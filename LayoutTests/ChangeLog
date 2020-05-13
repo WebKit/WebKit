@@ -1,3 +1,16 @@
+2020-05-13  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Calling reverse() on an accelerated animation has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=204717
+        <rdar://problem/62503582>
+
+        Reviewed by Dean Jackson.
+
+        Add a test where we play an animation for an accelerated property in reverse.
+
+        * webanimations/accelerated-animation-playback-rate-expected.html: Added.
+        * webanimations/accelerated-animation-playback-rate.html: Added.
+
 2020-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         composited scrolling interferes with the propagation of perspective

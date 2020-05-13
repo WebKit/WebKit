@@ -318,13 +318,6 @@ void RenderLayerModelObject::animationPaused(double timeOffset, const String& na
     layer()->backing()->animationPaused(timeOffset, name);
 }
 
-void RenderLayerModelObject::animationSeeked(double timeOffset, const String& name)
-{
-    if (!layer() || !layer()->backing())
-        return;
-    layer()->backing()->animationSeeked(timeOffset, name);
-}
-
 void RenderLayerModelObject::animationFinished(const String& name)
 {
     if (!layer() || !layer()->backing())

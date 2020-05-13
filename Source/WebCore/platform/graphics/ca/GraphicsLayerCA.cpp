@@ -1029,6 +1029,9 @@ bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 
 bool GraphicsLayerCA::animationCanBeAccelerated(const KeyframeValueList& valueList, const Animation* anim) const
 {
+    if (anim->playbackRate() != 1)
+        return false;
+
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
         return false;
 
@@ -1089,16 +1092,6 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
 
     // Call add since if there is already a Remove in there, we don't want to overwrite it with a Pause.
     addProcessingActionForAnimation(animationName, AnimationProcessingAction { Pause, Seconds { timeOffset } });
-
-    noteLayerPropertyChanged(AnimationChanged);
-}
-
-void GraphicsLayerCA::seekAnimation(const String& animationName, double timeOffset)
-{
-    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " seekAnimation " << animationName << " to " << timeOffset << " (is running " << animationIsRunning(animationName) << ")");
-
-    // Call add since if there is already a Remove in there, we don't want to overwrite it with a Pause.
-    addProcessingActionForAnimation(animationName, AnimationProcessingAction { Seek, Seconds { timeOffset } });
 
     noteLayerPropertyChanged(AnimationChanged);
 }
@@ -2921,9 +2914,6 @@ void GraphicsLayerCA::updateAnimations()
                     case Pause:
                         pauseCAAnimationOnLayer(currentAnimation.m_property, currentAnimationName, currentAnimation.m_index, currentAnimation.m_subIndex, processingInfo.timeOffset);
                         break;
-                    case Seek:
-                        seekCAAnimationOnLayer(currentAnimation.m_property, currentAnimationName, currentAnimation.m_index, currentAnimation.m_subIndex, processingInfo.timeOffset);
-                        break;
                     }
                 }
 
@@ -3035,36 +3025,6 @@ void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const
     RefPtr<PlatformCAAnimation> newAnim = curAnim->copy();
 
     newAnim->setSpeed(0);
-    newAnim->setTimeOffset(timeOffset.seconds());
-    
-    layer->addAnimationForKey(animationID, *newAnim); // This will replace the running animation.
-
-    // Pause the animations on the clones too.
-    if (LayerMap* layerCloneMap = animatedLayerClones(property)) {
-        for (auto& clone : *layerCloneMap) {
-            // Skip immediate replicas, since they move with the original.
-            if (m_replicaLayer && isReplicatedRootClone(clone.key))
-                continue;
-            clone.value->addAnimationForKey(animationID, *newAnim);
-        }
-    }
-}
-
-void GraphicsLayerCA::seekCAAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, int subIndex, Seconds timeOffset)
-{
-    // FIXME: this can be refactored a fair bit or merged with pauseCAAnimationOnLayer() with an operation flag.
-    PlatformCALayer* layer = animatedLayer(property);
-
-    String animationID = animationIdentifier(animationName, property, index, subIndex);
-
-    RefPtr<PlatformCAAnimation> currentAnimation = layer->animationForKey(animationID);
-    if (!currentAnimation)
-        return;
-
-    // Animations on the layer are immutable, so we have to clone and modify.
-    RefPtr<PlatformCAAnimation> newAnim = currentAnimation->copy();
-
-    newAnim->setBeginTime(CACurrentMediaTime());
     newAnim->setTimeOffset(timeOffset.seconds());
 
     layer->addAnimationForKey(animationID, *newAnim); // This will replace the running animation.
@@ -3232,8 +3192,24 @@ void GraphicsLayerCA::appendToUncommittedAnimations(LayerPropertyAnimation&& ani
     ensureLayerAnimations();
 
     // Since we're adding a new animation, make sure we clear any pending AnimationProcessingAction for this animation
-    // as these are applied after we've committed new animations.
-    m_animations->animationsToProcess.remove(animation.m_name);
+    // as these are applied after we've committed new animations. However, we want to check if we had a pending removal
+    // such that removing an animation prior to adding a new one for the same name works.
+    auto processingInfoIterator = m_animations->animationsToProcess.find(animation.m_name);
+    if (processingInfoIterator != m_animations->animationsToProcess.end()) {
+        auto animationIterator = m_animations->runningAnimations.find(animation.m_name);
+        if (animationIterator != m_animations->runningAnimations.end()) {
+            auto& animations = animationIterator->value;
+            for (const auto& processingInfo : processingInfoIterator->value) {
+                if (processingInfo.action == Remove) {
+                    for (const auto& currentAnimation : animations)
+                        removeCAAnimationFromLayer(currentAnimation.m_property, animation.m_name, currentAnimation.m_index, currentAnimation.m_subIndex);
+                    m_animations->runningAnimations.remove(animationIterator);
+                    break;
+                }
+            }
+        }
+        m_animations->animationsToProcess.remove(processingInfoIterator);
+    }
 
     m_animations->uncomittedAnimations.append(WTFMove(animation));
 }

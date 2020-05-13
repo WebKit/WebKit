@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "ComputedEffectTiming.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
@@ -132,7 +131,7 @@ public:
     bool isCompletelyAccelerated() const;
     bool isRelevant() const { return m_isRelevant; }
     void updateRelevance();
-    void effectTimingDidChange(Optional<ComputedEffectTiming> = WTF::nullopt);
+    void effectTimingDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
     void setSuspended(bool);

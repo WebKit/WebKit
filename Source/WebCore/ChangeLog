@@ -1,3 +1,76 @@
+2020-05-13  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Calling reverse() on an accelerated animation has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=204717
+        <rdar://problem/62503582>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/accelerated-animation-playback-rate.html
+
+        We completely ignored the playbackRate set on a WebAnimation object when considering whether we could run an accelerated animation.
+        To address this we do several things.
+
+        First, we now add a playbackRate() on Animation objects such that we can make GraphicsLayerCA aware of the originating WebAnimation's
+        playback rate and use this data to opt out of running CA animations for animations with a playbackRate other than 1 in
+        GraphicsLayerCA::animationCanBeAccelerated(). We'll be looking to add support for variable playback rates for CA animations in
+        https://bugs.webkit.org/show_bug.cgi?id=211839.
+
+        Then, we make sure to completely replace an accelerated animation whenever one of the properties affected timing would change. Up until
+        now we would onyl do this for a change in the effective currentTime, but this needs to also happen when the current time doesn't change
+        but the animation may have changed playback rate or any of its timing properties that could change the duration of the animation. So we
+        remove the "Seek" command and instead use an "UpdateTiming" command that will remove the existing animation and add a new one.
+
+        This allows us to remove any notion of seeking in GraphicsLayer since now we'll just create a new animation when its timing attributes
+        changed.
+
+        This revealed an issue where if we called animationFinished() and startAnimation() on a RenderLayerModelObject in succession, theanimation
+        removal would not occur on the GraphicsLayerCA because we disregarded any pending accelerated action for an animation we knew would be
+        replaced. We now ensure we honor the removal in GraphicsLayerCA::appendToUncommittedAnimations().
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::updateTiming):
+        * animation/AnimationEffect.h:
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::addPendingAcceleratedAction):
+        (WebCore::KeyframeEffect::animationDidChangeTimingProperties):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        (WebCore::KeyframeEffect::backingAnimationForCompositedRenderer const):
+        (WebCore::KeyframeEffect::animationDidSeek): Deleted.
+        * animation/KeyframeEffect.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::effectTimingDidChange):
+        (WebCore::WebAnimation::setCurrentTime):
+        (WebCore::WebAnimation::setPlaybackRate):
+        (WebCore::WebAnimation::updatePlaybackRate):
+        (WebCore::WebAnimation::reverse):
+        * animation/WebAnimation.h:
+        * platform/animation/Animation.h:
+        (WebCore::Animation::playbackRate const):
+        (WebCore::Animation::setPlaybackRate):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::pauseAnimation):
+        (WebCore::GraphicsLayer::seekAnimation): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated const):
+        (WebCore::GraphicsLayerCA::updateAnimations):
+        (WebCore::GraphicsLayerCA::pauseCAAnimationOnLayer):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::seekAnimation): Deleted.
+        (WebCore::GraphicsLayerCA::seekCAAnimationOnLayer): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::animationPaused):
+        (WebCore::RenderElement::animationSeeked): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::animationSeeked): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::animationSeeked): Deleted.
+        * rendering/RenderLayerModelObject.h:
+
 2020-05-13  Antti Koivisto  <antti@apple.com>
 
         [Wheel event region] Debug overlay

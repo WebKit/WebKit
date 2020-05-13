@@ -1508,7 +1508,7 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
     if (action == AcceleratedAction::Stop)
         m_pendingAcceleratedActions.clear();
     m_pendingAcceleratedActions.append(action);
-    if (action != AcceleratedAction::Seek)
+    if (action != AcceleratedAction::UpdateTiming)
         m_lastRecordedAcceleratedAction = action;
     animation()->acceleratedStateDidChange();
 }
@@ -1525,12 +1525,12 @@ void KeyframeEffect::animationDidPlay()
         addPendingAcceleratedAction(AcceleratedAction::Play);
 }
 
-void KeyframeEffect::animationDidSeek()
+void KeyframeEffect::animationDidChangeTimingProperties()
 {
-    // There is no need to seek if we're not playing an animation already. If seeking
+    // There is no need to update the animation if we're not playing already. If updating timing
     // means we're moving into an active lexicalGlobalObject, we'll pick this up in apply().
     if (m_isRunningAccelerated || isAboutToRunAccelerated())
-        addPendingAcceleratedAction(AcceleratedAction::Seek);
+        addPendingAcceleratedAction(AcceleratedAction::UpdateTiming);
 }
 
 void KeyframeEffect::animationWasCanceled()
@@ -1581,6 +1581,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     for (const auto& action : pendingAcceleratedActions) {
         switch (action) {
         case AcceleratedAction::Play:
+            renderer->animationFinished(m_blendingKeyframes.animationName());
             m_isRunningAccelerated = renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes);
             if (!m_isRunningAccelerated) {
                 m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
@@ -1590,8 +1591,11 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         case AcceleratedAction::Pause:
             renderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
             break;
-        case AcceleratedAction::Seek:
-            renderer->animationSeeked(timeOffset, m_blendingKeyframes.animationName());
+        case AcceleratedAction::UpdateTiming:
+            renderer->animationFinished(m_blendingKeyframes.animationName());
+            renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes);
+            if (animation()->playState() == WebAnimation::PlayState::Paused)
+                renderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
             break;
         case AcceleratedAction::Stop:
             ASSERT(document());
@@ -1617,6 +1621,7 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
     animation->setDelay(delay().seconds());
     animation->setIterationCount(iterations());
     animation->setTimingFunction(timingFunction()->clone());
+    animation->setPlaybackRate(effectAnimation->playbackRate());
 
     switch (fill()) {
     case FillMode::None:

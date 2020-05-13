@@ -75,7 +75,6 @@ public:
 
     bool startAnimation(double timeOffset, const Animation&, const KeyframeList&) override;
     void animationPaused(double timeOffset, const String& name) override;
-    void animationSeeked(double timeOffset, const String& name) override;
     void animationFinished(const String& name) override;
 
     void suspendAnimations(MonotonicTime = MonotonicTime()) override;

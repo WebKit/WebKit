@@ -124,7 +124,7 @@ public:
     void invalidate() override;
     void animationDidTick() final;
     void animationDidPlay() final;
-    void animationDidSeek() final;
+    void animationDidChangeTimingProperties() final;
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
     void animationTimelineDidChange(AnimationTimeline*) final;
@@ -169,7 +169,7 @@ public:
 private:
     KeyframeEffect(Element*, PseudoId);
 
-    enum class AcceleratedAction : uint8_t { Play, Pause, Seek, Stop };
+    enum class AcceleratedAction : uint8_t { Play, Pause, UpdateTiming, Stop };
     enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
 

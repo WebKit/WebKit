@@ -134,16 +134,12 @@ void WebAnimation::unsuspendEffectInvalidation()
     --m_suspendCount;
 }
 
-void WebAnimation::effectTimingDidChange(Optional<ComputedEffectTiming> previousTiming)
+void WebAnimation::effectTimingDidChange()
 {
     timingDidChange(DidSeek::No, SynchronouslyNotify::Yes);
 
-    if (previousTiming) {
-        auto* effect = this->effect();
-        ASSERT(effect);
-        if (previousTiming->progress != effect->getComputedTiming().progress)
-            effect->animationDidSeek();
-    }
+    if (m_effect)
+        m_effect->animationDidChangeTimingProperties();
 
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
 }
@@ -477,7 +473,7 @@ ExceptionOr<void> WebAnimation::setCurrentTime(Optional<Seconds> seekTime)
     timingDidChange(DidSeek::Yes, SynchronouslyNotify::No);
 
     if (m_effect)
-        m_effect->animationDidSeek();
+        m_effect->animationDidChangeTimingProperties();
 
     invalidateEffect();
 
@@ -508,6 +504,9 @@ void WebAnimation::setPlaybackRate(double newPlaybackRate)
     // 4. If previous time is resolved, set the current time of animation to previous time.
     if (previousTime)
         setCurrentTime(previousTime);
+
+    if (m_effect)
+        m_effect->animationDidChangeTimingProperties();
 }
 
 void WebAnimation::updatePlaybackRate(double newPlaybackRate)
@@ -560,6 +559,9 @@ void WebAnimation::updatePlaybackRate(double newPlaybackRate)
         // Run the procedure to play an animation for animation with the auto-rewind flag set to false.
         play(AutoRewind::No);
     }
+
+    if (m_effect)
+        m_effect->animationDidChangeTimingProperties();
 }
 
 void WebAnimation::applyPendingPlaybackRate()
@@ -1151,6 +1153,9 @@ ExceptionOr<void> WebAnimation::reverse()
         m_pendingPlaybackRate = originalPendingPlaybackRate;
         return playResult.releaseException();
     }
+
+    if (m_effect)
+        m_effect->animationDidChangeTimingProperties();
 
     return { };
 }

@@ -117,6 +117,7 @@ public:
     AnimationFillMode fillMode() const { return static_cast<AnimationFillMode>(m_fillMode); }
 
     double duration() const { return m_duration; }
+    double playbackRate() const { return m_playbackRate; }
 
     enum { IterationCountInfinite = -1 };
     double iterationCount() const { return m_iterationCount; }
@@ -130,6 +131,7 @@ public:
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(AnimationDirection d) { m_direction = d; m_directionSet = true; }
     void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
+    void setPlaybackRate(double d) { m_playbackRate = d; }
     void setFillMode(AnimationFillMode f) { m_fillMode = static_cast<unsigned>(f); m_fillModeSet = true; }
     void setIterationCount(double c) { m_iterationCount = c; m_iterationCountSet = true; }
     void setName(const String& name, Style::ScopeOrdinal scope = Style::ScopeOrdinal::Element)
@@ -169,6 +171,7 @@ private:
     double m_iterationCount;
     double m_delay;
     double m_duration;
+    double m_playbackRate { 1 };
     RefPtr<TimingFunction> m_timingFunction;
 
     Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };

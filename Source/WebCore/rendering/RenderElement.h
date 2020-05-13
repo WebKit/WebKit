@@ -232,7 +232,6 @@ public:
 
     virtual bool startAnimation(double /* timeOffset */, const Animation&, const KeyframeList&) { return false; }
     virtual void animationPaused(double /* timeOffset */, const String& /* name */) { }
-    virtual void animationSeeked(double /* timeOffset */, const String& /* name */) { }
     virtual void animationFinished(const String& /* name */) { }
 
     virtual void suspendAnimations(MonotonicTime = MonotonicTime()) { }

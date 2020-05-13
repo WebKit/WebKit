@@ -188,7 +188,6 @@ public:
 
     bool startAnimation(double timeOffset, const Animation&, const KeyframeList&);
     void animationPaused(double timeOffset, const String& name);
-    void animationSeeked(double timeOffset, const String& name);
     void animationFinished(const String& name);
 
     void suspendAnimations(MonotonicTime = MonotonicTime());

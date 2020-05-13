@@ -3497,11 +3497,6 @@ void RenderLayerBacking::animationPaused(double timeOffset, const String& animat
     m_graphicsLayer->pauseAnimation(animationName, timeOffset);
 }
 
-void RenderLayerBacking::animationSeeked(double timeOffset, const String& animationName)
-{
-    m_graphicsLayer->seekAnimation(animationName, timeOffset);
-}
-
 void RenderLayerBacking::animationFinished(const String& animationName)
 {
     m_graphicsLayer->removeAnimation(animationName);
