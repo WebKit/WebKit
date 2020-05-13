@@ -2755,6 +2755,7 @@
 		1DA4089423A80A3E0058C950 /* RemoteMediaResourceManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceManager.h; sourceTree = "<group>"; };
 		1DA4089E23A827780058C950 /* RemoteMediaResourceManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResourceManager.cpp; sourceTree = "<group>"; };
 		1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKShareSheet.mm; sourceTree = "<group>"; };
+		1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesDefaultValuesCocoa.mm; sourceTree = "<group>"; };
 		1DE0D095211CC21300439B5F /* WKShareSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKShareSheet.h; sourceTree = "<group>"; };
 		1DE2DFAC23A959F8003E013A /* RemoteMediaResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceIdentifier.h; sourceTree = "<group>"; };
 		1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoLayerRemoteCocoa.mm; sourceTree = "<group>"; };
@@ -7493,6 +7494,7 @@
 				1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */,
 				7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */,
 				465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */,
+				1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */,
 				37C4C0921814B3AF003688B9 /* WKNSArray.h */,
 				37C4C0911814B3AF003688B9 /* WKNSArray.mm */,
 				373CEAD4185417AE008C363D /* WKNSData.h */,
@@ -8373,14 +8375,14 @@
 		7C6E70F818B2D47E00F24E2E /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				41684C4F24643D3F001CE8ED /* RemoteCaptureSampleManager.cpp */,
-				41684C4E24643C81001CE8ED /* RemoteCaptureSampleManager.h */,
-				41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */,
 				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
 				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
 				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
 				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
 				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
+				41684C4F24643D3F001CE8ED /* RemoteCaptureSampleManager.cpp */,
+				41684C4E24643C81001CE8ED /* RemoteCaptureSampleManager.h */,
+				41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */,
 				41684C50246450FD001CE8ED /* RemoteRealtimeMediaSource.cpp */,
 				41684C51246450FD001CE8ED /* RemoteRealtimeMediaSource.h */,
 				CD491B051E70D05F00009066 /* UserMediaCaptureManager.cpp */,
@@ -9972,7 +9974,6 @@
 			isa = PBXGroup;
 			children = (
 				2D7DEBE221269E4B00B9F73C /* unified-sources */,
-				0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */,
 				CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */,
 				CD4570D12441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessages.h */,
 				CD4570D22441014B00A3DCEB /* AudioSessionRoutingArbitratorProxyMessagesReplies.h */,
@@ -10054,6 +10055,7 @@
 				CDD53571240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessageReceiver.cpp */,
 				CDD53572240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessages.h */,
 				CDD53577240DDE0700F7B8C4 /* RemoteAudioSessionProxyMessagesReplies.h */,
+				0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */,
 				CDAC20F223FC383A0021DEE3 /* RemoteCDMFactoryProxyMessageReceiver.cpp */,
 				CDAC20F323FC383A0021DEE3 /* RemoteCDMFactoryProxyMessages.h */,
 				CDAC20EE23FC38390021DEE3 /* RemoteCDMFactoryProxyMessagesReplies.h */,
@@ -12685,7 +12687,6 @@
 				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,
-				0FF24A2D1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp in Sources */,
 				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
 				CD7CF3612444CCA6003BC4D5 /* AudioSessionRoutingArbitratorProxyCocoa.mm in Sources */,
 				CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */,
@@ -12774,6 +12775,7 @@
 				1A0C227F2451130A00ED614D /* QuickLookThumbnailingSoftLink.mm in Sources */,
 				1A0C225E243575CD00ED614D /* QuickLookThumbnailLoader.mm in Sources */,
 				9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */,
+				0FF24A2D1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp in Sources */,
 				CDAC20F723FC726C0021DEE3 /* RemoteCDMFactoryProxyMessageReceiver.cpp in Sources */,
 				CDAC20F823FC726C0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp in Sources */,
 				CD46618324010A670047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp in Sources */,

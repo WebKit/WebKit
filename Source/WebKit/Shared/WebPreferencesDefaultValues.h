@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 #if PLATFORM(GTK)
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED true
 #else
@@ -289,6 +291,10 @@
 #endif
 
 namespace WebKit {
+
+#if PLATFORM(COCOA) && HAVE(SYSTEM_FEATURE_FLAGS)
+bool isFeatureFlagEnabled(const String&);
+#endif
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCSSOMViewScrollingAPIEnabled();

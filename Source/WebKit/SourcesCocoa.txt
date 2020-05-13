@@ -170,6 +170,7 @@ Shared/Cocoa/WKNSURL.mm
 Shared/Cocoa/WKNSURLExtras.mm
 Shared/Cocoa/WKNSURLRequest.mm
 Shared/Cocoa/WKObject.mm
+Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm
 
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm

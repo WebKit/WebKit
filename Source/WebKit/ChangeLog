@@ -1,3 +1,30 @@
+2020-05-12  Peng Liu  <peng.liu6@apple.com>
+
+        Add the feature flag plist file parser
+        https://bugs.webkit.org/show_bug.cgi?id=211457
+
+        Reviewed by Tim Horton.
+
+        WebKit needs to parse the feature flags plist by itself in some cases.
+
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm: Added.
+        (WebKit::featureFlagEnabled):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAsyncFrameAndOverflowScrollingEnabled):
+        (WebKit::defaultUseGPUProcessForMedia):
+        (WebKit::defaultRenderCanvasInGPUProcessEnabled):
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+        (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+        (WebKit::defaultWebRTCCodecsInGPUProcess):
+        (WebKit::defaultWebGL2Enabled):
+        (WebKit::defaultWebGPUEnabled):
+        (WebKit::defaultInAppBrowserPrivacy):
+        (WebKit::defaultIncrementalPDFEnabled):
+        (WebKit::defaultWebXREnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Give some NetworkLoadMetrics to WebCoreNSURLSession's delegate

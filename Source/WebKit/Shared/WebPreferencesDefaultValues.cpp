@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebPreferencesDefaultValues.h"
+
 #include <WebCore/RuntimeApplicationChecks.h>
 
 #if PLATFORM(COCOA)
@@ -85,7 +86,7 @@ static bool defaultAsyncFrameAndOverflowScrollingEnabled()
 #endif
 
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "async_frame_and_overflow_scrolling");
+    return isFeatureFlagEnabled("async_frame_and_overflow_scrolling");
 #endif
 
 #if PLATFORM(MAC)
@@ -114,7 +115,7 @@ bool defaultAsyncOverflowScrollingEnabled()
 bool defaultUseGPUProcessForMedia()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "canvas_and_media_in_gpu_process");
+    return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
 #endif
 
     return false;
@@ -125,7 +126,7 @@ bool defaultUseGPUProcessForMedia()
 bool defaultRenderCanvasInGPUProcessEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "canvas_and_media_in_gpu_process");
+    return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
 #endif
 
     return false;
@@ -136,11 +137,11 @@ bool defaultRenderCanvasInGPUProcessEnabled()
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
 #if PLATFORM(MAC) && HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "webrtc_in_gpu_process");
+    return isFeatureFlagEnabled("webrtc_in_gpu_process");
 #endif
 
 #if PLATFORM(IOS_FAMILY) && HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "canvas_and_media_in_gpu_process");
+    return isFeatureFlagEnabled("canvas_and_media_in_gpu_process");
 #endif
 
     return false;
@@ -162,7 +163,7 @@ bool defaultCaptureAudioInUIProcessEnabled()
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "webrtc_in_gpu_process");
+    return isFeatureFlagEnabled("webrtc_in_gpu_process");
 #endif
 
     return false;
@@ -175,7 +176,7 @@ bool defaultCaptureVideoInGPUProcessEnabled()
 bool defaultWebRTCCodecsInGPUProcess()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "webrtc_in_gpu_process");
+    return isFeatureFlagEnabled("webrtc_in_gpu_process");
 #endif
 
     return false;
@@ -188,7 +189,7 @@ bool defaultWebRTCCodecsInGPUProcess()
 bool defaultWebGL2Enabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "WebGL2");
+    return isFeatureFlagEnabled("WebGL2");
 #endif
 
     return false;
@@ -201,7 +202,7 @@ bool defaultWebGL2Enabled()
 bool defaultWebGPUEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "WebGPU");
+    return isFeatureFlagEnabled("WebGPU");
 #endif
 
     return false;
@@ -212,7 +213,7 @@ bool defaultWebGPUEnabled()
 bool defaultInAppBrowserPrivacy()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "InAppBrowserPrivacy");
+    return isFeatureFlagEnabled("InAppBrowserPrivacy");
 #endif
 
     return false;
@@ -222,7 +223,7 @@ bool defaultInAppBrowserPrivacy()
 bool defaultIncrementalPDFEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "incremental_pdf");
+    return isFeatureFlagEnabled("incremental_pdf");
 #endif
 
     return false;
@@ -234,7 +235,7 @@ bool defaultIncrementalPDFEnabled()
 bool defaultWebXREnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
-    return _os_feature_enabled_impl("WebKit", "WebXR");
+    return isFeatureFlagEnabled("WebXR");
 #endif
 
     return false;
