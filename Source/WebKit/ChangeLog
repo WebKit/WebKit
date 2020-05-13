@@ -1,3 +1,29 @@
+2020-05-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r260571): RequestedScrollPosition doesn't have its scroll change applied to layers anymore
+        https://bugs.webkit.org/show_bug.cgi?id=211374
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use WebPage::finalizeRenderingUpdate() to perform the compositing state flush
+        and the scrolling tree layer positioning, instead of doing things half-baked
+        by manually invoking the FrameView method.
+
+        Additional WebPage calls (updateRendering(), flushPendingEditorStateUpdate())
+        are moved into CompositingCoordinator::flushPendingLayerChanges() from the
+        LayerTreeHost::layerFlushTimerFired() method for consistency. The additional
+        CompositingCoordinator::syncDisplayState() method call is removed -- this call
+        triggered any necessary layout, but that's already done through WebPage::updateRendering().
+
+        CompositingCoordinator::flushPendingLayerChanges() doesn't rely on the
+        FrameView flush return value since that's not available anymore -- instead,
+        true is returned always.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+
 2020-05-13  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed compile fix after r261584.

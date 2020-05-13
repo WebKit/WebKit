@@ -136,10 +136,6 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_isSuspended || m_isWaitingForRenderer)
         return;
 
-    m_coordinator.syncDisplayState();
-    m_webPage.updateRendering();
-    m_webPage.flushPendingEditorStateUpdate();
-
     if (!m_coordinator.rootCompositingLayer())
         return;
 
