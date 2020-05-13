@@ -43,6 +43,7 @@ private:
     Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) final;
 
     RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint) final;
+    OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const final;
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&&) final;
 
@@ -55,7 +56,7 @@ private:
     void unlockLayersForHitTesting() final;
 
     // This lock protects the CALayer/PlatformCALayer tree.
-    Lock m_layerHitTestMutex;
+    mutable Lock m_layerHitTestMutex;
     
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 };

@@ -102,7 +102,8 @@ static void collectDescendantLayersAtPoint(Vector<CALayer *, 16>& layersAtPoint,
                 // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
                 FloatPoint boundsOrigin = layer.bounds.origin;
                 FloatPoint localPoint = subviewPoint - toFloatSize(boundsOrigin);
-                return platformCALayer->eventRegionContainsPoint(IntPoint(localPoint));
+                auto* eventRegion = platformCALayer->eventRegion();
+                return eventRegion && eventRegion->contains(roundedIntPoint(localPoint));
             }
             
             return false;
@@ -182,6 +183,37 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found no scrollable layers; using root node");
     return rootScrollingNode;
+}
+
+OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesForPoint(FloatPoint point) const
+{
+    auto* rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
+        return { };
+
+    LockHolder lockHolder(m_layerHitTestMutex);
+
+    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
+
+    Vector<CALayer *, 16> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point);
+
+    if (layersAtPoint.isEmpty())
+        return { };
+
+    auto *hitLayer = layersAtPoint.last();
+    if (!hitLayer)
+        return { };
+
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)hitLayer);
+    if (!platformCALayer)
+        return { };
+
+    auto* eventRegion = platformCALayer->eventRegion();
+    if (!eventRegion)
+        return { };
+
+    return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(point));
 }
 
 void ScrollingTreeMac::lockLayersForHitTesting()

@@ -79,6 +79,8 @@ public:
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
     const Region* regionForTouchAction(TouchAction) const;
 
+    OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
+
 #if ENABLE(EDITABLE_REGION)
     WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;
     Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion.rects(); }

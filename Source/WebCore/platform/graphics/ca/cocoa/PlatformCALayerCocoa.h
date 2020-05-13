@@ -168,8 +168,8 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
+    const EventRegion* eventRegion() const override { return &m_eventRegion; }
     void setEventRegion(const EventRegion&) override;
-    bool eventRegionContainsPoint(IntPoint) const override;
 
 #if ENABLE(SCROLLING_THREAD)
     ScrollingNodeID scrollingNodeID() const override { return m_scrollingNodeID; }

@@ -53,6 +53,7 @@ class ScrollingTreeNode;
 class ScrollingTreeOverflowScrollProxyNode;
 class ScrollingTreePositionedNode;
 class ScrollingTreeScrollingNode;
+enum class EventListenerRegionType : uint8_t;
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
 friend class ScrollingTreeLatchingController;
@@ -194,6 +195,7 @@ private:
     void traverseScrollingTreeRecursive(ScrollingTreeNode&, const VisitorFunction&);
 
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
+    WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
 
     Lock m_treeMutex; // Protects the scrolling tree.

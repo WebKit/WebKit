@@ -1038,11 +1038,6 @@ void PlatformCALayerCocoa::setEventRegion(const EventRegion& eventRegion)
     m_eventRegion = eventRegion;
 }
 
-bool PlatformCALayerCocoa::eventRegionContainsPoint(IntPoint point) const
-{
-    return m_eventRegion.contains(point);
-}
-
 GraphicsLayer::EmbeddedViewID PlatformCALayerCocoa::embeddedViewID() const
 {
     ASSERT_NOT_REACHED();

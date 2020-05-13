@@ -170,6 +170,11 @@ RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
     return m_rootNode;
 }
 
+OptionSet<EventListenerRegionType> ScrollingTree::eventListenerRegionTypesForPoint(FloatPoint) const
+{
+    return { };
+}
+
 void ScrollingTree::traverseScrollingTree(VisitorFunction&& visitorFunction)
 {
     LockHolder locker(m_treeMutex);
