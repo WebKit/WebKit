@@ -1,3 +1,13 @@
+2020-05-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r261023): [GTK][WPE] Several WebGL tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=211338
+
+        Reviewed by Dean Jackson.
+
+        * platform/gtk/TestExpectations: Remove failure expectations for the fixed tests.
+        * platform/wpe/TestExpectations: Ditto.
+
 2020-05-13  Antti Koivisto  <antti@apple.com>
 
         [Wheel event region] Include listeners on Window

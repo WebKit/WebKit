@@ -4301,6 +4301,15 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         functionType = TexImageFunctionType::TexImage;
     else
         functionType = TexImageFunctionType::TexSubImage;
+
+#if !USE(ANGLE)
+    if (functionType == TexImageFunctionType::TexSubImage) {
+        auto texture = validateTexImageBinding(functionName, functionID, target);
+        if (texture)
+            internalformat = texture->getInternalFormat(target, level);
+    }
+#endif
+
     auto visitor = WTF::makeVisitor([&](const RefPtr<ImageBitmap>& bitmap) -> ExceptionOr<void> {
         auto validationResult = validateImageBitmap(functionName, bitmap.get());
         if (validationResult.hasException())
@@ -4541,13 +4550,19 @@ void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID
     if (isContextLostOrPending())
         return;
     const char* functionName = getTexImageFunctionName(functionID);
-    if (!validateTexImageBinding(functionName, functionID, target))
+    auto texture = validateTexImageBinding(functionName, functionID, target);
+    if (!texture)
         return;
     TexImageFunctionType functionType;
     if (functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexImage3D)
         functionType = TexImageFunctionType::TexImage;
     else
         functionType = TexImageFunctionType::TexSubImage;
+#if !USE(ANGLE)
+    if (functionType == TexImageFunctionType::TexSubImage)
+        internalformat = texture->getInternalFormat(target, level);
+#endif
+
     if (!validateTexFunc(functionName, functionType, SourceArrayBufferView, target, level, internalformat, width, height, depth, border, format, type, xoffset, yoffset, zoffset))
         return;
     TexImageDimension sourceType;

@@ -1,3 +1,19 @@
+2020-05-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r261023): [GTK][WPE] Several WebGL tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=211338
+
+        Reviewed by Dean Jackson.
+
+        For non-ANGLE-backed WebGL, we are still required to query the internal
+        format of the target texture for the texture sub-image commands. Falling
+        back to that behavior on !USE(ANGLE) removes regressions in a bunch of
+        WebGL tests.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        (WebCore::WebGLRenderingContextBase::texImageArrayBufferViewHelper):
+
 2020-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK debug build after r261554
