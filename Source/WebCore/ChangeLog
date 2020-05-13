@@ -1,3 +1,25 @@
+2020-05-12  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] REGRESSION: (r261342) Play/pause button doesn't work upon first entering fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=211797
+        <rdar://problem/63118008>
+
+        Reviewed by Eric Carlson.
+
+        In r261342 we added code to handle "canplay" and "waiting" events without ever actually
+        adding event listeners for them. So when we enter fullscreen before the "canplay" event, we
+        never re-evaluate whether we're playing or not.
+
+        Drive-by fix: Also noticed that stalls will cause the play/pause toggle to switch from the
+        "pause icon" to the "play icon", which is incorrect; we're still "playing" event when we're
+        stalled. So when we are in the stalled state, set the "playbackRate" property to some very
+        small, but non-zero value. This will cause the playback slider to stop progressing, but
+        won't also cause the play/pause button to swap states.
+
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::updateForEventName):
+        (WebCore::PlaybackSessionModelMediaElement::observedEventNames):
+
 2020-05-12  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API
