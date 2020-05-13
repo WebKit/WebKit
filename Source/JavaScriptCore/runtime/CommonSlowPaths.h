@@ -244,6 +244,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_typeof);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_object);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_object_or_null);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_function);
+SLOW_PATH_HIDDEN_DECL(slow_path_is_constructor);
 SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);
 SLOW_PATH_HIDDEN_DECL(slow_path_in_by_val);
 SLOW_PATH_HIDDEN_DECL(slow_path_del_by_val);

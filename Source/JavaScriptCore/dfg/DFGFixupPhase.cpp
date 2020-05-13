@@ -2677,6 +2677,7 @@ private:
         case IsBigInt:
         case IsObjectOrNull:
         case IsFunction:
+        case IsConstructor:
         case CreateDirectArguments:
         case Jump:
         case Return:

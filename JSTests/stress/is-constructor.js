@@ -1,11 +1,12 @@
-var createBuiltin = $vm.createBuiltin;
-
 function assert(x) {
     if (!x)
         throw Error("Bad");
 }
 
-let isConstructor = createBuiltin("(function (c) { return @isConstructor(c); })");
+const isConstructor = $vm.createBuiltin("(function (c) { return @isConstructor(c); })");
+noInline(isConstructor);
+
+for (let i = 0; i < 1e4; ++i) {
 
 // Functions.
 assert(isConstructor(assert));
@@ -98,3 +99,5 @@ assert(isConstructor(new Proxy(Symbol, {})));
 assert(isConstructor(Symbol.bind(null)));
 assert(!isConstructor(new Proxy(Math.cos, {})));
 assert(!isConstructor(Math.cos.bind(null)));
+
+}

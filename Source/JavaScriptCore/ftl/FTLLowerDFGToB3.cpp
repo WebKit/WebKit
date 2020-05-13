@@ -1440,6 +1440,9 @@ private:
         case IsFunction:
             compileIsFunction();
             break;
+        case IsConstructor:
+            compileIsConstructor();
+            break;
         case IsTypedArrayView:
             compileIsTypedArrayView();
             break;
@@ -11688,6 +11691,13 @@ private:
         LValue result = m_out.phi(
             Int32, notCellResult, functionResult, objectResult, slowResult);
         setBoolean(result);
+    }
+
+    void compileIsConstructor()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        LValue value = lowJSValue(m_node->child1());
+        setBoolean(vmCall(Int32, operationIsConstructor, weakPointer(globalObject), value));
     }
 
     void compileIsTypedArrayView()

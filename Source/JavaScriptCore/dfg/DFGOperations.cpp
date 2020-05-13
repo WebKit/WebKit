@@ -2163,6 +2163,15 @@ size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject* globalObject, JSC
     return false;
 }
 
+size_t JIT_OPERATION operationIsConstructor(JSGlobalObject* globalObject, EncodedJSValue value)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return JSValue::decode(value).isConstructor(vm);
+}
+
 JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject* globalObject, JSCell* object)
 {
     VM& vm = globalObject->vm();

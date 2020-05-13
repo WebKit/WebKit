@@ -1407,6 +1407,7 @@ public:
     void compileIsObject(Node*);
     void compileIsObjectOrNull(Node*);
     void compileIsFunction(Node*);
+    void compileIsConstructor(Node*);
     void compileTypeOf(Node*);
     void compileCheckIsConstant(Node*);
     void compileCheckNotEmpty(Node*);

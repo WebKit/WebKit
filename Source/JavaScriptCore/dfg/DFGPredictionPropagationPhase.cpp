@@ -1040,6 +1040,7 @@ private:
         case IsObject:
         case IsObjectOrNull:
         case IsFunction:
+        case IsConstructor:
         case IsCellWithType:
         case IsTypedArrayView:
         case MatchStructure: {

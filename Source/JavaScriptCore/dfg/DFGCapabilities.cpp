@@ -154,6 +154,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_is_object_or_null:
     case op_is_cell_with_type:
     case op_is_function:
+    case op_is_constructor:
     case op_not:
     case op_less:
     case op_lesseq:

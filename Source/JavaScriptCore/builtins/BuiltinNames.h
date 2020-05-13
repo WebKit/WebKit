@@ -121,7 +121,6 @@ namespace JSC {
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \
     macro(isArraySlow) \
-    macro(isConstructor) \
     macro(sameValue) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \

@@ -1458,6 +1458,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IsObject:
     case IsObjectOrNull:
     case IsFunction:
+    case IsConstructor:
     case IsCellWithType:
     case IsTypedArrayView: {
         AbstractValue child = forNode(node->child1());
@@ -1520,6 +1521,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
                 } else
                     setConstant(node, jsBoolean(false));
+                break;
+            case IsConstructor:
+                setConstant(node, jsBoolean(child.value().isConstructor(m_vm)));
                 break;
             case IsEmpty:
                 setConstant(node, jsBoolean(child.value().isEmpty()));
@@ -1729,7 +1733,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             break;
+        case IsConstructor:
+            // FIXME: We can speculate constructability from child's m_structure.
+            // https://bugs.webkit.org/show_bug.cgi?id=211796
+            if (!(child.m_type & (SpecFunction | SpecProxyObject))) {
+                setConstant(node, jsBoolean(false));
+                constantWasSet = true;
+                break;
+            }
 
+            break;
         case IsCellWithType: {
             Optional<SpeculatedType> filter = node->speculatedTypeForQuery();
             if (!filter) {

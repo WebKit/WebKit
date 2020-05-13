@@ -9453,6 +9453,18 @@ void SpeculativeJIT::compileIsFunction(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileIsConstructor(Node* node)
+{
+    JSValueOperand input(this, node->child1());
+    JSValueRegs inputRegs = input.jsValueRegs();
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+
+    callOperation(operationIsConstructor, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), inputRegs);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileTypeOf(Node* node)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);

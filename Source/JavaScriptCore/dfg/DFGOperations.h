@@ -213,6 +213,7 @@ void JIT_OPERATION operationWeakMapSet(VM*, JSCell*, JSCell*, EncodedJSValue, in
 double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+size_t JIT_OPERATION operationIsConstructor(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM*) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocateSimplePropertyStorage(VM*, size_t newSize) WTF_INTERNAL;

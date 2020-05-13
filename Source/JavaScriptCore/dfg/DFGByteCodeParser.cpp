@@ -5789,6 +5789,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_is_function);
         }
 
+        case op_is_constructor: {
+            auto bytecode = currentInstruction->as<OpIsConstructor>();
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(IsConstructor, value));
+            NEXT_OPCODE(op_is_constructor);
+        }
+
         case op_not: {
             auto bytecode = currentInstruction->as<OpNot>();
             Node* value = get(bytecode.m_operand);

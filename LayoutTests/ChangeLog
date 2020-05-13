@@ -1,3 +1,19 @@
+2020-05-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Implement @isConstructor bytecode intrinsic and bytecode for that
+        https://bugs.webkit.org/show_bug.cgi?id=144093
+
+        Reviewed by Keith Miller.
+
+        Tests for unsupported customized built-in elements now fail early
+        since interfaces they extend lack Constructor WebIDL attribute.
+
+        * js/class-syntax-extends-expected.txt:
+        * js/script-tests/class-syntax-extends.js:
+        * platform/gtk/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+
 2020-05-12  Jason Lawrence  <lawrence.j@apple.com>
 
         ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html 

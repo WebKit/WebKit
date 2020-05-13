@@ -1,3 +1,23 @@
+2020-05-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Implement @isConstructor bytecode intrinsic and bytecode for that
+        https://bugs.webkit.org/show_bug.cgi?id=144093
+
+        Reviewed by Keith Miller.
+
+        Tests for unsupported customized built-in elements now fail early 
+        since interfaces they extend lack Constructor WebIDL attribute.
+
+        * web-platform-tests/custom-elements/Document-createElement-expected.txt:
+        * web-platform-tests/custom-elements/Document-createElementNS-expected.txt:
+        * web-platform-tests/custom-elements/HTMLElement-constructor-expected.txt:
+        * web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget-expected.txt:
+        * web-platform-tests/custom-elements/parser/serializing-html-fragments-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Document-importNode-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode-expected.txt:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-custom-element-expected.txt:
+
 2020-05-12  Youenn Fablet  <youenn@apple.com>
 
         Introduce a RealtimeMediaSource video sample observer

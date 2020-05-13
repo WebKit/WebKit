@@ -51,6 +51,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getSetIteratorInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
+    macro(isConstructor) \
     macro(isJSArray) \
     macro(isProxyObject) \
     macro(isDerivedArray) \

@@ -1,3 +1,15 @@
+2020-05-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Implement @isConstructor bytecode intrinsic and bytecode for that
+        https://bugs.webkit.org/show_bug.cgi?id=144093
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/is-constructor.js: Added.
+        * stress/async-arrow-function-in-class-heritage.js:
+        * stress/is-constructor.js:
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-05-12  Robin Morisset  <rmorisset@apple.com>
 
         Exception check for OOM is a bit too late in JSBigInt::exponentiate.

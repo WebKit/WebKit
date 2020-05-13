@@ -4385,6 +4385,12 @@ RegisterID* BytecodeGenerator::emitIsObject(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitIsConstructor(RegisterID* dst, RegisterID* src)
+{
+    OpIsConstructor::emit(this, dst, src);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitIsNumber(RegisterID* dst, RegisterID* src)
 {
     OpIsNumber::emit(this, dst, src);

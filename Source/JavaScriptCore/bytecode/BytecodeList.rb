@@ -334,6 +334,7 @@ op_group :UnaryOp,
         :is_object,
         :is_object_or_null,
         :is_function,
+        :is_constructor,
     ],
     args: {
         dst: VirtualRegister,

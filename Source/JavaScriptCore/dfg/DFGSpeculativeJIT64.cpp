@@ -4711,6 +4711,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case IsConstructor: {
+        compileIsConstructor(node);
+        break;
+    }
+
     case IsCellWithType: {
         compileIsCellWithType(node);
         break;

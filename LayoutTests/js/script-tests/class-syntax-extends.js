@@ -78,8 +78,8 @@ shouldBe('x.prototype.__proto__', 'Base.prototype');
 shouldBe('Object.getPrototypeOf(x.prototype)', 'Base.prototype');
 shouldBe('x = class extends null { constructor() { } }; x.__proto__', 'Function.prototype');
 shouldBe('x.__proto__', 'Function.prototype');
-shouldThrow('x = class extends 3 { constructor() { } }; x.__proto__', '"TypeError: The superclass is not an object."');
-shouldThrow('x = class extends "abc" { constructor() { } }; x.__proto__', '"TypeError: The superclass is not an object."');
+shouldThrow('x = class extends 3 { constructor() { } }; x.__proto__', '"TypeError: The superclass is not a constructor."');
+shouldThrow('x = class extends "abc" { constructor() { } }; x.__proto__', '"TypeError: The superclass is not a constructor."');
 shouldNotThrow('baseWithBadPrototype = function () {}; baseWithBadPrototype.prototype = 3; new baseWithBadPrototype');
 shouldThrow('x = class extends baseWithBadPrototype { constructor() { } }', '"TypeError: The value of the superclass\'s prototype property is not an object."');
 shouldNotThrow('baseWithBadPrototype.prototype = "abc"');
@@ -112,8 +112,8 @@ shouldBe('x = 1; namespace = {}; namespace.A = class { constructor() { } }; try 
 
 shouldBe('Object.getPrototypeOf((class { constructor () { } }).prototype)', 'Object.prototype');
 shouldBe('Object.getPrototypeOf((class extends null { constructor () { super(); } }).prototype)', 'null');
-shouldThrow('new (class extends undefined { constructor () { this } })', '"TypeError: The superclass is not an object."');
-shouldThrow('x = undefined; new (class extends x { constructor () { super(); } })', '"TypeError: The superclass is not an object."');
+shouldThrow('new (class extends undefined { constructor () { this } })', '"TypeError: The superclass is not a constructor."');
+shouldThrow('x = undefined; new (class extends x { constructor () { super(); } })', '"TypeError: The superclass is not a constructor."');
 shouldBeTrue ('class x {}; new (class extends null { constructor () { return new x; } }) instanceof x');
 shouldThrow('new (class extends null { constructor () { this; } })');
 shouldThrow('new (class extends null { constructor () { super(); } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');

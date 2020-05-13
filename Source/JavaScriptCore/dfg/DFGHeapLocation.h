@@ -55,6 +55,7 @@ enum LocationKind {
     IndexedPropertyStorageLoc,
     InvalidationPointLoc,
     IsFunctionLoc,
+    IsConstructorLoc,
     IsObjectOrNullLoc,
     NamedPropertyLoc,
     RegExpObjectLastIndexLoc,

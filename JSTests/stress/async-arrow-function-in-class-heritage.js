@@ -22,4 +22,4 @@ function testSyntaxError(script, message) {
 }
 
 testSyntaxError(`void class extends async()=>{} {}`, `SyntaxError: Unexpected token '=>'`);
-testSyntaxError(`void class extends (async()=>{}) {}`, `TypeError: The value of the superclass's prototype property is not an object.`);
+testSyntaxError(`void class extends (async()=>{}) {}`, `TypeError: The superclass is not a constructor.`);

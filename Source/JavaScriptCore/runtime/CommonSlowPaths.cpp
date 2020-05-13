@@ -835,6 +835,13 @@ SLOW_PATH_DECL(slow_path_is_function)
     RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isCallable(vm)));
 }
 
+SLOW_PATH_DECL(slow_path_is_constructor)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpIsConstructor>();
+    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isConstructor(vm)));
+}
+
 SLOW_PATH_DECL(slow_path_in_by_val)
 {
     BEGIN();
