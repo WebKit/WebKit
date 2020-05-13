@@ -1,3 +1,26 @@
+2020-05-13  Kenneth Russell  <kbr@chromium.org>
+
+        Enable webgl_canvas/ tests
+        https://bugs.webkit.org/show_bug.cgi?id=211748
+
+        Reviewed by Dean Jackson.
+
+        With the fixes for Bug 183151 and other bugs, all of these tests
+        are now passing.
+
+        * TestExpectations:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r8ui-red_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rgb8ui-rgb_integer-unsigned_byte-expected.txt:
+
 2020-05-13  Kate Cheney  <katherine_cheney@apple.com>
 
         SHOULD NEVER BE REACHED in WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary
