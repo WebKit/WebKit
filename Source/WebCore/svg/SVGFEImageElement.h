@@ -50,7 +50,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     void didFinishInsertingNode() override;

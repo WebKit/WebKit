@@ -70,7 +70,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     Path toClipPath() override;
     bool selfHasRelativeLengths() const override;
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     Document* externalDocument() const;
     void updateExternalDocument();

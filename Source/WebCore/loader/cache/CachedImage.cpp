@@ -565,7 +565,7 @@ void CachedImage::updateData(const char* data, unsigned length)
     CachedResource::updateData(data, length);
 }
 
-void CachedImage::finishLoading(SharedBuffer* data)
+void CachedImage::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     m_data = convertedDataIfNeeded(data);
     if (m_data) {
@@ -584,7 +584,7 @@ void CachedImage::finishLoading(SharedBuffer* data)
     }
 
     notifyObservers();
-    CachedResource::finishLoading(data);
+    CachedResource::finishLoading(data, metrics);
 }
 
 void CachedImage::didReplaceSharedBufferContents()

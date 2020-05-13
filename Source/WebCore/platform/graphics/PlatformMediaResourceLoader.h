@@ -51,7 +51,7 @@ public:
     virtual void dataReceived(PlatformMediaResource&, const char*, int) { }
     virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFailed(PlatformMediaResource&, const ResourceError&) { }
-    virtual void loadFinished(PlatformMediaResource&) { }
+    virtual void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) { }
 };
 
 class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader, WTF::DestructionThread::Main> {

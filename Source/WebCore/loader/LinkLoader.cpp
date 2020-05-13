@@ -82,7 +82,7 @@ void LinkLoader::triggerEvents(const CachedResource& resource)
         m_client.linkLoaded();
 }
 
-void LinkLoader::notifyFinished(CachedResource& resource)
+void LinkLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, m_cachedLinkResource.get() == &resource);
 

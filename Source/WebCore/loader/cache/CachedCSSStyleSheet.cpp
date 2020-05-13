@@ -97,7 +97,7 @@ void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
         saveParsedStyleSheet(*sheet.m_parsedStyleSheetCache);
 }
 
-void CachedCSSStyleSheet::finishLoading(SharedBuffer* data)
+void CachedCSSStyleSheet::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     m_data = data;
     setEncodedSize(data ? data->size() : 0);
@@ -105,12 +105,12 @@ void CachedCSSStyleSheet::finishLoading(SharedBuffer* data)
     if (data)
         m_decodedSheetText = m_decoder->decodeAndFlush(data->data(), data->size());
     setLoading(false);
-    checkNotify();
+    checkNotify(metrics);
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.
     m_decodedSheetText = String();
 }
 
-void CachedCSSStyleSheet::checkNotify()
+void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&)
 {
     if (isLoading())
         return;

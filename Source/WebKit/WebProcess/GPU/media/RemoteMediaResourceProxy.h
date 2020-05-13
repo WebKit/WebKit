@@ -50,7 +50,7 @@ private:
     void dataReceived(WebCore::PlatformMediaResource&, const char*, int) final;
     void accessControlCheckFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
     void loadFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
-    void loadFinished(WebCore::PlatformMediaResource&) final;
+    void loadFinished(WebCore::PlatformMediaResource&, const WebCore::NetworkLoadMetrics&) final;
 
     Ref<IPC::Connection> m_connection;
     WebCore::PlatformMediaResource& m_platformMediaResource;

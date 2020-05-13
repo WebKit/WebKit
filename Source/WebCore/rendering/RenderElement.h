@@ -266,7 +266,7 @@ protected:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
     void willBeDestroyed() override;
-    void notifyFinished(CachedResource&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
     void setRenderInlineAlwaysCreatesLineBoxes(bool b) { m_renderInlineAlwaysCreatesLineBoxes = b; }
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }

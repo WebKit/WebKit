@@ -82,7 +82,7 @@ public:
 
 protected:
     explicit ImageLoader(Element&);
-    void notifyFinished(CachedResource&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
 private:
     enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };

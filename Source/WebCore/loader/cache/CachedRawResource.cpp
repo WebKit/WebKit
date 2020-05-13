@@ -86,7 +86,7 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
 
     if (m_delayedFinishLoading) {
         auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, WTF::nullopt);
-        finishLoading(delayedFinishLoading->buffer.get());
+        finishLoading(delayedFinishLoading->buffer.get(), { });
     }
 }
 
@@ -97,7 +97,7 @@ void CachedRawResource::updateData(const char* data, unsigned length)
     CachedResource::updateData(data, length);
 }
 
-void CachedRawResource::finishLoading(SharedBuffer* data)
+void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (m_inIncrementalDataNotify) {
         // We may get here synchronously from updateBuffer() if the callback there ends up spinning a runloop.
@@ -120,7 +120,7 @@ void CachedRawResource::finishLoading(SharedBuffer* data)
     m_allowEncodedDataReplacement = m_loader && !m_loader->isQuickLookResource();
 #endif
 
-    CachedResource::finishLoading(data);
+    CachedResource::finishLoading(data, metrics);
     if (dataBufferingPolicy == DataBufferingPolicy::BufferData && this->dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);

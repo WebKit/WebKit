@@ -58,7 +58,7 @@ private:
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
     void dataReceived(CachedResource&, const char*, int) override;
-    void notifyFinished(CachedResource&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
     void fulfillRequestWithResource(CachedResource&);
 

@@ -53,7 +53,7 @@ public:
     void setDefersLoading(bool);
 
 private:
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
 
     static void handleLoadingFailure(DocumentThreadableLoader&, unsigned long, const ResourceError&);

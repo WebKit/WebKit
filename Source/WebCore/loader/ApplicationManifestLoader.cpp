@@ -115,7 +115,7 @@ Optional<ApplicationManifest>& ApplicationManifestLoader::processManifest()
     return m_processedManifest;
 }
 
-void ApplicationManifestLoader::notifyFinished(CachedResource& resource)
+void ApplicationManifestLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
     m_documentLoader.finishedLoadingApplicationManifest(*this);

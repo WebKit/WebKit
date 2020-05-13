@@ -65,7 +65,7 @@ bool RenderLayerFilters::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
     return m_filter && m_filter->hasFilterThatShouldBeRestrictedBySecurityOrigin();
 }
 
-void RenderLayerFilters::notifyFinished(CachedResource&)
+void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&)
 {
     // FIXME: This really shouldn't have to invalidate layer composition,
     // but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.

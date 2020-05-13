@@ -32,7 +32,7 @@ messages -> RemoteMediaResourceManager NotRefCounted {
     DataReceived(WebKit::RemoteMediaResourceIdentifier id, IPC::DataReference data)
     AccessControlCheckFailed(WebKit::RemoteMediaResourceIdentifier id, WebCore::ResourceError error)
     LoadFailed(WebKit::RemoteMediaResourceIdentifier id, WebCore::ResourceError error)
-    LoadFinished(WebKit::RemoteMediaResourceIdentifier id)
+    LoadFinished(WebKit::RemoteMediaResourceIdentifier id, WebCore::NetworkLoadMetrics metrics)
 }
 
 #endif

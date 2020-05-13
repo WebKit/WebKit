@@ -781,6 +781,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         NSTimeInterval responseEndInterval = [m.responseEndDate timeIntervalSinceDate:fetchStartDate];
 
         auto& networkLoadMetrics = networkDataTask->networkLoadMetrics();
+        networkLoadMetrics.fetchStart = Seconds(fetchStartDate.timeIntervalSince1970);
         networkLoadMetrics.domainLookupStart = Seconds(domainLookupStartInterval);
         networkLoadMetrics.domainLookupEnd = Seconds(domainLookupEndInterval);
         networkLoadMetrics.connectStart = Seconds(connectStartInterval);

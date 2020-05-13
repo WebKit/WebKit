@@ -64,7 +64,7 @@ const char* NavigatorBeacon::supplementName()
     return "NavigatorBeacon";
 }
 
-void NavigatorBeacon::notifyFinished(CachedResource& resource)
+void NavigatorBeacon::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     if (!resource.resourceError().isNull())
         logError(resource.resourceError());

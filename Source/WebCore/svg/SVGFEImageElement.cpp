@@ -162,7 +162,7 @@ void SVGFEImageElement::removedFromAncestor(RemovalType removalType, ContainerNo
         clearResourceReferences();
 }
 
-void SVGFEImageElement::notifyFinished(CachedResource&)
+void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics&)
 {
     if (!isConnected())
         return;

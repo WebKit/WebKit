@@ -56,7 +56,7 @@ private:
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) final;
     void dataReceived(CachedResource&, const char*, int) final;
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     void fulfillRequestWithResource(CachedResource&);
 
@@ -112,7 +112,7 @@ void CachedResourceMediaLoader::responseReceived(CachedResource& resource, const
     m_parent.responseReceived(response);
 }
 
-void CachedResourceMediaLoader::notifyFinished(CachedResource& resource)
+void CachedResourceMediaLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     if (resource.loadFailedOrCanceled()) {
         m_parent.loadFailed(resource.resourceError());
@@ -150,7 +150,7 @@ private:
     void dataReceived(PlatformMediaResource&, const char*, int) final;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
-    void loadFinished(PlatformMediaResource&) final { loadFinished(); }
+    void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final { loadFinished(); }
 
     WebCoreAVFResourceLoader& m_parent;
     RefPtr<PlatformMediaResource> m_resource;

@@ -54,7 +54,9 @@ public:
     bool isComplete() const { return complete; }
     void markComplete() { complete = true; }
 
-    // These should be treated as deltas to LoadTiming's fetchStart.
+    Seconds fetchStart;
+
+    // These should be treated as deltas to fetchStart.
     // They should be in ascending order as listed here.
     Seconds domainLookupStart { -1 };     // -1 if no DNS.
     Seconds domainLookupEnd { -1 };       // -1 if no DNS.
@@ -80,6 +82,8 @@ public:
     NetworkLoadMetrics isolatedCopy() const
     {
         NetworkLoadMetrics copy;
+
+        copy.fetchStart = fetchStart;
 
         copy.domainLookupStart = domainLookupStart;
         copy.domainLookupEnd = domainLookupEnd;
@@ -110,7 +114,8 @@ public:
 
     bool operator==(const NetworkLoadMetrics& other) const
     {
-        return domainLookupStart == other.domainLookupStart
+        return fetchStart == other.fetchStart
+            && domainLookupStart == other.domainLookupStart
             && domainLookupEnd == other.domainLookupEnd
             && connectStart == other.connectStart
             && secureConnectionStart == other.secureConnectionStart
@@ -165,6 +170,7 @@ WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData);
 template<class Encoder>
 void NetworkLoadMetrics::encode(Encoder& encoder) const
 {
+    encoder << fetchStart;
     encoder << domainLookupStart;
     encoder << domainLookupEnd;
     encoder << connectStart;
@@ -191,7 +197,8 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
 template<class Decoder>
 bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
 {
-    return decoder.decode(metrics.domainLookupStart)
+    return decoder.decode(metrics.fetchStart)
+        && decoder.decode(metrics.domainLookupStart)
         && decoder.decode(metrics.domainLookupEnd)
         && decoder.decode(metrics.connectStart)
         && decoder.decode(metrics.secureConnectionStart)

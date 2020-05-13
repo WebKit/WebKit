@@ -542,7 +542,7 @@ bool SVGUseElement::selfHasRelativeLengths() const
     return targetClone && targetClone->hasRelativeLengths();
 }
 
-void SVGUseElement::notifyFinished(CachedResource& resource)
+void SVGUseElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     invalidateShadowTree();

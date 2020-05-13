@@ -40,7 +40,7 @@ private:
     void setEncoding(const String&) override;
     String encoding() const override;
     const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
-    void finishLoading(SharedBuffer*) override;
+    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
 
     RefPtr<SVGDocument> m_document;
     RefPtr<TextResourceDecoder> m_decoder;

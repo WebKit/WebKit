@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    void notifyFinished(CachedResource& resource) final { triggerEvents(resource); }
+    void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };
@@ -122,7 +122,7 @@ public:
     }
 
 private:
-    void notifyFinished(CachedResource& resource) final { triggerEvents(resource); }
+    void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };
@@ -157,7 +157,7 @@ public:
     }
 
 private:
-    void notifyFinished(CachedResource& resource) final { triggerEvents(resource); }
+    void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };

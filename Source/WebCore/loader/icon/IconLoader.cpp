@@ -104,7 +104,7 @@ void IconLoader::stopLoading()
     }
 }
 
-void IconLoader::notifyFinished(CachedResource& resource)
+void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 

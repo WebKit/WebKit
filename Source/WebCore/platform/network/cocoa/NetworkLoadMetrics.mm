@@ -56,6 +56,7 @@ Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData)
     double requestStart = timingValue(timingData, @"_kCFNTimingDataRequestStart");
     double responseStart = timingValue(timingData, @"_kCFNTimingDataResponseStart");
 
+    timing->fetchStart = Seconds(referenceStart);
     timing->domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - referenceStart);
     timing->domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - referenceStart);
     timing->connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - referenceStart);

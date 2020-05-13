@@ -96,11 +96,11 @@ unsigned CachedScript::scriptHash()
     return m_scriptHash;
 }
 
-void CachedScript::finishLoading(SharedBuffer* data)
+void CachedScript::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     m_data = data;
     setEncodedSize(data ? data->size() : 0);
-    CachedResource::finishLoading(data);
+    CachedResource::finishLoading(data, metrics);
 }
 
 void CachedScript::destroyDecodedData()

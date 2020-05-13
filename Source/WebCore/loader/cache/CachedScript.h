@@ -47,7 +47,7 @@ private:
     void setEncoding(const String&) final;
     String encoding() const final;
     const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.get(); }
-    void finishLoading(SharedBuffer*) final;
+    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) final;
 
     void destroyDecodedData() final;
 

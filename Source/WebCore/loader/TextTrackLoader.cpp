@@ -116,7 +116,7 @@ void TextTrackLoader::corsPolicyPreventedLoad()
     m_state = Failed;
 }
 
-void TextTrackLoader::notifyFinished(CachedResource& resource)
+void TextTrackLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, m_resource == &resource);
 

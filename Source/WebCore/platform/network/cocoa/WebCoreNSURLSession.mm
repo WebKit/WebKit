@@ -39,6 +39,121 @@ using namespace WebCore;
 
 NS_ASSUME_NONNULL_BEGIN
 
+static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds delta)
+{
+    if (!fetchStart.value())
+        return nil;
+    if (delta.value() == -1)
+        return nil;
+    return [NSDate dateWithTimeIntervalSince1970:fetchStart.value() + delta.value()];
+}
+
+@interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
+- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics;
+@property (nullable, copy, readonly) NSDate *fetchStartDate;
+@property (nullable, copy, readonly) NSDate *domainLookupStartDate;
+@property (nullable, copy, readonly) NSDate *domainLookupEndDate;
+@property (nullable, copy, readonly) NSDate *connectStartDate;
+@property (nullable, copy, readonly) NSDate *secureConnectionStartDate;
+@property (nullable, copy, readonly) NSDate *connectEndDate;
+@property (nullable, copy, readonly) NSDate *requestStartDate;
+@property (nullable, copy, readonly) NSDate *responseStartDate;
+@property (nullable, copy, readonly) NSDate *responseEndDate;
+@end
+
+@implementation WebCoreNSURLSessionTaskTransactionMetrics {
+    WebCore::NetworkLoadMetrics _metrics;
+}
+
+- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics
+{
+    if (!(self = [super init]))
+        return nil;
+    _metrics = metrics;
+    return self;
+}
+
+@dynamic fetchStartDate;
+- (nullable NSDate *)fetchStartDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, Seconds(0));
+}
+
+@dynamic domainLookupStartDate;
+- (nullable NSDate *)domainLookupStartDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.domainLookupStart);
+}
+
+@dynamic domainLookupEndDate;
+- (nullable NSDate *)domainLookupEndDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.domainLookupEnd);
+}
+
+@dynamic connectStartDate;
+- (nullable NSDate *)connectStartDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.connectStart);
+}
+
+@dynamic secureConnectionStartDate;
+- (nullable NSDate *)secureConnectionStartDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.secureConnectionStart);
+}
+
+@dynamic connectEndDate;
+- (nullable NSDate *)connectEndDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.connectEnd);
+}
+
+@dynamic requestStartDate;
+- (nullable NSDate *)requestStartDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.requestStart);
+}
+
+@dynamic responseStartDate;
+- (nullable NSDate *)responseStartDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseStart);
+}
+
+@dynamic responseEndDate;
+- (nullable NSDate *)responseEndDate
+{
+    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseEnd);
+}
+
+@end
+
+@interface WebCoreNSURLSessionTaskMetrics : NSObject
+- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics;
+@property (copy, readonly) NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics;
+@end
+
+@implementation WebCoreNSURLSessionTaskMetrics {
+    RetainPtr<WebCoreNSURLSessionTaskTransactionMetrics> _transactionMetrics;
+}
+
+- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics
+{
+    if (!(self = [super init]))
+        return nil;
+    _transactionMetrics = adoptNS([[WebCoreNSURLSessionTaskTransactionMetrics alloc] _initWithMetrics:metrics]);
+    return self;
+}
+
+@dynamic transactionMetrics;
+- (NSArray<NSURLSessionTaskTransactionMetrics *> *)transactionMetrics
+{
+    return @[ (NSURLSessionTaskTransactionMetrics *)self->_transactionMetrics.get() ];
+}
+
+@end
+
 @interface WebCoreNSURLSession ()
 @property (readonly) PlatformMediaResourceLoader& loader;
 @property (readwrite, retain) id<NSURLSessionTaskDelegate> delegate;
@@ -63,7 +178,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)resource:(PlatformMediaResource&)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&&)request completionHandler:(CompletionHandler<void(ResourceRequest&&)>&&)completionHandler;
 - (void)resource:(PlatformMediaResource&)resource accessControlCheckFailedWithError:(const ResourceError&)error;
 - (void)resource:(PlatformMediaResource&)resource loadFailedWithError:(const ResourceError&)error;
-- (void)resourceFinished:(PlatformMediaResource&)resource;
+- (void)resourceFinished:(PlatformMediaResource&)resource metrics:(const NetworkLoadMetrics&)metrics;
 @end
 
 NS_ASSUME_NONNULL_END
@@ -389,7 +504,7 @@ public:
     void dataReceived(PlatformMediaResource&, const char* /* data */, int /* length */) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
-    void loadFinished(PlatformMediaResource&) override;
+    void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
 private:
     Lock m_taskLock;
@@ -469,13 +584,13 @@ void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resour
     [m_task resource:resource loadFailedWithError:error];
 }
 
-void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& resource)
+void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& resource, const NetworkLoadMetrics& metrics)
 {
     LockHolder locker(m_taskLock);
     if (!m_task)
         return;
 
-    [m_task resourceFinished:resource];
+    [m_task resourceFinished:resource metrics:metrics];
 }
 
 }
@@ -541,7 +656,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 {
     ASSERT(isMainThread());
     if (_resource)
-        [self resourceFinished:*_resource];
+        [self resourceFinished:*_resource metrics:NetworkLoadMetrics { }];
 }
 
 #pragma mark - NSURLSession API
@@ -719,7 +834,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     }];
 }
 
-- (void)_resource:(PlatformMediaResource&)resource loadFinishedWithError:(NSError *)error
+- (void)_resource:(PlatformMediaResource&)resource loadFinishedWithError:(NSError *)error metrics:(const NetworkLoadMetrics&)metrics
 {
     ASSERT_UNUSED(resource, &resource == _resource);
     if (self.state == NSURLSessionTaskStateCompleted)
@@ -729,8 +844,12 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     RetainPtr<NSError> strongError { error };
-    [self.session addDelegateOperation:[strongSelf, strongSession, strongError] {
+    [self.session addDelegateOperation:[strongSelf, strongSession, strongError, metrics = metrics.isolatedCopy()] {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
+
+        if ([delegate respondsToSelector:@selector(URLSession:task:didFinishCollectingMetrics:)])
+            [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:metrics]).get()];
+
         if ([delegate respondsToSelector:@selector(URLSession:task:didCompleteWithError:)])
             [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:strongError.get()];
 
@@ -742,16 +861,16 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (void)resource:(PlatformMediaResource&)resource accessControlCheckFailedWithError:(const ResourceError&)error
 {
-    [self _resource:resource loadFinishedWithError:error.nsError()];
+    [self _resource:resource loadFinishedWithError:error.nsError() metrics:NetworkLoadMetrics { }];
 }
 
 - (void)resource:(PlatformMediaResource&)resource loadFailedWithError:(const ResourceError&)error
 {
-    [self _resource:resource loadFinishedWithError:error.nsError()];
+    [self _resource:resource loadFinishedWithError:error.nsError() metrics:NetworkLoadMetrics { }];
 }
 
-- (void)resourceFinished:(PlatformMediaResource&)resource
+- (void)resourceFinished:(PlatformMediaResource&)resource metrics:(const NetworkLoadMetrics&)metrics
 {
-    [self _resource:resource loadFinishedWithError:nil];
+    [self _resource:resource loadFinishedWithError:nil metrics:metrics];
 }
 @end

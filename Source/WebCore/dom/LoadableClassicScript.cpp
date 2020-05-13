@@ -70,7 +70,7 @@ bool LoadableClassicScript::wasCanceled() const
     return m_cachedScript->wasCanceled();
 }
 
-void LoadableClassicScript::notifyFinished(CachedResource& resource)
+void LoadableClassicScript::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT(m_cachedScript);
     if (resource.resourceError().isAccessControl()) {

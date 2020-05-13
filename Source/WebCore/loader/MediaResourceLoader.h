@@ -84,7 +84,7 @@ public:
     bool shouldCacheResponse(CachedResource&, const ResourceResponse&) override;
     void dataSent(CachedResource&, unsigned long long, unsigned long long) override;
     void dataReceived(CachedResource&, const char*, int) override;
-    void notifyFinished(CachedResource&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
 private:
     MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);

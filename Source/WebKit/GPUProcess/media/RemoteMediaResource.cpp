@@ -112,10 +112,10 @@ void RemoteMediaResource::loadFailed(const ResourceError& error)
         m_client->loadFailed(*this, error);
 }
 
-void RemoteMediaResource::loadFinished()
+void RemoteMediaResource::loadFinished(const NetworkLoadMetrics& metrics)
 {
     if (m_client)
-        m_client->loadFinished(*this);
+        m_client->loadFinished(*this, metrics);
 }
 
 } // namespace WebKit

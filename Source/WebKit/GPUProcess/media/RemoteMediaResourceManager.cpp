@@ -67,7 +67,7 @@ void RemoteMediaResourceManager::responseReceived(RemoteMediaResourceIdentifier 
         return;
     }
 
-    m_remoteMediaResources.get(id)->responseReceived(response, didPassAccessControlCheck, WTFMove(completionHandler));
+    resource->responseReceived(response, didPassAccessControlCheck, WTFMove(completionHandler));
 }
 
 void RemoteMediaResourceManager::redirectReceived(RemoteMediaResourceIdentifier id, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
@@ -78,7 +78,7 @@ void RemoteMediaResourceManager::redirectReceived(RemoteMediaResourceIdentifier 
         return;
     }
 
-    m_remoteMediaResources.get(id)->redirectReceived(WTFMove(request), response, WTFMove(completionHandler));
+    resource->redirectReceived(WTFMove(request), response, WTFMove(completionHandler));
 }
 
 void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier id, uint64_t bytesSent, uint64_t totalBytesToBeSent)
@@ -87,7 +87,7 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier id, uint
     if (!resource || !resource->ready())
         return;
 
-    m_remoteMediaResources.get(id)->dataSent(bytesSent, totalBytesToBeSent);
+    resource->dataSent(bytesSent, totalBytesToBeSent);
 }
 
 void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier id, const IPC::DataReference& data)
@@ -96,7 +96,7 @@ void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier id, 
     if (!resource || !resource->ready())
         return;
 
-    m_remoteMediaResources.get(id)->dataReceived(reinterpret_cast<const char*>(data.data()), data.size());
+    resource->dataReceived(reinterpret_cast<const char*>(data.data()), data.size());
 }
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier id, const ResourceError& error)
@@ -105,7 +105,7 @@ void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIde
     if (!resource || !resource->ready())
         return;
 
-    m_remoteMediaResources.get(id)->accessControlCheckFailed(error);
+    resource->accessControlCheckFailed(error);
 }
 
 void RemoteMediaResourceManager::loadFailed(RemoteMediaResourceIdentifier id, const ResourceError& error)
@@ -114,16 +114,16 @@ void RemoteMediaResourceManager::loadFailed(RemoteMediaResourceIdentifier id, co
     if (!resource || !resource->ready())
         return;
 
-    m_remoteMediaResources.get(id)->loadFailed(error);
+    resource->loadFailed(error);
 }
 
-void RemoteMediaResourceManager::loadFinished(RemoteMediaResourceIdentifier id)
+void RemoteMediaResourceManager::loadFinished(RemoteMediaResourceIdentifier id, const NetworkLoadMetrics& metrics)
 {
     auto* resource = m_remoteMediaResources.get(id);
     if (!resource || !resource->ready())
         return;
 
-    m_remoteMediaResources.get(id)->loadFinished();
+    resource->loadFinished(metrics);
 }
 
 } // namespace WebKit

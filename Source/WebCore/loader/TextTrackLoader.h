@@ -67,7 +67,7 @@ public:
 
 private:
     // CachedResourceClient
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void deprecatedDidReceiveCachedResource(CachedResource&) final;
 
     // WebVTTParserClient

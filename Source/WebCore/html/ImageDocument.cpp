@@ -158,7 +158,7 @@ void ImageDocument::finishedParsing()
         if (data && loader()->isLoadingMultipartContent())
             data = data->copy();
 
-        cachedImage.finishLoading(data.get());
+        cachedImage.finishLoading(data.get(), { });
         cachedImage.finish();
 
         // Report the natural image size in the page title, regardless of zoom level.

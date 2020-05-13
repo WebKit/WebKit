@@ -39,6 +39,7 @@ class DataReference;
 }
 
 namespace WebCore {
+class NetworkLoadMetrics;
 class ResourceRequest;
 }
 
@@ -66,7 +67,7 @@ private:
     void dataReceived(RemoteMediaResourceIdentifier, const IPC::DataReference&);
     void accessControlCheckFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
-    void loadFinished(RemoteMediaResourceIdentifier);
+    void loadFinished(RemoteMediaResourceIdentifier, const WebCore::NetworkLoadMetrics&);
 
     HashMap<RemoteMediaResourceIdentifier, RemoteMediaResource*> m_remoteMediaResources;
 };

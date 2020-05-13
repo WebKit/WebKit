@@ -58,7 +58,7 @@ private:
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) final;
     void dataReceived(CachedResource&, const char* data, int dataLength) final;
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     unsigned m_type;
     CachedResourceHandle<CachedRawResource> m_resource;

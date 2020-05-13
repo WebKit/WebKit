@@ -86,7 +86,7 @@ namespace WebCore {
         void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
         void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) override;
         void finishedTimingForWorkerLoad(const ResourceTiming&);
-        void notifyFinished(CachedResource&) override;
+        void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didReceiveData(unsigned long identifier, const char* data, int dataLength);

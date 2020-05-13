@@ -71,7 +71,7 @@ public:
     void cancelLoad();
 
 private:
-    void notifyFinished(CachedResource&) override;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
     static void preconnectIfNeeded(const LinkLoadParameters&, Document&);
     static std::unique_ptr<LinkPreloadResourceClient> preloadIfNeeded(const LinkLoadParameters&, Document&, LinkLoader*);
     void prefetchIfNeeded(const LinkLoadParameters&, Document&);

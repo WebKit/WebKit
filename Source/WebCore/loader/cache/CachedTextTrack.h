@@ -38,7 +38,7 @@ public:
 private:
     bool mayTryReplaceEncodedData() const override { return true; }
     void updateBuffer(SharedBuffer&) override;
-    void finishLoading(SharedBuffer*) override;
+    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
 
     void doUpdateBuffer(SharedBuffer*);
 };

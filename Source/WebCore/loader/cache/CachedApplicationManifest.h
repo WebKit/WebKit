@@ -43,7 +43,7 @@ public:
     Optional<struct ApplicationManifest> process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> = nullptr);
 
 private:
-    void finishLoading(SharedBuffer*) override;
+    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
     const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.ptr(); }
     void setEncoding(const String&) override;
     String encoding() const override;

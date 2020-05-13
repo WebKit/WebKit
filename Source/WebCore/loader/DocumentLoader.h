@@ -446,7 +446,7 @@ private:
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     WEBCORE_EXPORT void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
     WEBCORE_EXPORT void dataReceived(CachedResource&, const char* data, int length) override;
-    WEBCORE_EXPORT void notifyFinished(CachedResource&) override;
+    WEBCORE_EXPORT void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 #if USE(QUICK_LOOK)
     WEBCORE_EXPORT void previewResponseReceived(CachedResource&, const ResourceResponse&) override;
 #endif

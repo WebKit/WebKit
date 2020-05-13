@@ -48,6 +48,7 @@ class CachedResourceRequest;
 class CookieJar;
 class LoadTiming;
 class MemoryCache;
+class NetworkLoadMetrics;
 class SecurityOrigin;
 class SharedBuffer;
 class SubresourceLoader;
@@ -113,7 +114,7 @@ public:
     virtual const TextResourceDecoder* textResourceDecoder() const { return nullptr; }
     virtual void updateBuffer(SharedBuffer&);
     virtual void updateData(const char* data, unsigned length);
-    virtual void finishLoading(SharedBuffer*);
+    virtual void finishLoading(SharedBuffer*, const NetworkLoadMetrics&);
     virtual void error(CachedResource::Status);
 
     void setResourceError(const ResourceError& error) { m_error = error; }
@@ -314,7 +315,7 @@ private:
 
     void decodedDataDeletionTimerFired();
 
-    virtual void checkNotify();
+    virtual void checkNotify(const NetworkLoadMetrics&);
     virtual bool mayTryReplaceEncodedData() const { return false; }
 
     Seconds freshnessLifetime(const ResourceResponse&) const;

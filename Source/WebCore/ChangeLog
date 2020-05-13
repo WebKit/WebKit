@@ -1,3 +1,165 @@
+2020-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Give some NetworkLoadMetrics to WebCoreNSURLSession's delegate
+        https://bugs.webkit.org/show_bug.cgi?id=211759
+        <rdar://problem/62909440>
+
+        Reviewed by Jer Noble.
+
+        This required packaging the fetchStart time with the rest of the time deltas,
+        passing a const NetworkLoadMetrics& down to the media loader, and packaging the data up
+        in an ObjC object that pretends to be NSURLSessionTaskMetrics, just like WebCoreNSURLSession
+        pretends to be an NSURLSession.
+
+        I manually verified the NSDates are correct.  This is not straightforward to automate tests for
+        because of the inherant dynamic nature of timing data, and because our other WebCoreNSURLSession
+        tests use WebKitLegacy, and that approach won't work here because we are only hooking up data from
+        NSURLSession, which is only used in modern WebKit.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::notifyFinished):
+        * Modules/beacon/NavigatorBeacon.h:
+        * bindings/js/CachedModuleScriptLoader.cpp:
+        (WebCore::CachedModuleScriptLoader::notifyFinished):
+        * bindings/js/CachedModuleScriptLoader.h:
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished):
+        * dom/LoadableClassicScript.h:
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLImageLoader.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::finishedParsing):
+        * loader/ApplicationManifestLoader.cpp:
+        (WebCore::ApplicationManifestLoader::notifyFinished):
+        * loader/ApplicationManifestLoader.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::notifyFinished):
+        * loader/CrossOriginPreflightChecker.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished):
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::notifyFinished):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/ImageLoader.h:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::notifyFinished):
+        * loader/LinkLoader.h:
+        * loader/LinkPreloadResourceClients.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::notifyFinished):
+        * loader/MediaResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::notifyFinished):
+        * loader/TextTrackLoader.h:
+        * loader/appcache/ApplicationCacheResourceLoader.cpp:
+        (WebCore::ApplicationCacheResourceLoader::responseReceived):
+        (WebCore::ApplicationCacheResourceLoader::notifyFinished):
+        * loader/appcache/ApplicationCacheResourceLoader.h:
+        * loader/cache/CachedApplicationManifest.cpp:
+        (WebCore::CachedApplicationManifest::finishLoading):
+        * loader/cache/CachedApplicationManifest.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::finishLoading):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::finishLoading):
+        (WebCore::CachedFont::checkNotify):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::finishLoading):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+        (WebCore::CachedRawResource::finishLoading):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::checkNotify):
+        (WebCore::CachedResource::finishLoading):
+        (WebCore::CachedResource::error):
+        (WebCore::CachedResource::cancelLoad):
+        (WebCore::CachedResource::didAddClient):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::notifyFinished):
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::finishLoading):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::finishLoading):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::finishLoading):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::finishLoading):
+        (WebCore::CachedXSLStyleSheet::checkNotify):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/KeepaliveRequestTracker.cpp:
+        (WebCore::KeepaliveRequestTracker::notifyFinished):
+        * loader/cache/KeepaliveRequestTracker.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished):
+        * loader/icon/IconLoader.h:
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        (WebCore::PlatformMediaResourceClient::loadFinished):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::CachedResourceMediaLoader::notifyFinished):
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        (WebCore::NetworkLoadMetrics::operator== const):
+        (WebCore::NetworkLoadMetrics::encode const):
+        (WebCore::NetworkLoadMetrics::decode):
+        (WTF::Persistence::Coder<Optional<WebCore::NetworkLoadPriority>>::encode): Deleted.
+        (WTF::Persistence::Coder<Optional<WebCore::NetworkLoadPriority>>::decode): Deleted.
+        * platform/network/cocoa/NetworkLoadMetrics.mm:
+        (WebCore::copyTimingData):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (networkLoadMetricsDate):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics _initWithMetrics:]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics fetchStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics domainLookupStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics domainLookupEndDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics connectStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics secureConnectionStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics connectEndDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics requestStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics responseStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics responseEndDate]):
+        (-[WebCoreNSURLSessionTaskMetrics _initWithMetrics:]):
+        (-[WebCoreNSURLSessionTaskMetrics transactionMetrics]):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::loadFinished):
+        (-[WebCoreNSURLSessionDataTask _finish]):
+        (-[WebCoreNSURLSessionDataTask _resource:loadFinishedWithError:metrics:]):
+        (-[WebCoreNSURLSessionDataTask resource:accessControlCheckFailedWithError:]):
+        (-[WebCoreNSURLSessionDataTask resource:loadFailedWithError:]):
+        (-[WebCoreNSURLSessionDataTask resourceFinished:metrics:]):
+        (-[WebCoreNSURLSessionDataTask _resource:loadFinishedWithError:]): Deleted.
+        (-[WebCoreNSURLSessionDataTask resourceFinished:]): Deleted.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::notifyFinished):
+        * rendering/RenderElement.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::notifyFinished):
+        * rendering/RenderImage.h:
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::notifyFinished):
+        * rendering/RenderLayerFilters.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyFinished):
+        * svg/SVGUseElement.h:
+
 2020-05-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Change the UTI of the "WebP" image to be "org.webmproject.webp"

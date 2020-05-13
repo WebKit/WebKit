@@ -66,13 +66,13 @@ String HTMLImageLoader::sourceURI(const AtomString& attr) const
     return stripLeadingAndTrailingHTMLSpaces(attr);
 }
 
-void HTMLImageLoader::notifyFinished(CachedResource&)
+void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& metrics)
 {
     ASSERT(image());
     CachedImage& cachedImage = *image();
 
     Ref<Element> protect(element());
-    ImageLoader::notifyFinished(cachedImage);
+    ImageLoader::notifyFinished(cachedImage, metrics);
 
     bool loadError = cachedImage.errorOccurred() || cachedImage.response().httpStatusCode() >= 400;
     if (!loadError) {

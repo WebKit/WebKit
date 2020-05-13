@@ -61,17 +61,17 @@ String CachedXSLStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedXSLStyleSheet::finishLoading(SharedBuffer* data)
+void CachedXSLStyleSheet::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     m_data = data;
     setEncodedSize(data ? data->size() : 0);
     if (data)
         m_sheet = m_decoder->decodeAndFlush(data->data(), encodedSize());
     setLoading(false);
-    checkNotify();
+    checkNotify(metrics);
 }
 
-void CachedXSLStyleSheet::checkNotify()
+void CachedXSLStyleSheet::checkNotify(const NetworkLoadMetrics&)
 {
     if (isLoading())
         return;

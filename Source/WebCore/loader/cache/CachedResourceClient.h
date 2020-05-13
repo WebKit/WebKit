@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class CachedResource;
+class NetworkLoadMetrics;
 
 class CachedResourceClient {
 public:
@@ -39,7 +40,7 @@ public:
     };
 
     virtual ~CachedResourceClient() = default;
-    virtual void notifyFinished(CachedResource&) { }
+    virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&) { }
     virtual void deprecatedDidReceiveCachedResource(CachedResource&) { }
 
     static CachedResourceClientType expectedType() { return BaseResourceType; }

@@ -464,7 +464,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         auto* buffer = resourceData();
         if (m_loadingMultipartContent && buffer && buffer->size()) {
             // The resource data will change as the next part is loaded, so we need to make a copy.
-            m_resource->finishLoading(buffer->copy().ptr());
+            m_resource->finishLoading(buffer->copy().ptr(), { });
             clearResourceData();
             // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.
             // After the first multipart section is complete, signal to delegates that this load is "finished"
@@ -727,7 +727,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         tracePoint(SubresourceLoadDidEnd);
 
     m_state = Finishing;
-    m_resource->finishLoading(resourceData());
+    m_resource->finishLoading(resourceData(), networkLoadMetrics);
 
     if (wasCancelled()) {
         RELEASE_LOG_IF_ALLOWED("didFinishLoading: was canceled");

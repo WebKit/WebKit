@@ -70,7 +70,7 @@ public:
     bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
 
     void updateBuffer(SharedBuffer&) override;
-    void finishLoading(SharedBuffer*) override;
+    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
 
     enum SizeType {
         UsedSize,

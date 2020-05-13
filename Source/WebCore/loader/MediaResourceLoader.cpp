@@ -228,7 +228,7 @@ void MediaResource::dataReceived(CachedResource& resource, const char* data, int
         m_client->dataReceived(*this, data, dataLength);
 }
 
-void MediaResource::notifyFinished(CachedResource& resource)
+void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 
@@ -237,7 +237,7 @@ void MediaResource::notifyFinished(CachedResource& resource)
         if (m_resource->loadFailedOrCanceled())
             m_client->loadFailed(*this, m_resource->resourceError());
         else
-            m_client->loadFinished(*this);
+            m_client->loadFinished(*this, metrics);
     }
     stop();
 }

@@ -63,12 +63,12 @@ void CachedFont::didAddClient(CachedResourceClient& client)
         static_cast<CachedFontClient&>(client).fontLoaded(*this);
 }
 
-void CachedFont::finishLoading(SharedBuffer* data)
+void CachedFont::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     setLoading(false);
-    checkNotify();
+    checkNotify(metrics);
 }
 
 void CachedFont::beginLoadIfNeeded(CachedResourceLoader& loader)
@@ -142,7 +142,7 @@ void CachedFont::allClientsRemoved()
     m_fontCustomPlatformData = nullptr;
 }
 
-void CachedFont::checkNotify()
+void CachedFont::checkNotify(const NetworkLoadMetrics&)
 {
     if (isLoading())
         return;

@@ -52,7 +52,7 @@ public:
     Optional<ApplicationManifest>& processManifest();
 
 private:
-    void notifyFinished(CachedResource&);
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&);
 
     DocumentLoader& m_documentLoader;
     Optional<ApplicationManifest> m_processedManifest;

@@ -55,7 +55,7 @@ private:
 
     static const char* supplementName();
 
-    void notifyFinished(CachedResource&) final;
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void logError(const ResourceError&);
 
     Navigator& m_navigator;

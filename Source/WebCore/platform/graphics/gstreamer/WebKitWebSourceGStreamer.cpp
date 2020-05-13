@@ -72,7 +72,7 @@ private:
     void dataReceived(PlatformMediaResource&, const char*, int) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
-    void loadFinished(PlatformMediaResource&) override;
+    void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
     static constexpr int s_growBlocksizeLimit { 1 };
     static constexpr int s_growBlocksizeCount { 2 };
@@ -1170,7 +1170,7 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
     members->responseCondition.notifyOne();
 }
 
-void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&)
+void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&)
 {
     ASSERT(isMainThread());
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());

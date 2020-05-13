@@ -87,7 +87,7 @@ void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, 
     }
 
     if (response.httpStatusCode() == 304) {
-        notifyFinished(*m_resource);
+        notifyFinished(*m_resource, { });
         return;
     }
 
@@ -117,7 +117,7 @@ void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceR
     callback(WTFMove(newRequest));
 }
 
-void ApplicationCacheResourceLoader::notifyFinished(CachedResource& resource)
+void ApplicationCacheResourceLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     auto protectedThis = makeRef(*this);
 

@@ -319,7 +319,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
                 InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, error);
                 return;
             }
-            finishLoading(nullptr);
+            finishLoading(nullptr, { });
             NetworkLoadMetrics emptyMetrics;
             InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, emptyMetrics, nullptr);
         });
@@ -366,14 +366,14 @@ void CachedResource::setBodyDataFrom(const CachedResource& resource)
     setEncodedSize(resource.encodedSize());
 }
 
-void CachedResource::checkNotify()
+void CachedResource::checkNotify(const NetworkLoadMetrics& metrics)
 {
     if (isLoading() || stillNeedsLoad())
         return;
 
     CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
     while (CachedResourceClient* client = walker.next())
-        client->notifyFinished(*this);
+        client->notifyFinished(*this, metrics);
 }
 
 void CachedResource::updateBuffer(SharedBuffer&)
@@ -386,10 +386,10 @@ void CachedResource::updateData(const char*, unsigned)
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
 }
 
-void CachedResource::finishLoading(SharedBuffer*)
+void CachedResource::finishLoading(SharedBuffer*, const NetworkLoadMetrics& metrics)
 {
     setLoading(false);
-    checkNotify();
+    checkNotify(metrics);
 }
 
 void CachedResource::error(CachedResource::Status status)
@@ -399,7 +399,7 @@ void CachedResource::error(CachedResource::Status status)
     m_data = nullptr;
 
     setLoading(false);
-    checkNotify();
+    checkNotify({ });
 }
     
 void CachedResource::cancelLoad()
@@ -414,7 +414,7 @@ void CachedResource::cancelLoad()
         setStatus(LoadError);
 
     setLoading(false);
-    checkNotify();
+    checkNotify({ });
 }
 
 void CachedResource::finish()
@@ -549,7 +549,7 @@ void CachedResource::didAddClient(CachedResourceClient& client)
 
     // FIXME: Make calls to notifyFinished async
     if (!isLoading() && !stillNeedsLoad())
-        client.notifyFinished(*this);
+        client.notifyFinished(*this, { });
 }
 
 bool CachedResource::addClientToSet(CachedResourceClient& client)

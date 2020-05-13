@@ -143,7 +143,7 @@ void WebCoreAVCFResourceLoader::dataReceived(CachedResource& resource, const cha
     fulfillRequestWithResource(resource);
 }
 
-void WebCoreAVCFResourceLoader::notifyFinished(CachedResource& resource)
+void WebCoreAVCFResourceLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     if (resource.loadFailedOrCanceled()) {
         // <rdar://problem/13987417> Set the contentType of the contentInformationRequest to an empty

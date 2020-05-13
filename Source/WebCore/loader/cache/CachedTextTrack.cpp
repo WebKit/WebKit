@@ -59,10 +59,10 @@ void CachedTextTrack::updateBuffer(SharedBuffer& data)
     CachedResource::updateBuffer(data);
 }
 
-void CachedTextTrack::finishLoading(SharedBuffer* data)
+void CachedTextTrack::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     doUpdateBuffer(data);
-    CachedResource::finishLoading(data);
+    CachedResource::finishLoading(data, metrics);
 }
 
 }

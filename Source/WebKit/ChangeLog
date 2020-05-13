@@ -1,3 +1,32 @@
+2020-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Give some NetworkLoadMetrics to WebCoreNSURLSession's delegate
+        https://bugs.webkit.org/show_bug.cgi?id=211759
+        <rdar://problem/62909440>
+
+        Reviewed by Jer Noble.
+
+        This also reduces duplicate lookups in RemoteMediaResourceManager
+
+        * GPUProcess/media/RemoteMediaResource.cpp:
+        (WebKit::RemoteMediaResource::loadFinished):
+        * GPUProcess/media/RemoteMediaResource.h:
+        * GPUProcess/media/RemoteMediaResourceManager.cpp:
+        (WebKit::RemoteMediaResourceManager::responseReceived):
+        (WebKit::RemoteMediaResourceManager::redirectReceived):
+        (WebKit::RemoteMediaResourceManager::dataSent):
+        (WebKit::RemoteMediaResourceManager::dataReceived):
+        (WebKit::RemoteMediaResourceManager::accessControlCheckFailed):
+        (WebKit::RemoteMediaResourceManager::loadFailed):
+        (WebKit::RemoteMediaResourceManager::loadFinished):
+        * GPUProcess/media/RemoteMediaResourceManager.h:
+        * GPUProcess/media/RemoteMediaResourceManager.messages.in:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        * WebProcess/GPU/media/RemoteMediaResourceProxy.cpp:
+        (WebKit::RemoteMediaResourceProxy::loadFinished):
+        * WebProcess/GPU/media/RemoteMediaResourceProxy.h:
+
 2020-05-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Don't assume extensions always exist

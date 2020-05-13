@@ -322,7 +322,7 @@ inline void ImageLoader::rejectDecodePromises(const char* message)
     rejectPromises(m_decodingPromises, message);
 }
 
-void ImageLoader::notifyFinished(CachedResource& resource)
+void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT(m_failedLoadURL.isEmpty());
     ASSERT_UNUSED(resource, &resource == m_image.get());
