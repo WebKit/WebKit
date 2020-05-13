@@ -1389,6 +1389,9 @@ webkit.org/b/211693 editing/input/caret-at-the-edge-of-input.html [ Failure Pass
 
 webkit.org/b/211770 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure ]
 
+# The test is failing since r261576 and crashing occasionally
+webkit.org/b/211833 compositing/video/video-poster.html [ Failure Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1711,7 +1714,7 @@ webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure Timeout Pa
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure Pass ]
 webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
-webkit.org/b/132185 editing/pasteboard/gtk/middle-button-paste.html [ Failure Pass ]
+webkit.org/b/132185 editing/pasteboard/gtk/middle-button-paste.html [ Failure Pass Timeout ]
 
 webkit.org/b/132249 http/tests/media/video-cookie.html [ Timeout Failure Pass ]
 
@@ -2905,6 +2908,12 @@ webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/insta
 webkit.org/b/211764 http/wpt/webrtc/generateCertificate.html [ Failure Pass ]
 
 webkit.org/b/211767 memory/memory-pressure-simulation.html [ Crash Pass ]
+
+webkit.org/b/211834 tables/mozilla/bugs/bug4527.html [ Failure Pass ]
+
+webkit.org/b/211835 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure Pass ]
+
+webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
