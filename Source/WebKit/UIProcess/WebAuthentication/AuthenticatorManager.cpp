@@ -123,8 +123,11 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
 // Only roaming authenticators are supported for Google legacy AppID support.
 static void processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions, AuthenticatorManager::TransportSet& transports)
 {
-    // AuthenticatorCoordinator::create should always set it.
-    ASSERT(!!extensions);
+    if (!extensions) {
+        // AuthenticatorCoordinator::create should always set it.
+        ASSERT_NOT_REACHED();
+        return;
+    }
     if (!extensions->googleLegacyAppidSupport)
         return;
     transports.remove(AuthenticatorTransport::Internal);

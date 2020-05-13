@@ -355,9 +355,12 @@ bool CtapAuthenticator::tryDowngrade()
 // Only U2F protocol is supported for Google legacy AppID support.
 bool CtapAuthenticator::processGoogleLegacyAppIdSupportExtension()
 {
-    // AuthenticatorCoordinator::create should always set it.
     auto& extensions = WTF::get<PublicKeyCredentialCreationOptions>(requestData().options).extensions;
-    ASSERT(!!extensions);
+    if (!extensions) {
+        // AuthenticatorCoordinator::create should always set it.
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     if (extensions->googleLegacyAppidSupport)
         tryDowngrade();
     return extensions->googleLegacyAppidSupport;

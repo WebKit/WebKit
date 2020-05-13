@@ -133,8 +133,12 @@ Vector<uint8_t> constructBogusU2fRegistrationCommand()
 
 String processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions)
 {
-    // AuthenticatorCoordinator::create should always set it.
-    ASSERT(!!extensions);
+    if (!extensions) {
+        // AuthenticatorCoordinator::create should always set it.
+        ASSERT_NOT_REACHED();
+        return String();
+    }
+
     if (!extensions->googleLegacyAppidSupport)
         return String();
     return "https://www.gstatic.com/securitykey/origins.json"_s;

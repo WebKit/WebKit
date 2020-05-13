@@ -1,3 +1,14 @@
+2020-05-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Don't assume extensions always exist
+        https://bugs.webkit.org/show_bug.cgi?id=211760
+        <rdar://problem/61217642>
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/webauthn/fido/U2fCommandConstructor.cpp:
+        (fido::processGoogleLegacyAppIdSupportExtension):
+
 2020-05-12  Jer Noble  <jer.noble@apple.com>
 
         [iOS] REGRESSION: (r261342) Play/pause button doesn't work upon first entering fullscreen mode
