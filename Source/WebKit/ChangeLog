@@ -1,3 +1,27 @@
+2020-05-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r261560. rdar://problem/63195727
+
+    Unreviewed crash fix.
+    
+    Use correct global name for icon service in RELEASE_ASSERT.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261560 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-12  Per Arne Vollan  <pvollan@apple.com>
+
+            Unreviewed crash fix.
+
+            Use correct global name for icon service in RELEASE_ASSERT.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+
 2020-05-10  Tim Horton  <timothy_horton@apple.com>
 
         Clicking a tel:// link on iPad with a trackpad presents different UI than tapping on it
