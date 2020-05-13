@@ -1736,21 +1736,17 @@ private:
         }
 
         case DeleteByVal: {
-#if USE(JSVALUE64)
             if (node->child1()->shouldSpeculateCell()) {
                 fixEdge<CellUse>(node->child1());
                 if (node->child2()->shouldSpeculateCell())
                     fixEdge<CellUse>(node->child2());
             }
-#endif
             break;
         }
 
         case DeleteById: {
-#if USE(JSVALUE64)
             if (node->child1()->shouldSpeculateCell())
                 fixEdge<CellUse>(node->child1());
-#endif
             break;
         }
 

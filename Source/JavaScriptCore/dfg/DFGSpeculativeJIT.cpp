@@ -1107,6 +1107,132 @@ void SpeculativeJIT::compileGetByIdFlush(Node* node, AccessType accessType)
     }
 }
 
+void SpeculativeJIT::compileDeleteById(Node* node)
+{
+    if (node->child1().useKind() == CellUse) {
+        SpeculateCellOperand base(this, node->child1());
+        JSValueRegsTemporary result(this);
+        GPRTemporary scratch(this);
+
+        JITCompiler::JumpList slowCases;
+
+        JSValueRegs resultRegs = result.regs();
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        GPRReg resultGPR = resultRegs.payloadGPR();
+
+        CodeOrigin codeOrigin = node->origin.semantic;
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        RegisterSet usedRegisters = this->usedRegisters();
+
+        JITDelByIdGenerator gen(
+            m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
+            JSValueRegs::payloadOnly(baseGPR), resultRegs, scratchGPR);
+
+        gen.generateFastPath(m_jit);
+        slowCases.append(gen.slowPathJump());
+
+#if USE(JSVALUE64)
+        std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+            slowCases, this, operationDeleteByIdOptimize,
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), node->cacheableIdentifier().rawBits(), TrustedImm32(node->ecmaMode().value()));
+#else
+        std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+            slowCases, this, operationDeleteByIdOptimize,
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), CCallHelpers::CellValue(baseGPR), node->cacheableIdentifier().rawBits(), TrustedImm32(node->ecmaMode().value()));
+#endif
+
+        m_jit.addDelById(gen, slowPath.get());
+        addSlowPathGenerator(WTFMove(slowPath));
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    // FIXME: We should use IC even if child1 is UntypedUse. In that case, we should emit write-barrier after the fast path of IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=209397
+    ASSERT(node->child1().useKind() == UntypedUse);
+    JSValueOperand base(this, node->child1());
+
+    JSValueRegs baseRegs = base.jsValueRegs();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationDeleteByIdGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, node->cacheableIdentifier().rawBits(), TrustedImm32(node->ecmaMode().value()));
+    m_jit.exceptionCheck();
+
+    unblessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileDeleteByVal(Node* node)
+{
+    if (node->child1().useKind() == CellUse) {
+        SpeculateCellOperand base(this, node->child1());
+
+        JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
+        speculate(node, node->child2());
+
+        JSValueRegsTemporary result(this, Reuse, key);
+        GPRTemporary scratch(this);
+
+        JITCompiler::JumpList slowCases;
+
+        GPRReg baseGPR = base.gpr();
+        JSValueRegs keyRegs = key.jsValueRegs();
+        JSValueRegs resultRegs = result.regs();
+        GPRReg scratchGPR = scratch.gpr();
+        GPRReg resultGPR = resultRegs.payloadGPR();
+
+        if (needsTypeCheck(node->child2(), SpecCell))
+            slowCases.append(m_jit.branchIfNotCell(keyRegs));
+
+        CodeOrigin codeOrigin = node->origin.semantic;
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        RegisterSet usedRegisters = this->usedRegisters();
+
+        JITDelByValGenerator gen(
+            m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+            JSValueRegs::payloadOnly(baseGPR), keyRegs, resultRegs, scratchGPR);
+
+        gen.generateFastPath(m_jit);
+        slowCases.append(gen.slowPathJump());
+
+#if USE(JSVALUE64)
+        std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+            slowCases, this, operationDeleteByValOptimize,
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), JSValueRegs(baseGPR), keyRegs, TrustedImm32(node->ecmaMode().value()));
+#else
+        std::unique_ptr<SlowPathGenerator> slowPath = slowPathCall(
+            slowCases, this, operationDeleteByValOptimize,
+            resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), gen.stubInfo(), CCallHelpers::CellValue(baseGPR), keyRegs, TrustedImm32(node->ecmaMode().value()));
+#endif
+
+        m_jit.addDelByVal(gen, slowPath.get());
+        addSlowPathGenerator(WTFMove(slowPath));
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    // FIXME: We should use IC even if child1 is UntypedUse. In that case, we should emit write-barrier after the fast path of IC.
+    // https://bugs.webkit.org/show_bug.cgi?id=209397
+    JSValueOperand base(this, node->child1());
+    JSValueOperand key(this, node->child2());
+
+    JSValueRegs baseRegs = base.jsValueRegs();
+    JSValueRegs keyRegs = key.jsValueRegs();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationDeleteByValGeneric, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), nullptr, baseRegs, keyRegs, TrustedImm32(node->ecmaMode().value()));
+    m_jit.exceptionCheck();
+
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileInById(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());

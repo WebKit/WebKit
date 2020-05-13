@@ -400,7 +400,7 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     JITDelByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident),
-        JSValueRegs(regT1), regT0, regT2);
+        JSValueRegs(regT1), JSValueRegs(regT0), regT2);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_delByIds.append(gen);
@@ -449,7 +449,7 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, property);
     JITDelByValGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        JSValueRegs(regT1), JSValueRegs(regT0), regT0, regT2);
+        JSValueRegs(regT1), JSValueRegs(regT0), JSValueRegs(regT0), regT2);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
     m_delByVals.append(gen);

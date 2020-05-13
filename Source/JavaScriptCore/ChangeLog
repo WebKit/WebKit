@@ -1,3 +1,39 @@
+2020-05-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Support delete by val/id IC on 32-bits
+        https://bugs.webkit.org/show_bug.cgi?id=208207
+
+        Reviewed by Saam Barati.
+
+        This patch implements DeleteById and DeleteByVal IC on 32-bits JIT. It
+        includes both Baseline and DFG changes.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDeleteById): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITDelByValGenerator::JITDelByValGenerator):
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_id):
+
 2020-05-13  Saam Barati  <sbarati@apple.com>
 
         MovHint can see an arguments object be MovHinted to a Tmp

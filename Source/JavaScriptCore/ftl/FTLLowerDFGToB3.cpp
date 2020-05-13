@@ -5444,12 +5444,12 @@ private:
                         return Box<JITDelByIdGenerator>::create(
                             jit.codeBlock(), node->origin.semantic, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
-                            returnGPR, params.gpScratch(0));
+                            JSValueRegs(returnGPR), params.gpScratch(0));
                     } else {
                         return Box<JITDelByValGenerator>::create(
                             jit.codeBlock(), node->origin.semantic, callSiteIndex,
                             params.unavailableRegisters(), base,
-                            subscript, returnGPR, params.gpScratch(0));
+                            subscript, JSValueRegs(returnGPR), params.gpScratch(0));
                     }
                 }();
 

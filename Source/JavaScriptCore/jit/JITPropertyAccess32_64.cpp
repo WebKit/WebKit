@@ -123,10 +123,28 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
 
-    emitLoad(base, regT1, regT0);
-    callOperation(operationDeleteByIdGeneric, m_codeBlock->globalObject(), nullptr, JSValueRegs(regT1, regT0), CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident).rawBits(), TrustedImm32(bytecode.m_ecmaMode.value()));
-    boxBoolean(regT0, JSValueRegs(regT1, regT0));
-    emitPutVirtualRegister(dst, JSValueRegs(regT1, regT0));
+    JSValueRegs baseRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
+
+    emitLoad(base, baseRegs.tagGPR(), baseRegs.payloadGPR());
+    emitJumpSlowCaseIfNotJSCell(base, baseRegs.tagGPR());
+    JITDelByIdGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident),
+        baseRegs, resultRegs, regT4);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_delByIds.append(gen);
+
+    boxBoolean(regT0, resultRegs);
+
+    emitPutVirtualRegister(dst, resultRegs);
+
+    // IC can write new Structure without write-barrier if a base is cell.
+    // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
@@ -135,14 +153,84 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
-    emitLoad2(base, regT1, regT0, property, regT3, regT2);
-    callOperation(operationDeleteByValGeneric, m_codeBlock->globalObject(), nullptr, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2), TrustedImm32(bytecode.m_ecmaMode.value()));
-    boxBoolean(regT0, JSValueRegs(regT1, regT0));
-    emitPutVirtualRegister(dst, JSValueRegs(regT1, regT0));
+
+    JSValueRegs baseRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs propertyRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
+
+    emitLoad2(base, baseRegs.tagGPR(), baseRegs.payloadGPR(), property, propertyRegs.tagGPR(), propertyRegs.payloadGPR());
+
+    emitJumpSlowCaseIfNotJSCell(base, baseRegs.tagGPR());
+    emitJumpSlowCaseIfNotJSCell(property, propertyRegs.tagGPR());
+
+    JITDelByValGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        baseRegs, propertyRegs, resultRegs, regT4);
+
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_delByVals.append(gen);
+
+    boxBoolean(regT0, resultRegs);
+    emitPutVirtualRegister(dst, resultRegs);
+
+    // We should emit write-barrier at the end of sequence since write-barrier clobbers registers.
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
-void JIT::emitSlow_op_del_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&) { }
-void JIT::emitSlow_op_del_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&) { }
+void JIT::emitSlow_op_del_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpDelByVal>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+
+    JITDelByValGenerator& gen = m_delByVals[m_delByValIndex++];
+
+    Label coldPathBegin = label();
+
+    JSValueRegs baseRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs propertyRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
+
+    emitLoad2(base, baseRegs.tagGPR(), baseRegs.payloadGPR(), property, propertyRegs.tagGPR(), propertyRegs.payloadGPR());
+
+    Call call = callOperation(operationDeleteByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), JSValueRegs(baseRegs.tagGPR(), baseRegs.payloadGPR()), JSValueRegs(propertyRegs.tagGPR(), propertyRegs.payloadGPR()), TrustedImm32(bytecode.m_ecmaMode.value()));
+    gen.reportSlowPathCall(coldPathBegin, call);
+
+    boxBoolean(regT0, resultRegs);
+    emitPutVirtualRegister(dst, resultRegs);
+}
+
+void JIT::emitSlow_op_del_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpDelById>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    const Identifier* ident = &(m_codeBlock->identifier(bytecode.m_property));
+
+    JSValueRegs baseRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
+
+    JITDelByIdGenerator& gen = m_delByIds[m_delByIdIndex++];
+
+    Label coldPathBegin = label();
+
+    emitLoad(base, baseRegs.tagGPR(), baseRegs.payloadGPR());
+
+    Call call = callOperation(operationDeleteByIdOptimize, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), baseRegs, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident).rawBits(), TrustedImm32(bytecode.m_ecmaMode.value()));
+    gen.reportSlowPathCall(coldPathBegin, call);
+
+    boxBoolean(regT0, resultRegs);
+    emitPutVirtualRegister(dst, resultRegs);
+}
 
 void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 {

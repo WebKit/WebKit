@@ -163,17 +163,18 @@ V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
     return operationPutByIdNonStrictOptimize;
 }
 
-JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, GPRReg result, GPRReg scratch)
+JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg scratch)
     : Base(codeBlock, codeOrigin, callSiteIndex, AccessType::DeleteByVal, usedRegisters)
 {
     m_stubInfo->hasConstantIdentifier = false;
-    ASSERT(base.payloadGPR() != result);
+    ASSERT(base.payloadGPR() != result.payloadGPR());
     m_stubInfo->baseGPR = base.payloadGPR();
     m_stubInfo->regs.propertyGPR = property.payloadGPR();
-    m_stubInfo->valueGPR = result;
+    m_stubInfo->valueGPR = result.payloadGPR();
 #if USE(JSVALUE32_64)
+    ASSERT(base.tagGPR() != result.tagGPR());
     m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = InvalidGPRReg;
+    m_stubInfo->valueTagGPR = result.tagGPR();
     m_stubInfo->v.propertyTagGPR = property.tagGPR();
 #endif
     m_stubInfo->usedRegisters.clear(scratch);
@@ -194,17 +195,18 @@ void JITDelByValGenerator::finalize(
         fastPath, slowPath, fastPath.locationOf<JITStubRoutinePtrTag>(m_start));
 }
 
-JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base, GPRReg result, GPRReg scratch)
+JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base, JSValueRegs result, GPRReg scratch)
     : Base(codeBlock, codeOrigin, callSiteIndex, AccessType::DeleteByID, usedRegisters)
 {
     m_stubInfo->hasConstantIdentifier = true;
-    ASSERT(base.payloadGPR() != result);
+    ASSERT(base.payloadGPR() != result.payloadGPR());
     m_stubInfo->baseGPR = base.payloadGPR();
     m_stubInfo->regs.propertyGPR = InvalidGPRReg;
-    m_stubInfo->valueGPR = result;
+    m_stubInfo->valueGPR = result.payloadGPR();
 #if USE(JSVALUE32_64)
+    ASSERT(base.tagGPR() != result.tagGPR());
     m_stubInfo->baseTagGPR = base.tagGPR();
-    m_stubInfo->valueTagGPR = InvalidGPRReg;
+    m_stubInfo->valueTagGPR = result.tagGPR();
     m_stubInfo->v.propertyTagGPR = InvalidGPRReg;
 #endif
     m_stubInfo->usedRegisters.clear(scratch);
