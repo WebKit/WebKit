@@ -1,3 +1,19 @@
+2020-05-13  Saam Barati  <sbarati@apple.com>
+
+        MovHint can see an arguments object be MovHinted to a Tmp
+        https://bugs.webkit.org/show_bug.cgi?id=211820
+        <rdar://problem/62882158>
+
+        Reviewed by Keith Miller.
+
+        We had an assert that it wasn't possible to have a MovHint from an arguments
+        object to a Tmp. However, this is possible with for-of. There is nothing
+        about the current algorithm that is specific to only VirtualRegisters. The
+        algorithm also works over Tmps. So I've generalized the algorithm to just work
+        over Operand.
+
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
 2020-05-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Move @isConstructor checks from fast paths of Array.from and Array.of

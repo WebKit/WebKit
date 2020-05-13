@@ -1,3 +1,15 @@
+2020-05-13  Saam Barati  <sbarati@apple.com>
+
+        MovHint can see an arguments object be MovHinted to a Tmp
+        https://bugs.webkit.org/show_bug.cgi?id=211820
+        <rdar://problem/62882158>
+
+        Reviewed by Keith Miller.
+
+        * stress/varargs-forwarding-can-see-arguments-mov-hint-to-for-of-tmp.js: Added.
+        (let.iter.Symbol.iterator.return.next):
+        (let.iter.Symbol.iterator):
+
 2020-05-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Move @isConstructor checks from fast paths of Array.from and Array.of
