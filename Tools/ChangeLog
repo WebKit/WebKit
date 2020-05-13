@@ -1,3 +1,22 @@
+2020-05-13  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [Flatpak] *PROCESS_CMD_PREFIX are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=211830
+
+        Reviewed by Philippe Normand.
+
+        Checking the last slice of the splitted environment variable won't
+        match with any of the list of suffixes since they are composed by
+        several slices if they are splitted too.
+
+        A new internal function is defined where the suffixes list is
+        traversed and matched with the end of the passend enviroment
+        variable.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox.envvar_in_suffixes_to_keep):
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-05-12  Alex Christensen  <achristensen@webkit.org>
 
         [iOS Simulator] TestWebKitAPI._WKDownload.Resume is a flaky crash

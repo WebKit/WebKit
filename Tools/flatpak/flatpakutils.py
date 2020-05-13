@@ -747,11 +747,17 @@ class WebkitFlatpak:
             "SSLKEYLOGFILE",
         ]
 
+        def envvar_in_suffixes_to_keep(envvar):
+            for env_var in env_var_suffixes_to_keep:
+                if envvar.endswith(env_var):
+                    return True
+            return False
+
         env_vars = os.environ
         env_vars.update(extra_env_vars)
         for envvar, value in env_vars.items():
             var_tokens = envvar.split("_")
-            if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or var_tokens[-1] in env_var_suffixes_to_keep:
+            if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or envvar_in_suffixes_to_keep(envvar):
                 sandbox_environment[envvar] = value
 
         share_network_option = "--share=network"
