@@ -284,6 +284,16 @@ const String& WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifi
     return websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
 }
 
+void WebPageProxy::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName, IPC::MessageReceiver& messageReceiver)
+{
+    process().addMessageReceiver(receiverName, m_webPageID, messageReceiver);
+}
+
+void WebPageProxy::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName)
+{
+    process().removeMessageReceiver(receiverName, m_webPageID);
+}
+
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
