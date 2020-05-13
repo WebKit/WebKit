@@ -1230,7 +1230,7 @@ UIView *UIScriptControllerIOS::platformContentView() const
 JSObjectRef UIScriptControllerIOS::calendarType() const
 {
     UIView *contentView = [webView() valueForKeyPath:@"_currentContentView"];
-    NSString *calendarTypeString = [contentView valueForKeyPath:@"formInputControl.dateTimePickerCalendarType"];
+    NSString *calendarTypeString = [contentView valueForKeyPath:@"dateTimeInputControl.dateTimePickerCalendarType"];
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:calendarTypeString inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }

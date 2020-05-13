@@ -1688,7 +1688,7 @@
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
 		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
-		C54256B518BEC18C00DE4179 /* WKFormInputControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */; };
+		C54256B518BEC18C00DE4179 /* WKDateTimeInputControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256AF18BEC18B00DE4179 /* WKDateTimeInputControl.h */; };
 		C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */; };
 		C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B218BEC18B00DE4179 /* WKFormPopover.h */; };
 		C54256BA18BEC18C00DE4179 /* WKFormSelectControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */; };
@@ -5025,8 +5025,8 @@
 		C1E123B920A11572002646F4 /* PDFContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFContextMenu.h; sourceTree = "<group>"; };
 		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
-		C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormInputControl.h; path = ios/forms/WKFormInputControl.h; sourceTree = "<group>"; };
-		C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormInputControl.mm; path = ios/forms/WKFormInputControl.mm; sourceTree = "<group>"; };
+		C54256AF18BEC18B00DE4179 /* WKDateTimeInputControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKDateTimeInputControl.h; path = ios/forms/WKDateTimeInputControl.h; sourceTree = "<group>"; };
+		C54256B018BEC18B00DE4179 /* WKDateTimeInputControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKDateTimeInputControl.mm; path = ios/forms/WKDateTimeInputControl.mm; sourceTree = "<group>"; };
 		C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormPeripheral.h; path = ios/forms/WKFormPeripheral.h; sourceTree = "<group>"; };
 		C54256B218BEC18B00DE4179 /* WKFormPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormPopover.h; path = ios/forms/WKFormPopover.h; sourceTree = "<group>"; };
 		C54256B318BEC18B00DE4179 /* WKFormPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormPopover.mm; path = ios/forms/WKFormPopover.mm; sourceTree = "<group>"; };
@@ -10267,6 +10267,8 @@
 				C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */,
 				2E94FC1420351A6D00974BA0 /* WKDatePickerViewController.h */,
 				2E94FC1520351A6D00974BA0 /* WKDatePickerViewController.mm */,
+				C54256AF18BEC18B00DE4179 /* WKDateTimeInputControl.h */,
+				C54256B018BEC18B00DE4179 /* WKDateTimeInputControl.mm */,
 				A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */,
 				A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */,
 				2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */,
@@ -10275,8 +10277,6 @@
 				E5CB07DB20E1678F0022C183 /* WKFormColorControl.mm */,
 				E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */,
 				E548EBD021015F0E00BE3C32 /* WKFormColorPicker.mm */,
-				C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */,
-				C54256B018BEC18B00DE4179 /* WKFormInputControl.mm */,
 				C54256B118BEC18B00DE4179 /* WKFormPeripheral.h */,
 				CE70EE5C22442BD000E0AF0F /* WKFormPeripheralBase.h */,
 				CE70EE5A22442BB300E0AF0F /* WKFormPeripheralBase.mm */,
@@ -11527,6 +11527,7 @@
 				37A709A71E3EA0FD00CA5969 /* WKDataDetectorTypes.h in Headers */,
 				37A709A91E3EA40C00CA5969 /* WKDataDetectorTypesInternal.h in Headers */,
 				2E94FC1620351A6D00974BA0 /* WKDatePickerViewController.h in Headers */,
+				C54256B518BEC18C00DE4179 /* WKDateTimeInputControl.h in Headers */,
 				377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */,
 				F44815642387820000982657 /* WKDeferringGestureRecognizer.h in Headers */,
 				5C359C0D2154739F009E7948 /* WKDeprecated.h in Headers */,
@@ -11559,7 +11560,6 @@
 				2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */,
 				E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */,
 				E548EBD121015F0E00BE3C32 /* WKFormColorPicker.h in Headers */,
-				C54256B518BEC18C00DE4179 /* WKFormInputControl.h in Headers */,
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
 				CE70EE5D22442BD000E0AF0F /* WKFormPeripheralBase.h in Headers */,
 				C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */,

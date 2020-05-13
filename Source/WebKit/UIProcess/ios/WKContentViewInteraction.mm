@@ -50,10 +50,10 @@
 #import "WKContextMenuElementInfoInternal.h"
 #import "WKContextMenuElementInfoPrivate.h"
 #import "WKDatePickerViewController.h"
+#import "WKDateTimeInputControl.h"
 #import "WKDrawingCoordinator.h"
 #import "WKError.h"
 #import "WKFocusedFormControlView.h"
-#import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHighlightLongPressGestureRecognizer.h"
@@ -1906,16 +1906,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
+    case WebKit::InputType::Date:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Time:
         return NO;
     case WebKit::InputType::Select:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
-    case WebKit::InputType::Date:
-    case WebKit::InputType::Month:
-    case WebKit::InputType::DateTimeLocal:
-    case WebKit::InputType::Time:
-        return !WebKit::currentUserInterfaceIdiomIsPad();
     default:
         return !_focusedElementInformation.isReadOnly;
     }
@@ -2918,6 +2917,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
+    case WebKit::InputType::Date:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::Time:
         return NO;
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
@@ -2930,12 +2933,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::Select:
-    case WebKit::InputType::Date:
     case WebKit::InputType::DateTime:
-    case WebKit::InputType::DateTimeLocal:
-    case WebKit::InputType::Month:
-    case WebKit:: InputType::Week:
-    case WebKit::InputType::Time:
+    case WebKit::InputType::Week:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
@@ -4406,8 +4405,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::Date:
-    case WebKit::InputType::Month:
     case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Month:
     case WebKit::InputType::Time:
         [accessoryView setClearVisible:YES];
         return;
@@ -5733,7 +5732,6 @@ static bool mayContainSelectableText(WebKit::InputType type)
         return false;
     // The following types look and behave like a text field.
     case WebKit::InputType::ContentEditable:
-    case WebKit::InputType::DateTime:
     case WebKit::InputType::Email:
     case WebKit::InputType::Number:
     case WebKit::InputType::NumberPad:
@@ -5743,6 +5741,7 @@ static bool mayContainSelectableText(WebKit::InputType type)
     case WebKit::InputType::Text:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::URL:
+    case WebKit::InputType::DateTime:
     case WebKit::InputType::Week:
         return true;
     }
@@ -5805,8 +5804,13 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     case WebKit::InputType::Color:
         return adoptNS([[WKFormColorControl alloc] initWithView:view]);
 #endif // ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Date:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::Time:
+        return adoptNS([[WKDateTimeInputControl alloc] initWithView:view]);
     default:
-        return adoptNS([[WKFormInputControl alloc] initWithView:view]);
+        return nil;
     }
 #endif
 }
@@ -6755,6 +6759,20 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 }
 #endif
 
+- (NSString *)inputLabelText
+{
+    if (!_focusedElementInformation.label.isEmpty())
+        return _focusedElementInformation.label;
+
+    if (!_focusedElementInformation.ariaLabel.isEmpty())
+        return _focusedElementInformation.ariaLabel;
+
+    if (!_focusedElementInformation.title.isEmpty())
+        return _focusedElementInformation.title;
+
+    return _focusedElementInformation.placeholder;
+}
+
 #pragma mark - UITextInputMultiDocument
 
 - (BOOL)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token
@@ -7696,8 +7714,12 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if ([_actionSheetAssistant hasContextMenuInteraction])
         return;
 #endif
-    // and for the file upload panel.
+    // and for the file upload panel...
     if (_fileUploadPanel)
+        return;
+    
+    // and for the date/time picker.
+    if ([self dateTimeInputControl])
         return;
     
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
@@ -8315,16 +8337,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (NSString *)inputLabelTextForViewController:(PUICQuickboardViewController *)controller
 {
-    if (!_focusedElementInformation.label.isEmpty())
-        return _focusedElementInformation.label;
-
-    if (!_focusedElementInformation.ariaLabel.isEmpty())
-        return _focusedElementInformation.ariaLabel;
-
-    if (!_focusedElementInformation.title.isEmpty())
-        return _focusedElementInformation.title;
-
-    return _focusedElementInformation.placeholder;
+    return [self inputLabelText];
 }
 
 - (NSString *)initialValueForViewController:(PUICQuickboardViewController *)controller
@@ -8699,10 +8712,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     action();
 }
 
-- (WKFormInputControl *)formInputControl
+- (WKDateTimeInputControl *)dateTimeInputControl
 {
-    if ([_inputPeripheral isKindOfClass:WKFormInputControl.class])
-        return (WKFormInputControl *)_inputPeripheral.get();
+    if ([_inputPeripheral isKindOfClass:WKDateTimeInputControl.class])
+        return (WKDateTimeInputControl *)_inputPeripheral.get();
     return nil;
 }
 
@@ -8778,16 +8791,16 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
 #elif PLATFORM(IOS_FAMILY)
-    if ([_inputPeripheral isKindOfClass:[WKFormInputControl class]])
-        [(WKFormInputControl *)_inputPeripheral.get() setTimePickerHour:hour minute:minute];
+    if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
+        [(WKDateTimeInputControl *)_inputPeripheral.get() setTimePickerHour:hour minute:minute];
 #endif
 }
 
 - (double)timePickerValueHour
 {
 #if PLATFORM(IOS_FAMILY)
-    if ([_inputPeripheral isKindOfClass:[WKFormInputControl class]])
-        return [(WKFormInputControl *)_inputPeripheral.get() timePickerValueHour];
+    if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
+        return [(WKDateTimeInputControl *)_inputPeripheral.get() timePickerValueHour];
 #endif
     return -1;
 }
@@ -8795,8 +8808,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (double)timePickerValueMinute
 {
 #if PLATFORM(IOS_FAMILY)
-    if ([_inputPeripheral isKindOfClass:[WKFormInputControl class]])
-        return [(WKFormInputControl *)_inputPeripheral.get() timePickerValueMinute];
+    if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
+        return [(WKDateTimeInputControl *)_inputPeripheral.get() timePickerValueMinute];
 #endif
     return -1;
 }

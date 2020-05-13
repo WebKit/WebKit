@@ -101,9 +101,9 @@ struct WebAutocorrectionContext;
 @class WebEvent;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
+@class WKDateTimeInputControl;
 @class WKDrawingCoordinator;
 @class WKFocusedFormControlView;
-@class WKFormInputControl;
 @class WKFormInputSession;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKMouseGestureRecognizer;
@@ -542,6 +542,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (BOOL)hasHiddenContentEditable;
 - (void)generateSyntheticEditingCommand:(WebKit::SyntheticEditingCommandType)command;
 
+- (NSString *)inputLabelText;
+
 - (void)preserveFocus;
 - (void)releaseFocus;
 
@@ -627,7 +629,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
-@property (nonatomic, readonly) WKFormInputControl *formInputControl;
+@property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
 
 @end
 

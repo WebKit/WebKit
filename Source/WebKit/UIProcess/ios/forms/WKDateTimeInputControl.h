@@ -29,11 +29,11 @@
 
 @class WKContentView;
 
-@interface WKFormInputControl : WKFormPeripheralBase
+@interface WKDateTimeInputControl : WKFormPeripheralBase
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
-@interface WKFormInputControl (WKTesting)
+@interface WKDateTimeInputControl (WKTesting)
 @property (nonatomic, readonly) NSString *dateTimePickerCalendarType;
 @property (nonatomic, readonly) double timePickerValueHour;
 @property (nonatomic, readonly) double timePickerValueMinute;

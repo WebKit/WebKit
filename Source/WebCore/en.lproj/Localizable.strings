@@ -211,9 +211,6 @@
 /* Title for file button used in HTML forms for media files */
 "Choose Media (Single)" = "Choose Media (Single)";
 
-/* Clear button in date input popover */
-"Clear Button Date Popover" = "Clear";
-
 /* menu item in Recent Searches menu that empties menu's contents */
 "Clear Recent Searches" = "Clear Recent Searches";
 
@@ -1326,6 +1323,9 @@
 
 /* HTTP result code string */
 "requested range not satisfiable" = "requested range not satisfiable";
+
+/* Reset button in date input popover */
+"Reset Button Date/Time Context Menu" = "Reset";
 
 /* HTTP result code string */
 "reset content" = "reset content";
