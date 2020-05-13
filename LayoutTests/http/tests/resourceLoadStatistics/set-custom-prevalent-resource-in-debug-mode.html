@@ -13,6 +13,7 @@
     const thirdPartyOrigin = "http://localhost:8000";
 
     if (window.testRunner && window.internals) {
+        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                 testFailed(thirdPartyOrigin + " already set as prevalent resource.");

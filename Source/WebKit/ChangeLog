@@ -1,3 +1,22 @@
+2020-05-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        SHOULD NEVER BE REACHED in WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=211637
+        <rdar://problem/63031185>
+
+        Reviewed by John Wilander.
+
+        No new tests, behavior confirmed by existing tests.
+
+        Stop reseting ITP to use the memory store between tests. This results
+        in consecutive calls to NetworkSession::recreateResourceLoadStatisticStore
+        if two database tests occur in a row, which can set the m_resourceLoadStatistics
+        object before a previous call to WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore
+        is done.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+
 2020-05-13  Megan Gardner  <megan_gardner@apple.com>
 
         Change Date/Time popovers to contextMenus.

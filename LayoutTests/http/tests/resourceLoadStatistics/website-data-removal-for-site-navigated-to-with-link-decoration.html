@@ -238,6 +238,7 @@
     const prevalentResourceOrigin = "http://localhost:8000";
     const destinationOrigin  = "http://127.0.0.1:8000";
     function runTest() {
+        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function () {
             testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
                 testRunner.setStatisticsCrossSiteLoadWithLinkDecoration(prevalentResourceOrigin, destinationOrigin);

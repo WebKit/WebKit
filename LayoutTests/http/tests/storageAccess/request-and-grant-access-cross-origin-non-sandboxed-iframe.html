@@ -7,6 +7,7 @@
     <script>
         description("Tests that cross-origin iframe storage access is granted if the iframe is not sandboxed and the user accepts.");
         jsTestIsAsync = true;
+        testRunner.setUseITPDatabase(false);
 
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest + "/temp";

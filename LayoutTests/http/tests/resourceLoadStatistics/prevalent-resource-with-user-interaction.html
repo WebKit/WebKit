@@ -55,6 +55,7 @@
 
     function setUpAndRun() {
         if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function () {
                 testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 runTestRunnerTest();

@@ -53,6 +53,7 @@
     }
 
     onload = function() {
+        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             shouldBe("document.location.origin", "topFrameOrigin");
 

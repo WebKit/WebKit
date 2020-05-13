@@ -68,6 +68,7 @@
         function runTest() {
             switch (document.location.hash) {
                 case "":
+                    testRunner.setUseITPDatabase(false);
                     setEnableFeature(true, function() {
                         document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.php?dummy=" + Math.random() + "&name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html#firstTest";
                     });

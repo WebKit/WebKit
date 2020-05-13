@@ -30,6 +30,7 @@
     const topFrameOrigin4 = "http://topframe4:8000";
 
     function runTest() {
+        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function () {
             testRunner.setStatisticsPrevalentResource(subOrigin1, true, function () {
                 testRunner.setStatisticsPrevalentResource(subOrigin2, true, function () {

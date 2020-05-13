@@ -8,7 +8,6 @@
 <div id="output"></div>
 <script>
     if (window.testRunner) {
-        testRunner.setUseITPDatabase(true);
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }
@@ -22,6 +21,7 @@
 
     function runTest() {
         if (document.location.origin === navigationStartOrigin) {
+            testRunner.setUseITPDatabase(true);
             setEnableFeature(true, navigateCrossSite);
         } else {
             testRunner.dumpResourceLoadStatistics();

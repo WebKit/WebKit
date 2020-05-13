@@ -10,6 +10,7 @@
 <script>
     description("Tests that Storage Access API calls work well for removed frames.");
     jsTestIsAsync = true;
+    testRunner.setUseITPDatabase(false);
 
     function finishTest() {
         setEnableFeature(false, finishJSTest);

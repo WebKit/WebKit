@@ -24,6 +24,7 @@
                 if (window.testRunner && window.internals) {
                     testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
+                        testRunner.setUseITPDatabase(false);
                         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                         testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                         document.location.hash = "step1";

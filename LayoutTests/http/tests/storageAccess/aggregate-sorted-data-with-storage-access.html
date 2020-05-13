@@ -7,6 +7,7 @@
     <script>
         description("Check correct UI data gets reported with storage access granted.");
         jsTestIsAsync = true;
+        testRunner.setUseITPDatabase(false);
 
         const firstPartyUrl = "http://127.0.0.1:8000";
         const thirdPartyUrl = "http://localhost:8000";

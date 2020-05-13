@@ -45,6 +45,7 @@
         }
 
         function runTest() {
+            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function() {
                 testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
                     if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))

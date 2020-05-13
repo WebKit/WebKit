@@ -20,7 +20,6 @@
     const subPathToSetThirdPartyCookie = "/set-cookie.php?name=" + thirdPartyCookieName + "&value=" + cookieValue;
 
     function finishTest() {
-        testRunner.setUseITPDatabase(false);
         setEnableFeature(false, function() {
             testRunner.notifyDone();
         });

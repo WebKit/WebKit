@@ -99,6 +99,7 @@
         });
     }
 
+    testRunner.setUseITPDatabase(false);
     setEnableFeature(true, function() {
         if (testRunner.isStatisticsPrevalentResource("http://localhost"))
             testFailed("Localhost was classified as prevalent resource before the test started.");

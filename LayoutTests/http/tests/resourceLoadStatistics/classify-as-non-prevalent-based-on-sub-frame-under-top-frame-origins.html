@@ -42,6 +42,7 @@
 
     function run() {
         if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+            testRunner.setUseITPDatabase(false);
             testRunner.waitUntilDone();
             setEnableFeature(true, runTestRunnerTest);
         }

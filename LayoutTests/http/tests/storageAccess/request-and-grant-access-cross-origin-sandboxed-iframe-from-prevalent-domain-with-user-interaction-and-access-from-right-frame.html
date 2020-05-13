@@ -149,6 +149,7 @@
         }
 
         if (document.location.hash === "") {
+            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function() {
                 if (testRunner.isStatisticsPrevalentResource(thirdPartyBaseUrl))
                     testFailed("Localhost was classified as prevalent resource before the test starts.");

@@ -13,6 +13,7 @@
     const thirdPartyOrigin = "http://3rdpartytestwebkit.org";
 
     if (window.testRunner && window.internals) {
+        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                 testFailed(thirdPartyOrigin + " already set as prevalent resource.");

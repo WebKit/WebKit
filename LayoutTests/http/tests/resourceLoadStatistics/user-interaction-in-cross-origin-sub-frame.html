@@ -7,6 +7,7 @@
 <script>
 description("Tests that user interaction is always logged for the top document/frame.");
 jsTestIsAsync = true;
+testRunner.setUseITPDatabase(false);
 
 const topFrameOrigin = "http://127.0.0.1:8000";
 const subFrameOrigin = "http://localhost:8000";

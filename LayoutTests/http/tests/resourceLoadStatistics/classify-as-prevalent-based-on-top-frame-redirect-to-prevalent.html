@@ -35,6 +35,7 @@
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             testRunner.setStatisticsPrevalentResource(statisticsUrl, false, function() {
                 if (testRunner.isStatisticsPrevalentResource(statisticsUrl))

@@ -7,6 +7,7 @@
     <script>
         description("Tests that cross-origin iframe storage access is denied if the iframe is sandboxed, has the allow token, but calls the API without a user gesture being processed.");
         jsTestIsAsync = true;
+        testRunner.setUseITPDatabase(false);
 
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest + "/temp";

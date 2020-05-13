@@ -89,6 +89,7 @@
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest;
         if (document.location.hash !== "#firstPartyCookieSet" && document.location.hash !== "#elementActivated") {
+            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function() {
                 document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
             });
