@@ -48,9 +48,6 @@ function newPromiseCapabilitySlow(constructor)
         @promise: @undefined,
     };
 
-    if (!@isConstructor(constructor))
-        @throwTypeError("promise capability requires a constructor function");
-
     var promise = new constructor(function (resolve, reject) {
         if (promiseCapability.@resolve !== @undefined)
             @throwTypeError("resolve function is already set");
