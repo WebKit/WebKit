@@ -7029,7 +7029,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     m_currentBlock = isObjectBlock;
                     clearCaches();
                     SpeculatedType prediction = getPrediction();
-                    Node* bottomValue = jsConstant(m_graph.bottomValueMatchingSpeculation(valuePredicition));
 
                     Node* base = get(nextResult);
                     auto* doneImpl = m_vm->propertyNames->done.impl();
@@ -7044,7 +7043,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                     handleGetById(bytecode.m_done, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(doneImpl), identifierNumber, getByStatus, type, nextCheckpoint());
                     // Set a value for m_value so we don't exit on it differing from what we expected.
-                    set(bytecode.m_value, bottomValue);
+                    set(bytecode.m_value, jsConstant(m_graph.bottomValueMatchingSpeculation(valuePredicition)));
                     progressToNextCheckpoint();
 
                     BranchData* branchData = m_graph.m_branchData.add();
