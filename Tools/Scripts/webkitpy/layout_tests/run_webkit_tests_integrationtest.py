@@ -280,15 +280,10 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             _, regular_output, _ = logging_run(['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True, shared_port=False)
             self.assertTrue(any(['Interrupted, exiting' in line for line in regular_output.getvalue().splitlines()]))
 
-    def test_no_tests_found(self):
-        details, err, _ = logging_run(['resources'], tests_included=True)
-        self.assertEqual(details.exit_code, -1)
-        self.assertContains(err, 'No tests to run.\n')
-
-    def test_no_tests_found_2(self):
+    def test_all_tests_skipped(self):
         details, err, _ = logging_run(['foo'], tests_included=True)
-        self.assertEqual(details.exit_code, -1)
-        self.assertContains(err, 'No tests to run.\n')
+        self.assertEqual(details.exit_code, 0)
+        self.assertContains(err, 'All tests skipped.\n')
 
     def test_natural_order(self):
         tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']

@@ -89,6 +89,8 @@ def main(argv, stdout, stderr):
         options.additional_env_var.append('JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
         options.additional_env_var.append('__XPC_JSC_maxPerThreadStackUsage=' + str(stackSizeInBytes))
         run_details = run(port, options, args, stderr)
+        if run_details.exit_code != -1 and run_details.skipped_all_tests:
+            return run_details.exit_code
         if run_details.exit_code != -1 and not run_details.initial_results.keyboard_interrupted:
             bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
             bot_printer.print_results(run_details)

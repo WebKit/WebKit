@@ -1,3 +1,24 @@
+2020-05-12  Matt Lewis  <jlewis3@apple.com>
+
+        Run-webkit-tests should not fail if all tests found to run are skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=210880
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Added a check to see if we skiped all tests. If so We return a successful exit
+        code as we performed as expected.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (RunDetails.__init__): Added in an additional class variable to be used as a way to record an
+        all skipped result check.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main): Added a all test skipped check and we return early with the exit code.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py: Added a new test and removed the old
+        ones that no longer test the correct functionality.
+        (RunTest.test_all_tests_skipped):
+        (RunTest.test_no_tests_found): Deleted.
+        (RunTest.test_no_tests_found_2): Deleted.
+
 2020-05-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Add test for non-app-bound iframe under app-bound domain
