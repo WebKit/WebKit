@@ -1,5 +1,26 @@
 2020-05-12  Mark Lam  <mark.lam@apple.com>
 
+        Cherry-pick r261549. rdar://problem/63156073
+
+    2020-05-12  Mark Lam  <mark.lam@apple.com>
+
+            Wasm::enableFastMemory() was called too late.
+            https://bugs.webkit.org/show_bug.cgi?id=211773
+
+            Reviewed by Yusuke Suzuki.
+
+            If Wasm fast memory is to be enabled, we should just do it in initializeThreading()
+            just like for all the other signal handlers that need to be initialized for JSC.
+            This simplifies its initialization and ensures that it is done in a timely manner
+            before Configs are frozen.
+
+            * jsc.cpp:
+            (jscmain):
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+
+2020-05-12  Mark Lam  <mark.lam@apple.com>
+
         Cherry-pick r260165, r261538. rdar://problem/63156083
 
     2020-04-15  Robin Morisset  <rmorisset@apple.com>

@@ -1,3 +1,27 @@
+2020-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Cherry-pick r261549. rdar://problem/63156073
+
+    2020-05-12  Mark Lam  <mark.lam@apple.com>
+
+            Wasm::enableFastMemory() was called too late.
+            https://bugs.webkit.org/show_bug.cgi?id=211773
+
+            Reviewed by Yusuke Suzuki.
+
+            Previously, we were calling Wasm::enableFastMemory() in WebProcess::initializeWebProcess().
+            By then, it is too late because the JSC::Config and WTF::Config have already been
+            frozen.  There is nothing special about Wasm::enableFastMemory() that it needs to
+            be called this late.  This patch moves it into JSC::initializeThreading() where
+            it belongs.
+
+            This change also make the initialization of Wasm fast memory consistent with how
+            we have always done it for the jsc shell i.e. it is initialized at the end of
+            JSC::initializeThreading().
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::initializeWebProcess):
+
 2020-05-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r261480. rdar://problem/63151931

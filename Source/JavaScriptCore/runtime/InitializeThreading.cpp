@@ -47,6 +47,7 @@
 #include "VMTraps.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
+#include "WasmFaultSignalHandler.h"
 #include "WasmThunks.h"
 #include "WriteBarrier.h"
 #include <mutex>
@@ -104,6 +105,9 @@ void initializeThreading()
         WTF::startMachExceptionHandlerThread();
 #endif
         VMTraps::initializeSignals();
+#if ENABLE(WEBASSEMBLY)
+        Wasm::enableFastMemory();
+#endif
 
         WTF::compilerFence();
         RELEASE_ASSERT(!g_jscConfig.initializeThreadingHasBeenCalled);
