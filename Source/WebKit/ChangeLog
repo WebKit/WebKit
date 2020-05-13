@@ -1,3 +1,16 @@
+2020-05-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] In CFPrefs direct mode, the WebContent sandbox needs to allow access to plist files
+        https://bugs.webkit.org/show_bug.cgi?id=211782
+
+        Reviewed by Brent Fulgham.
+
+        Since preference files will be read directly in CFPrefs direct mode, the WebContent sandbox on iOS needs to allow reading these files.
+
+        No new tests. There is API test coverage for this in PreferenceChanges.mm, but these tests are only run on simulator, not device.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-05-13  Peng Liu  <peng.liu6@apple.com>
 
         Add the feature flags plist file back
