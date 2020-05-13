@@ -617,6 +617,49 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
         m_graphicsLayer->setTransform(t);
 }
 
+void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer)
+{
+    if (!renderer().hasTransformRelatedProperty()) {
+        auto defaultAnchorPoint = FloatPoint3D { 0.5, 0.5, 0 };
+        m_graphicsLayer->setAnchorPoint(defaultAnchorPoint);
+        if (m_contentsContainmentLayer)
+            m_contentsContainmentLayer->setAnchorPoint(defaultAnchorPoint);
+        return;
+    }
+
+    const auto deviceScaleFactor = this->deviceScaleFactor();
+    auto borderBoxRect = downcast<RenderBox>(renderer()).borderBoxRect();
+    auto transformOrigin = computeTransformOriginForPainting(borderBoxRect);
+    auto layerOffset = roundPointToDevicePixels(toLayoutPoint(offsetFromParentGraphicsLayer), deviceScaleFactor);
+    auto anchor = FloatPoint3D {
+        primaryGraphicsLayerRect.width() ? ((layerOffset.x() - primaryGraphicsLayerRect.x()) + transformOrigin.x()) / primaryGraphicsLayerRect.width() : 0.5f,
+        primaryGraphicsLayerRect.height() ? ((layerOffset.y() - primaryGraphicsLayerRect.y())+ transformOrigin.y()) / primaryGraphicsLayerRect.height() : 0.5f,
+        transformOrigin.z()
+    };
+
+    if (m_contentsContainmentLayer)
+        m_contentsContainmentLayer->setAnchorPoint(anchor);
+    else
+        m_graphicsLayer->setAnchorPoint(anchor);
+
+    auto* clipLayer = clippingLayer();
+    if (!renderer().style().hasPerspective()) {
+        if (clipLayer)
+            clipLayer->setChildrenTransform({ });
+        else
+            m_graphicsLayer->setChildrenTransform({ });
+        return;
+    }
+
+    // FIXME: borderBoxRect isn't quite right here. This needs work: webkit.org/b/211787.
+    auto perspectiveTransform = owningLayer().perspectiveTransform(borderBoxRect);
+    if (clipLayer) {
+        clipLayer->setChildrenTransform(perspectiveTransform);
+        m_graphicsLayer->setChildrenTransform({ });
+    } else
+        m_graphicsLayer->setChildrenTransform(perspectiveTransform);
+}
+
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
     m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
@@ -1040,7 +1083,7 @@ static LayoutSize computeOffsetFromAncestorGraphicsLayer(const RenderLayer* comp
     if (!compositedAncestor)
         return toLayoutSize(location);
 
-    // FIXME: This is a workaround until after webkit.org/162634 gets fixed. ancestorSubpixelOffsetFromRenderer
+    // FIXME: This is a workaround until after webkit.org/b/162634 gets fixed. ancestorSubpixelOffsetFromRenderer
     // could be stale when a dynamic composited state change triggers a pre-order updateGeometry() traversal.
     LayoutSize ancestorSubpixelOffsetFromRenderer = compositedAncestor->backing()->subpixelOffsetFromRenderer();
     LayoutRect ancestorCompositedBounds = compositedAncestor->backing()->compositedBounds();
@@ -1293,44 +1336,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     if (m_maskLayer)
         updateMaskingLayerGeometry();
 
-    if (renderer().hasTransformRelatedProperty()) {
-        // Update properties that depend on layer dimensions.
-        auto borderBoxRect = downcast<RenderBox>(renderer()).borderBoxRect();
-        FloatPoint3D transformOrigin = computeTransformOriginForPainting(borderBoxRect);
-        FloatPoint layerOffset = roundPointToDevicePixels(toLayoutPoint(rendererOffset.fromParentGraphicsLayer()), deviceScaleFactor);
-        // Compute the anchor point, which is in the center of the renderer box unless transform-origin is set.
-        FloatPoint3D anchor(
-            primaryGraphicsLayerRect.width() ? ((layerOffset.x() - primaryGraphicsLayerRect.x()) + transformOrigin.x()) / primaryGraphicsLayerRect.width() : 0.5,
-            primaryGraphicsLayerRect.height() ? ((layerOffset.y() - primaryGraphicsLayerRect.y())+ transformOrigin.y()) / primaryGraphicsLayerRect.height() : 0.5,
-            transformOrigin.z());
-
-        if (m_contentsContainmentLayer)
-            m_contentsContainmentLayer->setAnchorPoint(anchor);
-        else
-            m_graphicsLayer->setAnchorPoint(anchor);
-
-        auto* clipLayer = clippingLayer();
-        if (style.hasPerspective()) {
-            // FIXME: borderBoxRect isn't quite right here. This needs work: webkit.org/b/211787.
-            TransformationMatrix t = owningLayer().perspectiveTransform(borderBoxRect);
-            
-            if (clipLayer) {
-                clipLayer->setChildrenTransform(t);
-                m_graphicsLayer->setChildrenTransform(TransformationMatrix());
-            }
-            else
-                m_graphicsLayer->setChildrenTransform(t);
-        } else {
-            if (clipLayer)
-                clipLayer->setChildrenTransform(TransformationMatrix());
-            else
-                m_graphicsLayer->setChildrenTransform(TransformationMatrix());
-        }
-    } else {
-        m_graphicsLayer->setAnchorPoint(FloatPoint3D(0.5, 0.5, 0));
-        if (m_contentsContainmentLayer)
-            m_contentsContainmentLayer->setAnchorPoint(FloatPoint3D(0.5, 0.5, 0));
-    }
+    updateChildrenTransformAndAnchorPoint(primaryGraphicsLayerRect, rendererOffset.fromParentGraphicsLayer());
 
     if (m_owningLayer.reflectionLayer() && m_owningLayer.reflectionLayer()->isComposited()) {
         auto* reflectionBacking = m_owningLayer.reflectionLayer()->backing();

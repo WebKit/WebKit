@@ -329,6 +329,7 @@ private:
 
     void updateOpacity(const RenderStyle&);
     void updateTransform(const RenderStyle&);
+    void updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer);
     void updateFilters(const RenderStyle&);
 #if ENABLE(FILTERS_LEVEL_2)
     void updateBackdropFilters(const RenderStyle&);
