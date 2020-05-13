@@ -1,3 +1,882 @@
+2020-05-12  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Move shared css expectation files to glib dir
+
+        Unreviewed test gardening.
+
+        * platform/glib/css1/box_properties/acid_test-expected.txt: Renamed from LayoutTests/platform/gtk/css1/box_properties/acid_test-expected.txt.
+        * platform/glib/css1/formatting_model/horizontal_formatting-expected.txt: Renamed from LayoutTests/platform/gtk/css1/formatting_model/horizontal_formatting-expected.txt.
+        * platform/glib/css2.1/20110323/absolute-non-replaced-width-017-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/absolute-non-replaced-width-017-expected.txt.
+        * platform/glib/css2.1/20110323/absolute-non-replaced-width-018-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/absolute-non-replaced-width-018-expected.txt.
+        * platform/glib/css2.1/20110323/absolute-non-replaced-width-019-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/absolute-non-replaced-width-019-expected.txt.
+        * platform/glib/css2.1/20110323/absolute-non-replaced-width-020-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/absolute-non-replaced-width-020-expected.txt.
+        * platform/glib/css2.1/20110323/absolute-replaced-height-036-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/absolute-replaced-height-036-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-001-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-001-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-002-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-002-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-003-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-003-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-004-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-004-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-005-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-005-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-006-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-006-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-007-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-007-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-008-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-008-expected.txt.
+        * platform/glib/css2.1/20110323/background-intrinsic-009-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/background-intrinsic-009-expected.txt.
+        * platform/glib/css2.1/20110323/border-collapse-offset-002-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/border-collapse-offset-002-expected.txt.
+        * platform/glib/css2.1/20110323/dynamic-top-change-001-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/dynamic-top-change-001-expected.txt.
+        * platform/glib/css2.1/20110323/dynamic-top-change-002-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/dynamic-top-change-002-expected.txt.
+        * platform/glib/css2.1/20110323/dynamic-top-change-003-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/dynamic-top-change-003-expected.txt.
+        * platform/glib/css2.1/20110323/dynamic-top-change-004-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/dynamic-top-change-004-expected.txt.
+        * platform/glib/css2.1/20110323/float-non-replaced-width-007-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/float-non-replaced-width-007-expected.txt.
+        * platform/glib/css2.1/20110323/float-non-replaced-width-008-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/float-non-replaced-width-008-expected.txt.
+        * platform/glib/css2.1/20110323/float-non-replaced-width-009-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/float-non-replaced-width-009-expected.txt.
+        * platform/glib/css2.1/20110323/float-non-replaced-width-010-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/float-non-replaced-width-010-expected.txt.
+        * platform/glib/css2.1/20110323/float-non-replaced-width-011-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/float-non-replaced-width-011-expected.txt.
+        * platform/glib/css2.1/20110323/float-non-replaced-width-012-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/float-non-replaced-width-012-expected.txt.
+        * platform/glib/css2.1/20110323/inline-block-non-replaced-width-003-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/inline-block-non-replaced-width-003-expected.txt.
+        * platform/glib/css2.1/20110323/inline-block-non-replaced-width-004-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/inline-block-non-replaced-width-004-expected.txt.
+        * platform/glib/css2.1/20110323/inline-table-002a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/inline-table-002a-expected.txt.
+        * platform/glib/css2.1/20110323/inline-table-003-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/inline-table-003-expected.txt.
+        * platform/glib/css2.1/20110323/replaced-intrinsic-003-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/replaced-intrinsic-003-expected.txt.
+        * platform/glib/css2.1/20110323/replaced-intrinsic-004-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/replaced-intrinsic-004-expected.txt.
+        * platform/glib/css2.1/20110323/replaced-intrinsic-005-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/replaced-intrinsic-005-expected.txt.
+        * platform/glib/css2.1/20110323/replaced-min-max-001-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/replaced-min-max-001-expected.txt.
+        * platform/glib/css2.1/20110323/table-caption-margins-001-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/20110323/table-caption-margins-001-expected.txt.
+        * platform/glib/css2.1/t010403-shand-border-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t010403-shand-border-00-c-expected.txt.
+        * platform/glib/css2.1/t010403-shand-font-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t010403-shand-font-00-b-expected.txt.
+        * platform/glib/css2.1/t010403-shand-font-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t010403-shand-font-01-b-expected.txt.
+        * platform/glib/css2.1/t010403-shand-font-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t010403-shand-font-02-b-expected.txt.
+        * platform/glib/css2.1/t010403-shand-font-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t010403-shand-font-03-b-expected.txt.
+        * platform/glib/css2.1/t040102-keywords-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040102-keywords-00-b-expected.txt.
+        * platform/glib/css2.1/t040103-case-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-case-00-b-expected.txt.
+        * platform/glib/css2.1/t040103-case-01-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-case-01-c-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-00-b-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-01-b-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-02-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-02-d-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-03-b-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-04-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-04-b-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-05-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-05-c-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-06-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-06-b-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-07-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-07-b-expected.txt.
+        * platform/glib/css2.1/t040103-escapes-08-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-escapes-08-b-expected.txt.
+        * platform/glib/css2.1/t040103-ident-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-00-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-01-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-01-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-02-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-02-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-03-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-03-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-04-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-04-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-05-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-05-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-06-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-06-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-07-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-07-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-08-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-08-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-09-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-09-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-10-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-10-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-11-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-11-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-12-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-12-c-expected.txt.
+        * platform/glib/css2.1/t040103-ident-13-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040103-ident-13-c-expected.txt.
+        * platform/glib/css2.1/t040105-atkeyw-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atkeyw-00-b-expected.txt.
+        * platform/glib/css2.1/t040105-atkeyw-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atkeyw-01-b-expected.txt.
+        * platform/glib/css2.1/t040105-atkeyw-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atkeyw-02-b-expected.txt.
+        * platform/glib/css2.1/t040105-atrule-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atrule-00-b-expected.txt.
+        * platform/glib/css2.1/t040105-atrule-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atrule-01-b-expected.txt.
+        * platform/glib/css2.1/t040105-atrule-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atrule-02-b-expected.txt.
+        * platform/glib/css2.1/t040105-atrule-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atrule-03-b-expected.txt.
+        * platform/glib/css2.1/t040105-atrule-04-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-atrule-04-b-expected.txt.
+        * platform/glib/css2.1/t040105-import-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-import-00-b-expected.txt.
+        * platform/glib/css2.1/t040105-import-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-import-01-b-expected.txt.
+        * platform/glib/css2.1/t040105-import-10-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040105-import-10-b-expected.txt.
+        * platform/glib/css2.1/t040109-c17-comments-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040109-c17-comments-00-b-expected.txt.
+        * platform/glib/css2.1/t040109-c17-comments-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040109-c17-comments-01-b-expected.txt.
+        * platform/glib/css2.1/t0402-c71-fwd-parsing-00-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-c71-fwd-parsing-00-f-expected.txt.
+        * platform/glib/css2.1/t0402-c71-fwd-parsing-02-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-c71-fwd-parsing-02-f-expected.txt.
+        * platform/glib/css2.1/t0402-c71-fwd-parsing-03-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-c71-fwd-parsing-03-f-expected.txt.
+        * platform/glib/css2.1/t0402-c71-fwd-parsing-04-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-c71-fwd-parsing-04-f-expected.txt.
+        * platform/glib/css2.1/t0402-syntax-01-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-syntax-01-f-expected.txt.
+        * platform/glib/css2.1/t0402-syntax-02-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-syntax-02-f-expected.txt.
+        * platform/glib/css2.1/t0402-syntax-03-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-syntax-03-f-expected.txt.
+        * platform/glib/css2.1/t0402-syntax-04-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-syntax-04-f-expected.txt.
+        * platform/glib/css2.1/t0402-syntax-05-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-syntax-05-f-expected.txt.
+        * platform/glib/css2.1/t0402-syntax-06-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0402-syntax-06-f-expected.txt.
+        * platform/glib/css2.1/t040302-c61-ex-len-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040302-c61-ex-len-00-b-a-expected.txt.
+        * platform/glib/css2.1/t040306-syntax-01-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040306-syntax-01-f-expected.txt.
+        * platform/glib/css2.1/t040307-syntax-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t040307-syntax-01-b-expected.txt.
+        * platform/glib/css2.1/t050201-c12-grouping-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t050201-c12-grouping-00-b-expected.txt.
+        * platform/glib/css2.1/t0505-c16-descendant-00-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0505-c16-descendant-00-e-expected.txt.
+        * platform/glib/css2.1/t0505-c16-descendant-01-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0505-c16-descendant-01-e-expected.txt.
+        * platform/glib/css2.1/t0505-c16-descendant-02-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0505-c16-descendant-02-e-expected.txt.
+        * platform/glib/css2.1/t050803-c14-classes-00-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t050803-c14-classes-00-e-expected.txt.
+        * platform/glib/css2.1/t0509-c15-ids-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0509-c15-ids-00-a-expected.txt.
+        * platform/glib/css2.1/t0509-c15-ids-01-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0509-c15-ids-01-e-expected.txt.
+        * platform/glib/css2.1/t0509-id-sel-syntax-01-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0509-id-sel-syntax-01-f-expected.txt.
+        * platform/glib/css2.1/t0509-id-sel-syntax-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0509-id-sel-syntax-02-b-expected.txt.
+        * platform/glib/css2.1/t0511-c21-pseud-anch-00-e-i-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0511-c21-pseud-anch-00-e-i-expected.txt.
+        * platform/glib/css2.1/t0511-c21-pseud-link-00-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0511-c21-pseud-link-00-e-expected.txt.
+        * platform/glib/css2.1/t0511-c21-pseud-link-01-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0511-c21-pseud-link-01-e-expected.txt.
+        * platform/glib/css2.1/t0511-c21-pseud-link-02-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0511-c21-pseud-link-02-e-expected.txt.
+        * platform/glib/css2.1/t0511-c21-pseud-link-03-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0511-c21-pseud-link-03-e-expected.txt.
+        * platform/glib/css2.1/t051103-c21-activ-ln-00-e-i-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t051103-c21-activ-ln-00-e-i-expected.txt.
+        * platform/glib/css2.1/t051103-c21-focus-ln-00-e-i-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t051103-c21-focus-ln-00-e-i-expected.txt.
+        * platform/glib/css2.1/t051103-c21-hover-ln-00-e-i-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t051103-c21-hover-ln-00-e-i-expected.txt.
+        * platform/glib/css2.1/t051103-dom-hover-01-c-io-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t051103-dom-hover-01-c-io-expected.txt.
+        * platform/glib/css2.1/t051103-dom-hover-02-c-io-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t051103-dom-hover-02-c-io-expected.txt.
+        * platform/glib/css2.1/t0602-c13-inh-underlin-00-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0602-c13-inh-underlin-00-e-expected.txt.
+        * platform/glib/css2.1/t0603-c11-import-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0603-c11-import-00-b-expected.txt.
+        * platform/glib/css2.1/t060401-c32-cascading-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t060401-c32-cascading-00-b-expected.txt.
+        * platform/glib/css2.1/t060402-c31-important-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t060402-c31-important-00-b-expected.txt.
+        * platform/glib/css2.1/t060403-c21-pseu-cls-00-e-i-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t060403-c21-pseu-cls-00-e-i-expected.txt.
+        * platform/glib/css2.1/t060403-c21-pseu-id-00-e-i-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t060403-c21-pseu-id-00-e-i-expected.txt.
+        * platform/glib/css2.1/t0801-c412-hz-box-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0801-c412-hz-box-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5501-mrgn-t-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5501-mrgn-t-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-01-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-01-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-02-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-02-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-03-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-03-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-04-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-04-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-05-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-05-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-imrgn-r-06-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-imrgn-r-06-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-mrgn-r-01-c-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-mrgn-r-01-c-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-mrgn-r-02-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-mrgn-r-02-c-expected.txt.
+        * platform/glib/css2.1/t0803-c5502-mrgn-r-03-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5502-mrgn-r-03-c-expected.txt.
+        * platform/glib/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5503-mrgn-b-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5503-mrgn-b-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-01-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-01-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-02-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-02-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-03-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-03-b-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-04-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-04-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-05-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-05-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-imrgn-l-06-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-imrgn-l-06-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-mrgn-l-01-c-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-mrgn-l-01-c-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-mrgn-l-02-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-mrgn-l-02-c-expected.txt.
+        * platform/glib/css2.1/t0803-c5504-mrgn-l-03-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5504-mrgn-l-03-c-expected.txt.
+        * platform/glib/css2.1/t0803-c5505-imrgn-00-a-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5505-imrgn-00-a-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5505-mrgn-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5505-mrgn-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0803-c5505-mrgn-01-e-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5505-mrgn-01-e-a-expected.txt.
+        * platform/glib/css2.1/t0803-c5505-mrgn-02-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5505-mrgn-02-c-expected.txt.
+        * platform/glib/css2.1/t0803-c5505-mrgn-03-c-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0803-c5505-mrgn-03-c-ag-expected.txt.
+        * platform/glib/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt.
+        * platform/glib/css2.1/t0804-c5506-ipadn-t-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5506-ipadn-t-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5506-ipadn-t-01-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5506-ipadn-t-01-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5506-ipadn-t-02-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5506-ipadn-t-02-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5506-padn-t-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5506-padn-t-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-ipadn-r-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-ipadn-r-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-ipadn-r-01-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-ipadn-r-01-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-ipadn-r-02-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-ipadn-r-02-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-ipadn-r-03-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-ipadn-r-03-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-ipadn-r-04-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-ipadn-r-04-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-padn-r-01-c-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-padn-r-01-c-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-padn-r-02-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-padn-r-02-f-expected.txt.
+        * platform/glib/css2.1/t0804-c5507-padn-r-03-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5507-padn-r-03-f-expected.txt.
+        * platform/glib/css2.1/t0804-c5508-ipadn-b-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5508-ipadn-b-00-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5508-ipadn-b-01-f-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5508-ipadn-b-01-f-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5508-ipadn-b-02-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5508-ipadn-b-02-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-ipadn-l-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-ipadn-l-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-ipadn-l-01-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-ipadn-l-01-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-ipadn-l-02-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-ipadn-l-02-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-ipadn-l-03-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-ipadn-l-03-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-ipadn-l-04-f-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-ipadn-l-04-f-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-padn-l-01-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-padn-l-01-b-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-padn-l-02-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-padn-l-02-f-expected.txt.
+        * platform/glib/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt.
+        * platform/glib/css2.1/t0804-c5510-ipadn-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5510-ipadn-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5510-padn-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5510-padn-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t0804-c5510-padn-01-e-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5510-padn-01-e-a-expected.txt.
+        * platform/glib/css2.1/t0804-c5510-padn-02-f-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0804-c5510-padn-02-f-expected.txt.
+        * platform/glib/css2.1/t0805-c5511-brdr-tw-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5511-brdr-tw-00-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5511-brdr-tw-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5511-brdr-tw-01-b-g-expected.txt.
+        * platform/glib/css2.1/t0805-c5511-brdr-tw-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5511-brdr-tw-02-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5511-brdr-tw-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5511-brdr-tw-03-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5511-ibrdr-tw-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5511-ibrdr-tw-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5512-brdr-rw-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5512-brdr-rw-00-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5512-brdr-rw-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5512-brdr-rw-01-b-g-expected.txt.
+        * platform/glib/css2.1/t0805-c5512-brdr-rw-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5512-brdr-rw-02-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5512-brdr-rw-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5512-brdr-rw-03-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5512-ibrdr-rw-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5512-ibrdr-rw-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5513-brdr-bw-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5513-brdr-bw-00-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5513-brdr-bw-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5513-brdr-bw-01-b-g-expected.txt.
+        * platform/glib/css2.1/t0805-c5513-brdr-bw-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5513-brdr-bw-02-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5513-brdr-bw-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5513-brdr-bw-03-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5513-ibrdr-bw-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5513-ibrdr-bw-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5514-brdr-lw-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5514-brdr-lw-00-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5514-brdr-lw-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5514-brdr-lw-01-b-g-expected.txt.
+        * platform/glib/css2.1/t0805-c5514-brdr-lw-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5514-brdr-lw-02-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5514-brdr-lw-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5514-brdr-lw-03-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5514-ibrdr-lw-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5514-ibrdr-lw-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5515-brdr-w-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5515-brdr-w-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5515-brdr-w-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5515-brdr-w-01-b-g-expected.txt.
+        * platform/glib/css2.1/t0805-c5515-brdr-w-02-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5515-brdr-w-02-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5515-ibrdr-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5515-ibrdr-00-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5517-brdr-s-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5517-brdr-s-00-c-expected.txt.
+        * platform/glib/css2.1/t0805-c5517-ibrdr-s-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5517-ibrdr-s-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5518-brdr-t-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5518-brdr-t-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5518-ibrdr-t-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5518-ibrdr-t-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5520-brdr-b-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5520-brdr-b-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt.
+        * platform/glib/css2.1/t0805-c5522-brdr-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5522-brdr-00-b-expected.txt.
+        * platform/glib/css2.1/t0805-c5522-brdr-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5522-brdr-01-b-g-expected.txt.
+        * platform/glib/css2.1/t0805-c5522-brdr-02-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5522-brdr-02-e-expected.txt.
+        * platform/glib/css2.1/t0805-c5522-ibrdr-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0805-c5522-ibrdr-00-a-expected.txt.
+        * platform/glib/css2.1/t09-c5526c-display-00-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t09-c5526c-display-00-e-expected.txt.
+        * platform/glib/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.txt.
+        * platform/glib/css2.1/t0905-c414-flt-00-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0905-c414-flt-00-d-expected.txt.
+        * platform/glib/css2.1/t0905-c414-flt-01-d-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0905-c414-flt-01-d-g-expected.txt.
+        * platform/glib/css2.1/t0905-c414-flt-fit-00-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0905-c414-flt-fit-00-d-expected.txt.
+        * platform/glib/css2.1/t0905-c5525-fltwidth-01-c-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t0905-c5525-fltwidth-01-c-g-expected.txt.
+        * platform/glib/css2.1/t090501-c414-flt-02-d-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t090501-c414-flt-02-d-g-expected.txt.
+        * platform/glib/css2.1/t090501-c414-flt-ln-00-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t090501-c414-flt-ln-00-d-expected.txt.
+        * platform/glib/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt.
+        * platform/glib/css2.1/t090501-c414-flt-ln-02-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t090501-c414-flt-ln-02-d-expected.txt.
+        * platform/glib/css2.1/t090501-c414-flt-ln-03-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t090501-c414-flt-ln-03-d-expected.txt.
+        * platform/glib/css2.1/t1002-c5523-width-00-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1002-c5523-width-00-b-g-expected.txt.
+        * platform/glib/css2.1/t1002-c5523-width-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1002-c5523-width-01-b-g-expected.txt.
+        * platform/glib/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.txt.
+        * platform/glib/css2.1/t1004-c43-rpl-bbx-00-d-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1004-c43-rpl-bbx-00-d-ag-expected.txt.
+        * platform/glib/css2.1/t1004-c43-rpl-ibx-00-d-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1004-c43-rpl-ibx-00-d-ag-expected.txt.
+        * platform/glib/css2.1/t1004-c5524-width-00-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1004-c5524-width-00-b-g-expected.txt.
+        * platform/glib/css2.1/t1005-c5524-width-00-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1005-c5524-width-00-b-g-expected.txt.
+        * platform/glib/css2.1/t1005-c5524-width-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1005-c5524-width-01-b-g-expected.txt.
+        * platform/glib/css2.1/t100801-c544-valgn-02-d-agi-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100801-c544-valgn-02-d-agi-expected.txt.
+        * platform/glib/css2.1/t100801-c544-valgn-03-d-agi-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100801-c544-valgn-03-d-agi-expected.txt.
+        * platform/glib/css2.1/t100801-c544-valgn-04-d-agi-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100801-c544-valgn-04-d-agi-expected.txt.
+        * platform/glib/css2.1/t100801-c548-ln-ht-00-c-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100801-c548-ln-ht-00-c-a-expected.txt.
+        * platform/glib/css2.1/t100801-c548-ln-ht-03-d-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100801-c548-ln-ht-03-d-ag-expected.txt.
+        * platform/glib/css2.1/t100801-c548-ln-ht-04-d-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t100801-c548-ln-ht-04-d-ag-expected.txt.
+        * platform/glib/css2.1/t1202-counter-07-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counter-07-b-expected.txt.
+        * platform/glib/css2.1/t1202-counter-11-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counter-11-b-expected.txt.
+        * platform/glib/css2.1/t1202-counter-12-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counter-12-b-expected.txt.
+        * platform/glib/css2.1/t1202-counter-15-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counter-15-b-expected.txt.
+        * platform/glib/css2.1/t1202-counters-07-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counters-07-b-expected.txt.
+        * platform/glib/css2.1/t1202-counters-11-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counters-11-b-expected.txt.
+        * platform/glib/css2.1/t1202-counters-12-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counters-12-b-expected.txt.
+        * platform/glib/css2.1/t1202-counters-15-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counters-15-b-expected.txt.
+        * platform/glib/css2.1/t1202-counters-16-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counters-16-c-expected.txt.
+        * platform/glib/css2.1/t1202-counters-17-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1202-counters-17-d-expected.txt.
+        * platform/glib/css2.1/t1204-implied-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1204-implied-00-b-expected.txt.
+        * platform/glib/css2.1/t1204-implied-01-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1204-implied-01-c-expected.txt.
+        * platform/glib/css2.1/t1204-implied-02-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1204-implied-02-d-expected.txt.
+        * platform/glib/css2.1/t1204-multiple-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1204-multiple-00-c-expected.txt.
+        * platform/glib/css2.1/t1204-multiple-01-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1204-multiple-01-c-expected.txt.
+        * platform/glib/css2.1/t1204-root-e-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1204-root-e-expected.txt.
+        * platform/glib/css2.1/t120401-scope-02-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t120401-scope-02-c-expected.txt.
+        * platform/glib/css2.1/t120401-scope-03-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t120401-scope-03-c-expected.txt.
+        * platform/glib/css2.1/t120401-scope-04-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t120401-scope-04-d-expected.txt.
+        * platform/glib/css2.1/t120403-content-none-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t120403-content-none-00-c-expected.txt.
+        * platform/glib/css2.1/t120403-display-none-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t120403-display-none-00-c-expected.txt.
+        * platform/glib/css2.1/t120403-visibility-00-c-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t120403-visibility-00-c-expected.txt.
+        * platform/glib/css2.1/t1205-c563-list-type-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1205-c563-list-type-00-b-expected.txt.
+        * platform/glib/css2.1/t1205-c563-list-type-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1205-c563-list-type-01-b-expected.txt.
+        * platform/glib/css2.1/t1205-c564-list-img-00-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1205-c564-list-img-00-b-g-expected.txt.
+        * platform/glib/css2.1/t1401-c531-color-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1401-c531-color-00-a-expected.txt.
+        * platform/glib/css2.1/t1402-c45-bg-canvas-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1402-c45-bg-canvas-00-b-expected.txt.
+        * platform/glib/css2.1/t140201-c532-bgcolor-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t140201-c532-bgcolor-00-a-expected.txt.
+        * platform/glib/css2.1/t140201-c532-bgcolor-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t140201-c532-bgcolor-01-b-expected.txt.
+        * platform/glib/css2.1/t140201-c533-bgimage-00-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t140201-c533-bgimage-00-a-expected.txt.
+        * platform/glib/css2.1/t140201-c533-bgimage-01-b-g-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t140201-c533-bgimage-01-b-g-expected.txt.
+        * platform/glib/css2.1/t140201-c536-bgpos-00-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t140201-c536-bgpos-00-b-ag-expected.txt.
+        * platform/glib/css2.1/t140201-c536-bgpos-01-b-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t140201-c536-bgpos-01-b-ag-expected.txt.
+        * platform/glib/css2.1/t1503-c522-font-family-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1503-c522-font-family-00-b-expected.txt.
+        * platform/glib/css2.1/t1504-c523-font-style-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1504-c523-font-style-00-b-expected.txt.
+        * platform/glib/css2.1/t1505-c524-font-var-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1505-c524-font-var-00-b-expected.txt.
+        * platform/glib/css2.1/t1506-c525-font-wt-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1506-c525-font-wt-00-b-expected.txt.
+        * platform/glib/css2.1/t1507-c526-font-sz-03-f-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1507-c526-font-sz-03-f-a-expected.txt.
+        * platform/glib/css2.1/t1508-c527-font-00-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1508-c527-font-00-b-expected.txt.
+        * platform/glib/css2.1/t1508-c527-font-06-b-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1508-c527-font-06-b-expected.txt.
+        * platform/glib/css2.1/t1602-c43-center-00-d-ag-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1602-c43-center-00-d-ag-expected.txt.
+        * platform/glib/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt.
+        * platform/glib/css2.1/t1604-c542-letter-sp-01-b-a-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t1604-c542-letter-sp-01-b-a-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-00-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-00-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-01-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-01-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-02-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-02-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-03-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-03-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-04-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-04-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-05-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-05-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-06-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-06-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-07-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-07-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-08-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-08-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-09-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-09-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-10-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-10-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-11-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-11-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-12-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-12-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-13-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-13-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-14-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-14-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-15-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-15-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-16-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-16-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-17-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-17-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-18-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-18-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-19-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-19-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-20-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-20-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-21-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-21-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-22-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-22-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-23-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-23-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-24-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-24-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-25-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-25-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-26-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-26-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-27-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-27-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-28-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-28-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-29-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-29-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-30-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-30-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-31-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-31-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-32-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-32-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-33-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-33-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-34-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-34-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-35-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-35-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-36-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-36-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-37-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-37-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-38-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-38-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-39-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-39-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-40-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-40-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-41-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-41-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-42-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-42-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-43-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-43-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-44-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-44-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-45-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-45-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-46-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-46-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-47-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-47-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-48-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-48-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-49-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-49-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-50-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-50-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-51-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-51-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-52-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-52-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-53-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-53-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-54-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-54-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-55-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-55-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-56-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-56-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-57-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-57-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-58-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-58-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-59-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-59-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-60-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-60-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-61-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-61-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-62-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-62-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-63-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-63-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-64-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-64-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-65-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-65-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-66-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-66-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-67-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-67-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-68-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-68-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-69-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-69-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-70-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-70-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-71-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-71-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-72-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-72-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-73-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-73-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-74-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-74-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-75-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-75-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-76-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-76-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-77-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-77-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-78-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-78-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-79-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-79-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-80-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-80-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-81-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-81-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-82-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-82-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-83-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-83-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-84-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-84-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-85-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-85-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-86-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-86-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-87-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-87-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-88-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-88-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-89-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-89-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-90-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-90-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-91-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-91-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-92-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-92-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-93-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-93-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-94-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-94-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-95-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-95-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-96-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-96-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-97-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-97-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-98-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-98-d-expected.txt.
+        * platform/glib/css2.1/t170602-bdr-conflct-w-99-d-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/t170602-bdr-conflct-w-99-d-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-091-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-091-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-092-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-092-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-099-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-099-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-100-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-100-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-103-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-103-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-104-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-104-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-105-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-105-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-106-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-106-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-107-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-107-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-108-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-108-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-109-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-109-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-110-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-110-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-111-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-111-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-112-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-112-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-113-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-113-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-114-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-114-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-123-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-123-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-124-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-124-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-139-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-139-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-140-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-140-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-149-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-149-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-150-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-150-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-155-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-155-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-156-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-156-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-159-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-159-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-160-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-160-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-165-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-165-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-166-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-166-expected.txt.
+        * platform/glib/css2.1/tables/table-anonymous-objects-181-expected.txt: Renamed from LayoutTests/platform/gtk/css2.1/tables/table-anonymous-objects-181-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-default-value-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-default-value-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-different-image-formats-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-different-image-formats-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-gif-color-2-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-gif-color-2-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-gif-color-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-gif-color-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-image-color-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-image-color-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-image-image-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-image-image-expected.txt.
+        * platform/glib/css3/blending/background-blend-mode-single-layer-no-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/background-blend-mode-single-layer-no-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-background-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-background-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.txt.
+        * platform/glib/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.txt.
+        * platform/glib/css3/blending/blend-mode-simple-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/blend-mode-simple-expected.txt.
+        * platform/glib/css3/blending/repaint/blend-mode-turn-off-isolation-no-effect-expected.txt: Renamed from LayoutTests/platform/gtk/css3/blending/repaint/blend-mode-turn-off-isolation-no-effect-expected.txt.
+        * platform/glib/css3/flexbox/flexbox-baseline-expected.txt: Renamed from LayoutTests/platform/gtk/css3/flexbox/flexbox-baseline-expected.txt.
+        * platform/glib/css3/flexbox/flexbox-baseline-margins-expected.txt: Renamed from LayoutTests/platform/gtk/css3/flexbox/flexbox-baseline-margins-expected.txt.
+        * platform/glib/css3/flexbox/line-wrapping-expected.txt: Renamed from LayoutTests/platform/gtk/css3/flexbox/line-wrapping-expected.txt.
+        * platform/glib/css3/images/cross-fade-background-size-expected.txt: Renamed from LayoutTests/platform/gtk/css3/images/cross-fade-background-size-expected.txt.
+        * platform/wpe/css1/box_properties/acid_test-expected.txt: Removed.
+        * platform/wpe/css1/formatting_model/horizontal_formatting-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/absolute-non-replaced-width-017-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/absolute-non-replaced-width-018-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/absolute-non-replaced-width-019-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/absolute-non-replaced-width-020-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/absolute-replaced-height-036-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-001-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-002-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-003-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-004-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-005-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-006-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-007-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-008-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/background-intrinsic-009-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/border-collapse-offset-002-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/dynamic-top-change-001-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/dynamic-top-change-002-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/dynamic-top-change-003-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/dynamic-top-change-004-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/float-non-replaced-width-007-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/float-non-replaced-width-008-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/float-non-replaced-width-009-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/float-non-replaced-width-010-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/float-non-replaced-width-011-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/float-non-replaced-width-012-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/inline-block-non-replaced-width-003-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/inline-block-non-replaced-width-004-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/inline-table-002a-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/inline-table-003-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/replaced-intrinsic-003-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/replaced-intrinsic-004-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/replaced-intrinsic-005-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/replaced-min-max-001-expected.txt: Removed.
+        * platform/wpe/css2.1/20110323/table-caption-margins-001-expected.txt: Removed.
+        * platform/wpe/css2.1/t010403-shand-border-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t010403-shand-font-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t010403-shand-font-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t010403-shand-font-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t010403-shand-font-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040102-keywords-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-case-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-case-01-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-02-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-04-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-05-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-06-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-07-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-escapes-08-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-01-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-02-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-03-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-04-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-05-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-06-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-07-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-08-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-09-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-10-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-11-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-12-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040103-ident-13-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atkeyw-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atkeyw-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atkeyw-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atrule-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atrule-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atrule-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atrule-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-atrule-04-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-import-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-import-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040105-import-10-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040109-c17-comments-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t040109-c17-comments-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-c71-fwd-parsing-00-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-c71-fwd-parsing-02-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-c71-fwd-parsing-03-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-c71-fwd-parsing-04-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-syntax-01-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-syntax-02-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-syntax-03-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-syntax-04-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-syntax-05-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0402-syntax-06-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t040302-c61-ex-len-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t040306-syntax-01-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t040307-syntax-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t050201-c12-grouping-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0505-c16-descendant-00-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0505-c16-descendant-01-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0505-c16-descendant-02-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t050803-c14-classes-00-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0509-c15-ids-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0509-c15-ids-01-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0509-id-sel-syntax-01-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0509-id-sel-syntax-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0511-c21-pseud-anch-00-e-i-expected.txt: Removed.
+        * platform/wpe/css2.1/t0511-c21-pseud-link-00-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0511-c21-pseud-link-01-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0511-c21-pseud-link-02-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0511-c21-pseud-link-03-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t051103-c21-activ-ln-00-e-i-expected.txt: Removed.
+        * platform/wpe/css2.1/t051103-c21-focus-ln-00-e-i-expected.txt: Removed.
+        * platform/wpe/css2.1/t051103-c21-hover-ln-00-e-i-expected.txt: Removed.
+        * platform/wpe/css2.1/t051103-dom-hover-01-c-io-expected.txt: Removed.
+        * platform/wpe/css2.1/t051103-dom-hover-02-c-io-expected.txt: Removed.
+        * platform/wpe/css2.1/t0602-c13-inh-underlin-00-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0603-c11-import-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t060401-c32-cascading-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t060402-c31-important-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t060403-c21-pseu-cls-00-e-i-expected.txt: Removed.
+        * platform/wpe/css2.1/t060403-c21-pseu-id-00-e-i-expected.txt: Removed.
+        * platform/wpe/css2.1/t0801-c412-hz-box-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5501-mrgn-t-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-01-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-02-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-03-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-04-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-05-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-imrgn-r-06-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-mrgn-r-01-c-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-mrgn-r-02-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5502-mrgn-r-03-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5503-mrgn-b-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-01-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-02-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-03-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-04-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-05-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-imrgn-l-06-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-mrgn-l-01-c-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-mrgn-l-02-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5504-mrgn-l-03-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5505-imrgn-00-a-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5505-mrgn-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5505-mrgn-01-e-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5505-mrgn-02-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t0803-c5505-mrgn-03-c-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5506-ipadn-t-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5506-ipadn-t-01-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5506-ipadn-t-02-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5506-padn-t-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-ipadn-r-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-ipadn-r-01-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-ipadn-r-02-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-ipadn-r-03-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-ipadn-r-04-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-padn-r-01-c-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-padn-r-02-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5507-padn-r-03-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5508-ipadn-b-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5508-ipadn-b-01-f-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5508-ipadn-b-02-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-ipadn-l-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-ipadn-l-01-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-ipadn-l-02-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-ipadn-l-03-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-ipadn-l-04-f-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-padn-l-01-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-padn-l-02-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5510-ipadn-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5510-padn-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5510-padn-01-e-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0804-c5510-padn-02-f-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5511-brdr-tw-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5511-brdr-tw-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5511-brdr-tw-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5511-brdr-tw-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5511-ibrdr-tw-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5512-brdr-rw-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5512-brdr-rw-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5512-brdr-rw-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5512-brdr-rw-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5512-ibrdr-rw-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5513-brdr-bw-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5513-brdr-bw-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5513-brdr-bw-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5513-brdr-bw-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5513-ibrdr-bw-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5514-brdr-lw-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5514-brdr-lw-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5514-brdr-lw-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5514-brdr-lw-03-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5514-ibrdr-lw-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5515-brdr-w-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5515-brdr-w-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5515-brdr-w-02-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5515-ibrdr-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5517-brdr-s-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5517-ibrdr-s-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5518-brdr-t-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5518-ibrdr-t-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5520-brdr-b-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5522-brdr-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5522-brdr-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5522-brdr-02-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t0805-c5522-ibrdr-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t09-c5526c-display-00-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t0905-c414-flt-00-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t0905-c414-flt-01-d-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t0905-c414-flt-fit-00-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t0905-c5525-fltwidth-01-c-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t090501-c414-flt-02-d-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t090501-c414-flt-ln-00-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t090501-c414-flt-ln-02-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t090501-c414-flt-ln-03-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t1002-c5523-width-00-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t1002-c5523-width-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t1004-c43-rpl-bbx-00-d-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t1004-c43-rpl-ibx-00-d-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t1004-c5524-width-00-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t1005-c5524-width-00-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t1005-c5524-width-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t100801-c544-valgn-02-d-agi-expected.txt: Removed.
+        * platform/wpe/css2.1/t100801-c544-valgn-03-d-agi-expected.txt: Removed.
+        * platform/wpe/css2.1/t100801-c544-valgn-04-d-agi-expected.txt: Removed.
+        * platform/wpe/css2.1/t100801-c548-ln-ht-00-c-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t100801-c548-ln-ht-03-d-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t100801-c548-ln-ht-04-d-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counter-07-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counter-11-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counter-12-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counter-15-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counters-07-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counters-11-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counters-12-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counters-15-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counters-16-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t1202-counters-17-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t1204-implied-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1204-implied-01-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t1204-implied-02-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t1204-multiple-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t1204-multiple-01-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t1204-root-e-expected.txt: Removed.
+        * platform/wpe/css2.1/t120401-scope-02-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t120401-scope-03-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t120401-scope-04-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t120403-content-none-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t120403-display-none-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t120403-visibility-00-c-expected.txt: Removed.
+        * platform/wpe/css2.1/t1205-c563-list-type-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1205-c563-list-type-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1205-c564-list-img-00-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t1401-c531-color-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t1402-c45-bg-canvas-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t140201-c532-bgcolor-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t140201-c532-bgcolor-01-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t140201-c533-bgimage-00-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t140201-c533-bgimage-01-b-g-expected.txt: Removed.
+        * platform/wpe/css2.1/t140201-c536-bgpos-00-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t140201-c536-bgpos-01-b-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t1503-c522-font-family-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1504-c523-font-style-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1505-c524-font-var-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1506-c525-font-wt-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1507-c526-font-sz-03-f-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t1508-c527-font-00-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1508-c527-font-06-b-expected.txt: Removed.
+        * platform/wpe/css2.1/t1602-c43-center-00-d-ag-expected.txt: Removed.
+        * platform/wpe/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t1604-c542-letter-sp-01-b-a-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-00-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-01-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-02-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-03-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-04-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-05-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-06-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-07-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-08-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-09-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-10-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-11-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-12-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-13-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-14-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-15-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-16-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-17-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-18-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-19-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-20-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-21-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-22-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-23-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-24-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-25-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-26-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-27-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-28-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-29-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-30-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-31-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-32-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-33-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-34-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-35-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-36-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-37-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-38-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-39-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-40-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-41-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-42-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-43-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-44-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-45-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-46-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-47-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-48-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-49-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-50-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-51-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-52-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-53-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-54-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-55-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-56-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-57-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-58-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-59-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-60-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-61-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-62-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-63-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-64-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-65-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-66-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-67-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-68-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-69-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-70-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-71-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-72-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-73-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-74-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-75-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-76-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-77-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-78-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-79-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-80-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-81-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-82-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-83-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-84-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-85-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-86-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-87-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-88-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-89-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-90-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-91-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-92-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-93-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-94-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-95-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-96-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-97-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-98-d-expected.txt: Removed.
+        * platform/wpe/css2.1/t170602-bdr-conflct-w-99-d-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-091-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-092-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-099-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-100-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-103-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-104-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-105-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-106-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-107-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-108-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-109-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-110-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-111-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-112-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-113-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-114-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-123-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-124-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-139-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-140-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-149-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-150-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-155-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-156-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-159-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-160-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-165-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-166-expected.txt: Removed.
+        * platform/wpe/css2.1/tables/table-anonymous-objects-181-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-default-value-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-different-image-formats-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-gif-color-2-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-gif-color-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-image-color-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-image-image-expected.txt: Removed.
+        * platform/wpe/css3/blending/background-blend-mode-single-layer-no-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-background-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-append-stacking-context-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-off-stacking-context-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-on-blending-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-isolation-flags-turn-on-stacking-context-expected.txt: Removed.
+        * platform/wpe/css3/blending/blend-mode-simple-expected.txt: Removed.
+        * platform/wpe/css3/blending/repaint/blend-mode-turn-off-isolation-no-effect-expected.txt: Removed.
+        * platform/wpe/css3/flexbox/flexbox-baseline-expected.txt: Removed.
+        * platform/wpe/css3/flexbox/flexbox-baseline-margins-expected.txt: Removed.
+        * platform/wpe/css3/flexbox/line-wrapping-expected.txt: Removed.
+        * platform/wpe/css3/images/cross-fade-background-size-expected.txt: Removed.
+
 2020-05-13  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r261023): [GTK][WPE] Several WebGL tests are failing
