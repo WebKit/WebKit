@@ -1,3 +1,13 @@
+2020-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK debug build after r261554
+
+        Remove writeToClipboard that receives a const SelectionData& that is no longer used. Make
+        readBufferFromClipboard pure virtual and remove the GTK leftovers from PlatformPasteboard.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+
 2020-05-13  Antti Koivisto  <antti@apple.com>
 
         [Wheel event region] Add support for getting wheel event region from ScrollingTree

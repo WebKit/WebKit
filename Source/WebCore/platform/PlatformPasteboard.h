@@ -101,11 +101,6 @@ public:
     WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
     WEBCORE_EXPORT bool containsStringSafeForDOMToReadForType(const String&) const;
 
-#if PLATFORM(GTK)
-    WEBCORE_EXPORT void writeToClipboard(const SelectionData&, WTF::Function<void()>&& primarySelectionCleared);
-    WEBCORE_EXPORT Ref<SelectionData> readFromClipboard();
-#endif
-
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT bool containsURLStringSuitableForLoading();
     WEBCORE_EXPORT String urlStringSuitableForLoading(String& title);
@@ -125,9 +120,6 @@ private:
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<id> m_pasteboard;
-#endif
-#if PLATFORM(GTK) && !USE(GTK4)
-    GtkClipboard* m_clipboard;
 #endif
 #if USE(LIBWPE)
     struct wpe_pasteboard* m_pasteboard;

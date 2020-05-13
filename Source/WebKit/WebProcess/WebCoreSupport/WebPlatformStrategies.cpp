@@ -327,12 +327,6 @@ void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, Selec
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, WebSelectionData(selectionData)), 0);
 }
 
-void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, const SelectionData& selection)
-{
-    WebSelectionData selectionData(selection);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, selectionData), 0);
-}
-
 void WebPlatformStrategies::clearClipboard(const String& pasteboardName)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::ClearClipboard(pasteboardName), 0);
