@@ -1,3 +1,22 @@
+2020-05-13  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Fix refactoring issue with animation suspension following r261336
+        https://bugs.webkit.org/show_bug.cgi?id=211842
+        <rdar://problem/63118326>
+
+        Reviewed by Dean Jackson.
+
+        We moved up the suspension code up from DocumentTimeline to DocumentTimelinesController in r261336
+        and forgot to move the code that set the initial suspension state from the DocumentTimeline constructor
+        to the DocumentTimelinesController constructor. This is problematic because the suspension state is
+        only recorded on DocumentTimelinesController itself.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+        (WebCore::DocumentTimelinesController::addTimeline):
+
 2020-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         composited scrolling interferes with the propagation of perspective
