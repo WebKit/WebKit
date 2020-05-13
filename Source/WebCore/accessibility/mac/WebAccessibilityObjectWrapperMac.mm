@@ -556,13 +556,13 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 - (id)attachmentView
 {
-    ASSERT(self.axBackingObject->isAttachment());
-
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-        auto* widget = protectedSelf.get().axBackingObject->widgetForAttachmentView();
-        if (!widget)
+        auto* backingObject = protectedSelf.get().axBackingObject;
+        if (!backingObject)
             return nil;
-        return NSAccessibilityUnignoredDescendant(widget->platformWidget());
+
+        auto* widget = backingObject->widgetForAttachmentView();
+        return widget ? NSAccessibilityUnignoredDescendant(widget->platformWidget()) : nil;
     });
 }
 

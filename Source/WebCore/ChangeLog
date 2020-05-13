@@ -1,3 +1,17 @@
+2020-05-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        Remove unnecessary assert in {WebAccessibilityObjectWrapper attachmentView].
+        https://bugs.webkit.org/show_bug.cgi?id=211857
+
+        Reviewed by Chris Fleizach.
+
+        This assert is unnecessary since the backing object that is relevant is
+        the one on the main thread. This was causing crashes in LayoutTest in
+        isolated tree mode.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper attachmentView]):
+
 2020-05-13  Jer Noble  <jer.noble@apple.com>
 
         Replace isNullFunctionPointer with real weak-linking support
