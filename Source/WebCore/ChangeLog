@@ -1,3 +1,15 @@
+2020-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Replace isNullFunctionPointer with real weak-linking support
+        https://bugs.webkit.org/show_bug.cgi?id=211751
+
+        Reviewed by Sam Weinig.
+
+        Use the new WTF_WEAK_LINK_FORCE_IMPORT macro.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+
 2020-05-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Implementation of AXIsolatedObject::hasBoldFont and hasItalicFont.

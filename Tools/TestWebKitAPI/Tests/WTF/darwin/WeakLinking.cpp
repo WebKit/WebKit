@@ -42,14 +42,19 @@ asm(".linker_option \"-lTestWTFAlwaysMissing-macOS-v2\"");
 
 extern "C" {
     extern void TestWTFAlwaysMissing(void) __attribute__((weak_import));
+    extern void TestWTFAlwaysMissingWithoutAttributeWeakImport(void);
 }
+
+WTF_WEAK_LINK_FORCE_IMPORT(TestWTFAlwaysMissingWithoutAttributeWeakImport);
+WTF_WEAK_LINK_FORCE_IMPORT(close);
 
 namespace TestWebKitAPI {
 
-TEST(WeakLinking, IsNullFunctionPointer)
+TEST(WeakLinking, WeakImport)
 {
-    EXPECT_TRUE(isNullFunctionPointer(TestWTFAlwaysMissing));
-    EXPECT_FALSE(isNullFunctionPointer(close));
+    EXPECT_FALSE(TestWTFAlwaysMissing);
+    EXPECT_FALSE(TestWTFAlwaysMissingWithoutAttributeWeakImport);
+    EXPECT_TRUE(close);
 }
 
 }

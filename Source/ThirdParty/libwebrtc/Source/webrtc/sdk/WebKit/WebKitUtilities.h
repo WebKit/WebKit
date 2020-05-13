@@ -44,7 +44,7 @@ enum class WebKitCodecSupport { H264VP8AndH265, H264AndVP8 };
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport);
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitCodecSupport);
 
-void setApplicationStatus(bool isActive) __attribute__((weak_import));
+void setApplicationStatus(bool isActive);
 
 void setH264HardwareEncoderAllowed(bool);
 bool isH264HardwareEncoderAllowed();

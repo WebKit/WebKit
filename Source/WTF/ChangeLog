@@ -1,3 +1,15 @@
+2020-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Replace isNullFunctionPointer with real weak-linking support
+        https://bugs.webkit.org/show_bug.cgi?id=211751
+
+        Reviewed by Sam Weinig.
+
+        Replace isNullFunctionPointer with a macro which explicitly marks symbols as weakly imported.
+
+        * wtf/darwin/WeakLinking.h:
+        (WTF::isNullFunctionPointer): Deleted.
+
 2020-05-12  Mark Lam  <mark.lam@apple.com>
 
         catch_mach_exception_raise_state() should fail early if the faulting address is not of interest.

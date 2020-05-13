@@ -33,6 +33,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/darwin/WeakLinking.h>
 
+WTF_WEAK_LINK_FORCE_IMPORT(svm_load_model);
+
 namespace WebKit {
 
 bool ResourceLoadStatisticsClassifierCocoa::classify(unsigned subresourceUnderTopFrameDomainsCount, unsigned subresourceUniqueRedirectsToCount, unsigned subframeUnderTopFrameOriginsCount)
@@ -81,7 +83,7 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
     if (!m_useCorePrediction)
         return false;
 
-    if (isNullFunctionPointer(svm_load_model)) {
+    if (svm_load_model) {
         m_useCorePrediction = false;
         return false;
     }

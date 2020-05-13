@@ -34,6 +34,8 @@ ALLOW_UNUSED_PARAMETERS_END
 #include <wtf/MainThread.h>
 #include <wtf/darwin/WeakLinking.h>
 
+WTF_WEAK_LINK_FORCE_IMPORT(webrtc::setApplicationStatus);
+
 namespace WebCore {
 
 UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
@@ -76,7 +78,7 @@ bool LibWebRTCProvider::webRTCAvailable()
 #if PLATFORM(IOS)
     return true;
 #else
-    return !isNullFunctionPointer(webrtc::setApplicationStatus);
+    return !!webrtc::setApplicationStatus;
 #endif
 }
 

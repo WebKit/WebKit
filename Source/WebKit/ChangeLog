@@ -1,3 +1,15 @@
+2020-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Replace isNullFunctionPointer with real weak-linking support
+        https://bugs.webkit.org/show_bug.cgi?id=211751
+
+        Reviewed by Sam Weinig.
+
+        Use the new WTF_WEAK_LINK_FORCE_IMPORT macro.
+
+        * Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp:
+        (WebKit::ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction):
+
 2020-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Add SPI for reverting to touch events for iPad trackpad interactions

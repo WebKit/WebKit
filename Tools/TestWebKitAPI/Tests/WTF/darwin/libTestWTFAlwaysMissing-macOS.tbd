@@ -5,5 +5,5 @@ install-name: /usr/local/lib/libTestWTFAlwaysMissing.dylib
 objc-constraint: none
 exports:
   - archs: [ i386, x86_64 ]
-    symbols: [ _TestWTFAlwaysMissing ]
+    symbols: [ _TestWTFAlwaysMissing, _TestWTFAlwaysMissingWithoutAttributeWeakImport ]
 ...
