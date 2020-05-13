@@ -1,5 +1,48 @@
 2020-05-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261635. rdar://problem/63195707
+
+    [Web Animations] Fix refactoring issue with animation suspension following r261336
+    https://bugs.webkit.org/show_bug.cgi?id=211842
+    <rdar://problem/63118326>
+    
+    Patch by Antoine Quint <graouts@apple.com> on 2020-05-13
+    Reviewed by Dean Jackson.
+    
+    We moved up the suspension code up from DocumentTimeline to DocumentTimelinesController in r261336
+    and forgot to move the code that set the initial suspension state from the DocumentTimeline constructor
+    to the DocumentTimelinesController constructor. This is problematic because the suspension state is
+    only recorded on DocumentTimelinesController itself.
+    
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::DocumentTimeline):
+    * animation/DocumentTimelinesController.cpp:
+    (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+    (WebCore::DocumentTimelinesController::addTimeline):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261635 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-13  Antoine Quint  <graouts@apple.com>
+
+            [Web Animations] Fix refactoring issue with animation suspension following r261336
+            https://bugs.webkit.org/show_bug.cgi?id=211842
+            <rdar://problem/63118326>
+
+            Reviewed by Dean Jackson.
+
+            We moved up the suspension code up from DocumentTimeline to DocumentTimelinesController in r261336
+            and forgot to move the code that set the initial suspension state from the DocumentTimeline constructor
+            to the DocumentTimelinesController constructor. This is problematic because the suspension state is
+            only recorded on DocumentTimelinesController itself.
+
+            * animation/DocumentTimeline.cpp:
+            (WebCore::DocumentTimeline::DocumentTimeline):
+            * animation/DocumentTimelinesController.cpp:
+            (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+            (WebCore::DocumentTimelinesController::addTimeline):
+
+2020-05-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261587. rdar://problem/63195680
 
     [iOS] REGRESSION: (r261342) Play/pause button doesn't work upon first entering fullscreen mode

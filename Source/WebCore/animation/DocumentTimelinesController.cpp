@@ -32,6 +32,8 @@
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventLoop.h"
+#include "Page.h"
+#include "Settings.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <JavaScriptCore/VM.h>
@@ -41,6 +43,10 @@ namespace WebCore {
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
     : m_document(document)
 {
+    if (auto* page = document.page()) {
+        if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
+            suspendAnimations();
+    }
 }
 
 DocumentTimelinesController::~DocumentTimelinesController()
@@ -50,6 +56,11 @@ DocumentTimelinesController::~DocumentTimelinesController()
 void DocumentTimelinesController::addTimeline(DocumentTimeline& timeline)
 {
     m_timelines.add(timeline);
+
+    if (m_isSuspended)
+        timeline.suspendAnimations();
+    else
+        timeline.resumeAnimations();
 }
 
 void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
