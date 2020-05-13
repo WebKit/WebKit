@@ -34,6 +34,7 @@
 #include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
 #include <WebCore/CustomHeaderFields.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/OptionSet.h>
 
@@ -68,6 +69,7 @@ struct WebsitePoliciesData {
     WebsiteLegacyOverflowScrollingTouchPolicy legacyOverflowScrollingTouchPolicy { WebsiteLegacyOverflowScrollingTouchPolicy::Default };
     bool allowContentChangeObserverQuirk { false };
     WebCore::AllowsContentJavaScript allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
+    WebCore::MouseEventPolicy mouseEventPolicy { WebCore::MouseEventPolicy::Default };
 
     void encode(IPC::Encoder&) const;
     static Optional<WebsitePoliciesData> decode(IPC::Decoder&);

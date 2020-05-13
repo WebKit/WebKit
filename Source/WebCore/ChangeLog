@@ -1,3 +1,15 @@
+2020-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add SPI for reverting to touch events for iPad trackpad interactions
+        https://bugs.webkit.org/show_bug.cgi?id=211824
+        <rdar://problem/61363084>
+
+        Reviewed by Megan Gardner.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::mouseEventPolicy const):
+        (WebCore::DocumentLoader::setMouseEventPolicy):
+
 2020-05-13  Kenneth Russell  <kbr@chromium.org>
 
         Bad flicker on three.js example

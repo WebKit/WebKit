@@ -1,3 +1,67 @@
+2020-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add SPI for reverting to touch events for iPad trackpad interactions
+        https://bugs.webkit.org/show_bug.cgi?id=211824
+        <rdar://problem/61363084>
+
+        Reviewed by Megan Gardner.
+
+        New Test: IOSMouseSupport.WebsiteMouseEventPolicies
+
+        Plumb a "mouse event policy" WKWebpagePreference, which has two values:
+
+        - Default, which means that WebKit decides whether or not indirect
+        pointing devices send mouse or touch events.
+
+        - SynthesizeTouchEvents, which ensures that WebKit will always send
+        touch events from indirect pointing devices.
+        This value is only available on platforms that implement touch events.
+
+        We use the WKWebpagePreferences mechanism in order to make it easy to
+        implement it as a "per-site" quirk, but unlike most WKWebpagePreferences,
+        it turns around and changes UI process state (the enablement of the
+        WKMouseGestureRecgonizer).
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        (WebKit::mouseEventPolicy):
+        (WebKit::coreMouseEventPolicy):
+        (-[WKWebpagePreferences _setMouseEventPolicy:]):
+        (-[WKWebpagePreferences _mouseEventPolicy]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::setMouseEventPolicy):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setMouseEventPolicy):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldUseMouseGestureRecognizer]):
+        (-[WKContentView setUpMouseGestureRecognizer]):
+        (-[WKContentView _configureMouseGestureRecognizer]):
+        (-[WKContentView _setMouseEventPolicy:]):
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer setEnabled:]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
 2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] "Copy" context menu action for attachment element does not work in Mail

@@ -88,6 +88,7 @@ class WebMediaSessionManager;
 class SelectionData;
 #endif
 
+enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ScrollbarStyle : uint8_t;
 enum class TextIndicatorWindowLifetime : uint8_t;
@@ -469,6 +470,8 @@ public:
     virtual bool scrollingUpdatesDisabledForTesting() { return false; }
 
     virtual bool hasSafeBrowsingWarning() const { return false; }
+
+    virtual void setMouseEventPolicy(WebCore::MouseEventPolicy) { }
     
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;

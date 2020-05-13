@@ -81,6 +81,7 @@ class SelectionRect;
 struct PromisedAttachmentInfo;
 struct ShareDataWithParsedURL;
 enum class DOMPasteAccessResponse : uint8_t;
+enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 
 #if ENABLE(DRAG_SUPPORT)
@@ -243,6 +244,7 @@ struct WKAutoCorrectionData {
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
+    WebCore::MouseEventPolicy _mouseEventPolicy;
 #endif
 
 #if HAVE(UI_CURSOR_INTERACTION)
@@ -601,6 +603,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_writePromisedAttachmentToPasteboard:(WebCore::PromisedAttachmentInfo&&)info;
+#endif
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+- (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy;
 #endif
 
 @end

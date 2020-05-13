@@ -961,6 +961,11 @@ void PageClientImpl::writePromisedAttachmentToPasteboard(WebCore::PromisedAttach
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+void PageClientImpl::setMouseEventPolicy(WebCore::MouseEventPolicy policy)
+{
+    [m_contentView _setMouseEventPolicy:policy];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

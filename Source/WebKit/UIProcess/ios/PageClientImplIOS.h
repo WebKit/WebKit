@@ -254,6 +254,8 @@ private:
 
     void handleAutocorrectionContext(const WebAutocorrectionContext&) final;
 
+    void setMouseEventPolicy(WebCore::MouseEventPolicy) final;
+
 #if HAVE(PENCILKIT)
     RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
 #endif

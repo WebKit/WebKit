@@ -70,6 +70,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setCustomHeaderFields(WTFMove(customHeaderFields));
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
+    policies->setMouseEventPolicy(m_mouseEventPolicy);
     return policies;
 }
 
@@ -114,7 +115,8 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_simulatedMouseEventsDispatchPolicy,
         m_legacyOverflowScrollingTouchPolicy,
         m_allowContentChangeObserverQuirk,
-        m_allowsContentJavaScript, 
+        m_allowsContentJavaScript,
+        m_mouseEventPolicy
     };
 }
 

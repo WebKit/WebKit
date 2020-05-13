@@ -1,3 +1,25 @@
+2020-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add SPI for reverting to touch events for iPad trackpad interactions
+        https://bugs.webkit.org/show_bug.cgi?id=211824
+        <rdar://problem/61363084>
+
+        Reviewed by Megan Gardner.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/MacCatalystMouseSupport.mm.
+        (-[WKTestingEvent locationInView:]):
+        (-[WKTestingEvent _setButtonMask:]):
+        (-[WKTestingEvent _buttonMask]):
+        (-[WKTestingTouch locationInView:]):
+        (-[WKTestingTouch setTapCount:]):
+        (-[WKTestingTouch tapCount]):
+        (mouseGesture):
+        (TEST):
+        Rename and enable MacCatalystMouseSupport tests for iOS.
+        Add a test that ensures that the next load after setting the
+        WKWebpagePreference causes the WKMouseGestureRecognizer to get disabled.
+
 2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] "Copy" context menu action for attachment element does not work in Mail

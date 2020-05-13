@@ -72,6 +72,20 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return self;
 }
 
+- (void)setEnabled:(BOOL)enabled
+{
+    [super setEnabled:enabled];
+
+    if (!enabled) {
+        _currentHoverEvent = nil;
+        _currentTouch = nil;
+        _touching = NO;
+        _lastEvent = nil;
+        _lastLocation = WTF::nullopt;
+        _pressedButtonMask = WTF::nullopt;
+    }
+}
+
 - (void)setView:(UIView *)view
 {
     if (view == self.view)

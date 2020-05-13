@@ -8459,6 +8459,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         return YES;
     }();
 
+    switch (_mouseEventPolicy) {
+    case WebCore::MouseEventPolicy::Default:
+        break;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    case WebCore::MouseEventPolicy::SynthesizeTouchEvents:
+        return NO;
+#endif
+    }
+
     return shouldUseMouseGestureRecognizer;
 }
 
@@ -8466,7 +8475,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
     [_mouseGestureRecognizer setDelegate:self];
-    [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
+    [self _configureMouseGestureRecognizer];
     [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 }
 
@@ -8483,6 +8492,17 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
     _page->handleMouseEvent(*event);
+}
+
+- (void)_configureMouseGestureRecognizer
+{
+    [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
+}
+
+- (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy
+{
+    _mouseEventPolicy = policy;
+    [self _configureMouseGestureRecognizer];
 }
 
 #endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)

@@ -33,11 +33,12 @@
 #import "WebContentMode.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
+#import <WebCore/DocumentLoader.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
-
 namespace WebKit {
+
+#if PLATFORM(IOS_FAMILY)
 
 WKContentMode contentMode(WebKit::WebContentMode contentMode)
 {
@@ -67,9 +68,37 @@ WebKit::WebContentMode webContentMode(WKContentMode contentMode)
     return WebKit::WebContentMode::Recommended;
 }
 
-} // namespace WebKit
-
 #endif // PLATFORM(IOS_FAMILY)
+
+static _WKWebsiteMouseEventPolicy mouseEventPolicy(WebCore::MouseEventPolicy policy)
+{
+    switch (policy) {
+    case WebCore::MouseEventPolicy::Default:
+        return _WKWebsiteMouseEventPolicyDefault;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    case WebCore::MouseEventPolicy::SynthesizeTouchEvents:
+        return _WKWebsiteMouseEventPolicySynthesizeTouchEvents;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return _WKWebsiteMouseEventPolicyDefault;
+}
+
+static WebCore::MouseEventPolicy coreMouseEventPolicy(_WKWebsiteMouseEventPolicy policy)
+{
+    switch (policy) {
+    case _WKWebsiteMouseEventPolicyDefault:
+        return WebCore::MouseEventPolicy::Default;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    case _WKWebsiteMouseEventPolicySynthesizeTouchEvents:
+        return WebCore::MouseEventPolicy::SynthesizeTouchEvents;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::MouseEventPolicy::Default;
+}
+
+} // namespace WebKit
 
 @implementation WKWebpagePreferences
 
@@ -368,5 +397,15 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+- (void)_setMouseEventPolicy:(_WKWebsiteMouseEventPolicy)policy
+{
+    _websitePolicies->setMouseEventPolicy(WebKit::coreMouseEventPolicy(policy));
+}
+
+- (_WKWebsiteMouseEventPolicy)_mouseEventPolicy
+{
+    return WebKit::mouseEventPolicy(_websitePolicies->mouseEventPolicy());
+}
 
 @end

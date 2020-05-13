@@ -37,6 +37,7 @@
 #include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
 #include <WebCore/CustomHeaderFields.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/OptionSet.h>
@@ -124,6 +125,9 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_allowsContentJavaScript = allows; }
 
+    WebCore::MouseEventPolicy mouseEventPolicy() const { return m_mouseEventPolicy; }
+    void setMouseEventPolicy(WebCore::MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
+
 private:
     bool m_contentBlockersEnabled { true };
     OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
@@ -148,6 +152,7 @@ private:
     WTF::String m_applicationNameForDesktopUserAgent;
     bool m_allowContentChangeObserverQuirk { false };
     WebCore::AllowsContentJavaScript m_allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
+    WebCore::MouseEventPolicy m_mouseEventPolicy { WebCore::MouseEventPolicy::Default };
 };
 
 } // namespace API
