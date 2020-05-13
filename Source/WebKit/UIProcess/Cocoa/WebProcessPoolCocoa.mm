@@ -83,9 +83,12 @@
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <pal/spi/ios/MobileGestaltSPI.h>
+#endif
+
 #if PLATFORM(IOS)
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
-#import <pal/spi/ios/MobileGestaltSPI.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
