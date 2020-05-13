@@ -1,5 +1,33 @@
 2020-05-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261478. rdar://problem/63203495
+
+    Unreviewed, fix the watchOS build after r261457
+    
+    Put -[WKActionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:] behind a USE(UICONTEXTMENU)
+    compiler guard; currently, it is declared everywhere, but only implemented if ENABLE(DATA_DETECTION) &&
+    USE(UICONTEXTMENU). However, WKContentView only invokes it behind code that is guarded by USE(UICONTEXTMENU).
+    
+    * UIProcess/ios/WKActionSheetAssistant.h:
+    * UIProcess/ios/WKActionSheetAssistant.mm:
+    (-[WKActionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261478 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, fix the watchOS build after r261457
+
+            Put -[WKActionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:] behind a USE(UICONTEXTMENU)
+            compiler guard; currently, it is declared everywhere, but only implemented if ENABLE(DATA_DETECTION) &&
+            USE(UICONTEXTMENU). However, WKContentView only invokes it behind code that is guarded by USE(UICONTEXTMENU).
+
+            * UIProcess/ios/WKActionSheetAssistant.h:
+            * UIProcess/ios/WKActionSheetAssistant.mm:
+            (-[WKActionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:]):
+
+2020-05-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261617. rdar://problem/63195712
 
     REGRESSION (r261254): Broke Apple Pay on macOS

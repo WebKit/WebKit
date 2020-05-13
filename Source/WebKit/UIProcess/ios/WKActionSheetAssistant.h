@@ -90,7 +90,9 @@ struct InteractionInformationAtPosition;
 - (BOOL)isShowingSheet;
 - (void)interactionDidStartWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)information;
 - (NSArray *)currentAvailableActionTitles;
+#if USE(UICONTEXTMENU)
 - (NSArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation;
+#endif
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
