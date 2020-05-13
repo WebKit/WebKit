@@ -2758,6 +2758,7 @@
 		1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesDefaultValuesCocoa.mm; sourceTree = "<group>"; };
 		1DE0D095211CC21300439B5F /* WKShareSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKShareSheet.h; sourceTree = "<group>"; };
 		1DE2DFAC23A959F8003E013A /* RemoteMediaResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceIdentifier.h; sourceTree = "<group>"; };
+		1DEC97AC246B691E007C83F4 /* WebKit.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = WebKit.plist; sourceTree = "<group>"; };
 		1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoLayerRemoteCocoa.mm; sourceTree = "<group>"; };
 		1DFDD0E023F60E1F00E9B490 /* VideoLayerRemoteCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoLayerRemoteCocoa.h; sourceTree = "<group>"; };
 		1DFDD0E223F610F000E9B490 /* VideoLayerRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoLayerRemote.h; sourceTree = "<group>"; };
@@ -5652,6 +5653,7 @@
 				1A0EC6B0124BBD36007EF4A5 /* PluginProcess */,
 				2D9FB1FF2375209D0049F936 /* GPUProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
+				1DEC97AB246B6865007C83F4 /* FeatureFlags */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
@@ -6499,6 +6501,14 @@
 				1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		1DEC97AB246B6865007C83F4 /* FeatureFlags */ = {
+			isa = PBXGroup;
+			children = (
+				1DEC97AC246B691E007C83F4 /* WebKit.plist */,
+			);
+			path = FeatureFlags;
 			sourceTree = "<group>";
 		};
 		1F0181681858DC1500F92884 /* Cocoa */ = {
@@ -12228,7 +12238,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}/WebKit/WebKit.plist",
+				"${SRCROOT}/FeatureFlags/WebKit.plist",
 			);
 			name = "Copy Feature Flags Plist";
 			outputFileListPaths = (
@@ -12238,7 +12248,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${WK_PLATFORM_NAME} == \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nSOURCE_DIR=\"${WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH}/WebKit\"\nDEST_DIR=${INSTALL_ROOT}/${WK_INSTALL_PATH_PREFIX}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain\n\nif [[ ! -d \"${DEST_DIR}\" ]]; then\n    mkdir -p \"${DEST_DIR}\"\nfi\n\nditto \"${SOURCE_DIR}/WebKit.plist\" \"${DEST_DIR}/WebKit.plist\"\n";
+			shellScript = "if [[ ${WK_PLATFORM_NAME} == \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nSOURCE_DIR=\"${SRCROOT}/FeatureFlags\"\nDEST_DIR=${INSTALL_ROOT}/${WK_INSTALL_PATH_PREFIX}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain\n\nif [[ ! -d \"${DEST_DIR}\" ]]; then\n    mkdir -p \"${DEST_DIR}\"\nfi\n\nditto \"${SOURCE_DIR}/WebKit.plist\" \"${DEST_DIR}/WebKit.plist\"\n";
 		};
 		2D7DEBDF21269C9F00B9F73C /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;

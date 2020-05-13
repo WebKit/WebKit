@@ -1,3 +1,15 @@
+2020-05-13  Peng Liu  <peng.liu6@apple.com>
+
+        Add the feature flags plist file back
+        https://bugs.webkit.org/show_bug.cgi?id=211816
+
+        Reviewed by Jer Noble.
+
+        Add the WebKit.plist file to the WebKit project and use it instead of the one from the WebKitAdditions.
+
+        * FeatureFlags/WebKit.plist: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-13  Youenn Fablet  <youenn@apple.com>
 
         Allow WebAudioBufferList to dynamically change its number of frames
