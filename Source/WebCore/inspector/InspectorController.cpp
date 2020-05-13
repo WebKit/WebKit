@@ -361,6 +361,11 @@ void InspectorController::getHighlight(Highlight& highlight, InspectorOverlay::C
     m_overlay->getHighlight(highlight, coordinateSystem);
 }
 
+bool InspectorController::shouldShowOverlay() const
+{
+    return m_overlay->shouldShowOverlay();
+}
+
 void InspectorController::inspect(Node* node)
 {
     if (!enabled())

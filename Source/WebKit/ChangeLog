@@ -1,3 +1,20 @@
+2020-05-13  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Selected element on Web Inspector is not highlighted with CPU Rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=195933
+
+        Reviewed by Devin Rousso.
+
+        Since WebInspectorClient::drawHighlight was not called while non accelerated compositing mode, we cannot see element highlight on web inspector.
+        This patch adds WebInspectorClient::drawHighlight call in WebPage::drawRect, which draws webpage image while non accelerated compositing mode, to overlay the highlight.
+        WebInspectorClient::highlight and WebInspectorClient::hideHighlight currently requests re-paint whole web page, but it should be able to optimize by only updating dirty rects in the future.
+
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight): If it's not acceleratedCompositingEnabled, then just request repaint.
+        (WebKit::WebInspectorClient::hideHighlight): If it's not acceleratedCompositingEnabled, then just request repaint.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect): Draw inspector overlay here if it's not accelerated compositing mode.
+
 2020-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK debug build after r261554

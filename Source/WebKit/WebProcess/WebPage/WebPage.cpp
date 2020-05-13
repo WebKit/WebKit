@@ -1812,6 +1812,14 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.clip(rect);
 
     m_mainFrame->coreFrame()->view()->paint(graphicsContext, rect);
+
+#if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(PLAYSTATION)
+    if (!m_page->settings().acceleratedCompositingEnabled() && m_page->inspectorController().enabled() && m_page->inspectorController().shouldShowOverlay()) {
+        graphicsContext.beginTransparencyLayer(1);
+        m_page->inspectorController().drawHighlight(graphicsContext);
+        graphicsContext.endTransparencyLayer();
+    }
+#endif
 }
 
 double WebPage::textZoomFactor() const

@@ -107,6 +107,7 @@ public:
     void update();
     void paint(GraphicsContext&);
     void getHighlight(Highlight&, CoordinateSystem) const;
+    bool shouldShowOverlay() const;
 
     void hideHighlight();
     void highlightNodeList(RefPtr<NodeList>&&, const HighlightConfig&);
@@ -127,8 +128,6 @@ public:
 
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
-
-    bool shouldShowOverlay() const;
 
     struct RulerExclusion {
         Highlight::Bounds bounds;
