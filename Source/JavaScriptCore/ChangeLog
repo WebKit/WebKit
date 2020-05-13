@@ -1,3 +1,16 @@
+2020-05-12  Saam Barati  <sbarati@apple.com>
+
+        handling of Check in VarargsForwardingPhase is too pessimistic
+        https://bugs.webkit.org/show_bug.cgi?id=211810
+
+        Reviewed by Keith Miller and Filip Pizlo.
+
+        We were treating a check, even if it wasn't on the sink candidate,
+        as if it could escape the candidate. That's wrong. Only checks on the
+        candidate have the escaping ability.
+
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
 2020-05-12  Keith Miller  <keith_miller@apple.com>
 
         The bottom value set for m_value in iterator_next should be materialized after a done getter

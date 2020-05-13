@@ -127,16 +127,17 @@ private:
                 m_graph.doToChildren(
                     node,
                     [&] (Edge edge) {
-                        if (edge == candidate)
+                        if (edge == candidate) {
                             lastUserIndex = nodeIndex;
-                        
-                        if (edge.willNotHaveCheck())
-                            return;
-                        
-                        if (alreadyChecked(edge.useKind(), SpecObject))
-                            return;
-                        
-                        sawEscape = true;
+
+                            if (edge.willNotHaveCheck())
+                                return;
+
+                            if (alreadyChecked(edge.useKind(), SpecObject))
+                                return;
+
+                            sawEscape = true;
+                        }
                     });
                 if (sawEscape) {
                     if (verbose)
