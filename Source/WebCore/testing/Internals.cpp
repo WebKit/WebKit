@@ -550,6 +550,7 @@ void Internals::resetToConsistentState(Page& page)
 
     page.setShowAllPlugins(false);
     page.setLowPowerModeEnabledOverrideForTesting(WTF::nullopt);
+    page.setOutsideViewportThrottlingEnabledForTesting(false);
 
 #if USE(QUICK_LOOK)
     MockPreviewLoaderClient::singleton().setPassword("");
@@ -1796,6 +1797,19 @@ ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
         return Exception { InvalidAccessError };
 
     page->setLowPowerModeEnabledOverrideForTesting(isEnabled);
+    return { };
+}
+
+ExceptionOr<void> Internals::setOutsideViewportThrottlingEnabled(bool isEnabled)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return Exception { InvalidAccessError };
+    auto* page = document->page();
+    if (!page)
+        return Exception { InvalidAccessError };
+
+    page->setOutsideViewportThrottlingEnabledForTesting(isEnabled);
     return { };
 }
 

@@ -52,7 +52,10 @@ constexpr const FramesPerSecond ZeroFramesPerSecond = 0;
 
 inline Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>& reasons)
 {
-    // FIXME: handle ThrottlingReason::VisuallyIdle, ThrottlingReason::OutsideViewport
+    // FIXME: handle ThrottlingReason::VisuallyIdle
+    if (reasons.contains(ThrottlingReason::OutsideViewport))
+        return AggressiveThrottlingAnimationInterval;
+    
     if (reasons.containsAny({ ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame }))
         return HalfSpeedThrottlingAnimationInterval;
 
@@ -73,11 +76,11 @@ inline FramesPerSecond preferredFramesPerSecond(Seconds preferredFrameInterval)
 
 inline TextStream& operator<<(TextStream& ts, const OptionSet<ThrottlingReason>& reasons)
 {
-    StringBuilder builder;
-    for (auto reason : reasons) {
-        if (!builder.isEmpty())
-            ts << "|";
+    bool didAppend = false;
 
+    for (auto reason : reasons) {
+        if (didAppend)
+            ts << "|";
         switch (reason) {
         case ThrottlingReason::VisuallyIdle:
             ts << "VisuallyIdle";
@@ -92,7 +95,9 @@ inline TextStream& operator<<(TextStream& ts, const OptionSet<ThrottlingReason>&
             ts << "NonInteractiveCrossOriginFrame";
             break;
         }
+        didAppend = true;
     }
+
     if (reasons.isEmpty())
         ts << "[Unthrottled]";
     return ts;

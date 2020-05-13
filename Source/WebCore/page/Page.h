@@ -722,7 +722,9 @@ public:
     bool loadsFromNetwork() const { return m_loadsFromNetwork; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
+    bool canUpdateThrottlingReason(ThrottlingReason reason) const { return !m_throttlingReasonsOverridenForTesting.contains(reason); }
     WEBCORE_EXPORT void setLowPowerModeEnabledOverrideForTesting(Optional<bool>);
+    WEBCORE_EXPORT void setOutsideViewportThrottlingEnabledForTesting(bool);
 
     OptionSet<ThrottlingReason> throttlingReasons() const { return m_throttlingReasons; }
     Seconds preferredRenderingUpdateInterval() const;
@@ -793,8 +795,6 @@ private:
     void updateTimerThrottlingState();
     void updateDOMTimerAlignmentInterval();
     void domTimerAlignmentIntervalIncreaseTimerFired();
-
-    bool canUpdateThrottlingReason(ThrottlingReason reason) const { return !m_throttlingReasonsOverridenForTesting.contains(reason); }
 
     void doAfterUpdateRendering();
 

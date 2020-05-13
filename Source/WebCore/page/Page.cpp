@@ -1188,6 +1188,16 @@ void Page::setLowPowerModeEnabledOverrideForTesting(Optional<bool> isEnabled)
     m_throttlingReasonsOverridenForTesting.add(ThrottlingReason::LowPowerMode);
 }
 
+void Page::setOutsideViewportThrottlingEnabledForTesting(bool isEnabled)
+{
+    if (!isEnabled)
+        m_throttlingReasonsOverridenForTesting.add(ThrottlingReason::OutsideViewport);
+    else
+        m_throttlingReasonsOverridenForTesting.remove(ThrottlingReason::OutsideViewport);
+
+    m_throttlingReasons.remove(ThrottlingReason::OutsideViewport);
+}
+
 void Page::setTopContentInset(float contentInset)
 {
     if (m_topContentInset == contentInset)

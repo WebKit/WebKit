@@ -563,6 +563,7 @@ enum CompositingPolicy {
     boolean areTimersThrottled();
 
     [MayThrowException] void setLowPowerModeEnabled(boolean enabled);
+    [MayThrowException] void setOutsideViewportThrottlingEnabled(boolean enabled);
     readonly attribute double requestAnimationFrameInterval;
     readonly attribute boolean scriptedAnimationsAreSuspended;
 

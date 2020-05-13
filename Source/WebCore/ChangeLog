@@ -1,3 +1,35 @@
+2020-05-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Re-enable 'OutsideViewport' rAF throttling
+        https://bugs.webkit.org/show_bug.cgi?id=211482
+
+        Reviewed by Darin Adler.
+
+        Test: fast/animation/request-animation-frame-throttling-outside-viewport.html
+
+        Make preferredFrameInterval return AggressiveThrottlingAnimationInterval
+        if the OutsideViewport throttling reason exists.
+
+        Add an internal setting for enabling 'OutsideViewport' rAF throttling. It
+        is on by default but it is off by default for DRT and WTR. An Internals
+        API is added to enable it for specific tests which want to test its
+        functionality.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateScriptedAnimationsAndTimersThrottlingState):
+        * page/Page.cpp:
+        (WebCore::Page::setOutsideViewportThrottlingEnabledForTesting):
+        * page/Page.h:
+        (WebCore::Page::canUpdateThrottlingReason const):
+        * platform/graphics/AnimationFrameRate.h:
+        (WebCore::preferredFrameInterval):
+        (WebCore::operator<<):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setOutsideViewportThrottlingEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-05-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Remove unnecessary assert in {WebAccessibilityObjectWrapper attachmentView].

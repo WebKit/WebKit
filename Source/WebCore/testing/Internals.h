@@ -273,6 +273,7 @@ public:
     void setFontSmoothingEnabled(bool);
 
     ExceptionOr<void> setLowPowerModeEnabled(bool);
+    ExceptionOr<void> setOutsideViewportThrottlingEnabled(bool);
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);
     ExceptionOr<void> unconstrainedScrollTo(Element&, double x, double y);
