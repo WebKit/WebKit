@@ -147,8 +147,10 @@ private:
         FocusableAncestor,
         HasARIAValueNow,
         HasApplePDFAnnotationAttribute,
+        HasBoldFont,
         HasChildren,
         HasHighlighting,
+        HasItalicFont,
         HasPopup,
         HeaderContainer,
         HeadingLevel,
@@ -758,8 +760,8 @@ private:
     bool isVisible() const override;
     bool isCollapsed() const override;
     bool isSelectedOptionActive() const override;
-    bool hasBoldFont() const override;
-    bool hasItalicFont() const override;
+    bool hasBoldFont() const override { return boolAttributeValue(AXPropertyName::HasBoldFont); }
+    bool hasItalicFont() const override { return boolAttributeValue(AXPropertyName::HasItalicFont); }
     bool hasMisspelling() const override;
     bool hasPlainText() const override;
     bool hasSameFont(RenderObject*) const override;

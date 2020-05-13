@@ -218,6 +218,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
     setProperty(AXPropertyName::Path, object.elementPath());
     setProperty(AXPropertyName::HasHighlighting, object.hasHighlighting());
+    setProperty(AXPropertyName::HasBoldFont, object.hasBoldFont());
+    setProperty(AXPropertyName::HasItalicFont, object.hasItalicFont());
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     
     if (object.isTable()) {
@@ -1179,18 +1181,6 @@ bool AXIsolatedObject::isCollapsed() const
 }
 
 bool AXIsolatedObject::isSelectedOptionActive() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::hasBoldFont() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::hasItalicFont() const
 {
     ASSERT_NOT_REACHED();
     return false;

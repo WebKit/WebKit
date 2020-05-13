@@ -1,3 +1,18 @@
+2020-05-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implementation of AXIsolatedObject::hasBoldFont and hasItalicFont.
+        https://bugs.webkit.org/show_bug.cgi?id=211858
+
+        Reviewed by Chris Fleizach.
+
+        Added hasBoldFont and hasItalicFont to the cached properties map.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData): Added properties to cache.
+        (WebCore::AXIsolatedObject::hasBoldFont const): Deleted. Inlined in header.
+        (WebCore::AXIsolatedObject::hasItalicFont const): Deleted. Inlined in header.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Add SPI for reverting to touch events for iPad trackpad interactions
