@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "JSCConfig.h"
+#include <wtf/WTFConfig.h>
 
+#include <wtf/Lock.h>
 #include <wtf/ResourceUsage.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/WTFConfig.h>
 
 #if OS(DARWIN)
 #include <mach/mach.h>
@@ -36,32 +36,19 @@
 #include <sys/mman.h>
 #endif
 
-namespace JSC {
+namespace WTF {
 
-alignas(PageSize) JS_EXPORT_PRIVATE Config g_jscConfig;
+alignas(ConfigSizeToProtect) WTF_EXPORT_PRIVATE Config g_wtfConfig;
 
-void Config::disableFreezingForTesting()
-{
-    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen);
-    g_jscConfig.disabledFreezingForTesting = true;
-}
-
-void Config::enableRestrictedOptions()
-{
-    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen);
-    g_jscConfig.restrictedOptionsEnabled = true;
-}
-    
 void Config::permanentlyFreeze()
 {
-    WTF::Config::permanentlyFreeze();
+    static Lock configLock;
+    auto locker = holdLock(configLock);
 
-#if PLATFORM(COCOA)
-    RELEASE_ASSERT(roundUpToMultipleOf(vmPageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
-#endif
+    RELEASE_ASSERT(roundUpToMultipleOf(pageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
 
-    if (!g_jscConfig.isPermanentlyFrozen)
-        g_jscConfig.isPermanentlyFrozen = true;
+    if (!g_wtfConfig.isPermanentlyFrozen)
+        g_wtfConfig.isPermanentlyFrozen = true;
 
     int result = 0;
 #if OS(DARWIN)
@@ -71,15 +58,15 @@ void Config::permanentlyFreeze()
     };
 
     // There's no going back now!
-    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_jscConfig), ConfigSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_wtfConfig), ConfigSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
 #elif OS(LINUX)
-    result = mprotect(&g_jscConfig, ConfigSizeToProtect, PROT_READ);
+    result = mprotect(&g_wtfConfig, ConfigSizeToProtect, PROT_READ);
 #elif OS(WINDOWS)
     // FIXME: Implement equivalent, maybe with VirtualProtect.
     // Also need to fix WebKitTestRunner.
 #endif
     RELEASE_ASSERT(!result);
-    RELEASE_ASSERT(g_jscConfig.isPermanentlyFrozen);
+    RELEASE_ASSERT(g_wtfConfig.isPermanentlyFrozen);
 }
 
-} // namespace JSC
+} // namespace WTF

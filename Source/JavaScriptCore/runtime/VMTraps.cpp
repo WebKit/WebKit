@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -198,6 +198,9 @@ public:
     SignalSender(const AbstractLocker& locker, VM& vm)
         : Base(locker, vm.traps().m_lock, vm.traps().m_condition.copyRef())
         , m_vm(vm)
+    { }
+
+    static void initializeSignals()
     {
         static std::once_flag once;
         std::call_once(once, [] {
@@ -295,6 +298,14 @@ private:
 };
 
 #endif // ENABLE(SIGNAL_BASED_VM_TRAPS)
+
+void VMTraps::initializeSignals()
+{
+#if ENABLE(SIGNAL_BASED_VM_TRAPS)
+    if (!Options::usePollingTraps())
+        SignalSender::initializeSignals();
+#endif
+}
 
 void VMTraps::willDestroyVM()
 {

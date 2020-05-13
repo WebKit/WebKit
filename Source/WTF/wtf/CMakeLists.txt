@@ -270,6 +270,7 @@ set(WTF_PUBLIC_HEADERS
     Vector.h
     VectorHash.h
     VectorTraits.h
+    WTFConfig.h
     WTFSemaphore.h
     WallTime.h
     WeakHashSet.h
@@ -428,6 +429,7 @@ set(WTF_SOURCES
     UniqueArray.cpp
     Vector.cpp
     WTFAssertions.cpp
+    WTFConfig.cpp
     WallTime.cpp
     WordLock.cpp
     WorkQueue.cpp

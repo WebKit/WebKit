@@ -36,8 +36,10 @@
 #include <wtf/ThreadGroup.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/WTFConfig.h>
 #include <wtf/text/AtomStringTable.h>
 #include <wtf/text/StringView.h>
+#include <wtf/threads/Signals.h>
 
 #if HAVE(QOS_CLASSES)
 #include <bmalloc/bmalloc.h>
@@ -337,12 +339,16 @@ void initializeThreading()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+        Config::AssertNotFrozenScope assertScope;
         initializeRandomNumberGenerator();
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)
         Thread::initializeTLSKey();
 #endif
         initializeDates();
         Thread::initializePlatformThreading();
+#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+        SignalHandlers::initialize();
+#endif
     });
 }
 

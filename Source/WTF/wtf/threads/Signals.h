@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,13 @@
 #include <signal.h>
 #include <tuple>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
+
+#if HAVE(MACH_EXCEPTIONS)
+#include <mach/exception_types.h>
+#endif
 
 namespace WTF {
 
@@ -82,17 +87,43 @@ struct SigInfo {
 };
 
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
+using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
 
-// Call this method whenever you want to install a signal handler. It's ok to call this function lazily.
+struct SignalHandlers {
+    static void initialize();
+
+    void add(Signal, SignalHandler&&);
+    template<typename Func>
+    void forEachHandler(Signal, const Func&) const;
+
+    static constexpr size_t numberOfSignals = static_cast<size_t>(Signal::NumberOfSignals);
+    static constexpr size_t maxNumberOfHandlers = 2;
+
+    static_assert(numberOfSignals < std::numeric_limits<uint8_t>::max());
+
+#if HAVE(MACH_EXCEPTIONS)
+    mach_port_t exceptionPort;
+    exception_mask_t activeExceptions;
+    bool useMach;
+#endif
+    uint8_t numberOfHandlers[numberOfSignals];
+    SignalHandlerMemory handlers[numberOfSignals][maxNumberOfHandlers];
+    struct sigaction oldActions[numberOfSignals];
+};
+
+// Call this method whenever you want to install a signal handler. This function needs to be called
+// before g_wtfConfig is frozen. After the g_wtfConfig is frozen, no additional signal handlers may
+// be installed. Any attempt to do so will trigger a crash.
 // Note: Your signal handler will be called every time the handler for the desired signal is called.
 // Thus it is your responsibility to discern if the signal fired was yours.
-// This function is currently a one way street i.e. once installed, a signal handler cannot be uninstalled.
+// This function is a one way street i.e. once installed, a signal handler cannot be uninstalled.
 WTF_EXPORT_PRIVATE void installSignalHandler(Signal, SignalHandler&&);
 
 
 #if HAVE(MACH_EXCEPTIONS)
 class Thread;
 void registerThreadForMachExceptionHandling(Thread&);
+void startMachExceptionHandlerThread();
 
 void handleSignalsWithMach();
 #endif // HAVE(MACH_EXCEPTIONS)
