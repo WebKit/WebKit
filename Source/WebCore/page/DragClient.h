@@ -37,7 +37,10 @@ class DataTransfer;
 class Element;
 class Frame;
 class Image;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
 struct PromisedAttachmentInfo;
+#endif
 
 class DragClient {
     WTF_MAKE_FAST_ALLOCATED;

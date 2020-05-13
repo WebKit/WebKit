@@ -46,7 +46,6 @@
 #import "PlatformStrategies.h"
 #import "Range.h"
 #import "RuntimeEnabledFeatures.h"
-#import "UTIUtilities.h"
 
 #if ENABLE(DATA_INTERACTION)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -90,14 +89,6 @@ const IntSize& DragController::maxDragImageSize()
     static const IntSize maxDragImageSize(400, 400);
     
     return maxDragImageSize;
-}
-
-String DragController::platformContentTypeForBlobType(const String& type) const
-{
-    auto utiType = UTIFromMIMEType(type);
-    if (!utiType.isEmpty())
-        return utiType;
-    return type;
 }
 
 void DragController::cleanupAfterSystemDrag()

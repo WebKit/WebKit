@@ -293,6 +293,11 @@
 #endif
 }
 
+- (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
+{
+    [_contentView _simulateElementAction:actionType atLocation:location];
+}
+
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location
 {
     [_contentView _simulateLongPressActionAtLocation:location];

@@ -124,6 +124,10 @@
 #include "ServicesOverlayController.h"
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+#include "PromisedAttachmentInfo.h"
+#endif
+
 namespace WebCore {
 
 static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
@@ -3950,6 +3954,11 @@ void Editor::platformFontAttributesAtSelectionStart(FontAttributes&, const Rende
 {
 }
 
+String Editor::platformContentTypeForBlobType(const String& type) const
+{
+    return type;
+}
+
 #endif
 
 static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Position& position)
@@ -4082,6 +4091,33 @@ FontAttributes Editor::fontAttributesAtSelectionStart() const
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
+
+PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
+{
+    auto* client = this->client();
+    if (!client || !client->supportsClientSideAttachmentData())
+        return { };
+
+    RefPtr<HTMLAttachmentElement> attachment;
+    if (is<HTMLAttachmentElement>(element))
+        attachment = &downcast<HTMLAttachmentElement>(element);
+    else if (is<HTMLImageElement>(element))
+        attachment = downcast<HTMLImageElement>(element).attachmentElement();
+
+    if (!attachment)
+        return { };
+
+    Vector<String> additionalTypes;
+    Vector<RefPtr<SharedBuffer>> additionalData;
+#if PLATFORM(COCOA)
+    getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
+#endif
+
+    if (auto* file = attachment->file())
+        return { file->url(), platformContentTypeForBlobType(file->type()), file->name(), { }, WTFMove(additionalTypes), WTFMove(additionalData) };
+
+    return { { }, { }, { }, attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
+}
 
 void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<SharedBuffer>&& data)
 {

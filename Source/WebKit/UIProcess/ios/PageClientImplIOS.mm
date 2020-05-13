@@ -952,6 +952,15 @@ void PageClientImpl::showDataDetectorsUIForPositionInformation(const Interaction
     [m_contentView _showDataDetectorsUIForPositionInformation:positionInformation];
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void PageClientImpl::writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&& info)
+{
+    [m_contentView _writePromisedAttachmentToPasteboard:WTFMove(info)];
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

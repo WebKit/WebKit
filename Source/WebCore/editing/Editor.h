@@ -92,6 +92,7 @@ struct PasteboardURL;
 struct TextCheckingResult;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
+struct PromisedAttachmentInfo;
 struct SerializedAttachmentData;
 #endif
 
@@ -559,6 +560,7 @@ public:
     void didInsertAttachmentElement(HTMLAttachmentElement&);
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
 
+    WEBCORE_EXPORT PromisedAttachmentInfo promisedAttachmentInfo(Element&);
 #if PLATFORM(COCOA)
     void getPasteboardTypesAndDataForAttachment(Element&, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData);
 #endif
@@ -618,6 +620,8 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     void notifyClientOfAttachmentUpdates();
 #endif
+
+    String platformContentTypeForBlobType(const String& type) const;
 
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 

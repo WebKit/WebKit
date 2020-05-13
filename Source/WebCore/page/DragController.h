@@ -137,14 +137,9 @@ struct PromisedAttachmentInfo;
         bool tryToUpdateDroppedImagePlaceholders(const DragData&);
         void removeAllDroppedImagePlaceholders();
 
-        String platformContentTypeForBlobType(const String& type) const;
-
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-        PromisedAttachmentInfo promisedAttachmentInfo(Frame&, Element&);
-#endif
         Page& m_page;
         std::unique_ptr<DragClient> m_client;
 

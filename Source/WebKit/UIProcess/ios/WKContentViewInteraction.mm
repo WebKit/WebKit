@@ -149,6 +149,10 @@
 #import <UIKit/_UILookupGestureRecognizer.h>
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+#import "APIAttachment.h"
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
 #import "WKFormColorControl.h"
 #endif
@@ -8587,6 +8591,61 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #endif // HAVE(UI_CURSOR_INTERACTION)
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& page, const WebCore::PromisedAttachmentInfo& info)
+{
+    auto numberOfAdditionalTypes = info.additionalTypes.size();
+    ASSERT(numberOfAdditionalTypes == info.additionalData.size());
+
+    auto attachment = page.attachmentForIdentifier(info.attachmentIdentifier);
+    if (!attachment)
+        return { };
+
+    NSString *utiType = attachment->utiType();
+    if (![utiType length])
+        return { };
+
+    auto fileWrapper = retainPtr(attachment->fileWrapper());
+    if (!fileWrapper)
+        return { };
+
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+
+    NSString *fileName = attachment->fileName();
+    if ([fileName length])
+        [item setSuggestedName:fileName];
+
+    if (numberOfAdditionalTypes == info.additionalData.size() && numberOfAdditionalTypes) {
+        for (size_t index = 0; index < numberOfAdditionalTypes; ++index) {
+            auto nsData = info.additionalData[index]->createNSData();
+            [item registerDataRepresentationForTypeIdentifier:info.additionalTypes[index] visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[nsData](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+                completionHandler(nsData.get(), nil);
+                return nil;
+            }];
+        }
+    }
+
+    [item registerDataRepresentationForTypeIdentifier:utiType visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[fileWrapper](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+        if (auto nsData = retainPtr([fileWrapper serializedRepresentation]))
+            completionHandler(nsData.get(), nil);
+        else
+            completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
+        return nil;
+    }];
+
+    return item;
+}
+
+- (void)_writePromisedAttachmentToPasteboard:(WebCore::PromisedAttachmentInfo&&)info
+{
+    if (auto item = createItemProvider(*_page, WTFMove(info)))
+        UIPasteboard.generalPasteboard.itemProviders = @[ item.get() ];
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
+
 @end
 
 @implementation WKContentView (WKTesting)
@@ -8627,6 +8686,16 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #else
     [self insertText:text];
 #endif
+}
+
+- (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
+{
+    RetainPtr<WKContentView> protectedSelf = self;
+    [self doAfterPositionInformationUpdate:[actionType, protectedSelf] (WebKit::InteractionInformationAtPosition info) {
+        _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType assistant:protectedSelf->_actionSheetAssistant.get()];
+        _WKActivatedElementInfo *elementInfo = [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:info userInfo:nil];
+        [action runActionWithElementInfo:elementInfo];
+    } forRequest:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(location))];
 }
 
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location

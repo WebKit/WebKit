@@ -258,6 +258,10 @@ private:
     RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&) final;
+#endif
+
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
     WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
 

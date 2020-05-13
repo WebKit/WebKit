@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WKWebView.h>
+#import <WebKit/_WKElementAction.h>
 
 #if TARGET_OS_IPHONE
 
@@ -67,6 +68,7 @@
 - (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action;
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID;
+- (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location;
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 - (void)_simulateTextEntered:(NSString *)text;
 

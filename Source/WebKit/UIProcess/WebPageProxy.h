@@ -157,6 +157,10 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include "SOAuthorizationLoadPolicy.h"
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+#include <WebCore/PromisedAttachmentInfo.h>
+#endif
+
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -2262,6 +2266,8 @@ private:
     void didRemoveAttachment(API::Attachment&);
     Ref<API::Attachment> ensureAttachment(const String& identifier);
     void invalidateAllAttachments();
+
+    void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&);
 #endif
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });

@@ -1,3 +1,65 @@
+2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] "Copy" context menu action for attachment element does not work in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=211817
+        <rdar://problem/58043110>
+
+        Reviewed by Tim Horton.
+
+        Implements support for copying an attachment element, via context menu actions. To achieve this, we first
+        refactor code in WebCore that is currently responsible for converting an attachment element into a
+        PromisedAttachmentInfo, which provides a handle to an UI-process-side API attachment object. We then use this
+        helper in WebKit to send PromisedAttachmentInfo back to the UI process when handling the copy action from the
+        context menu on iOS.
+
+        On iOS, we then take this promised attachment info in the UI process, map it to an API::Attachment object, and
+        use the file handle to create and write an NSItemProvider to the general pasteboard. (In the future, similar
+        logic could be implemented on macOS as well to handle copying attachment elements by implementing a version of
+        writePromisedAttachmentToPasteboard in PageClientImplMac. Currently, we fall back to treating this case as if
+        we're copying a text selection containing a single attachment element).
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+
+        Add a new helper function to simulate an element action (_WKElementActionType) for an element at the given
+        location. This is used by the new API test.
+
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _simulateElementAction:atLocation:]):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::writePromisedAttachmentToPasteboard):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::writePromisedAttachmentToPasteboard):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add an IPC message for the UI process to receive a PromisedAttachmentInfo, and copy it to the system pasteboard
+        if it maps to an actual API::Attachment. For now, we only support copying data if the attachment is backed by
+        a file wrapper in the UI process (as opposed to blob data written by the web process).
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::writePromisedAttachmentToPasteboard):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createItemProvider):
+
+        Create a helper function to convert PromisedAttachmentInfo into an NSItemProvider. This is similar to
+        `-_prepareToDragPromisedAttachment:`, but with a couple differences: (1) we only create an NSItemProvider
+        instead of going through `WebItemProviderRegistrationInfoList`; (2) since there's no opportunity to clean up
+        temporary after pasting, serialize the attachment data using `-serializedRepresentation`, and provide the
+        attachment data instead of a file URL.
+
+        Ideally, we would offer the data directly to the pasteboard so that even if Mail terminates, the contents of the
+        pasteboard can still be provided when pasting; however, it doesn't seem like we can do this while being able to
+        offer a suggested name for the item we're writing. Some other apps work around this limitation by writing the
+        file name as plain text on the pasteboard, but this doesn't work then attempting to copy a plain text file that
+        has a file name.
+
+        (-[WKContentView _writePromisedAttachmentToPasteboard:]):
+        (-[WKContentView _simulateElementAction:atLocation:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement):
+
 2020-05-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Update message filtering rules in the WebContent process' sandbox

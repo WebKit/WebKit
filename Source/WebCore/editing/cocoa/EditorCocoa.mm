@@ -55,6 +55,7 @@
 #import "RenderStyle.h"
 #import "Settings.h"
 #import "Text.h"
+#import "UTIUtilities.h"
 #import "WebContentReader.h"
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
@@ -255,6 +256,14 @@ void Editor::takeFindStringFromSelection()
         client->updateStringForFind(stringFromSelection);
     }
 #endif
+}
+
+String Editor::platformContentTypeForBlobType(const String& type) const
+{
+    auto utiType = UTIFromMIMEType(type);
+    if (!utiType.isEmpty())
+        return utiType;
+    return type;
 }
 
 }

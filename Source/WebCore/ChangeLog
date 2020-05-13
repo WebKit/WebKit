@@ -1,3 +1,41 @@
+2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] "Copy" context menu action for attachment element does not work in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=211817
+        <rdar://problem/58043110>
+
+        Reviewed by Tim Horton.
+
+        Minor refactoring to help support writing attachment data to the pasteboard when using context menu actions to
+        copy an attachment element on iOS. See below for more details, as well as the WebKit ChangeLog entry.
+
+        Test: WKAttachmentTestsIOS.CopyAttachmentUsingElementAction
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::platformContentTypeForBlobType const):
+        (WebCore::Editor::promisedAttachmentInfo):
+
+        Move promisedAttachmentInfo out of DragController and into Editor, so that it is accessible outside of drag
+        and drop code.
+
+        * editing/Editor.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::platformContentTypeForBlobType const):
+
+        Move this private helper function out of DragController as well, and into Editor.
+
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+        Refactor this to use Editor::promisedAttachmentInfo().
+
+        (WebCore::DragController::platformContentTypeForBlobType const): Deleted.
+        (WebCore::DragController::promisedAttachmentInfo): Deleted.
+        * page/DragController.h:
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::platformContentTypeForBlobType const): Deleted.
+
 2020-05-13  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Calling reverse() on an accelerated animation has no effect

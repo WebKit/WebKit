@@ -1036,7 +1036,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         ASSERT(!image->filenameExtension().isEmpty());
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        auto attachmentInfo = promisedAttachmentInfo(src, element);
+        auto attachmentInfo = src.editor().promisedAttachmentInfo(element);
 #else
         PromisedAttachmentInfo attachmentInfo;
 #endif
@@ -1132,9 +1132,9 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
         PromisedAttachmentInfo promisedAttachment;
         if (hasData == HasNonDefaultPasteboardData::No) {
-            promisedAttachment = promisedAttachmentInfo(src, attachment);
-#if PLATFORM(COCOA)
             auto& editor = src.editor();
+            promisedAttachment = editor.promisedAttachmentInfo(attachment);
+#if PLATFORM(COCOA)
             if (!promisedAttachment && editor.client()) {
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
                 editor.willWriteSelectionToPasteboard(createLiveRange(src.selection().selection().toNormalizedRange()).get());
@@ -1473,46 +1473,6 @@ bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
     return image.size().height() * image.size().width() <= MaxOriginalImageArea;
 #endif
 }
-
-#if !PLATFORM(COCOA)
-
-String DragController::platformContentTypeForBlobType(const String& type) const
-{
-    return type;
-}
-
-#endif
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-PromisedAttachmentInfo DragController::promisedAttachmentInfo(Frame& frame, Element& element)
-{
-    auto* client = frame.editor().client();
-    if (!client || !client->supportsClientSideAttachmentData())
-        return { };
-
-    RefPtr<HTMLAttachmentElement> attachment;
-    if (is<HTMLAttachmentElement>(element))
-        attachment = &downcast<HTMLAttachmentElement>(element);
-    else if (is<HTMLImageElement>(element))
-        attachment = downcast<HTMLImageElement>(element).attachmentElement();
-
-    if (!attachment)
-        return { };
-
-    Vector<String> additionalTypes;
-    Vector<RefPtr<SharedBuffer>> additionalData;
-#if PLATFORM(COCOA)
-    frame.editor().getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
-#endif
-
-    if (auto* file = attachment->file())
-        return { file->url(), platformContentTypeForBlobType(file->type()), file->name(), { }, WTFMove(additionalTypes), WTFMove(additionalData) };
-
-    return { { }, { }, { }, attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
-}
-
-#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #endif // ENABLE(DRAG_SUPPORT)
 

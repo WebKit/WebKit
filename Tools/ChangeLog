@@ -1,3 +1,15 @@
+2020-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] "Copy" context menu action for attachment element does not work in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=211817
+        <rdar://problem/58043110>
+
+        Reviewed by Tim Horton.
+
+        Add a new iOS API test that simulates the context menu action to "copy" on an attachment element.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
 2020-05-12  Matt Lewis  <jlewis3@apple.com>
 
         Run-webkit-tests should not fail if all tests found to run are skipped.

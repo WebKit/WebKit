@@ -106,6 +106,10 @@ using FloatBoxExtent = RectEdges<float>;
 #if ENABLE(DRAG_SUPPORT)
 struct DragItem;
 #endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+struct PromisedAttachmentInfo;
+#endif
 }
 
 namespace WebKit {
@@ -509,6 +513,7 @@ public:
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }
     virtual void didInvalidateDataForAttachment(API::Attachment&) { }
+    virtual void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&) { }
 #if PLATFORM(COCOA)
     virtual NSFileWrapper *allocFileWrapperInstance() const { return nullptr; }
     virtual NSSet *serializableFileWrapperClasses() const { return nullptr; }

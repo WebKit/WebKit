@@ -50,6 +50,7 @@
 #import "WKShareSheet.h"
 #import "WKSyntheticTapGestureRecognizer.h"
 #import "WKTouchActionGestureRecognizer.h"
+#import "_WKElementAction.h"
 #import "_WKFormInputSession.h"
 #import <UIKit/UIView.h>
 #import <WebCore/ActivityState.h>
@@ -598,10 +599,15 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_removeContextMenuViewIfPossible;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+- (void)_writePromisedAttachmentToPasteboard:(WebCore::PromisedAttachmentInfo&&)info;
+#endif
+
 @end
 
 @interface WKContentView (WKTesting)
 
+- (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location;
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 - (void)_simulateTextEntered:(NSString *)text;
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;

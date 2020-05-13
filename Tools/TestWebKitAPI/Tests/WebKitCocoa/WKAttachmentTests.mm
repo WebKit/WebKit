@@ -2153,6 +2153,48 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageWithNonImageFileExtension)
     });
 }
 
+TEST(WKAttachmentTestsIOS, CopyAttachmentUsingElementAction)
+{
+    UIPasteboard.generalPasteboard.items = @[ ];
+
+    auto webView = webViewForTestingAttachments();
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body></body><script>document.body.focus();</script>"];
+
+    auto document = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testPDFData()]);
+    [document setPreferredFilename:@"hello.pdf"];
+
+    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFileWrapper:document.get() contentType:(__bridge NSString *)kUTTypePDF]);
+    NSString *identifier = [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"];
+    EXPECT_WK_STREQ(identifier, [attachment uniqueIdentifier]);
+
+    // Ensure that we can hit-test to the attachment element when simulating a context menu element by adding a click event handler.
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('attachment').addEventListener('click', () => { })"];
+    [webView _setEditable:NO];
+
+    [webView _simulateElementAction:_WKElementActionTypeCopy atLocation:CGPointMake(20, 20)];
+
+    // It takes two IPC round trips between the UI process and web process until the pasteboard data is written,
+    // since we first need to hit-test to discover the activated element, and then use the activated element to
+    // simulate the "copy" action.
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    NSArray<NSItemProvider *> *itemProviders = UIPasteboard.generalPasteboard.itemProviders;
+    EXPECT_EQ(1U, itemProviders.count);
+
+    NSItemProvider *itemProvider = itemProviders.firstObject;
+    EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
+    EXPECT_WK_STREQ("hello.pdf", itemProvider.suggestedName);
+
+    __block bool done = false;
+    [itemProvider loadDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePDF completionHandler:^(NSData *data, NSError *) {
+        EXPECT_TRUE([[document serializedRepresentation] isEqualToData:data]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 #if HAVE(PENCILKIT)
 static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
 {
