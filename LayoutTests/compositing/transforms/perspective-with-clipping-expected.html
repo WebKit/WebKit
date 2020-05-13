@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            display: inline-block;
+            background-color: silver;
+            position: relative;
+            overflow: hidden;
+            perspective: 500px;
+        }
+
+        .angled {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="transform-box: border-box; border-left: 50px solid black; border-top: 50px solid black; perspective-origin: 150px 150px;">
+        <div class="angled"></div>
+        <div class="angled vertical"></div>
+    </div>
+
+    <div class="container" style="transform-box: view-box; border-left: 50px solid black; border-top: 50px solid black; perspective-origin: 150px 150px">
+        <div class="angled"></div>
+        <div class="angled vertical"></div>
+    </div>
+
+    <div class="container" style="transform-box: content-box; border-right: 50px solid black; border-bottom: 50px solid black; perspective-origin: 100px 100px">
+        <div class="angled"></div>
+        <div class="angled vertical"></div>
+    </div>
+
+    <div class="container" style="transform-box: content-box; border-left: 50px solid black; border-top: 50px solid black; perspective-origin: 100px 100px">
+        <div class="angled"></div>
+        <div class="angled vertical"></div>
+    </div>
+
+    <div class="container" style="transform-box: content-box; border-left: 50px solid black; border-top: 50px solid black; perspective-origin: 50% 50%">
+        <div class="angled"></div>
+        <div class="angled vertical"></div>
+    </div>
+</body>
+</html>

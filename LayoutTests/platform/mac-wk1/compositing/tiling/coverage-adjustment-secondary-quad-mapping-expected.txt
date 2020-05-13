@@ -26,7 +26,7 @@
                   (position 1.00 1.00)
                   (bounds 583.00 578.00)
                   (backingStoreAttached 1)
-                  (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-300.00 -290.00 1.00 -1.00] [0.00 0.00 0.00 1.00])
+                  (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-307.50 -290.00 1.00 -1.00] [0.00 0.00 0.00 1.00])
                   (children 1
                     (GraphicsLayer
                       (position 0.00 -400.00)

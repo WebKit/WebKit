@@ -1750,7 +1750,7 @@ TransformationMatrix RenderLayer::perspectiveTransform(const LayoutRect& layerRe
     auto pixelSnappedReferenceBox = snapRectToDevicePixels(referenceBox, deviceScaleFactor);
     auto snappedLayerRect = snapRectToDevicePixels(layerRect, deviceScaleFactor);
 
-    auto perspectiveOrigin = pixelSnappedReferenceBox.location() + floatPointForLengthPoint(style.perspectiveOrigin(), pixelSnappedReferenceBox.size());
+    auto perspectiveOrigin = pixelSnappedReferenceBox.location() - toFloatSize(snappedLayerRect.location()) + floatPointForLengthPoint(style.perspectiveOrigin(), pixelSnappedReferenceBox.size());
 
     // A perspective origin of 0,0 makes the vanishing point in the center of the element.
     // We want it to be in the top-left, so subtract half the height and width.

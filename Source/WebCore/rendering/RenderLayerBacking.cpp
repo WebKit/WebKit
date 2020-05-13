@@ -594,6 +594,28 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_graphicsLayer);
 }
 
+static LayoutRect scrollContainerLayerBox(const RenderBox& renderBox)
+{
+    return renderBox.paddingBoxRect();
+}
+
+static LayoutRect clippingLayerBox(const RenderBox& renderBox)
+{
+    LayoutRect result = LayoutRect::infiniteRect();
+    if (renderBox.hasOverflowClip())
+        result = renderBox.overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
+
+    if (renderBox.hasClip())
+        result.intersect(renderBox.clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
+
+    return result;
+}
+
+static LayoutRect overflowControlsHostLayerBox(const RenderBox& renderBox)
+{
+    return renderBox.paddingBoxRectIncludingScrollbar();
+}
+
 void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 {
     m_graphicsLayer->setOpacity(compositingOpacity(style.opacity()));
@@ -652,7 +674,8 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
     }
 
     // FIXME: borderBoxRect isn't quite right here. This needs work: webkit.org/b/211787.
-    auto perspectiveTransform = owningLayer().perspectiveTransform(borderBoxRect);
+    auto perspectiveRelativeBox = clipLayer ? clippingLayerBox(downcast<RenderBox>(renderer())) : borderBoxRect;
+    auto perspectiveTransform = owningLayer().perspectiveTransform(perspectiveRelativeBox);
     if (clipLayer) {
         clipLayer->setChildrenTransform(perspectiveTransform);
         m_graphicsLayer->setChildrenTransform({ });
@@ -1146,28 +1169,6 @@ LayoutRect RenderLayerBacking::computePrimaryGraphicsLayerRect(const RenderLayer
     ComputedOffsets compositedBoundsOffset(m_owningLayer, compositedAncestor, compositedBounds(), parentGraphicsLayerRect, { });
     return LayoutRect(encloseRectToDevicePixels(LayoutRect(toLayoutPoint(compositedBoundsOffset.fromParentGraphicsLayer()), compositedBounds().size()),
         deviceScaleFactor()));
-}
-
-static LayoutRect scrollContainerLayerBox(const RenderBox& renderBox)
-{
-    return renderBox.paddingBoxRect();
-}
-
-static LayoutRect clippingLayerBox(const RenderBox& renderBox)
-{
-    LayoutRect result = LayoutRect::infiniteRect();
-    if (renderBox.hasOverflowClip())
-        result = renderBox.overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
-
-    if (renderBox.hasClip())
-        result.intersect(renderBox.clipRect({ }, 0)); // FIXME: Incorrect for CSS regions.
-
-    return result;
-}
-
-static LayoutRect overflowControlsHostLayerBox(const RenderBox& renderBox)
-{
-    return renderBox.paddingBoxRectIncludingScrollbar();
 }
 
 // FIXME: See if we need this now that updateGeometry() is always called in post-order traversal.

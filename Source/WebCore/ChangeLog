@@ -1,3 +1,25 @@
+2020-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        The perspective matrix is affected by overflow:hidden on a box with borders
+        https://bugs.webkit.org/show_bug.cgi?id=211828
+
+        Reviewed by Zalan Bujtas.
+
+        For a box with non-uniform borders, the layer created for overflow:hidden is not
+        centered in its parent layer. However, we push the childrenTransform onto this
+        clipping layer, so that transform needs to be adjusted to account for the geometry
+        of the clipping layer.
+
+        Test: compositing/transforms/perspective-with-clipping.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::perspectiveTransform const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::scrollContainerLayerBox):
+        (WebCore::clippingLayerBox):
+        (WebCore::overflowControlsHostLayerBox):
+        (WebCore::RenderLayerBacking::updateChildrenTransformAndAnchorPoint):
+
 2020-05-13  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Selected element on Web Inspector is not highlighted with CPU Rendering.
