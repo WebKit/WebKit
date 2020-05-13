@@ -60,6 +60,7 @@ scriptdir = os.path.abspath(os.path.dirname(__file__))
 _log = logging.getLogger(__name__)
 
 FLATPAK_USER_DIR_PATH = os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak"))
+DEFAULT_SCCACHE_SCHEDULER='https://sccache.igalia.com'
 
 is_colored_output_supported = False
 try:
@@ -427,8 +428,8 @@ class WebkitFlatpak:
                              help="Regenerate IceCC distribuable toolchain archives")
         distributed_build_options.add_argument("-t", "--sccache-token", dest="sccache_token",
                                                help="sccache authentication token")
-        distributed_build_options.add_argument("-s", "--sccache-scheduler", dest="sccache_scheduler", default='https://sccache.igalia.com',
-                                               help="sccache scheduler URL")
+        distributed_build_options.add_argument("-s", "--sccache-scheduler", dest="sccache_scheduler",
+                                               help="sccache scheduler URL (default: %s)" % DEFAULT_SCCACHE_SCHEDULER)
 
         debugoptions = parser.add_argument_group("Debugging")
         debugoptions.add_argument("--gdb", nargs="?", help="Activate gdb, passing extra args to it if wanted.")
@@ -484,7 +485,7 @@ class WebkitFlatpak:
         self.icc_version = {}
         self.regenerate_toolchains = False
         self.sccache_token = ""
-        self.sccache_scheduler = ""
+        self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
     def execute_command(self, args, stdout=None, stderr=None):
         _log.debug('Running in sandbox: %s\n' % ' '.join(args))
