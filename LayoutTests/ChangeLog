@@ -1,5 +1,14 @@
 2020-05-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [Win EWS] webanimations/accelerated-animation-slot-invalidation.html is frequently failing
+        https://bugs.webkit.org/show_bug.cgi?id=211854
+
+        Unrevewed test gardening.
+
+        * platform/win/TestExpectations: Mark test as flaky to speed up EWS.
+
+2020-05-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening for iOS Simulator.
 
         Add test expectations for webkit.org/b/211652 and webkit.org/b/211653.
