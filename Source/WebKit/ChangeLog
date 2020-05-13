@@ -1,3 +1,29 @@
+2020-05-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r261254): Broke Apple Pay on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=211826
+        <rdar://problem/63161750>
+
+        Reviewed by Alex Christensen.
+
+        r261254 dropped the code needed to add the WebPaymentCoordinatorProxy as an IPC message receiver.
+        This patch re-introduces the code in order to address the regression.
+
+        No new tests, tested manually on https://applepaydemo.apple.com.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm:
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver):
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorRemoveMessageReceiver):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy):
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorAddMessageReceiver):
+        (WebKit::WebPageProxy::paymentCoordinatorRemoveMessageReceiver):
+        * UIProcess/WebPageProxy.h:
+
 2020-05-13  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r260571): RequestedScrollPosition doesn't have its scroll change applied to layers anymore

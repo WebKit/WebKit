@@ -85,6 +85,14 @@ std::unique_ptr<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::pa
     return makeUnique<PaymentAuthorizationController>(coordinator, request);
 }
 
+void NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&)
+{
+}
+
+void NetworkConnectionToWebProcess::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName)
+{
+}
+
 #endif // ENABLE(APPLE_PAY_REMOTE_UI)
 
 } // namespace WebKit

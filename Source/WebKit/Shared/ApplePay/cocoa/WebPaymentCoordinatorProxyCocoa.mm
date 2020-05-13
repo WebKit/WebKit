@@ -79,12 +79,15 @@ WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProx
     : m_client(client)
     , m_canMakePaymentsQueue(WorkQueue::create("com.apple.WebKit.CanMakePayments"))
 {
+    m_client.paymentCoordinatorAddMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName(), *this);
 }
 
 WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
 {
     if (m_state != State::Idle)
         hidePaymentUI();
+
+    m_client.paymentCoordinatorRemoveMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName());
 }
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
