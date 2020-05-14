@@ -29,6 +29,7 @@
 #include "RemoteWebInspectorProxyMessages.h"
 #include "RemoteWebInspectorUIMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebInspectorUI.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/CertificateInfo.h>
@@ -54,6 +55,7 @@ RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
     : m_page(page)
     , m_frontendAPIDispatcher(page)
 {
+    WebInspectorUI::enableFrontendFeatures();
 }
 
 void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)

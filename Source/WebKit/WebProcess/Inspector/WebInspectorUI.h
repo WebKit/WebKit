@@ -47,6 +47,8 @@ class WebInspectorUI : public RefCounted<WebInspectorUI>, private IPC::Connectio
 public:
     static Ref<WebInspectorUI> create(WebPage&);
 
+    static void enableFrontendFeatures();
+
     // Implemented in generated WebInspectorUIMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

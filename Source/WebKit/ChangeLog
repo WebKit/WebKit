@@ -1,3 +1,17 @@
+2020-05-13  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: `RuntimeEnabledFeatures` should also be enabled when remotely inspecting
+        https://bugs.webkit.org/show_bug.cgi?id=211874
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::enableFrontendFeatures): Added.
+        (WebKit::WebInspectorUI::WebInspectorUI):
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::RemoteWebInspectorUI):
+
 2020-05-13  Megan Gardner  <megan_gardner@apple.com>
 
         Unreviewed Build Fix.

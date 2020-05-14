@@ -48,16 +48,21 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
     return adoptRef(*new WebInspectorUI(page));
 }
 
-WebInspectorUI::WebInspectorUI(WebPage& page)
-    : m_page(page)
-    , m_frontendAPIDispatcher(page)
-    , m_debuggableInfo(DebuggableInfoData::empty())
+void WebInspectorUI::enableFrontendFeatures()
 {
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setImageBitmapEnabled(true);
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(true);
 #endif
+}
+
+WebInspectorUI::WebInspectorUI(WebPage& page)
+    : m_page(page)
+    , m_frontendAPIDispatcher(page)
+    , m_debuggableInfo(DebuggableInfoData::empty())
+{
+    WebInspectorUI::enableFrontendFeatures();
 }
 
 void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIdentifier, const DebuggableInfoData& debuggableInfo, bool underTest, unsigned inspectionLevel)
