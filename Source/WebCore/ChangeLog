@@ -1,3 +1,23 @@
+2020-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Add sourceURL to _evaluateJavaScript: so the scripts appear in Web Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=211904
+        rdar://problem/62074376
+
+        Reviewed by Devin Rousso.
+
+        Added sourceURL to RunJavaScriptParameters. Use it instead of the frame's document URL.
+
+        * bindings/js/RunJavaScriptParameters.h:
+        (WebCore::RunJavaScriptParameters::RunJavaScriptParameters):
+        (WebCore::RunJavaScriptParameters::encode const):
+        (WebCore::RunJavaScriptParameters::decode):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorldIgnoringException):
+        (WebCore::ScriptController::executeScriptInWorld):
+        (WebCore::ScriptController::callInWorld):
+        (WebCore::ScriptController::executeUserAgentScriptInWorld):
+
 2020-05-14  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Don't clear NowPlaying state unless it was set

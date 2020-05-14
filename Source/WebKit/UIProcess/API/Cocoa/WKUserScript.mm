@@ -36,7 +36,7 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld());
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, API::UserScript::generateUniqueURL(), { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld());
 
     return self;
 }
@@ -85,7 +85,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *userContentWorld->_contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, API::UserScript::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *userContentWorld->_contentWorld->_contentWorld);
 
     return self;
 }
@@ -95,7 +95,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), URL(associatedURL), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *userContentWorld->_contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *userContentWorld->_contentWorld->_contentWorld);
 
     return self;
 }
@@ -111,7 +111,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, API::UserScript::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
 
     return self;
 }
@@ -121,7 +121,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), URL(associatedURL), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
 
     return self;
 }
@@ -131,7 +131,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), URL(associatedURL), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, deferRunningUntilNotification ? WebCore::WaitForNotificationBeforeInjecting::Yes : WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, deferRunningUntilNotification ? WebCore::WaitForNotificationBeforeInjecting::Yes : WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
 
     return self;
 }

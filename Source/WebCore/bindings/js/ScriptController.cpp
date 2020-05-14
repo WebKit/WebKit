@@ -573,7 +573,7 @@ JSC::JSValue ScriptController::executeScriptIgnoringException(const String& scri
 
 JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, RunJavaScriptParameters { script, false, WTF::nullopt, forceUserGesture });
+    auto result = executeScriptInWorld(world, { script, URL { }, false, WTF::nullopt, forceUserGesture });
     return result ? result.value() : JSC::JSValue { };
 }
 
@@ -592,11 +592,15 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
 
-    switch (parameters.runAsAsyncFunction) {
-    case RunAsAsyncFunction::No: {
-        ScriptSourceCode sourceCode(parameters.source, URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()));
-        return evaluateInWorld(sourceCode, world);
+    auto sourceURL = parameters.sourceURL;
+    if (!sourceURL.isValid()) {
+        // FIXME: This is gross, but when setTimeout() and setInterval() are passed JS strings, the thrown errors should use the frame document URL (according to WPT).
+        sourceURL = m_frame.document()->url();
     }
+
+    switch (parameters.runAsAsyncFunction) {
+    case RunAsAsyncFunction::No:
+        return evaluateInWorld({ parameters.source, WTFMove(sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) }, world);
     case RunAsAsyncFunction::Yes:
         return callInWorld(WTFMove(parameters), world);
     default:
@@ -640,7 +644,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     functionStringBuilder.append("){", parameters.source, "})");
 
-    auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
+    auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), WTFMove(parameters.sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
     const auto& jsSourceCode = sourceCode.jsSourceCode();
 
     String sourceURL = jsSourceCode.provider()->url().string();
@@ -698,7 +702,7 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeUserAgentScriptInWorldInternal(world, { script, false, WTF::nullopt, forceUserGesture });
+    return executeUserAgentScriptInWorldInternal(world, { script, URL { }, false, WTF::nullopt, forceUserGesture });
 }
 
 ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)

@@ -3695,7 +3695,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(script), false, WTF::nullopt, true }, [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
         ExceptionDetails exceptionDetails;
         if (details)
             exceptionDetails = *details;
@@ -3797,7 +3797,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName));
-    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), false, WTF::nullopt, true }, WTF::nullopt, world.get(), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, WTF::nullopt, world.get(), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
         ExceptionDetails exceptionDetails;
         if (details)
             exceptionDetails = *details;
@@ -3839,7 +3839,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), false, WTF::nullopt, true},
+    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, false, WTF::nullopt, true },
         [task](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
             ExceptionDetails exceptionDetails;
             if (details)

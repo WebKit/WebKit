@@ -816,17 +816,17 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
 }
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES inFrame:nil inWorld:contentWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:contentWorld completionHandler:completionHandler];
 }
 
 - (void)callAsyncJavaScript:(NSString *)javaScriptString arguments:(NSDictionary<NSString *, id> *)arguments inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withArguments:arguments forceUserGesture:YES inFrame:nil inWorld:contentWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:nil inWorld:contentWorld completionHandler:completionHandler];
 }
 
 static bool validateArgument(id argument)
@@ -863,7 +863,7 @@ static bool validateArgument(id argument)
     return false;
 }
 
-- (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
+- (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withSourceURL:(NSURL *)sourceURL withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);
 
@@ -904,7 +904,7 @@ static bool validateArgument(id argument)
             frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(identifier);
     }
 
-    _page->runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters { javaScriptString, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler](API::SerializedScriptValue* serializedScriptValue, Optional<WebCore::ExceptionDetails> details, WebKit::ScriptValueCallback::Error errorCode) {
+    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler](API::SerializedScriptValue* serializedScriptValue, Optional<WebCore::ExceptionDetails> details, WebKit::ScriptValueCallback::Error errorCode) {
         if (!handler)
             return;
 
@@ -2200,17 +2200,22 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:NO inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:NO inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
 }
 
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
-    [self _evaluateJavaScript:functionBody asAsyncFunction:YES withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:functionBody asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
-    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
+}
+
+- (void)_evaluateJavaScript:(NSString *)javaScriptString withSourceURL:(NSURL *)url inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
+{
+    [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:url withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
