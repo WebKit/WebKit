@@ -1,3 +1,24 @@
+2020-05-14  Antoine Quint  <graouts@apple.com>
+
+        Cursor should not update on a 20ms timer
+        https://bugs.webkit.org/show_bug.cgi?id=211884
+        <rdar://problem/63220368>
+
+        Reviewed by Antti Koivisto.
+
+        Update the cursor during page rendering rather than using a 20ms timer.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::updateCursorIfNeeded):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::scheduleCursorUpdate):
+        (WebCore::EventHandler::cursorUpdateTimerFired): Deleted.
+        * page/EventHandler.h:
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+
 2020-05-14  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] webrtc/disable-encryption.html is a crashing flaky

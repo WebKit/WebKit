@@ -14,7 +14,6 @@
 <br/>
 <div id="console"></div>
 <script>
-var CURSOR_UPDATE_DELAY = 50;
 
 description("Test that there is no mousemove event fired when changing cursor.");
 
@@ -28,8 +27,12 @@ if (window.testRunner) {
     window.jsTestIsAsync = true;
 }
 
-// Can't do anything useful here without eventSender
-if (window.eventSender) {
+(async function()
+{
+    // Can't do anything useful here without eventSender
+    if (!window.eventSender)
+        return;
+
     var node = document.getElementById('target');
     debug('TEST CASE: ' + node.textContent);
     eventSender.mouseMoveTo(node.offsetLeft + 3, node.offsetTop + 3);
@@ -39,17 +42,17 @@ if (window.eventSender) {
         finishJSTest();
     });
     node.style.cursor = 'help';
-    setTimeout(function() {
-        debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
-        debug('');
-    }, CURSOR_UPDATE_DELAY);
+
+    // Cursor will be updated during the next animation frame.
+    await new Promise(requestAnimationFrame);
+    debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
+    debug('');
 
     // Give some time for the change to resolve. Fake mousemove event that caused bug, is using a timer
-    setTimeout(function() {
-        document.getElementById('test-container').style.display = 'none';
-        finishJSTest();
-    }, 150);
-}
+    await new Promise(resolve => setTimeout(resolve, 100));
+    document.getElementById('test-container').style.display = 'none';
+    finishJSTest();
+})();
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

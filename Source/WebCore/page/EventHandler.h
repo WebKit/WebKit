@@ -319,6 +319,7 @@ public:
 #endif
 
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
+    void updateCursorIfNeeded();
     void updateCursor();
 
     bool isHandlingWheelEvent() const { return m_isHandlingWheelEvent; }
@@ -375,7 +376,6 @@ private:
     void updateCursor(FrameView&, const HitTestResult&, bool shiftKey);
 
     void hoverTimerFired();
-    void cursorUpdateTimerFired();
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
@@ -533,7 +533,7 @@ private:
 #endif
 
     Timer m_hoverTimer;
-    Timer m_cursorUpdateTimer;
+    bool m_hasScheduledCursorUpdate { false };
 
 #if PLATFORM(MAC)
     Timer m_clearLatchingStateTimer;

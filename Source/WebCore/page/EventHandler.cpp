@@ -395,7 +395,6 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 EventHandler::EventHandler(Frame& frame)
     : m_frame(frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
-    , m_cursorUpdateTimer(*this, &EventHandler::cursorUpdateTimerFired)
 #if PLATFORM(MAC)
     , m_clearLatchingStateTimer(*this, &EventHandler::clearLatchedStateTimerFired)
 #endif
@@ -432,7 +431,7 @@ DragState& EventHandler::dragState()
 void EventHandler::clear()
 {
     m_hoverTimer.stop();
-    m_cursorUpdateTimer.stop();
+    m_hasScheduledCursorUpdate = false;
 #if !ENABLE(IOS_TOUCH_EVENTS)
     m_fakeMouseMoveEventTimer.stop();
 #endif
@@ -1416,10 +1415,10 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
     return ((isOverLink || isSubmitImage(node)) && (!editable || editableLinkEnabled));
 }
 
-void EventHandler::cursorUpdateTimerFired()
+void EventHandler::updateCursorIfNeeded()
 {
-    ASSERT(m_frame.document());
-    updateCursor();
+    if (std::exchange(m_hasScheduledCursorUpdate, false))
+        updateCursor();
 }
 
 void EventHandler::updateCursor()
@@ -1982,7 +1981,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
 
-    m_cursorUpdateTimer.stop();
+    m_hasScheduledCursorUpdate = false;
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
     cancelFakeMouseMoveEvent();
@@ -3141,13 +3140,18 @@ void EventHandler::scheduleHoverStateUpdate()
 
 void EventHandler::scheduleCursorUpdate()
 {
-    if (Page* page = m_frame.page()) {
-        if (!page->chrome().client().supportsSettingCursor())
-            return;
-    }
+    if (m_hasScheduledCursorUpdate)
+        return;
 
-    if (!m_cursorUpdateTimer.isActive())
-        m_cursorUpdateTimer.startOneShot(cursorUpdateInterval);
+    auto* page = m_frame.page();
+    if (!page)
+        return;
+
+    if (!page->chrome().client().supportsSettingCursor())
+        return;
+
+    m_hasScheduledCursorUpdate = true;
+    page->scheduleRenderingUpdate();
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoon()

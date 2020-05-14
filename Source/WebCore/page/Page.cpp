@@ -52,6 +52,7 @@
 #include "EditorClient.h"
 #include "EmptyClients.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
@@ -1361,6 +1362,11 @@ void Page::updateRendering()
     });
 
     // Flush autofocus candidates
+
+    forEachDocument([] (Document& document) {
+        if (auto* frame = document.frame())
+            frame->eventHandler().updateCursorIfNeeded();
+    });
 
     forEachDocument([] (Document& document) {
         document.runResizeSteps();
