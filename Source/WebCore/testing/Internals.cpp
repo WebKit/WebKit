@@ -5750,10 +5750,7 @@ ExceptionOr<RefPtr<WebXRTest>> Internals::xrTest()
         if (!navigator)
             return Exception { InvalidAccessError };
 
-        auto& navigatorXR = NavigatorWebXR::from(*navigator);
-        auto& xrSystem = navigatorXR.xr(*scriptExecutionContext(), *navigator);
-
-        m_xrTest = WebXRTest::create(makeWeakPtr(&xrSystem));
+        m_xrTest = WebXRTest::create(makeWeakPtr(&NavigatorWebXR::xr(*navigator)));
     }
     return m_xrTest.get();
 }

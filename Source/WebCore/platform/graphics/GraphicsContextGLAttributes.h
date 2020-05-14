@@ -53,6 +53,9 @@ struct GraphicsContextGLAttributes {
     bool noExtensions { false };
     float devicePixelRatio { 1 };
     PowerPreference initialPowerPreference { PowerPreference::Default };
+#if ENABLE(WEBXR)
+    bool xrCompatible { false };
+#endif
 };
 
 }

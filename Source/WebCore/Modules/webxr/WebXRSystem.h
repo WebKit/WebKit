@@ -29,7 +29,10 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "HTMLCanvasElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "WebGLContextAttributes.h"
+#include "WebGLRenderingContextBase.h"
 #include "XRSessionMode.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
@@ -56,6 +59,10 @@ public:
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);
 
+    // This is also needed by WebGLRenderingContextBase::makeXRCompatible() and HTMLCanvasElement::createContextWebGL().
+    void ensureImmersiveXRDeviceIsSelected();
+    bool hasActiveImmersiveXRDevice() { return !!m_activeImmersiveDevice; }
+
     // For testing purpouses only.
     void registerSimulatedXRDeviceForTesting(const PlatformXR::Device&);
     void unregisterSimulatedXRDeviceForTesting(PlatformXR::Device*);
@@ -73,8 +80,6 @@ protected:
 
 private:
     WebXRSystem(ScriptExecutionContext&);
-
-    void ensureImmersiveXRDeviceIsSelected();
 
     // https://immersive-web.github.io/webxr/#default-inline-xr-device
     class DummyInlineDevice final : public PlatformXR::Device {

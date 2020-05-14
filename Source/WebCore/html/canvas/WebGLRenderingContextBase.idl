@@ -602,6 +602,9 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     GLboolean isTexture(WebGLTexture? texture);
     void lineWidth(GLfloat width);
     void linkProgram(WebGLProgram? program);
+
+    [NewObject, Conditional=WEBXR] Promise<void> makeXRCompatible();
+
     void pixelStorei(GLenum pname, GLint param);
     void polygonOffset(GLfloat factor, GLfloat units);
 

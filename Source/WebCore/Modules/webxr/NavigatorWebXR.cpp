@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-WebXRSystem& NavigatorWebXR::xr(ScriptExecutionContext& scriptExecutionContext, Navigator& navigatorObject)
+WebXRSystem& NavigatorWebXR::xr(Navigator& navigatorObject)
 {
     auto& navigator = NavigatorWebXR::from(navigatorObject);
     if (!navigator.m_xr)
-        navigator.m_xr = WebXRSystem::create(scriptExecutionContext);
+        navigator.m_xr = WebXRSystem::create(*navigatorObject.scriptExecutionContext());
     return *navigator.m_xr;
 }
 

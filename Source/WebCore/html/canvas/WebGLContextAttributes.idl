@@ -45,4 +45,5 @@ enum WebGLPowerPreference {
     GLboolean preserveDrawingBuffer = false;
     WebGLPowerPreference powerPreference = "default";
     GLboolean failIfMajorPerformanceCaveat = false;
+    [Conditional=WEBXR] boolean xrCompatible = false;
 };

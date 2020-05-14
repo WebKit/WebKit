@@ -80,6 +80,13 @@
 #include "GPUCanvasContext.h"
 #endif
 
+#if ENABLE(WEBXR)
+#include "DOMWindow.h"
+#include "Navigator.h"
+#include "NavigatorWebXR.h"
+#include "WebXRSystem.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "MediaSampleAVFObjC.h"
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -416,10 +423,23 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& t
     if (!shouldEnableWebGL(document().settings()))
         return nullptr;
 
+#if ENABLE(WEBXR)
+    // https://immersive-web.github.io/webxr/#xr-compatible
+    if (attrs.xrCompatible) {
+        if (auto* window = document().domWindow())
+            NavigatorWebXR::xr(window->navigator()).ensureImmersiveXRDeviceIsSelected();
+    }
+#endif
+
+    // TODO(WEBXR): ensure the context is created in a compatible graphics
+    // adapter when there is an active immersive device.
     m_context = WebGLRenderingContextBase::create(*this, attrs, type);
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
+#if ENABLE(WEBXR)
+        ASSERT(!attrs.xrCompatible || m_context.isXRCompatible());
+#endif
     }
 
     return downcast<WebGLRenderingContextBase>(m_context.get());

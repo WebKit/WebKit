@@ -52,6 +52,10 @@
 #include "WebGLVertexArrayObject.h"
 #endif
 
+#if ENABLE(WEBXR)
+#include "JSDOMPromiseDeferred.h"
+#endif
+
 namespace WebCore {
 
 class ANGLEInstancedArrays;
@@ -230,6 +234,11 @@ public:
     void linkProgram(WebGLProgram*);
     bool linkProgramWithoutInvalidatingAttribLocations(WebGLProgram*);
     virtual void pixelStorei(GCGLenum pname, GCGLint param);
+#if ENABLE(WEBXR)
+    using MakeXRCompatiblePromise = DOMPromiseDeferred<void>;
+    void makeXRCompatible(MakeXRCompatiblePromise&&);
+    bool isXRCompatible() const { return m_isXRCompatible; }
+#endif
     void polygonOffset(GCGLfloat factor, GCGLfloat units);
     void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels);
     void releaseShaderCompiler();
@@ -1034,6 +1043,10 @@ private:
     WebGLStateTracker::Token m_trackerToken;
     Timer m_checkForContextLossHandlingTimer;
     bool m_isSuspended { false };
+
+#if ENABLE(WEBXR)
+    bool m_isXRCompatible { false };
+#endif
 };
 
 template <typename T>

@@ -57,6 +57,7 @@
 #include "IntSize.h"
 #include "JSExecState.h"
 #include "Logging.h"
+#include "NavigatorWebXR.h"
 #include "NotImplemented.h"
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
@@ -95,6 +96,7 @@
 #include "WebGLShaderPrecisionFormat.h"
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
+#include "WebXRSystem.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -106,6 +108,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
@@ -737,6 +740,9 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
     , m_isPendingPolicyResolution(true)
     , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
+#if ENABLE(WEBXR)
+    , m_isXRCompatible(attributes.xrCompatible)
+#endif
 {
     m_restoreTimer.suspendIfNeeded();
 
@@ -752,6 +758,9 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
     , m_attributes(attributes)
     , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
     , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
+#if ENABLE(WEBXR)
+    , m_isXRCompatible(attributes.xrCompatible)
+#endif
 {
     m_restoreTimer.suspendIfNeeded();
 
@@ -3705,6 +3714,52 @@ bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(We
     m_context->linkProgram(objectOrZero(program));
     return true;
 }
+
+#if ENABLE(WEBXR)
+// https://immersive-web.github.io/webxr/#dom-webglrenderingcontextbase-makexrcompatible
+void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promise)
+{
+    auto rejectPromiseWithInvalidStateError = makeScopeExit([&] () {
+        m_isXRCompatible = false;
+        promise.reject(Exception { InvalidStateError });
+    });
+
+    // Returning an exception in these two checks is not part of the spec.
+    auto canvas = htmlCanvas();
+    if (!canvas)
+        return;
+
+    auto* window = canvas->document().domWindow();
+    if (!window)
+        return;
+
+    // 1. Let promise be a new Promise.
+    // 2. Let context be the target WebGLRenderingContextBase object.
+    // 3. Ensure an immersive XR device is selected.
+    auto& xrSystem = NavigatorWebXR::xr(window->navigator());
+    xrSystem.ensureImmersiveXRDeviceIsSelected();
+
+    // 4. Set context’s XR compatible boolean as follows:
+    //    If context’s WebGL context lost flag is set
+    //      Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
+    if (isContextLostOrPending())
+        return;
+
+    // If the immersive XR device is null
+    //    Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
+    if (!xrSystem.hasActiveImmersiveXRDevice())
+        return;
+
+    // If context’s XR compatible boolean is true. Resolve promise.
+    // If context was created on a compatible graphics adapter for the immersive XR device
+    //  Set context’s XR compatible boolean to true and resolve promise.
+    // Otherwise: Queue a task on the WebGL task source to perform the following steps:
+    // TODO: add a way to verify that we're using a compatible graphics adapter.
+    m_isXRCompatible = true;
+    promise.resolve();
+    rejectPromiseWithInvalidStateError.release();
+}
+#endif
 
 void WebGLRenderingContextBase::pixelStorei(GCGLenum pname, GCGLint param)
 {
