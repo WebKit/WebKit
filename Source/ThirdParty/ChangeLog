@@ -1,3 +1,17 @@
+2020-05-14  Daniel Bates  <dabates@apple.com>
+
+        Include LocalOverrides.xcconfig in all Tools projects
+        https://bugs.webkit.org/show_bug.cgi?id=211789
+
+        Reviewed by Dan Bernstein.
+
+        Matches what is done for all Source projects so as to support local overriding of configs.
+        Only allow overrides when building for Debug and Release. Again, this matches what is
+        being done for Source projects.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
 2020-04-25  Darin Adler  <darin@apple.com>
 
         [Cocoa] Deal with another round of Xcode upgrade checks
