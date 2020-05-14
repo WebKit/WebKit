@@ -28,6 +28,8 @@
 
 #include "DOMException.h"
 #include "JSDOMException.h"
+#include "JSEventListener.h"
+#include "JSEventTarget.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
@@ -161,6 +163,48 @@ static JSString* jsStringForPaymentRequestState(VM& vm, PaymentRequest::State st
 }
 #endif
 
+static JSObject* objectForEventTargetListeners(VM& vm, JSGlobalObject* exec, EventTarget* eventTarget)
+{
+    auto* scriptExecutionContext = eventTarget->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+
+    JSObject* listeners = nullptr;
+
+    for (auto& eventType : eventTarget->eventTypes()) {
+        unsigned listenersForEventIndex = 0;
+        auto* listenersForEvent = constructEmptyArray(exec, nullptr);
+
+        for (auto& eventListener : eventTarget->eventListeners(eventType)) {
+            if (!is<JSEventListener>(eventListener->callback()))
+                continue;
+
+            auto& jsListener = downcast<JSEventListener>(eventListener->callback());
+            if (&jsListener.isolatedWorld() != &currentWorld(*exec))
+                continue;
+
+            auto* jsFunction = jsListener.ensureJSFunction(*scriptExecutionContext);
+            if (!jsFunction)
+                continue;
+
+            auto* propertiesForListener = constructEmptyObject(exec);
+            propertiesForListener->putDirect(vm, Identifier::fromString(vm, "callback"), jsFunction);
+            propertiesForListener->putDirect(vm, Identifier::fromString(vm, "capture"), jsBoolean(eventListener->useCapture()));
+            propertiesForListener->putDirect(vm, Identifier::fromString(vm, "passive"), jsBoolean(eventListener->isPassive()));
+            propertiesForListener->putDirect(vm, Identifier::fromString(vm, "once"), jsBoolean(eventListener->isOnce()));
+            listenersForEvent->putDirectIndex(exec, listenersForEventIndex++, propertiesForListener);
+        }
+
+        if (listenersForEventIndex) {
+            if (!listeners)
+                listeners = constructEmptyObject(exec);
+            listeners->putDirect(vm, Identifier::fromString(vm, eventType), listenersForEvent);
+        }
+    }
+
+    return listeners;
+}
+
 JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exec, JSC::JSValue value)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -168,8 +212,16 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
     if (auto* worker = JSWorker::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
-        array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "name"_s, jsString(vm, worker->name())));
+
+        String name = worker->name();
+        if (!name.isEmpty())
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "name"_s, jsString(vm, name)));
+
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "terminated"_s, jsBoolean(worker->wasTerminated())));
+
+        if (auto* listeners = objectForEventTargetListeners(vm, exec, worker))
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
+
         RETURN_IF_EXCEPTION(scope, { });
         return array;
     }
@@ -178,13 +230,29 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
     if (PaymentRequest* paymentRequest = JSPaymentRequest::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
+
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "options"_s, objectForPaymentOptions(vm, exec, paymentRequest->paymentOptions())));
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "details"_s, objectForPaymentDetails(vm, exec, paymentRequest->paymentDetails())));
         array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "state"_s, jsStringForPaymentRequestState(vm, paymentRequest->state())));
+
+        if (auto* listeners = objectForEventTargetListeners(vm, exec, paymentRequest))
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
+
         RETURN_IF_EXCEPTION(scope, { });
         return array;
     }
 #endif
+
+    if (auto* eventTarget = JSEventTarget::toWrapped(vm, value)) {
+        unsigned index = 0;
+        auto* array = constructEmptyArray(exec, nullptr);
+
+        if (auto* listeners = objectForEventTargetListeners(vm, exec, eventTarget))
+            array->putDirectIndex(exec, index++, constructInternalProperty(vm, exec, "listeners"_s, listeners));
+
+        RETURN_IF_EXCEPTION(scope, { });
+        return array;
+    }
 
     return { };
 }
