@@ -1,3 +1,19 @@
+2020-05-14  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] webrtc/disable-encryption.html is a crashing flaky
+        https://bugs.webkit.org/show_bug.cgi?id=211166
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Make sure the audio and video mediastream source elements are correctly removed and disposed
+        from their parent bin when resetting the track sources. Before this change there was a
+        possibility of disposing the elements while they were still in PLAYING state.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::_WebKitMediaStreamSrc::SourceData::reset):
+        (WebCore::webkitMediaStreamSrcDispose):
+        (WebCore::webkitMediaStreamSrcRemoveTrackByType):
+
 2020-05-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixed, mid May 2020 edition

@@ -191,6 +191,16 @@ struct _WebKitMediaStreamSrc {
         {
             m_firstBufferPts = GST_CLOCK_TIME_NONE;
             m_isVideo = isVideo;
+
+            if (!m_src)
+                return;
+
+            gst_element_set_locked_state(m_src.get(), true);
+            gst_element_set_state(m_src.get(), GST_STATE_NULL);
+            auto parent = adoptGRef(gst_object_get_parent(GST_OBJECT_CAST(m_src.get())));
+            if (parent)
+                gst_bin_remove(GST_BIN_CAST(parent.get()), m_src.get());
+            gst_element_set_locked_state(m_src.get(), false);
             m_src = nullptr;
         }
 
@@ -199,24 +209,25 @@ struct _WebKitMediaStreamSrc {
             return m_src.get();
         }
 
-        static void needDataCb(GstElement*, guint, WebKitMediaStreamSrc::SourceData *self)
+        static void needDataCallback(WebKitMediaStreamSrc::SourceData* self, unsigned)
         {
             self->setEnoughData(false);
         }
 
-        static void enoughDataCb(GstElement*, WebKitMediaStreamSrc::SourceData *self)
+        static void enoughDataCallback(WebKitMediaStreamSrc::SourceData* self)
         {
             self->setEnoughData(true);
         }
 
-        void setSrc(GstElement *src)
+        void setSrc(GRefPtr<GstElement>&& src)
         {
-            m_src = adoptGRef(GST_ELEMENT(g_object_ref_sink(src)));
-            if (GST_IS_APP_SRC(src)) {
-                g_object_set(src, "is-live", true, "format", GST_FORMAT_TIME, "emit-signals", TRUE, "min-percent", 100, nullptr);
-                g_signal_connect(src, "enough-data", G_CALLBACK(enoughDataCb), this);
-                g_signal_connect(src, "need-data", G_CALLBACK(needDataCb), this);
-            }
+            m_src = WTFMove(src);
+            if (!GST_IS_APP_SRC(m_src.get()))
+                return;
+
+            g_object_set(m_src.get(), "is-live", true, "format", GST_FORMAT_TIME, "emit-signals", true, "min-percent", 100, nullptr);
+            g_signal_connect_swapped(m_src.get(), "enough-data", G_CALLBACK(enoughDataCallback), this);
+            g_signal_connect_swapped(m_src.get(), "need-data", G_CALLBACK(needDataCallback), this);
         }
 
         bool isUsed()
@@ -369,15 +380,8 @@ static void webkitMediaStreamSrcDispose(GObject* object)
 {
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC(object);
 
-    if (self->audioSrc.isUsed()) {
-        gst_bin_remove(GST_BIN(self), self->audioSrc.src());
-        self->audioSrc.reset(false);
-    }
-
-    if (self->videoSrc.isUsed()) {
-        gst_bin_remove(GST_BIN(self), self->videoSrc.src());
-        self->videoSrc.reset(true);
-    }
+    self->audioSrc.reset(false);
+    self->videoSrc.reset(true);
 }
 
 static void webkitMediaStreamSrcFinalize(GObject* object)
@@ -584,7 +588,8 @@ static gboolean webkitMediaStreamSrcSetupAppSrc(WebKitMediaStreamSrc* self,
     MediaStreamTrackPrivate* track, WebKitMediaStreamSrc::SourceData* data,
     GstStaticPadTemplate* pad_template, bool onlyTrack)
 {
-    data->setSrc(gst_element_factory_make("appsrc", nullptr));
+    GRefPtr<GstElement> src = gst_element_factory_make("appsrc", nullptr);
+    data->setSrc(WTFMove(src));
     if (track->isCaptureTrack())
         g_object_set(data->src(), "do-timestamp", true, nullptr);
 
@@ -624,19 +629,11 @@ bool webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
 
 static void webkitMediaStreamSrcRemoveTrackByType(WebKitMediaStreamSrc* self, RealtimeMediaSource::Type trackType)
 {
-    if (trackType == RealtimeMediaSource::Type::Audio) {
-        if (self->audioSrc.isUsed()) {
-            gst_element_set_state(self->audioSrc.src(), GST_STATE_NULL);
-            gst_bin_remove(GST_BIN(self), self->audioSrc.src());
-            self->audioSrc.reset(false);
-        }
-    } else if (trackType == RealtimeMediaSource::Type::Video) {
-        if (self->videoSrc.isUsed()) {
-            gst_element_set_state(self->videoSrc.src(), GST_STATE_NULL);
-            gst_bin_remove(GST_BIN(self), self->videoSrc.src());
-            self->videoSrc.reset(true);
-        }
-    } else
+    if (trackType == RealtimeMediaSource::Type::Audio)
+        self->audioSrc.reset(false);
+    else if (trackType == RealtimeMediaSource::Type::Video)
+        self->videoSrc.reset(true);
+    else
         GST_INFO("Unsupported track type: %d", static_cast<int>(trackType));
 }
 

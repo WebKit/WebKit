@@ -2901,8 +2901,6 @@ webkit.org/b/210538 imported/w3c/web-platform-tests/css/css-position/position-st
 
 webkit.org/b/210541 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https.html [ Failure Pass ]
 
-webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
-
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 
 webkit.org/b/211764 http/wpt/webrtc/generateCertificate.html [ Failure Pass ]

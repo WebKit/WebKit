@@ -1,3 +1,12 @@
+2020-05-14  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] webrtc/disable-encryption.html is a crashing flaky
+        https://bugs.webkit.org/show_bug.cgi?id=211166
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/gtk/TestExpectations: Marking webrtc/disable-encryption.html as no longer flaky.
+
 2020-05-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         fast/text/multiple-codeunit-vertical-upright.html is failing
