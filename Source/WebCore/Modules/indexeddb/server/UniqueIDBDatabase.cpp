@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetAllResult.h"
@@ -35,6 +36,7 @@
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResultData.h"
+#include "IDBSerializationContext.h"
 #include "IDBServer.h"
 #include "IDBTransactionInfo.h"
 #include "IDBValue.h"

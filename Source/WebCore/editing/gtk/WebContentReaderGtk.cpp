@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContentReader.h"
 
+#include "Blob.h"
 #include "BlobURL.h"
 #include "DOMURL.h"
 #include "Document.h"

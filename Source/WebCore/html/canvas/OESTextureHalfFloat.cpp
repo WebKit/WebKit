@@ -29,6 +29,8 @@
 
 #include "OESTextureHalfFloat.h"
 
+#include "ExtensionsGL.h"
+
 namespace WebCore {
 
 OESTextureHalfFloat::OESTextureHalfFloat(WebGLRenderingContextBase& context)

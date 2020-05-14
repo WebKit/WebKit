@@ -25,6 +25,9 @@
 
 #include "config.h"
 #include "Clipboard.h"
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

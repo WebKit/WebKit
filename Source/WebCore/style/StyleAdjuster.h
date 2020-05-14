@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class Document;
 class Element;
+class EventTarget;
 class RenderStyle;
 class SVGElement;
 class Settings;

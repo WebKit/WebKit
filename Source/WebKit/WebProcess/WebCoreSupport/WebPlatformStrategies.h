@@ -78,7 +78,7 @@ private:
     Vector<String> types(const String& pasteboardName) override;
     String readTextFromClipboard(const String& pasteboardName) override;
     Vector<String> readFilePathsFromClipboard(const String& pasteboardName) override;
-    RefPtr<SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
+    RefPtr<WebCore::SharedBuffer> readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType) override;
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&) override;
     void clearClipboard(const String& pasteboardName) override;
 #endif

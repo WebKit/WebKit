@@ -1,3 +1,17 @@
+2020-05-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixed, mid May 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=211859
+
+        Unreviewed build fix.
+
+        * UIProcess/gtk/Clipboard.cpp: Add missing includes for <mutex>, wtf/NeverDestroyed.h, and
+        wtf/text/WTFString.h.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Add missing
+        SharedBufferDataReference.h include.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h: Add missing namespace to usage of
+        the WebCore::SharedBuffer type.
+
 2020-05-13  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Use templates to reduce duplicate code in IPC::Decoder and IPC::Encoder classes

@@ -40,6 +40,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"

@@ -1,3 +1,27 @@
+2020-05-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixed, mid May 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=211859
+
+        Unreviewed build.
+
+        No new tests needed.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp: Add missing IDBBindingUtilities.h and
+        IDBSerializationContext.h includes.
+        * accessibility/AccessibilityRenderObject.cpp: Add missing EventHandler.h include.
+        * css/parser/CSSParserToken.cpp: Add missing RuntimeEnabledFeatures.h include.
+        * editing/gtk/WebContentReaderGtk.cpp: Add missing Blob.h include.
+        * html/canvas/OESTextureHalfFloat.cpp: Add missing ExtensionsGL.h include.
+        * page/ShareDataReader.h: Add missing ExceptionOr.h include.
+        * rendering/ContentfulPaintChecker.cpp: Add missing RenderView.h include.
+        * rendering/style/StyleRareInheritedData.h: Add missing RenderStyleConstants.h and
+        wtf/OptionSet.h includes.
+        * rendering/style/StyleRareNonInheritedData.h: Add missing TouchAction.h and wtf/OptionSet.h
+        includes.
+        * style/StyleAdjuster.h: Add missing RenderStyleConstants.h include and forward declaration
+        for WebCore::EventTarget.
+
 2020-05-14  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Playbin3 track switch rework
