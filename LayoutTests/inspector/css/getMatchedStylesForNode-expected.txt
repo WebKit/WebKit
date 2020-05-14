@@ -20,6 +20,148 @@ Matched:
             ]
           }
         ],
+        "text": "div"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "user",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "600"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": ""
+      },
+      "sourceURL": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div",
+            "specificity": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "text": "div"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "user",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "500"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": ""
+      },
+      "sourceURL": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div",
+            "specificity": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "text": "div"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "regular",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "400"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": ""
+      },
+      "sourceURL": "<filtered>",
+      "ruleId": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div",
+            "specificity": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "text": "div"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "regular",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "300"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": ""
+      },
+      "sourceURL": "<filtered>",
+      "ruleId": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div",
+            "specificity": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
         "text": "div",
         "range": "<filtered>"
       },

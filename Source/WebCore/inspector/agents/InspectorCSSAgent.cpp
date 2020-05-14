@@ -931,7 +931,7 @@ Inspector::Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSSt
     if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
         return Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent;
 
-    if (pageStyleSheet && pageStyleSheet->ownerNode() && pageStyleSheet->ownerNode()->nodeName() == "#document")
+    if (pageStyleSheet && pageStyleSheet->contents().isUserStyleSheet())
         return Inspector::Protocol::CSS::StyleSheetOrigin::User;
 
     auto iterator = m_documentToInspectorStyleSheet.find(ownerDocument);

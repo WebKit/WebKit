@@ -1,3 +1,16 @@
+2020-05-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: front-end shouldn't change the order of User Style Sheet rules
+        https://bugs.webkit.org/show_bug.cgi?id=210893
+        <rdar://problem/61937118>
+
+        Reviewed by Devin Rousso.
+
+        Test that AuthorCSS and UserCSS are correctly arranged.
+
+        * inspector/css/getMatchedStylesForNode-expected.txt:
+        * inspector/css/getMatchedStylesForNode.html:
+
 2020-05-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, remove expectations for tests that are no longer failing.

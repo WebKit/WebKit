@@ -1,6 +1,12 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+window.internals.insertAuthorCSS("div { z-index: 400; }");
+window.internals.insertUserCSS("div { z-index: 600; }");
+window.internals.insertAuthorCSS("div { z-index: 300; }");
+window.internals.insertUserCSS("div { z-index: 500; }");
+</script>
 <style>
     @import url(resources/external.css?1) (min-width: 0px);
 

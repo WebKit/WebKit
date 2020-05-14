@@ -1,3 +1,19 @@
+2020-05-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: front-end shouldn't change the order of User Style Sheet rules
+        https://bugs.webkit.org/show_bug.cgi?id=210893
+        <rdar://problem/61937118>
+
+        Reviewed by Devin Rousso.
+
+        Previously, some style sheets were falsly detected as Inspector::Protocol::CSS::StyleSheetOrigin::User
+        causing incorrect order of style rules in Web Inspector.
+
+        Test: inspector/css/getMatchedStylesForNode.html
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::detectOrigin):
+
 2020-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Update the placeholder icon image for attachment elements with progress="0"
