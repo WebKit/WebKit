@@ -49,9 +49,6 @@ namespace {
 const uint8_t uncompressedKey = 0x04;
 // https://www.w3.org/TR/webauthn/#flags
 const uint8_t makeCredentialFlags = 0b01000001; // UP and AT are set.
-// https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#registration-response-message-success
-const uint8_t minSignatureLength = 71;
-const uint8_t maxSignatureLength = 73;
 // https://fidoalliance.org/specs/fido-u2f-v1.2-ps-20170411/fido-u2f-raw-message-formats-v1.2-ps-20170411.html#authentication-response-message-success
 const size_t flagIndex = 0;
 const size_t counterIndex = 1;
@@ -133,7 +130,7 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
 
     Vector<uint8_t> signature;
     signature.append(u2fData.data() + offset, u2fData.size() - offset);
-    if (signature.size() < minSignatureLength || signature.size() > maxSignatureLength)
+    if (signature.isEmpty())
         return { };
 
     cbor::CBORValue::MapValue attestationStatementMap;

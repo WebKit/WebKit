@@ -1,3 +1,14 @@
+2020-05-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Relaxing signature length requirements for U2fRegister
+        https://bugs.webkit.org/show_bug.cgi?id=209645
+        <rdar://problem/63204591>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-05-14  Jonathan Bedard  <jbedard@apple.com>
 
         run-webkit-tests shouldn't need Xcode to run Mac tests

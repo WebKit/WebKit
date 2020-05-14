@@ -512,10 +512,6 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData4)
     const auto prefix = sizeof(TestData::kTestU2fRegisterResponse);
     auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix - 71, nullptr, 0));
     EXPECT_FALSE(response);
-
-    const uint8_t testData[] = { 0x40, 0x40, 0x40 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData, sizeof(testData)));
-    EXPECT_FALSE(response);
 }
 
 // Test malformed X.509 but pass.
