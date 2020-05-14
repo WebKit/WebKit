@@ -1,3 +1,15 @@
+2020-05-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r261703): [ Mac ] inspector/css/getMatchedStylesForNode.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=211918
+        <rdar://problem/63241578>
+
+        Reviewed by Timothy Hatcher.
+
+        Rebaseline tests after CSS.StyleSheetOrigin.Regular was renamed to CSS.StyleSheetOrigin.Author.
+
+        * inspector/css/getMatchedStylesForNode-expected.txt:
+
 2020-05-14  Truitt Savell  <tsavell@apple.com>
 
         (r260169) [ iOS ] http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html is a flaky timeout

@@ -93,7 +93,7 @@ Matched:
         "text": "div"
       },
       "sourceLine": "<filtered>",
-      "origin": "regular",
+      "origin": "author",
       "style": {
         "cssProperties": [
           {
@@ -129,7 +129,7 @@ Matched:
         "text": "div"
       },
       "sourceLine": "<filtered>",
-      "origin": "regular",
+      "origin": "author",
       "style": {
         "cssProperties": [
           {
