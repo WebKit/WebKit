@@ -386,6 +386,10 @@ def determineArchitectureFromELFBinary
         "x86"
     when 8
         "mips"
+    when 21
+        "powerpc"
+    when 22
+        "s390"
     when 62
         "x86-64"
     when 40
