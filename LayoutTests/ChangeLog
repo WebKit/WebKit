@@ -1,3 +1,16 @@
+2020-05-13  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in DeleteSelectionCommand::doApply() when merge node is disconnected.
+        https://bugs.webkit.org/show_bug.cgi?id=211793
+        <rdar://problem/62993645>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test for the crash.
+
+        * editing/inserting/insert-text-merge-node-removed-crash-expected.txt: Added.
+        * editing/inserting/insert-text-merge-node-removed-crash.html: Added.
+
 2020-05-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Enable the 'OutsideViewport' rAF throttling

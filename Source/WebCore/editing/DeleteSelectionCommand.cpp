@@ -754,7 +754,10 @@ void DeleteSelectionCommand::mergeParagraphs()
     moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination, false, !paragraphToMergeIsEmpty);
     m_needPlaceholder = needPlaceholder;
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
-    m_endingPosition = endingSelection().start();
+
+    // FIXME (Bug 211793): endingSelection() becomes disconnected in moveParagraph
+    if (endingSelection().start().anchorNode()->isConnected())
+        m_endingPosition = endingSelection().start();
 }
 
 void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()

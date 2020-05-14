@@ -1476,7 +1476,10 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     ASSERT(destination.deepEquivalent().anchorNode()->isConnected());
     cleanupAfterDeletion(destination);
-    ASSERT(destination.deepEquivalent().anchorNode()->isConnected());
+
+    // FIXME (Bug 211793): We should redesign cleanupAfterDeletion or find another destination when it is removed.
+    if (!destination.deepEquivalent().anchorNode()->isConnected())
+        return;
 
     // Add a br if pruning an empty block level element caused a collapse. For example:
     // foo^

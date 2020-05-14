@@ -1,3 +1,21 @@
+2020-05-13  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in DeleteSelectionCommand::doApply() when merge node is disconnected.
+        https://bugs.webkit.org/show_bug.cgi?id=211793
+        <rdar://problem/62993645>
+
+        Reviewed by Geoffrey Garen.
+
+        Check for disconnected merge destination and endingSelection() after mergeParagraph is
+        Called and bail out to avoid using corrupted positions for node insertion.
+
+        Test: editing/inserting/insert-text-merge-node-removed-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+
 2020-05-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Re-enable 'OutsideViewport' rAF throttling
