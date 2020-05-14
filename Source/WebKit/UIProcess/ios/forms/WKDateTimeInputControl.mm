@@ -255,7 +255,9 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 - (void)dealloc
 {
     [_datePicker removeTarget:self action:NULL forControlEvents:UIControlEventValueChanged];
+#if USE(UICONTEXTMENU)
     [self removeContextMenuInteraction];
+#endif
     [super dealloc];
 }
 
@@ -369,10 +371,12 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _initialValueAsNumber = _view.focusedElementInformation.valueAsNumber;
     [self setDateTimePickerToInitialValue];
     
+#if USE(UICONTEXTMENU)
     WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_view.focusedElementInformation.lastInteractionLocation) };
     [_view doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
         [self showDateTimePicker];
     } forRequest:positionInformationRequest];
+#endif
 
 }
 
@@ -395,7 +399,9 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         [_view releaseFocus];
         _preservingFocus = NO;
     }
+#if USE(UICONTEXTMENU)
     [self removeContextMenuInteraction];
+#endif
 }
 @end
 

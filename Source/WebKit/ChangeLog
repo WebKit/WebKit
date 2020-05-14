@@ -1,3 +1,14 @@
+2020-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Unreviewed Build Fix.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setMouseEventPolicy):
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker dealloc]):
+        (-[WKDateTimePicker controlBeginEditing]):
+        (-[WKDateTimePicker controlEndEditing]):
+
 2020-05-13  Kate Cheney  <katherine_cheney@apple.com>
 
         SHOULD NEVER BE REACHED in WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary

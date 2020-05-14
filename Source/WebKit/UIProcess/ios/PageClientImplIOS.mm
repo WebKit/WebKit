@@ -963,7 +963,9 @@ void PageClientImpl::writePromisedAttachmentToPasteboard(WebCore::PromisedAttach
 
 void PageClientImpl::setMouseEventPolicy(WebCore::MouseEventPolicy policy)
 {
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [m_contentView _setMouseEventPolicy:policy];
+#endif
 }
 
 } // namespace WebKit
