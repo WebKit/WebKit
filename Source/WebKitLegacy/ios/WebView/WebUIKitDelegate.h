@@ -132,7 +132,6 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 - (int)deviceOrientation;
 #endif
 
-- (BOOL)isUnperturbedDictationResultMarker:(id)metadataForMarker;
 - (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)message withSource:(NSString *)source;
 @end
 

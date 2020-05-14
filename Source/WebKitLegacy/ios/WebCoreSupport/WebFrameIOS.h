@@ -88,9 +88,6 @@ typedef enum {
 
 - (BOOL)renderedCharactersExceed:(NSUInteger)threshold;
 
-- (WebVisiblePosition *)previousUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position;
-- (WebVisiblePosition *)nextUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position;
-
 - (CGRect)elementRectAtPoint:(CGPoint)point;
 @end
 

@@ -5579,18 +5579,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return nil;
 }
 
-// Returns the dictation result boundaries from position so that text that was not dictated can be excluded from logging.
-// If these are not implemented, no text will be logged.
-- (UITextPosition *)previousUnperturbedDictationResultBoundaryFromPosition:(UITextPosition *)position
-{
-    return nil;
-}
-
-- (UITextPosition *)nextUnperturbedDictationResultBoundaryFromPosition:(UITextPosition *)position
-{
-    return nil;
-}
-
 // The can all be (and have been) trivially implemented in terms of UITextInput.  Deprecate and remove.
 - (void)moveBackward:(unsigned)count
 {

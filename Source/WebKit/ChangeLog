@@ -1,3 +1,17 @@
+2020-05-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Remove dead dictation code
+        https://bugs.webkit.org/show_bug.cgi?id=211871
+
+        Reviewed by Wenson Hsieh.
+
+        UIKit has long removed all callers that would call -nextUnperturbedDictationResultBoundaryFromPosition
+        and -previousUnperturbedDictationResultBoundaryFromPosition. So, remove the implementations.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previousUnperturbedDictationResultBoundaryFromPosition:]): Deleted.
+        (-[WKContentView nextUnperturbedDictationResultBoundaryFromPosition:]): Deleted.
+
 2020-05-14  Brady Eidson  <beidson@apple.com>
 
         Crash in PDFPlugin::ensureDataBufferLength

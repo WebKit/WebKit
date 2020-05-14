@@ -288,11 +288,6 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
     return 0;
 }
 
-- (BOOL)isUnperturbedDictationResultMarker:(id)metadataForMarker
-{
-    return NO;
-}
-
 - (void)webView:(WebView *)webView willAddPlugInView:(id)plugInView
 {
 }
