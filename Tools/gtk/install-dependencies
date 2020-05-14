@@ -125,7 +125,7 @@ function installDependenciesWithApt {
         libopenjp2-7-dev \
         libopus-dev \
         libpango1.0-dev \
-        $(aptIfElse libpng-dev libpng12-dev) \
+        libpng-dev \
         libpulse-dev \
         librsvg2-dev \
         libseccomp-dev \
@@ -181,8 +181,7 @@ function installDependenciesWithApt {
 
     # These are dependencies necessary for building with the Flatpak SDK.
     packages="$packages \
-        flatpak \
-        pipenv"
+        flatpak"
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
@@ -251,6 +250,14 @@ function installDependenciesWithApt {
         subversion"
 
     apt-get install $packages
+
+    # Ubuntu Bionic doesn't ship pipenv. So fallback to the pip3 install path.
+    if apt-cache show pipenv &>/dev/null; then
+        apt-get install pipenv
+    else
+        apt-get install -y python3-pip
+        pip3 install pipenv
+    fi
 }
 
 function installDependenciesWithPacman {
