@@ -1,3 +1,20 @@
+2020-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Don't clear NowPlaying state unless it was set
+        https://bugs.webkit.org/show_bug.cgi?id=211899
+        <rdar://problem/62249870>
+
+        Reviewed by Jer Noble.
+
+        * media/now-playing-status-without-media-expected.txt: Added.
+        * media/now-playing-status-without-media.html: Added.
+
+        * gpu-process/TestExpectations: Skip test because media session isn't fully functional in GPUP.
+        * platform/mac-wk1/TestExpectations: Skip test because media session manager is a singleton.
+        * platform/gtk/TestExpectations: Skip Cocoa-only test.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wpe/TestExpectations: Ditto.
+
 2020-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         fast/text/multiple-codeunit-vertical-upright.html is failing

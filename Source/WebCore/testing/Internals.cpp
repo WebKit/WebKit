@@ -4282,7 +4282,8 @@ ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
         PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingElapsedTime(),
         PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingInfoUniqueIdentifier().toUInt64(),
         PlatformMediaSessionManager::sharedManager().hasActiveNowPlayingSession(),
-        PlatformMediaSessionManager::sharedManager().registeredAsNowPlayingApplication()
+        PlatformMediaSessionManager::sharedManager().registeredAsNowPlayingApplication(),
+        PlatformMediaSessionManager::sharedManager().haveEverRegisteredAsNowPlayingApplication()
     } };
 #else
     return Exception { InvalidAccessError };

@@ -72,6 +72,7 @@ public:
     virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
     virtual MediaSessionIdentifier lastUpdatedNowPlayingInfoUniqueIdentifier() const { return { }; }
     virtual bool registeredAsNowPlayingApplication() const { return false; }
+    virtual bool haveEverRegisteredAsNowPlayingApplication() const { return false; }
     virtual void prepareToSendUserMediaPermissionRequest() { }
 
     bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }

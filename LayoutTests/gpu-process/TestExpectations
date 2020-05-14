@@ -248,6 +248,7 @@ media/modern-media-controls/tracks-support/tracks-support-off-text-track.html [ 
 
 media/muted-video-is-playing-audio.html [ Skip ]
 media/navigate-with-pip-should-not-crash.html [ Skip ]
+media/now-playing-status-without-media.html [ Skip ]
 media/picture-in-picture/picture-in-picture-api-css-selector.html [ Skip ]
 media/picture-in-picture/picture-in-picture-api-enter-pip-4.html [ Skip ]
 media/picture-in-picture/picture-in-picture-api-events.html [ Skip ]

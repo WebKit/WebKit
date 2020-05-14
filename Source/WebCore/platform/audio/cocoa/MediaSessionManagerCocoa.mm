@@ -322,8 +322,11 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         nowPlayingInfo = session->nowPlayingInfo();
 
     if (!nowPlayingInfo) {
-        ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
-        platformStrategies()->mediaStrategy().clearNowPlayingInfo();
+
+        if (m_registeredAsNowPlayingApplication) {
+            ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
+            platformStrategies()->mediaStrategy().clearNowPlayingInfo();
+        }
 
         m_registeredAsNowPlayingApplication = false;
         m_nowPlayingActive = false;
@@ -335,14 +338,15 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         return;
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication);
-
+    m_haveEverRegisteredAsNowPlayingApplication = true;
     platformStrategies()->mediaStrategy().setNowPlayingInfo(!m_registeredAsNowPlayingApplication, *nowPlayingInfo);
 
     if (!m_registeredAsNowPlayingApplication) {
         m_registeredAsNowPlayingApplication = true;
         providePresentingApplicationPIDIfNecessary();
     }
+
+    ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication);
 
     if (!nowPlayingInfo->title.isEmpty())
         m_lastUpdatedNowPlayingTitle = nowPlayingInfo->title;
