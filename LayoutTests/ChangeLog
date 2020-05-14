@@ -1,3 +1,9 @@
+2020-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Rebaseline after r261676.
+
+        * platform/win/fast/layoutformattingcontext/table-fixed-width-with-max-distribution-expected.txt: Added.
+
 2020-05-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Flaky Test: media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html
