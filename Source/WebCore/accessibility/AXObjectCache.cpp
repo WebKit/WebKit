@@ -833,6 +833,9 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
 
 void AXObjectCache::remove(AXID axID)
 {
+    AXTRACE("AXObjectCache::remove");
+    AXLOG(makeString("AXID ", axID));
+
     if (!axID)
         return;
 
@@ -1120,6 +1123,9 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, Po
 
 void AXObjectCache::postNotification(AXCoreObject* object, Document* document, AXNotification notification, PostTarget postTarget, PostType postType)
 {
+    AXTRACE("AXObjectCache::postNotification");
+    AXLOG(std::make_pair(object, notification));
+
     stopCachingComputedObjectAttributes();
 
     if (object && postTarget == TargetObservableParent)
@@ -3037,6 +3043,7 @@ void AXObjectCache::performCacheUpdateTimerFired()
     
 void AXObjectCache::performDeferredCacheUpdate()
 {
+    AXTRACE("AXObjectCache::performDeferredCacheUpdate");
     if (m_performingDeferredCacheUpdate)
         return;
 
@@ -3113,6 +3120,8 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");
     AXLOG(std::make_pair(&object, notification));
+    AXLOG(*this);
+
     if (!m_pageID)
         return;
 
@@ -3146,6 +3155,8 @@ static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F mat
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");
+    AXLOG(*this);
+
     if (!m_pageID)
         return;
 

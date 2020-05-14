@@ -2290,11 +2290,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
     auto* backingObject = self.updateObjectBackingStore;
-    if (!backingObject) {
-        AXLOG("No backingObject!!!");
+    AXLOG("backingObject");
+    AXLOG(backingObject);
+    if (!backingObject)
         return nil;
-    }
-    AXLOG(*backingObject);
 
     if (backingObject->isDetachedFromParent()) {
         AXLOG("backingObject is detached from parent!!!");

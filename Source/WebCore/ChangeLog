@@ -1,5 +1,42 @@
 2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
 
+        AXIsolatedTree::updateChildren needs to apply pending changes before updating the given node.
+        https://bugs.webkit.org/show_bug.cgi?id=211790
+
+        Reviewed by Chris Fleizach.
+
+        Covered by multiple tests.
+
+        AXIsolatedTree::updateChildren may be fired for an isolated object that
+        is still in the pending changes list, and thus nodeForID would fail,
+        causing the isolated tree to not be updated. This patch calls
+        applyPendingChanges before updating the given node's children.
+        Additional logging was added including the logging of the AXObjectCache
+        object hierarchy.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::AXLogger::log):
+        (WebCore::operator<<):
+        * accessibility/AXLogger.h:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/AXObjectCache.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNode):
+        (WebCore::AXIsolatedTree::updateSubtree):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::focusedNode):
+        (WebCore::AXIsolatedTree::removeNode):
+        (WebCore::AXIsolatedTree::removeSubtree):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
+2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
+
         Fix for crash in LayoutTest in isolated tree mode.
         https://bugs.webkit.org/show_bug.cgi?id=211894
 

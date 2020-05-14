@@ -197,6 +197,7 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
 void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::updateNode");
+    AXLOG(&axObject);
     ASSERT(isMainThread());
     AXID axID = axObject.objectID();
     auto* axParent = axObject.parentObject();
@@ -218,6 +219,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 void AXIsolatedTree::updateSubtree(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::updateSubtree");
+    AXLOG(&axObject);
     ASSERT(isMainThread());
     removeSubtree(axObject.objectID());
     auto* axParent = axObject.parentObject();
@@ -228,15 +230,22 @@ void AXIsolatedTree::updateSubtree(AXCoreObject& axObject)
 void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::updateChildren");
+    AXLOG("For AXObject:");
+    AXLOG(&axObject);
     ASSERT(isMainThread());
+
     if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
         return;
 
     AXID axObjectID = axObject.objectID();
+
+    applyPendingChanges();
     LockHolder locker { m_changeLogLock };
     auto object = nodeForID(axObjectID);
-    if (!object)
+    if (!object) {
+        AXLOG("No associated isolated object!");
         return; // nothing to update.
+    }
 
     auto removals = object->m_childrenIDs;
     locker.unlockEarly();
@@ -250,6 +259,8 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
             removals.remove(index);
         else {
             // This is a new child, add it to the tree.
+            AXLOG("Adding a new child for:");
+            AXLOG(axChildren[i]);
             generateSubtree(*axChildren[i], axObjectID, true);
         }
     }
@@ -268,11 +279,13 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
 {
-    AXTRACE("AXIsolatedTree::focusedUIElement");
+    AXTRACE("AXIsolatedTree::focusedNode");
     // Apply pending changes in case focus has changed and hasn't been updated.
     applyPendingChanges();
     LockHolder locker { m_changeLogLock };
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID));
+    AXLOG("focused node:");
+    AXLOG(nodeForID(m_focusedNodeID));
     return nodeForID(m_focusedNodeID);
 }
 
@@ -305,6 +318,8 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
 void AXIsolatedTree::removeNode(AXID axID)
 {
     AXTRACE("AXIsolatedTree::removeNode");
+    AXLOG(makeString("AXID ", axID));
+
     LockHolder locker { m_changeLogLock };
     m_pendingNodeRemovals.append(axID);
 }
@@ -312,6 +327,7 @@ void AXIsolatedTree::removeNode(AXID axID)
 void AXIsolatedTree::removeSubtree(AXID axID)
 {
     AXTRACE("AXIsolatedTree::removeSubtree");
+    AXLOG(makeString("Removing subtree for axID ", axID));
     LockHolder locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(axID);
 }
@@ -328,6 +344,7 @@ void AXIsolatedTree::applyPendingChanges()
     AXTRACE("AXIsolatedTree::applyPendingChanges");
     LockHolder locker { m_changeLogLock };
 
+    AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));
     m_focusedNodeID = m_pendingFocusedNodeID;
 
     while (m_pendingNodeRemovals.size()) {

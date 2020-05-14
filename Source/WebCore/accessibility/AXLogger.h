@@ -36,11 +36,12 @@ public:
     AXLogger(const String& methodName);
     ~AXLogger();
     static void log(const String&);
-    static void log(const AXCoreObject&);
+    static void log(const RefPtr<AXCoreObject>&);
     static void log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>&);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void log(AXIsolatedTree&);
 #endif
+    static void log(AXObjectCache&);
     static void add(TextStream&, const RefPtr<AXCoreObject>&, bool recursive = false);
 private:
     String m_methodName;

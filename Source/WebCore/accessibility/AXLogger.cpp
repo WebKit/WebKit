@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AXLogger.h"
 
+#include "AXObjectCache.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 
@@ -59,10 +60,15 @@ void AXLogger::log(const String& message)
 #endif
 }
 
-void AXLogger::log(const AXCoreObject& object)
+void AXLogger::log(const RefPtr<AXCoreObject>& object)
 {
     TextStream stream(TextStream::LineMode::MultipleLine);
-    stream << object;
+
+    if (object)
+        stream << *object;
+    else
+        stream << "null";
+
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 
@@ -100,6 +106,13 @@ void AXLogger::log(AXIsolatedTree& tree)
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 #endif
+
+void AXLogger::log(AXObjectCache& axObjectCache)
+{
+    TextStream stream(TextStream::LineMode::MultipleLine);
+    stream << axObjectCache;
+    LOG(Accessibility, "%s", stream.release().utf8().data());
+}
 
 TextStream& operator<<(TextStream& stream, AccessibilityRole role)
 {
@@ -699,5 +712,18 @@ TextStream& operator<<(TextStream& stream, AXIsolatedTree& tree)
     return stream;
 }
 #endif
+
+TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
+{
+    TextStream::GroupScope groupScope(stream);
+    stream << "AXObjectCache " << &axObjectCache;
+
+    if (auto* root = axObjectCache.get(axObjectCache.document().view()))
+        AXLogger::add(stream, root, true);
+    else
+        stream << "No root!";
+
+    return stream;
+}
 
 } // namespace WebCore
