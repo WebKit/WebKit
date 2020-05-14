@@ -361,7 +361,7 @@ struct ColumnSpan {
     static size_t index(size_t columnIndex, size_t /*rowIndex*/) { return columnIndex; }
     static size_t size(const TableGrid& grid) { return grid.columns().size(); }
 
-    static LayoutUnit spacing(const TableGrid& grid, const TableGrid::Cell& cell) { return (cell.columnSpan() - 1) * grid.horizontalSpacing(); }
+    static LayoutUnit spacing(const TableGrid& grid) { return grid.horizontalSpacing(); }
 };
 
 struct RowSpan {
@@ -375,7 +375,7 @@ struct RowSpan {
     static size_t index(size_t /*columnIndex*/, size_t rowIndex) { return rowIndex; }
     static size_t size(const TableGrid& grid) { return grid.rows().size(); }
 
-    static LayoutUnit spacing(const TableGrid& grid, const TableGrid::Cell& cell) { return (cell.rowSpan() - 1) * grid.verticalSpacing(); }
+    static LayoutUnit spacing(const TableGrid& grid) { return grid.verticalSpacing(); }
 };
 
 struct GridSpace {
@@ -420,7 +420,7 @@ inline static GridSpace& operator/(GridSpace& a, unsigned value)
 
 using DistributedSpaces = Vector<float>;
 template <typename SpanType>
-static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float spaceToDistribute, const WTF::Function<GridSpace(const TableGrid::Slot&, size_t)>& slotSpace)
+static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, LayoutUnit availableSpace, const WTF::Function<GridSpace(const TableGrid::Slot&, size_t)>& slotSpace)
 {
     struct ResolvedItem {
         GridSpace slotSpace;
@@ -505,7 +505,7 @@ static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float s
                 // The spanning cell fits the spanned columns/rows just fine. Nothing to distribute.
                 continue;
             }
-            auto spacing = SpanType::spacing(grid, cell);
+            auto spacing = SpanType::spacing(grid) * (SpanType::spanCount(cell) - 1);
             auto spaceToDistribute = unresolvedSpanningSpace - GridSpace { spacing, spacing } - resolvedSpanningSpace; 
             if (!spaceToDistribute.isEmpty()) {
                 auto distributionRatio = spaceToDistribute.distributionBase / resolvedSpanningSpace.distributionBase;
@@ -529,6 +529,9 @@ static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float s
     }
 
     DistributedSpaces distributedSpaces(resolvedItems.size());
+    float spaceToDistribute = availableSpace - adjustabledSpace.value - ((resolvedItems.size() + 1) * SpanType::spacing(grid));
+    // Essentially the remaining space to distribute should never be negative. LayoutUnit::epsilon() is required to compensate for LayoutUnit's low precision.
+    ASSERT(spaceToDistribute >= -LayoutUnit::epsilon() * resolvedItems.size());
     // Distribute the extra space based on the resolved spaces.
     auto distributionRatio = spaceToDistribute / adjustabledSpace.distributionBase;
     for (size_t index = 0; index < resolvedItems.size(); ++index) {
@@ -537,7 +540,7 @@ static DistributedSpaces distributeAvailableSpace(const TableGrid& grid, float s
         distributedSpaces[index] = slotSpace;
         if (!needsSpaceDistribution)
             continue;
-        distributedSpaces[index] += slotSpace * distributionRatio;
+        distributedSpaces[index] += resolvedItems[index]->slotSpace.distributionBase * distributionRatio;
     }
     return distributedSpaces;
 }
@@ -552,11 +555,19 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
     auto computeColumnWidths = [&] (auto columnWidthBalancingBase, auto extraHorizontalSpace) {
         auto distributedSpaces = distributeAvailableSpace<ColumnSpan>(grid, extraHorizontalSpace, [&] (const TableGrid::Slot& slot, size_t columnIndex) {
             auto& column = columns.list()[columnIndex];
-            auto columnFixedWidth = column.box() ? column.box()->columnWidth() : WTF::nullopt;
-            auto slotWidth = std::max<float>(columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth ? slot.widthConstraints().minimum : slot.widthConstraints().maximum, columnFixedWidth.valueOr(0_lu));
-            return GridSpace { slotWidth, slotWidth };
+            auto columnBoxFixedWidth = column.box() ? column.box()->columnWidth().valueOr(0_lu) : 0_lu;
+            if (columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth) {
+                auto minimumWidth = std::max<float>(slot.widthConstraints().minimum, columnBoxFixedWidth);
+                return GridSpace { minimumWidth, minimumWidth };
+            }
+            // When the column has a fixed width cell, the maximum width balancing is based on the minimum width.
+            auto minimumWidth = std::max<float>(slot.widthConstraints().minimum, columnBoxFixedWidth);
+            auto maximumWidth = std::max<float>(slot.widthConstraints().maximum, columnBoxFixedWidth);
+            if (column.isFixedWidth())
+                return GridSpace { minimumWidth, maximumWidth };
+            return GridSpace { maximumWidth, maximumWidth };
         });
-        // Set finial horizontal position and width.
+        // Set final horizontal position and width.
         auto columnLogicalLeft = grid.horizontalSpacing();
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& column = columns.list()[columnIndex];
@@ -567,16 +578,8 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace(LayoutUnit
             columnLogicalLeft += columnWidth + grid.horizontalSpacing();
         }
     };
-
-    auto needsExtraSpaceDistribution = availableHorizontalSpace != tableWidthConstraints.minimum && availableHorizontalSpace != tableWidthConstraints.maximum;
-    if (!needsExtraSpaceDistribution) {
-        auto columnWidthBalancingBase = availableHorizontalSpace == tableWidthConstraints.maximum ? ColumnWidthBalancingBase::MaximumWidth : ColumnWidthBalancingBase::MinimumWidth;
-        computeColumnWidths(columnWidthBalancingBase, LayoutUnit { });
-        return;
-    }
-    auto horizontalSpaceToDistribute = availableHorizontalSpace - tableWidthConstraints.minimum;
-    ASSERT(horizontalSpaceToDistribute > 0);
-    computeColumnWidths(ColumnWidthBalancingBase::MinimumWidth, horizontalSpaceToDistribute);
+    auto columnWidthBalancingBase = availableHorizontalSpace == tableWidthConstraints.maximum ? ColumnWidthBalancingBase::MaximumWidth : ColumnWidthBalancingBase::MinimumWidth;
+    computeColumnWidths(columnWidthBalancingBase, availableHorizontalSpace);
 }
 
 void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace)
@@ -593,7 +596,7 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     };
     Vector<RowHeight> rowHeight(rows.size());
     Vector<SlotPosition> spanningRowPositionList;
-    float tableUsedHeight = 0;
+    LayoutUnit tableUsedHeight;
     // 1. Collect initial, basline aligned row heights.
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto maximumColumnAscent = InlineLayoutUnit { };
@@ -620,10 +623,9 @@ void TableFormattingContext::computeAndDistributeExtraVerticalSpace(LayoutUnit a
     // FIXME: Collect spanning row maximum heights.
 
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
-    float spaceToDistribute = 0;
-    if (availableVerticalSpace)
-        spaceToDistribute = std::max(0.0f, *availableVerticalSpace - ((rows.size() + 1) * grid.verticalSpacing()) - tableUsedHeight);
-    auto distributedSpaces = distributeAvailableSpace<RowSpan>(grid, spaceToDistribute, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
+    tableUsedHeight += (rows.size() + 1) * grid.verticalSpacing();
+    auto availableSpace = std::max(availableVerticalSpace.valueOr(0_lu), tableUsedHeight);
+    auto distributedSpaces = distributeAvailableSpace<RowSpan>(grid, availableSpace, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan())
             return GridSpace { geometryForBox(slot.cell().box()).height(), geometryForBox(slot.cell().box()).height() };
         auto computedRowHeight = geometry().computedHeight(rows.list()[rowIndex].box(), { });

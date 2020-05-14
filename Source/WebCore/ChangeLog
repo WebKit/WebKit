@@ -1,5 +1,44 @@
 2020-05-13  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add support for cases when the balancing is not based on the initial width
+        https://bugs.webkit.org/show_bug.cgi?id=211878
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for the cases when the table stretches all the way to the maximum content size,
+        and we still choose the minimum width as the initial width and the maximum width as the base for balancing the extra space.
+
+        Consider the following 2 tables:
+
+        <table>
+          <tr><td style="width: 20px"></td><td>some long long long content</td></tr>
+          <tr><td style="width: 20px"></td><td>22px width content</td></tr>
+        </table>
+
+        <table>
+          <tr><td style="width: 20px"></td><td>some long long long content</td></tr>
+          <tr><td style="width: 20px"></td><td id=fixed_width style="width: 22px;">22px width content</td></tr>
+        </table>
+
+        These tables have the same maximum widths and they both stretch to that size. 
+        However the second table will end up with a wider first and narrower second column because of the
+        width property on the [fixed_width] cell.
+        While the first table applies the maximum width for each columns, the second table uses the minimum width as the
+        initial width and balances the extra space using the maximum width (as the distribution ratio).
+        This produces a very different layout where the first table has no line wrapping, while
+        the second table wraps the "some long long long content" text (even though the used max widths are the same for each cells).
+
+        Test: fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::ColumnSpan::spacing):
+        (WebCore::Layout::RowSpan::spacing):
+        (WebCore::Layout::distributeAvailableSpace):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace):
+
+2020-05-13  Zalan Bujtas  <zalan@apple.com>
+
         Do not clear selection/repaint when the renderer gets moved during tree normalization.
         https://bugs.webkit.org/show_bug.cgi?id=211865
         <rdar://problem/62849044>

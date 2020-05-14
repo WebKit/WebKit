@@ -1,5 +1,15 @@
 2020-05-13  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Add support for cases when the balancing is not based on the initial width
+        https://bugs.webkit.org/show_bug.cgi?id=211878
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-fixed-width-with-max-distribution-expected.txt: Added.
+        * fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html: Added.
+
+2020-05-13  Zalan Bujtas  <zalan@apple.com>
+
         Do not clear selection/repaint when the renderer gets moved during tree normalization.
         https://bugs.webkit.org/show_bug.cgi?id=211865
         <rdar://problem/62849044>
