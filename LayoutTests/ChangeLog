@@ -1,3 +1,11 @@
+2020-05-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, remove expectations for tests that are no longer failing.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-05-14  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Move remaining shared tests expectation files to glib
