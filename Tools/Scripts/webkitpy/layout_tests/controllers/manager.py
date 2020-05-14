@@ -218,7 +218,12 @@ class Manager(object):
         self._printer.print_found(len(aggregate_test_names), len(aggregate_tests), self._options.repeat_each, self._options.iterations)
         start_time = time.time()
 
-        # Check to make sure we're not skipping every test.
+        # Check to see if all tests we are running are skipped.
+        if tests_to_skip == total_tests:
+            _log.error("All tests skipped.")
+            return test_run_results.RunDetails(exit_code=0, skipped_all_tests=True)
+
+        # Check to make sure we have no tests to run that are not skipped.
         if not sum([len(tests) for tests in itervalues(tests_to_run_by_device)]):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
