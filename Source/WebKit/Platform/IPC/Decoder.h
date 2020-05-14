@@ -75,34 +75,28 @@ public:
     WARN_UNUSED_RETURN bool isValid() const { return m_bufferPos != nullptr; }
     void markInvalid() { m_bufferPos = nullptr; }
 
-    WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t*, size_t, unsigned alignment);
+    WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t, size_t alignment);
 
     // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
     WARN_UNUSED_RETURN bool decodeVariableLengthByteArray(DataReference&);
 
-    WARN_UNUSED_RETURN bool decode(bool&);
-    Decoder& operator>>(Optional<bool>&);
-    WARN_UNUSED_RETURN bool decode(uint8_t&);
-    Decoder& operator>>(Optional<uint8_t>&);
-    WARN_UNUSED_RETURN bool decode(uint16_t&);
-    Decoder& operator>>(Optional<uint16_t>&);
-    WARN_UNUSED_RETURN bool decode(uint32_t&);
-    Decoder& operator>>(Optional<uint32_t>&);
-    WARN_UNUSED_RETURN bool decode(uint64_t&);
-    Decoder& operator>>(Optional<uint64_t>&);
-    WARN_UNUSED_RETURN bool decode(int16_t&);
-    Decoder& operator>>(Optional<int16_t>&);
-    WARN_UNUSED_RETURN bool decode(int32_t&);
-    Decoder& operator>>(Optional<int32_t>&);
-    WARN_UNUSED_RETURN bool decode(int64_t&);
-    Decoder& operator>>(Optional<int64_t>&);
-    WARN_UNUSED_RETURN bool decode(float&);
-    Decoder& operator>>(Optional<float>&);
-    WARN_UNUSED_RETURN bool decode(double&);
-    Decoder& operator>>(Optional<double>&);
+    template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+    WARN_UNUSED_RETURN bool decode(T& value)
+    {
+        return decodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(T), alignof(T));
+    }
 
-    template<typename E, typename = std::enable_if_t<std::is_enum<E>::value>> WARN_UNUSED_RETURN
-    bool decode(E& e)
+    template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+    Decoder& operator>>(Optional<T>& optional)
+    {
+        T result;
+        if (decodeFixedLengthData(reinterpret_cast<uint8_t*>(&result), sizeof(T), alignof(T)))
+            optional = result;
+        return *this;
+    }
+
+    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
+    WARN_UNUSED_RETURN bool decode(E& enumValue)
     {
         typename std::underlying_type<E>::type value;
         if (!decode(value))
@@ -110,11 +104,11 @@ public:
         if (!WTF::isValidEnum<E>(value))
             return false;
 
-        e = static_cast<E>(value);
+        enumValue = static_cast<E>(value);
         return true;
     }
 
-    template<typename E, typename = std::enable_if_t<std::is_enum<E>::value>>
+    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
     Decoder& operator>>(Optional<E>& optional)
     {
         Optional<typename std::underlying_type<E>::type> value;
@@ -124,14 +118,14 @@ public:
         return *this;
     }
 
-    template<typename T> WARN_UNUSED_RETURN
-    bool decodeEnum(T& result)
+    template<typename E>
+    WARN_UNUSED_RETURN bool decodeEnum(E& result)
     {
-        typename std::underlying_type<T>::type value;
+        // FIXME: Remove this after migrating all uses of this function to decode() or operator>>() with WTF::isValidEnum check.
+        typename std::underlying_type<E>::type value;
         if (!decode(value))
             return false;
-
-        result = static_cast<T>(value);
+        result = static_cast<E>(value);
         return true;
     }
 
@@ -146,14 +140,14 @@ public:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    template<typename T, std::enable_if_t<!std::is_enum<T>::value && UsesLegacyDecoder<T>::value>* = nullptr> WARN_UNUSED_RETURN
-    bool decode(T& t)
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !std::is_arithmetic<T>::value && UsesLegacyDecoder<T>::value>* = nullptr>
+    WARN_UNUSED_RETURN bool decode(T& t)
     {
         return ArgumentCoder<T>::decode(*this, t);
     }
 
-    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !UsesLegacyDecoder<T>::value>* = nullptr> WARN_UNUSED_RETURN
-    bool decode(T& t)
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !std::is_arithmetic<T>::value && !UsesLegacyDecoder<T>::value>* = nullptr>
+    WARN_UNUSED_RETURN bool decode(T& t)
     {
         Optional<T> optional;
         *this >> optional;
@@ -170,7 +164,7 @@ public:
         return *this;
     }
     
-    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !UsesModernDecoder<T>::value>* = nullptr>
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !std::is_arithmetic<T>::value && !UsesModernDecoder<T>::value>* = nullptr>
     Decoder& operator>>(Optional<T>& optional)
     {
         T t;
@@ -187,9 +181,8 @@ public:
     static const bool isIPCDecoder = true;
 
 private:
-    bool alignBufferPosition(unsigned alignment, size_t);
-    bool bufferIsLargeEnoughToContain(unsigned alignment, size_t) const;
-    template<typename Type> Decoder& getOptional(Optional<Type>&);
+    bool alignBufferPosition(size_t alignment, size_t);
+    bool bufferIsLargeEnoughToContain(size_t alignment, size_t) const;
 
     const uint8_t* m_buffer;
     const uint8_t* m_bufferPos;

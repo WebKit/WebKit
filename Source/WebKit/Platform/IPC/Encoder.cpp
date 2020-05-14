@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -138,7 +138,7 @@ void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
         addAttachment(WTFMove(attachment));
 }
 
-static inline size_t roundUpToAlignment(size_t value, unsigned alignment)
+static inline size_t roundUpToAlignment(size_t value, size_t alignment)
 {
     return ((value + alignment - 1) / alignment) * alignment;
 }
@@ -172,7 +172,7 @@ void Encoder::encodeHeader()
     *this << m_destinationID;
 }
 
-uint8_t* Encoder::grow(unsigned alignment, size_t size)
+uint8_t* Encoder::grow(size_t alignment, size_t size)
 {
     size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
     reserve(alignedSize + size);
@@ -185,7 +185,7 @@ uint8_t* Encoder::grow(unsigned alignment, size_t size)
     return m_buffer + alignedSize;
 }
 
-void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, size_t alignment)
 {
     ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
 
@@ -197,72 +197,6 @@ void Encoder::encodeVariableLengthByteArray(const DataReference& dataReference)
 {
     encode(static_cast<uint64_t>(dataReference.size()));
     encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
-}
-
-template<typename Type>
-static void copyValueToBuffer(Type value, uint8_t* bufferPosition)
-{
-    memcpy(bufferPosition, &value, sizeof(Type));
-}
-
-void Encoder::encode(bool n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(uint8_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(uint16_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(uint32_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(uint64_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(int16_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(int32_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(int64_t n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(float n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
-}
-
-void Encoder::encode(double n)
-{
-    uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    copyValueToBuffer(n, buffer);
 }
 
 void Encoder::addAttachment(Attachment&& attachment)

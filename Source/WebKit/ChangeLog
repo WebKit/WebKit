@@ -1,3 +1,47 @@
+2020-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Use templates to reduce duplicate code in IPC::Decoder and IPC::Encoder classes
+        <https://webkit.org/b/211861>
+        <rdar://problem/62360390>
+
+        Reviewed by Alex Christensen.
+
+        In broad strokes, this change fixes the following issues:
+        - Change `unsigned` type to `size_t` for `alignment` parameters
+          for consistency on 32-bit platforms.
+        - Templatize Encoder::encode(), Decoder::decode() and
+          Decoder::operator>>() methods to reduce duplicate code.  This
+          deleted code in source files, added template methods to header
+          files, and required a few changes to existing templates in
+          header files to disambiguate std::is_arithmetic parameter
+          types.
+        - Use `typename E` for all template methods that handle enum
+          types.
+        - Use `typename T` for all other template method types.
+        - Move WARN_UNUSED_RETURN to same line as `bool` return type.
+        - Add FIXME comments to validate enum values.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::roundUpToAlignment):
+        (IPC::Decoder::alignBufferPosition):
+        (IPC::Decoder::bufferIsLargeEnoughToContain const):
+        (IPC::Decoder::decodeFixedLengthData):
+        (IPC::decodeValueFromBuffer): Delete.
+        (IPC::Decoder::getOptional): Delete.
+        (IPC::Decoder::operator>>): Delete.
+        (IPC::Decoder::decode): Delete.
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decode):
+        (IPC::Decoder::operator>>):
+        (IPC::Decoder::decodeEnum):
+        * Platform/IPC/Encoder.cpp:
+        (IPC::roundUpToAlignment):
+        (IPC::Encoder::grow):
+        (IPC::Encoder::encodeFixedLengthData):
+        (IPC::copyValueToBuffer): Delete.
+        (IPC::Encoder::encode): Delete.
+        * Platform/IPC/Encoder.h:
+
 2020-05-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: `RuntimeEnabledFeatures` should also be enabled when remotely inspecting

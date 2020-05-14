@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,24 +58,27 @@ public:
 
     void wrapForTesting(std::unique_ptr<Encoder>);
 
-    void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
+    void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
     void encodeVariableLengthByteArray(const DataReference&);
 
-    template<typename T> void encodeEnum(T t)
+    template<typename E>
+    void encodeEnum(E enumValue)
     {
-        encode(static_cast<typename std::underlying_type<T>::type>(t));
+        // FIXME: Remove this after migrating all uses of this function to encode() or operator<<() with WTF::isValidEnum check.
+        encode(static_cast<typename std::underlying_type<E>::type>(enumValue));
     }
 
-    template<typename T, std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value>* = nullptr>
+    template<typename T, std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value && !std::is_arithmetic<typename std::remove_const_t<std::remove_reference_t<T>>>::value>* = nullptr>
     void encode(T&& t)
     {
         ArgumentCoder<typename std::remove_const<typename std::remove_reference<T>::type>::type>::encode(*this, std::forward<T>(t));
     }
 
-    template<typename T, std::enable_if_t<std::is_enum<T>::value>* = nullptr>
-    Encoder& operator<<(T&& t)
+    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
+    Encoder& operator<<(E&& enumValue)
     {
-        encode(static_cast<typename std::underlying_type<T>::type>(t));
+        ASSERT(WTF::isValidEnum<E>(static_cast<typename std::underlying_type<E>::type>(enumValue)));
+        encode(static_cast<typename std::underlying_type<E>::type>(enumValue));
         return *this;
     }
 
@@ -86,6 +89,12 @@ public:
         return *this;
     }
 
+    template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+    void encode(T value)
+    {
+        encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
+    }
+
     uint8_t* buffer() const { return m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
 
@@ -94,28 +103,16 @@ public:
 
     static const bool isIPCEncoder = true;
 
-    void encode(uint64_t);
-
 private:
     void reserve(size_t);
 
-    uint8_t* grow(unsigned alignment, size_t);
+    uint8_t* grow(size_t alignment, size_t);
 
-    void encode(bool);
-    void encode(uint8_t);
-    void encode(uint16_t);
-    void encode(uint32_t);
-    void encode(int16_t);
-    void encode(int32_t);
-    void encode(int64_t);
-    void encode(float);
-    void encode(double);
-
-    template<typename E>
-    auto encode(E value) -> std::enable_if_t<std::is_enum<E>::value>
+    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
+    void encode(E enumValue)
     {
-        ASSERT(WTF::isValidEnum<E>(static_cast<typename std::underlying_type<E>::type>(value)));
-        encode(static_cast<typename std::underlying_type<E>::type>(value));
+        ASSERT(WTF::isValidEnum<E>(static_cast<typename std::underlying_type<E>::type>(enumValue)));
+        encode(static_cast<typename std::underlying_type<E>::type>(enumValue));
     }
 
     void encodeHeader();
