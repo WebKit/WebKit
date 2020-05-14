@@ -40,7 +40,6 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
 {
     // FIXME: Get a real ID from the tkhd atom.
     m_id = "A" + String::number(index);
-    notifyTrackOfActiveChanged();
 }
 
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
@@ -56,10 +55,6 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     m_id = gst_stream_get_stream_id(stream.get());
-    if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT)
-        markAsActive();
-
-    notifyTrackOfActiveChanged();
 }
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const
@@ -76,19 +71,14 @@ void AudioTrackPrivateGStreamer::disconnect()
     TrackPrivateBaseGStreamer::disconnect();
 }
 
-void AudioTrackPrivateGStreamer::markAsActive()
-{
-    AudioTrackPrivate::setEnabled(true);
-}
-
 void AudioTrackPrivateGStreamer::setEnabled(bool enabled)
 {
     if (enabled == this->enabled())
         return;
     AudioTrackPrivate::setEnabled(enabled);
 
-    if (enabled && m_player)
-        m_player->enableTrack(TrackPrivateBaseGStreamer::TrackType::Audio, m_index);
+    if (m_player)
+        m_player->updateEnabledAudioTrack();
 }
 
 } // namespace WebCore

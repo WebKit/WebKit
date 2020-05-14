@@ -65,11 +65,9 @@ protected:
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream>);
 
-    void notifyTrackOfActiveChanged();
     void notifyTrackOfTagsChanged();
 
     enum MainThreadNotification {
-        ActiveChanged = 1 << 0,
         TagsChanged = 1 << 1,
         NewSample = 1 << 2,
         StreamChanged = 1 << 3

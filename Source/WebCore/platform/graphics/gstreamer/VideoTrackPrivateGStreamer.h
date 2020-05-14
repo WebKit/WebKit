@@ -53,7 +53,6 @@ public:
 
     void disconnect() override;
 
-    void markAsActive();
     void setSelected(bool) override;
     void setActive(bool enabled) override { setSelected(enabled); }
 

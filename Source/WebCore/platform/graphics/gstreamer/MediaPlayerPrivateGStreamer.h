@@ -220,7 +220,9 @@ public:
     NativeImagePtr nativeImageForCurrentTime() override;
 #endif
 
-    void enableTrack(TrackPrivateBaseGStreamer::TrackType, unsigned index);
+    void updateEnabledVideoTrack();
+    void updateEnabledAudioTrack();
+    void playbin3SendSelectStreamsIfAppropriate();
 
     // Append pipeline interface
     // FIXME: Use the client interface pattern, AppendPipeline does not need the full interface to this class just for these two functions.
@@ -461,8 +463,7 @@ private:
     void setPlaybinURL(const URL& urlString);
     void loadFull(const String& url, const String& pipelineName);
 
-    void updateTracks();
-    void clearTracks();
+    void updateTracks(GRefPtr<GstStreamCollection>&&);
 
 #if ENABLE(ENCRYPTED_MEDIA)
     bool isCDMAttached() const { return m_cdmInstance; }
@@ -508,13 +509,19 @@ private:
     bool m_shouldPreservePitch { false };
     mutable Optional<Seconds> m_lastQueryTime;
     bool m_isLegacyPlaybin;
-    GRefPtr<GstStreamCollection> m_streamCollection;
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStreamPrivate> m_streamPrivate;
 #endif
-    String m_currentAudioStreamId;
-    String m_currentVideoStreamId;
-    String m_currentTextStreamId;
+
+    // playbin3 only:
+    bool m_waitingForStreamsSelectedEvent { true };
+    AtomString m_currentAudioStreamId; // Currently playing.
+    AtomString m_currentVideoStreamId;
+    AtomString m_wantedAudioStreamId; // Set in JavaScript.
+    AtomString m_wantedVideoStreamId;
+    AtomString m_requestedAudioStreamId; // Expected in the next STREAMS_SELECTED message.
+    AtomString m_requestedVideoStreamId;
+
 #if ENABLE(WEB_AUDIO)
     std::unique_ptr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif

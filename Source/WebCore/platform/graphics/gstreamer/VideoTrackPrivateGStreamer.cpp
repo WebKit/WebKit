@@ -40,7 +40,6 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
 {
     // FIXME: Get a real ID from the tkhd atom.
     m_id = "V" + String::number(index);
-    notifyTrackOfActiveChanged();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
@@ -56,9 +55,6 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     m_id = gst_stream_get_stream_id(stream.get());
-    if (gst_stream_get_stream_flags(stream.get()) & GST_STREAM_FLAG_SELECT)
-        markAsActive();
-    notifyTrackOfActiveChanged();
 }
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
@@ -75,19 +71,14 @@ void VideoTrackPrivateGStreamer::disconnect()
     TrackPrivateBaseGStreamer::disconnect();
 }
 
-void VideoTrackPrivateGStreamer::markAsActive()
-{
-    VideoTrackPrivate::setSelected(true);
-}
-
 void VideoTrackPrivateGStreamer::setSelected(bool selected)
 {
     if (selected == this->selected())
         return;
     VideoTrackPrivate::setSelected(selected);
 
-    if (selected && m_player)
-        m_player->enableTrack(TrackPrivateBaseGStreamer::TrackType::Video, m_index);
+    if (m_player)
+        m_player->updateEnabledVideoTrack();
 }
 
 } // namespace WebCore

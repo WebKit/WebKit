@@ -1,3 +1,80 @@
+2020-05-14  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Playbin3 track switch rework
+        https://bugs.webkit.org/show_bug.cgi?id=211623
+
+        Reviewed by Philippe Normand.
+
+        This patch reworks how track selection and reporting of selected
+        tracks is done in the player.
+
+        The following found limitations and assumptions in current GStreamer
+        have informed this patch:
+
+        a) Although the API for playbin3 is designed to be able to accept any
+        number of tracks of any kind, this is not supported in practice.
+
+        b) The first track of each type is always selected. Even in playbin3
+        mode, looking for GST_STREAM_FLAG_SELECT is not a reliable method, as
+        in most cases the demuxer does not set it at all. [qtdemux never sets
+        it at all, and matroskademux only sets it in certain cases.]
+
+        c) Sending GST_EVENT_SELECT_STREAMS is only safe at certain moments.
+        It's not safe before pre-roll, after EOS or during the handling of
+        another SELECT_STREAMS.
+
+        d) Selecting text tracks with playbin APIs is not relevant. All text
+        tracks are already being picked by WebKitTextCombiner, unaffected by
+        playbin track selection.
+
+        e) Tracks requested in a GST_EVENT_SELECT_STREAMS are eventually
+        selected. On the other hand,  looking at
+        GST_MESSAGE_STREAMS_SELECTED's content is not reliable, as this has
+        been seen to miss tracks depending on thread luck.
+
+        This patch takes the points above into account to rework how track
+        selection is handled in MediaPlayerPrivateGStreamer and fix the
+        following issues:
+
+        1) In playbin3 mode, no track was marked as selected initially,
+        because of reliance on GST_STREAM_FLAG_SELECT.
+
+        2) In playbin2 mode, sometimes tracks would not be initially marked as
+        selected. This occurred because of reliance on the "selected" property
+        in inputselector sinkpads, whose initialization is racy -- it can
+        occur after the track has been added and picked up by WebKit.
+
+        3) In playbin3 mode, the limitations explained before has been honored
+        to make track selection stable, delaying SELECT_STREAMS events until
+        they are safe to send.
+
+        This patch doesn't introduce significative behavior changes, rather
+        aiming for improving the stabilitity of the player. Existing tests
+        should provide enough coverage.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer):
+        (WebCore::AudioTrackPrivateGStreamer::setEnabled):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::updateEnabledVideoTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::updateEnabledAudioTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        (WebCore::VideoTrackPrivateGStreamer::setSelected):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+
 2020-05-14  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Can't replay blob videos in web.whatsapp.com

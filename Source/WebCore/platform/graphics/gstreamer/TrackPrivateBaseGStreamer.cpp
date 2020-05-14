@@ -51,7 +51,6 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
 {
     ASSERT(m_pad);
 
-    g_signal_connect_swapped(m_pad.get(), "notify::active", G_CALLBACK(activeChangedCallback), this);
     g_signal_connect_swapped(m_pad.get(), "notify::tags", G_CALLBACK(tagsChangedCallback), this);
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
@@ -92,11 +91,6 @@ void TrackPrivateBaseGStreamer::disconnect()
     m_pad.clear();
 }
 
-void TrackPrivateBaseGStreamer::activeChangedCallback(TrackPrivateBaseGStreamer* track)
-{
-    track->m_notifier->notify(MainThreadNotification::ActiveChanged, [track] { track->notifyTrackOfActiveChanged(); });
-}
-
 void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* track)
 {
     track->tagsChanged();
@@ -123,18 +117,6 @@ void TrackPrivateBaseGStreamer::tagsChanged()
     }
 
     m_notifier->notify(MainThreadNotification::TagsChanged, [this] { notifyTrackOfTagsChanged(); });
-}
-
-void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
-{
-    if (!m_pad)
-        return;
-
-    gboolean active = false;
-    if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_pad.get()), "active"))
-        g_object_get(m_pad.get(), "active", &active, nullptr);
-
-    setActive(active);
 }
 
 bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomString& value)
