@@ -1,3 +1,1015 @@
+2020-05-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Move shared table tests expectation files to glib
+        https://bugs.webkit.org/show_bug.cgi?id=211872
+
+        Unreviewed test gardening.
+
+        * platform/glib/tables/mozilla/bugs/45621-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/45621-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug10009-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug10009-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug100334-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug100334-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug10036-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug10036-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug10039-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug10039-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug101201-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug101201-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug102145-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug102145-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug102145-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug102145-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug102145-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug102145-3-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug102145-4-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug102145-4-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug10296-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug10296-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug103533-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug103533-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug10565-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug10565-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1067-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1067-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1067-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1067-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug106795-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug106795-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug106816-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug106816-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug108340-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug108340-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug11026-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug11026-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug110566-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug110566-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug11321-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug11321-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug113235-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug113235-3-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug113424-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug113424-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug119786-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug119786-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug12008-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug12008-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug120364-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug120364-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1220-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1220-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug12268-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug12268-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug123862-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug123862-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1261-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1261-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug12709-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug12709-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug127267-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug127267-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug128229-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug128229-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug12908-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug12908-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug12910-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug12910-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1296-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1296-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug13105-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug13105-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug13196-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug13196-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug133756-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug133756-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug133948-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug133948-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug13484-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug13484-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug13526-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug13526-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug139524-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug139524-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug139524-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug139524-3-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug139524-4-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug139524-4-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug14159-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug14159-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug14159-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug14159-3-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug14323-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug14323-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug145572-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug145572-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1474-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1474-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug149275-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug149275-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug15247-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug15247-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug154780-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug154780-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug157890-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug157890-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug159108-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug159108-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug15933-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug15933-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug17168-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug17168-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug175455-4-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug175455-4-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug17548-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug17548-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1800-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1800-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1802-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1802-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1802s-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1802s-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1809-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1809-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1818-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1818-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1818-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1818-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1818-4-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1818-4-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1818-5-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1818-5-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug1828-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug1828-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug18440-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug18440-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug18558-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug18558-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug19061-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug19061-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug19061-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug19061-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2123-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2123-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug21299-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug21299-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug215629-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug215629-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug21918-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug21918-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug219693-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug219693-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug219693-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug219693-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug22019-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug22019-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug221784-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug221784-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug221784-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug221784-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug222846-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug222846-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug22513-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug22513-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2267-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2267-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug227123-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug227123-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2296-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2296-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug23072-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug23072-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug23151-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug23151-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug23994-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug23994-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug24503-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug24503-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug24661-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug24661-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug24880-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug24880-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug25004-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug25004-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug25074-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug25074-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug25086-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug25086-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2516-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2516-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug25367-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug25367-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2684-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2684-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug27038-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug27038-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug275625-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug275625-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2757-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2757-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2763-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2763-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2773-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2773-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug278266-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug278266-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug278385-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug278385-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug27993-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug27993-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug28341-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug28341-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug29058-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug29058-3-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug29429-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug29429-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2973-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2973-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug2981-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug2981-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3037-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3037-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3037-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3037-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug30418-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug30418-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug30985-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug30985-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3103-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3103-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3191-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3191-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug32205-5-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug32205-5-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3263-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3263-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug32841-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug32841-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3309-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3309-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3309-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3309-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug33137-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug33137-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug34176-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug34176-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug35662-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug35662-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3681-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3681-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3681-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3681-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug3718-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug3718-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug40828-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug40828-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4093-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4093-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug41890-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug41890-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug42443-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug42443-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4284-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4284-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug43204-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug43204-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4385-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4385-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug43854-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug43854-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4501-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4501-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug45055-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug45055-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug45055-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug45055-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4520-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4520-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4523-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4523-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug45350-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug45350-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug45486-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug45486-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug46268-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug46268-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug46268-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug46268-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug46268-5-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug46268-5-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug46268-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug46268-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug46944-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug46944-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4739-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4739-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug47432-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug47432-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug48028-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug48028-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4849-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4849-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug4849-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug4849-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug48827-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug48827-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug50695-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug50695-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug51140-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug51140-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug53690-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug53690-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug53690-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug53690-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug53891-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug53891-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug54450-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug54450-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug55527-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug55527-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug55789-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug55789-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug56405-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug56405-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug56563-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug56563-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug57378-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug57378-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug57828-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug57828-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug5797-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug5797-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug5798-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug5798-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug5838-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug5838-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug60013-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug60013-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug60804-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug60804-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug60807-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug60807-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug60992-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug60992-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug625-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug625-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug63785-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug63785-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug6404-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug6404-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug641-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug641-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug641-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug641-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug647-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug647-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug650-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug650-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug6674-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug6674-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug67864-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug67864-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug67915-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug67915-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug68998-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug68998-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug72359-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug72359-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug727-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug727-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug7471-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug7471-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug75250-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug75250-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug7714-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug7714-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug8032-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug8032-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug81934-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug81934-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug8361-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug8361-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug8411-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug8411-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug86220-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug86220-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug88035-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug88035-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug88035-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug88035-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug88524-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug88524-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug8950-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug8950-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug9072-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug9072-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug9123-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug9123-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug92647-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug92647-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug9271-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug9271-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug9271-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug9271-2-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug92868-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug92868-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug963-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug963-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug96343-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug96343-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug97138-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug97138-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug97383-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug97383-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug98196-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug98196-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug9879-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug9879-1-expected.txt.
+        * platform/glib/tables/mozilla/bugs/bug99923-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug99923-expected.txt.
+        * platform/glib/tables/mozilla/collapsing_borders/bug127040-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/collapsing_borders/bug127040-expected.txt.
+        * platform/glib/tables/mozilla/core/box_sizing-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/box_sizing-expected.txt.
+        * platform/glib/tables/mozilla/core/captions-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/captions-expected.txt.
+        * platform/glib/tables/mozilla/core/cell_heights-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/cell_heights-expected.txt.
+        * platform/glib/tables/mozilla/core/col_span-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_span-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_auto_auto-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_auto_auto-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_auto_autoFixPer-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_auto_autoFixPer-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_auto_autoPer-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_auto_autoPer-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_auto_fix-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_auto_fix-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_auto_fixPer-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_auto_fixPer-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_auto_per-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_auto_per-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_fix_auto-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_fix_auto-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_fix_autoFix-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_fix_autoFix-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_fix_autoPer-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_fix_autoPer-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_fix_fix-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_fix_fix-expected.txt.
+        * platform/glib/tables/mozilla/core/col_widths_fix_per-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/col_widths_fix_per-expected.txt.
+        * platform/glib/tables/mozilla/core/misc-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/misc-expected.txt.
+        * platform/glib/tables/mozilla/core/nested1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/nested1-expected.txt.
+        * platform/glib/tables/mozilla/core/table_frame-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/table_frame-expected.txt.
+        * platform/glib/tables/mozilla/core/table_heights-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/table_heights-expected.txt.
+        * platform/glib/tables/mozilla/core/table_rules-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/table_rules-expected.txt.
+        * platform/glib/tables/mozilla/core/table_widths-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/core/table_widths-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteCellsRebuild1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteCellsRebuild1-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteCellsShrink2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteCellsShrink2-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteCol1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteCol1-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteCol2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteCol2-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteCol3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteCol3-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteColGroup1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteColGroup1-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteColGroup2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteColGroup2-expected.txt.
+        * platform/glib/tables/mozilla/dom/deleteTbodyExpand1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/deleteTbodyExpand1-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCellsExpand1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCellsExpand1-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCellsExpand2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCellsExpand2-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCellsRebuild1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCellsRebuild1-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCellsRebuild2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCellsRebuild2-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertColGroups1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertColGroups1-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertColGroups2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertColGroups2-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCols1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCols1-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCols2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCols2-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCols3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCols3-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCols4-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCols4-expected.txt.
+        * platform/glib/tables/mozilla/dom/insertCols5-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/dom/insertCols5-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_index-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_index-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_layers-opacity-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_layers-opacity-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_position-table-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_position-table-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_simple-table-cell-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_simple-table-cell-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_simple-table-column-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_simple-table-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_simple-table-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_simple-table-row-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_simple-table-row-expected.txt.
+        * platform/glib/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt.
+        * platform/glib/tables/mozilla/marvin/body_col-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/body_col-expected.txt.
+        * platform/glib/tables/mozilla/marvin/table_overflow_td_dynamic_deactivate-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/table_overflow_td_dynamic_deactivate-expected.txt.
+        * platform/glib/tables/mozilla/marvin/table_row_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/table_row_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/table_row_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/table_row_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/table_row_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/table_row_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_aqua-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_aqua-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_aqua_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_aqua_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_black-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_black-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_black_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_black_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_blue-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_blue-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_blue_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_blue_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_fuchsia-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_fuchsia-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_fuchsia_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_fuchsia_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_gray-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_gray-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_gray_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_gray_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_green-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_green-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_green_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_green_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_lime-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_lime-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_lime_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_lime_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_maroon-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_maroon-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_maroon_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_maroon_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_navy-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_navy-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_navy_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_navy_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_olive-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_olive-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_olive_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_olive_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_purple-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_purple-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_purple_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_purple_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_red-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_red-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_red_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_red_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_silver-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_silver-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_silver_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_silver_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_white-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_white-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_bgcolor_white_rgb-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_bgcolor_white_rgb-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_border_0-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_border_0-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_caption_align_bot-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_caption_align_bot-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_caption_align_top-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_caption_align_top-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_class-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_class-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_default-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_default-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_id-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_id-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tables_width_px-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tables_width_px-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tbody_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tbody_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tfoot_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tfoot_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tfoot_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tfoot_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tfoot_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tfoot_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tfoot_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tfoot_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/tfoot_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/tfoot_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/thead_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/thead_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/thead_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/thead_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/thead_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/thead_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/thead_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/thead_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/thead_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/thead_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_caption_align_bottom-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_caption_align_bottom-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_caption_align_top-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_caption_align_top-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_caption_class-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_caption_class-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_caption_id-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_caption_id-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_caption_style-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_caption_style-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_span-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_span-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_width_pct-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_width_pct-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_col_width_px-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_col_width_px-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_span-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_span-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_colgroup_width_pct-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_colgroup_width_pct-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_cellpadding-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_cellpadding-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_cellpadding_pct-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_cellpadding_pct-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_cellspacing-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_cellspacing-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_cellspacing_pct-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_cellspacing_pct-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_class-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_class-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_frame_void-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_frame_void-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_id-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_id-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_width_pct-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_width_pct-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_table_width_px-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_table_width_px-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_class-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_class-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_id-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_id-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tbody_style-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tbody_style-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_class-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_class-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_colspan-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_colspan-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_height-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_height-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_id-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_id-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_nowrap-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_nowrap-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_rowspan-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_rowspan-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_style-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_style-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_td_width-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_td_width-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tfoot_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tfoot_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tfoot_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tfoot_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tfoot_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tfoot_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tfoot_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tfoot_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_th_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_th_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_th_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_th_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_th_colspan-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_th_colspan-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_th_height-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_th_height-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_th_width-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_th_width-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_thead_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_thead_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_thead_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_thead_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_thead_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_thead_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_thead_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_thead_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_thead_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_thead_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_align_center-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_align_center-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_align_char-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_align_char-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_align_justify-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_align_justify-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_align_left-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_align_right-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_class-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_class-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_id-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_id-expected.txt.
+        * platform/glib/tables/mozilla/marvin/x_tr_style-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/marvin/x_tr_style-expected.txt.
+        * platform/glib/tables/mozilla/other/body_col-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/other/body_col-expected.txt.
+        * platform/glib/tables/mozilla/other/cellspacing-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/other/cellspacing-expected.txt.
+        * platform/glib/tables/mozilla/other/nested2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/other/nested2-expected.txt.
+        * platform/glib/tables/mozilla/other/nestedTables-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/other/nestedTables-expected.txt.
+        * platform/glib/tables/mozilla/other/padding-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/other/padding-expected.txt.
+        * platform/glib/tables/mozilla/other/slashlogo-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/other/slashlogo-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/97619-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/97619-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug101759-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug101759-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug10216-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug10216-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug104898-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug104898-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug106336-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug106336-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug106966-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug106966-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug1164-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug1164-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug11945-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug11945-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug14007-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug14007-1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug14159-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug14159-2-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug14489-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug14489-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug1647-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug1647-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug178855-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug178855-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug220653-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug220653-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug23847-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug23847-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug24880-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug24880-1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug27993-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug27993-2-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3105-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3105-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-10-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-10-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-11-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-11-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-12-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-12-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-13-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-13-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-14-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-14-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-15-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-15-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-16-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-16-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-17-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-17-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-18-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-18-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-2-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-3-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-3-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-4-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-4-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-5-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-5-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-6-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-6-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-7-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-7-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-8-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-8-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug3166-9-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-9-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug33784-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug33784-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug4294-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug4294-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug45621-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug45621-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug47163-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug47163-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug61042-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug61042-1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug61042-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug61042-2-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug65372-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug65372-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug67915-2-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug67915-2-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug6933-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug6933-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug7113-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug7113-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug72393-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug72393-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug7243-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug7243-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug73629-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug73629-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug85016-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug85016-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/bugs/bug9879-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/bugs/bug9879-1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/core/columns-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/core/columns-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/core/conflicts-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/core/conflicts-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/dom/appendCellsRebuild1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/dom/appendCellsRebuild1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_td_dynamic_deactivate-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_td_dynamic_deactivate-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/tables_caption_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/tables_caption_align_left-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/tables_caption_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/tables_caption_align_right-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_caption_align_left-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_caption_align_left-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_caption_align_right-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_caption_align_right-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_above-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_above-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_below-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_below-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_border-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_border-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_box-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_box-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_hsides-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_hsides-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_lhs-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_lhs-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_rhs-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_rhs-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/marvin/x_table_frame_vsides-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/marvin/x_table_frame_vsides-expected.txt.
+        * platform/glib/tables/mozilla_expected_failures/other/empty_cells-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla_expected_failures/other/empty_cells-expected.txt.
+        * platform/wpe/tables/mozilla/bugs/45621-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug10009-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug100334-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug10036-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug10039-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug101201-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug102145-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug102145-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug102145-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug102145-4-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug10296-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug103533-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug10565-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1067-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1067-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug106795-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug106816-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug108340-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug11026-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug110566-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug11321-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug113235-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug113424-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug119786-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug12008-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug120364-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1220-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug12268-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug123862-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1261-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug12709-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug127267-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug128229-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug12908-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug12910-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1296-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug13105-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug13196-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug133756-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug133948-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug13484-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug13526-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug139524-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug139524-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug139524-4-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug14159-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug14159-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug14323-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug145572-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1474-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug149275-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug15247-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug154780-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug157890-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug159108-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug15933-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug17168-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug175455-4-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug17548-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1800-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1802-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1802s-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1809-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1818-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1818-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1818-4-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1818-5-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug1828-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug18440-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug18558-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug19061-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug19061-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2123-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug21299-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug215629-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug21918-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug219693-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug219693-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug22019-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug221784-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug221784-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug222846-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug22513-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2267-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug227123-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2296-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug23072-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug23151-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug23994-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug24503-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug24661-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug24880-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug25004-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug25074-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug25086-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2516-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug25367-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2684-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug27038-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug275625-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2757-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2763-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2773-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug278266-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug278385-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug27993-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug28341-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug29058-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug29429-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2973-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug2981-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3037-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3037-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug30418-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug30985-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3103-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3191-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug32205-5-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3263-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug32841-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3309-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3309-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug33137-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug34176-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug35662-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3681-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3681-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug3718-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug40828-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4093-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug41890-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug42443-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4284-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug43204-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4385-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug43854-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4501-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug45055-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug45055-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4520-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4523-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug45350-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug45486-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug46268-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug46268-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug46268-5-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug46268-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug46944-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4739-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug47432-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug48028-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4849-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug4849-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug48827-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug50695-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug51140-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug53690-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug53690-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug53891-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug54450-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug55527-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug55789-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug56405-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug56563-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug57378-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug57828-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug5797-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug5798-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug5838-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug60013-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug60804-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug60807-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug60992-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug625-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug63785-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug6404-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug641-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug641-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug647-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug650-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug6674-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug67864-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug67915-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug68998-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug72359-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug727-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug7471-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug75250-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug7714-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug8032-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug81934-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug8361-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug8411-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug86220-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug88035-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug88035-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug88524-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug8950-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug9072-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug9123-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug92647-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug9271-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug9271-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug92868-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug963-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug96343-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug97138-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug97383-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug98196-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug9879-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug99923-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/collapsing_borders/bug127040-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/box_sizing-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/captions-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/cell_heights-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_span-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_auto_auto-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_auto_autoFixPer-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_auto_autoPer-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_auto_fix-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_auto_fixPer-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_auto_per-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_fix_auto-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_fix_autoFix-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_fix_autoPer-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_fix_fix-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/col_widths_fix_per-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/misc-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/nested1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/table_frame-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/table_heights-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/table_rules-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/core/table_widths-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteCellsRebuild1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteCellsShrink2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteCol1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteCol2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteCol3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteColGroup1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteColGroup2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/deleteTbodyExpand1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCellsExpand1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCellsExpand2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCellsRebuild1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCellsRebuild2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertColGroups1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertColGroups2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCols1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCols2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCols3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCols4-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/dom/insertCols5-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_index-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_layers-opacity-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_position-table-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-cell-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-column-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-row-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/body_col-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/table_overflow_td_dynamic_deactivate-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/table_row_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/table_row_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/table_row_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_aqua-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_aqua_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_black-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_black_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_blue-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_blue_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_fuchsia-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_fuchsia_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_gray-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_gray_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_green-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_green_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_lime-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_lime_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_maroon-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_maroon_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_navy-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_navy_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_olive-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_olive_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_purple-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_purple_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_red-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_red_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_silver-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_silver_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_white-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_bgcolor_white_rgb-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_border_0-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_caption_align_bot-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_caption_align_top-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_class-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_default-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_id-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tables_width_px-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tbody_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tfoot_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tfoot_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tfoot_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tfoot_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/tfoot_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/thead_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/thead_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/thead_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/thead_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/thead_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_caption_align_bottom-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_caption_align_top-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_caption_class-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_caption_id-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_caption_style-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_span-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_width_pct-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_col_width_px-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_span-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_width_pct-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_cellpadding-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_cellpadding_pct-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_cellspacing-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_cellspacing_pct-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_class-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_frame_void-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_id-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_width_pct-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_table_width_px-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_class-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_id-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tbody_style-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_class-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_colspan-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_height-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_id-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_nowrap-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_rowspan-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_style-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_td_width-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tfoot_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tfoot_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tfoot_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tfoot_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_th_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_th_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_th_colspan-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_th_height-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_th_width-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_thead_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_thead_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_thead_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_thead_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_thead_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_align_center-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_align_char-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_align_justify-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_class-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_id-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/marvin/x_tr_style-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/other/body_col-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/other/cellspacing-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/other/nested2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/other/nestedTables-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/other/padding-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/other/slashlogo-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/97619-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug101759-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug10216-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug104898-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug106336-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug106966-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug1164-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug11945-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug14007-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug14159-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug14489-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug1647-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug178855-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug220653-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug23847-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug24880-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug27993-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3105-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-10-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-11-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-12-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-13-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-14-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-15-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-16-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-17-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-18-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-3-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-4-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-5-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-6-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-7-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-8-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug3166-9-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug33784-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug4294-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug45621-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug47163-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug61042-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug61042-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug65372-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug67915-2-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug6933-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug7113-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug72393-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug7243-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug73629-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug85016-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug9879-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/core/columns-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/core/conflicts-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/dom/appendCellsRebuild1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_td_dynamic_deactivate-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/tables_caption_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/tables_caption_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_caption_align_left-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_caption_align_right-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_above-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_below-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_border-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_box-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_hsides-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_lhs-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_rhs-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/marvin/x_table_frame_vsides-expected.txt: Removed.
+        * platform/wpe/tables/mozilla_expected_failures/other/empty_cells-expected.txt: Removed.
+
 2020-05-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: show EventTarget listeners as an internal property
