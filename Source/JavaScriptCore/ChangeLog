@@ -1,3 +1,55 @@
+2020-05-14  Keith Miller  <keith_miller@apple.com>
+
+        GetArrayLength should be "blessed" during Fixup phase in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=211540
+
+        Reviewed by Saam Barati.
+
+        If we got an ArrayMode during bytecode parsing for-of that expects
+        to be configured during Fixup, then right now we will crash on
+        GetArrayLength. This fixes GetArrayLength to properly call
+        blessArrayOperation and fixes clobberize to know that
+        GetArrayLength could have a ForceExit ArrayMode briefly before
+        being cleaned up.
+
+        When blessing GetArrayLength we can now produce CheckArrays that
+        have an AnyTypedArray ArrayMode::Type. So this patch expands
+        CheckArray to properly handle that. To help with this we expand
+        branchIfType to have a starting JSType and an optional ending
+        JSType. Additionally, to prevent extra checks AI has been taught
+        to fold more ArrayModes so we should almost always avoid new
+        runtime checks.
+
+        Lastly, make sure that Undecided Arrays don't fall back to generic
+        because GetArrayLength can't be converted to...
+        GetArrayLenth. Also, GetArrayLength would previously pass it's own
+        speculation for the speculation of the index, which logically
+        doesn't make sense. So this patch adds a new constant, which is
+        SpecInt32Only, that can be passed if a DFG node doesn't have an
+        index.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchIfType):
+        (JSC::testBranchIfNotType):
+        (JSC::run):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::canBecomeGetArrayLength):
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::isArrayTypeForCheckArray):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfType):
+        (JSC::AssemblyHelpers::branchIfNotType):
+        * runtime/JSType.h:
+
 2020-05-13  Keith Miller  <keith_miller@apple.com>
 
         iteration bytecodes need to handle osr exiting from inlined getter frames

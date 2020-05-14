@@ -2021,6 +2021,14 @@ private:
         }
 
         case GetArrayLength: {
+            ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
+            // We don't know how to handle generic and we only emit this in the Parser when we have checked the value is an Array/TypedArray.
+            if (arrayMode.type() == Array::Generic)
+                arrayMode = arrayMode.withType(Array::ForceExit);
+            ASSERT(arrayMode.isSpecific() || arrayMode.type() == Array::ForceExit);
+            node->setArrayMode(arrayMode);
+            blessArrayOperation(node->child1(), Edge(), node->child2(), lengthNeedsStorage);
+
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
@@ -3519,7 +3527,7 @@ private:
         }
     }
     
-    void blessArrayOperation(Edge base, Edge index, Edge& storageChild)
+    void blessArrayOperation(Edge base, Edge index, Edge& storageChild, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
     {
         Node* node = m_currentNode;
         
@@ -3539,7 +3547,7 @@ private:
             return;
             
         default: {
-            Node* storage = checkArray(node->arrayMode(), node->origin, base.node(), index.node());
+            Node* storage = checkArray(node->arrayMode(), node->origin, base.node(), index.node(), storageCheck);
             if (!storage)
                 return;
             
@@ -3828,7 +3836,7 @@ private:
         }
             
         arrayMode = arrayMode.refine(
-            m_graph, node, node->child1()->prediction(), node->prediction());
+            m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             
         if (arrayMode.type() == Array::Generic) {
             // Check if the input is something that we can't get array length for, but for which we

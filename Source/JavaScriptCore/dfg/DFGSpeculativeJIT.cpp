@@ -832,13 +832,14 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
 
 void SpeculativeJIT::checkArray(Node* node)
 {
-    ASSERT(node->arrayMode().isSpecific());
-    ASSERT(!node->arrayMode().doesConversion());
+    ArrayMode arrayMode = node->arrayMode();
+    ASSERT(arrayMode.isSpecific());
+    ASSERT(!arrayMode.doesConversion());
     
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
     
-    if (node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1()))) {
+    if (arrayMode.alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1()))) {
         // We can purge Empty check completely in this case of CheckArrayOrEmpty since CellUse only accepts SpecCell | SpecEmpty.
         ASSERT(typeFilterFor(node->child1().useKind()) & SpecEmpty);
         noResult(m_currentNode);
@@ -847,7 +848,7 @@ void SpeculativeJIT::checkArray(Node* node)
 
     Optional<GPRTemporary> temp;
     Optional<GPRReg> tempGPR;
-    switch (node->arrayMode().type()) {
+    switch (arrayMode.type()) {
     case Array::Int32:
     case Array::Double:
     case Array::Contiguous:
@@ -871,8 +872,7 @@ void SpeculativeJIT::checkArray(Node* node)
     }
 #endif
 
-    switch (node->arrayMode().type()) {
-    case Array::AnyTypedArray:
+    switch (arrayMode.type()) {
     case Array::String:
         RELEASE_ASSERT_NOT_REACHED(); // Should have been a Phantom(String:)
         return;
@@ -885,7 +885,7 @@ void SpeculativeJIT::checkArray(Node* node)
         m_jit.load8(MacroAssembler::Address(baseReg, JSCell::indexingTypeAndMiscOffset()), tempGPR.value());
         speculationCheck(
             BadIndexingType, JSValueSource::unboxedCell(baseReg), nullptr,
-            jumpSlowForUnwantedArrayMode(tempGPR.value(), node->arrayMode()));
+            jumpSlowForUnwantedArrayMode(tempGPR.value(), arrayMode));
         break;
     }
     case Array::DirectArguments:
@@ -894,11 +894,15 @@ void SpeculativeJIT::checkArray(Node* node)
     case Array::ScopedArguments:
         speculateCellTypeWithoutTypeFiltering(node->child1(), baseReg, ScopedArgumentsType);
         break;
-    default:
-        speculateCellTypeWithoutTypeFiltering(
-            node->child1(), baseReg,
-            typeForTypedArrayType(node->arrayMode().typedArrayType()));
+    default: {
+        DFG_ASSERT(m_graph, node, arrayMode.isSomeTypedArrayView());
+
+        if (arrayMode.type() == Array::AnyTypedArray)
+            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), nullptr, m_jit.branchIfNotType(baseReg, JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView)));
+        else
+            speculateCellTypeWithoutTypeFiltering(node->child1(), baseReg, typeForTypedArrayType(arrayMode.typedArrayType()));
         break;
+    }
     }
 
     if (isEmpty.isSet())

@@ -17959,10 +17959,14 @@ private:
                 m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
                 m_out.constInt32(ScopedArgumentsType));
             
-        default:
+        default: {
+            DFG_ASSERT(m_graph, m_node, arrayMode.isSomeTypedArrayView());
+            if (arrayMode.type() == Array::AnyTypedArray)
+                return isTypedArrayView(cell);
             return m_out.equal(
                 m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
                 m_out.constInt32(typeForTypedArrayType(arrayMode.typedArrayType())));
+        }
         }
     }
     

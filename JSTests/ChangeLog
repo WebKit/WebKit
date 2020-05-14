@@ -1,3 +1,13 @@
+2020-05-14  Keith Miller  <keith_miller@apple.com>
+
+        GetArrayLength should be "blessed" during Fixup phase in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=211540
+
+        Reviewed by Saam Barati.
+
+        * stress/get-array-length-node-should-be-blessed-in-fixup.js: Added.
+        (foo):
+
 2020-05-13  Keith Miller  <keith_miller@apple.com>
 
         iteration bytecodes need to handle osr exiting from inlined getter frames

@@ -132,6 +132,7 @@ enum JSType : uint8_t {
 
 static constexpr uint32_t FirstTypedArrayType = Int8ArrayType;
 static constexpr uint32_t LastTypedArrayType = DataViewType;
+static constexpr uint32_t LastTypedArrayTypeExcludingDataView = LastTypedArrayType - 1;
 
 // LastObjectType should be MaxJSType (not LastJSCObjectType) since embedders can add their extended object types after the enums listed in JSType.
 static constexpr uint32_t FirstObjectType = ObjectType;

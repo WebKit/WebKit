@@ -2161,6 +2161,74 @@ static void testCagePreservesPACFailureBit()
 #endif
 }
 
+static void testBranchIfType()
+{
+    using JSC::JSType;
+    struct CellLike {
+        uint32_t structureID;
+        uint8_t indexingType;
+        JSType type;
+    };
+    CHECK_EQ(JSCell::typeInfoTypeOffset(), OBJECT_OFFSETOF(CellLike, type));
+
+    auto isType = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        auto isType = jit.branchIfType(GPRInfo::argumentGPR0, JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView));
+        jit.move(CCallHelpers::TrustedImm32(false), GPRInfo::returnValueGPR);
+        auto done = jit.jump();
+        isType.link(&jit);
+        jit.move(CCallHelpers::TrustedImm32(true), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    CellLike cell;
+    for (unsigned i = JSC::FirstTypedArrayType; i <= JSC::LastTypedArrayTypeExcludingDataView; ++i) {
+        cell.type = JSType(i);
+        CHECK_EQ(invoke<bool>(isType, &cell), true);
+    }
+
+    cell.type = JSType(LastTypedArrayType);
+    CHECK_EQ(invoke<bool>(isType, &cell), false);
+    cell.type = JSType(FirstTypedArrayType - 1);
+    CHECK_EQ(invoke<bool>(isType, &cell), false);
+}
+
+static void testBranchIfNotType()
+{
+    using JSC::JSType;
+    struct CellLike {
+        uint32_t structureID;
+        uint8_t indexingType;
+        JSType type;
+    };
+    CHECK_EQ(JSCell::typeInfoTypeOffset(), OBJECT_OFFSETOF(CellLike, type));
+
+    auto isNotType = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        auto isNotType = jit.branchIfNotType(GPRInfo::argumentGPR0, JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView));
+        jit.move(CCallHelpers::TrustedImm32(false), GPRInfo::returnValueGPR);
+        auto done = jit.jump();
+        isNotType.link(&jit);
+        jit.move(CCallHelpers::TrustedImm32(true), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    CellLike cell;
+    for (unsigned i = JSC::FirstTypedArrayType; i <= JSC::LastTypedArrayTypeExcludingDataView; ++i) {
+        cell.type = JSType(i);
+        CHECK_EQ(invoke<bool>(isNotType, &cell), false);
+    }
+
+    cell.type = JSType(LastTypedArrayType);
+    CHECK_EQ(invoke<bool>(isNotType, &cell), true);
+    cell.type = JSType(FirstTypedArrayType - 1);
+    CHECK_EQ(invoke<bool>(isNotType, &cell), true);
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -2282,6 +2350,9 @@ void run(const char* filter)
     RUN(testMoveDoubleConditionally64());
 
     RUN(testCagePreservesPACFailureBit());
+
+    RUN(testBranchIfType());
+    RUN(testBranchIfNotType());
 
     RUN(testOrImmMem());
 

@@ -1353,6 +1353,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), LazyNode(node));
             return;
 
+        case Array::ForceExit: {
+            write(SideState);
+            return;
+        }
+
         default:
             ASSERT(mode.isSomeTypedArrayView());
             read(MiscFields);

@@ -237,6 +237,7 @@ public:
         return ArrayMode(type, arrayClass(), speculation(), conversion, action());
     }
     
+    static constexpr SpeculatedType unusedIndexSpeculatedType = SpecInt32Only;
     ArrayMode refine(Graph&, Node*, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
     
     bool alreadyChecked(Graph&, Node*, const AbstractValue&) const;
