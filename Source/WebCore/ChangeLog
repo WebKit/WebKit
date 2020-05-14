@@ -1,3 +1,19 @@
+2020-05-13  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename CSS.StyleSheetOrigin.Regular to CSS.StyleSheetOrigin.Author to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=211827
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector/css/add-rule.html
+               inspector/css/getMatchedStylesForNode.html
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+
 2020-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JSDOMWindowBase m_windowCloseWatchpoints must be Ref<>

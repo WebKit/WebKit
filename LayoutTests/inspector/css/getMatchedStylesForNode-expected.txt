@@ -24,7 +24,7 @@ Matched:
         "range": "<filtered>"
       },
       "sourceLine": "<filtered>",
-      "origin": "regular",
+      "origin": "author",
       "style": {
         "cssProperties": [
           {
@@ -67,7 +67,7 @@ Matched:
         "range": "<filtered>"
       },
       "sourceLine": "<filtered>",
-      "origin": "regular",
+      "origin": "author",
       "style": {
         "cssProperties": [
           {
@@ -110,7 +110,7 @@ Matched:
         "range": "<filtered>"
       },
       "sourceLine": "<filtered>",
-      "origin": "regular",
+      "origin": "author",
       "style": {
         "cssProperties": [
           {
@@ -160,7 +160,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -208,7 +208,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -256,7 +256,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -304,7 +304,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -352,7 +352,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -400,7 +400,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -448,7 +448,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -496,7 +496,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -544,7 +544,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -592,7 +592,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -640,7 +640,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -688,7 +688,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -736,7 +736,7 @@ Pseudo:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -787,7 +787,7 @@ Inherited:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -837,7 +837,7 @@ Inherited:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -880,7 +880,7 @@ Inherited:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -930,7 +930,7 @@ Inherited:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -985,7 +985,7 @@ Inherited:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {
@@ -1035,7 +1035,7 @@ Inherited:
             "range": "<filtered>"
           },
           "sourceLine": "<filtered>",
-          "origin": "regular",
+          "origin": "author",
           "style": {
             "cssProperties": [
               {

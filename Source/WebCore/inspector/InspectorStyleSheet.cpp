@@ -1135,7 +1135,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRul
         .setStyle(buildObjectForStyle(&rule->style()))
         .release();
 
-    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Regular || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User)
+    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Author || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User)
         result->setSourceURL(finalURL());
 
     if (canBind()) {

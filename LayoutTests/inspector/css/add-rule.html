@@ -95,7 +95,7 @@ function test() {
 
                 InspectorTest.expectEqual(rulePayload.selectorList.text, "div", `Rule selector should be "div"`);
                 InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "2:0,2:3", `Rule range should be [2:0,2:3]`);
-                InspectorTest.expectEqual(rulePayload.origin, "regular", `Rule origin should be "regular"`);
+                InspectorTest.expectEqual(rulePayload.origin, "author", `Rule origin should be "author"`);
 
                 resolve();
             }

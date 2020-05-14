@@ -63,18 +63,20 @@ WI.CSSManager = class CSSManager extends WI.Object
     static protocolStyleSheetOriginToEnum(origin)
     {
         switch (origin) {
-        case InspectorBackend.Enum.CSS.StyleSheetOrigin.Regular:
-            return WI.CSSStyleSheet.Type.Author;
         case InspectorBackend.Enum.CSS.StyleSheetOrigin.User:
             return WI.CSSStyleSheet.Type.User;
+
         case InspectorBackend.Enum.CSS.StyleSheetOrigin.UserAgent:
             return WI.CSSStyleSheet.Type.UserAgent;
+
         case InspectorBackend.Enum.CSS.StyleSheetOrigin.Inspector:
             return WI.CSSStyleSheet.Type.Inspector;
-        default:
-            console.assert(false, "Unknown CSS.StyleSheetOrigin", origin);
-            return InspectorBackend.Enum.CSS.StyleSheetOrigin.Regular;
         }
+
+        // COMPATIBILITY (iOS 14): CSS.StyleSheetOrigin.Regular was replaced with CSS.StyleSheetOrigin.Author.
+        console.assert(!InspectorBackend.Enum.CSS.StyleSheetOrigin.Author || origin === InspectorBackend.Enum.CSS.StyleSheetOrigin.Author);
+        console.assert(!InspectorBackend.Enum.CSS.StyleSheetOrigin.Regular || origin === InspectorBackend.Enum.CSS.StyleSheetOrigin.Regular);
+        return WI.CSSStyleSheet.Type.Author;
     }
 
     static protocolGroupingTypeToEnum(type)

@@ -20,7 +20,7 @@
         {
             "id": "StyleSheetOrigin",
             "type": "string",
-            "enum": ["user", "user-agent", "inspector", "regular"],
+            "enum": ["user", "user-agent", "author", "inspector"],
             "description": "Stylesheet type: \"user\" for user stylesheets, \"user-agent\" for user-agent stylesheets, \"inspector\" for stylesheets created by the inspector (i.e. those holding the \"via inspector\" rules), \"regular\" for regular stylesheets."
         },
         {

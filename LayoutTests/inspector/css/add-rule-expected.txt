@@ -16,7 +16,7 @@ PASS: Rule origin should be "inspector"
 -- Running test case: CSS.addRule.ExternalStyleSheet
 PASS: Rule selector should be "div"
 PASS: Rule range should be [2:0,2:3]
-PASS: Rule origin should be "regular"
+PASS: Rule origin should be "author"
 
 -- Running test case: CSS.addRule.BadStyleSheetId
 PASS: Missing style sheet for given styleSheetId
