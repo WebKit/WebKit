@@ -2163,7 +2163,6 @@ fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/han-generic-font-families.html [ ImageOnlyFailure ]
 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
-fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 

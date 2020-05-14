@@ -1,3 +1,24 @@
+2020-05-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/multiple-codeunit-vertical-upright.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=211860
+        <rdar://problem/31893714>
+
+        Reviewed by Megan Gardner.
+
+        Font metrics were hard-coded into the test. This patch adds a new font,
+        Ahem-multi-code-unit.ttf, which has predictable metrics so we don't have
+        to bake in the metrics into the test. The test is no longer sensitive
+        to fallback fonts and their metrics.
+
+        * fast/text/multiple-codeunit-vertical-upright-2-expected.html: Added.
+        * fast/text/multiple-codeunit-vertical-upright-2.html: Added.
+        * fast/text/multiple-codeunit-vertical-upright-expected.html:
+        * fast/text/multiple-codeunit-vertical-upright.html:
+        * fast/text/resources/Ahem-multi-code-unit.ttf: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2020-05-13  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Move shared fast test expectations files to glib
