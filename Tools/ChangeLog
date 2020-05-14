@@ -1,3 +1,19 @@
+2020-05-14  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests shouldn't need Xcode to run Mac tests
+        https://bugs.webkit.org/show_bug.cgi?id=211903
+        <rdar://problem/63205839>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo):
+        (PlatformInfo.xcode_sdk_version): Memoize SDK version retrieval.
+        (PlatformInfo.xcode_version): Only run xcodebuild if macosx SDK is present.
+        (PlatformInfo.available_sdks): Ditto.
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_available_sdks):
+
 2020-05-14  Daniel Bates  <dabates@apple.com>
 
         Include LocalOverrides.xcconfig in all Tools projects

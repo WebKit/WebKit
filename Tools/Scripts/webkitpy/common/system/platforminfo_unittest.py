@@ -160,6 +160,10 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertIsNone(info.total_bytes_memory())
 
     def test_available_sdks(self):
+        sdk_version_output = '10.16\n'
+        info = self.make_info(fake_sys('darwin'), fake_platform('10.14.0'), fake_executive(sdk_version_output))
+        info.xcode_sdk_version('macosx')
+
         show_sdks_output = """iOS SDKs:
     iOS 12.0                          -sdk iphoneos12.0
 
@@ -177,7 +181,7 @@ watchOS Simulator SDKs:
     Simulator - watchOS 5.0           -sdk watchsimulator5.0
     Simulator - watchOS 5.0 Internal    -sdk watchsimulator5.0.type
 """
-        info = self.make_info(fake_sys('darwin'), fake_platform('10.14.0'), fake_executive(show_sdks_output))
+        info._executive = fake_executive(show_sdks_output)
         self.assertEqual(info.available_sdks(), [
             'iphoneos',
             'iphonesimulator', 'iphonesimulator.type',

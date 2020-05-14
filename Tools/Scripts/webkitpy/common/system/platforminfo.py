@@ -31,6 +31,7 @@ import logging
 import re
 import sys
 
+from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.system.executive import Executive
@@ -159,6 +160,7 @@ class PlatformInfo(object):
             return self._executive.run_command(['/usr/bin/sw_vers', '-buildVersion'], return_stderr=False, ignore_errors=True).rstrip()
         return None
 
+    @memoized
     def xcode_sdk_version(self, sdk_name):
         if self.is_mac():
             # Assumes that xcrun does not write to standard output on failure (e.g. SDK does not exist).
@@ -173,13 +175,15 @@ class PlatformInfo(object):
         output = self._executive.run_command(['xcrun', 'simctl', 'list'], return_stderr=False)
         return (line for line in output.splitlines())
 
+    @memoized
     def xcode_version(self):
-        if not self.is_mac():
+        if not self.xcode_sdk_version('macosx'):
             raise NotImplementedError
         return Version.from_string(self._executive.run_command(['xcodebuild', '-version']).split()[1])
 
+    @memoized
     def available_sdks(self):
-        if not self.is_mac():
+        if not self.xcode_sdk_version('macosx'):
             return []
 
         XCODE_SDK_REGEX = re.compile('\-sdk (?P<sdk>\D+)\d+\.\d+(?P<specifier>\D*)')
