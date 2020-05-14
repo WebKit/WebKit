@@ -456,8 +456,6 @@ public:
         return m_hiddenPageThrottlingAutoIncreasesCounter.count();
     }
 
-    void clearResourceLoadStatistics();
-
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     bool shouldTakeUIBackgroundAssertion() const { return m_shouldTakeUIBackgroundAssertion; }
 

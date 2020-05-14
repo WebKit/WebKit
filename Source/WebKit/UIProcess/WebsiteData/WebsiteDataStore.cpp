@@ -2082,14 +2082,14 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         
         for (auto& processPool : processPools()) {
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, true));
-            processPool->sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(true));
+            processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(true), m_sessionID);
         }
         return;
     }
 
     for (auto& processPool : processPools()) {
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::SetResourceLoadStatisticsEnabled(m_sessionID, false));
-        processPool->sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(false));
+        processPool->sendToAllProcessesForSession(Messages::WebProcess::SetResourceLoadStatisticsEnabled(false), m_sessionID);
     }
 
     m_resourceLoadStatisticsEnabled = false;
@@ -2167,7 +2167,7 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
 {
     if (resourceLoadStatisticsEnabled()) {
         for (auto& processPool : processPools())
-            processPool->clearResourceLoadStatistics();
+            processPool->sendToAllProcessesForSession(Messages::WebProcess::ClearResourceLoadStatistics(), m_sessionID);
     }
     callback();
 }

@@ -1,3 +1,21 @@
+2020-05-14  Chris Dumez  <cdumez@apple.com>
+
+        WebsiteDataStore functions should only send IPC to WebProcesses that are associated with its session
+        https://bugs.webkit.org/show_bug.cgi?id=211917
+
+        Reviewed by Alex Christensen.
+
+        WebsiteDataStore functions should only send IPC to WebProcesses that are associated with its session.
+        setResourceLoadStatisticsEnabled() / clearResourceLoadStatisticsInWebProcesses() were talking to all
+        WebProcesses, even those associated with other sessions, which was wrong.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::clearResourceLoadStatistics): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses):
+
 2020-05-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Remove dead dictation code

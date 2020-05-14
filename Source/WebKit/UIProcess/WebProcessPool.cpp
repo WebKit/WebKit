@@ -1542,11 +1542,6 @@ void WebProcessPool::setShouldUseFontSmoothing(bool useFontSmoothing)
     sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothing(useFontSmoothing));
 }
 
-void WebProcessPool::clearResourceLoadStatistics()
-{
-    sendToAllProcesses(Messages::WebProcess::ClearResourceLoadStatistics());
-}
-
 void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
     m_schemesToRegisterAsEmptyDocument.add(urlScheme);
