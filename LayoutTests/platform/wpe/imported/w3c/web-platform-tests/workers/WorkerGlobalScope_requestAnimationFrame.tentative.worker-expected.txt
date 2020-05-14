@@ -1,3 +1,0 @@
-
-PASS WorkerGlobalScope_requestAnimationFrame 
-

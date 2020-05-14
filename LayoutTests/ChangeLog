@@ -1,5 +1,977 @@
 2020-05-13  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK][WPE] Move shared imported tests expectation files to glib
+        https://bugs.webkit.org/show_bug.cgi?id=211875
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-flipY-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-flipY-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-sizing/button-min-width-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-sizing/button-min-width-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-016-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-016-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-017-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-017-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/line-break-ch-unit-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-values/line-break-ch-unit-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/selectors/focus-visible-009-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/selectors/focus-visible-009-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record-events.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record-events.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/eventsource/format-field-id-2-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/eventsource/format-field-id-2-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/eventsource/format-field-id-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/eventsource/format-field-id-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/editing/editing-0/autocapitalization/autocapitalize-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/editing/editing-0/autocapitalization/autocapitalize-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-generated-content-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-generated-content-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-sans-fieldset-display-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-sans-fieldset-display-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.tentative-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.tentative-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-viewref-with-viewbox-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-viewref-with-viewbox-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-inline-style-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-inline-style-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/geometry/parsing/height-computed-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/geometry/parsing/height-computed-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-09-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-09-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-20-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-20-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-21-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-21-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-23-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-23-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-28-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-28-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-29-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-29-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-38-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-38-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-39-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-39-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-46-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-46-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-53-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-53-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-64-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-64-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-67-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-67-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-84-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-84-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-86-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-86-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-89-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-89-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-elem-90-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-90-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-interact-events-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-interact-events-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/color-prop-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/color-prop-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/color-prop-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/color-prop-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/color-prop-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/color-prop-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/conform-viewers-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/conform-viewers-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-coord-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-coord-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-coord-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-coord-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-dom-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-dom-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-dom-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-dom-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-06-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-06-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-07-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-07-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-trans-08-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-trans-08-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-transformattr-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-transformattr-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-transformattr-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-transformattr-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-transformattr-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-transformattr-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-transformattr-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-transformattr-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-transformattr-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-transformattr-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-units-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-units-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-units-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-units-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-units-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-units-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/coords-viewattr-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/coords-viewattr-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-background-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-background-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-blend-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-blend-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-composite-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-composite-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-composite-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-composite-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-comptran-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-comptran-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-conv-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-conv-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-conv-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-conv-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-conv-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-conv-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-displace-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-displace-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-example-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-example-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-felem-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-felem-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-felem-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-felem-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-gauss-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-gauss-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-gauss-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-gauss-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-gauss-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-gauss-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-light-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-light-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-light-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-light-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-light-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-light-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-offset-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-offset-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-offset-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-offset-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-overview-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-overview-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-overview-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-overview-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-overview-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-overview-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/filters-turb-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/filters-turb-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-desc-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-desc-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-desc-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-desc-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-desc-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-desc-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-desc-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-desc-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-desc-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-desc-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-elem-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-elem-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-elem-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-elem-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-elem-07-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-elem-07-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-glyph-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-glyph-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-glyph-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-glyph-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/fonts-overview-201-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/fonts-overview-201-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/imp-path-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/imp-path-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/interact-events-202-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/interact-events-202-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/interact-events-203-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/interact-events-203-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/interact-order-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/interact-order-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/interact-order-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/interact-order-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/interact-order-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/interact-order-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/interact-pointer-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/interact-pointer-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/linking-a-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/linking-a-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/linking-a-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/linking-a-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/linking-a-07-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/linking-a-07-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/linking-a-08-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/linking-a-08-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/linking-frag-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/linking-frag-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-mask-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-mask-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-06-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-06-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-08-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-08-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-10-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-10-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-11-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-11-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-12-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-12-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-13-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-13-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/masking-path-14-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/masking-path-14-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-control-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-control-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-control-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-control-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-control-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-control-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-control-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-control-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-control-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-control-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-control-06-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-control-06-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-fill-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-fill-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-fill-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-fill-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-fill-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-fill-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-render-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-render-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-06-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-06-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-07-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-07-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/painting-stroke-09-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/painting-stroke-09-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-08-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-08-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-09-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-09-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-10-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-10-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-12-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-12-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-13-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-13-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-14-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-14-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-15-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-15-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-17-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-17-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-18-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-18-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-19-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-19-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-data-20-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-data-20-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/paths-dom-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/paths-dom-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-04-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-04-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-05-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-05-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-07-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-07-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-08-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-08-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-13-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-13-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-14-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-14-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-15-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-15-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-16-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-16-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-17-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-17-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-18-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-18-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-20-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-20-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-21-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-21-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-22-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-22-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-23-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-23-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-24-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-24-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-grad-stops-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-grad-stops-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-06-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-06-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-07-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-07-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-08-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-08-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/pservers-pattern-09-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/pservers-pattern-09-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/render-elems-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/render-elems-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/render-elems-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/render-elems-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/render-elems-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/render-elems-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-circle-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-circle-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-grammar-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-grammar-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-intro-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-intro-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-line-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-line-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-line-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-line-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-polygon-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-polygon-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-polygon-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-polygon-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-polygon-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-polygon-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-polyline-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-polyline-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-polyline-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-polyline-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-rect-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-rect-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-rect-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-rect-06-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-06-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/shapes-rect-07-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-07-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-cond-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-cond-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-defs-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-defs-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-04-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-04-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-05-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-05-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-07-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-07-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-14-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-14-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-15-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-15-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-dom-20-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-dom-20-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-frag-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-frag-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-frag-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-frag-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-frag-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-frag-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-frag-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-frag-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-group-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-group-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-group-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-group-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-05-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-05-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-07-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-07-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-08-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-08-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-09-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-09-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-10-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-10-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-11-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-11-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-12-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-12-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-16-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-16-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-18-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-18-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-image-19-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-image-19-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-svg-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-svg-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-svg-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-svg-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-symbol-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-symbol-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-04-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-04-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-05-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-05-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-06-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-06-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-07-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-07-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-08-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-08-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-09-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-09-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-10-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-10-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-11-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-11-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-12-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-12-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-13-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-13-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-14-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-14-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/struct-use-15-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/struct-use-15-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-class-01-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-class-01-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-05-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-05-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-07-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-07-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-08-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-08-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-09-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-09-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-css-10-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-css-10-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-inherit-01-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-inherit-01-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-pres-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-pres-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-pres-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-pres-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-pres-04-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-pres-04-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/styling-pres-05-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/styling-pres-05-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-align-08-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-align-08-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-altglyph-02-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-altglyph-02-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-altglyph-03-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-altglyph-03-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-bidi-01-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-bidi-01-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-fonts-02-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-fonts-02-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-fonts-03-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-fonts-03-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-fonts-04-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-fonts-04-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-fonts-204-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-fonts-204-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-06-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-06-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-07-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-07-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-09-b-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-09-b-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-10-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-10-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-11-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-11-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-intro-12-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-intro-12-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-text-05-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-text-05-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-text-10-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-text-10-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-text-11-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-text-11-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-text-12-t-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-text-12-t-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/text-tselect-03-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/text-tselect-03-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/types-basic-02-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/types-basic-02-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/import/types-dom-06-f-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/import/types-dom-06-f-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/interact/manual/event-attribute-001-manual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/interact/manual/event-attribute-001-manual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fallback-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fallback-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fill-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fill-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-004-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-004-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-006-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-006-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-007-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-007-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/marker-008-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/marker-008-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/bearing/absolute-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/bearing/absolute-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/bearing/relative-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/bearing/relative-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/bearing/zero-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/bearing/zero-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/closepath/segment-completing-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/closepath/segment-completing-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/path/property/priority-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/path/property/priority-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/render/reftests/blending-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/render/reftests/blending-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/render/reftests/blending-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/render/reftests/blending-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/rendering/order/clip-path-filter-order-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/rendering/order/clip-path-filter-order-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/rendering/order/z-index-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/rendering/order/z-index-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/ellipse-01-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/ellipse-01-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/rect-01-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/rect-01-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/rect-02-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/rect-02-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/rect-03-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/rect-03-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/rect-04-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/rect-04-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/struct/scripted/blank-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/struct/scripted/blank-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/styling/render/transform-box-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/styling/render/transform-box-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/styling/render/transform-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/styling/render/transform-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/styling/render/transform-origin-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/styling/render/transform-origin-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-102-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-102-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-201-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-201-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-203-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-203-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-003-visual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-003-visual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-201-visual-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-201-visual-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/basic-auth.any-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/basic-auth.any-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/basic-auth.any.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/basic-auth.any.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/opening-handshake/003-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/opening-handshake/003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/unload-a-document/002-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/unload-a-document/002-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/unload-a-document/004-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/websockets/unload-a-document/004-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/xhr/send-redirect-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/xhr/send-redirect-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-sizing/button-min-width-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-016-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-017-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/white-space-collapse-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/line-break-ch-unit-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-angle-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-009-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record-events.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/eventsource/format-field-id-2-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/eventsource/format-field-id-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/editing/editing-0/autocapitalization/autocapitalize-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-generated-content-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-sans-fieldset-display-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads.sub.tentative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.tentative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-viewref-with-viewbox-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/embedded/image-embedding-svg-with-viewport-units-inline-style-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/parsing/height-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-09-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-20-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-21-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-23-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-28-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-29-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-38-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-39-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-46-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-53-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-64-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-67-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-84-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-86-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-89-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-90-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-interact-events-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/color-prop-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/color-prop-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/color-prop-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/conform-viewers-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-coord-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-coord-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-dom-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-dom-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-06-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-07-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-trans-08-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-transformattr-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-transformattr-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-transformattr-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-transformattr-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-transformattr-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-units-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-units-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-units-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/coords-viewattr-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-background-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-blend-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-composite-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-composite-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-comptran-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-conv-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-conv-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-conv-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-displace-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-example-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-felem-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-felem-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-gauss-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-gauss-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-gauss-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-light-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-light-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-light-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-offset-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-offset-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-overview-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-overview-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-overview-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/filters-turb-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-desc-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-desc-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-desc-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-desc-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-desc-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-elem-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-elem-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-elem-07-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-glyph-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-glyph-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/fonts-overview-201-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/imp-path-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/interact-events-202-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/interact-events-203-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/interact-order-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/interact-order-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/interact-order-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/interact-pointer-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/linking-a-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/linking-a-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/linking-a-07-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/linking-a-08-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/linking-frag-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-mask-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-06-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-08-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-10-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-11-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-12-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-13-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/masking-path-14-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-control-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-control-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-control-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-control-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-control-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-control-06-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-fill-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-fill-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-fill-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-render-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-06-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-07-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/painting-stroke-09-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-08-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-09-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-10-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-12-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-13-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-14-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-15-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-17-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-18-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-19-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-data-20-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/paths-dom-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-04-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-05-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-06-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-07-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-08-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-13-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-14-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-15-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-16-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-17-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-18-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-20-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-21-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-22-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-23-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-24-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-grad-stops-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-06-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-07-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-08-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/pservers-pattern-09-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/render-elems-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/render-elems-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/render-elems-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-circle-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-grammar-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-intro-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-line-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-line-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-polygon-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-polygon-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-polygon-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-polyline-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-polyline-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-06-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-07-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-cond-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-cond-overview-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-defs-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-04-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-05-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-07-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-14-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-15-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-dom-20-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-frag-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-frag-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-frag-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-frag-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-group-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-group-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-05-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-07-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-08-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-09-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-10-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-11-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-12-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-16-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-18-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-image-19-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-svg-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-svg-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-symbol-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-04-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-05-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-06-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-07-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-08-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-09-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-10-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-11-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-12-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-13-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-14-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/struct-use-15-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-class-01-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-05-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-07-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-08-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-09-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-css-10-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-inherit-01-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-pres-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-pres-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-pres-04-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/styling-pres-05-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-align-08-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-altglyph-02-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-altglyph-03-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-bidi-01-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-fonts-02-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-fonts-03-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-fonts-04-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-fonts-204-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-06-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-07-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-09-b-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-10-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-11-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-intro-12-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-text-05-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-text-10-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-text-11-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-text-12-t-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/text-tselect-03-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/types-basic-02-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/types-dom-06-f-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/interact/manual/event-attribute-001-manual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fallback-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fill-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-004-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-006-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-007-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/marker-008-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/paint-order-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/painting/reftests/percentage-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/bearing/absolute-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/bearing/relative-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/bearing/zero-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/closepath/segment-completing-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive-percentage-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/path/property/priority-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/render/reftests/blending-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/render/reftests/blending-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/rendering/order/clip-path-filter-order-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/rendering/order/z-index-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/ellipse-01-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/line-dasharray-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/rect-01-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/rect-02-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/rect-03-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/rect-04-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/use-svg-dimensions-override-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/reftests/use-symbol-dimensions-override-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/struct/scripted/blank-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/styling/render/transform-box-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/styling/render/transform-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/styling/render/transform-origin-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-complex-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-102-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-201-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-text-anchor-203-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-003-visual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-201-visual-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/wasm/jsapi/global/value-set.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/basic-auth.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/basic-auth.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/opening-handshake/003-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/unload-a-document/002-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/websockets/unload-a-document/004-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_requestAnimationFrame.tentative.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-redirect-expected.txt: Removed.
+
+2020-05-13  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Move shared table tests expectation files to glib
         https://bugs.webkit.org/show_bug.cgi?id=211872
 

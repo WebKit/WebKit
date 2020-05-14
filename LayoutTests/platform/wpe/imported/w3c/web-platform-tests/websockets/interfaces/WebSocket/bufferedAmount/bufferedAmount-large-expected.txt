@@ -1,3 +1,0 @@
-
-PASS WebSockets: bufferedAmount for 65K data 
-

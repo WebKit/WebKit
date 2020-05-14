@@ -1,3 +1,0 @@
-
-FAIL WebSockets: navigating nested browsing context with closed websocket assert_equals is not a function. (In 'assert_equals(ws.readyState, ws.CLOSED, 'ws.readyState')', 'assert_equals' is undefined)
-
