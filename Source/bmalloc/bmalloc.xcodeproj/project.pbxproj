@@ -139,6 +139,8 @@
 		DE8B13B321CC5D9F00A63FCD /* BVMTags.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8B13B221CC5D9F00A63FCD /* BVMTags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E31E747F2238CA5B005D084A /* StaticPerProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E328D84D23CEB38900545B18 /* Packed.h in Headers */ = {isa = PBXBuildFile; fileRef = E328D84C23CEB38900545B18 /* Packed.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E378A9DF246B68720029C2BB /* ObjectTypeTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E378A9DE246B686A0029C2BB /* ObjectTypeTable.cpp */; };
+		E378A9E0246B68750029C2BB /* ObjectTypeTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E378A9DD246B686A0029C2BB /* ObjectTypeTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A413C9226061140037F470 /* IsoSharedPageInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A413C8226061140037F470 /* IsoSharedPageInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F24402225D2C0100A0E0C3 /* IsoSharedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F24401225D2C0100A0E0C3 /* IsoSharedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F24404225D2C7600A0E0C3 /* IsoSharedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F24403225D2C7600A0E0C3 /* IsoSharedPage.cpp */; };
@@ -293,6 +295,8 @@
 		DE8B13B221CC5D9F00A63FCD /* BVMTags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BVMTags.h; path = bmalloc/BVMTags.h; sourceTree = "<group>"; };
 		E31E747F2238CA5B005D084A /* StaticPerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticPerProcess.h; path = bmalloc/StaticPerProcess.h; sourceTree = "<group>"; };
 		E328D84C23CEB38900545B18 /* Packed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Packed.h; path = bmalloc/Packed.h; sourceTree = "<group>"; };
+		E378A9DD246B686A0029C2BB /* ObjectTypeTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ObjectTypeTable.h; path = bmalloc/ObjectTypeTable.h; sourceTree = "<group>"; };
+		E378A9DE246B686A0029C2BB /* ObjectTypeTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectTypeTable.cpp; path = bmalloc/ObjectTypeTable.cpp; sourceTree = "<group>"; };
 		E3A413C8226061140037F470 /* IsoSharedPageInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedPageInlines.h; path = bmalloc/IsoSharedPageInlines.h; sourceTree = "<group>"; };
 		E3F24401225D2C0100A0E0C3 /* IsoSharedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedPage.h; path = bmalloc/IsoSharedPage.h; sourceTree = "<group>"; };
 		E3F24403225D2C7600A0E0C3 /* IsoSharedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IsoSharedPage.cpp; path = bmalloc/IsoSharedPage.cpp; sourceTree = "<group>"; };
@@ -490,6 +494,8 @@
 				144BE11E1CA346520099C8C0 /* Object.h */,
 				14105E8318E14374003A106E /* ObjectType.cpp */,
 				1485656018A43DBA00ED6942 /* ObjectType.h */,
+				E378A9DE246B686A0029C2BB /* ObjectTypeTable.cpp */,
+				E378A9DD246B686A0029C2BB /* ObjectTypeTable.h */,
 				795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */,
 				AD14AD27202529A600890E3B /* ProcessCheck.h */,
 				AD14AD28202529B000890E3B /* ProcessCheck.mm */,
@@ -645,6 +651,7 @@
 				143CB81D19022BC900B16A45 /* Mutex.h in Headers */,
 				144BE11F1CA346520099C8C0 /* Object.h in Headers */,
 				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
+				E378A9E0246B68750029C2BB /* ObjectTypeTable.h in Headers */,
 				E328D84D23CEB38900545B18 /* Packed.h in Headers */,
 				0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */,
 				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
@@ -777,6 +784,7 @@
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
 				143CB81C19022BC900B16A45 /* Mutex.cpp in Sources */,
 				14F271C818EA3990008C152F /* ObjectType.cpp in Sources */,
+				E378A9DF246B68720029C2BB /* ObjectTypeTable.cpp in Sources */,
 				0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */,
 				AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */,
 				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,

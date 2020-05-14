@@ -35,6 +35,7 @@
 #include "Map.h"
 #include "Mutex.h"
 #include "Object.h"
+#include "ObjectTypeTable.h"
 #include "PerHeapKind.h"
 #include "PerProcess.h"
 #include "PhysicalPageMap.h"
@@ -69,19 +70,19 @@ public:
     void* allocateLarge(UniqueLockHolder&, size_t alignment, size_t, FailureAction);
     void deallocateLarge(UniqueLockHolder&, void*);
 
-    bool isLarge(UniqueLockHolder&, void*);
+    bool isLarge(void*);
     size_t largeSize(UniqueLockHolder&, void*);
     void shrinkLarge(UniqueLockHolder&, const Range&, size_t);
 
 #if BUSE(PARTIAL_SCAVENGE)
-    void scavengeToHighWatermark(const LockHolder&, BulkDecommit&);
-    void scavenge(const LockHolder&, BulkDecommit&);
+    void scavengeToHighWatermark(UniqueLockHolder&, BulkDecommit&);
+    void scavenge(UniqueLockHolder&, BulkDecommit&);
 #else
-    void scavenge(const LockHolder&, BulkDecommit&, size_t& deferredDecommits);
+    void scavenge(UniqueLockHolder&, BulkDecommit&, size_t& deferredDecommits);
 #endif
-    void scavenge(const LockHolder&, BulkDecommit&, size_t& freed, size_t goal);
+    void scavenge(UniqueLockHolder&, BulkDecommit&, size_t& freed, size_t goal);
 
-    size_t freeableMemory(const LockHolder&);
+    size_t freeableMemory(UniqueLockHolder&);
     size_t footprint();
 
     void externalDecommit(void* ptr, size_t);
@@ -92,7 +93,7 @@ public:
     void markAllLargeAsEligibile(const LockHolder&);
 
 private:
-    void decommitLargeRange(const LockHolder&, LargeRange&, BulkDecommit&);
+    void decommitLargeRange(UniqueLockHolder&, LargeRange&, BulkDecommit&);
 
     struct LargeObjectHash {
         static unsigned hash(void* key)
@@ -117,7 +118,7 @@ private:
     void deallocateSmallLine(UniqueLockHolder&, Object, LineCache&);
 
     void allocateSmallChunk(UniqueLockHolder&, size_t pageClass, FailureAction);
-    void deallocateSmallChunk(Chunk*, size_t pageClass);
+    void deallocateSmallChunk(UniqueLockHolder&, Chunk*, size_t pageClass);
 
     LargeRange tryAllocateLargeChunk(size_t alignment, size_t);
     LargeRange splitAndAllocate(UniqueLockHolder&, LargeRange&, size_t alignment, size_t);
@@ -135,7 +136,7 @@ private:
     Map<void*, size_t, LargeObjectHash> m_largeAllocated;
     LargeMap m_largeFree;
 
-    Map<Chunk*, ObjectType, ChunkHash> m_objectTypes;
+    ObjectTypeTable m_objectTypes;
 
     Scavenger* m_scavenger { nullptr };
 
@@ -166,6 +167,11 @@ inline void Heap::derefSmallLine(UniqueLockHolder& lock, Object object, LineCach
     if (!object.line()->deref(lock))
         return;
     deallocateSmallLine(lock, object, lineCache);
+}
+
+inline bool Heap::isLarge(void* object)
+{
+    return m_objectTypes.get(Object(object).chunk()) == ObjectType::Large;
 }
 
 } // namespace bmalloc

@@ -1,3 +1,61 @@
+2020-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Introduce lock-less ObjectType query
+        https://bugs.webkit.org/show_bug.cgi?id=211809
+
+        Reviewed by Mark Lam.
+
+        This patch introduces ObjectTypeTable, which allows lock-less ObjectType query for Chunk*.
+        It has bit-vector to store ObjectType per address. And each bit represents 1MB of VA region since
+        Chunk*'s size is at least 1MB and ObjectType is 1bit data. Every time we extend this bit-vector
+        to support larger VA region, we do not free the old bit-vector. Since we always allocate power-of-2
+        sized bit-vector, # of extension is limited and it does not waste much memory because Chunk's size
+        is enough large (1MB). Since each 4KB page on macOS can represent a bit-vector for 32GB VA region,
+        in practice, this extension almost never happens. I verified that 4KB page can handle memory
+        allocations in JetStream2 and Gmail.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Algorithm.h:
+        (bmalloc::roundUpToPowerOfTwo):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::freeableMemory):
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeToHighWatermark):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::deallocateSmallChunk):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::isLarge): Deleted.
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::isLarge):
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectTypeTable.cpp: Added.
+        (bmalloc::ObjectTypeTable::set):
+        * bmalloc/ObjectTypeTable.h: Added.
+        (bmalloc::ObjectTypeTable::convertToIndex):
+        (bmalloc::ObjectTypeTable::Bits::Bits):
+        (bmalloc::ObjectTypeTable::Bits::previous const):
+        (bmalloc::ObjectTypeTable::Bits::begin const):
+        (bmalloc::ObjectTypeTable::Bits::end const):
+        (bmalloc::ObjectTypeTable::Bits::count const):
+        (bmalloc::ObjectTypeTable::Bits::sizeInBytes const):
+        (bmalloc::ObjectTypeTable::Bits::words const):
+        (bmalloc::ObjectTypeTable::Bits::words):
+        (bmalloc::ObjectTypeTable::ObjectTypeTable):
+        (bmalloc::ObjectTypeTable::get):
+        (bmalloc::ObjectTypeTable::Bits::get):
+        (bmalloc::ObjectTypeTable::Bits::set):
+        (bmalloc::ObjectTypeTable::Bits::wordForIndex):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::partialScavenge):
+        (bmalloc::Scavenger::freeableMemory):
+
 2020-05-11  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc][WTF] Add computing memory size implementation for FreeBSD

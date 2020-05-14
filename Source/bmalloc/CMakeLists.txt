@@ -29,6 +29,7 @@ set(bmalloc_SOURCES
     bmalloc/Logging.cpp
     bmalloc/Mutex.cpp
     bmalloc/ObjectType.cpp
+    bmalloc/ObjectTypeTable.cpp
     bmalloc/PerProcess.cpp
     bmalloc/Scavenger.cpp
     bmalloc/bmalloc.cpp
@@ -110,6 +111,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/Mutex.h
     bmalloc/Object.h
     bmalloc/ObjectType.h
+    bmalloc/ObjectTypeTable.h
     bmalloc/Packed.h
     bmalloc/PerHeapKind.h
     bmalloc/PerProcess.h

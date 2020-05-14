@@ -38,8 +38,7 @@ ObjectType objectType(Heap& heap, void* object)
         if (!object)
             return ObjectType::Small;
 
-        UniqueLockHolder lock(Heap::mutex());
-        if (heap.isLarge(lock, object))
+        if (heap.isLarge(object))
             return ObjectType::Large;
     }
     
