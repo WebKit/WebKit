@@ -14,6 +14,7 @@ depends:
 - sdk/atk.bst
 - sdk/brotli.bst
 - sdk/capnp.bst
+- sdk/ccls.bst
 - sdk/enchant-2.bst
 - sdk/glib-networking.bst
 - sdk/glib.bst

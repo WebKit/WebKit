@@ -1,3 +1,16 @@
+2020-05-14  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Path references shouldn't point to the sandbox in compile_commands.json
+        https://bugs.webkit.org/show_bug.cgi?id=209901
+
+        Reviewed by Žan Doberšek.
+
+        Add ccls to the SDK. It can then be used through a wrapper script by Emacs's lsp-mode.
+        
+        * buildstream/elements/sdk-build-depends/rapidjson.bst: Added.
+        * buildstream/elements/sdk-platform.bst:
+        * buildstream/elements/sdk/ccls.bst: Added.
+
 2020-05-13  Jer Noble  <jer.noble@apple.com>
 
         Replace isNullFunctionPointer with real weak-linking support
