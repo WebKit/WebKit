@@ -487,7 +487,8 @@ void AXIsolatedObject::detachFromParent()
 
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
 {
-    ASSERT(_AXSIsolatedTreeModeFunctionIsAvailable() && ((_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && !isMainThread()) || (_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeMainThread && isMainThread())));
+    ASSERT(_AXSIsolatedTreeModeFunctionIsAvailable() && ((_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && !isMainThread())
+        || (_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeMainThread && isMainThread())));
     updateBackingStore();
     m_children.clear();
     m_children.reserveInitialCapacity(m_childrenIDs.size());
@@ -1147,8 +1148,11 @@ bool AXIsolatedObject::isIndeterminate() const
 
 bool AXIsolatedObject::isOnScreen() const
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    return Accessibility::retrieveValueFromMainThread<bool>([this] () -> bool {
+        if (auto* object = associatedAXObject())
+            return object->isOnScreen();
+        return false;
+    });
 }
 
 bool AXIsolatedObject::isOffScreen() const

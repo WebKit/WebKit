@@ -1,5 +1,18 @@
 2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
 
+        AXIsolatedObject::isOnScreen needs to be dispatched to the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=211893
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::children): Split assert into two lines for readability.
+        (WebCore::AXIsolatedObject::isOnScreen const): Forward to associated AXObject and dispatch to the main thread.
+
+2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
+
         Implementation of AXIsolatedObject::hasPlainText.
         https://bugs.webkit.org/show_bug.cgi?id=211892
 
