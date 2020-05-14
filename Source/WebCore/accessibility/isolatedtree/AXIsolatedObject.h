@@ -151,6 +151,7 @@ private:
         HasChildren,
         HasHighlighting,
         HasItalicFont,
+        HasPlainText,
         HasPopup,
         HeaderContainer,
         HeadingLevel,
@@ -763,7 +764,7 @@ private:
     bool hasBoldFont() const override { return boolAttributeValue(AXPropertyName::HasBoldFont); }
     bool hasItalicFont() const override { return boolAttributeValue(AXPropertyName::HasItalicFont); }
     bool hasMisspelling() const override;
-    bool hasPlainText() const override;
+    bool hasPlainText() const override { return boolAttributeValue(AXPropertyName::HasPlainText); }
     bool hasSameFont(RenderObject*) const override;
     bool hasSameFontColor(RenderObject*) const override;
     bool hasSameStyle(RenderObject*) const override;
