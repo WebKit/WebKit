@@ -912,7 +912,7 @@ size_t PDFPlugin::getResourceBytesAtPositionMainThread(void* buffer, off_t posit
     ASSERT(m_documentFinishedLoading);
     ASSERT(position >= 0);
 
-    auto cfLength = CFDataGetLength(m_data.get());
+    auto cfLength = m_data ? CFDataGetLength(m_data.get()) : 0;
     ASSERT(cfLength >= 0);
 
     if ((unsigned)position + count > (unsigned)cfLength) {
@@ -1623,7 +1623,10 @@ void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t 
 
 void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
 {
-    ASSERT(m_data);
+    if (!m_data) {
+        m_data = adoptCF(CFDataCreateMutable(0, targetLength));
+        return;
+    }
 
     auto currentLength = CFDataGetLength(m_data.get());
     ASSERT(currentLength >= 0);
