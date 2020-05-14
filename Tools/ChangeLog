@@ -1,3 +1,39 @@
+2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crashes in LayoutTests related to TextMarkers in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=211912
+
+        Reviewed by Chris Fleizach.
+
+        Check for null pointer parameters before dereferencing.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::misspellingSearchParameterizedAttributeForCriteria):
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::textMarkerRangeLength):
+        (WTR::AccessibilityUIElement::previousTextMarker):
+        (WTR::AccessibilityUIElement::nextTextMarker):
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        (WTR::AccessibilityUIElement::indexForTextMarker):
+        (WTR::AccessibilityUIElement::isTextMarkerValid):
+        (WTR::AccessibilityUIElement::leftWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::rightWordTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousWordStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextWordEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::paragraphTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousParagraphStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextParagraphEndTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::sentenceTextMarkerRangeForTextMarker):
+        (WTR::AccessibilityUIElement::previousSentenceStartTextMarkerForTextMarker):
+        (WTR::AccessibilityUIElement::nextSentenceEndTextMarkerForTextMarker):
+
 2020-05-14  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js failing on ppc64le and s390x
