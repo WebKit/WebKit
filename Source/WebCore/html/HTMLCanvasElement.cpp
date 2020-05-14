@@ -438,7 +438,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& t
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
 #if ENABLE(WEBXR)
-        ASSERT(!attrs.xrCompatible || m_context.isXRCompatible());
+        ASSERT(!attrs.xrCompatible || downcast<WebGLRenderingContextBase>(m_context.get())->isXRCompatible());
 #endif
     }
 

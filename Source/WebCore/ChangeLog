@@ -1,3 +1,12 @@
+2020-05-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createContextWebGL): downcast m_context to
+        WebGLRenderingContextBase before calling isXRCompatible(). It's created
+        as a WebGLRenderingContextBase but stored in a CanvasRenderingContext.
+
 2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
 
         Replacing and inserting text need to be dispatched to the main thread.
