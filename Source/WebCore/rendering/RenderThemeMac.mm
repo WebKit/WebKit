@@ -73,6 +73,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
+#import <pal/spi/mac/NSImageSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -2784,15 +2785,23 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     icon->paint(context, layout.iconRect);
 }
 
+#if HAVE(SYSTEM_ATTACHMENT_PLACEHOLDER_ICON) && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/RenderThemeMacAdditions.mm>
+#else
+
+static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout&)
+{
+    if (deviceScaleFactor >= 2)
+        return { Image::loadPlatformResource("AttachmentPlaceholder@2x"), 2 };
+
+    return { Image::loadPlatformResource("AttachmentPlaceholder"), 1 };
+}
+
+#endif
+
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
-    RefPtr<Image> placeholderImage;
-    float imageScale = 1;
-    if (attachment.document().deviceScaleFactor() >= 2) {
-        placeholderImage = Image::loadPlatformResource("AttachmentPlaceholder@2x");
-        imageScale = 2;
-    } else
-        placeholderImage = Image::loadPlatformResource("AttachmentPlaceholder");
+    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(attachment.document().deviceScaleFactor(), layout);
 
     // Center the placeholder image where the icon would usually be.
     FloatRect placeholderRect(0, 0, placeholderImage->width() / imageScale, placeholderImage->height() / imageScale);

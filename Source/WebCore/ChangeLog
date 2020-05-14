@@ -1,3 +1,18 @@
+2020-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Update the placeholder icon image for attachment elements with progress="0"
+        https://bugs.webkit.org/show_bug.cgi?id=211898
+        <rdar://problem/63203900>
+
+        Reviewed by Timothy Hatcher.
+
+        Refactor logic for creating an attachment placeholder image into a separate helper method, with a
+        WebKitAdditions implementation when HAVE(SYSTEM_ATTACHMENT_PLACEHOLDER_ICON) is defined.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::createAttachmentPlaceholderImage):
+        (WebCore::paintAttachmentIconPlaceholder):
+
 2020-05-14  Chris Dumez  <cdumez@apple.com>
 
         Regression(r254856) Family Health iOS app is broken due to lack for WebSQL support
