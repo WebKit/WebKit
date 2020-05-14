@@ -3629,10 +3629,10 @@ static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, Acce
             && axObject->roleValue() != criteria.startObject->roleValue();
     case AccessibilitySearchKey::FontChange:
         return criteria.startObject
-            && !axObject->hasSameFont(criteria.startObject->renderer());
+            && !axObject->hasSameFont(*criteria.startObject);
     case AccessibilitySearchKey::FontColorChange:
         return criteria.startObject
-            && !axObject->hasSameFontColor(criteria.startObject->renderer());
+            && !axObject->hasSameFontColor(*criteria.startObject);
     case AccessibilitySearchKey::Frame:
         return axObject->isWebArea();
     case AccessibilitySearchKey::Graphic:
@@ -3690,7 +3690,7 @@ static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, Acce
         return axObject->isStaticText();
     case AccessibilitySearchKey::StyleChange:
         return criteria.startObject
-            && !axObject->hasSameStyle(criteria.startObject->renderer());
+            && !axObject->hasSameStyle(*criteria.startObject);
     case AccessibilitySearchKey::TableSameLevel:
         return criteria.startObject
             && axObject->isTable() && axObject->isExposable()

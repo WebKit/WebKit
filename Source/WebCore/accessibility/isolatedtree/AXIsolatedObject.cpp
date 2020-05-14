@@ -60,6 +60,7 @@ AXIsolatedObject::~AXIsolatedObject()
 void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot)
 {
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
+    setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription());
     setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
     setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::ElementRect, object.elementRect());
@@ -221,6 +222,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::HasBoldFont, object.hasBoldFont());
     setProperty(AXPropertyName::HasItalicFont, object.hasItalicFont());
     setProperty(AXPropertyName::HasPlainText, object.hasPlainText());
+    setProperty(AXPropertyName::HasUnderline, object.hasUnderline());
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     
     if (object.isTable()) {
@@ -1056,12 +1058,6 @@ bool AXIsolatedObject::isNativeTextControl() const
     return false;
 }
 
-bool AXIsolatedObject::isNativeListBox() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isListBoxOption() const
 {
     ASSERT_NOT_REACHED();
@@ -1167,12 +1163,6 @@ bool AXIsolatedObject::isPressed() const
     return false;
 }
 
-bool AXIsolatedObject::isUnvisited() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isLinked() const
 {
     ASSERT_NOT_REACHED();
@@ -1203,28 +1193,46 @@ bool AXIsolatedObject::hasMisspelling() const
     return false;
 }
 
-bool AXIsolatedObject::hasSameFont(RenderObject*) const
+bool AXIsolatedObject::hasSameFont(const AXCoreObject& otherObject) const
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    if (!is<AXIsolatedObject>(otherObject))
+        return false;
+
+    return Accessibility::retrieveValueFromMainThread<bool>([&otherObject, this] () -> bool {
+        if (auto* axObject = associatedAXObject()) {
+            if (auto* axOtherObject = downcast<AXIsolatedObject>(otherObject).associatedAXObject())
+                return axObject->hasSameFont(*axOtherObject);
+        }
+        return false;
+    });
 }
 
-bool AXIsolatedObject::hasSameFontColor(RenderObject*) const
+bool AXIsolatedObject::hasSameFontColor(const AXCoreObject& otherObject) const
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    if (!is<AXIsolatedObject>(otherObject))
+        return false;
+
+    return Accessibility::retrieveValueFromMainThread<bool>([&otherObject, this] () -> bool {
+        if (auto* axObject = associatedAXObject()) {
+            if (auto* axOtherObject = downcast<AXIsolatedObject>(otherObject).associatedAXObject())
+                return axObject->hasSameFontColor(*axOtherObject);
+        }
+        return false;
+    });
 }
 
-bool AXIsolatedObject::hasSameStyle(RenderObject*) const
+bool AXIsolatedObject::hasSameStyle(const AXCoreObject& otherObject) const
 {
-    ASSERT_NOT_REACHED();
-    return false;
-}
+    if (!is<AXIsolatedObject>(otherObject))
+        return false;
 
-bool AXIsolatedObject::hasUnderline() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
+    return Accessibility::retrieveValueFromMainThread<bool>([&otherObject, this] () -> bool {
+        if (auto* axObject = associatedAXObject()) {
+            if (auto* axOtherObject = downcast<AXIsolatedObject>(otherObject).associatedAXObject())
+                return axObject->hasSameStyle(*axOtherObject);
+        }
+        return false;
+    });
 }
 
 Element* AXIsolatedObject::element() const
@@ -1466,12 +1474,6 @@ bool AXIsolatedObject::hasAttributesRequiredForInclusion() const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-String AXIsolatedObject::accessibilityDescription() const
-{
-    ASSERT_NOT_REACHED();
-    return String();
 }
 
 String AXIsolatedObject::helpText() const

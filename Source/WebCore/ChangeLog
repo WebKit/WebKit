@@ -1,3 +1,40 @@
+2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        AXCoreObject font comparison methods should take another AXCoreObject instead of a RenderObject.
+        https://bugs.webkit.org/show_bug.cgi?id=211909
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        - In order for font comparison methods to be implementted for both
+        AXObjects and AXIsolatedObjects, they should take another AXCoreObject
+        to compare against, instead of a RenderObject.
+        - The AXIsolatedObject implementation of these methods is forwarded to
+        the associated AXObject and dispatched to the main thread.
+        - Implemented AXIsolatedObject::accessibilityDescription, hasUnderline and isUnvisited.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::Accessibility::isAccessibilityObjectSearchMatchAtIndex):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::AXCoreObject::isNativeListBox const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasSameFont const):
+        (WebCore::AccessibilityRenderObject::hasSameFontColor const):
+        (WebCore::AccessibilityRenderObject::hasSameStyle const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::hasSameFont const):
+        (WebCore::AXIsolatedObject::hasSameFontColor const):
+        (WebCore::AXIsolatedObject::hasSameStyle const):
+        (WebCore::AXIsolatedObject::isNativeListBox const): Deleted, implemented in base class.
+        (WebCore::AXIsolatedObject::isUnvisited const): Deleted, inlined in header.
+        (WebCore::AXIsolatedObject::hasUnderline const): Deleted, inlined in header.
+        (WebCore::AXIsolatedObject::accessibilityDescription const): Deleted, inlined in header.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-05-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: front-end shouldn't change the order of User Style Sheet rules

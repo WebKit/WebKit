@@ -3712,8 +3712,9 @@ bool AccessibilityRenderObject::hasPlainText() const
         && style.textDecorationsInEffect().isEmpty();
 }
 
-bool AccessibilityRenderObject::hasSameFont(RenderObject* renderer) const
+bool AccessibilityRenderObject::hasSameFont(const AXCoreObject& object) const
 {
+    auto* renderer = object.renderer();
     if (!m_renderer || !renderer)
         return false;
     
@@ -3736,16 +3737,18 @@ ApplePayButtonType AccessibilityRenderObject::applePayButtonType() const
 }
 #endif
 
-bool AccessibilityRenderObject::hasSameFontColor(RenderObject* renderer) const
+bool AccessibilityRenderObject::hasSameFontColor(const AXCoreObject& object) const
 {
+    auto* renderer = object.renderer();
     if (!m_renderer || !renderer)
         return false;
     
     return m_renderer->style().visitedDependentColor(CSSPropertyColor) == renderer->style().visitedDependentColor(CSSPropertyColor);
 }
 
-bool AccessibilityRenderObject::hasSameStyle(RenderObject* renderer) const
+bool AccessibilityRenderObject::hasSameStyle(const AXCoreObject& object) const
 {
+    auto* renderer = object.renderer();
     if (!m_renderer || !renderer)
         return false;
     

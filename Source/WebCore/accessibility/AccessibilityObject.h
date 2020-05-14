@@ -233,9 +233,9 @@ public:
     bool hasMisspelling() const override;
     RefPtr<Range> getMisspellingRange(RefPtr<Range> const& start, AccessibilitySearchDirection) const override;
     bool hasPlainText() const override { return false; }
-    bool hasSameFont(RenderObject*) const override { return false; }
-    bool hasSameFontColor(RenderObject*) const override { return false; }
-    bool hasSameStyle(RenderObject*) const override { return false; }
+    bool hasSameFont(const AXCoreObject&) const override { return false; }
+    bool hasSameFontColor(const AXCoreObject&) const override { return false; }
+    bool hasSameStyle(const AXCoreObject&) const override { return false; }
     bool hasUnderline() const override { return false; }
     bool hasHighlighting() const override;
 
