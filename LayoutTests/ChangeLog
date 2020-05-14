@@ -1,3 +1,699 @@
+2020-05-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Move remaining shared tests expectation files to glib
+        https://bugs.webkit.org/show_bug.cgi?id=211902
+
+        Unreviewed test gardening.
+
+        * platform/glib/accessibility/add-children-pseudo-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/add-children-pseudo-element-expected.txt.
+        * platform/glib/accessibility/aria-fallback-roles-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-fallback-roles-expected.txt.
+        * platform/glib/accessibility/aria-hidden-negates-no-visibility-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-hidden-negates-no-visibility-expected.txt.
+        * platform/glib/accessibility/aria-label-on-label-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-label-on-label-element-expected.txt.
+        * platform/glib/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-labelledby-overrides-aria-label-expected.txt.
+        * platform/glib/accessibility/aria-labelledby-overrides-label-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-labelledby-overrides-label-expected.txt.
+        * platform/glib/accessibility/aria-option-role-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-option-role-expected.txt.
+        * platform/glib/accessibility/aria-roledescription-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-roledescription-expected.txt.
+        * platform/glib/accessibility/aria-switch-sends-notification-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-switch-sends-notification-expected.txt.
+        * platform/glib/accessibility/aria-tab-roles-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-tab-roles-expected.txt.
+        * platform/glib/accessibility/aria-table-attributes-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-table-attributes-expected.txt.
+        * platform/glib/accessibility/aria-table-content-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-table-content-expected.txt.
+        * platform/glib/accessibility/aria-toggle-button-with-title-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/aria-toggle-button-with-title-expected.txt.
+        * platform/glib/accessibility/auto-fill-crash-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/auto-fill-crash-expected.txt.
+        * platform/glib/accessibility/button-with-aria-haspopup-role-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/button-with-aria-haspopup-role-expected.txt.
+        * platform/glib/accessibility/deleting-iframe-destroys-axcache-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt.
+        * platform/glib/accessibility/dimensions-include-descendants-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/dimensions-include-descendants-expected.txt.
+        * platform/glib/accessibility/double-nested-inline-element-missing-from-tree-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/double-nested-inline-element-missing-from-tree-expected.txt.
+        * platform/glib/accessibility/empty-image-with-title-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/empty-image-with-title-expected.txt.
+        * platform/glib/accessibility/file-upload-button-stringvalue-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt.
+        * platform/glib/accessibility/help-text-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/help-text-expected.txt.
+        * platform/glib/accessibility/image-map1-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/image-map1-expected.txt.
+        * platform/glib/accessibility/inline-continuations-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/inline-continuations-expected.txt.
+        * platform/glib/accessibility/label-with-pseudo-elements-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/label-with-pseudo-elements-expected.txt.
+        * platform/glib/accessibility/list-detection-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/list-detection-expected.txt.
+        * platform/glib/accessibility/media-emits-object-replacement-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/media-emits-object-replacement-expected.txt.
+        * platform/glib/accessibility/menu-list-crash2-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/menu-list-crash2-expected.txt.
+        * platform/glib/accessibility/menu-list-sends-change-notification-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/menu-list-sends-change-notification-expected.txt.
+        * platform/glib/accessibility/minimal-table-with-aria-is-data-table-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/minimal-table-with-aria-is-data-table-expected.txt.
+        * platform/glib/accessibility/radio-button-title-label-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/radio-button-title-label-expected.txt.
+        * platform/glib/accessibility/render-counter-text-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/render-counter-text-expected.txt.
+        * platform/glib/accessibility/roles-computedRoleString-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/roles-computedRoleString-expected.txt.
+        * platform/glib/accessibility/set-selected-text-range-contenteditable-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/set-selected-text-range-contenteditable-expected.txt.
+        * platform/glib/accessibility/svg-remote-element-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/svg-remote-element-expected.txt.
+        * platform/glib/accessibility/tabindex-elements-are-accessible-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/tabindex-elements-are-accessible-expected.txt.
+        * platform/glib/accessibility/table-cells-roles-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-cells-roles-expected.txt.
+        * platform/glib/accessibility/table-column-headers-with-captions-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-column-headers-with-captions-expected.txt.
+        * platform/glib/accessibility/table-roles-hierarchy-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-roles-hierarchy-expected.txt.
+        * platform/glib/accessibility/text-alternative-calculation-hidden-nodes-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/text-alternative-calculation-hidden-nodes-expected.txt.
+        * platform/glib/animations/3d/change-transform-in-end-event-expected.txt: Renamed from LayoutTests/platform/gtk/animations/3d/change-transform-in-end-event-expected.txt.
+        * platform/glib/animations/3d/state-at-end-event-transform-expected.txt: Renamed from LayoutTests/platform/gtk/animations/3d/state-at-end-event-transform-expected.txt.
+        * platform/glib/animations/state-at-end-event-expected.txt: Renamed from LayoutTests/platform/gtk/animations/state-at-end-event-expected.txt.
+        * platform/glib/compositing/repaint/invalidations-on-composited-layers-with-subpixel-positions-expected.txt: Renamed from LayoutTests/platform/gtk/compositing/repaint/invalidations-on-composited-layers-with-subpixel-positions-expected.txt.
+        * platform/glib/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/aes-export-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/aes-export-key-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/aes-generate-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/aes-generate-key-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/aes-import-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/aes-import-key-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/ecdh-derive-bits-length-limits-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/ecdh-derive-bits-length-limits-expected.txt.
+        * platform/glib/crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt.
+        * platform/glib/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt.
+        * platform/glib/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/gtk/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt.
+        * platform/glib/fetch/fetch-url-serialization-expected.txt: Renamed from LayoutTests/platform/gtk/fetch/fetch-url-serialization-expected.txt.
+        * platform/glib/fullscreen/full-screen-placeholder-expected.txt: Renamed from LayoutTests/platform/gtk/fullscreen/full-screen-placeholder-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/broken-utf8-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/broken-utf8-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/close-before-open-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/close-before-open-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/close-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/close-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/closed-when-entering-page-cache-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/closed-when-entering-page-cache-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/compressed-control-frame-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/compressed-control-frame-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/deflate-frame-parameter-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/deflate-frame-parameter-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/extensions-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/extensions-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-error-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-error-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-maxlength-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-maxlength-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/invalid-continuation-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/invalid-continuation-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/invalid-encode-length-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/invalid-encode-length-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/invalid-masked-frames-from-server-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/invalid-masked-frames-from-server-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/long-control-frame-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/long-control-frame-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/long-invalid-header-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/long-invalid-header-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/reserved-bits-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/reserved-bits-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/reserved-opcodes-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/reserved-opcodes-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/send-object-tostring-check-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/send-object-tostring-check-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/simple-wss-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/simple-wss-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/too-long-payload-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/too-long-payload-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/websocket-event-target-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/websocket-event-target-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/workers/close-code-and-reason-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/workers/close-code-and-reason-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/workers/close-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/workers/close-expected.txt.
+        * platform/glib/js/dom/constructor-length-expected.txt: Renamed from LayoutTests/platform/gtk/js/dom/constructor-length-expected.txt.
+        * platform/glib/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt: Renamed from LayoutTests/platform/gtk/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt.
+        * platform/glib/scrollbars/basic-scrollbar-expected.txt: Renamed from LayoutTests/platform/gtk/scrollbars/basic-scrollbar-expected.txt.
+        * platform/glib/scrollbars/disabled-scrollbar-expected.txt: Renamed from LayoutTests/platform/gtk/scrollbars/disabled-scrollbar-expected.txt.
+        * platform/glib/scrollbars/listbox-scrollbar-combinations-expected.txt: Renamed from LayoutTests/platform/gtk/scrollbars/listbox-scrollbar-combinations-expected.txt.
+        * platform/glib/scrollbars/scrollbar-buttons-expected.txt: Renamed from LayoutTests/platform/gtk/scrollbars/scrollbar-buttons-expected.txt.
+        * platform/glib/scrollbars/scrollbar-orientation-expected.txt: Renamed from LayoutTests/platform/gtk/scrollbars/scrollbar-orientation-expected.txt.
+        * platform/glib/scrollbars/scrollbar-selectors-expected.txt: Renamed from LayoutTests/platform/gtk/scrollbars/scrollbar-selectors-expected.txt.
+        * platform/glib/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt.
+        * platform/glib/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt.
+        * platform/glib/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt.
+        * platform/glib/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt.
+        * platform/glib/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt.
+        * platform/glib/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt.
+        * platform/glib/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt.
+        * platform/glib/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt.
+        * platform/glib/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt.
+        * platform/glib/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt.
+        * platform/glib/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt.
+        * platform/glib/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt.
+        * platform/glib/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt.
+        * platform/glib/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt.
+        * platform/glib/svg/as-border-image/svg-as-border-image-2-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-border-image/svg-as-border-image-2-expected.txt.
+        * platform/glib/svg/as-border-image/svg-as-border-image-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-border-image/svg-as-border-image-expected.txt.
+        * platform/glib/svg/as-image/animated-svg-as-image-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/animated-svg-as-image-expected.txt.
+        * platform/glib/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.txt.
+        * platform/glib/svg/as-image/animated-svg-as-image-same-image-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/animated-svg-as-image-same-image-expected.txt.
+        * platform/glib/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt.
+        * platform/glib/svg/as-image/image-respects-deviceScaleFactor-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/image-respects-deviceScaleFactor-expected.txt.
+        * platform/glib/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/img-preserveAspectRatio-support-1-expected.txt.
+        * platform/glib/svg/as-image/img-preserveAspectRatio-support-2-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/img-preserveAspectRatio-support-2-expected.txt.
+        * platform/glib/svg/as-image/same-image-two-instances-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/same-image-two-instances-expected.txt.
+        * platform/glib/svg/as-image/svg-image-change-content-size-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-image/svg-image-change-content-size-expected.txt.
+        * platform/glib/svg/as-object/object-box-sizing-no-width-height-expected.txt: Renamed from LayoutTests/platform/gtk/svg/as-object/object-box-sizing-no-width-height-expected.txt.
+        * platform/glib/svg/batik/filters/filterRegions-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/filters/filterRegions-expected.txt.
+        * platform/glib/svg/batik/masking/maskRegions-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/masking/maskRegions-expected.txt.
+        * platform/glib/svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/paints/patternPreserveAspectRatioA-expected.txt.
+        * platform/glib/svg/batik/paints/patternRegions-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/paints/patternRegions-expected.txt.
+        * platform/glib/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.txt.
+        * platform/glib/svg/batik/text/textAnchor2-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/text/textAnchor2-expected.txt.
+        * platform/glib/svg/batik/text/textAnchor3-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/text/textAnchor3-expected.txt.
+        * platform/glib/svg/batik/text/textEffect3-expected.txt: Renamed from LayoutTests/platform/gtk/svg/batik/text/textEffect3-expected.txt.
+        * platform/glib/svg/carto.net/combobox-expected.txt: Renamed from LayoutTests/platform/gtk/svg/carto.net/combobox-expected.txt.
+        * platform/glib/svg/carto.net/slider-expected.txt: Renamed from LayoutTests/platform/gtk/svg/carto.net/slider-expected.txt.
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt: Renamed from LayoutTests/platform/gtk/svg/css/getComputedStyle-basic-expected.txt.
+        * platform/glib/svg/css/text-gradient-shadow-expected.txt: Renamed from LayoutTests/platform/gtk/svg/css/text-gradient-shadow-expected.txt.
+        * platform/glib/svg/css/text-shadow-multiple-expected.txt: Renamed from LayoutTests/platform/gtk/svg/css/text-shadow-multiple-expected.txt.
+        * platform/glib/svg/custom/SVGMatrix-interface-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/SVGMatrix-interface-expected.txt.
+        * platform/glib/svg/custom/SVGPoint-matrixTransform-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/SVGPoint-matrixTransform-expected.txt.
+        * platform/glib/svg/custom/absolute-sized-content-with-resources-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/absolute-sized-content-with-resources-expected.txt.
+        * platform/glib/svg/custom/alignment-baseline-modes-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/alignment-baseline-modes-expected.txt.
+        * platform/glib/svg/custom/animate-path-morphing-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/animate-path-morphing-expected.txt.
+        * platform/glib/svg/custom/broken-internal-references-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/broken-internal-references-expected.txt.
+        * platform/glib/svg/custom/bug78807-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/bug78807-expected.txt.
+        * platform/glib/svg/custom/circle-move-invalidation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/circle-move-invalidation-expected.txt.
+        * platform/glib/svg/custom/control-points-for-S-and-T-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/control-points-for-S-and-T-expected.txt.
+        * platform/glib/svg/custom/coords-relative-units-transforms-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/coords-relative-units-transforms-expected.txt.
+        * platform/glib/svg/custom/createImageElement2-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/createImageElement2-expected.txt.
+        * platform/glib/svg/custom/dominant-baseline-hanging-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/dominant-baseline-hanging-expected.txt.
+        * platform/glib/svg/custom/dominant-baseline-modes-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/dominant-baseline-modes-expected.txt.
+        * platform/glib/svg/custom/embedding-external-svgs-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/embedding-external-svgs-expected.txt.
+        * platform/glib/svg/custom/empty-mask-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/empty-mask-expected.txt.
+        * platform/glib/svg/custom/feComponentTransfer-Discrete-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/feComponentTransfer-Discrete-expected.txt.
+        * platform/glib/svg/custom/feComponentTransfer-Linear-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/feComponentTransfer-Linear-expected.txt.
+        * platform/glib/svg/custom/feComponentTransfer-Table-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/feComponentTransfer-Table-expected.txt.
+        * platform/glib/svg/custom/focus-ring-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/focus-ring-expected.txt.
+        * platform/glib/svg/custom/font-face-cascade-order-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/font-face-cascade-order-expected.txt.
+        * platform/glib/svg/custom/font-face-simple-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/font-face-simple-expected.txt.
+        * platform/glib/svg/custom/foreign-object-skew-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/foreign-object-skew-expected.txt.
+        * platform/glib/svg/custom/foreignObject-crash-on-hover-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/foreignObject-crash-on-hover-expected.txt.
+        * platform/glib/svg/custom/getTransformToElement-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/getTransformToElement-expected.txt.
+        * platform/glib/svg/custom/getscreenctm-in-mixed-content-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/getscreenctm-in-mixed-content-expected.txt.
+        * platform/glib/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt.
+        * platform/glib/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt.
+        * platform/glib/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt.
+        * platform/glib/svg/custom/glyph-selection-arabic-forms-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.txt.
+        * platform/glib/svg/custom/glyph-selection-bidi-mirror-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/glyph-selection-bidi-mirror-expected.txt.
+        * platform/glib/svg/custom/glyph-selection-non-bmp-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/glyph-selection-non-bmp-expected.txt.
+        * platform/glib/svg/custom/glyph-setting-d-attribute-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/glyph-setting-d-attribute-expected.txt.
+        * platform/glib/svg/custom/gradient-cycle-detection-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/gradient-cycle-detection-expected.txt.
+        * platform/glib/svg/custom/gradient-deep-referencing-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/gradient-deep-referencing-expected.txt.
+        * platform/glib/svg/custom/hit-test-path-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/hit-test-path-expected.txt.
+        * platform/glib/svg/custom/hit-test-path-stroke-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/hit-test-path-stroke-expected.txt.
+        * platform/glib/svg/custom/image-parent-translation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/image-parent-translation-expected.txt.
+        * platform/glib/svg/custom/image-rescale-clip-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/image-rescale-clip-expected.txt.
+        * platform/glib/svg/custom/invalid-lengthlist-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/invalid-lengthlist-expected.txt.
+        * platform/glib/svg/custom/invisible-text-after-scrolling-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/invisible-text-after-scrolling-expected.txt.
+        * platform/glib/svg/custom/js-late-clipPath-and-object-creation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-late-clipPath-and-object-creation-expected.txt.
+        * platform/glib/svg/custom/js-late-clipPath-creation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-late-clipPath-creation-expected.txt.
+        * platform/glib/svg/custom/js-late-gradient-and-object-creation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-late-gradient-and-object-creation-expected.txt.
+        * platform/glib/svg/custom/js-late-gradient-creation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-late-gradient-creation-expected.txt.
+        * platform/glib/svg/custom/js-late-pattern-and-object-creation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-late-pattern-and-object-creation-expected.txt.
+        * platform/glib/svg/custom/js-late-pattern-creation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-late-pattern-creation-expected.txt.
+        * platform/glib/svg/custom/js-update-stop-linked-gradient-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/js-update-stop-linked-gradient-expected.txt.
+        * platform/glib/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt.
+        * platform/glib/svg/custom/linking-a-03-b-transform-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/linking-a-03-b-transform-expected.txt.
+        * platform/glib/svg/custom/linking-a-03-b-viewBox-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/linking-a-03-b-viewBox-expected.txt.
+        * platform/glib/svg/custom/linking-a-03-b-viewBox-transform-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/linking-a-03-b-viewBox-transform-expected.txt.
+        * platform/glib/svg/custom/linking-a-03-b-viewTarget-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/linking-a-03-b-viewTarget-expected.txt.
+        * platform/glib/svg/custom/linking-a-03-b-zoomAndPan-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/linking-a-03-b-zoomAndPan-expected.txt.
+        * platform/glib/svg/custom/marker-opacity-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/marker-opacity-expected.txt.
+        * platform/glib/svg/custom/marker-overflow-clip-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/marker-overflow-clip-expected.txt.
+        * platform/glib/svg/custom/massive-coordinates-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/massive-coordinates-expected.txt.
+        * platform/glib/svg/custom/mouse-move-on-svg-container-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/mouse-move-on-svg-container-expected.txt.
+        * platform/glib/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.txt.
+        * platform/glib/svg/custom/mouse-move-on-svg-root-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/mouse-move-on-svg-root-expected.txt.
+        * platform/glib/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.txt.
+        * platform/glib/svg/custom/no-inherited-dashed-stroke-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/no-inherited-dashed-stroke-expected.txt.
+        * platform/glib/svg/custom/non-opaque-filters-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/non-opaque-filters-expected.txt.
+        * platform/glib/svg/custom/object-sizing-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/object-sizing-expected.txt.
+        * platform/glib/svg/custom/object-sizing-explicit-height-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/object-sizing-explicit-height-expected.txt.
+        * platform/glib/svg/custom/object-sizing-explicit-width-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/object-sizing-explicit-width-expected.txt.
+        * platform/glib/svg/custom/object-sizing-explicit-width-height-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/object-sizing-explicit-width-height-expected.txt.
+        * platform/glib/svg/custom/path-textPath-simulation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/path-textPath-simulation-expected.txt.
+        * platform/glib/svg/custom/path-zero-strokewidth-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/path-zero-strokewidth-expected.txt.
+        * platform/glib/svg/custom/pattern-cycle-detection-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/pattern-cycle-detection-expected.txt.
+        * platform/glib/svg/custom/pattern-deep-referencing-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/pattern-deep-referencing-expected.txt.
+        * platform/glib/svg/custom/pattern-incorrect-tiling-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/pattern-incorrect-tiling-expected.txt.
+        * platform/glib/svg/custom/pattern-referencing-preserve-aspect-ratio-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/pattern-referencing-preserve-aspect-ratio-expected.txt.
+        * platform/glib/svg/custom/percentage-of-html-parent-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/percentage-of-html-parent-expected.txt.
+        * platform/glib/svg/custom/preserve-aspect-ratio-syntax-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/preserve-aspect-ratio-syntax-expected.txt.
+        * platform/glib/svg/custom/recursive-filter-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/recursive-filter-expected.txt.
+        * platform/glib/svg/custom/recursive-gradient-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/recursive-gradient-expected.txt.
+        * platform/glib/svg/custom/recursive-mask-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/recursive-mask-expected.txt.
+        * platform/glib/svg/custom/recursive-pattern-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/recursive-pattern-expected.txt.
+        * platform/glib/svg/custom/relative-sized-content-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-content-expected.txt.
+        * platform/glib/svg/custom/relative-sized-content-with-resources-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-content-with-resources-expected.txt.
+        * platform/glib/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt.
+        * platform/glib/svg/custom/relative-sized-image-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-image-expected.txt.
+        * platform/glib/svg/custom/relative-sized-inner-svg-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-inner-svg-expected.txt.
+        * platform/glib/svg/custom/relative-sized-shadow-tree-content-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-shadow-tree-content-expected.txt.
+        * platform/glib/svg/custom/relative-sized-use-on-symbol-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/relative-sized-use-on-symbol-expected.txt.
+        * platform/glib/svg/custom/repaint-shadow-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/repaint-shadow-expected.txt.
+        * platform/glib/svg/custom/shape-rendering-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/shape-rendering-expected.txt.
+        * platform/glib/svg/custom/shapes-supporting-markers-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/shapes-supporting-markers-expected.txt.
+        * platform/glib/svg/custom/stroke-width-click-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/stroke-width-click-expected.txt.
+        * platform/glib/svg/custom/stroke-width-large-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/stroke-width-large-expected.txt.
+        * platform/glib/svg/custom/svg-curve-with-relative-coordinates-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/svg-curve-with-relative-coordinates-expected.txt.
+        * platform/glib/svg/custom/svg-fonts-in-text-controls-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/svg-fonts-in-text-controls-expected.txt.
+        * platform/glib/svg/custom/svg-fonts-segmented-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/svg-fonts-segmented-expected.txt.
+        * platform/glib/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/svg-fonts-with-no-element-reference-expected.txt.
+        * platform/glib/svg/custom/svg-overflow-types-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/svg-overflow-types-expected.txt.
+        * platform/glib/svg/custom/text-ctm-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-ctm-expected.txt.
+        * platform/glib/svg/custom/text-hit-test-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-hit-test-expected.txt.
+        * platform/glib/svg/custom/text-image-opacity-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-image-opacity-expected.txt.
+        * platform/glib/svg/custom/text-letter-spacing-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-letter-spacing-expected.txt.
+        * platform/glib/svg/custom/text-linking-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-linking-expected.txt.
+        * platform/glib/svg/custom/text-repaint-including-stroke-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-repaint-including-stroke-expected.txt.
+        * platform/glib/svg/custom/text-rotation-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-rotation-expected.txt.
+        * platform/glib/svg/custom/text-x-dx-lists-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-x-dx-lists-expected.txt.
+        * platform/glib/svg/custom/text-x-dy-lists-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-x-dy-lists-expected.txt.
+        * platform/glib/svg/custom/text-x-override-in-tspan-child-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-x-override-in-tspan-child-expected.txt.
+        * platform/glib/svg/custom/text-xy-updates-SVGList-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-xy-updates-SVGList-expected.txt.
+        * platform/glib/svg/custom/text-xy-updates-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/text-xy-updates-expected.txt.
+        * platform/glib/svg/custom/tref-update-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/tref-update-expected.txt.
+        * platform/glib/svg/custom/use-clipped-hit-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-clipped-hit-expected.txt.
+        * platform/glib/svg/custom/use-detach-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-detach-expected.txt.
+        * platform/glib/svg/custom/use-dynamic-append-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-dynamic-append-expected.txt.
+        * platform/glib/svg/custom/use-on-g-containing-use-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-on-g-containing-use-expected.txt.
+        * platform/glib/svg/custom/use-on-g-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-on-g-expected.txt.
+        * platform/glib/svg/custom/use-on-rect-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-on-rect-expected.txt.
+        * platform/glib/svg/custom/use-on-symbol-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-on-symbol-expected.txt.
+        * platform/glib/svg/custom/use-on-use-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-on-use-expected.txt.
+        * platform/glib/svg/custom/use-referencing-nonexisting-symbol-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-referencing-nonexisting-symbol-expected.txt.
+        * platform/glib/svg/custom/use-transform-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/use-transform-expected.txt.
+        * platform/glib/svg/custom/viewbox-syntax-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/viewbox-syntax-expected.txt.
+        * platform/glib/svg/dom/SVGPathSegList-segment-modification-expected.txt: Renamed from LayoutTests/platform/gtk/svg/dom/SVGPathSegList-segment-modification-expected.txt.
+        * platform/glib/svg/filters/feBlend-all-blendmodes-expected.txt: Renamed from LayoutTests/platform/gtk/svg/filters/feBlend-all-blendmodes-expected.txt.
+        * platform/glib/svg/filters/feColorMatrix-values-expected.txt: Renamed from LayoutTests/platform/gtk/svg/filters/feColorMatrix-values-expected.txt.
+        * platform/glib/svg/filters/feComposite-expected.txt: Renamed from LayoutTests/platform/gtk/svg/filters/feComposite-expected.txt.
+        * platform/glib/svg/filters/filter-on-filter-for-text-expected.txt: Renamed from LayoutTests/platform/gtk/svg/filters/filter-on-filter-for-text-expected.txt.
+        * platform/glib/svg/filters/sourceAlpha-expected.txt: Renamed from LayoutTests/platform/gtk/svg/filters/sourceAlpha-expected.txt.
+        * platform/glib/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt: Renamed from LayoutTests/platform/gtk/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt.
+        * platform/glib/svg/foreignObject/svg-document-as-direct-child-expected.txt: Renamed from LayoutTests/platform/gtk/svg/foreignObject/svg-document-as-direct-child-expected.txt.
+        * platform/glib/svg/hixie/error/002-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/error/002-expected.txt.
+        * platform/glib/svg/hixie/error/003-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/error/003-expected.txt.
+        * platform/glib/svg/hixie/error/010-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/error/010-expected.txt.
+        * platform/glib/svg/hixie/error/011-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/error/011-expected.txt.
+        * platform/glib/svg/hixie/links/002-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/links/002-expected.txt.
+        * platform/glib/svg/hixie/processing-model/003-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/processing-model/003-expected.txt.
+        * platform/glib/svg/hixie/processing-model/004-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/processing-model/004-expected.txt.
+        * platform/glib/svg/hixie/rendering-model/004-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/rendering-model/004-expected.txt.
+        * platform/glib/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt: Renamed from LayoutTests/platform/gtk/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt.
+        * platform/glib/svg/in-html/circle-expected.txt: Renamed from LayoutTests/platform/gtk/svg/in-html/circle-expected.txt.
+        * platform/glib/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.txt: Renamed from LayoutTests/platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.txt.
+        * platform/glib/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt: Renamed from LayoutTests/platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt.
+        * platform/glib/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.txt: Renamed from LayoutTests/platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.txt.
+        * platform/glib/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.txt: Renamed from LayoutTests/platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.txt.
+        * platform/glib/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt: Renamed from LayoutTests/platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt.
+        * platform/glib/svg/repaint/filter-repaint-expected.txt: Renamed from LayoutTests/platform/gtk/svg/repaint/filter-repaint-expected.txt.
+        * platform/glib/svg/repaint/inner-svg-change-viewPort-relative-expected.txt: Renamed from LayoutTests/platform/gtk/svg/repaint/inner-svg-change-viewPort-relative-expected.txt.
+        * platform/glib/svg/text/bidi-embedded-direction-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/bidi-embedded-direction-expected.txt.
+        * platform/glib/svg/text/bidi-text-query-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/bidi-text-query-expected.txt.
+        * platform/glib/svg/text/font-size-below-point-five-2-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/font-size-below-point-five-2-expected.txt.
+        * platform/glib/svg/text/font-size-below-point-five-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/font-size-below-point-five-expected.txt.
+        * platform/glib/svg/text/foreignObject-repaint-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/foreignObject-repaint-expected.txt.
+        * platform/glib/svg/text/scaled-font-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/scaled-font-expected.txt.
+        * platform/glib/svg/text/scaling-font-with-geometric-precision-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/scaling-font-with-geometric-precision-expected.txt.
+        * platform/glib/svg/text/selection-background-color-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/selection-background-color-expected.txt.
+        * platform/glib/svg/text/selection-styles-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/selection-styles-expected.txt.
+        * platform/glib/svg/text/small-fonts-2-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/small-fonts-2-expected.txt.
+        * platform/glib/svg/text/small-fonts-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/small-fonts-expected.txt.
+        * platform/glib/svg/text/text-fonts-02-t-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-fonts-02-t-expected.txt.
+        * platform/glib/svg/text/text-intro-05-t-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-intro-05-t-expected.txt.
+        * platform/glib/svg/text/text-text-01-b-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-text-01-b-expected.txt.
+        * platform/glib/svg/text/text-text-03-b-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-text-03-b-expected.txt.
+        * platform/glib/svg/text/text-text-05-t-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-text-05-t-expected.txt.
+        * platform/glib/svg/text/text-vkern-on-horizontal-text-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.txt.
+        * platform/glib/svg/text/text-ws-01-t-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-ws-01-t-expected.txt.
+        * platform/glib/svg/text/text-ws-02-t-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/text-ws-02-t-expected.txt.
+        * platform/glib/svg/text/textPathBoundsBug-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/textPathBoundsBug-expected.txt.
+        * platform/glib/svg/text/tspan-dynamic-positioning-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/tspan-dynamic-positioning-expected.txt.
+        * platform/glib/svg/transforms/svg-css-transforms-clip-path-expected.txt: Renamed from LayoutTests/platform/gtk/svg/transforms/svg-css-transforms-clip-path-expected.txt.
+        * platform/glib/svg/transforms/svg-css-transforms-expected.txt: Renamed from LayoutTests/platform/gtk/svg/transforms/svg-css-transforms-expected.txt.
+        * platform/glib/svg/wicd/test-rightsizing-a-expected.txt: Renamed from LayoutTests/platform/gtk/svg/wicd/test-rightsizing-a-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-foreignObject-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-foreignObject-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-svg-as-relative-image-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt.
+        * platform/glib/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt.
+        * platform/glib/svg/zoom/text/zoom-foreignObject-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/text/zoom-foreignObject-expected.txt.
+        * platform/glib/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt: Renamed from LayoutTests/platform/gtk/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt.
+        * platform/glib/transforms/2d/hindi-rotated-expected.txt: Renamed from LayoutTests/platform/gtk/transforms/2d/hindi-rotated-expected.txt.
+        * platform/glib/transforms/3d/general/perspective-units-expected.txt: Renamed from LayoutTests/platform/gtk/transforms/3d/general/perspective-units-expected.txt.
+        * platform/glib/transforms/svg-vs-css-expected.txt: Renamed from LayoutTests/platform/gtk/transforms/svg-vs-css-expected.txt.
+        * platform/glib/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt: Renamed from LayoutTests/platform/gtk/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt.
+        * platform/glib/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Renamed from LayoutTests/platform/gtk/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt.
+        * platform/glib/webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt: Renamed from LayoutTests/platform/gtk/webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt.
+        * platform/glib/webgl/1.0.3/conformance/misc/webgl-specific-expected.txt: Renamed from LayoutTests/platform/gtk/webgl/1.0.3/conformance/misc/webgl-specific-expected.txt.
+        * platform/glib/webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt: Renamed from LayoutTests/platform/gtk/webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt.
+        * platform/glib/webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt: Renamed from LayoutTests/platform/gtk/webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt.
+        * platform/wpe/accessibility/add-children-pseudo-element-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-fallback-roles-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-hidden-negates-no-visibility-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-label-on-label-element-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-labelledby-overrides-label-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-option-role-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-roledescription-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-switch-sends-notification-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-tab-roles-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-table-attributes-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-table-content-expected.txt: Removed.
+        * platform/wpe/accessibility/aria-toggle-button-with-title-expected.txt: Removed.
+        * platform/wpe/accessibility/auto-fill-crash-expected.txt: Removed.
+        * platform/wpe/accessibility/button-with-aria-haspopup-role-expected.txt: Removed.
+        * platform/wpe/accessibility/deleting-iframe-destroys-axcache-expected.txt: Removed.
+        * platform/wpe/accessibility/dimensions-include-descendants-expected.txt: Removed.
+        * platform/wpe/accessibility/double-nested-inline-element-missing-from-tree-expected.txt: Removed.
+        * platform/wpe/accessibility/empty-image-with-title-expected.txt: Removed.
+        * platform/wpe/accessibility/file-upload-button-stringvalue-expected.txt: Removed.
+        * platform/wpe/accessibility/help-text-expected.txt: Removed.
+        * platform/wpe/accessibility/image-map1-expected.txt: Removed.
+        * platform/wpe/accessibility/inline-continuations-expected.txt: Removed.
+        * platform/wpe/accessibility/label-with-pseudo-elements-expected.txt: Removed.
+        * platform/wpe/accessibility/list-detection-expected.txt: Removed.
+        * platform/wpe/accessibility/media-emits-object-replacement-expected.txt: Removed.
+        * platform/wpe/accessibility/menu-list-crash2-expected.txt: Removed.
+        * platform/wpe/accessibility/menu-list-sends-change-notification-expected.txt: Removed.
+        * platform/wpe/accessibility/minimal-table-with-aria-is-data-table-expected.txt: Removed.
+        * platform/wpe/accessibility/radio-button-title-label-expected.txt: Removed.
+        * platform/wpe/accessibility/render-counter-text-expected.txt: Removed.
+        * platform/wpe/accessibility/roles-computedRoleString-expected.txt: Removed.
+        * platform/wpe/accessibility/set-selected-text-range-contenteditable-expected.txt: Removed.
+        * platform/wpe/accessibility/svg-remote-element-expected.txt: Removed.
+        * platform/wpe/accessibility/tabindex-elements-are-accessible-expected.txt: Removed.
+        * platform/wpe/accessibility/table-cells-roles-expected.txt: Removed.
+        * platform/wpe/accessibility/table-column-headers-with-captions-expected.txt: Removed.
+        * platform/wpe/accessibility/table-roles-hierarchy-expected.txt: Removed.
+        * platform/wpe/accessibility/text-alternative-calculation-hidden-nodes-expected.txt: Removed.
+        * platform/wpe/animations/3d/change-transform-in-end-event-expected.txt: Removed.
+        * platform/wpe/animations/3d/state-at-end-event-transform-expected.txt: Removed.
+        * platform/wpe/animations/state-at-end-event-expected.txt: Removed.
+        * platform/wpe/compositing/repaint/invalidations-on-composited-layers-with-subpixel-positions-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/aes-export-key-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/aes-generate-key-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/aes-import-key-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/ecdh-derive-bits-length-limits-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Removed.
+        * platform/wpe/fetch/fetch-url-serialization-expected.txt: Removed.
+        * platform/wpe/fullscreen/full-screen-placeholder-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/broken-utf8-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-before-open-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/closed-when-entering-page-cache-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/compressed-control-frame-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/deflate-frame-parameter-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/extensions-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-error-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-maxlength-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/invalid-continuation-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/invalid-encode-length-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/invalid-masked-frames-from-server-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/long-control-frame-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/long-invalid-header-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/reserved-bits-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/reserved-opcodes-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/send-object-tostring-check-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/simple-wss-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/too-long-payload-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/websocket-event-target-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/workers/close-code-and-reason-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/workers/close-expected.txt: Removed.
+        * platform/wpe/js/dom/constructor-length-expected.txt: Removed.
+        * platform/wpe/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt: Removed.
+        * platform/wpe/scrollbars/basic-scrollbar-expected.txt: Removed.
+        * platform/wpe/scrollbars/disabled-scrollbar-expected.txt: Removed.
+        * platform/wpe/scrollbars/listbox-scrollbar-combinations-expected.txt: Removed.
+        * platform/wpe/scrollbars/scrollbar-buttons-expected.txt: Removed.
+        * platform/wpe/scrollbars/scrollbar-orientation-expected.txt: Removed.
+        * platform/wpe/scrollbars/scrollbar-selectors-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/wpe/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/wpe/svg/as-background-image/background-image-preserveaspectRatio-support-expected.txt: Removed.
+        * platform/wpe/svg/as-border-image/svg-as-border-image-2-expected.txt: Removed.
+        * platform/wpe/svg/as-border-image/svg-as-border-image-expected.txt: Removed.
+        * platform/wpe/svg/as-image/animated-svg-as-image-expected.txt: Removed.
+        * platform/wpe/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.txt: Removed.
+        * platform/wpe/svg/as-image/animated-svg-as-image-same-image-expected.txt: Removed.
+        * platform/wpe/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt: Removed.
+        * platform/wpe/svg/as-image/image-respects-deviceScaleFactor-expected.txt: Removed.
+        * platform/wpe/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/wpe/svg/as-image/img-preserveAspectRatio-support-2-expected.txt: Removed.
+        * platform/wpe/svg/as-image/same-image-two-instances-expected.txt: Removed.
+        * platform/wpe/svg/as-image/svg-image-change-content-size-expected.txt: Removed.
+        * platform/wpe/svg/as-object/object-box-sizing-no-width-height-expected.txt: Removed.
+        * platform/wpe/svg/batik/filters/filterRegions-expected.txt: Removed.
+        * platform/wpe/svg/batik/masking/maskRegions-expected.txt: Removed.
+        * platform/wpe/svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Removed.
+        * platform/wpe/svg/batik/paints/patternRegions-expected.txt: Removed.
+        * platform/wpe/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Removed.
+        * platform/wpe/svg/batik/text/textAnchor2-expected.txt: Removed.
+        * platform/wpe/svg/batik/text/textAnchor3-expected.txt: Removed.
+        * platform/wpe/svg/batik/text/textEffect3-expected.txt: Removed.
+        * platform/wpe/svg/carto.net/combobox-expected.txt: Removed.
+        * platform/wpe/svg/carto.net/slider-expected.txt: Removed.
+        * platform/wpe/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/wpe/svg/css/text-gradient-shadow-expected.txt: Removed.
+        * platform/wpe/svg/css/text-shadow-multiple-expected.txt: Removed.
+        * platform/wpe/svg/custom/SVGMatrix-interface-expected.txt: Removed.
+        * platform/wpe/svg/custom/SVGPoint-matrixTransform-expected.txt: Removed.
+        * platform/wpe/svg/custom/absolute-sized-content-with-resources-expected.txt: Removed.
+        * platform/wpe/svg/custom/alignment-baseline-modes-expected.txt: Removed.
+        * platform/wpe/svg/custom/animate-path-morphing-expected.txt: Removed.
+        * platform/wpe/svg/custom/broken-internal-references-expected.txt: Removed.
+        * platform/wpe/svg/custom/bug78807-expected.txt: Removed.
+        * platform/wpe/svg/custom/circle-move-invalidation-expected.txt: Removed.
+        * platform/wpe/svg/custom/control-points-for-S-and-T-expected.txt: Removed.
+        * platform/wpe/svg/custom/coords-relative-units-transforms-expected.txt: Removed.
+        * platform/wpe/svg/custom/createImageElement2-expected.txt: Removed.
+        * platform/wpe/svg/custom/dominant-baseline-hanging-expected.txt: Removed.
+        * platform/wpe/svg/custom/dominant-baseline-modes-expected.txt: Removed.
+        * platform/wpe/svg/custom/embedding-external-svgs-expected.txt: Removed.
+        * platform/wpe/svg/custom/empty-mask-expected.txt: Removed.
+        * platform/wpe/svg/custom/feComponentTransfer-Discrete-expected.txt: Removed.
+        * platform/wpe/svg/custom/feComponentTransfer-Linear-expected.txt: Removed.
+        * platform/wpe/svg/custom/feComponentTransfer-Table-expected.txt: Removed.
+        * platform/wpe/svg/custom/focus-ring-expected.txt: Removed.
+        * platform/wpe/svg/custom/font-face-cascade-order-expected.txt: Removed.
+        * platform/wpe/svg/custom/font-face-simple-expected.txt: Removed.
+        * platform/wpe/svg/custom/foreign-object-skew-expected.txt: Removed.
+        * platform/wpe/svg/custom/foreignObject-crash-on-hover-expected.txt: Removed.
+        * platform/wpe/svg/custom/getTransformToElement-expected.txt: Removed.
+        * platform/wpe/svg/custom/getscreenctm-in-mixed-content-expected.txt: Removed.
+        * platform/wpe/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt: Removed.
+        * platform/wpe/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt: Removed.
+        * platform/wpe/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt: Removed.
+        * platform/wpe/svg/custom/glyph-selection-arabic-forms-expected.txt: Removed.
+        * platform/wpe/svg/custom/glyph-selection-bidi-mirror-expected.txt: Removed.
+        * platform/wpe/svg/custom/glyph-selection-non-bmp-expected.txt: Removed.
+        * platform/wpe/svg/custom/glyph-setting-d-attribute-expected.txt: Removed.
+        * platform/wpe/svg/custom/gradient-cycle-detection-expected.txt: Removed.
+        * platform/wpe/svg/custom/gradient-deep-referencing-expected.txt: Removed.
+        * platform/wpe/svg/custom/hit-test-path-expected.txt: Removed.
+        * platform/wpe/svg/custom/hit-test-path-stroke-expected.txt: Removed.
+        * platform/wpe/svg/custom/image-parent-translation-expected.txt: Removed.
+        * platform/wpe/svg/custom/image-rescale-clip-expected.txt: Removed.
+        * platform/wpe/svg/custom/invalid-lengthlist-expected.txt: Removed.
+        * platform/wpe/svg/custom/invisible-text-after-scrolling-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-late-clipPath-and-object-creation-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-late-clipPath-creation-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-late-gradient-and-object-creation-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-late-gradient-creation-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-late-pattern-and-object-creation-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-late-pattern-creation-expected.txt: Removed.
+        * platform/wpe/svg/custom/js-update-stop-linked-gradient-expected.txt: Removed.
+        * platform/wpe/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt: Removed.
+        * platform/wpe/svg/custom/linking-a-03-b-transform-expected.txt: Removed.
+        * platform/wpe/svg/custom/linking-a-03-b-viewBox-expected.txt: Removed.
+        * platform/wpe/svg/custom/linking-a-03-b-viewBox-transform-expected.txt: Removed.
+        * platform/wpe/svg/custom/linking-a-03-b-viewTarget-expected.txt: Removed.
+        * platform/wpe/svg/custom/linking-a-03-b-zoomAndPan-expected.txt: Removed.
+        * platform/wpe/svg/custom/marker-opacity-expected.txt: Removed.
+        * platform/wpe/svg/custom/marker-overflow-clip-expected.txt: Removed.
+        * platform/wpe/svg/custom/massive-coordinates-expected.txt: Removed.
+        * platform/wpe/svg/custom/mouse-move-on-svg-container-expected.txt: Removed.
+        * platform/wpe/svg/custom/mouse-move-on-svg-container-standalone-expected.txt: Removed.
+        * platform/wpe/svg/custom/mouse-move-on-svg-root-expected.txt: Removed.
+        * platform/wpe/svg/custom/mouse-move-on-svg-root-standalone-expected.txt: Removed.
+        * platform/wpe/svg/custom/no-inherited-dashed-stroke-expected.txt: Removed.
+        * platform/wpe/svg/custom/non-opaque-filters-expected.txt: Removed.
+        * platform/wpe/svg/custom/object-sizing-expected.txt: Removed.
+        * platform/wpe/svg/custom/object-sizing-explicit-height-expected.txt: Removed.
+        * platform/wpe/svg/custom/object-sizing-explicit-width-expected.txt: Removed.
+        * platform/wpe/svg/custom/object-sizing-explicit-width-height-expected.txt: Removed.
+        * platform/wpe/svg/custom/path-textPath-simulation-expected.txt: Removed.
+        * platform/wpe/svg/custom/path-zero-strokewidth-expected.txt: Removed.
+        * platform/wpe/svg/custom/pattern-cycle-detection-expected.txt: Removed.
+        * platform/wpe/svg/custom/pattern-deep-referencing-expected.txt: Removed.
+        * platform/wpe/svg/custom/pattern-incorrect-tiling-expected.txt: Removed.
+        * platform/wpe/svg/custom/pattern-referencing-preserve-aspect-ratio-expected.txt: Removed.
+        * platform/wpe/svg/custom/percentage-of-html-parent-expected.txt: Removed.
+        * platform/wpe/svg/custom/preserve-aspect-ratio-syntax-expected.txt: Removed.
+        * platform/wpe/svg/custom/recursive-filter-expected.txt: Removed.
+        * platform/wpe/svg/custom/recursive-gradient-expected.txt: Removed.
+        * platform/wpe/svg/custom/recursive-mask-expected.txt: Removed.
+        * platform/wpe/svg/custom/recursive-pattern-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-content-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-content-with-resources-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-image-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-inner-svg-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-shadow-tree-content-expected.txt: Removed.
+        * platform/wpe/svg/custom/relative-sized-use-on-symbol-expected.txt: Removed.
+        * platform/wpe/svg/custom/repaint-shadow-expected.txt: Removed.
+        * platform/wpe/svg/custom/shape-rendering-expected.txt: Removed.
+        * platform/wpe/svg/custom/shapes-supporting-markers-expected.txt: Removed.
+        * platform/wpe/svg/custom/stroke-width-click-expected.txt: Removed.
+        * platform/wpe/svg/custom/stroke-width-large-expected.txt: Removed.
+        * platform/wpe/svg/custom/svg-curve-with-relative-coordinates-expected.txt: Removed.
+        * platform/wpe/svg/custom/svg-fonts-in-text-controls-expected.txt: Removed.
+        * platform/wpe/svg/custom/svg-fonts-segmented-expected.txt: Removed.
+        * platform/wpe/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Removed.
+        * platform/wpe/svg/custom/svg-overflow-types-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-ctm-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-hit-test-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-image-opacity-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-letter-spacing-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-linking-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-repaint-including-stroke-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-rotation-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-x-dx-lists-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-x-dy-lists-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-x-override-in-tspan-child-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-xy-updates-SVGList-expected.txt: Removed.
+        * platform/wpe/svg/custom/text-xy-updates-expected.txt: Removed.
+        * platform/wpe/svg/custom/tref-update-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-clipped-hit-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-detach-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-dynamic-append-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-on-g-containing-use-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-on-g-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-on-rect-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-on-symbol-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-on-use-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-referencing-nonexisting-symbol-expected.txt: Removed.
+        * platform/wpe/svg/custom/use-transform-expected.txt: Removed.
+        * platform/wpe/svg/custom/viewbox-syntax-expected.txt: Removed.
+        * platform/wpe/svg/dom/SVGPathSegList-segment-modification-expected.txt: Removed.
+        * platform/wpe/svg/filters/feBlend-all-blendmodes-expected.txt: Removed.
+        * platform/wpe/svg/filters/feColorMatrix-values-expected.txt: Removed.
+        * platform/wpe/svg/filters/feComposite-expected.txt: Removed.
+        * platform/wpe/svg/filters/filter-on-filter-for-text-expected.txt: Removed.
+        * platform/wpe/svg/filters/sourceAlpha-expected.txt: Removed.
+        * platform/wpe/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt: Removed.
+        * platform/wpe/svg/foreignObject/svg-document-as-direct-child-expected.txt: Removed.
+        * platform/wpe/svg/hixie/error/002-expected.txt: Removed.
+        * platform/wpe/svg/hixie/error/003-expected.txt: Removed.
+        * platform/wpe/svg/hixie/error/010-expected.txt: Removed.
+        * platform/wpe/svg/hixie/error/011-expected.txt: Removed.
+        * platform/wpe/svg/hixie/links/002-expected.txt: Removed.
+        * platform/wpe/svg/hixie/processing-model/003-expected.txt: Removed.
+        * platform/wpe/svg/hixie/processing-model/004-expected.txt: Removed.
+        * platform/wpe/svg/hixie/rendering-model/004-expected.txt: Removed.
+        * platform/wpe/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt: Removed.
+        * platform/wpe/svg/in-html/circle-expected.txt: Removed.
+        * platform/wpe/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.txt: Removed.
+        * platform/wpe/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt: Removed.
+        * platform/wpe/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.txt: Removed.
+        * platform/wpe/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.txt: Removed.
+        * platform/wpe/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt: Removed.
+        * platform/wpe/svg/repaint/filter-repaint-expected.txt: Removed.
+        * platform/wpe/svg/repaint/inner-svg-change-viewPort-relative-expected.txt: Removed.
+        * platform/wpe/svg/text/bidi-embedded-direction-expected.txt: Removed.
+        * platform/wpe/svg/text/bidi-text-query-expected.txt: Removed.
+        * platform/wpe/svg/text/font-size-below-point-five-2-expected.txt: Removed.
+        * platform/wpe/svg/text/font-size-below-point-five-expected.txt: Removed.
+        * platform/wpe/svg/text/foreignObject-repaint-expected.txt: Removed.
+        * platform/wpe/svg/text/scaled-font-expected.txt: Removed.
+        * platform/wpe/svg/text/scaling-font-with-geometric-precision-expected.txt: Removed.
+        * platform/wpe/svg/text/selection-background-color-expected.txt: Removed.
+        * platform/wpe/svg/text/selection-styles-expected.txt: Removed.
+        * platform/wpe/svg/text/small-fonts-2-expected.txt: Removed.
+        * platform/wpe/svg/text/small-fonts-expected.txt: Removed.
+        * platform/wpe/svg/text/text-fonts-02-t-expected.txt: Removed.
+        * platform/wpe/svg/text/text-intro-05-t-expected.txt: Removed.
+        * platform/wpe/svg/text/text-text-01-b-expected.txt: Removed.
+        * platform/wpe/svg/text/text-text-03-b-expected.txt: Removed.
+        * platform/wpe/svg/text/text-text-05-t-expected.txt: Removed.
+        * platform/wpe/svg/text/text-vkern-on-horizontal-text-expected.txt: Removed.
+        * platform/wpe/svg/text/text-ws-01-t-expected.txt: Removed.
+        * platform/wpe/svg/text/text-ws-02-t-expected.txt: Removed.
+        * platform/wpe/svg/text/textPathBoundsBug-expected.txt: Removed.
+        * platform/wpe/svg/text/tspan-dynamic-positioning-expected.txt: Removed.
+        * platform/wpe/svg/transforms/svg-css-transforms-clip-path-expected.txt: Removed.
+        * platform/wpe/svg/transforms/svg-css-transforms-expected.txt: Removed.
+        * platform/wpe/svg/wicd/test-rightsizing-a-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-foreignObject-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Removed.
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Removed.
+        * platform/wpe/svg/zoom/text/zoom-foreignObject-expected.txt: Removed.
+        * platform/wpe/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt: Removed.
+        * platform/wpe/transforms/2d/hindi-rotated-expected.txt: Removed.
+        * platform/wpe/transforms/3d/general/perspective-units-expected.txt: Removed.
+        * platform/wpe/transforms/svg-vs-css-expected.txt: Removed.
+        * platform/wpe/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt: Removed.
+        * platform/wpe/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Removed.
+        * platform/wpe/webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts-expected.txt: Removed.
+        * platform/wpe/webgl/1.0.3/conformance/misc/webgl-specific-expected.txt: Removed.
+        * platform/wpe/webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt: Removed.
+        * platform/wpe/webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt: Removed.
+
 2020-05-14  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update expectations after r261609
