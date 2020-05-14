@@ -3607,7 +3607,6 @@ fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
 fast/multicol/newmulticol/compare-with-old-impl/shrink-to-column-height-for-pagination.html [ ImageOnlyFailure ]
 fast/text/accessibility-bold-system-font-2.html [ ImageOnlyFailure ]
 fast/text/emoji-overlap.html [ ImageOnlyFailure ]
-fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-simple-text-but-complex-font-path.html [ ImageOnlyFailure ]
 imported/blink/scrollbars/avoid-double-scrollbars-when-html-element-is-not-the-renderview.html [ ImageOnlyFailure ]
 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
@@ -4494,3 +4493,7 @@ fast/forms/file/open-file-panel-crash.html [ Skip ]
 fast/text/text-indent-inside-float.html [ ImageOnlyFailure ]
 
 webkit.org/b/211854 webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
+
+# Windows can't seem to handle the fonts used in these tests.
+webkit.org/b/211860 fast/text/multiple-codeunit-vertical-upright.html [ Pass ImageOnlyFailure ]
+webkit.org/b/211860 fast/text/multiple-codeunit-vertical-upright-2.html [ Pass ImageOnlyFailure ]

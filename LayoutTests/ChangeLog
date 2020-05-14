@@ -1,3 +1,13 @@
+2020-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/multiple-codeunit-vertical-upright.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=211860
+        <rdar://problem/31893714>
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2020-05-14  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Rebaseline after r261676.
