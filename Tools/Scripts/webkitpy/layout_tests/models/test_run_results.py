@@ -157,12 +157,13 @@ class TestRunResults(object):
 
 
 class RunDetails(object):
-    def __init__(self, exit_code, summarized_results=None, initial_results=None, retry_results=None, enabled_pixel_tests_in_retry=False):
+    def __init__(self, exit_code, summarized_results=None, initial_results=None, retry_results=None, enabled_pixel_tests_in_retry=False, skipped_all_tests=False):
         self.exit_code = exit_code
         self.summarized_results = summarized_results
         self.initial_results = initial_results
         self.retry_results = retry_results
         self.enabled_pixel_tests_in_retry = enabled_pixel_tests_in_retry
+        self.skipped_all_tests = skipped_all_tests
 
 
 def _interpret_test_failures(failures):
