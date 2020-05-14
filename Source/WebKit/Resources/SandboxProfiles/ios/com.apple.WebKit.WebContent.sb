@@ -92,8 +92,9 @@
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-async-external-method
-                    iokit-external-method
                     iokit-external-trap)
+                (allow
+                    iokit-external-method)
             )
         )
     )
@@ -386,8 +387,9 @@
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-async-external-method
-                    iokit-external-method
                     iokit-external-trap)
+                (allow
+                    iokit-external-method)
             )
         )
     )
@@ -1264,12 +1266,15 @@
             (deny mach-message-send (with telemetry))
             (allow mach-message-send (kernel-mig-routine
                 (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
+                clock_get_time
                 host_get_clock_service
                 host_get_io_master
                 host_get_special_port
                 host_info
                 host_request_notification
+                io_connect_add_client
                 io_connect_async_method
+                io_connect_map_memory_into_task
                 io_connect_method
                 io_connect_set_notification_port_64
                 io_iterator_next
@@ -1292,6 +1297,7 @@
                 mach_vm_copy
                 mach_vm_map_external
                 mach_vm_region
+                mach_vm_region_recurse
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
