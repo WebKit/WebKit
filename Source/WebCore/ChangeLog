@@ -1,3 +1,27 @@
+2020-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        Do not clear selection/repaint when the renderer gets moved during tree normalization.
+        https://bugs.webkit.org/show_bug.cgi?id=211865
+        <rdar://problem/62849044>
+
+        Reviewed by Antti Koivisto.
+
+        While detachFromRenderElement should really be about "this renderer is being detached from its parent", some code in here assumes
+        the renderer is not only going to be detached but also going to be destroyed. Ideally such code should live in RenderObject::willBeDestroyed(),
+        but no tree walk is possible in there anymore.
+
+        The reason for the crash is that when we split the inline for continuation, we construct new anonymous containers and move subtrees over
+        to these new renderers. However at this point these new parent containers are not yet attached to the tree
+        so any tree-walking cleanup code will fail (in detachFromRenderElement).
+
+        Test: fast/repaint/do-no-repaint-on-internal-move.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::detachFromRenderElement):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+
 2020-05-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: show EventTarget listeners as an internal property

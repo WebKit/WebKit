@@ -309,7 +309,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             // FIXME: When the anonymous wrapper has multiple children, we end up traversing up to the topmost wrapper
             // every time, which is a bit wasteful.
         }
-        auto childToMove = m_builder.detachFromRenderElement(*rendererToMove->parent(), *rendererToMove);
+        auto childToMove = m_builder.detachFromRenderElement(*rendererToMove->parent(), *rendererToMove, WillBeDestroyed::No);
         m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
@@ -347,7 +347,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
             // *after* currentChild and append them all to the clone.
             for (auto* sibling = currentChild->nextSibling(); sibling;) {
                 auto* next = sibling->nextSibling();
-                auto childToMove = m_builder.detachFromRenderElement(*current, *sibling);
+                auto childToMove = m_builder.detachFromRenderElement(*current, *sibling, WillBeDestroyed::No);
                 m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
                 sibling->setNeedsLayoutAndPrefWidthsRecalc();
                 sibling = next;
@@ -371,7 +371,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
     // and put them in the toBlock.
     for (auto* current = currentChild->nextSibling(); current;) {
         auto* next = current->nextSibling();
-        auto childToMove = m_builder.detachFromRenderElement(*fromBlock, *current);
+        auto childToMove = m_builder.detachFromRenderElement(*fromBlock, *current, WillBeDestroyed::No);
         m_builder.attachToRenderElementInternal(*toBlock, WTFMove(childToMove));
         current = next;
     }
