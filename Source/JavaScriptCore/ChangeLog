@@ -1,3 +1,13 @@
+2020-05-13  Keith Miller  <keith_miller@apple.com>
+
+        iteration bytecodes need to handle osr exiting from inlined getter frames
+        https://bugs.webkit.org/show_bug.cgi?id=211873
+
+        Reviewed by Saam Barati.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::slow_path_checkpoint_osr_exit_from_inlined_call):
+
 2020-05-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: rename CSS.StyleSheetOrigin.Regular to CSS.StyleSheetOrigin.Author to match the spec

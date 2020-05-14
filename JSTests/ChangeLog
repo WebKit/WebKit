@@ -1,3 +1,20 @@
+2020-05-13  Keith Miller  <keith_miller@apple.com>
+
+        iteration bytecodes need to handle osr exiting from inlined getter frames
+        https://bugs.webkit.org/show_bug.cgi?id=211873
+
+        Reviewed by Saam Barati.
+
+        * stress/for-of-done-getter-osr-exit-inlined.js: Added.
+        (let.d.get done):
+        (let.d.get value):
+        * stress/for-of-next-getter-osr-exit-inlined.js: Added.
+        (let.x.get next):
+        (foo):
+        * stress/for-of-value-getter-osr-exit-inlined.js: Added.
+        (let.d.get value):
+        (let.d.get done):
+
 2020-05-14  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js failing on ppc64le and s390x
