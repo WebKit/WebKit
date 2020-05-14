@@ -90,7 +90,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
     : JSDOMGlobalObject(vm, structure, proxy->world(), &s_globalObjectMethodTable)
-    , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
+    , m_windowCloseWatchpoints(WatchpointSet::create((window && window->frame()) ? IsWatched : IsInvalidated))
     , m_wrapped(WTFMove(window))
     , m_proxy(proxy)
 {
@@ -296,7 +296,7 @@ void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
         if (!wrapper)
             continue;
         JSDOMWindowBase* jsWindow = JSC::jsCast<JSDOMWindowBase*>(wrapper);
-        jsWindow->m_windowCloseWatchpoints.fireAll(vm, "Frame cleared");
+        jsWindow->m_windowCloseWatchpoints->fireAll(vm, "Frame cleared");
     }
 }
 

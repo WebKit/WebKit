@@ -194,7 +194,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
 
     // FIXME: this needs more explanation.
     // (Particularly, is it correct that this exists here but not in getOwnPropertySlotByIndex?)
-    slot.setWatchpointSet(thisObject->m_windowCloseWatchpoints);
+    slot.setWatchpointSet(thisObject->m_windowCloseWatchpoints.get());
 
     // (2) Regular own properties.
     PropertySlot slotCopy = slot;

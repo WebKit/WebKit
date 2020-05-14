@@ -1,3 +1,26 @@
+2020-05-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JSDOMWindowBase m_windowCloseWatchpoints must be Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=211844
+
+        Reviewed by Mark Lam.
+
+        JSDOMWindowBase::m_windowCloseWatchpoints is WatchpointSet, not Ref<WatchpointSet>. And it is passed to JSC IC layer via PropertySlot::setWatchpoint(...).
+        And ProxyableAccessCase can hold it as `RefPtr<WatchpointSet> m_additionalSet;`, this is wrong.
+
+        This patch hides WatchpointSet constructor behind `protected` to disallow non Ref<> WatchpointSet construction. We made it `protected` since InferredValueWatchpointSet
+        inherits WatchpointSet and uses this constructor.
+
+        Possibly, this does not matter: ProxyableAccessCase keeps Structure, which points to JSDOMWindowBase. So, it would not happen that ProxyableAccessCase has a wrong pointer
+        to WatchpointSet since JSDOMWindowBase is kept alive anyway. But avoid using RefCounted objects without RefCount allocation is better since this can cause bugs easily.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::fireFrameClearedWatchpointsForWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+
 2020-05-13  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in InsertParagraphSeparatorCommand::doApply when the canonical position is uneditable

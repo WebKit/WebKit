@@ -953,7 +953,7 @@ WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, Propert
     }
     auto result = rareData->m_replacementWatchpointSets->add(offset, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = adoptRef(new WatchpointSet(IsWatched));
+        result.iterator->value = WatchpointSet::create(IsWatched);
     return result.iterator->value.get();
 }
 

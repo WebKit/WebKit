@@ -1163,7 +1163,7 @@ WatchpointSet* VM::ensureWatchpointSetForImpureProperty(UniquedStringImpl* prope
 {
     auto result = m_impurePropertyWatchpointSets.add(propertyName, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = adoptRef(new WatchpointSet(IsWatched));
+        result.iterator->value = WatchpointSet::create(IsWatched);
     return result.iterator->value.get();
 }
 

@@ -69,7 +69,7 @@ void SymbolTableEntry::prepareToWatch()
     FatEntry* entry = inflate();
     if (entry->m_watchpoints)
         return;
-    entry->m_watchpoints = adoptRef(new WatchpointSet(ClearWatchpoint));
+    entry->m_watchpoints = WatchpointSet::create(ClearWatchpoint);
 }
 
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
