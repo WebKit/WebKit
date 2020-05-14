@@ -3472,7 +3472,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!backingObject)
         return NO;
 
-    return backingObject->replaceTextInRange(string, PlainTextRange(range));
+    return backingObject->replaceTextInRange(String(string).isolatedCopy(), PlainTextRange(range));
 }
 
 - (BOOL)accessibilityInsertText:(NSString *)text
@@ -3481,7 +3481,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!backingObject)
         return NO;
 
-    return backingObject->insertText(text);
+    return backingObject->insertText(String(text).isolatedCopy());
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

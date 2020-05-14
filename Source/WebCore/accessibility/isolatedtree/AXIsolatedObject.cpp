@@ -927,16 +927,22 @@ FloatRect AXIsolatedObject::relativeFrame() const
     });
 }
 
-bool AXIsolatedObject::replaceTextInRange(const String&, const PlainTextRange&)
+bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const PlainTextRange& textRange)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    return Accessibility::retrieveValueFromMainThread<bool>([&replacementText, &textRange, this] () -> bool {
+        if (auto* axObject = associatedAXObject())
+            return axObject->replaceTextInRange(replacementText, textRange);
+        return false;
+    });
 }
 
-bool AXIsolatedObject::insertText(const String&)
+bool AXIsolatedObject::insertText(const String& text)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    return Accessibility::retrieveValueFromMainThread<bool>([&text, this] () -> bool {
+        if (auto* axObject = associatedAXObject())
+            return axObject->insertText(text);
+        return false;
+    });
 }
 
 bool AXIsolatedObject::press()

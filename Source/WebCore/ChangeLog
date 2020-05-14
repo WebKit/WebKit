@@ -1,3 +1,24 @@
+2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Replacing and inserting text need to be dispatched to the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=211863
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        In isolated tree mode WebAccessibilityObjectWrapper accessibilityReplaceRange
+        and InsertText may be called on the secondary thread. Thus the AXIsolatedObject
+        implementation of this functionality needs to forward these calls to the
+        associated AXObject on the main thread.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::replaceTextInRange):
+        (WebCore::AXIsolatedObject::insertText):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityReplaceRange:withText:]):
+        (-[WebAccessibilityObjectWrapper accessibilityInsertText:]):
+
 2020-05-14  Antoine Quint  <graouts@apple.com>
 
         Cursor should not update on a 20ms timer
