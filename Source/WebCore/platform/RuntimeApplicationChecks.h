@@ -87,6 +87,7 @@ WEBCORE_EXPORT bool isDumpRenderTree();
 WEBCORE_EXPORT bool isMiniBrowser();
 bool isMobileStore();
 WEBCORE_EXPORT bool isJesusCalling();
+WEBCORE_EXPORT bool isFamilyHealthApp();
 bool isSpringBoard();
 WEBCORE_EXPORT bool isWebProcess();
 WEBCORE_EXPORT bool isIBooks();

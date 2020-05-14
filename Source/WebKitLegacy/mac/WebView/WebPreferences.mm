@@ -396,7 +396,7 @@ public:
     bool allowsInlineMediaPlaybackAfterFullscreen = WebCore::deviceClass() != MGDeviceClassiPad;
     bool requiresPlaysInlineAttribute = !allowsInlineMediaPlayback;
     bool attachmentElementEnabled = IOSApplication::isMobileMail();
-    bool webSQLEnabled = IOSApplication::isJesusCalling() && applicationSDKVersion() <= DYLD_IOS_VERSION_12_2;
+    bool webSQLEnabled = (IOSApplication::isFamilyHealthApp() || IOSApplication::isJesusCalling()) && applicationSDKVersion() < DYLD_IOS_VERSION_14_0;
 #endif
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:

@@ -255,6 +255,12 @@ bool IOSApplication::isJesusCalling()
     return isJesusCalling;
 }
 
+bool IOSApplication::isFamilyHealthApp()
+{
+    static bool isFamilyHealthApp = applicationBundleStartsWith("com.wildflowerhealth.Grow"_s) || applicationBundleStartsWith("com.wildflowerhealth.UGROW");
+    return isFamilyHealthApp;
+}
+
 bool IOSApplication::isMobileStore()
 {
     static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore"_s);
