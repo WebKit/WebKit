@@ -1,5 +1,3 @@
-//@ runLogicalAssignmentOperatorsEnabled
-
 function shouldBe(func, expected) {
     let actual = func();
     if (typeof expected === "function" ? !(actual instanceof expected) : actual !== expected)

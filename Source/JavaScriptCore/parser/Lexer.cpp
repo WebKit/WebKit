@@ -2086,7 +2086,7 @@ start:
         shift();
         if (m_current == '&') {
             shift();
-            if (UNLIKELY(Options::useLogicalAssignmentOperators() && m_current == '=')) {
+            if (m_current == '=') {
                 shift();
                 token = ANDEQUAL;
                 break;
@@ -2128,7 +2128,7 @@ start:
         }
         if (m_current == '|') {
             shift();
-            if (UNLIKELY(Options::useLogicalAssignmentOperators() && m_current == '=')) {
+            if (m_current == '=') {
                 shift();
                 token = OREQUAL;
                 break;
@@ -2169,7 +2169,7 @@ start:
         shift();
         if (m_current == '?') {
             shift();
-            if (UNLIKELY(Options::useLogicalAssignmentOperators() && m_current == '=')) {
+            if (m_current == '=') {
                 shift();
                 token = COALESCEEQUAL;
                 break;

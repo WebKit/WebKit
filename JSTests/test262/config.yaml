@@ -6,7 +6,6 @@ flags:
   Intl.RelativeTimeFormat: useIntlRelativeTimeFormat
   WeakRef: useWeakRefs
   class-fields-public: usePublicClassFields
-  logical-assignment-operators: useLogicalAssignmentOperators
 skip:
   features:
     - SharedArrayBuffer
