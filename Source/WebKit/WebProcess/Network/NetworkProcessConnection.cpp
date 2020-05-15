@@ -76,7 +76,9 @@ NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier c
     , m_cookieAcceptPolicy(cookieAcceptPolicy)
 {
     m_connection->open();
-    WebProcess::singleton().libWebRTCNetwork().setConnection(m_connection.copyRef());
+
+    if (LibWebRTCProvider::webRTCAvailable())
+        WebProcess::singleton().libWebRTCNetwork().setConnection(m_connection.copyRef());
 }
 
 NetworkProcessConnection::~NetworkProcessConnection()
