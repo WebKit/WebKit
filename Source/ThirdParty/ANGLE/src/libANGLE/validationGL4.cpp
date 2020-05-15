@@ -11,17 +11,17 @@
 namespace gl
 {
 
-bool ValidateBeginQueryIndexed(Context *context, GLenum target, GLuint index, QueryID id)
+bool ValidateBeginQueryIndexed(const Context *context, GLenum target, GLuint index, QueryID id)
 {
     return true;
 }
 
-bool ValidateDrawTransformFeedback(Context *context, GLenum mode, TransformFeedbackID id)
+bool ValidateDrawTransformFeedback(const Context *context, GLenum mode, TransformFeedbackID id)
 {
     return true;
 }
 
-bool ValidateDrawTransformFeedbackStream(Context *context,
+bool ValidateDrawTransformFeedbackStream(const Context *context,
                                          GLenum mode,
                                          TransformFeedbackID id,
                                          GLuint stream)
@@ -29,62 +29,62 @@ bool ValidateDrawTransformFeedbackStream(Context *context,
     return true;
 }
 
-bool ValidateEndQueryIndexed(Context *context, GLenum target, GLuint index)
+bool ValidateEndQueryIndexed(const Context *context, GLenum target, GLuint index)
 {
     return true;
 }
 
-bool ValidateGetActiveSubroutineName(Context *context,
+bool ValidateGetActiveSubroutineName(const Context *context,
                                      ShaderProgramID program,
                                      GLenum shadertype,
                                      GLuint index,
                                      GLsizei bufsize,
-                                     GLsizei *length,
-                                     GLchar *name)
+                                     const GLsizei *length,
+                                     const GLchar *name)
 {
     return true;
 }
 
-bool ValidateGetActiveSubroutineUniformName(Context *context,
+bool ValidateGetActiveSubroutineUniformName(const Context *context,
                                             ShaderProgramID program,
                                             GLenum shadertype,
                                             GLuint index,
                                             GLsizei bufsize,
-                                            GLsizei *length,
-                                            GLchar *name)
+                                            const GLsizei *length,
+                                            const GLchar *name)
 {
     return true;
 }
 
-bool ValidateGetActiveSubroutineUniformiv(Context *context,
+bool ValidateGetActiveSubroutineUniformiv(const Context *context,
                                           ShaderProgramID program,
                                           GLenum shadertype,
                                           GLuint index,
                                           GLenum pname,
-                                          GLint *values)
+                                          const GLint *values)
 {
     return true;
 }
 
-bool ValidateGetProgramStageiv(Context *context,
+bool ValidateGetProgramStageiv(const Context *context,
                                ShaderProgramID program,
                                GLenum shadertype,
                                GLenum pname,
-                               GLint *values)
+                               const GLint *values)
 {
     return true;
 }
 
-bool ValidateGetQueryIndexediv(Context *context,
+bool ValidateGetQueryIndexediv(const Context *context,
                                GLenum target,
                                GLuint index,
                                GLenum pname,
-                               GLint *params)
+                               const GLint *params)
 {
     return true;
 }
 
-bool ValidateGetSubroutineIndex(Context *context,
+bool ValidateGetSubroutineIndex(const Context *context,
                                 ShaderProgramID program,
                                 GLenum shadertype,
                                 const GLchar *name)
@@ -92,7 +92,7 @@ bool ValidateGetSubroutineIndex(Context *context,
     return true;
 }
 
-bool ValidateGetSubroutineUniformLocation(Context *context,
+bool ValidateGetSubroutineUniformLocation(const Context *context,
                                           ShaderProgramID program,
                                           GLenum shadertype,
                                           const GLchar *name)
@@ -100,59 +100,72 @@ bool ValidateGetSubroutineUniformLocation(Context *context,
     return true;
 }
 
-bool ValidateGetUniformSubroutineuiv(Context *context,
+bool ValidateGetUniformSubroutineuiv(const Context *context,
                                      GLenum shadertype,
                                      GLint location,
-                                     GLuint *params)
+                                     const GLuint *params)
 {
     return true;
 }
 
-bool ValidateGetUniformdv(Context *context,
+bool ValidateGetUniformdv(const Context *context,
                           ShaderProgramID program,
-                          GLint location,
-                          GLdouble *params)
+                          UniformLocation location,
+                          const GLdouble *params)
 {
     return true;
 }
 
-bool ValidatePatchParameterfv(Context *context, GLenum pname, const GLfloat *values)
+bool ValidatePatchParameterfv(const Context *context, GLenum pname, const GLfloat *values)
 {
     return true;
 }
 
-bool ValidateUniform1d(Context *context, GLint location, GLdouble x)
+bool ValidateUniform1d(const Context *context, UniformLocation location, GLdouble x)
 {
     return true;
 }
 
-bool ValidateUniform1dv(Context *context, GLint location, GLsizei count, const GLdouble *value)
+bool ValidateUniform1dv(const Context *context,
+                        UniformLocation location,
+                        GLsizei count,
+                        const GLdouble *value)
 {
     return true;
 }
 
-bool ValidateUniform2d(Context *context, GLint location, GLdouble x, GLdouble y)
+bool ValidateUniform2d(const Context *context, UniformLocation location, GLdouble x, GLdouble y)
 {
     return true;
 }
 
-bool ValidateUniform2dv(Context *context, GLint location, GLsizei count, const GLdouble *value)
+bool ValidateUniform2dv(const Context *context,
+                        UniformLocation location,
+                        GLsizei count,
+                        const GLdouble *value)
 {
     return true;
 }
 
-bool ValidateUniform3d(Context *context, GLint location, GLdouble x, GLdouble y, GLdouble z)
+bool ValidateUniform3d(const Context *context,
+                       UniformLocation location,
+                       GLdouble x,
+                       GLdouble y,
+                       GLdouble z)
 {
     return true;
 }
 
-bool ValidateUniform3dv(Context *context, GLint location, GLsizei count, const GLdouble *value)
+bool ValidateUniform3dv(const Context *context,
+                        UniformLocation location,
+                        GLsizei count,
+                        const GLdouble *value)
 {
     return true;
 }
 
-bool ValidateUniform4d(Context *context,
-                       GLint location,
+bool ValidateUniform4d(const Context *context,
+                       UniformLocation location,
                        GLdouble x,
                        GLdouble y,
                        GLdouble z,
@@ -161,13 +174,16 @@ bool ValidateUniform4d(Context *context,
     return true;
 }
 
-bool ValidateUniform4dv(Context *context, GLint location, GLsizei count, const GLdouble *value)
+bool ValidateUniform4dv(const Context *context,
+                        UniformLocation location,
+                        GLsizei count,
+                        const GLdouble *value)
 {
     return true;
 }
 
-bool ValidateUniformMatrix2dv(Context *context,
-                              GLint location,
+bool ValidateUniformMatrix2dv(const Context *context,
+                              UniformLocation location,
                               GLsizei count,
                               GLboolean transpose,
                               const GLdouble *value)
@@ -175,8 +191,8 @@ bool ValidateUniformMatrix2dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix2x3dv(Context *context,
-                                GLint location,
+bool ValidateUniformMatrix2x3dv(const Context *context,
+                                UniformLocation location,
                                 GLsizei count,
                                 GLboolean transpose,
                                 const GLdouble *value)
@@ -184,8 +200,8 @@ bool ValidateUniformMatrix2x3dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix2x4dv(Context *context,
-                                GLint location,
+bool ValidateUniformMatrix2x4dv(const Context *context,
+                                UniformLocation location,
                                 GLsizei count,
                                 GLboolean transpose,
                                 const GLdouble *value)
@@ -193,8 +209,8 @@ bool ValidateUniformMatrix2x4dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix3dv(Context *context,
-                              GLint location,
+bool ValidateUniformMatrix3dv(const Context *context,
+                              UniformLocation location,
                               GLsizei count,
                               GLboolean transpose,
                               const GLdouble *value)
@@ -202,8 +218,8 @@ bool ValidateUniformMatrix3dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix3x2dv(Context *context,
-                                GLint location,
+bool ValidateUniformMatrix3x2dv(const Context *context,
+                                UniformLocation location,
                                 GLsizei count,
                                 GLboolean transpose,
                                 const GLdouble *value)
@@ -211,8 +227,8 @@ bool ValidateUniformMatrix3x2dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix3x4dv(Context *context,
-                                GLint location,
+bool ValidateUniformMatrix3x4dv(const Context *context,
+                                UniformLocation location,
                                 GLsizei count,
                                 GLboolean transpose,
                                 const GLdouble *value)
@@ -220,8 +236,8 @@ bool ValidateUniformMatrix3x4dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix4dv(Context *context,
-                              GLint location,
+bool ValidateUniformMatrix4dv(const Context *context,
+                              UniformLocation location,
                               GLsizei count,
                               GLboolean transpose,
                               const GLdouble *value)
@@ -229,8 +245,8 @@ bool ValidateUniformMatrix4dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix4x2dv(Context *context,
-                                GLint location,
+bool ValidateUniformMatrix4x2dv(const Context *context,
+                                UniformLocation location,
                                 GLsizei count,
                                 GLboolean transpose,
                                 const GLdouble *value)
@@ -238,8 +254,8 @@ bool ValidateUniformMatrix4x2dv(Context *context,
     return true;
 }
 
-bool ValidateUniformMatrix4x3dv(Context *context,
-                                GLint location,
+bool ValidateUniformMatrix4x3dv(const Context *context,
+                                UniformLocation location,
                                 GLsizei count,
                                 GLboolean transpose,
                                 const GLdouble *value)
@@ -247,7 +263,7 @@ bool ValidateUniformMatrix4x3dv(Context *context,
     return true;
 }
 
-bool ValidateUniformSubroutinesuiv(Context *context,
+bool ValidateUniformSubroutinesuiv(const Context *context,
                                    GLenum shadertype,
                                    GLsizei count,
                                    const GLuint *indices)

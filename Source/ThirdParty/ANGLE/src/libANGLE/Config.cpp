@@ -34,6 +34,7 @@ Config::Config()
       alphaMaskSize(0),
       bindToTextureRGB(EGL_FALSE),
       bindToTextureRGBA(EGL_FALSE),
+      bindToTextureTarget(EGL_TEXTURE_2D),
       colorBufferType(EGL_RGB_BUFFER),
       configCaveat(EGL_NONE),
       configID(0),
@@ -317,6 +318,9 @@ std::vector<const Config *> ConfigSet::filter(const AttributeMap &attributeMap) 
                     break;
                 case EGL_BIND_TO_TEXTURE_RGBA:
                     match = config.bindToTextureRGBA == static_cast<EGLBoolean>(attributeValue);
+                    break;
+                case EGL_BIND_TO_TEXTURE_TARGET_ANGLE:
+                    match = config.bindToTextureTarget == static_cast<EGLenum>(attributeValue);
                     break;
                 case EGL_MIN_SWAP_INTERVAL:
                     match = config.minSwapInterval == attributeValue;

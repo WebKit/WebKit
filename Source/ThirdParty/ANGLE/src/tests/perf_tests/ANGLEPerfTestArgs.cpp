@@ -13,10 +13,10 @@
 
 namespace angle
 {
-bool gCalibration = false;
-Optional<unsigned int> gStepsToRunOverride;
-bool gEnableTrace      = false;
-const char *gTraceFile = "ANGLETrace.json";
+bool gCalibration       = false;
+int gStepsToRunOverride = -1;
+bool gEnableTrace       = false;
+const char *gTraceFile  = "ANGLETrace.json";
 }  // namespace angle
 
 using namespace angle;

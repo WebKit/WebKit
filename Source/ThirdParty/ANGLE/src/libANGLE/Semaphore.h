@@ -38,6 +38,7 @@ class Semaphore final : public RefCountObject<SemaphoreID>
     rx::SemaphoreImpl *getImplementation() const { return mImplementation.get(); }
 
     angle::Result importFd(Context *context, HandleType handleType, GLint fd);
+    angle::Result importZirconHandle(Context *context, HandleType handleType, GLuint handle);
 
     angle::Result wait(Context *context,
                        const BufferBarrierVector &bufferBarriers,

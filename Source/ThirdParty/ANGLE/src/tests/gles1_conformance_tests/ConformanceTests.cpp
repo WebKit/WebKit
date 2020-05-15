@@ -558,3 +558,6 @@ TEST_P(GLES1ConformanceTest, MatrixPalette)
 
 ANGLE_INSTANTIATE_TEST(GLES1ConformanceTest, ES1_OPENGL(), ES1_VULKAN());
 }  // namespace angle
+
+// Included here to fix a compile error due to white box tests using angle_end2end_tests_main.
+void RegisterContextCompatibilityTests() {}

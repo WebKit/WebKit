@@ -10,6 +10,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/validationES.h"
+#include "libANGLE/validationES32.h"
 
 namespace gl
 {
@@ -18,7 +19,7 @@ using namespace err;
 namespace
 {
 template <typename ObjectT>
-bool ValidateGetImageFormatAndType(Context *context, ObjectT *obj, GLenum format, GLenum type)
+bool ValidateGetImageFormatAndType(const Context *context, ObjectT *obj, GLenum format, GLenum type)
 {
     GLenum implFormat = obj->getImplementationColorReadFormat(context);
     if (!ValidES3Format(format) && (format != implFormat || format == GL_NONE))
@@ -41,12 +42,12 @@ bool ValidateGetImageFormatAndType(Context *context, ObjectT *obj, GLenum format
 
 }  // namespace
 
-bool ValidateGetTexImageANGLE(Context *context,
+bool ValidateGetTexImageANGLE(const Context *context,
                               TextureTarget target,
                               GLint level,
                               GLenum format,
                               GLenum type,
-                              void *pixels)
+                              const void *pixels)
 {
     if (!context->getExtensions().getImageANGLE)
     {
@@ -91,11 +92,11 @@ bool ValidateGetTexImageANGLE(Context *context,
     return true;
 }
 
-bool ValidateGetRenderbufferImageANGLE(Context *context,
+bool ValidateGetRenderbufferImageANGLE(const Context *context,
                                        GLenum target,
                                        GLenum format,
                                        GLenum type,
-                                       void *pixels)
+                                       const void *pixels)
 {
     if (!context->getExtensions().getImageANGLE)
     {
@@ -126,7 +127,7 @@ bool ValidateGetRenderbufferImageANGLE(Context *context,
     return true;
 }
 
-bool ValidateDrawElementsBaseVertexEXT(Context *context,
+bool ValidateDrawElementsBaseVertexEXT(const Context *context,
                                        PrimitiveMode mode,
                                        GLsizei count,
                                        DrawElementsType type,
@@ -142,7 +143,7 @@ bool ValidateDrawElementsBaseVertexEXT(Context *context,
     return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
 }
 
-bool ValidateDrawElementsInstancedBaseVertexEXT(Context *context,
+bool ValidateDrawElementsInstancedBaseVertexEXT(const Context *context,
                                                 PrimitiveMode mode,
                                                 GLsizei count,
                                                 DrawElementsType type,
@@ -159,7 +160,7 @@ bool ValidateDrawElementsInstancedBaseVertexEXT(Context *context,
     return ValidateDrawElementsInstancedBase(context, mode, count, type, indices, instancecount);
 }
 
-bool ValidateDrawRangeElementsBaseVertexEXT(Context *context,
+bool ValidateDrawRangeElementsBaseVertexEXT(const Context *context,
                                             PrimitiveMode mode,
                                             GLuint start,
                                             GLuint end,
@@ -205,7 +206,7 @@ bool ValidateDrawRangeElementsBaseVertexEXT(Context *context,
     return true;
 }
 
-bool ValidateMultiDrawElementsBaseVertexEXT(Context *context,
+bool ValidateMultiDrawElementsBaseVertexEXT(const Context *context,
                                             PrimitiveMode mode,
                                             const GLsizei *count,
                                             DrawElementsType type,
@@ -216,7 +217,7 @@ bool ValidateMultiDrawElementsBaseVertexEXT(Context *context,
     return true;
 }
 
-bool ValidateDrawElementsBaseVertexOES(Context *context,
+bool ValidateDrawElementsBaseVertexOES(const Context *context,
                                        PrimitiveMode mode,
                                        GLsizei count,
                                        DrawElementsType type,
@@ -232,7 +233,7 @@ bool ValidateDrawElementsBaseVertexOES(Context *context,
     return ValidateDrawElementsCommon(context, mode, count, type, indices, 1);
 }
 
-bool ValidateDrawElementsInstancedBaseVertexOES(Context *context,
+bool ValidateDrawElementsInstancedBaseVertexOES(const Context *context,
                                                 PrimitiveMode mode,
                                                 GLsizei count,
                                                 DrawElementsType type,
@@ -249,7 +250,7 @@ bool ValidateDrawElementsInstancedBaseVertexOES(Context *context,
     return ValidateDrawElementsInstancedBase(context, mode, count, type, indices, instancecount);
 }
 
-bool ValidateDrawRangeElementsBaseVertexOES(Context *context,
+bool ValidateDrawRangeElementsBaseVertexOES(const Context *context,
                                             PrimitiveMode mode,
                                             GLuint start,
                                             GLuint end,
@@ -292,6 +293,226 @@ bool ValidateDrawRangeElementsBaseVertexOES(Context *context,
         context->validationError(GL_INVALID_OPERATION, kExceedsElementRange);
         return false;
     }
+    return true;
+}
+
+bool ValidateBlendEquationSeparateiEXT(const Context *context,
+                                       GLuint buf,
+                                       GLenum modeRGB,
+                                       GLenum modeAlpha)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendEquationSeparatei(context, buf, modeRGB, modeAlpha);
+}
+
+bool ValidateBlendEquationiEXT(const Context *context, GLuint buf, GLenum mode)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendEquationi(context, buf, mode);
+}
+
+bool ValidateBlendFuncSeparateiEXT(const Context *context,
+                                   GLuint buf,
+                                   GLenum srcRGB,
+                                   GLenum dstRGB,
+                                   GLenum srcAlpha,
+                                   GLenum dstAlpha)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendFuncSeparatei(context, buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+}
+
+bool ValidateBlendFunciEXT(const Context *context, GLuint buf, GLenum src, GLenum dst)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendFunci(context, buf, src, dst);
+}
+
+bool ValidateColorMaskiEXT(const Context *context,
+                           GLuint index,
+                           GLboolean r,
+                           GLboolean g,
+                           GLboolean b,
+                           GLboolean a)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateColorMaski(context, index, r, g, b, a);
+}
+
+bool ValidateDisableiEXT(const Context *context, GLenum target, GLuint index)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDisablei(context, target, index);
+}
+
+bool ValidateEnableiEXT(const Context *context, GLenum target, GLuint index)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateEnablei(context, target, index);
+}
+
+bool ValidateIsEnablediEXT(const Context *context, GLenum target, GLuint index)
+{
+    if (!context->getExtensions().drawBuffersIndexedEXT)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateIsEnabledi(context, target, index);
+}
+
+bool ValidateBlendEquationSeparateiOES(const Context *context,
+                                       GLuint buf,
+                                       GLenum modeRGB,
+                                       GLenum modeAlpha)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendEquationSeparatei(context, buf, modeRGB, modeAlpha);
+}
+
+bool ValidateBlendEquationiOES(const Context *context, GLuint buf, GLenum mode)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendEquationi(context, buf, mode);
+}
+
+bool ValidateBlendFuncSeparateiOES(const Context *context,
+                                   GLuint buf,
+                                   GLenum srcRGB,
+                                   GLenum dstRGB,
+                                   GLenum srcAlpha,
+                                   GLenum dstAlpha)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendFuncSeparatei(context, buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+}
+
+bool ValidateBlendFunciOES(const Context *context, GLuint buf, GLenum src, GLenum dst)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateBlendFunci(context, buf, src, dst);
+}
+
+bool ValidateColorMaskiOES(const Context *context,
+                           GLuint index,
+                           GLboolean r,
+                           GLboolean g,
+                           GLboolean b,
+                           GLboolean a)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateColorMaski(context, index, r, g, b, a);
+}
+
+bool ValidateDisableiOES(const Context *context, GLenum target, GLuint index)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDisablei(context, target, index);
+}
+
+bool ValidateEnableiOES(const Context *context, GLenum target, GLuint index)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateEnablei(context, target, index);
+}
+
+bool ValidateIsEnablediOES(const Context *context, GLenum target, GLuint index)
+{
+    if (!context->getExtensions().drawBuffersIndexedOES)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateIsEnabledi(context, target, index);
+}
+
+bool ValidateGetInteger64vEXT(const Context *context, GLenum pname, const GLint64 *data)
+{
+    if (!context->getExtensions().disjointTimerQuery)
+    {
+        context->validationError(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    GLenum nativeType      = GL_NONE;
+    unsigned int numParams = 0;
+    if (!ValidateStateQuery(context, pname, &nativeType, &numParams))
+    {
+        return false;
+    }
+
     return true;
 }
 }  // namespace gl

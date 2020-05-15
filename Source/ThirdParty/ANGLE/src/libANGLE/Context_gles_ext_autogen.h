@@ -83,10 +83,10 @@
                                  GLsizei *length, GLfloat *params);                                \
     void getTexParameterivRobust(TextureType targetPacked, GLenum pname, GLsizei bufSize,          \
                                  GLsizei *length, GLint *params);                                  \
-    void getUniformfvRobust(ShaderProgramID programPacked, GLint location, GLsizei bufSize,        \
-                            GLsizei *length, GLfloat *params);                                     \
-    void getUniformivRobust(ShaderProgramID programPacked, GLint location, GLsizei bufSize,        \
-                            GLsizei *length, GLint *params);                                       \
+    void getUniformfvRobust(ShaderProgramID programPacked, UniformLocation locationPacked,         \
+                            GLsizei bufSize, GLsizei *length, GLfloat *params);                    \
+    void getUniformivRobust(ShaderProgramID programPacked, UniformLocation locationPacked,         \
+                            GLsizei bufSize, GLsizei *length, GLint *params);                      \
     void getVertexAttribfvRobust(GLuint index, GLenum pname, GLsizei bufSize, GLsizei *length,     \
                                  GLfloat *params);                                                 \
     void getVertexAttribivRobust(GLuint index, GLenum pname, GLsizei bufSize, GLsizei *length,     \
@@ -141,8 +141,8 @@
                                   GLint *params);                                                  \
     void getVertexAttribIuivRobust(GLuint index, GLenum pname, GLsizei bufSize, GLsizei *length,   \
                                    GLuint *params);                                                \
-    void getUniformuivRobust(ShaderProgramID programPacked, GLint location, GLsizei bufSize,       \
-                             GLsizei *length, GLuint *params);                                     \
+    void getUniformuivRobust(ShaderProgramID programPacked, UniformLocation locationPacked,        \
+                             GLsizei bufSize, GLsizei *length, GLuint *params);                    \
     void getActiveUniformBlockivRobust(ShaderProgramID programPacked, GLuint uniformBlockIndex,    \
                                        GLenum pname, GLsizei bufSize, GLsizei *length,             \
                                        GLint *params);                                             \
@@ -177,12 +177,12 @@
     void readnPixelsRobust(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format,         \
                            GLenum type, GLsizei bufSize, GLsizei *length, GLsizei *columns,        \
                            GLsizei *rows, void *data);                                             \
-    void getnUniformfvRobust(ShaderProgramID programPacked, GLint location, GLsizei bufSize,       \
-                             GLsizei *length, GLfloat *params);                                    \
-    void getnUniformivRobust(ShaderProgramID programPacked, GLint location, GLsizei bufSize,       \
-                             GLsizei *length, GLint *params);                                      \
-    void getnUniformuivRobust(ShaderProgramID programPacked, GLint location, GLsizei bufSize,      \
-                              GLsizei *length, GLuint *params);                                    \
+    void getnUniformfvRobust(ShaderProgramID programPacked, UniformLocation locationPacked,        \
+                             GLsizei bufSize, GLsizei *length, GLfloat *params);                   \
+    void getnUniformivRobust(ShaderProgramID programPacked, UniformLocation locationPacked,        \
+                             GLsizei bufSize, GLsizei *length, GLint *params);                     \
+    void getnUniformuivRobust(ShaderProgramID programPacked, UniformLocation locationPacked,       \
+                              GLsizei bufSize, GLsizei *length, GLuint *params);                   \
     void texParameterIivRobust(TextureType targetPacked, GLenum pname, GLsizei bufSize,            \
                                const GLint *params);                                               \
     void texParameterIuivRobust(TextureType targetPacked, GLenum pname, GLsizei bufSize,           \
@@ -211,7 +211,8 @@
                             GLenum type);                                                          \
     void invalidateTexture(TextureType targetPacked);                                              \
     /* GL_CHROMIUM_bind_uniform_location */                                                        \
-    void bindUniformLocation(ShaderProgramID programPacked, GLint location, const GLchar *name);   \
+    void bindUniformLocation(ShaderProgramID programPacked, UniformLocation locationPacked,        \
+                             const GLchar *name);                                                  \
     /* GL_CHROMIUM_copy_compressed_texture */                                                      \
     void compressedCopyTexture(TextureID sourceIdPacked, TextureID destIdPacked);                  \
     /* GL_CHROMIUM_copy_texture */                                                                 \
@@ -226,53 +227,9 @@
                         GLboolean unpackUnmultiplyAlpha);                                          \
     /* GL_CHROMIUM_framebuffer_mixed_samples */                                                    \
     void coverageModulation(GLenum components);                                                    \
-    void matrixLoadf(GLenum matrixMode, const GLfloat *matrix);                                    \
-    void matrixLoadIdentity(GLenum matrixMode);                                                    \
     /* GL_CHROMIUM_lose_context */                                                                 \
     void loseContext(GraphicsResetStatus currentPacked, GraphicsResetStatus otherPacked);          \
     /* GL_CHROMIUM_path_rendering */                                                               \
-    GLuint genPaths(GLsizei range);                                                                \
-    void deletePaths(PathID firstPacked, GLsizei range);                                           \
-    GLboolean isPath(PathID pathPacked);                                                           \
-    void pathCommands(PathID pathPacked, GLsizei numCommands, const GLubyte *commands,             \
-                      GLsizei numCoords, GLenum coordType, const void *coords);                    \
-    void pathParameterf(PathID pathPacked, GLenum pname, GLfloat value);                           \
-    void pathParameteri(PathID pathPacked, GLenum pname, GLint value);                             \
-    void getPathParameterfv(PathID pathPacked, GLenum pname, GLfloat *value);                      \
-    void getPathParameteriv(PathID pathPacked, GLenum pname, GLint *value);                        \
-    void pathStencilFunc(GLenum func, GLint ref, GLuint mask);                                     \
-    void stencilFillPath(PathID pathPacked, GLenum fillMode, GLuint mask);                         \
-    void stencilStrokePath(PathID pathPacked, GLint reference, GLuint mask);                       \
-    void coverFillPath(PathID pathPacked, GLenum coverMode);                                       \
-    void coverStrokePath(PathID pathPacked, GLenum coverMode);                                     \
-    void stencilThenCoverFillPath(PathID pathPacked, GLenum fillMode, GLuint mask,                 \
-                                  GLenum coverMode);                                               \
-    void stencilThenCoverStrokePath(PathID pathPacked, GLint reference, GLuint mask,               \
-                                    GLenum coverMode);                                             \
-    void coverFillPathInstanced(GLsizei numPath, GLenum pathNameType, const void *paths,           \
-                                PathID pathBasePacked, GLenum coverMode, GLenum transformType,     \
-                                const GLfloat *transformValues);                                   \
-    void coverStrokePathInstanced(GLsizei numPath, GLenum pathNameType, const void *paths,         \
-                                  PathID pathBasePacked, GLenum coverMode, GLenum transformType,   \
-                                  const GLfloat *transformValues);                                 \
-    void stencilStrokePathInstanced(GLsizei numPath, GLenum pathNameType, const void *paths,       \
-                                    PathID pathBasePacked, GLint reference, GLuint mask,           \
-                                    GLenum transformType, const GLfloat *transformValues);         \
-    void stencilFillPathInstanced(GLsizei numPaths, GLenum pathNameType, const void *paths,        \
-                                  PathID pathBasePacked, GLenum fillMode, GLuint mask,             \
-                                  GLenum transformType, const GLfloat *transformValues);           \
-    void stencilThenCoverFillPathInstanced(GLsizei numPaths, GLenum pathNameType,                  \
-                                           const void *paths, PathID pathBasePacked,               \
-                                           GLenum fillMode, GLuint mask, GLenum coverMode,         \
-                                           GLenum transformType, const GLfloat *transformValues);  \
-    void stencilThenCoverStrokePathInstanced(                                                      \
-        GLsizei numPaths, GLenum pathNameType, const void *paths, PathID pathBasePacked,           \
-        GLint reference, GLuint mask, GLenum coverMode, GLenum transformType,                      \
-        const GLfloat *transformValues);                                                           \
-    void bindFragmentInputLocation(ShaderProgramID programsPacked, GLint location,                 \
-                                   const GLchar *name);                                            \
-    void programPathFragmentInputGen(ShaderProgramID programPacked, GLint location,                \
-                                     GLenum genMode, GLint components, const GLfloat *coeffs);     \
                                                                                                    \
     /* GLES2+ Extensions */                                                                        \
                                                                                                    \
@@ -292,6 +249,9 @@
     /* GL_ANGLE_framebuffer_blit */                                                                \
     /* GL_ANGLE_framebuffer_multisample */                                                         \
     /* GL_ANGLE_instanced_arrays */                                                                \
+    /* GL_ANGLE_memory_object_fuchsia */                                                           \
+    void importMemoryZirconHandle(MemoryObjectID memoryPacked, GLuint64 size,                      \
+                                  HandleType handleTypePacked, GLuint handle);                     \
     /* GL_ANGLE_multi_draw */                                                                      \
     void multiDrawArrays(PrimitiveMode modePacked, const GLint *firsts, const GLsizei *counts,     \
                          GLsizei drawcount);                                                       \
@@ -306,6 +266,9 @@
                                     const GLsizei *instanceCounts, GLsizei drawcount);             \
     /* GL_ANGLE_provoking_vertex */                                                                \
     void provokingVertex(ProvokingVertexConvention modePacked);                                    \
+    /* GL_ANGLE_semaphore_fuchsia */                                                               \
+    void importSemaphoreZirconHandle(SemaphoreID semaphorePacked, HandleType handleTypePacked,     \
+                                     GLuint handle);                                               \
     /* GL_ANGLE_texture_multisample */                                                             \
     /* GL_ANGLE_translated_shader_source */                                                        \
     void getTranslatedShaderSource(ShaderProgramID shaderPacked, GLsizei bufsize, GLsizei *length, \
@@ -329,6 +292,7 @@
     void getQueryObjectui64v(QueryID idPacked, GLenum pname, GLuint64 *params);                    \
     void queryCounter(QueryID idPacked, QueryType targetPacked);                                   \
     /* GL_EXT_draw_buffers */                                                                      \
+    /* GL_EXT_draw_buffers_indexed */                                                              \
     /* GL_EXT_draw_elements_base_vertex */                                                         \
     void multiDrawElementsBaseVertex(PrimitiveMode modePacked, const GLsizei *count,               \
                                      DrawElementsType typePacked, const void *const *indices,      \
@@ -345,7 +309,7 @@
                                     GLint *params);                                                \
     void getUnsignedBytev(GLenum pname, GLubyte *data);                                            \
     void getUnsignedBytei_v(GLenum target, GLuint index, GLubyte *data);                           \
-    GLboolean isMemoryObject(MemoryObjectID memoryObjectPacked);                                   \
+    GLboolean isMemoryObject(MemoryObjectID memoryObjectPacked) const;                             \
     void memoryObjectParameteriv(MemoryObjectID memoryObjectPacked, GLenum pname,                  \
                                  const GLint *params);                                             \
     void texStorageMem2D(TextureType targetPacked, GLsizei levels, GLenum internalFormat,          \
@@ -376,7 +340,7 @@
     void deleteSemaphores(GLsizei n, const SemaphoreID *semaphoresPacked);                         \
     void genSemaphores(GLsizei n, SemaphoreID *semaphoresPacked);                                  \
     void getSemaphoreParameterui64v(SemaphoreID semaphorePacked, GLenum pname, GLuint64 *params);  \
-    GLboolean isSemaphore(SemaphoreID semaphorePacked);                                            \
+    GLboolean isSemaphore(SemaphoreID semaphorePacked) const;                                      \
     void semaphoreParameterui64v(SemaphoreID semaphorePacked, GLenum pname,                        \
                                  const GLuint64 *params);                                          \
     void signalSemaphore(SemaphoreID semaphorePacked, GLuint numBufferBarriers,                    \
@@ -389,6 +353,7 @@
     void importSemaphoreFd(SemaphoreID semaphorePacked, HandleType handleTypePacked, GLint fd);    \
     /* GL_EXT_texture_compression_bptc */                                                          \
     /* GL_EXT_texture_compression_dxt1 */                                                          \
+    /* GL_EXT_texture_compression_rgtc */                                                          \
     /* GL_EXT_texture_compression_s3tc */                                                          \
     /* GL_EXT_texture_compression_s3tc_srgb */                                                     \
     /* GL_EXT_texture_filter_anisotropic */                                                        \
@@ -403,7 +368,7 @@
     void finishFenceNV(FenceNVID fencePacked);                                                     \
     void genFencesNV(GLsizei n, FenceNVID *fencesPacked);                                          \
     void getFenceivNV(FenceNVID fencePacked, GLenum pname, GLint *params);                         \
-    GLboolean isFenceNV(FenceNVID fencePacked);                                                    \
+    GLboolean isFenceNV(FenceNVID fencePacked) const;                                              \
     void setFenceNV(FenceNVID fencePacked, GLenum condition);                                      \
     GLboolean testFenceNV(FenceNVID fencePacked);                                                  \
     /* GL_OES_EGL_image */                                                                         \
@@ -411,6 +376,7 @@
     void eGLImageTargetTexture2D(TextureType targetPacked, GLeglImageOES image);                   \
     /* GL_OES_compressed_ETC1_RGB8_texture */                                                      \
     /* GL_OES_depth32 */                                                                           \
+    /* GL_OES_draw_buffers_indexed */                                                              \
     /* GL_OES_draw_elements_base_vertex */                                                         \
     /* GL_OES_get_program_binary */                                                                \
     /* GL_OES_mapbuffer */                                                                         \

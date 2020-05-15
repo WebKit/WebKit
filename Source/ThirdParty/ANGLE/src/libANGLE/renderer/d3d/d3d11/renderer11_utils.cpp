@@ -1570,15 +1570,18 @@ void GenerateCaps(ID3D11Device *device,
     // becomes core. WebGL doesn't want to expose it unless there is native support.
     extensions->compressedETC1RGB8TextureOES = false;
 
-    extensions->elementIndexUintOES         = true;
-    extensions->getProgramBinaryOES         = true;
-    extensions->rgb8rgba8OES                = true;
-    extensions->readFormatBGRA              = true;
-    extensions->pixelBufferObjectNV         = true;
-    extensions->mapBufferOES                = true;
-    extensions->mapBufferRange              = true;
-    extensions->textureNPOTOES              = GetNPOTTextureSupport(featureLevel);
-    extensions->drawBuffers                 = GetMaximumSimultaneousRenderTargets(featureLevel) > 1;
+    extensions->elementIndexUintOES = true;
+    extensions->getProgramBinaryOES = true;
+    extensions->rgb8rgba8OES        = true;
+    extensions->readFormatBGRA      = true;
+    extensions->pixelBufferObjectNV = true;
+    extensions->mapBufferOES        = true;
+    extensions->mapBufferRange      = true;
+    extensions->textureNPOTOES      = GetNPOTTextureSupport(featureLevel);
+    extensions->drawBuffers         = GetMaximumSimultaneousRenderTargets(featureLevel) > 1;
+    extensions->drawBuffersIndexedEXT =
+        (renderer11DeviceCaps.featureLevel >= D3D_FEATURE_LEVEL_10_1);
+    extensions->drawBuffersIndexedOES       = extensions->drawBuffersIndexedEXT;
     extensions->textureStorage              = true;
     extensions->textureFilterAnisotropic    = true;
     extensions->maxTextureAnisotropy        = GetMaximumAnisotropy(featureLevel);
@@ -1620,6 +1623,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->debugMarker                         = true;
     extensions->eglImageOES                         = true;
     extensions->eglImageExternalOES                 = true;
+    extensions->eglImageExternalWrapModesEXT        = true;
     extensions->eglImageExternalEssl3OES            = true;
     extensions->eglStreamConsumerExternalNV         = true;
     extensions->unpackSubimage                      = true;
@@ -2213,6 +2217,11 @@ BlendStateKey::BlendStateKey()
     memset(this, 0, sizeof(BlendStateKey));
 }
 
+BlendStateKey::BlendStateKey(const BlendStateKey &other)
+{
+    memcpy(this, &other, sizeof(BlendStateKey));
+}
+
 bool operator==(const BlendStateKey &a, const BlendStateKey &b)
 {
     return memcmp(&a, &b, sizeof(BlendStateKey)) == 0;
@@ -2448,8 +2457,9 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     ANGLE_FEATURE_CONDITION(features, selectViewInGeometryShader,
                             !deviceCaps.supportsVpRtIndexWriteFromVertexShader);
 
-    // Never clear for robust resource init.  This matches Chrome's texture clearning behaviour.
-    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, false);
+    // Intel and AMD drivers have trouble clearing textures without causing corruption. NVidia,
+    // on the other hand, can handle.
+    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, isNvidia);
 
     // Don't translate uniform block to StructuredBuffer on Windows 7 and earlier. This is targeted
     // to work around a bug that fails to allocate ShaderResourceView for StructuredBuffer.

@@ -106,19 +106,21 @@
     void getTexParameterfv(TextureType targetPacked, GLenum pname, GLfloat *params);               \
     void getTexParameteriv(TextureType targetPacked, GLenum pname, GLint *params);                 \
     GLint getUniformLocation(ShaderProgramID programPacked, const GLchar *name);                   \
-    void getUniformfv(ShaderProgramID programPacked, GLint location, GLfloat *params);             \
-    void getUniformiv(ShaderProgramID programPacked, GLint location, GLint *params);               \
+    void getUniformfv(ShaderProgramID programPacked, UniformLocation locationPacked,               \
+                      GLfloat *params);                                                            \
+    void getUniformiv(ShaderProgramID programPacked, UniformLocation locationPacked,               \
+                      GLint *params);                                                              \
     void getVertexAttribPointerv(GLuint index, GLenum pname, void **pointer);                      \
     void getVertexAttribfv(GLuint index, GLenum pname, GLfloat *params);                           \
     void getVertexAttribiv(GLuint index, GLenum pname, GLint *params);                             \
     void hint(GLenum target, GLenum mode);                                                         \
-    GLboolean isBuffer(BufferID bufferPacked);                                                     \
-    GLboolean isEnabled(GLenum cap);                                                               \
-    GLboolean isFramebuffer(FramebufferID framebufferPacked);                                      \
-    GLboolean isProgram(ShaderProgramID programPacked);                                            \
-    GLboolean isRenderbuffer(RenderbufferID renderbufferPacked);                                   \
-    GLboolean isShader(ShaderProgramID shaderPacked);                                              \
-    GLboolean isTexture(TextureID texturePacked);                                                  \
+    GLboolean isBuffer(BufferID bufferPacked) const;                                               \
+    GLboolean isEnabled(GLenum cap) const;                                                         \
+    GLboolean isFramebuffer(FramebufferID framebufferPacked) const;                                \
+    GLboolean isProgram(ShaderProgramID programPacked) const;                                      \
+    GLboolean isRenderbuffer(RenderbufferID renderbufferPacked) const;                             \
+    GLboolean isShader(ShaderProgramID shaderPacked) const;                                        \
+    GLboolean isTexture(TextureID texturePacked) const;                                            \
     void lineWidth(GLfloat width);                                                                 \
     void linkProgram(ShaderProgramID programPacked);                                               \
     void pixelStorei(GLenum pname, GLint param);                                                   \
@@ -148,27 +150,28 @@
     void texSubImage2D(TextureTarget targetPacked, GLint level, GLint xoffset, GLint yoffset,      \
                        GLsizei width, GLsizei height, GLenum format, GLenum type,                  \
                        const void *pixels);                                                        \
-    void uniform1f(GLint location, GLfloat v0);                                                    \
-    void uniform1fv(GLint location, GLsizei count, const GLfloat *value);                          \
-    void uniform1i(GLint location, GLint v0);                                                      \
-    void uniform1iv(GLint location, GLsizei count, const GLint *value);                            \
-    void uniform2f(GLint location, GLfloat v0, GLfloat v1);                                        \
-    void uniform2fv(GLint location, GLsizei count, const GLfloat *value);                          \
-    void uniform2i(GLint location, GLint v0, GLint v1);                                            \
-    void uniform2iv(GLint location, GLsizei count, const GLint *value);                            \
-    void uniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);                            \
-    void uniform3fv(GLint location, GLsizei count, const GLfloat *value);                          \
-    void uniform3i(GLint location, GLint v0, GLint v1, GLint v2);                                  \
-    void uniform3iv(GLint location, GLsizei count, const GLint *value);                            \
-    void uniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);                \
-    void uniform4fv(GLint location, GLsizei count, const GLfloat *value);                          \
-    void uniform4i(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);                        \
-    void uniform4iv(GLint location, GLsizei count, const GLint *value);                            \
-    void uniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose,                      \
+    void uniform1f(UniformLocation locationPacked, GLfloat v0);                                    \
+    void uniform1fv(UniformLocation locationPacked, GLsizei count, const GLfloat *value);          \
+    void uniform1i(UniformLocation locationPacked, GLint v0);                                      \
+    void uniform1iv(UniformLocation locationPacked, GLsizei count, const GLint *value);            \
+    void uniform2f(UniformLocation locationPacked, GLfloat v0, GLfloat v1);                        \
+    void uniform2fv(UniformLocation locationPacked, GLsizei count, const GLfloat *value);          \
+    void uniform2i(UniformLocation locationPacked, GLint v0, GLint v1);                            \
+    void uniform2iv(UniformLocation locationPacked, GLsizei count, const GLint *value);            \
+    void uniform3f(UniformLocation locationPacked, GLfloat v0, GLfloat v1, GLfloat v2);            \
+    void uniform3fv(UniformLocation locationPacked, GLsizei count, const GLfloat *value);          \
+    void uniform3i(UniformLocation locationPacked, GLint v0, GLint v1, GLint v2);                  \
+    void uniform3iv(UniformLocation locationPacked, GLsizei count, const GLint *value);            \
+    void uniform4f(UniformLocation locationPacked, GLfloat v0, GLfloat v1, GLfloat v2,             \
+                   GLfloat v3);                                                                    \
+    void uniform4fv(UniformLocation locationPacked, GLsizei count, const GLfloat *value);          \
+    void uniform4i(UniformLocation locationPacked, GLint v0, GLint v1, GLint v2, GLint v3);        \
+    void uniform4iv(UniformLocation locationPacked, GLsizei count, const GLint *value);            \
+    void uniformMatrix2fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,      \
                           const GLfloat *value);                                                   \
-    void uniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose,                      \
+    void uniformMatrix3fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,      \
                           const GLfloat *value);                                                   \
-    void uniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose,                      \
+    void uniformMatrix4fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,      \
                           const GLfloat *value);                                                   \
     void useProgram(ShaderProgramID programPacked);                                                \
     void validateProgram(ShaderProgramID programPacked);                                           \

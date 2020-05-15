@@ -420,7 +420,7 @@ RenderTarget11 *Framebuffer11::getFirstRenderTarget() const
         }
     }
 
-    return mRenderTargetCache.getDepthStencil();
+    return mRenderTargetCache.getDepthStencil(true);
 }
 
 }  // namespace rx

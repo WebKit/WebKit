@@ -50,29 +50,27 @@
 3570 VULKAN : KHR-GLES31.core.sepshaderobjs* = FAIL
 
 // Shader support:
-3596 : KHR-GLES31.core.shader_bitfield_operation.frexp.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.uaddCarry.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.usubBorrow.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.umulExtended.* = SKIP
-3596 : KHR-GLES31.core.shader_bitfield_operation.imulExtended.* = SKIP
+4402 : KHR-GLES31.core.shader_bitfield_operation.frexp.* = SKIP
+4402 : KHR-GLES31.core.shader_bitfield_operation.uaddCarry.* = SKIP
+4402 : KHR-GLES31.core.shader_bitfield_operation.usubBorrow.* = SKIP
+4402 : KHR-GLES31.core.shader_bitfield_operation.umulExtended.* = SKIP
+4402 : KHR-GLES31.core.shader_bitfield_operation.imulExtended.* = SKIP
+
 // Program interface query.
 3596 VULKAN : KHR-GLES31.core.program_interface_query.* = FAIL
 
 // Image related failures
 
-4312 VULKAN : KHR-GLES31.core.shader_image_load_store.advanced-sync-imageAccess = SKIP
 4315 VULKAN : KHR-GLES31.core.shader_image_load_store.advanced-memory-order-vsfs = FAIL
-4108 VULKAN : KHR-GLES31.core.shader_image_size.*-nonMS-* = SKIP
 
 // Unimplemented glValidateCreateShaderProgramv:
 4146 : KHR-GLES31.core.shader_storage_buffer_object.basic-syntaxSSO = FAIL
 4146 : KHR-GLES31.core.vertex_attrib_binding.advanced-bindingUpdate = FAIL
 4146 : KHR-GLES31.core.vertex_attrib_binding.advanced-largeStrideAndOffsetsNewAndLegacyAPI = FAIL
 
-// Multisampled textures:
-// --gtest_filter=dEQP.KHR_GLES31/core_texture_storage_multisample_FunctionalTests_verify_sample_masking_for_non_integer_color_renderable_internalformats* --use-angle=swiftshader
-4259 SWIFTSHADER : KHR-GLES31.core.texture_storage_multisample.FunctionalTests.verify_sample_masking_for_non_integer_color_renderable_internalformats = FAIL
-
+// Failing on SwiftShader
+4414 SWIFTSHADER : KHR-GLES31.core.shader_image_load_store.advanced-allMips-cs = SKIP
+4414 SWIFTSHADER : KHR-GLES31.core.shader_image_load_store.advanced-allMips-fs = SKIP
 
 ////
 //// General Vulkan expectations
@@ -90,15 +88,11 @@
 
 // Dispatch indirect:
 4188 VULKAN : KHR-GLES31.core.compute_shader.resource-image = FAIL
-4189 VULKAN : KHR-GLES31.core.compute_shader.shared-struct = SKIP
 4191 VULKAN : KHR-GLES31.core.compute_shader.resources-max = FAIL
 4192 VULKAN : KHR-GLES31.core.compute_shader.pipeline-post-xfb = FAIL
 3726 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.pipeline-compute-chain = FAIL
 4194 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.resource-ubo = FAIL
 4194 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.built-in-variables = FAIL
-
-// Arrays-of-arrays as vertex inputs:
-4148 : KHR-GLES31.core.arrays_of_arrays.InteractionInterfaceArrays2 = FAIL
 
 
 ////
@@ -122,7 +116,7 @@
 ////
 
 // Crashes on Android
-3520 VULKAN ANDROID : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength* = SKIP
+4107 VULKAN ANDROID : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength* = SKIP
 
 // Passing on recent drivers:
 3726 VULKAN ANDROID : KHR-GLES31.core.shader_atomic_counters.* = FAIL
@@ -135,3 +129,24 @@
 // Fails on Pixel2 and Pixel2 XL
 4159 VULKAN PIXEL2ORXL : KHR-GLES31.core.draw_indirect.advanced-twoPass-transformFeedback-elements = FAIL
 4159 VULKAN PIXEL2ORXL : KHR-GLES31.core.draw_indirect.advanced-twoPass-transformFeedback-arrays = FAIL
+
+// Android uses "old" sampler rewrite that doesn't support array of arrays
+2703 VULKAN ANDROID : KHR-GLES31.core.arrays_of_arrays.* = SKIP
+
+// Failing on Android with SwiftShader
+4300 SWIFTSHADER ANDROID : KHR-GLES31.core.shader_integer_mix.mix-bvec4 = FAIL
+4300 SWIFTSHADER ANDROID : KHR-GLES31.core.shader_integer_mix.mix-ivec4 = FAIL
+4300 SWIFTSHADER ANDROID : KHR-GLES31.core.shader_integer_mix.mix-uvec4 = FAIL
+
+// Crashing on Android with SwiftShader
+4108 SWIFTSHADER ANDROID : KHR-GLES31.core.shader_image_size.basic-nonMS* = SKIP
+4108 SWIFTSHADER ANDROID : KHR-GLES31.core.shader_image_size.advanced-nonMS* = SKIP
+
+// Crashing on Android with SwiftShader
+4188 SWIFTSHADER ANDROID : KHR-GLES31.core.compute_shader.resource-image = SKIP
+
+// Crashing on Android with SwiftShader
+4190 SWIFTSHADER ANDROID : KHR-GLES31.core.compute_shader.pipeline-compute-chain = SKIP
+
+// Crashing on Android with SwiftShader
+4240 SWIFTSHADER ANDROID : KHR-GLES31.core.texture_storage_multisample.FunctionalTests.blitting_multisampled_depth_attachment = SKIP

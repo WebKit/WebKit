@@ -157,6 +157,4 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     EGLint mEGLMinorVersion;
 };
 
-ANGLE_UTIL_EXPORT bool CheckExtensionExists(const char *allExtensions, const std::string &extName);
-
 #endif  // UTIL_EGLWINDOW_H_

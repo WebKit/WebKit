@@ -17,42 +17,42 @@ namespace gl
 {
 class Context;
 
-bool ValidateBeginConditionalRender(Context *context, GLuint id, GLenum mode);
-bool ValidateBindFragDataLocation(Context *context,
+bool ValidateBeginConditionalRender(const Context *context, GLuint id, GLenum mode);
+bool ValidateBindFragDataLocation(const Context *context,
                                   ShaderProgramID programPacked,
                                   GLuint color,
                                   const GLchar *name);
-bool ValidateClampColor(Context *context, GLenum target, GLenum clamp);
-bool ValidateEndConditionalRender(Context *context);
-bool ValidateFramebufferTexture1D(Context *context,
+bool ValidateClampColor(const Context *context, GLenum target, GLenum clamp);
+bool ValidateEndConditionalRender(const Context *context);
+bool ValidateFramebufferTexture1D(const Context *context,
                                   GLenum target,
                                   GLenum attachment,
                                   TextureTarget textargetPacked,
                                   TextureID texturePacked,
                                   GLint level);
-bool ValidateFramebufferTexture3D(Context *context,
+bool ValidateFramebufferTexture3D(const Context *context,
                                   GLenum target,
                                   GLenum attachment,
                                   TextureTarget textargetPacked,
                                   TextureID texturePacked,
                                   GLint level,
                                   GLint zoffset);
-bool ValidateVertexAttribI1i(Context *context, GLuint index, GLint x);
-bool ValidateVertexAttribI1iv(Context *context, GLuint index, const GLint *v);
-bool ValidateVertexAttribI1ui(Context *context, GLuint index, GLuint x);
-bool ValidateVertexAttribI1uiv(Context *context, GLuint index, const GLuint *v);
-bool ValidateVertexAttribI2i(Context *context, GLuint index, GLint x, GLint y);
-bool ValidateVertexAttribI2iv(Context *context, GLuint index, const GLint *v);
-bool ValidateVertexAttribI2ui(Context *context, GLuint index, GLuint x, GLuint y);
-bool ValidateVertexAttribI2uiv(Context *context, GLuint index, const GLuint *v);
-bool ValidateVertexAttribI3i(Context *context, GLuint index, GLint x, GLint y, GLint z);
-bool ValidateVertexAttribI3iv(Context *context, GLuint index, const GLint *v);
-bool ValidateVertexAttribI3ui(Context *context, GLuint index, GLuint x, GLuint y, GLuint z);
-bool ValidateVertexAttribI3uiv(Context *context, GLuint index, const GLuint *v);
-bool ValidateVertexAttribI4bv(Context *context, GLuint index, const GLbyte *v);
-bool ValidateVertexAttribI4sv(Context *context, GLuint index, const GLshort *v);
-bool ValidateVertexAttribI4ubv(Context *context, GLuint index, const GLubyte *v);
-bool ValidateVertexAttribI4usv(Context *context, GLuint index, const GLushort *v);
+bool ValidateVertexAttribI1i(const Context *context, GLuint index, GLint x);
+bool ValidateVertexAttribI1iv(const Context *context, GLuint index, const GLint *v);
+bool ValidateVertexAttribI1ui(const Context *context, GLuint index, GLuint x);
+bool ValidateVertexAttribI1uiv(const Context *context, GLuint index, const GLuint *v);
+bool ValidateVertexAttribI2i(const Context *context, GLuint index, GLint x, GLint y);
+bool ValidateVertexAttribI2iv(const Context *context, GLuint index, const GLint *v);
+bool ValidateVertexAttribI2ui(const Context *context, GLuint index, GLuint x, GLuint y);
+bool ValidateVertexAttribI2uiv(const Context *context, GLuint index, const GLuint *v);
+bool ValidateVertexAttribI3i(const Context *context, GLuint index, GLint x, GLint y, GLint z);
+bool ValidateVertexAttribI3iv(const Context *context, GLuint index, const GLint *v);
+bool ValidateVertexAttribI3ui(const Context *context, GLuint index, GLuint x, GLuint y, GLuint z);
+bool ValidateVertexAttribI3uiv(const Context *context, GLuint index, const GLuint *v);
+bool ValidateVertexAttribI4bv(const Context *context, GLuint index, const GLbyte *v);
+bool ValidateVertexAttribI4sv(const Context *context, GLuint index, const GLshort *v);
+bool ValidateVertexAttribI4ubv(const Context *context, GLuint index, const GLubyte *v);
+bool ValidateVertexAttribI4usv(const Context *context, GLuint index, const GLushort *v);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_GL3_AUTOGEN_H_

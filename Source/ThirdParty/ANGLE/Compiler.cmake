@@ -153,6 +153,8 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/RegenerateStructNames.h"
     "src/compiler/translator/tree_ops/RemoveArrayLengthMethod.cpp"
     "src/compiler/translator/tree_ops/RemoveArrayLengthMethod.h"
+    "src/compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.cpp"
+    "src/compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.h"
     "src/compiler/translator/tree_ops/RemoveDynamicIndexing.cpp"
     "src/compiler/translator/tree_ops/RemoveDynamicIndexing.h"
     "src/compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.cpp"

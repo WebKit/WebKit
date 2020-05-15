@@ -11,7 +11,7 @@
 namespace gl
 {
 
-bool ValidateBindBuffersBase(Context *context,
+bool ValidateBindBuffersBase(const Context *context,
                              GLenum target,
                              GLuint first,
                              GLsizei count,
@@ -20,7 +20,7 @@ bool ValidateBindBuffersBase(Context *context,
     return true;
 }
 
-bool ValidateBindBuffersRange(Context *context,
+bool ValidateBindBuffersRange(const Context *context,
                               GLenum target,
                               GLuint first,
                               GLsizei count,
@@ -31,7 +31,7 @@ bool ValidateBindBuffersRange(Context *context,
     return true;
 }
 
-bool ValidateBindImageTextures(Context *context,
+bool ValidateBindImageTextures(const Context *context,
                                GLuint first,
                                GLsizei count,
                                const GLuint *textures)
@@ -39,17 +39,23 @@ bool ValidateBindImageTextures(Context *context,
     return true;
 }
 
-bool ValidateBindSamplers(Context *context, GLuint first, GLsizei count, const GLuint *samplers)
+bool ValidateBindSamplers(const Context *context,
+                          GLuint first,
+                          GLsizei count,
+                          const GLuint *samplers)
 {
     return true;
 }
 
-bool ValidateBindTextures(Context *context, GLuint first, GLsizei count, const GLuint *textures)
+bool ValidateBindTextures(const Context *context,
+                          GLuint first,
+                          GLsizei count,
+                          const GLuint *textures)
 {
     return true;
 }
 
-bool ValidateBindVertexBuffers(Context *context,
+bool ValidateBindVertexBuffers(const Context *context,
                                GLuint first,
                                GLsizei count,
                                const BufferID *buffers,
@@ -59,7 +65,7 @@ bool ValidateBindVertexBuffers(Context *context,
     return true;
 }
 
-bool ValidateBufferStorage(Context *context,
+bool ValidateBufferStorage(const Context *context,
                            GLenum target,
                            GLsizeiptr size,
                            const void *data,
@@ -68,7 +74,7 @@ bool ValidateBufferStorage(Context *context,
     return true;
 }
 
-bool ValidateClearTexImage(Context *context,
+bool ValidateClearTexImage(const Context *context,
                            TextureID texture,
                            GLint level,
                            GLenum format,
@@ -78,7 +84,7 @@ bool ValidateClearTexImage(Context *context,
     return true;
 }
 
-bool ValidateClearTexSubImage(Context *context,
+bool ValidateClearTexSubImage(const Context *context,
                               TextureID texture,
                               GLint level,
                               GLint xoffset,

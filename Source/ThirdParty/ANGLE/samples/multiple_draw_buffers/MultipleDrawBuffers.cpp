@@ -56,7 +56,7 @@ class MultipleDrawBuffersSample : public SampleApplication
         fsStream << angle::GetExecutableDirectory() << "/multiple_draw_buffers_fs.glsl";
 
         std::stringstream copyFsStream;
-        fsStream << angle::GetExecutableDirectory() << "/multiple_draw_buffers_copy_fs.glsl";
+        copyFsStream << angle::GetExecutableDirectory() << "/multiple_draw_buffers_copy_fs.glsl";
 
         mMRTProgram = CompileProgramFromFiles(vsStream.str(), fsStream.str());
         if (!mMRTProgram)

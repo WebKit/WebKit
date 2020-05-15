@@ -67,6 +67,14 @@ angle::Result SemaphoreGL::importFd(gl::Context *context, gl::HandleType handleT
     return angle::Result::Continue;
 }
 
+angle::Result SemaphoreGL::importZirconHandle(gl::Context *context,
+                                              gl::HandleType handleType,
+                                              GLuint handle)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
 angle::Result SemaphoreGL::wait(gl::Context *context,
                                 const gl::BufferBarrierVector &bufferBarriers,
                                 const gl::TextureBarrierVector &textureBarriers)

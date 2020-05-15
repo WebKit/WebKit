@@ -13,7 +13,12 @@ As an ANGLE Sheriff. Your job is to:
 If you're not an ANGLE team member, you can contact us on the public ANGLE project
 [Google group](https://groups.google.com/forum/#!forum/angleproject).
 
-## Task 1: The Try Waterfall
+**Note**: It's highly recommend that all wranglers install the [Chromium Flake Linker][Flaker]
+extension for inspecting bot builds. It'll save you a lot of time.
+
+[Flaker]: https://chrome.google.com/webstore/detail/flake-linker/boamnmbgmfnobomddmenbaicodgglkhc
+
+## Task 1: Monitor ANGLE CI and Try Testers
 
 Your first job is to keep the
 [ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/angle.try/builders) healthy.  Some

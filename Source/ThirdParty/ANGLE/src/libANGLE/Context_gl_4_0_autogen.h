@@ -30,33 +30,35 @@
     GLint getSubroutineUniformLocation(ShaderProgramID programPacked, GLenum shadertype,         \
                                        const GLchar *name);                                      \
     void getUniformSubroutineuiv(GLenum shadertype, GLint location, GLuint *params);             \
-    void getUniformdv(ShaderProgramID programPacked, GLint location, GLdouble *params);          \
+    void getUniformdv(ShaderProgramID programPacked, UniformLocation locationPacked,             \
+                      GLdouble *params);                                                         \
     void patchParameterfv(GLenum pname, const GLfloat *values);                                  \
-    void uniform1d(GLint location, GLdouble x);                                                  \
-    void uniform1dv(GLint location, GLsizei count, const GLdouble *value);                       \
-    void uniform2d(GLint location, GLdouble x, GLdouble y);                                      \
-    void uniform2dv(GLint location, GLsizei count, const GLdouble *value);                       \
-    void uniform3d(GLint location, GLdouble x, GLdouble y, GLdouble z);                          \
-    void uniform3dv(GLint location, GLsizei count, const GLdouble *value);                       \
-    void uniform4d(GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w);              \
-    void uniform4dv(GLint location, GLsizei count, const GLdouble *value);                       \
-    void uniformMatrix2dv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniform1d(UniformLocation locationPacked, GLdouble x);                                  \
+    void uniform1dv(UniformLocation locationPacked, GLsizei count, const GLdouble *value);       \
+    void uniform2d(UniformLocation locationPacked, GLdouble x, GLdouble y);                      \
+    void uniform2dv(UniformLocation locationPacked, GLsizei count, const GLdouble *value);       \
+    void uniform3d(UniformLocation locationPacked, GLdouble x, GLdouble y, GLdouble z);          \
+    void uniform3dv(UniformLocation locationPacked, GLsizei count, const GLdouble *value);       \
+    void uniform4d(UniformLocation locationPacked, GLdouble x, GLdouble y, GLdouble z,           \
+                   GLdouble w);                                                                  \
+    void uniform4dv(UniformLocation locationPacked, GLsizei count, const GLdouble *value);       \
+    void uniformMatrix2dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                           const GLdouble *value);                                                \
-    void uniformMatrix2x3dv(GLint location, GLsizei count, GLboolean transpose,                  \
+    void uniformMatrix2x3dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,  \
                             const GLdouble *value);                                              \
-    void uniformMatrix2x4dv(GLint location, GLsizei count, GLboolean transpose,                  \
+    void uniformMatrix2x4dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,  \
                             const GLdouble *value);                                              \
-    void uniformMatrix3dv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix3dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                           const GLdouble *value);                                                \
-    void uniformMatrix3x2dv(GLint location, GLsizei count, GLboolean transpose,                  \
+    void uniformMatrix3x2dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,  \
                             const GLdouble *value);                                              \
-    void uniformMatrix3x4dv(GLint location, GLsizei count, GLboolean transpose,                  \
+    void uniformMatrix3x4dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,  \
                             const GLdouble *value);                                              \
-    void uniformMatrix4dv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix4dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                           const GLdouble *value);                                                \
-    void uniformMatrix4x2dv(GLint location, GLsizei count, GLboolean transpose,                  \
+    void uniformMatrix4x2dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,  \
                             const GLdouble *value);                                              \
-    void uniformMatrix4x3dv(GLint location, GLsizei count, GLboolean transpose,                  \
+    void uniformMatrix4x3dv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,  \
                             const GLdouble *value);                                              \
     void uniformSubroutinesuiv(GLenum shadertype, GLsizei count, const GLuint *indices);
 

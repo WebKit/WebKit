@@ -149,7 +149,7 @@ angle::Result InputLayoutCache::getInputLayout(
     const auto &locationToSemantic = programD3D->getAttribLocationToD3DSemantics();
     int divisorMultiplier          = program->usesMultiview() ? program->getNumViews() : 1;
 
-    for (size_t attribIndex : program->getActiveAttribLocationsMask())
+    for (size_t attribIndex : state.getProgramExecutable()->getActiveAttribLocationsMask())
     {
         // Record the type of the associated vertex shader vector in our key
         // This will prevent mismatched vertex shaders from using the same input layout

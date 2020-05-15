@@ -135,6 +135,8 @@ class TextureState final : private angle::NonCopyable
     GLenum getUsage() const { return mUsage; }
     GLenum getDepthStencilTextureMode() const { return mDepthStencilTextureMode; }
     bool isStencilMode() const { return mDepthStencilTextureMode == GL_STENCIL_INDEX; }
+    bool isBoundAsSamplerTexture() const { return mSamplerBindingCount > 0; }
+    bool isBoundAsImageTexture() const { return mImageBindingCount > 0; }
 
     // Returns the desc of the base level. Only valid for cube-complete/mip-complete textures.
     const ImageDesc &getBaseLevelDesc() const;
@@ -157,7 +159,7 @@ class TextureState final : private angle::NonCopyable
     friend class rx::TextureGL;
     friend bool operator==(const TextureState &a, const TextureState &b);
 
-    bool computeSamplerCompleteness(const SamplerState &samplerState, const State &data) const;
+    bool computeSamplerCompleteness(const SamplerState &samplerState, const State &state) const;
     bool computeMipmapCompleteness() const;
     bool computeLevelCompleteness(TextureTarget target, size_t level) const;
     SamplerFormat computeRequiredSamplerFormat(const SamplerState &samplerState) const;
@@ -190,7 +192,8 @@ class TextureState final : private angle::NonCopyable
 
     GLenum mDepthStencilTextureMode;
 
-    bool mBoundAsImageTexture;
+    uint32_t mSamplerBindingCount;
+    uint32_t mImageBindingCount;
     bool mImmutableFormat;
     GLuint mImmutableLevels;
 
@@ -299,6 +302,7 @@ class Texture final : public RefCountObject<TextureID>,
 
     const TextureState &getTextureState() const;
 
+    const gl::Extents &getExtents(TextureTarget target, size_t level) const;
     size_t getWidth(TextureTarget target, size_t level) const;
     size_t getHeight(TextureTarget target, size_t level) const;
     size_t getDepth(TextureTarget target, size_t level) const;
@@ -413,7 +417,34 @@ class Texture final : public RefCountObject<TextureID>,
     angle::Result setEGLImageTarget(Context *context, TextureType type, egl::Image *imageTarget);
 
     angle::Result generateMipmap(Context *context);
-    void onBindImageTexture();
+
+    void onBindAsImageTexture();
+
+    ANGLE_INLINE void onUnbindAsImageTexture()
+    {
+        ASSERT(mState.isBoundAsImageTexture());
+        mState.mImageBindingCount--;
+    }
+
+    ANGLE_INLINE void onBindAsSamplerTexture()
+    {
+        ASSERT(mState.mSamplerBindingCount < std::numeric_limits<uint32_t>::max());
+        mState.mSamplerBindingCount++;
+        if (mState.mSamplerBindingCount == 1)
+        {
+            onStateChange(angle::SubjectMessage::BindingChanged);
+        }
+    }
+
+    ANGLE_INLINE void onUnbindAsSamplerTexture()
+    {
+        ASSERT(mState.isBoundAsSamplerTexture());
+        mState.mSamplerBindingCount--;
+        if (mState.mSamplerBindingCount == 0)
+        {
+            onStateChange(angle::SubjectMessage::BindingChanged);
+        }
+    }
 
     egl::Surface *getBoundSurface() const;
     egl::Stream *getBoundStream() const;

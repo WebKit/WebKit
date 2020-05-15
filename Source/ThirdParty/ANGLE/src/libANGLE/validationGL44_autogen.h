@@ -17,42 +17,48 @@ namespace gl
 {
 class Context;
 
-bool ValidateBindBuffersBase(Context *context,
+bool ValidateBindBuffersBase(const Context *context,
                              GLenum target,
                              GLuint first,
                              GLsizei count,
                              const BufferID *buffersPacked);
-bool ValidateBindBuffersRange(Context *context,
+bool ValidateBindBuffersRange(const Context *context,
                               GLenum target,
                               GLuint first,
                               GLsizei count,
                               const BufferID *buffersPacked,
                               const GLintptr *offsets,
                               const GLsizeiptr *sizes);
-bool ValidateBindImageTextures(Context *context,
+bool ValidateBindImageTextures(const Context *context,
                                GLuint first,
                                GLsizei count,
                                const GLuint *textures);
-bool ValidateBindSamplers(Context *context, GLuint first, GLsizei count, const GLuint *samplers);
-bool ValidateBindTextures(Context *context, GLuint first, GLsizei count, const GLuint *textures);
-bool ValidateBindVertexBuffers(Context *context,
+bool ValidateBindSamplers(const Context *context,
+                          GLuint first,
+                          GLsizei count,
+                          const GLuint *samplers);
+bool ValidateBindTextures(const Context *context,
+                          GLuint first,
+                          GLsizei count,
+                          const GLuint *textures);
+bool ValidateBindVertexBuffers(const Context *context,
                                GLuint first,
                                GLsizei count,
                                const BufferID *buffersPacked,
                                const GLintptr *offsets,
                                const GLsizei *strides);
-bool ValidateBufferStorage(Context *context,
+bool ValidateBufferStorage(const Context *context,
                            GLenum target,
                            GLsizeiptr size,
                            const void *data,
                            GLbitfield flags);
-bool ValidateClearTexImage(Context *context,
+bool ValidateClearTexImage(const Context *context,
                            TextureID texturePacked,
                            GLint level,
                            GLenum format,
                            GLenum type,
                            const void *data);
-bool ValidateClearTexSubImage(Context *context,
+bool ValidateClearTexSubImage(const Context *context,
                               TextureID texturePacked,
                               GLint level,
                               GLint xoffset,

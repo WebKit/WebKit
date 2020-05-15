@@ -534,11 +534,6 @@
 
 // General Vulkan failures
 
-// ANGLEPosition location assignment overlaps other varyings.  This only affects platforms that
-// don't support the bresenham line raster extension, which in turn also depends on the driver
-// versions.
-4251 VULKAN NVIDIA : dEQP-GLES3.functional.shaders.linkage.varying.struct.float_uvec2_vec3 = FAIL
-
 // Tests failing due to the "flat" qualifier in the shader:
 3677 VULKAN : dEQP-GLES3.functional.fragment_out.basic.int.* = FAIL
 3677 VULKAN : dEQP-GLES3.functional.fragment_out.basic.uint.* = FAIL
@@ -600,15 +595,5 @@
 4016 SWIFTSHADER : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.27 = FAIL
 4016 SWIFTSHADER : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.80 = FAIL
 
-// These only fail on Android
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_pointer.render.nested_structs_arrays.sampler2D_samplerCube_both = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_pointer.render.nested_structs_arrays.sampler2D_samplerCube_fragment = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_pointer.render.nested_structs_arrays.sampler2D_samplerCube_vertex = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_pointer.render.struct_in_array.sampler2D_samplerCube_both = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_pointer.render.struct_in_array.sampler2D_samplerCube_fragment = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_pointer.render.struct_in_array.sampler2D_samplerCube_vertex = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_value.render.nested_structs_arrays.sampler2D_samplerCube_both = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_value.render.nested_structs_arrays.sampler2D_samplerCube_fragment = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_value.render.nested_structs_arrays.sampler2D_samplerCube_vertex = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_value.render.struct_in_array.sampler2D_samplerCube_both = FAIL
-4045 SWIFTSHADER : dEQP-GLES3.functional.uniform_api.value.assigned.by_value.render.struct_in_array.sampler2D_samplerCube_fragment = FAIL
+// Fails on SwANGLE bots
+4418 SWIFTSHADER : dEQP-GLES3.functional.negative_api.buffer.framebuffer_texture_layer = FAIL

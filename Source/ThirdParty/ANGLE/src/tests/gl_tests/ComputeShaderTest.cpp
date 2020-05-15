@@ -637,10 +637,6 @@ TEST_P(ComputeShaderTest, DispatchComputeIndirect)
     // Flaky crash on teardown, see http://anglebug.com/3349
     ANGLE_SKIP_TEST_IF(IsD3D11() && IsIntel() && IsWindows());
 
-    // ASAN error on vulkan backend; ASAN tests only enabled on Mac Swangle
-    // (http://crbug.com/1029378)
-    ANGLE_SKIP_TEST_IF(IsOSX() && isSwiftshader());
-
     GLTexture texture;
     GLFramebuffer framebuffer;
     const char kCSSource[] = R"(#version 310 es
@@ -654,7 +650,7 @@ void main()
     ANGLE_GL_COMPUTE_PROGRAM(program, kCSSource);
     glUseProgram(program.get());
     const int kWidth = 4, kHeight = 6;
-    GLuint inputValues[] = {0};
+    GLuint inputValues[kWidth][kHeight] = {};
 
     GLBuffer buffer;
     glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer);
@@ -2910,6 +2906,9 @@ TEST_P(ComputeShaderTest, ImageSizeMipmapSlice)
 {
     // TODO(xinghua.cao@intel.com): http://anglebug.com/3101
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux());
+
+    // http://anglebug.com/4392
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsD3D11());
 
     GLTexture texture[2];
     GLFramebuffer framebuffer;

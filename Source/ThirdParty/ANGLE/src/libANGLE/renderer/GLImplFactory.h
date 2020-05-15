@@ -92,8 +92,6 @@ class GLImplFactory : angle::NonCopyable
     // Program Pipeline object creation
     virtual ProgramPipelineImpl *createProgramPipeline(const gl::ProgramPipelineState &data) = 0;
 
-    virtual std::vector<PathImpl *> createPaths(GLsizei range) = 0;
-
     // Memory object creation
     virtual MemoryObjectImpl *createMemoryObject() = 0;
 

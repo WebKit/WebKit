@@ -18,6 +18,7 @@
 #include "libANGLE/Fence.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/GLES1State.h"
+#include "libANGLE/MemoryObject.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/Renderbuffer.h"
 #include "libANGLE/Sampler.h"
@@ -217,7 +218,22 @@ void QueryTexLevelParameterBase(const Texture *texture,
     }
 }
 
-template <bool isPureInteger, typename ParamType>
+// This function is needed to handle fixed_point data.
+// It can be used when some pname need special conversion from int/float/bool to fixed_point.
+template <bool isGLfixed, typename QueryT, typename ParamType>
+QueryT CastFromSpecialValue(GLenum pname, const ParamType param)
+{
+    if (isGLfixed)
+    {
+        return static_cast<QueryT>(ConvertFloatToFixed(CastFromStateValue<GLfloat>(pname, param)));
+    }
+    else
+    {
+        return CastFromStateValue<QueryT>(pname, param);
+    }
+}
+
+template <bool isPureInteger, bool isGLfixed, typename ParamType>
 void QueryTexParameterBase(const Context *context,
                            const Texture *texture,
                            GLenum pname,
@@ -252,7 +268,8 @@ void QueryTexParameterBase(const Context *context,
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getUsage());
             break;
         case GL_TEXTURE_MAX_ANISOTROPY_EXT:
-            *params = CastFromStateValue<ParamType>(pname, texture->getMaxAnisotropy());
+            *params =
+                CastFromSpecialValue<isGLfixed, ParamType>(pname, texture->getMaxAnisotropy());
             break;
         case GL_TEXTURE_SWIZZLE_R:
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getSwizzleRed());
@@ -273,10 +290,10 @@ void QueryTexParameterBase(const Context *context,
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getMaxLevel());
             break;
         case GL_TEXTURE_MIN_LOD:
-            *params = CastFromStateValue<ParamType>(pname, texture->getMinLod());
+            *params = CastFromSpecialValue<isGLfixed, ParamType>(pname, texture->getMinLod());
             break;
         case GL_TEXTURE_MAX_LOD:
-            *params = CastFromStateValue<ParamType>(pname, texture->getMaxLod());
+            *params = CastFromSpecialValue<isGLfixed, ParamType>(pname, texture->getMaxLod());
             break;
         case GL_TEXTURE_COMPARE_MODE:
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getCompareMode());
@@ -294,23 +311,23 @@ void QueryTexParameterBase(const Context *context,
         case GL_TEXTURE_CROP_RECT_OES:
         {
             const gl::Rectangle &crop = texture->getCrop();
-            params[0]                 = CastFromGLintStateValue<ParamType>(pname, crop.x);
-            params[1]                 = CastFromGLintStateValue<ParamType>(pname, crop.y);
-            params[2]                 = CastFromGLintStateValue<ParamType>(pname, crop.width);
-            params[3]                 = CastFromGLintStateValue<ParamType>(pname, crop.height);
+            params[0]                 = CastFromSpecialValue<isGLfixed, ParamType>(pname, crop.x);
+            params[1]                 = CastFromSpecialValue<isGLfixed, ParamType>(pname, crop.y);
+            params[2] = CastFromSpecialValue<isGLfixed, ParamType>(pname, crop.width);
+            params[3] = CastFromSpecialValue<isGLfixed, ParamType>(pname, crop.height);
             break;
         }
         case GL_GENERATE_MIPMAP:
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getGenerateMipmapHint());
             break;
         case GL_MEMORY_SIZE_ANGLE:
-            *params = CastFromStateValue<ParamType>(pname, texture->getMemorySize());
+            *params = CastFromSpecialValue<isGLfixed, ParamType>(pname, texture->getMemorySize());
             break;
         case GL_TEXTURE_BORDER_COLOR:
             ConvertFromColor<isPureInteger>(texture->getBorderColor(), params);
             break;
         case GL_TEXTURE_NATIVE_ID_ANGLE:
-            *params = CastFromStateValue<ParamType>(pname, texture->getNativeID());
+            *params = CastFromSpecialValue<isGLfixed, ParamType>(pname, texture->getNativeID());
             break;
         case GL_IMPLEMENTATION_COLOR_READ_FORMAT:
             *params = CastFromGLintStateValue<ParamType>(
@@ -321,7 +338,8 @@ void QueryTexParameterBase(const Context *context,
                 pname, texture->getImplementationColorReadType(context));
             break;
         case GL_IMAGE_FORMAT_COMPATIBILITY_TYPE:
-            *params = GL_IMAGE_FORMAT_COMPATIBILITY_BY_SIZE;
+            *params =
+                CastFromGLintStateValue<ParamType>(pname, GL_IMAGE_FORMAT_COMPATIBILITY_BY_SIZE);
             break;
         default:
             UNREACHABLE();
@@ -329,7 +347,23 @@ void QueryTexParameterBase(const Context *context,
     }
 }
 
-template <bool isPureInteger, typename ParamType>
+// this function is needed to handle OES_FIXED_POINT.
+// Some pname values can take in GLfixed values and may need to be converted
+template <bool isGLfixed, typename ReturnType, typename ParamType>
+ReturnType ConvertTexParam(GLenum pname, const ParamType param)
+{
+    if (isGLfixed)
+    {
+        return CastQueryValueTo<ReturnType>(pname,
+                                            ConvertFixedToFloat(static_cast<GLfixed>(param)));
+    }
+    else
+    {
+        return CastQueryValueTo<ReturnType>(pname, param);
+    }
+}
+
+template <bool isPureInteger, bool isGLfixed, typename ParamType>
 void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const ParamType *params)
 {
     ASSERT(texture != nullptr);
@@ -355,7 +389,8 @@ void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const
             texture->setUsage(context, ConvertToGLenum(pname, params[0]));
             break;
         case GL_TEXTURE_MAX_ANISOTROPY_EXT:
-            texture->setMaxAnisotropy(context, CastQueryValueTo<GLfloat>(pname, params[0]));
+            texture->setMaxAnisotropy(context,
+                                      ConvertTexParam<isGLfixed, GLfloat>(pname, params[0]));
             break;
         case GL_TEXTURE_COMPARE_MODE:
             texture->setCompareMode(context, ConvertToGLenum(pname, params[0]));
@@ -398,10 +433,10 @@ void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const
             texture->setSRGBDecode(context, ConvertToGLenum(pname, params[0]));
             break;
         case GL_TEXTURE_CROP_RECT_OES:
-            texture->setCrop(gl::Rectangle(CastQueryValueTo<GLint>(pname, params[0]),
-                                           CastQueryValueTo<GLint>(pname, params[1]),
-                                           CastQueryValueTo<GLint>(pname, params[2]),
-                                           CastQueryValueTo<GLint>(pname, params[3])));
+            texture->setCrop(gl::Rectangle(ConvertTexParam<isGLfixed, GLint>(pname, params[0]),
+                                           ConvertTexParam<isGLfixed, GLint>(pname, params[1]),
+                                           ConvertTexParam<isGLfixed, GLint>(pname, params[2]),
+                                           ConvertTexParam<isGLfixed, GLint>(pname, params[3])));
             break;
         case GL_GENERATE_MIPMAP:
             texture->setGenerateMipmapHint(ConvertToGLenum(params[0]));
@@ -1194,7 +1229,7 @@ void QueryProgramiv(Context *context, const Program *program, GLenum pname, GLin
             *params = program->isValidated();
             return;
         case GL_INFO_LOG_LENGTH:
-            *params = program->getInfoLogLength();
+            *params = program->getExecutable().getInfoLogLength();
             return;
         case GL_ATTACHED_SHADERS:
             *params = program->getAttachedShadersCount();
@@ -1392,7 +1427,15 @@ void QueryTexParameterfv(const Context *context,
                          GLenum pname,
                          GLfloat *params)
 {
-    QueryTexParameterBase<false>(context, texture, pname, params);
+    QueryTexParameterBase<false, false>(context, texture, pname, params);
+}
+
+void QueryTexParameterxv(const Context *context,
+                         const Texture *texture,
+                         GLenum pname,
+                         GLfixed *params)
+{
+    QueryTexParameterBase<false, true>(context, texture, pname, params);
 }
 
 void QueryTexParameteriv(const Context *context,
@@ -1400,7 +1443,7 @@ void QueryTexParameteriv(const Context *context,
                          GLenum pname,
                          GLint *params)
 {
-    QueryTexParameterBase<false>(context, texture, pname, params);
+    QueryTexParameterBase<false, false>(context, texture, pname, params);
 }
 
 void QueryTexParameterIiv(const Context *context,
@@ -1408,7 +1451,7 @@ void QueryTexParameterIiv(const Context *context,
                           GLenum pname,
                           GLint *params)
 {
-    QueryTexParameterBase<true>(context, texture, pname, params);
+    QueryTexParameterBase<true, false>(context, texture, pname, params);
 }
 
 void QueryTexParameterIuiv(const Context *context,
@@ -1416,7 +1459,7 @@ void QueryTexParameterIuiv(const Context *context,
                            GLenum pname,
                            GLuint *params)
 {
-    QueryTexParameterBase<true>(context, texture, pname, params);
+    QueryTexParameterBase<true, false>(context, texture, pname, params);
 }
 
 void QuerySamplerParameterfv(const Sampler *sampler, GLenum pname, GLfloat *params)
@@ -1609,34 +1652,44 @@ angle::Result QuerySynciv(const Context *context,
     return angle::Result::Continue;
 }
 
+void SetTexParameterx(Context *context, Texture *texture, GLenum pname, GLfixed param)
+{
+    SetTexParameterBase<false, true>(context, texture, pname, &param);
+}
+
+void SetTexParameterxv(Context *context, Texture *texture, GLenum pname, const GLfixed *params)
+{
+    SetTexParameterBase<false, true>(context, texture, pname, params);
+}
+
 void SetTexParameterf(Context *context, Texture *texture, GLenum pname, GLfloat param)
 {
-    SetTexParameterBase<false>(context, texture, pname, &param);
+    SetTexParameterBase<false, false>(context, texture, pname, &param);
 }
 
 void SetTexParameterfv(Context *context, Texture *texture, GLenum pname, const GLfloat *params)
 {
-    SetTexParameterBase<false>(context, texture, pname, params);
+    SetTexParameterBase<false, false>(context, texture, pname, params);
 }
 
 void SetTexParameteri(Context *context, Texture *texture, GLenum pname, GLint param)
 {
-    SetTexParameterBase<false>(context, texture, pname, &param);
+    SetTexParameterBase<false, false>(context, texture, pname, &param);
 }
 
 void SetTexParameteriv(Context *context, Texture *texture, GLenum pname, const GLint *params)
 {
-    SetTexParameterBase<false>(context, texture, pname, params);
+    SetTexParameterBase<false, false>(context, texture, pname, params);
 }
 
 void SetTexParameterIiv(Context *context, Texture *texture, GLenum pname, const GLint *params)
 {
-    SetTexParameterBase<true>(context, texture, pname, params);
+    SetTexParameterBase<true, false>(context, texture, pname, params);
 }
 
 void SetTexParameterIuiv(Context *context, Texture *texture, GLenum pname, const GLuint *params)
 {
-    SetTexParameterBase<true>(context, texture, pname, params);
+    SetTexParameterBase<true, false>(context, texture, pname, params);
 }
 
 void SetSamplerParameterf(Context *context, Sampler *sampler, GLenum pname, GLfloat param)
@@ -1729,7 +1782,7 @@ GLint GetUniformResourceProperty(const Program *program, GLuint index, const GLe
             return GetCommonVariableProperty(uniform, resourceProp);
 
         case GL_LOCATION:
-            return program->getUniformLocation(uniform.name);
+            return program->getUniformLocation(uniform.name).value;
 
         case GL_BLOCK_INDEX:
             return (uniform.isAtomicCounter() ? -1 : uniform.bufferIndex);
@@ -1904,7 +1957,7 @@ GLint QueryProgramResourceLocation(const Program *program,
             return program->getOutputResourceLocation(name);
 
         case GL_UNIFORM:
-            return program->getUniformLocation(name);
+            return program->getUniformLocation(name).value;
 
         default:
             UNREACHABLE();
@@ -2016,6 +2069,37 @@ void QueryProgramInterfaceiv(const Program *program,
 
         case GL_MAX_NUM_ACTIVE_VARIABLES:
             *params = QueryProgramInterfaceMaxNumActiveVariables(program, programInterface);
+            break;
+
+        default:
+            UNREACHABLE();
+    }
+}
+
+angle::Result SetMemoryObjectParameteriv(const Context *context,
+                                         MemoryObject *memoryObject,
+                                         GLenum pname,
+                                         const GLint *params)
+{
+    switch (pname)
+    {
+        case GL_DEDICATED_MEMORY_OBJECT_EXT:
+            ANGLE_TRY(memoryObject->setDedicatedMemory(context, ConvertToBool(params[0])));
+            break;
+
+        default:
+            UNREACHABLE();
+    }
+
+    return angle::Result::Continue;
+}
+
+void QueryMemoryObjectParameteriv(const MemoryObject *memoryObject, GLenum pname, GLint *params)
+{
+    switch (pname)
+    {
+        case GL_DEDICATED_MEMORY_OBJECT_EXT:
+            *params = memoryObject->isDedicatedMemory();
             break;
 
         default:
@@ -2792,7 +2876,7 @@ void SetPointSize(GLES1State *state, GLfloat size)
     params.pointSize        = size;
 }
 
-void GetPointSize(GLES1State *state, GLfloat *sizeOut)
+void GetPointSize(const GLES1State *state, GLfloat *sizeOut)
 {
     const PointParameters &params = state->pointParameters();
     *sizeOut                      = params.pointSize;
@@ -3111,18 +3195,6 @@ bool GetQueryParameterInfo(const State &glState,
             case GL_SAMPLE_ALPHA_TO_ONE_EXT:
                 *type      = GL_BOOL;
                 *numParams = 1;
-                return true;
-        }
-    }
-
-    if (extensions.pathRendering)
-    {
-        switch (pname)
-        {
-            case GL_PATH_MODELVIEW_MATRIX_CHROMIUM:
-            case GL_PATH_PROJECTION_MATRIX_CHROMIUM:
-                *type      = GL_FLOAT;
-                *numParams = 16;
                 return true;
         }
     }
@@ -3653,6 +3725,9 @@ void QueryConfigAttrib(const Config *config, EGLint attribute, EGLint *value)
             break;
         case EGL_SURFACE_TYPE:
             *value = config->surfaceType;
+            break;
+        case EGL_BIND_TO_TEXTURE_TARGET_ANGLE:
+            *value = config->bindToTextureTarget;
             break;
         case EGL_TRANSPARENT_TYPE:
             *value = config->transparentType;

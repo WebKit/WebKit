@@ -342,6 +342,48 @@ void main()
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// GL backend optimizes away a uniform in the vertex shader if it's only used to
+// compute a varying that is never referenced in the fragment shader.
+TEST_P(BindUniformLocationTest, UnusedUniformUpdateComplex)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_bind_uniform_location"));
+
+    ASSERT_NE(nullptr, glBindUniformLocationCHROMIUM);
+
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 a_position;
+varying vec4 v_unused;
+uniform vec4 u_unused;
+void main()
+{
+    gl_Position = a_position;
+    v_unused = u_unused;
+}
+)";
+
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec4 v_unused;
+void main()
+{
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    const GLint unusedLocation = 1;
+
+    mProgram = CompileProgram(kVS, kFS, [&](GLuint program) {
+        glBindUniformLocationCHROMIUM(program, unusedLocation, "u_unused");
+    });
+    ASSERT_NE(0u, mProgram);
+
+    glUseProgram(mProgram);
+
+    // No errors on bound locations of names that do not exist
+    // in the shader. Otherwise it would be inconsistent wrt the
+    // optimization case.
+    glUniform4f(unusedLocation, 0.25f, 0.25f, 0.25f, 0.25f);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test for a bug where using a sampler caused GL error if the mProgram had
 // uniforms that were optimized away by the driver. This was only a problem with
 // glBindUniformLocationCHROMIUM implementation. This could be reproed by

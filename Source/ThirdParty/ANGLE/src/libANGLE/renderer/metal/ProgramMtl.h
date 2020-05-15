@@ -99,11 +99,6 @@ class ProgramMtl : public ProgramImpl
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
-    void setPathFragmentInputGen(const std::string &inputName,
-                                 GLenum genMode,
-                                 GLint components,
-                                 const GLfloat *coeffs) override;
-
     // Calls this before drawing, changedPipelineDesc is passed when vertex attributes desc and/or
     // shader program changed.
     angle::Result setupDraw(const gl::Context *glContext,
@@ -132,7 +127,9 @@ class ProgramMtl : public ProgramImpl
 
     void reset(ContextMtl *context);
     void linkResources(const gl::ProgramLinkedResources &resources);
-    angle::Result linkImpl(const gl::Context *glContext, gl::InfoLog &infoLog);
+    angle::Result linkImpl(const gl::Context *glContext,
+                           const gl::ProgramLinkedResources &resources,
+                           gl::InfoLog &infoLog);
     angle::Result convertToMsl(const gl::Context *glContext,
                                gl::ShaderType shaderType,
                                gl::InfoLog &infoLog,
@@ -160,10 +157,6 @@ class ProgramMtl : public ProgramImpl
     gl::ShaderBitSet mDefaultUniformBlocksDirty;
     gl::ShaderBitSet mSamplerBindingsDirty;
     gl::ShaderMap<DefaultUniformBlock> mDefaultUniformBlocks;
-
-    // We keep the translated linked shader sources to use with shader draw call patching.
-    gl::ShaderMap<std::string> mShaderSource;
-    ShaderInterfaceVariableInfoMap mVariableInfoMap;
 
     mtl::RenderPipelineCache mMetalRenderPipelineCache;
 };

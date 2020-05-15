@@ -8,16 +8,14 @@
 import("../../../../gni/angle.gni")
 
 _tests = [
-  "trex_200_210",
-  "trex_800_810",
-  "trex_900_910",
-  "trex_1300_1310",
+  "manhattan_10",
+  "trex_200",
 ]
 
 angle_trace_perf_sources = [ "perf_tests/TracePerfTest.cpp" ]
-angle_trace_perf_data =
-    [ "${angle_root}/src/tests/perf_tests/restricted_traces" ]
+
 angle_trace_perf_defines = []
+angle_trace_perf_data = []
 
 foreach(_test, _tests) {
   _test_dir = "${_test}"
@@ -36,9 +34,11 @@ foreach(_test, _tests) {
   if (is_android) {
     _test_data_path = "/sdcard/chromium_tests_root/third_party/angle/src/tests/perf_tests/restricted_traces/${_test}"
   } else {
-    _test_data_path = rebase_path("${_test_dir}")
+    _test_data_path = rebase_path("${_test_dir}", root_out_dir)
   }
 
   angle_trace_perf_defines +=
       [ "ANGLE_TRACE_DATA_DIR_${_test}=\"${_test_data_path}\"" ]
+
+  angle_trace_perf_data += [ "perf_tests/restricted_traces/${_test_dir}/${_test}_capture_context1.angledata.gz" ]
 }

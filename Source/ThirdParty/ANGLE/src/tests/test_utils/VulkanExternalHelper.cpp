@@ -201,10 +201,9 @@ void VulkanExternalHelper::initialize()
         EnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr);
 
     std::vector<const char *> requestedDeviceExtensions = {
-        VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME,
-        VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME,
-        VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME,
-        VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME,
+        VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME,  VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME,
+        VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME,     VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME,
+        VK_FUCHSIA_EXTERNAL_MEMORY_EXTENSION_NAME, VK_FUCHSIA_EXTERNAL_SEMAPHORE_EXTENSION_NAME,
     };
 
     std::vector<const char *> enabledDeviceExtensions;
@@ -273,6 +272,10 @@ void VulkanExternalHelper::initialize()
         HasExtension(enabledDeviceExtensions, VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME);
     mHasExternalSemaphoreFd =
         HasExtension(enabledDeviceExtensions, VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME);
+    mHasExternalMemoryFuchsia =
+        HasExtension(enabledDeviceExtensions, VK_FUCHSIA_EXTERNAL_MEMORY_EXTENSION_NAME);
+    mHasExternalSemaphoreFuchsia =
+        HasExtension(enabledDeviceExtensions, VK_FUCHSIA_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
 
     vkGetPhysicalDeviceImageFormatProperties2 =
         reinterpret_cast<PFN_vkGetPhysicalDeviceImageFormatProperties2>(
@@ -284,21 +287,20 @@ void VulkanExternalHelper::initialize()
     vkGetPhysicalDeviceExternalSemaphorePropertiesKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR>(
             vkGetInstanceProcAddr(mInstance, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"));
+    vkGetMemoryZirconHandleFUCHSIA = reinterpret_cast<PFN_vkGetMemoryZirconHandleFUCHSIA>(
+        vkGetInstanceProcAddr(mInstance, "vkGetMemoryZirconHandleFUCHSIA"));
 }
 
-bool VulkanExternalHelper::canCreateImageOpaqueFd(VkFormat format,
-                                                  VkImageType type,
-                                                  VkImageTiling tiling) const
+bool VulkanExternalHelper::canCreateImageExternal(
+    VkFormat format,
+    VkImageType type,
+    VkImageTiling tiling,
+    VkExternalMemoryHandleTypeFlagBits handleType) const
 {
-    if (!mHasExternalMemoryFd)
-    {
-        return false;
-    }
-
     VkPhysicalDeviceExternalImageFormatInfo externalImageFormatInfo = {
         /* .sType = */ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
         /* .pNext = */ nullptr,
-        /* .handleType = */ VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT,
+        /* .handleType = */ handleType,
     };
 
     VkPhysicalDeviceImageFormatInfo2 imageFormatInfo = {
@@ -347,8 +349,9 @@ bool VulkanExternalHelper::canCreateImageOpaqueFd(VkFormat format,
     return true;
 }
 
-VkResult VulkanExternalHelper::createImage2DOpaqueFd(VkFormat format,
+VkResult VulkanExternalHelper::createImage2DExternal(VkFormat format,
                                                      VkExtent3D extent,
+                                                     VkExternalMemoryHandleTypeFlags handleTypes,
                                                      VkImage *imageOut,
                                                      VkDeviceMemory *deviceMemoryOut,
                                                      VkDeviceSize *deviceMemorySizeOut)
@@ -356,7 +359,7 @@ VkResult VulkanExternalHelper::createImage2DOpaqueFd(VkFormat format,
     VkExternalMemoryImageCreateInfoKHR externalMemoryImageCreateInfo = {
         /* .sType = */ VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
         /* .pNext = */ nullptr,
-        /* .handleTypes = */ VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT,
+        /* .handleTypes = */ handleTypes,
     };
 
     VkImageCreateInfo imageCreateInfo = {
@@ -395,9 +398,8 @@ VkResult VulkanExternalHelper::createImage2DOpaqueFd(VkFormat format,
     VkExportMemoryAllocateInfo exportMemoryAllocateInfo = {
         /* .sType = */ VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
         /* .pNext = */ nullptr,
-        /* .handleTypes = */ VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT,
+        /* .handleTypes = */ handleTypes,
     };
-
     VkMemoryAllocateInfo memoryAllocateInfo = {
         /* .sType = */ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
         /* .pNext = */ &exportMemoryAllocateInfo,
@@ -429,6 +431,29 @@ VkResult VulkanExternalHelper::createImage2DOpaqueFd(VkFormat format,
     return VK_SUCCESS;
 }
 
+bool VulkanExternalHelper::canCreateImageOpaqueFd(VkFormat format,
+                                                  VkImageType type,
+                                                  VkImageTiling tiling) const
+{
+    if (!mHasExternalMemoryFd)
+    {
+        return false;
+    }
+
+    return canCreateImageExternal(format, type, tiling,
+                                  VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT);
+}
+
+VkResult VulkanExternalHelper::createImage2DOpaqueFd(VkFormat format,
+                                                     VkExtent3D extent,
+                                                     VkImage *imageOut,
+                                                     VkDeviceMemory *deviceMemoryOut,
+                                                     VkDeviceSize *deviceMemorySizeOut)
+{
+    return createImage2DExternal(format, extent, VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT,
+                                 imageOut, deviceMemoryOut, deviceMemorySizeOut);
+}
+
 VkResult VulkanExternalHelper::exportMemoryOpaqueFd(VkDeviceMemory deviceMemory, int *fd)
 {
     VkMemoryGetFdInfoKHR memoryGetFdInfo = {
@@ -439,6 +464,42 @@ VkResult VulkanExternalHelper::exportMemoryOpaqueFd(VkDeviceMemory deviceMemory,
     };
 
     return vkGetMemoryFdKHR(mDevice, &memoryGetFdInfo, fd);
+}
+
+bool VulkanExternalHelper::canCreateImageZirconVmo(VkFormat format,
+                                                   VkImageType type,
+                                                   VkImageTiling tiling) const
+{
+    if (!mHasExternalMemoryFuchsia)
+    {
+        return false;
+    }
+
+    return canCreateImageExternal(format, type, tiling,
+                                  VK_EXTERNAL_MEMORY_HANDLE_TYPE_TEMP_ZIRCON_VMO_BIT_FUCHSIA);
+}
+
+VkResult VulkanExternalHelper::createImage2DZirconVmo(VkFormat format,
+                                                      VkExtent3D extent,
+                                                      VkImage *imageOut,
+                                                      VkDeviceMemory *deviceMemoryOut,
+                                                      VkDeviceSize *deviceMemorySizeOut)
+{
+    return createImage2DExternal(format, extent,
+                                 VK_EXTERNAL_MEMORY_HANDLE_TYPE_TEMP_ZIRCON_VMO_BIT_FUCHSIA,
+                                 imageOut, deviceMemoryOut, deviceMemorySizeOut);
+}
+
+VkResult VulkanExternalHelper::exportMemoryZirconVmo(VkDeviceMemory deviceMemory, zx_handle_t *vmo)
+{
+    VkMemoryGetZirconHandleInfoFUCHSIA memoryGetZirconHandleInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_TEMP_MEMORY_GET_ZIRCON_HANDLE_INFO_FUCHSIA,
+        /* .pNext = */ nullptr,
+        /* .memory = */ deviceMemory,
+        /* .handleType = */ VK_EXTERNAL_MEMORY_HANDLE_TYPE_TEMP_ZIRCON_VMO_BIT_FUCHSIA,
+    };
+
+    return vkGetMemoryZirconHandleFUCHSIA(mDevice, &memoryGetZirconHandleInfo, vmo);
 }
 
 bool VulkanExternalHelper::canCreateSemaphoreOpaqueFd() const

@@ -52,8 +52,9 @@ angle::Result SyncHelper::initialize(ContextVk *contextVk)
 
     mEvent = event.release();
 
-    CommandGraph *commandGraph = contextVk->getCommandGraph();
-    commandGraph->setFenceSync(mEvent);
+    vk::PrimaryCommandBuffer *primary;
+    ANGLE_TRY(contextVk->flushAndGetPrimaryCommandBuffer(&primary));
+    primary->setEvent(mEvent.getHandle(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
     contextVk->getResourceUseList().add(mUse);
 
     return angle::Result::Continue;
@@ -103,11 +104,14 @@ angle::Result SyncHelper::clientWait(Context *context,
     return angle::Result::Continue;
 }
 
-void SyncHelper::serverWait(ContextVk *contextVk)
+angle::Result SyncHelper::serverWait(ContextVk *contextVk)
 {
-    CommandGraph *commandGraph = contextVk->getCommandGraph();
-    commandGraph->waitFenceSync(mEvent);
+    vk::PrimaryCommandBuffer *primary;
+    ANGLE_TRY(contextVk->flushAndGetPrimaryCommandBuffer(&primary));
+    primary->waitEvents(1, mEvent.ptr(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                        VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, nullptr, 0, nullptr, 0, nullptr);
     contextVk->getResourceUseList().add(mUse);
+    return angle::Result::Continue;
 }
 
 angle::Result SyncHelper::getStatus(Context *context, bool *signaled)
@@ -181,8 +185,7 @@ angle::Result SyncVk::serverWait(const gl::Context *context, GLbitfield flags, G
     ASSERT(timeout == GL_TIMEOUT_IGNORED);
 
     ContextVk *contextVk = vk::GetImpl(context);
-    mFenceSync.serverWait(contextVk);
-    return angle::Result::Continue;
+    return mFenceSync.serverWait(contextVk);
 }
 
 angle::Result SyncVk::getStatus(const gl::Context *context, GLint *outResult)
@@ -269,9 +272,10 @@ egl::Error EGLSyncVk::serverWait(const egl::Display *display,
     // No flags are currently implemented.
     ASSERT(flags == 0);
 
+    DisplayVk *displayVk = vk::GetImpl(display);
     ContextVk *contextVk = vk::GetImpl(context);
-    mFenceSync.serverWait(contextVk);
-    return egl::NoError();
+
+    return angle::ToEGL(mFenceSync.serverWait(contextVk), displayVk, EGL_BAD_ALLOC);
 }
 
 egl::Error EGLSyncVk::getStatus(const egl::Display *display, EGLint *outStatus)

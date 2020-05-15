@@ -111,6 +111,7 @@ bool IsIntel(VendorID vendorId);
 bool IsKazan(VendorID vendorId);
 bool IsNVIDIA(VendorID vendorId);
 bool IsQualcomm(VendorID vendorId);
+bool IsGoogle(VendorID vendorId);
 bool IsSwiftshader(VendorID vendorId);
 bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);

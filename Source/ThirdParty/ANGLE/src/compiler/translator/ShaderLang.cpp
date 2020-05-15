@@ -149,30 +149,31 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxDrawBuffers               = 1;
 
     // Extensions.
-    resources->OES_standard_derivatives                 = 0;
-    resources->OES_EGL_image_external                   = 0;
-    resources->OES_EGL_image_external_essl3             = 0;
-    resources->NV_EGL_stream_consumer_external          = 0;
-    resources->ARB_texture_rectangle                    = 0;
-    resources->EXT_blend_func_extended                  = 0;
-    resources->EXT_draw_buffers                         = 0;
-    resources->EXT_frag_depth                           = 0;
-    resources->EXT_shader_texture_lod                   = 0;
-    resources->WEBGL_debug_shader_precision             = 0;
-    resources->EXT_shader_framebuffer_fetch             = 0;
-    resources->NV_shader_framebuffer_fetch              = 0;
-    resources->ARM_shader_framebuffer_fetch             = 0;
-    resources->OVR_multiview                            = 0;
-    resources->OVR_multiview2                           = 0;
-    resources->EXT_YUV_target                           = 0;
-    resources->EXT_geometry_shader                      = 0;
-    resources->EXT_gpu_shader5                          = 0;
-    resources->OES_texture_storage_multisample_2d_array = 0;
-    resources->OES_texture_3D                           = 0;
-    resources->ANGLE_texture_multisample                = 0;
-    resources->ANGLE_multi_draw                         = 0;
-    resources->ANGLE_base_vertex_base_instance          = 0;
-    resources->WEBGL_video_texture                      = 0;
+    resources->OES_standard_derivatives                    = 0;
+    resources->OES_EGL_image_external                      = 0;
+    resources->OES_EGL_image_external_essl3                = 0;
+    resources->NV_EGL_stream_consumer_external             = 0;
+    resources->ARB_texture_rectangle                       = 0;
+    resources->EXT_blend_func_extended                     = 0;
+    resources->EXT_draw_buffers                            = 0;
+    resources->EXT_frag_depth                              = 0;
+    resources->EXT_shader_texture_lod                      = 0;
+    resources->WEBGL_debug_shader_precision                = 0;
+    resources->EXT_shader_framebuffer_fetch                = 0;
+    resources->NV_shader_framebuffer_fetch                 = 0;
+    resources->ARM_shader_framebuffer_fetch                = 0;
+    resources->OVR_multiview                               = 0;
+    resources->OVR_multiview2                              = 0;
+    resources->EXT_YUV_target                              = 0;
+    resources->EXT_geometry_shader                         = 0;
+    resources->EXT_gpu_shader5                             = 0;
+    resources->EXT_shader_non_constant_global_initializers = 0;
+    resources->OES_texture_storage_multisample_2d_array    = 0;
+    resources->OES_texture_3D                              = 0;
+    resources->ANGLE_texture_multisample                   = 0;
+    resources->ANGLE_multi_draw                            = 0;
+    resources->ANGLE_base_vertex_base_instance             = 0;
+    resources->WEBGL_video_texture                         = 0;
 
     resources->NV_draw_buffers = 0;
 
@@ -713,12 +714,12 @@ const char kDefaultUniformsNameGS[]  = "defaultUniformsGS";
 const char kDefaultUniformsNameFS[]  = "defaultUniformsFS";
 const char kDefaultUniformsNameCS[]  = "defaultUniformsCS";
 
-// Interface block and variable name containing driver uniforms
+// Interface block and variable names containing driver uniforms
 const char kDriverUniformsBlockName[] = "ANGLEUniformBlock";
 const char kDriverUniformsVarName[]   = "ANGLEUniforms";
 
-// Interface block array variable name used for atomic counter emulation
-const char kAtomicCountersVarName[] = "atomicCounters";
+// Interface block array name used for atomic counter emulation
+const char kAtomicCountersBlockName[] = "ANGLEAtomicCounters";
 
 const char kLineRasterEmulationPosition[] = "ANGLEPosition";
 

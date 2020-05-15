@@ -43,6 +43,7 @@ struct Config
     EGLint alphaMaskSize;          // Bits of Alpha Mask in the mask buffer
     EGLBoolean bindToTextureRGB;   // True if bindable to RGB textures.
     EGLBoolean bindToTextureRGBA;  // True if bindable to RGBA textures.
+    EGLenum bindToTextureTarget;   // Which texture target should be used for pbuffers
     EGLenum colorBufferType;       // Color buffer type
     EGLenum configCaveat;          // Any caveats for the configuration
     EGLint configID;               // Unique EGLConfig identifier

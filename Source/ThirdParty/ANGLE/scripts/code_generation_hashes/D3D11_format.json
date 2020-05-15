@@ -4,9 +4,9 @@
   "src/libANGLE/renderer/d3d/d3d11/gen_texture_format_table.py":
     "bf11e3404d4622059b6e9c4e96abf95e",
   "src/libANGLE/renderer/d3d/d3d11/texture_format_data.json":
-    "d7483ece817e819588f4ca157716dc7b",
+    "c80708c18348fd89a3b918e58e74c1f8",
   "src/libANGLE/renderer/d3d/d3d11/texture_format_map.json":
     "e9dfbd51ff183809f595f8fc5db9c217",
   "src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp":
-    "03d2b85db28de5c94f1e38d2ed4ee385"
+    "f48864159c3a1fe6ca7567e3eb8215fb"
 }

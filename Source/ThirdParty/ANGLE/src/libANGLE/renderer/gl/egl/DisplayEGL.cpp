@@ -8,16 +8,101 @@
 
 #include "libANGLE/renderer/gl/egl/DisplayEGL.h"
 
+#include "common/debug.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
+#include "libANGLE/Surface.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
+#include "libANGLE/renderer/gl/RendererGL.h"
+#include "libANGLE/renderer/gl/egl/ContextEGL.h"
+#include "libANGLE/renderer/gl/egl/FunctionsEGLDL.h"
 #include "libANGLE/renderer/gl/egl/ImageEGL.h"
+#include "libANGLE/renderer/gl/egl/PbufferSurfaceEGL.h"
+#include "libANGLE/renderer/gl/egl/RendererEGL.h"
 #include "libANGLE/renderer/gl/egl/SyncEGL.h"
+#include "libANGLE/renderer/gl/egl/WindowSurfaceEGL.h"
+#include "libANGLE/renderer/gl/renderergl_utils.h"
+
+namespace
+{
+
+EGLint ESBitFromPlatformAttrib(const rx::FunctionsEGL *egl, const EGLAttrib platformAttrib)
+{
+    EGLint esBit = EGL_NONE;
+    switch (platformAttrib)
+    {
+        case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
+        {
+            esBit = EGL_OPENGL_BIT;
+            break;
+        }
+
+        case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
+        {
+            static_assert(EGL_OPENGL_ES3_BIT == EGL_OPENGL_ES3_BIT_KHR,
+                          "Extension define must match core");
+
+            gl::Version eglVersion(egl->majorVersion, egl->minorVersion);
+            esBit = (eglVersion >= gl::Version(1, 5) || egl->hasExtension("EGL_KHR_create_context"))
+                        ? EGL_OPENGL_ES3_BIT
+                        : EGL_OPENGL_ES2_BIT;
+            break;
+        }
+
+        default:
+            break;
+    }
+    return esBit;
+}
+
+class WorkerContextEGL final : public rx::WorkerContext
+{
+  public:
+    WorkerContextEGL(EGLContext context, rx::FunctionsEGL *functions, EGLSurface pbuffer);
+    ~WorkerContextEGL() override;
+
+    bool makeCurrent() override;
+    void unmakeCurrent() override;
+
+  private:
+    EGLContext mContext;
+    rx::FunctionsEGL *mFunctions;
+    EGLSurface mPbuffer;
+};
+
+WorkerContextEGL::WorkerContextEGL(EGLContext context,
+                                   rx::FunctionsEGL *functions,
+                                   EGLSurface pbuffer)
+    : mContext(context), mFunctions(functions), mPbuffer(pbuffer)
+{}
+
+WorkerContextEGL::~WorkerContextEGL()
+{
+    mFunctions->destroyContext(mContext);
+}
+
+bool WorkerContextEGL::makeCurrent()
+{
+    if (mFunctions->makeCurrent(mPbuffer, mContext) == EGL_FALSE)
+    {
+        ERR() << "Unable to make the EGL context current.";
+        return false;
+    }
+    return true;
+}
+
+void WorkerContextEGL::unmakeCurrent()
+{
+    mFunctions->makeCurrent(EGL_NO_SURFACE, EGL_NO_CONTEXT);
+}
+
+}  // namespace
 
 namespace rx
 {
 
-#define EGL_NO_CONFIG ((EGLConfig)0)
-
 DisplayEGL::DisplayEGL(const egl::DisplayState &state)
-    : DisplayGL(state), mEGL(nullptr), mConfig(EGL_NO_CONFIG)
+    : DisplayGL(state), mRenderer(nullptr), mEGL(nullptr), mConfig(EGL_NO_CONFIG_KHR)
 {}
 
 DisplayEGL::~DisplayEGL() {}
@@ -111,6 +196,392 @@ egl::Error DisplayEGL::initializeContext(EGLContext shareContext,
     return egl::Error(mEGL->getError(), "eglCreateContext failed");
 }
 
+egl::Error DisplayEGL::initialize(egl::Display *display)
+{
+    mDisplayAttributes = display->getAttributeMap();
+    mEGL               = new FunctionsEGLDL();
+
+    void *eglHandle =
+        reinterpret_cast<void *>(mDisplayAttributes.get(EGL_PLATFORM_ANGLE_EGL_HANDLE_ANGLE, 0));
+    ANGLE_TRY(mEGL->initialize(display->getNativeDisplayId(), "libEGL.so.1", eglHandle));
+
+    gl::Version eglVersion(mEGL->majorVersion, mEGL->minorVersion);
+    if (eglVersion < gl::Version(1, 4))
+    {
+        return egl::EglNotInitialized() << "EGL >= 1.4 is required";
+    }
+
+    // Only support modern EGL implementation to keep default implementation
+    // simple.
+    const char *necessaryExtensions[] = {
+        "EGL_KHR_no_config_context",
+        "EGL_KHR_surfaceless_context",
+    };
+
+    for (const char *ext : necessaryExtensions)
+    {
+        if (!mEGL->hasExtension(ext))
+        {
+            return egl::EglNotInitialized() << "need " << ext;
+        }
+    }
+
+    const EGLAttrib platformAttrib = mDisplayAttributes.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, 0);
+    EGLint esBit                   = ESBitFromPlatformAttrib(mEGL, platformAttrib);
+    if (esBit == EGL_NONE)
+    {
+        return egl::EglNotInitialized() << "No matching ES Bit";
+    }
+
+    std::vector<EGLint> configAttribListBase = {
+        EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER, EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+        EGL_CONFIG_CAVEAT,     EGL_NONE,       EGL_CONFORMANT,   esBit,
+        EGL_RENDERABLE_TYPE,   esBit,          EGL_NONE};
+
+    mConfigAttribList = configAttribListBase;
+
+    EGLContext context = EGL_NO_CONTEXT;
+    native_egl::AttributeVector attribs;
+    ANGLE_TRY(initializeContext(EGL_NO_CONTEXT, mDisplayAttributes, &context, &attribs));
+
+    if (!mEGL->makeCurrent(EGL_NO_SURFACE, context))
+    {
+        return egl::EglNotInitialized() << "Could not make context current.";
+    }
+
+    std::unique_ptr<FunctionsGL> functionsGL(mEGL->makeFunctionsGL());
+    functionsGL->initialize(mDisplayAttributes);
+
+    mRenderer.reset(
+        new RendererEGL(std::move(functionsGL), mDisplayAttributes, this, context, attribs));
+    const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
+    if (maxVersion < gl::Version(2, 0))
+    {
+        return egl::EglNotInitialized() << "OpenGL ES 2.0 is not supportable.";
+    }
+
+    ANGLE_TRY(DisplayGL::initialize(display));
+
+    return egl::NoError();
+}
+
+void DisplayEGL::terminate()
+{
+    DisplayGL::terminate();
+
+    EGLBoolean success = mEGL->makeCurrent(EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    if (success == EGL_FALSE)
+    {
+        ERR() << "eglMakeCurrent error " << egl::Error(mEGL->getError());
+    }
+
+    mRenderer.reset();
+
+    egl::Error result = mEGL->terminate();
+    if (result.isError())
+    {
+        ERR() << "eglTerminate error " << result;
+    }
+
+    SafeDelete(mEGL);
+}
+
+SurfaceImpl *DisplayEGL::createWindowSurface(const egl::SurfaceState &state,
+                                             EGLNativeWindowType window,
+                                             const egl::AttributeMap &attribs)
+{
+    EGLConfig config;
+    EGLint numConfig;
+    EGLBoolean success;
+
+    const EGLint configAttribList[] = {EGL_CONFIG_ID, mConfigIds[state.config->configID], EGL_NONE};
+    success                         = mEGL->chooseConfig(configAttribList, &config, 1, &numConfig);
+    ASSERT(success && numConfig == 1);
+
+    return new WindowSurfaceEGL(state, mEGL, config, window);
+}
+
+SurfaceImpl *DisplayEGL::createPbufferSurface(const egl::SurfaceState &state,
+                                              const egl::AttributeMap &attribs)
+{
+    EGLConfig config;
+    EGLint numConfig;
+    EGLBoolean success;
+
+    const EGLint configAttribList[] = {EGL_CONFIG_ID, mConfigIds[state.config->configID], EGL_NONE};
+    success                         = mEGL->chooseConfig(configAttribList, &config, 1, &numConfig);
+    ASSERT(success && numConfig == 1);
+
+    return new PbufferSurfaceEGL(state, mEGL, config);
+}
+
+SurfaceImpl *DisplayEGL::createPbufferFromClientBuffer(const egl::SurfaceState &state,
+                                                       EGLenum buftype,
+                                                       EGLClientBuffer clientBuffer,
+                                                       const egl::AttributeMap &attribs)
+{
+    UNIMPLEMENTED();
+    return nullptr;
+}
+
+SurfaceImpl *DisplayEGL::createPixmapSurface(const egl::SurfaceState &state,
+                                             NativePixmapType nativePixmap,
+                                             const egl::AttributeMap &attribs)
+{
+    UNIMPLEMENTED();
+    return nullptr;
+}
+
+ContextImpl *DisplayEGL::createContext(const gl::State &state,
+                                       gl::ErrorSet *errorSet,
+                                       const egl::Config *configuration,
+                                       const gl::Context *shareContext,
+                                       const egl::AttributeMap &attribs)
+{
+    std::shared_ptr<RendererEGL> renderer;
+    EGLContext nativeShareContext = EGL_NO_CONTEXT;
+    if (shareContext)
+    {
+        ContextEGL *shareContextEGL = GetImplAs<ContextEGL>(shareContext);
+        nativeShareContext          = shareContextEGL->getContext();
+    }
+
+    egl::Error error = createRenderer(nativeShareContext, &renderer);
+    if (error.isError())
+    {
+        ERR() << "Failed to create a shared renderer: " << error.getMessage();
+        return nullptr;
+    }
+
+    return new ContextEGL(state, errorSet, renderer);
+}
+
+template <typename T>
+void DisplayEGL::getConfigAttrib(EGLConfig config, EGLint attribute, T *value) const
+{
+    EGLint tmp;
+    EGLBoolean success = mEGL->getConfigAttrib(config, attribute, &tmp);
+    ASSERT(success == EGL_TRUE);
+    *value = tmp;
+}
+
+template <typename T, typename U>
+void DisplayEGL::getConfigAttribIfExtension(EGLConfig config,
+                                            EGLint attribute,
+                                            T *value,
+                                            const char *extension,
+                                            const U &defaultValue) const
+{
+    if (mEGL->hasExtension(extension))
+    {
+        getConfigAttrib(config, attribute, value);
+    }
+    else
+    {
+        *value = static_cast<T>(defaultValue);
+    }
+}
+
+egl::ConfigSet DisplayEGL::generateConfigs()
+{
+    egl::ConfigSet configSet;
+    mConfigIds.clear();
+
+    EGLint numConfigs;
+    EGLBoolean success = mEGL->chooseConfig(mConfigAttribList.data(), nullptr, 0, &numConfigs);
+    ASSERT(success == EGL_TRUE && numConfigs > 0);
+
+    std::vector<EGLConfig> configs(numConfigs);
+    EGLint numConfigs2;
+    success =
+        mEGL->chooseConfig(mConfigAttribList.data(), configs.data(), numConfigs, &numConfigs2);
+    ASSERT(success == EGL_TRUE && numConfigs2 == numConfigs);
+
+    for (int i = 0; i < numConfigs; i++)
+    {
+        egl::Config config;
+
+        getConfigAttrib(configs[i], EGL_BUFFER_SIZE, &config.bufferSize);
+        getConfigAttrib(configs[i], EGL_RED_SIZE, &config.redSize);
+        getConfigAttrib(configs[i], EGL_GREEN_SIZE, &config.greenSize);
+        getConfigAttrib(configs[i], EGL_BLUE_SIZE, &config.blueSize);
+        getConfigAttrib(configs[i], EGL_LUMINANCE_SIZE, &config.luminanceSize);
+        getConfigAttrib(configs[i], EGL_ALPHA_SIZE, &config.alphaSize);
+        getConfigAttrib(configs[i], EGL_ALPHA_MASK_SIZE, &config.alphaMaskSize);
+        getConfigAttrib(configs[i], EGL_BIND_TO_TEXTURE_RGB, &config.bindToTextureRGB);
+        getConfigAttrib(configs[i], EGL_BIND_TO_TEXTURE_RGBA, &config.bindToTextureRGBA);
+        getConfigAttrib(configs[i], EGL_COLOR_BUFFER_TYPE, &config.colorBufferType);
+        getConfigAttrib(configs[i], EGL_CONFIG_CAVEAT, &config.configCaveat);
+        getConfigAttrib(configs[i], EGL_CONFIG_ID, &config.configID);
+        getConfigAttrib(configs[i], EGL_CONFORMANT, &config.conformant);
+        getConfigAttrib(configs[i], EGL_DEPTH_SIZE, &config.depthSize);
+        getConfigAttrib(configs[i], EGL_LEVEL, &config.level);
+        getConfigAttrib(configs[i], EGL_MAX_PBUFFER_WIDTH, &config.maxPBufferWidth);
+        getConfigAttrib(configs[i], EGL_MAX_PBUFFER_HEIGHT, &config.maxPBufferHeight);
+        getConfigAttrib(configs[i], EGL_MAX_PBUFFER_PIXELS, &config.maxPBufferPixels);
+        getConfigAttrib(configs[i], EGL_MAX_SWAP_INTERVAL, &config.maxSwapInterval);
+        getConfigAttrib(configs[i], EGL_MIN_SWAP_INTERVAL, &config.minSwapInterval);
+        getConfigAttrib(configs[i], EGL_NATIVE_RENDERABLE, &config.nativeRenderable);
+        getConfigAttrib(configs[i], EGL_NATIVE_VISUAL_ID, &config.nativeVisualID);
+        getConfigAttrib(configs[i], EGL_NATIVE_VISUAL_TYPE, &config.nativeVisualType);
+        getConfigAttrib(configs[i], EGL_RENDERABLE_TYPE, &config.renderableType);
+        getConfigAttrib(configs[i], EGL_SAMPLE_BUFFERS, &config.sampleBuffers);
+        getConfigAttrib(configs[i], EGL_SAMPLES, &config.samples);
+        getConfigAttrib(configs[i], EGL_STENCIL_SIZE, &config.stencilSize);
+        getConfigAttrib(configs[i], EGL_SURFACE_TYPE, &config.surfaceType);
+        getConfigAttrib(configs[i], EGL_TRANSPARENT_TYPE, &config.transparentType);
+        getConfigAttrib(configs[i], EGL_TRANSPARENT_RED_VALUE, &config.transparentRedValue);
+        getConfigAttrib(configs[i], EGL_TRANSPARENT_GREEN_VALUE, &config.transparentGreenValue);
+        getConfigAttrib(configs[i], EGL_TRANSPARENT_BLUE_VALUE, &config.transparentBlueValue);
+        getConfigAttribIfExtension(configs[i], EGL_COLOR_COMPONENT_TYPE_EXT,
+                                   &config.colorComponentType, "EGL_EXT_pixel_format_float",
+                                   EGL_COLOR_COMPONENT_TYPE_FIXED_EXT);
+
+        if (config.colorBufferType == EGL_RGB_BUFFER)
+        {
+            ASSERT(config.colorComponentType == EGL_COLOR_COMPONENT_TYPE_FIXED_EXT);
+            if (config.redSize == 8 && config.greenSize == 8 && config.blueSize == 8 &&
+                config.alphaSize == 8)
+            {
+                config.renderTargetFormat = GL_RGBA8;
+            }
+            else if (config.redSize == 8 && config.greenSize == 8 && config.blueSize == 8 &&
+                     config.alphaSize == 0)
+            {
+                config.renderTargetFormat = GL_RGB8;
+            }
+            else if (config.redSize == 5 && config.greenSize == 6 && config.blueSize == 5 &&
+                     config.alphaSize == 0)
+            {
+                config.renderTargetFormat = GL_RGB565;
+            }
+            else if (config.redSize == 5 && config.greenSize == 5 && config.blueSize == 5 &&
+                     config.alphaSize == 1)
+            {
+                config.renderTargetFormat = GL_RGB5_A1;
+            }
+            else if (config.redSize == 4 && config.greenSize == 4 && config.blueSize == 4 &&
+                     config.alphaSize == 4)
+            {
+                config.renderTargetFormat = GL_RGBA4;
+            }
+            else
+            {
+                ERR() << "RGBA(" << config.redSize << "," << config.greenSize << ","
+                      << config.blueSize << "," << config.alphaSize << ") not handled";
+                UNREACHABLE();
+            }
+        }
+        else
+        {
+            UNREACHABLE();
+        }
+
+        if (config.depthSize == 0 && config.stencilSize == 0)
+        {
+            config.depthStencilFormat = GL_ZERO;
+        }
+        else if (config.depthSize == 16 && config.stencilSize == 0)
+        {
+            config.depthStencilFormat = GL_DEPTH_COMPONENT16;
+        }
+        else if (config.depthSize == 24 && config.stencilSize == 0)
+        {
+            config.depthStencilFormat = GL_DEPTH_COMPONENT24;
+        }
+        else if (config.depthSize == 24 && config.stencilSize == 8)
+        {
+            config.depthStencilFormat = GL_DEPTH24_STENCIL8;
+        }
+        else if (config.depthSize == 0 && config.stencilSize == 8)
+        {
+            config.depthStencilFormat = GL_STENCIL_INDEX8;
+        }
+        else
+        {
+            UNREACHABLE();
+        }
+
+        config.matchNativePixmap  = EGL_NONE;
+        config.optimalOrientation = 0;
+
+        int internalId         = configSet.add(config);
+        mConfigIds[internalId] = config.configID;
+    }
+
+    return configSet;
+}
+
+bool DisplayEGL::testDeviceLost()
+{
+    return false;
+}
+
+egl::Error DisplayEGL::restoreLostDevice(const egl::Display *display)
+{
+    UNIMPLEMENTED();
+    return egl::NoError();
+}
+
+bool DisplayEGL::isValidNativeWindow(EGLNativeWindowType window) const
+{
+    return true;
+}
+
+DeviceImpl *DisplayEGL::createDevice()
+{
+    UNIMPLEMENTED();
+    return nullptr;
+}
+
+egl::Error DisplayEGL::waitClient(const gl::Context *context)
+{
+    UNIMPLEMENTED();
+    return egl::NoError();
+}
+
+egl::Error DisplayEGL::waitNative(const gl::Context *context, EGLint engine)
+{
+    UNIMPLEMENTED();
+    return egl::NoError();
+}
+
+egl::Error DisplayEGL::makeCurrent(egl::Surface *drawSurface,
+                                   egl::Surface *readSurface,
+                                   gl::Context *context)
+{
+    EGLSurface newSurface = EGL_NO_SURFACE;
+    if (drawSurface)
+    {
+        SurfaceEGL *drawSurfaceEGL = GetImplAs<SurfaceEGL>(drawSurface);
+        newSurface                 = drawSurfaceEGL->getSurface();
+    }
+
+    EGLContext newContext = EGL_NO_CONTEXT;
+    if (context)
+    {
+        ContextEGL *contextEGL = GetImplAs<ContextEGL>(context);
+        newContext             = contextEGL->getContext();
+    }
+
+    if (mEGL->makeCurrent(newSurface, newContext) == EGL_FALSE)
+    {
+        return egl::Error(mEGL->getError(), "eglMakeCurrent failed");
+    }
+
+    return DisplayGL::makeCurrent(drawSurface, readSurface, context);
+}
+
+gl::Version DisplayEGL::getMaxSupportedESVersion() const
+{
+    return mRenderer->getMaxSupportedESVersion();
+}
+
+void DisplayEGL::destroyNativeContext(EGLContext context)
+{
+    mEGL->destroyContext(context);
+}
+
 void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
     gl::Version eglVersion(mEGL->majorVersion, mEGL->minorVersion);
@@ -168,6 +639,8 @@ void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->noConfigContext = mEGL->hasExtension("EGL_KHR_no_config_context");
 
+    outExtensions->surfacelessContext = mEGL->hasExtension("EGL_KHR_surfaceless_context");
+
     outExtensions->framebufferTargetANDROID = mEGL->hasExtension("EGL_ANDROID_framebuffer_target");
 
     DisplayGL::generateExtensions(outExtensions);
@@ -184,6 +657,58 @@ void DisplayEGL::setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDR
     {
         mEGL->setBlobCacheFuncsANDROID(set, get);
     }
+}
+
+egl::Error DisplayEGL::makeCurrentSurfaceless(gl::Context *context)
+{
+    // Nothing to do because EGL always uses the same context and the previous surface can be left
+    // current.
+    return egl::NoError();
+}
+
+egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
+                                      std::shared_ptr<RendererEGL> *outRenderer)
+{
+    EGLContext context = EGL_NO_CONTEXT;
+    native_egl::AttributeVector attribs;
+    ANGLE_TRY(initializeContext(shareContext, mDisplayAttributes, &context, &attribs));
+
+    if (mEGL->makeCurrent(EGL_NO_SURFACE, context) == EGL_FALSE)
+    {
+        return egl::EglNotInitialized()
+               << "eglMakeCurrent failed with " << egl::Error(mEGL->getError());
+    }
+
+    std::unique_ptr<FunctionsGL> functionsGL(mEGL->makeFunctionsGL());
+    functionsGL->initialize(mDisplayAttributes);
+
+    outRenderer->reset(
+        new RendererEGL(std::move(functionsGL), mDisplayAttributes, this, context, attribs));
+
+    return egl::NoError();
+}
+
+WorkerContext *DisplayEGL::createWorkerContext(std::string *infoLog,
+                                               EGLContext sharedContext,
+                                               const native_egl::AttributeVector workerAttribs)
+{
+    EGLContext context = mEGL->createContext(mConfig, sharedContext, workerAttribs.data());
+    if (context == EGL_NO_CONTEXT)
+    {
+        *infoLog += "Unable to create the EGL context.";
+        return nullptr;
+    }
+    return new WorkerContextEGL(context, mEGL, EGL_NO_SURFACE);
+}
+
+void DisplayEGL::initializeFrontendFeatures(angle::FrontendFeatures *features) const
+{
+    mRenderer->initializeFrontendFeatures(features);
+}
+
+void DisplayEGL::populateFeatureList(angle::FeatureList *features)
+{
+    mRenderer->getFeatures().populateFeatureList(features);
 }
 
 }  // namespace rx

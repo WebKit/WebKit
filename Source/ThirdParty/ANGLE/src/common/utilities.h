@@ -222,6 +222,12 @@ enum class PipelineType
 };
 
 PipelineType GetPipelineType(ShaderType shaderType);
+
+// For use with KHR_debug.
+const char *GetDebugMessageSourceString(GLenum source);
+const char *GetDebugMessageTypeString(GLenum type);
+const char *GetDebugMessageSeverityString(GLenum severity);
+
 }  // namespace gl
 
 namespace egl

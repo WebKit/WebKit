@@ -9,6 +9,7 @@
 #include "system_utils.h"
 
 #include <array>
+#include <iostream>
 
 #include <dlfcn.h>
 #include <sys/stat.h>
@@ -55,6 +56,19 @@ const char *GetPathSeparatorForEnvironmentVar()
     return ":";
 }
 
+std::string GetHelperExecutableDir()
+{
+    std::string directory;
+    static int dummySymbol = 0;
+    Dl_info dlInfo;
+    if (dladdr(&dummySymbol, &dlInfo) != 0)
+    {
+        std::string moduleName = dlInfo.dli_fname;
+        directory              = moduleName.substr(0, moduleName.find_last_of('/') + 1);
+    }
+    return directory;
+}
+
 class PosixLibrary : public Library
 {
   public:
@@ -63,17 +77,15 @@ class PosixLibrary : public Library
         std::string directory;
         if (searchType == SearchType::ApplicationDir)
         {
-            static int dummySymbol = 0;
-            Dl_info dlInfo;
-            if (dladdr(&dummySymbol, &dlInfo) != 0)
-            {
-                std::string moduleName = dlInfo.dli_fname;
-                directory              = moduleName.substr(0, moduleName.find_last_of('/') + 1);
-            }
+            directory = GetHelperExecutableDir();
         }
 
         std::string fullPath = directory + libraryName + "." + GetSharedLibraryExtension();
         mModule              = dlopen(fullPath.c_str(), RTLD_NOW);
+        if (!mModule)
+        {
+            std::cerr << "Failed to load " << libraryName << ": " << dlerror() << std::endl;
+        }
     }
 
     ~PosixLibrary() override

@@ -71,6 +71,8 @@ TOutputVulkanGLSLForMetal::TOutputVulkanGLSLForMetal(TInfoSinkBase &objSink,
                         shaderType,
                         shaderVersion,
                         output,
+                        false,
+                        true,
                         compileOptions)
 {}
 

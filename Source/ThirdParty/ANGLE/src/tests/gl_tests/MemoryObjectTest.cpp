@@ -64,6 +64,42 @@ TEST_P(MemoryObjectTest, ShouldFailValidationOnImportFdUnsupportedHandleType)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test memory object queries
+TEST_P(MemoryObjectTest, MemoryObjectQueries)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object"));
+
+    GLMemoryObject memoryObject;
+
+    // Validate that the initial state of GL_DEDICATED_MEMORY_OBJECT_EXT is GL_FALSE
+    {
+        GLint dedicatedMemory = 0;
+        glGetMemoryObjectParameterivEXT(memoryObject, GL_DEDICATED_MEMORY_OBJECT_EXT,
+                                        &dedicatedMemory);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_GL_FALSE(dedicatedMemory);
+    }
+
+    // Change GL_DEDICATED_MEMORY_OBJECT_EXT to GL_TRUE
+    {
+        GLint dedicatedMemory = GL_TRUE;
+        glMemoryObjectParameterivEXT(memoryObject, GL_DEDICATED_MEMORY_OBJECT_EXT,
+                                     &dedicatedMemory);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Confirm that GL_DEDICATED_MEMORY_OBJECT_EXT is now TRUE
+    {
+        GLint dedicatedMemory = 0;
+        glGetMemoryObjectParameterivEXT(memoryObject, GL_DEDICATED_MEMORY_OBJECT_EXT,
+                                        &dedicatedMemory);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_GL_TRUE(dedicatedMemory);
+    }
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(MemoryObjectTest);

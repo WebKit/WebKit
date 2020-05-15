@@ -569,20 +569,20 @@ CallCapture CaptureGetTexParameterIuiv(const State &glState,
 CallCapture CaptureGetnUniformfv(const State &glState,
                                  bool isCallValid,
                                  ShaderProgramID programPacked,
-                                 GLint location,
+                                 UniformLocation locationPacked,
                                  GLsizei bufSize,
                                  GLfloat *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addValueParam("location", ParamType::TGLint, location);
+    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
     ParamCapture paramsParam("params", ParamType::TGLfloatPointer);
     InitParamValue(ParamType::TGLfloatPointer, params, &paramsParam.value);
-    CaptureGetnUniformfv_params(glState, isCallValid, programPacked, location, bufSize, params,
-                                &paramsParam);
+    CaptureGetnUniformfv_params(glState, isCallValid, programPacked, locationPacked, bufSize,
+                                params, &paramsParam);
     paramBuffer.addParam(std::move(paramsParam));
 
     return CallCapture(gl::EntryPoint::GetnUniformfv, std::move(paramBuffer));
@@ -591,20 +591,20 @@ CallCapture CaptureGetnUniformfv(const State &glState,
 CallCapture CaptureGetnUniformiv(const State &glState,
                                  bool isCallValid,
                                  ShaderProgramID programPacked,
-                                 GLint location,
+                                 UniformLocation locationPacked,
                                  GLsizei bufSize,
                                  GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addValueParam("location", ParamType::TGLint, location);
+    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
     ParamCapture paramsParam("params", ParamType::TGLintPointer);
     InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-    CaptureGetnUniformiv_params(glState, isCallValid, programPacked, location, bufSize, params,
-                                &paramsParam);
+    CaptureGetnUniformiv_params(glState, isCallValid, programPacked, locationPacked, bufSize,
+                                params, &paramsParam);
     paramBuffer.addParam(std::move(paramsParam));
 
     return CallCapture(gl::EntryPoint::GetnUniformiv, std::move(paramBuffer));
@@ -613,20 +613,20 @@ CallCapture CaptureGetnUniformiv(const State &glState,
 CallCapture CaptureGetnUniformuiv(const State &glState,
                                   bool isCallValid,
                                   ShaderProgramID programPacked,
-                                  GLint location,
+                                  UniformLocation locationPacked,
                                   GLsizei bufSize,
                                   GLuint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addValueParam("location", ParamType::TGLint, location);
+    paramBuffer.addValueParam("locationPacked", ParamType::TUniformLocation, locationPacked);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
 
     ParamCapture paramsParam("params", ParamType::TGLuintPointer);
     InitParamValue(ParamType::TGLuintPointer, params, &paramsParam.value);
-    CaptureGetnUniformuiv_params(glState, isCallValid, programPacked, location, bufSize, params,
-                                 &paramsParam);
+    CaptureGetnUniformuiv_params(glState, isCallValid, programPacked, locationPacked, bufSize,
+                                 params, &paramsParam);
     paramBuffer.addParam(std::move(paramsParam));
 
     return CallCapture(gl::EntryPoint::GetnUniformuiv, std::move(paramBuffer));

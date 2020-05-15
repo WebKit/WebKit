@@ -127,6 +127,7 @@ struct RasterizerState final
 {
     // This will zero-initialize the struct, including padding.
     RasterizerState();
+    RasterizerState(const RasterizerState &other);
 
     bool cullFace;
     CullFaceMode cullMode;
@@ -140,6 +141,8 @@ struct RasterizerState final
     bool multiSample;
 
     bool rasterizerDiscard;
+
+    bool dither;
 };
 
 bool operator==(const RasterizerState &a, const RasterizerState &b);
@@ -150,8 +153,6 @@ struct BlendState final
     // This will zero-initialize the struct, including padding.
     BlendState();
     BlendState(const BlendState &other);
-
-    bool allChannelsMasked() const;
 
     bool blend;
     GLenum sourceBlendRGB;
@@ -165,14 +166,12 @@ struct BlendState final
     bool colorMaskGreen;
     bool colorMaskBlue;
     bool colorMaskAlpha;
-
-    bool sampleAlphaToCoverage;
-
-    bool dither;
 };
 
 bool operator==(const BlendState &a, const BlendState &b);
 bool operator!=(const BlendState &a, const BlendState &b);
+
+using BlendStateArray = std::array<BlendState, IMPLEMENTATION_MAX_DRAW_BUFFERS>;
 
 struct DepthStencilState final
 {
@@ -488,8 +487,7 @@ using ActiveTextureMask = angle::BitSet<IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 template <typename T>
 using ActiveTextureArray = std::array<T, IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 
-using ActiveTexturePointerArray = ActiveTextureArray<Texture *>;
-using ActiveTextureTypeArray    = ActiveTextureArray<TextureType>;
+using ActiveTextureTypeArray = ActiveTextureArray<TextureType>;
 
 template <typename T>
 using UniformBuffersArray = std::array<T, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS>;

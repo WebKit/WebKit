@@ -108,3 +108,6 @@ TEST_P(FormatPrintTest, PrintAllSupportedFormats)
 ANGLE_INSTANTIATE_TEST(FormatPrintTest, ES2_VULKAN(), ES3_VULKAN());
 
 }  // anonymous namespace
+
+// Included here to fix a compile error due to white box tests using angle_end2end_tests_main.
+void RegisterContextCompatibilityTests() {}

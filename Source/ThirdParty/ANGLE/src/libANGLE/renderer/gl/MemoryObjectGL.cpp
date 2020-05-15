@@ -6,6 +6,7 @@
 #include "libANGLE/renderer/gl/MemoryObjectGL.h"
 
 #include "libANGLE/Context.h"
+#include "libANGLE/queryconversions.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
@@ -29,14 +30,34 @@ void MemoryObjectGL::onDestroy(const gl::Context *context)
     mMemoryObject = 0;
 }
 
+angle::Result MemoryObjectGL::setDedicatedMemory(const gl::Context *context, bool dedicatedMemory)
+{
+    const FunctionsGL *functions = GetFunctionsGL(context);
+
+    GLint params = gl::ConvertToGLBoolean(dedicatedMemory);
+    ANGLE_GL_TRY(context, functions->memoryObjectParameterivEXT(
+                              mMemoryObject, GL_DEDICATED_MEMORY_OBJECT_EXT, &params));
+    return angle::Result::Continue;
+}
+
 angle::Result MemoryObjectGL::importFd(gl::Context *context,
                                        GLuint64 size,
                                        gl::HandleType handleType,
                                        GLint fd)
 {
     const FunctionsGL *functions = GetFunctionsGL(context);
-    functions->importMemoryFdEXT(mMemoryObject, size, ToGLenum(handleType), fd);
+    ANGLE_GL_TRY(context,
+                 functions->importMemoryFdEXT(mMemoryObject, size, ToGLenum(handleType), fd));
     return angle::Result::Continue;
+}
+
+angle::Result MemoryObjectGL::importZirconHandle(gl::Context *context,
+                                                 GLuint64 size,
+                                                 gl::HandleType handleType,
+                                                 GLuint handle)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
 }
 
 GLuint MemoryObjectGL::getMemoryObjectID() const

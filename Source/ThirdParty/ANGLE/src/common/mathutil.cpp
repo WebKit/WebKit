@@ -79,15 +79,4 @@ void convert999E5toRGBFloats(unsigned int input, float *red, float *green, float
         inputData->B * pow(2.0f, (int)inputData->E - g_sharedexp_bias - g_sharedexp_mantissabits);
 }
 
-int BitCountPolyfill(uint32_t bits)
-{
-    int ones = 0;
-    while (bits)
-    {
-        ones += bool(bits & 1);
-        bits >>= 1;
-    }
-    return ones;
-}
-
 }  // namespace gl

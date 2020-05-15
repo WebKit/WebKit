@@ -32,6 +32,10 @@ class SemaphoreImpl : angle::NonCopyable
 
     virtual angle::Result importFd(gl::Context *context, gl::HandleType handleType, GLint fd) = 0;
 
+    virtual angle::Result importZirconHandle(gl::Context *context,
+                                             gl::HandleType handleType,
+                                             GLuint handle) = 0;
+
     virtual angle::Result wait(gl::Context *context,
                                const gl::BufferBarrierVector &bufferBarriers,
                                const gl::TextureBarrierVector &textureBarriers) = 0;

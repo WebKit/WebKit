@@ -87,18 +87,19 @@
     GLuint getUniformBlockIndex(ShaderProgramID programPacked, const GLchar *uniformBlockName);    \
     void getUniformIndices(ShaderProgramID programPacked, GLsizei uniformCount,                    \
                            const GLchar *const *uniformNames, GLuint *uniformIndices);             \
-    void getUniformuiv(ShaderProgramID programPacked, GLint location, GLuint *params);             \
+    void getUniformuiv(ShaderProgramID programPacked, UniformLocation locationPacked,              \
+                       GLuint *params);                                                            \
     void getVertexAttribIiv(GLuint index, GLenum pname, GLint *params);                            \
     void getVertexAttribIuiv(GLuint index, GLenum pname, GLuint *params);                          \
     void invalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments);  \
     void invalidateSubFramebuffer(GLenum target, GLsizei numAttachments,                           \
                                   const GLenum *attachments, GLint x, GLint y, GLsizei width,      \
                                   GLsizei height);                                                 \
-    GLboolean isQuery(QueryID idPacked);                                                           \
-    GLboolean isSampler(SamplerID samplerPacked);                                                  \
-    GLboolean isSync(GLsync sync);                                                                 \
-    GLboolean isTransformFeedback(TransformFeedbackID idPacked);                                   \
-    GLboolean isVertexArray(VertexArrayID arrayPacked);                                            \
+    GLboolean isQuery(QueryID idPacked) const;                                                     \
+    GLboolean isSampler(SamplerID samplerPacked) const;                                            \
+    GLboolean isSync(GLsync sync) const;                                                           \
+    GLboolean isTransformFeedback(TransformFeedbackID idPacked) const;                             \
+    GLboolean isVertexArray(VertexArrayID arrayPacked) const;                                      \
     void *mapBufferRange(BufferBinding targetPacked, GLintptr offset, GLsizeiptr length,           \
                          GLbitfield access);                                                       \
     void pauseTransformFeedback();                                                                 \
@@ -125,27 +126,27 @@
                        GLenum type, const void *pixels);                                           \
     void transformFeedbackVaryings(ShaderProgramID programPacked, GLsizei count,                   \
                                    const GLchar *const *varyings, GLenum bufferMode);              \
-    void uniform1ui(GLint location, GLuint v0);                                                    \
-    void uniform1uiv(GLint location, GLsizei count, const GLuint *value);                          \
-    void uniform2ui(GLint location, GLuint v0, GLuint v1);                                         \
-    void uniform2uiv(GLint location, GLsizei count, const GLuint *value);                          \
-    void uniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v2);                              \
-    void uniform3uiv(GLint location, GLsizei count, const GLuint *value);                          \
-    void uniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);                   \
-    void uniform4uiv(GLint location, GLsizei count, const GLuint *value);                          \
+    void uniform1ui(UniformLocation locationPacked, GLuint v0);                                    \
+    void uniform1uiv(UniformLocation locationPacked, GLsizei count, const GLuint *value);          \
+    void uniform2ui(UniformLocation locationPacked, GLuint v0, GLuint v1);                         \
+    void uniform2uiv(UniformLocation locationPacked, GLsizei count, const GLuint *value);          \
+    void uniform3ui(UniformLocation locationPacked, GLuint v0, GLuint v1, GLuint v2);              \
+    void uniform3uiv(UniformLocation locationPacked, GLsizei count, const GLuint *value);          \
+    void uniform4ui(UniformLocation locationPacked, GLuint v0, GLuint v1, GLuint v2, GLuint v3);   \
+    void uniform4uiv(UniformLocation locationPacked, GLsizei count, const GLuint *value);          \
     void uniformBlockBinding(ShaderProgramID programPacked, GLuint uniformBlockIndex,              \
                              GLuint uniformBlockBinding);                                          \
-    void uniformMatrix2x3fv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix2x3fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
-    void uniformMatrix2x4fv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix2x4fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
-    void uniformMatrix3x2fv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix3x2fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
-    void uniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix3x4fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
-    void uniformMatrix4x2fv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix4x2fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
-    void uniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose,                    \
+    void uniformMatrix4x3fv(UniformLocation locationPacked, GLsizei count, GLboolean transpose,    \
                             const GLfloat *value);                                                 \
     GLboolean unmapBuffer(BufferBinding targetPacked);                                             \
     void vertexAttribDivisor(GLuint index, GLuint divisor);                                        \

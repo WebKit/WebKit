@@ -11,7 +11,7 @@
 namespace gl
 {
 
-bool ValidateBindFragDataLocationIndexed(Context *context,
+bool ValidateBindFragDataLocationIndexed(const Context *context,
                                          ShaderProgramID program,
                                          GLuint colorNumber,
                                          GLuint index,
@@ -20,147 +20,165 @@ bool ValidateBindFragDataLocationIndexed(Context *context,
     return true;
 }
 
-bool ValidateColorP3ui(Context *context, GLenum type, GLuint color)
+bool ValidateColorP3ui(const Context *context, GLenum type, GLuint color)
 {
     return true;
 }
 
-bool ValidateColorP3uiv(Context *context, GLenum type, const GLuint *color)
+bool ValidateColorP3uiv(const Context *context, GLenum type, const GLuint *color)
 {
     return true;
 }
 
-bool ValidateColorP4ui(Context *context, GLenum type, GLuint color)
+bool ValidateColorP4ui(const Context *context, GLenum type, GLuint color)
 {
     return true;
 }
 
-bool ValidateColorP4uiv(Context *context, GLenum type, const GLuint *color)
+bool ValidateColorP4uiv(const Context *context, GLenum type, const GLuint *color)
 {
     return true;
 }
 
-bool ValidateGetFragDataIndex(Context *context, ShaderProgramID program, const GLchar *name)
+bool ValidateGetFragDataIndex(const Context *context, ShaderProgramID program, const GLchar *name)
 {
     return true;
 }
 
-bool ValidateGetQueryObjecti64v(Context *context, QueryID id, GLenum pname, GLint64 *params)
+bool ValidateGetQueryObjecti64v(const Context *context,
+                                QueryID id,
+                                GLenum pname,
+                                const GLint64 *params)
 {
     return true;
 }
 
-bool ValidateGetQueryObjectui64v(Context *context, QueryID id, GLenum pname, GLuint64 *params)
+bool ValidateGetQueryObjectui64v(const Context *context,
+                                 QueryID id,
+                                 GLenum pname,
+                                 const GLuint64 *params)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP1ui(Context *context, GLenum texture, GLenum type, GLuint coords)
+bool ValidateMultiTexCoordP1ui(const Context *context, GLenum texture, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP1uiv(Context *context, GLenum texture, GLenum type, const GLuint *coords)
+bool ValidateMultiTexCoordP1uiv(const Context *context,
+                                GLenum texture,
+                                GLenum type,
+                                const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP2ui(Context *context, GLenum texture, GLenum type, GLuint coords)
+bool ValidateMultiTexCoordP2ui(const Context *context, GLenum texture, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP2uiv(Context *context, GLenum texture, GLenum type, const GLuint *coords)
+bool ValidateMultiTexCoordP2uiv(const Context *context,
+                                GLenum texture,
+                                GLenum type,
+                                const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP3ui(Context *context, GLenum texture, GLenum type, GLuint coords)
+bool ValidateMultiTexCoordP3ui(const Context *context, GLenum texture, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP3uiv(Context *context, GLenum texture, GLenum type, const GLuint *coords)
+bool ValidateMultiTexCoordP3uiv(const Context *context,
+                                GLenum texture,
+                                GLenum type,
+                                const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP4ui(Context *context, GLenum texture, GLenum type, GLuint coords)
+bool ValidateMultiTexCoordP4ui(const Context *context, GLenum texture, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateMultiTexCoordP4uiv(Context *context, GLenum texture, GLenum type, const GLuint *coords)
+bool ValidateMultiTexCoordP4uiv(const Context *context,
+                                GLenum texture,
+                                GLenum type,
+                                const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateNormalP3ui(Context *context, GLenum type, GLuint coords)
+bool ValidateNormalP3ui(const Context *context, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateNormalP3uiv(Context *context, GLenum type, const GLuint *coords)
+bool ValidateNormalP3uiv(const Context *context, GLenum type, const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateQueryCounter(Context *context, QueryID id, QueryType targetPacked)
+bool ValidateQueryCounter(const Context *context, QueryID id, QueryType targetPacked)
 {
     return true;
 }
 
-bool ValidateSecondaryColorP3ui(Context *context, GLenum type, GLuint color)
+bool ValidateSecondaryColorP3ui(const Context *context, GLenum type, GLuint color)
 {
     return true;
 }
 
-bool ValidateSecondaryColorP3uiv(Context *context, GLenum type, const GLuint *color)
+bool ValidateSecondaryColorP3uiv(const Context *context, GLenum type, const GLuint *color)
 {
     return true;
 }
 
-bool ValidateTexCoordP1ui(Context *context, GLenum type, GLuint coords)
+bool ValidateTexCoordP1ui(const Context *context, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP1uiv(Context *context, GLenum type, const GLuint *coords)
+bool ValidateTexCoordP1uiv(const Context *context, GLenum type, const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP2ui(Context *context, GLenum type, GLuint coords)
+bool ValidateTexCoordP2ui(const Context *context, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP2uiv(Context *context, GLenum type, const GLuint *coords)
+bool ValidateTexCoordP2uiv(const Context *context, GLenum type, const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP3ui(Context *context, GLenum type, GLuint coords)
+bool ValidateTexCoordP3ui(const Context *context, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP3uiv(Context *context, GLenum type, const GLuint *coords)
+bool ValidateTexCoordP3uiv(const Context *context, GLenum type, const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP4ui(Context *context, GLenum type, GLuint coords)
+bool ValidateTexCoordP4ui(const Context *context, GLenum type, GLuint coords)
 {
     return true;
 }
 
-bool ValidateTexCoordP4uiv(Context *context, GLenum type, const GLuint *coords)
+bool ValidateTexCoordP4uiv(const Context *context, GLenum type, const GLuint *coords)
 {
     return true;
 }
 
-bool ValidateVertexAttribP1ui(Context *context,
+bool ValidateVertexAttribP1ui(const Context *context,
                               GLuint index,
                               GLenum type,
                               GLboolean normalized,
@@ -169,7 +187,7 @@ bool ValidateVertexAttribP1ui(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP1uiv(Context *context,
+bool ValidateVertexAttribP1uiv(const Context *context,
                                GLuint index,
                                GLenum type,
                                GLboolean normalized,
@@ -178,7 +196,7 @@ bool ValidateVertexAttribP1uiv(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP2ui(Context *context,
+bool ValidateVertexAttribP2ui(const Context *context,
                               GLuint index,
                               GLenum type,
                               GLboolean normalized,
@@ -187,7 +205,7 @@ bool ValidateVertexAttribP2ui(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP2uiv(Context *context,
+bool ValidateVertexAttribP2uiv(const Context *context,
                                GLuint index,
                                GLenum type,
                                GLboolean normalized,
@@ -196,7 +214,7 @@ bool ValidateVertexAttribP2uiv(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP3ui(Context *context,
+bool ValidateVertexAttribP3ui(const Context *context,
                               GLuint index,
                               GLenum type,
                               GLboolean normalized,
@@ -205,7 +223,7 @@ bool ValidateVertexAttribP3ui(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP3uiv(Context *context,
+bool ValidateVertexAttribP3uiv(const Context *context,
                                GLuint index,
                                GLenum type,
                                GLboolean normalized,
@@ -214,7 +232,7 @@ bool ValidateVertexAttribP3uiv(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP4ui(Context *context,
+bool ValidateVertexAttribP4ui(const Context *context,
                               GLuint index,
                               GLenum type,
                               GLboolean normalized,
@@ -223,7 +241,7 @@ bool ValidateVertexAttribP4ui(Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP4uiv(Context *context,
+bool ValidateVertexAttribP4uiv(const Context *context,
                                GLuint index,
                                GLenum type,
                                GLboolean normalized,
@@ -232,32 +250,32 @@ bool ValidateVertexAttribP4uiv(Context *context,
     return true;
 }
 
-bool ValidateVertexP2ui(Context *context, GLenum type, GLuint value)
+bool ValidateVertexP2ui(const Context *context, GLenum type, GLuint value)
 {
     return true;
 }
 
-bool ValidateVertexP2uiv(Context *context, GLenum type, const GLuint *value)
+bool ValidateVertexP2uiv(const Context *context, GLenum type, const GLuint *value)
 {
     return true;
 }
 
-bool ValidateVertexP3ui(Context *context, GLenum type, GLuint value)
+bool ValidateVertexP3ui(const Context *context, GLenum type, GLuint value)
 {
     return true;
 }
 
-bool ValidateVertexP3uiv(Context *context, GLenum type, const GLuint *value)
+bool ValidateVertexP3uiv(const Context *context, GLenum type, const GLuint *value)
 {
     return true;
 }
 
-bool ValidateVertexP4ui(Context *context, GLenum type, GLuint value)
+bool ValidateVertexP4ui(const Context *context, GLenum type, GLuint value)
 {
     return true;
 }
 
-bool ValidateVertexP4uiv(Context *context, GLenum type, const GLuint *value)
+bool ValidateVertexP4uiv(const Context *context, GLenum type, const GLuint *value)
 {
     return true;
 }

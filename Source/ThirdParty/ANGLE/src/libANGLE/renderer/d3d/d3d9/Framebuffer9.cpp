@@ -61,7 +61,7 @@ angle::Result Framebuffer9::clearImpl(const gl::Context *context,
                                       const ClearParameters &clearParams)
 {
     ANGLE_TRY(mRenderer->applyRenderTarget(context, mRenderTargetCache.getColors()[0],
-                                           mRenderTargetCache.getDepthStencil()));
+                                           mRenderTargetCache.getDepthStencil(true)));
 
     const gl::State &glState = context->getState();
     float nearZ              = glState.getNearPlane();
@@ -72,7 +72,7 @@ angle::Result Framebuffer9::clearImpl(const gl::Context *context,
     mRenderer->setScissorRectangle(glState.getScissor(), glState.isScissorTestEnabled());
 
     mRenderer->clear(clearParams, mRenderTargetCache.getColors()[0],
-                     mRenderTargetCache.getDepthStencil());
+                     mRenderTargetCache.getDepthStencil(true));
     return angle::Result::Continue;
 }
 

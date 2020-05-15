@@ -13,11 +13,11 @@
 #include <string>
 #include <vector>
 
-#define ANGLE_FEATURE_CONDITION(set, feature, cond)     \
-    do                                                  \
-    {                                                   \
-        set->feature.enabled   = cond;                  \
-        set->feature.condition = ANGLE_STRINGIFY(cond); \
+#define ANGLE_FEATURE_CONDITION(set, feature, cond)       \
+    do                                                    \
+    {                                                     \
+        (set)->feature.enabled   = cond;                  \
+        (set)->feature.condition = ANGLE_STRINGIFY(cond); \
     } while (0)
 
 namespace angle

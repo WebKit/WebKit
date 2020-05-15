@@ -111,4 +111,56 @@ TEST_P(TextureParameterTest, Set)
     }
 }
 
+// Make sure we don't improperly cast an int into a float in ANGLE's internals
+TEST_P(TextureParameterTest, IntConversionsAndIntBounds)
+{
+    // Test integers that can't be represented as floats, INT_MIN, and INT_MAX
+    constexpr GLint kFirstIntThatCannotBeFloat         = 16777217;
+    constexpr unsigned int kParameterLength            = 4;
+    constexpr std::array<GLint, kParameterLength> crop = {
+        -kFirstIntThatCannotBeFloat, kFirstIntThatCannotBeFloat, std::numeric_limits<GLint>::max(),
+        std::numeric_limits<GLint>::min()};
+    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, crop.data());
+    std::array<GLint, kParameterLength> cropStored = {0};
+    glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, cropStored.data());
+    ASSERT_EQ(crop, cropStored);
+}
+
+// Check that texture parameters can be set by glTexParameterx, glTexParameterxv
+// and get by glGetTexParameterxv.
+TEST_P(TextureParameterTest, SetFixedPoint)
+{
+    std::array<GLfixed, 4> params = {};
+
+    glTexParameterx(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    EXPECT_GL_NO_ERROR();
+
+    glGetTexParameterxv(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, params.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GL_TRUE(params[0]);
+
+    std::array<GLfixed, 4> cropRect = {0x10000, 0x10000, 0x20000, 0x20000};
+
+    glTexParameterxv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, cropRect.data());
+    EXPECT_GL_NO_ERROR();
+
+    glGetTexParameterxv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, params.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(cropRect, params);
+
+    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    EXPECT_GL_NO_ERROR();
+
+    glGetTexParameterxv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, params.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_REPEAT, params[0]);
+
+    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    EXPECT_GL_NO_ERROR();
+
+    glGetTexParameterxv(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, params.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(GL_LINEAR, params[0]);
+}
+
 ANGLE_INSTANTIATE_TEST_ES1(TextureParameterTest);

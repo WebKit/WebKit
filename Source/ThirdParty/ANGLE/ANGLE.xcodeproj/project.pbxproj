@@ -424,8 +424,6 @@
 		5CB3012A1DE39F1A00D2C405 /* functionsgl_typedefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300F61DE39F1A00D2C405 /* functionsgl_typedefs.h */; };
 		5CB3012B1DE39F1A00D2C405 /* FunctionsGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300F71DE39F1A00D2C405 /* FunctionsGL.cpp */; };
 		5CB3012C1DE39F1A00D2C405 /* FunctionsGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300F81DE39F1A00D2C405 /* FunctionsGL.h */; };
-		5CB3012D1DE39F1A00D2C405 /* PathGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300FA1DE39F1A00D2C405 /* PathGL.cpp */; };
-		5CB3012E1DE39F1A00D2C405 /* PathGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300FB1DE39F1A00D2C405 /* PathGL.h */; };
 		5CB3012F1DE39F1A00D2C405 /* ProgramGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300FC1DE39F1A00D2C405 /* ProgramGL.cpp */; };
 		5CB301301DE39F1A00D2C405 /* ProgramGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300FD1DE39F1A00D2C405 /* ProgramGL.h */; };
 		5CB301311DE39F1A00D2C405 /* QueryGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300FE1DE39F1A00D2C405 /* QueryGL.cpp */; };
@@ -551,14 +549,10 @@
 		5CCD599C2284FC750018F2D8 /* SystemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59992284FC750018F2D8 /* SystemInfo.h */; };
 		5CCD81721DBFE999006066B8 /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD815A1DBFE999006066B8 /* Debug.cpp */; };
 		5CCD81731DBFE999006066B8 /* Debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD815B1DBFE999006066B8 /* Debug.h */; };
-		5CCD81741DBFE999006066B8 /* HandleRangeAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD815C1DBFE999006066B8 /* HandleRangeAllocator.cpp */; };
-		5CCD81751DBFE999006066B8 /* HandleRangeAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD815D1DBFE999006066B8 /* HandleRangeAllocator.h */; };
 		5CCD81761DBFE999006066B8 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD815E1DBFE999006066B8 /* Image.cpp */; };
 		5CCD81771DBFE999006066B8 /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD815F1DBFE999006066B8 /* Image.h */; };
 		5CCD81781DBFE999006066B8 /* IndexRangeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81601DBFE999006066B8 /* IndexRangeCache.cpp */; };
 		5CCD81791DBFE999006066B8 /* IndexRangeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD81611DBFE999006066B8 /* IndexRangeCache.h */; };
-		5CCD817A1DBFE999006066B8 /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81621DBFE999006066B8 /* Path.cpp */; };
-		5CCD817B1DBFE999006066B8 /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD81631DBFE999006066B8 /* Path.h */; };
 		5CCD817C1DBFE999006066B8 /* queryutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81641DBFE999006066B8 /* queryutils.cpp */; };
 		5CCD817D1DBFE999006066B8 /* queryutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD81651DBFE999006066B8 /* queryutils.h */; };
 		5CCD81801DBFE999006066B8 /* Stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81681DBFE999006066B8 /* Stream.cpp */; };
@@ -581,6 +575,11 @@
 		6ED70A0D22CD630E008688CE /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0A22CD630E008688CE /* glext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED70A0E22CD630E008688CE /* glplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0B22CD630E008688CE /* glplatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED70A1022CD6822008688CE /* glext_angle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0F22CD6822008688CE /* glext_angle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6ED7BDF02432CCC400E01503 /* RemoveAtomicCounterBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BDEE2432CCC300E01503 /* RemoveAtomicCounterBuiltins.cpp */; };
+		6ED7BDF12432CCC400E01503 /* RemoveAtomicCounterBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED7BDEF2432CCC300E01503 /* RemoveAtomicCounterBuiltins.h */; };
+		6ED7BDF32432CD1B00E01503 /* InfoLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED7BDF22432CD1B00E01503 /* InfoLog.h */; };
+		6ED7BDF62432CD6200E01503 /* ProgramExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BDF42432CD6200E01503 /* ProgramExecutable.cpp */; };
+		6ED7BDF72432CD6200E01503 /* ProgramExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */; };
 		6EE2FD2D22BAE99C001D369E /* eglext_angle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE2FD2C22BAE99C001D369E /* eglext_angle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EE2FD2F22BAE9CD001D369E /* gl2ext_angle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */; };
@@ -1197,8 +1196,6 @@
 		5CB300F61DE39F1A00D2C405 /* functionsgl_typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = functionsgl_typedefs.h; sourceTree = "<group>"; };
 		5CB300F71DE39F1A00D2C405 /* FunctionsGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionsGL.cpp; sourceTree = "<group>"; };
 		5CB300F81DE39F1A00D2C405 /* FunctionsGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionsGL.h; sourceTree = "<group>"; };
-		5CB300FA1DE39F1A00D2C405 /* PathGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathGL.cpp; sourceTree = "<group>"; };
-		5CB300FB1DE39F1A00D2C405 /* PathGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathGL.h; sourceTree = "<group>"; };
 		5CB300FC1DE39F1A00D2C405 /* ProgramGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramGL.cpp; sourceTree = "<group>"; };
 		5CB300FD1DE39F1A00D2C405 /* ProgramGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramGL.h; sourceTree = "<group>"; };
 		5CB300FE1DE39F1A00D2C405 /* QueryGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryGL.cpp; sourceTree = "<group>"; };
@@ -1320,14 +1317,10 @@
 		5CCD59992284FC750018F2D8 /* SystemInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo.h; sourceTree = "<group>"; };
 		5CCD815A1DBFE999006066B8 /* Debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug.cpp; sourceTree = "<group>"; };
 		5CCD815B1DBFE999006066B8 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
-		5CCD815C1DBFE999006066B8 /* HandleRangeAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandleRangeAllocator.cpp; sourceTree = "<group>"; };
-		5CCD815D1DBFE999006066B8 /* HandleRangeAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleRangeAllocator.h; sourceTree = "<group>"; };
 		5CCD815E1DBFE999006066B8 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		5CCD815F1DBFE999006066B8 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		5CCD81601DBFE999006066B8 /* IndexRangeCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexRangeCache.cpp; sourceTree = "<group>"; };
 		5CCD81611DBFE999006066B8 /* IndexRangeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexRangeCache.h; sourceTree = "<group>"; };
-		5CCD81621DBFE999006066B8 /* Path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
-		5CCD81631DBFE999006066B8 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
 		5CCD81641DBFE999006066B8 /* queryutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = queryutils.cpp; sourceTree = "<group>"; };
 		5CCD81651DBFE999006066B8 /* queryutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queryutils.h; sourceTree = "<group>"; };
 		5CCD81681DBFE999006066B8 /* Stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Stream.cpp; sourceTree = "<group>"; };
@@ -1353,6 +1346,11 @@
 		6ED70A0A22CD630E008688CE /* glext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glext.h; path = include/GLES/glext.h; sourceTree = "<group>"; };
 		6ED70A0B22CD630E008688CE /* glplatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplatform.h; path = include/GLES/glplatform.h; sourceTree = "<group>"; };
 		6ED70A0F22CD6822008688CE /* glext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glext_angle.h; path = include/GLES/glext_angle.h; sourceTree = "<group>"; };
+		6ED7BDEE2432CCC300E01503 /* RemoveAtomicCounterBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveAtomicCounterBuiltins.cpp; sourceTree = "<group>"; };
+		6ED7BDEF2432CCC300E01503 /* RemoveAtomicCounterBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveAtomicCounterBuiltins.h; sourceTree = "<group>"; };
+		6ED7BDF22432CD1B00E01503 /* InfoLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoLog.h; sourceTree = "<group>"; };
+		6ED7BDF42432CD6200E01503 /* ProgramExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramExecutable.cpp; sourceTree = "<group>"; };
+		6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutable.h; sourceTree = "<group>"; };
 		6EE2FD2C22BAE99C001D369E /* eglext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eglext_angle.h; path = include/EGL/eglext_angle.h; sourceTree = "<group>"; };
 		6EE2FD2E22BAE9CD001D369E /* gl2ext_angle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl2ext_angle.h; path = include/GLES2/gl2ext_angle.h; sourceTree = "<group>"; };
 		A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayBoundsClamper.cpp; path = compiler/ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
@@ -1849,8 +1847,6 @@
 				5CCD59542284F7950018F2D8 /* GLES1State.h */,
 				5C1DBC6F1B0438D200235552 /* HandleAllocator.cpp */,
 				5C1DBC701B0438D200235552 /* HandleAllocator.h */,
-				5CCD815C1DBFE999006066B8 /* HandleRangeAllocator.cpp */,
-				5CCD815D1DBFE999006066B8 /* HandleRangeAllocator.h */,
 				5C1DBC711B0438D200235552 /* histogram_macros.h */,
 				5CCD815E1DBFE999006066B8 /* Image.cpp */,
 				5CCD815F1DBFE999006066B8 /* Image.h */,
@@ -1858,6 +1854,7 @@
 				5C1DBC731B0438D200235552 /* ImageIndex.h */,
 				5CCD81601DBFE999006066B8 /* IndexRangeCache.cpp */,
 				5CCD81611DBFE999006066B8 /* IndexRangeCache.h */,
+				6ED7BDF22432CD1B00E01503 /* InfoLog.h */,
 				315EBDD11FCE452800AC7A89 /* LoggingAnnotator.cpp */,
 				315EBDDA1FCE452B00AC7A89 /* LoggingAnnotator.h */,
 				5CCD59562284F7950018F2D8 /* MemoryObject.cpp */,
@@ -1873,11 +1870,11 @@
 				A315988323299037000619B9 /* Overlay_font_autogen.h */,
 				A315988523299037000619B9 /* OverlayWidgets.cpp */,
 				A315988723299037000619B9 /* OverlayWidgets.h */,
-				5CCD81621DBFE999006066B8 /* Path.cpp */,
-				5CCD81631DBFE999006066B8 /* Path.h */,
 				5C1DBC751B0438D200235552 /* Platform.cpp */,
 				5C1DBC761B0438D200235552 /* Program.cpp */,
 				5C1DBC771B0438D200235552 /* Program.h */,
+				6ED7BDF42432CD6200E01503 /* ProgramExecutable.cpp */,
+				6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */,
 				315EBDD51FCE452900AC7A89 /* ProgramLinkedResources.cpp */,
 				315EBDCF1FCE452700AC7A89 /* ProgramLinkedResources.h */,
 				315EBDCE1FCE452700AC7A89 /* ProgramPipeline.cpp */,
@@ -2147,8 +2144,6 @@
 				A30307862305F8F0002DA972 /* MemoryObjectGL.h */,
 				315EBDB51FCE44BE00AC7A89 /* null_functions.cpp */,
 				315EBDB81FCE44BF00AC7A89 /* null_functions.h */,
-				5CB300FA1DE39F1A00D2C405 /* PathGL.cpp */,
-				5CB300FB1DE39F1A00D2C405 /* PathGL.h */,
 				5CB300FC1DE39F1A00D2C405 /* ProgramGL.cpp */,
 				5CB300FD1DE39F1A00D2C405 /* ProgramGL.h */,
 				315EBDB01FCE44BD00AC7A89 /* ProgramPipelineGL.cpp */,
@@ -2257,6 +2252,8 @@
 				5C55D60022826B8F00B5BA2C /* RegenerateStructNames.h */,
 				5C55D5FA22826B8F00B5BA2C /* RemoveArrayLengthMethod.cpp */,
 				5C55D63E22826B9C00B5BA2C /* RemoveArrayLengthMethod.h */,
+				6ED7BDEE2432CCC300E01503 /* RemoveAtomicCounterBuiltins.cpp */,
+				6ED7BDEF2432CCC300E01503 /* RemoveAtomicCounterBuiltins.h */,
 				5C55D60922826B9000B5BA2C /* RemoveDynamicIndexing.cpp */,
 				5C55D62F22826B9800B5BA2C /* RemoveDynamicIndexing.h */,
 				A3D3291223CFCB7600375657 /* RemoveInactiveInterfaceVariables.cpp */,
@@ -2718,7 +2715,6 @@
 				31012E2D18B97B9B0039062F /* glslang.h in Headers */,
 				A3D3290C23CFCB4D00375657 /* glslang_tab_autogen.h in Headers */,
 				5C1DBDF91B0438D300235552 /* HandleAllocator.h in Headers */,
-				5CCD81751DBFE999006066B8 /* HandleRangeAllocator.h in Headers */,
 				5C55D72C2282747700B5BA2C /* hash_utils.h in Headers */,
 				31012E3318B97B9B0039062F /* HashNames.h in Headers */,
 				5C1DBDFA1B0438D300235552 /* histogram_macros.h in Headers */,
@@ -2732,6 +2728,7 @@
 				5C55D6E222826C7900B5BA2C /* ImmutableString.h in Headers */,
 				5C55D6E522826C7900B5BA2C /* ImmutableStringBuilder.h in Headers */,
 				5CCD81791DBFE999006066B8 /* IndexRangeCache.h in Headers */,
+				6ED7BDF32432CD1B00E01503 /* InfoLog.h in Headers */,
 				31012E3518B97B9B0039062F /* InfoSink.h in Headers */,
 				31012E3718B97B9B0039062F /* Initialize.h in Headers */,
 				31012E3918B97B9B0039062F /* InitializeDll.h in Headers */,
@@ -2780,8 +2777,6 @@
 				5C55D72A2282747700B5BA2C /* PackedEnums.h in Headers */,
 				5C55D7292282747700B5BA2C /* PackedGLEnums_autogen.h in Headers */,
 				31012E5518B97B9B0039062F /* ParseContext.h in Headers */,
-				5CCD817B1DBFE999006066B8 /* Path.h in Headers */,
-				5CB3012E1DE39F1A00D2C405 /* PathGL.h in Headers */,
 				5CB304F11DE4164800D2C405 /* PathImpl.h in Headers */,
 				5CB301511DE39F4700D2C405 /* PbufferSurfaceCGL.h in Headers */,
 				313BCE5D2361133A00FC39E5 /* PbufferSurfaceEAGL.h in Headers */,
@@ -2793,6 +2788,7 @@
 				A264F8BF16974DED006FAA5A /* Preprocessor.h in Headers */,
 				A30307942305F959002DA972 /* proc_table_egl.h in Headers */,
 				5C1DBE001B0438D300235552 /* Program.h in Headers */,
+				6ED7BDF72432CD6200E01503 /* ProgramExecutable.h in Headers */,
 				5CB301301DE39F1A00D2C405 /* ProgramGL.h in Headers */,
 				5CB304F31DE4164800D2C405 /* ProgramImpl.h in Headers */,
 				5CB304F21DE4164800D2C405 /* ProgramImpl_mock.h in Headers */,
@@ -2812,6 +2808,7 @@
 				5C1DBE061B0438D300235552 /* RefCountObject.h in Headers */,
 				5C55D65C22826B9F00B5BA2C /* RegenerateStructNames.h in Headers */,
 				5C55D69A22826B9F00B5BA2C /* RemoveArrayLengthMethod.h in Headers */,
+				6ED7BDF12432CCC400E01503 /* RemoveAtomicCounterBuiltins.h in Headers */,
 				5C55D68B22826B9F00B5BA2C /* RemoveDynamicIndexing.h in Headers */,
 				A3D3291923CFCB7700375657 /* RemoveInactiveInterfaceVariables.h in Headers */,
 				5C55D64D22826B9F00B5BA2C /* RemoveInvariantDeclaration.h in Headers */,
@@ -3160,7 +3157,6 @@
 				A3D3290D23CFCB4D00375657 /* glslang_lex_autogen.cpp in Sources */,
 				A3D3290B23CFCB4D00375657 /* glslang_tab_autogen.cpp in Sources */,
 				5C1DBDF81B0438D300235552 /* HandleAllocator.cpp in Sources */,
-				5CCD81741DBFE999006066B8 /* HandleRangeAllocator.cpp in Sources */,
 				315EBD861FCE443600AC7A89 /* HashNames.cpp in Sources */,
 				5CCD81761DBFE999006066B8 /* Image.cpp in Sources */,
 				5CCD59912284FC400018F2D8 /* imageformats.cpp in Sources */,
@@ -3212,8 +3208,6 @@
 				5C55D72D2282747700B5BA2C /* PackedEnums.cpp in Sources */,
 				5C55D72E2282747700B5BA2C /* PackedGLEnums_autogen.cpp in Sources */,
 				31012E5418B97B9B0039062F /* ParseContext.cpp in Sources */,
-				5CCD817A1DBFE999006066B8 /* Path.cpp in Sources */,
-				5CB3012D1DE39F1A00D2C405 /* PathGL.cpp in Sources */,
 				5CCD596F2284F9550018F2D8 /* PbufferSurfaceCGL.cpp in Sources */,
 				313BCE562361133A00FC39E5 /* PbufferSurfaceEAGL.cpp in Sources */,
 				5C1DBDFE1B0438D300235552 /* Platform.cpp in Sources */,
@@ -3225,6 +3219,7 @@
 				A3D3290723CFC88700375657 /* preprocessor_tab_autogen.cpp in Sources */,
 				A30307952305F959002DA972 /* proc_table_egl_autogen.cpp in Sources */,
 				5C1DBDFF1B0438D300235552 /* Program.cpp in Sources */,
+				6ED7BDF62432CD6200E01503 /* ProgramExecutable.cpp in Sources */,
 				5CB3012F1DE39F1A00D2C405 /* ProgramGL.cpp in Sources */,
 				315EBDEC1FCE452D00AC7A89 /* ProgramLinkedResources.cpp in Sources */,
 				315EBDE51FCE452D00AC7A89 /* ProgramPipeline.cpp in Sources */,
@@ -3240,6 +3235,7 @@
 				5C55D6B922826BC800B5BA2C /* RecordConstantPrecision.cpp in Sources */,
 				5C55D6BA22826BC800B5BA2C /* RegenerateStructNames.cpp in Sources */,
 				5C55D6BB22826BC800B5BA2C /* RemoveArrayLengthMethod.cpp in Sources */,
+				6ED7BDF02432CCC400E01503 /* RemoveAtomicCounterBuiltins.cpp in Sources */,
 				5C55D6BC22826BC800B5BA2C /* RemoveDynamicIndexing.cpp in Sources */,
 				A3D3291823CFCB7700375657 /* RemoveInactiveInterfaceVariables.cpp in Sources */,
 				5C55D6BD22826BC800B5BA2C /* RemoveInvariantDeclaration.cpp in Sources */,

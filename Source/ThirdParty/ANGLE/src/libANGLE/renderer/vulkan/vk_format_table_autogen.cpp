@@ -726,6 +726,54 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             vertexLoadRequiresConversion = false;
             break;
 
+        case angle::FormatID::BC4_RED_SNORM_BLOCK:
+            internalFormat               = GL_COMPRESSED_SIGNED_RED_RGTC1_EXT;
+            actualImageFormatID          = angle::FormatID::BC4_RED_SNORM_BLOCK;
+            vkImageFormat                = VK_FORMAT_BC4_SNORM_BLOCK;
+            imageInitializerFunction     = nullptr;
+            actualBufferFormatID         = angle::FormatID::BC4_RED_SNORM_BLOCK;
+            vkBufferFormat               = VK_FORMAT_BC4_SNORM_BLOCK;
+            vkBufferFormatIsPacked       = false;
+            vertexLoadFunction           = nullptr;
+            vertexLoadRequiresConversion = false;
+            break;
+
+        case angle::FormatID::BC4_RED_UNORM_BLOCK:
+            internalFormat               = GL_COMPRESSED_RED_RGTC1_EXT;
+            actualImageFormatID          = angle::FormatID::BC4_RED_UNORM_BLOCK;
+            vkImageFormat                = VK_FORMAT_BC4_UNORM_BLOCK;
+            imageInitializerFunction     = nullptr;
+            actualBufferFormatID         = angle::FormatID::BC4_RED_UNORM_BLOCK;
+            vkBufferFormat               = VK_FORMAT_BC4_UNORM_BLOCK;
+            vkBufferFormatIsPacked       = false;
+            vertexLoadFunction           = nullptr;
+            vertexLoadRequiresConversion = false;
+            break;
+
+        case angle::FormatID::BC5_RG_SNORM_BLOCK:
+            internalFormat               = GL_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT;
+            actualImageFormatID          = angle::FormatID::BC5_RG_SNORM_BLOCK;
+            vkImageFormat                = VK_FORMAT_BC5_SNORM_BLOCK;
+            imageInitializerFunction     = nullptr;
+            actualBufferFormatID         = angle::FormatID::BC5_RG_SNORM_BLOCK;
+            vkBufferFormat               = VK_FORMAT_BC5_SNORM_BLOCK;
+            vkBufferFormatIsPacked       = false;
+            vertexLoadFunction           = nullptr;
+            vertexLoadRequiresConversion = false;
+            break;
+
+        case angle::FormatID::BC5_RG_UNORM_BLOCK:
+            internalFormat               = GL_COMPRESSED_RED_GREEN_RGTC2_EXT;
+            actualImageFormatID          = angle::FormatID::BC5_RG_UNORM_BLOCK;
+            vkImageFormat                = VK_FORMAT_BC5_UNORM_BLOCK;
+            imageInitializerFunction     = nullptr;
+            actualBufferFormatID         = angle::FormatID::BC5_RG_UNORM_BLOCK;
+            vkBufferFormat               = VK_FORMAT_BC5_UNORM_BLOCK;
+            vkBufferFormatIsPacked       = false;
+            vertexLoadFunction           = nullptr;
+            vertexLoadRequiresConversion = false;
+            break;
+
         case angle::FormatID::BPTC_RGBA_UNORM_BLOCK:
             internalFormat               = GL_COMPRESSED_RGBA_BPTC_UNORM_EXT;
             actualImageFormatID          = angle::FormatID::BPTC_RGBA_UNORM_BLOCK;
@@ -806,15 +854,16 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             internalFormat = GL_DEPTH_COMPONENT24;
             {
                 static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::D24_UNORM_X8_UINT, VK_FORMAT_X8_D24_UNORM_PACK32, nullptr},
                     {angle::FormatID::D24_UNORM_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT, nullptr},
                     {angle::FormatID::D32_FLOAT_S8X24_UINT, VK_FORMAT_D32_SFLOAT_S8_UINT, nullptr}};
                 initImageFallback(renderer, kInfo, ArraySize(kInfo));
             }
-            actualBufferFormatID         = angle::FormatID::NONE;
-            vkBufferFormat               = VK_FORMAT_UNDEFINED;
-            vkBufferFormatIsPacked       = false;
-            vertexLoadFunction           = nullptr;
-            vertexLoadRequiresConversion = true;
+            actualBufferFormatID         = angle::FormatID::D24_UNORM_X8_UINT;
+            vkBufferFormat               = VK_FORMAT_X8_D24_UNORM_PACK32;
+            vkBufferFormatIsPacked       = true;
+            vertexLoadFunction           = CopyNativeVertexData<GLuint, 1, 1, 0>;
+            vertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::D32_FLOAT:
@@ -2225,22 +2274,15 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R8G8B8_UNORM:
-            internalFormat = GL_RGB8;
-            {
-                static constexpr ImageFormatInitInfo kInfo[] = {
-                    {angle::FormatID::R8G8B8_UNORM, VK_FORMAT_R8G8B8_UNORM, nullptr},
-                    {angle::FormatID::R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM,
-                     Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>}};
-                initImageFallback(renderer, kInfo, ArraySize(kInfo));
-            }
-            {
-                static constexpr BufferFormatInitInfo kInfo[] = {
-                    {angle::FormatID::R8G8B8_UNORM, VK_FORMAT_R8G8B8_UNORM, false,
-                     CopyNativeVertexData<GLubyte, 3, 3, 0>, false},
-                    {angle::FormatID::R32G32B32_FLOAT, VK_FORMAT_R32G32B32_SFLOAT, false,
-                     CopyTo32FVertexData<GLubyte, 3, 3, true>, true}};
-                initBufferFallback(renderer, kInfo, ArraySize(kInfo));
-            }
+            internalFormat           = GL_RGB8;
+            actualImageFormatID      = angle::FormatID::R8G8B8A8_UNORM;
+            vkImageFormat            = VK_FORMAT_R8G8B8A8_UNORM;
+            imageInitializerFunction = Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>;
+            actualBufferFormatID     = angle::FormatID::R32G32B32_FLOAT;
+            vkBufferFormat           = VK_FORMAT_R32G32B32_SFLOAT;
+            vkBufferFormatIsPacked   = false;
+            vertexLoadFunction       = CopyTo32FVertexData<GLubyte, 3, 3, true>;
+            vertexLoadRequiresConversion = true;
             break;
 
         case angle::FormatID::R8G8B8_UNORM_SRGB:

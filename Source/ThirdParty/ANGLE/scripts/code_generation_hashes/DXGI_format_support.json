@@ -1,8 +1,8 @@
 {
   "src/libANGLE/renderer/d3d/d3d11/dxgi_support_data.json":
-    "09195053f8829fc81efe08229b54a8b5",
+    "861037ff2340dd52e713c7b7283609bd",
   "src/libANGLE/renderer/d3d/d3d11/dxgi_support_table_autogen.cpp":
-    "7ec32ce0ad41450be7493c1db1130e25",
+    "3f32eabe4360e35d076265a6a14d9aa5",
   "src/libANGLE/renderer/d3d/d3d11/gen_dxgi_support_tables.py":
     "b464f153f15d60df1c6536adbfafb072"
 }

@@ -8,6 +8,8 @@
 
 #include "libANGLE/capture_gles_ext_autogen.h"
 
+#include "libANGLE/capture_gles_3_0_autogen.h"
+
 using namespace angle;
 
 namespace gl
@@ -416,7 +418,7 @@ void CaptureRequestExtensionANGLE_name(const State &glState,
                                        const GLchar *name,
                                        ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureDisableExtensionANGLE_name(const State &glState,
@@ -424,7 +426,7 @@ void CaptureDisableExtensionANGLE_name(const State &glState,
                                        const GLchar *name,
                                        ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureGetBooleanvRobustANGLE_length(const State &glState,
@@ -666,7 +668,7 @@ void CaptureGetTexParameterivRobustANGLE_params(const State &glState,
 void CaptureGetUniformfvRobustANGLE_length(const State &glState,
                                            bool isCallValid,
                                            ShaderProgramID program,
-                                           GLint location,
+                                           UniformLocation location,
                                            GLsizei bufSize,
                                            GLsizei *length,
                                            GLfloat *params,
@@ -678,7 +680,7 @@ void CaptureGetUniformfvRobustANGLE_length(const State &glState,
 void CaptureGetUniformfvRobustANGLE_params(const State &glState,
                                            bool isCallValid,
                                            ShaderProgramID program,
-                                           GLint location,
+                                           UniformLocation location,
                                            GLsizei bufSize,
                                            GLsizei *length,
                                            GLfloat *params,
@@ -690,7 +692,7 @@ void CaptureGetUniformfvRobustANGLE_params(const State &glState,
 void CaptureGetUniformivRobustANGLE_length(const State &glState,
                                            bool isCallValid,
                                            ShaderProgramID program,
-                                           GLint location,
+                                           UniformLocation location,
                                            GLsizei bufSize,
                                            GLsizei *length,
                                            GLint *params,
@@ -702,7 +704,7 @@ void CaptureGetUniformivRobustANGLE_length(const State &glState,
 void CaptureGetUniformivRobustANGLE_params(const State &glState,
                                            bool isCallValid,
                                            ShaderProgramID program,
-                                           GLint location,
+                                           UniformLocation location,
                                            GLsizei bufSize,
                                            GLsizei *length,
                                            GLint *params,
@@ -1190,7 +1192,7 @@ void CaptureGetVertexAttribIuivRobustANGLE_params(const State &glState,
 void CaptureGetUniformuivRobustANGLE_length(const State &glState,
                                             bool isCallValid,
                                             ShaderProgramID program,
-                                            GLint location,
+                                            UniformLocation location,
                                             GLsizei bufSize,
                                             GLsizei *length,
                                             GLuint *params,
@@ -1202,7 +1204,7 @@ void CaptureGetUniformuivRobustANGLE_length(const State &glState,
 void CaptureGetUniformuivRobustANGLE_params(const State &glState,
                                             bool isCallValid,
                                             ShaderProgramID program,
-                                            GLint location,
+                                            UniformLocation location,
                                             GLsizei bufSize,
                                             GLsizei *length,
                                             GLuint *params,
@@ -1624,7 +1626,7 @@ void CaptureReadnPixelsRobustANGLE_data(const State &glState,
 void CaptureGetnUniformfvRobustANGLE_length(const State &glState,
                                             bool isCallValid,
                                             ShaderProgramID program,
-                                            GLint location,
+                                            UniformLocation location,
                                             GLsizei bufSize,
                                             GLsizei *length,
                                             GLfloat *params,
@@ -1636,7 +1638,7 @@ void CaptureGetnUniformfvRobustANGLE_length(const State &glState,
 void CaptureGetnUniformfvRobustANGLE_params(const State &glState,
                                             bool isCallValid,
                                             ShaderProgramID program,
-                                            GLint location,
+                                            UniformLocation location,
                                             GLsizei bufSize,
                                             GLsizei *length,
                                             GLfloat *params,
@@ -1648,7 +1650,7 @@ void CaptureGetnUniformfvRobustANGLE_params(const State &glState,
 void CaptureGetnUniformivRobustANGLE_length(const State &glState,
                                             bool isCallValid,
                                             ShaderProgramID program,
-                                            GLint location,
+                                            UniformLocation location,
                                             GLsizei bufSize,
                                             GLsizei *length,
                                             GLint *params,
@@ -1660,7 +1662,7 @@ void CaptureGetnUniformivRobustANGLE_length(const State &glState,
 void CaptureGetnUniformivRobustANGLE_params(const State &glState,
                                             bool isCallValid,
                                             ShaderProgramID program,
-                                            GLint location,
+                                            UniformLocation location,
                                             GLsizei bufSize,
                                             GLsizei *length,
                                             GLint *params,
@@ -1672,7 +1674,7 @@ void CaptureGetnUniformivRobustANGLE_params(const State &glState,
 void CaptureGetnUniformuivRobustANGLE_length(const State &glState,
                                              bool isCallValid,
                                              ShaderProgramID program,
-                                             GLint location,
+                                             UniformLocation location,
                                              GLsizei bufSize,
                                              GLsizei *length,
                                              GLuint *params,
@@ -1684,7 +1686,7 @@ void CaptureGetnUniformuivRobustANGLE_length(const State &glState,
 void CaptureGetnUniformuivRobustANGLE_params(const State &glState,
                                              bool isCallValid,
                                              ShaderProgramID program,
-                                             GLint location,
+                                             UniformLocation location,
                                              GLsizei bufSize,
                                              GLsizei *length,
                                              GLuint *params,
@@ -1962,11 +1964,11 @@ void CaptureGetTranslatedShaderSourceANGLE_source(const State &glState,
 void CaptureBindUniformLocationCHROMIUM_name(const State &glState,
                                              bool isCallValid,
                                              ShaderProgramID program,
-                                             GLint location,
+                                             UniformLocation location,
                                              const GLchar *name,
                                              ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureMatrixLoadfCHROMIUM_matrix(const State &glState,
@@ -2213,7 +2215,7 @@ void CaptureBindFragmentInputLocationCHROMIUM_name(const State &glState,
                                                    const GLchar *name,
                                                    ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureProgramPathFragmentInputGenCHROMIUM_coeffs(const State &glState,
@@ -2235,7 +2237,7 @@ void CaptureBindFragDataLocationEXT_name(const State &glState,
                                          const GLchar *name,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureBindFragDataLocationIndexedEXT_name(const State &glState,
@@ -2246,7 +2248,7 @@ void CaptureBindFragDataLocationIndexedEXT_name(const State &glState,
                                                 const GLchar *name,
                                                 ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureGetFragDataIndexEXT_name(const State &glState,
@@ -2255,7 +2257,7 @@ void CaptureGetFragDataIndexEXT_name(const State &glState,
                                      const GLchar *name,
                                      ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureGetProgramResourceLocationIndexEXT_name(const State &glState,
@@ -2265,7 +2267,7 @@ void CaptureGetProgramResourceLocationIndexEXT_name(const State &glState,
                                                     const GLchar *name,
                                                     ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureInsertEventMarkerEXT_marker(const State &glState,
@@ -2324,6 +2326,15 @@ void CaptureGetQueryObjecti64vEXT_params(const State &glState,
     UNIMPLEMENTED();
 }
 
+void CaptureGetInteger64vEXT_data(const State &glState,
+                                  bool isCallValid,
+                                  GLenum pname,
+                                  GLint64 *data,
+                                  angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
+
 void CaptureGetQueryObjectivEXT_params(const State &glState,
                                        bool isCallValid,
                                        QueryID id,
@@ -2370,7 +2381,7 @@ void CaptureDrawBuffersEXT_bufs(const State &glState,
                                 const GLenum *bufs,
                                 ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureDrawBuffers_bufs(glState, isCallValid, n, bufs, paramCapture);
 }
 
 void CaptureDrawElementsInstancedEXT_indices(const State &glState,
@@ -2445,7 +2456,7 @@ void CaptureMemoryObjectParameterivEXT_params(const State &glState,
 void CaptureGetnUniformfvEXT_params(const State &glState,
                                     bool isCallValid,
                                     ShaderProgramID program,
-                                    GLint location,
+                                    UniformLocation location,
                                     GLsizei bufSize,
                                     GLfloat *params,
                                     ParamCapture *paramCapture)
@@ -2456,7 +2467,7 @@ void CaptureGetnUniformfvEXT_params(const State &glState,
 void CaptureGetnUniformivEXT_params(const State &glState,
                                     bool isCallValid,
                                     ShaderProgramID program,
-                                    GLint location,
+                                    UniformLocation location,
                                     GLsizei bufSize,
                                     GLint *params,
                                     ParamCapture *paramCapture)

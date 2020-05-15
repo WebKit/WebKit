@@ -31,9 +31,7 @@ if (enable_java_templates) {
 
     android_assets("${invoker.package_name}_assets") {
       disable_compression = true
-      sources = [
-        "src/feature_support_util/a4a_rules.json",
-      ]
+      sources = [ "src/feature_support_util/a4a_rules.json" ]
     }
 
     android_apk(target_name) {
@@ -42,9 +40,7 @@ if (enable_java_templates) {
       android_manifest_dep = ":$manifest_target_name"
       min_sdk_version = 26
       target_sdk_version = 28
-      deps = [
-        ":${invoker.package_name}_assets",
-      ]
+      deps = [ ":${invoker.package_name}_assets" ]
       if (symbol_level != 0) {
         deps += [ ":compressed_symbols" ]
         if (android_64bit_target_cpu) {

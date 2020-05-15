@@ -48,11 +48,11 @@ void BitSetIteratorPerfTest<T>::step()
 }
 
 // These type names unfortunately don't get printed correctly in Gtest.
-#if defined(ANGLE_IS_64_BIT_CPU)
-using TestTypes = Types<angle::IterableBitSet<32>, angle::BitSet32<32>, angle::BitSet64<32>>;
-#else
-using TestTypes = Types<angle::IterableBitSet<32>, angle::BitSet32<32>>;
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
+using TestTypes = Types<angle::IterableBitSet<32>,
+                        angle::BitSet32<32>,
+                        angle::BitSet64<32>,
+                        angle::IterableBitSet<64>,
+                        angle::BitSet64<64>>;
 TYPED_TEST_SUITE(BitSetIteratorPerfTest, TestTypes);
 
 TYPED_TEST(BitSetIteratorPerfTest, Run)

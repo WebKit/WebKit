@@ -114,7 +114,7 @@ class EGLSurfaceTest : public ANGLETest
         ASSERT_TRUE(eglInitialize(mDisplay, &majorVersion, &minorVersion) == EGL_TRUE);
 
         eglBindAPI(EGL_OPENGL_ES_API);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
     }
 
     void initializeContext()
@@ -122,26 +122,34 @@ class EGLSurfaceTest : public ANGLETest
         EGLint contextAttibutes[] = {EGL_CONTEXT_CLIENT_VERSION, GetParam().majorVersion, EGL_NONE};
 
         mContext = eglCreateContext(mDisplay, mConfig, nullptr, contextAttibutes);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
 
         mSecondContext = eglCreateContext(mDisplay, mConfig, nullptr, contextAttibutes);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
     }
 
     void initializeSurface(EGLConfig config)
     {
         mConfig = config;
 
-        std::vector<EGLint> surfaceAttributes;
-        surfaceAttributes.push_back(EGL_NONE);
-        surfaceAttributes.push_back(EGL_NONE);
+        std::vector<EGLint> windowAttributes;
+        windowAttributes.push_back(EGL_NONE);
 
         // Create first window surface
         mWindowSurface = eglCreateWindowSurface(mDisplay, mConfig, mOSWindow->getNativeWindow(),
-                                                &surfaceAttributes[0]);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+                                                windowAttributes.data());
+        ASSERT_EGL_SUCCESS();
 
-        mPbufferSurface = eglCreatePbufferSurface(mDisplay, mConfig, &surfaceAttributes[0]);
+        // Give pbuffer non-zero dimensions.
+        std::vector<EGLint> pbufferAttributes;
+        pbufferAttributes.push_back(EGL_WIDTH);
+        pbufferAttributes.push_back(64);
+        pbufferAttributes.push_back(EGL_HEIGHT);
+        pbufferAttributes.push_back(64);
+        pbufferAttributes.push_back(EGL_NONE);
+
+        mPbufferSurface = eglCreatePbufferSurface(mDisplay, mConfig, pbufferAttributes.data());
+        ASSERT_EGL_SUCCESS();
         initializeContext();
     }
 
@@ -206,7 +214,7 @@ class EGLSurfaceTest : public ANGLETest
     void runMessageLoopTest(EGLSurface secondSurface, EGLContext secondContext)
     {
         eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
 
         // Make a second context current
         eglMakeCurrent(mDisplay, secondSurface, secondSurface, secondContext);
@@ -219,10 +227,10 @@ class EGLSurfaceTest : public ANGLETest
 
         mWindowSurface = eglCreateWindowSurface(mDisplay, mConfig, mOSWindow->getNativeWindow(),
                                                 &surfaceAttributes[0]);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
 
         eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-        ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
 
         mOSWindow->signalTestEvent();
         mOSWindow->messageLoop();
@@ -375,17 +383,14 @@ TEST_P(EGLSurfaceTest, MessageLoopBugContext)
 // Test a bug where calling makeCurrent twice would release the surface
 TEST_P(EGLSurfaceTest, MakeCurrentTwice)
 {
-    // TODO(syoussefi): http://anglebug.com/3123
-    ANGLE_SKIP_TEST_IF(IsAndroid());
-
     initializeDisplay();
     initializeSurfaceWithDefaultConfig();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-    ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+    ASSERT_EGL_SUCCESS();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-    ASSERT_TRUE(eglGetError() == EGL_SUCCESS);
+    ASSERT_EGL_SUCCESS();
 
     // Simple operation to test the FBO is set appropriately
     glClear(GL_COLOR_BUFFER_BIT);
@@ -394,8 +399,8 @@ TEST_P(EGLSurfaceTest, MakeCurrentTwice)
 // Test that the window surface is correctly resized after calling swapBuffers
 TEST_P(EGLSurfaceTest, ResizeWindow)
 {
-    // TODO(syoussefi): http://anglebug.com/3123
-    ANGLE_SKIP_TEST_IF(IsAndroid());
+    // http://anglebug.com/4453
+    ANGLE_SKIP_TEST_IF(isVulkanRenderer() && IsLinux() && IsIntel());
 
     // Necessary for a window resizing test if there is no per-frame window size query
     mOSWindow->setVisible(true);
@@ -446,8 +451,13 @@ TEST_P(EGLSurfaceTest, ResizeWindow)
 // Test that the backbuffer is correctly resized after calling swapBuffers
 TEST_P(EGLSurfaceTest, ResizeWindowWithDraw)
 {
-    // Necessary for a window resizing test if there is no per-frame window size query
+    // http://anglebug.com/4453
+    ANGLE_SKIP_TEST_IF(isVulkanRenderer() && IsLinux() && IsIntel());
 
+    // Flaky on Linux SwANGLE http://anglebug.com/4453
+    ANGLE_SKIP_TEST_IF(IsLinux() && isSwiftshader());
+
+    // Necessary for a window resizing test if there is no per-frame window size query
     mOSWindow->setVisible(true);
 
     initializeDisplay();
@@ -547,84 +557,6 @@ TEST_P(EGLSurfaceTest, ResetNativeWindow)
 
     eglSwapBuffers(mDisplay, mWindowSurface);
     ASSERT_EGL_SUCCESS();
-}
-
-// Test that swap interval works.
-TEST_P(EGLSurfaceTest, SwapInterval)
-{
-    // On OSX, maxInterval >= 1 is advertised, but is not implemented.  http://anglebug.com/3140
-    ANGLE_SKIP_TEST_IF(IsOSX());
-    // Flaky hang on Nexus 5X and 6P. http://anglebug.com/3364
-    ANGLE_SKIP_TEST_IF((IsNexus5X() || IsNexus6P()) && isGLESRenderer());
-    // Flaky hang on Ubuntu 19.04 NVIDIA Vulkan. http://anglebug.com/3618
-    // Maybe hang due to bug in NVIDIA Linux Vulkan driver. http://anglebug.com/3450
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && isVulkanRenderer());
-    // Flaky on Linux NVIDIA OpenGL driver. http://anglebug.com/3807
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && isGLRenderer());
-    // Test fails on Swangle http://anglebug.com/4169
-    ANGLE_SKIP_TEST_IF(isVulkanSwiftshaderRenderer());
-
-    ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
-
-    initializeDisplay();
-    initializeSurfaceWithDefaultConfig();
-    initializeContext();
-
-    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-    eglSwapBuffers(mDisplay, mWindowSurface);
-    ASSERT_EGL_SUCCESS();
-
-    EGLint minInterval, maxInterval;
-
-    ASSERT_TRUE(eglGetConfigAttrib(mDisplay, mConfig, EGL_MIN_SWAP_INTERVAL, &minInterval));
-    ASSERT_TRUE(eglGetConfigAttrib(mDisplay, mConfig, EGL_MAX_SWAP_INTERVAL, &maxInterval));
-
-    for (int iter = 0; iter < 2; ++iter)
-    {
-        if (maxInterval >= 1)
-        {
-            Timer timer;
-
-            eglSwapInterval(mDisplay, 1);
-            timer.start();
-            for (int i = 0; i < 180; ++i)
-            {
-                eglSwapBuffers(mDisplay, mWindowSurface);
-            }
-            timer.stop();
-            ASSERT_EGL_SUCCESS();
-
-            // 120 frames at 60fps should take 3s.  At lower fps, it should take even longer.  At
-            // 144fps, it would take 1.25s.  Let's use 1s as a lower bound.
-            ASSERT_GT(timer.getElapsedTime(), 1);
-        }
-
-        if (minInterval <= 0)
-        {
-            Timer timer;
-
-            eglSwapInterval(mDisplay, 0);
-            timer.start();
-            for (int i = 0; i < 100; ++i)
-            {
-                eglSwapBuffers(mDisplay, mWindowSurface);
-
-                // Second eglSwapBuffers causes an EGL_BAD_SURFACE on Nvidia shield tv.
-                // http://anglebug.com/3144.
-                ANGLE_SKIP_TEST_IF(IsNVIDIAShield());
-            }
-            timer.stop();
-            ASSERT_EGL_SUCCESS();
-
-            // 100 no-op swaps should be fairly fast, though there is no guarantee how fast it can
-            // be. 10ms per swap is probably a safe upper bound.
-            //
-            // TODO(syoussefi): if a surface doesn't truly allow no-vsync, this can fail.  Until
-            // there's a way to query the exact minInterval from the surface, this test cannot be
-            // enabled.
-            // ASSERT_LT(timer.getElapsedTime(), 1);
-        }
-    }
 }
 
 // Test creating a surface that supports a EGLConfig with 16bit

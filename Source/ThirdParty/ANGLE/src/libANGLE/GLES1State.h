@@ -218,7 +218,7 @@ class GLES1State final : angle::NonCopyable
     AttributesMask getActiveAttributesMask() const;
 
     void setHint(GLenum target, GLenum mode);
-    GLenum getHint(GLenum target);
+    GLenum getHint(GLenum target) const;
 
   private:
     friend class State;

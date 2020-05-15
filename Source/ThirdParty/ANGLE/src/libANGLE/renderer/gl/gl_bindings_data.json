@@ -370,33 +370,6 @@
         "WaitSync"
     ],
 
-    "NV_path_rendering (originally written against 3.2 compatibility profile)":
-    [
-        "MatrixLoadfEXT",
-        "GenPathsNV",
-        "DeletePathsNV",
-        "PathCommandsNV",
-        "IsPathNV",
-        "PathParameterfNV",
-        "PathParameteriNV",
-        "GetPathParameterfvNV",
-        "GetPathParameterivNV",
-        "PathStencilFuncNV",
-        "StencilFillPathNV",
-        "StencilStrokePathNV",
-        "CoverFillPathNV",
-        "CoverStrokePathNV",
-        "StencilThenCoverFillPathNV",
-        "StencilThenCoverStrokePathNV",
-        "CoverFillPathInstancedNV",
-        "CoverStrokePathInstancedNV",
-        "StencilFillPathInstancedNV",
-        "StencilStrokePathInstancedNV",
-        "StencilThenCoverFillPathInstancedNV",
-        "StencilThenCoverStrokePathInstancedNV",
-        "ProgramPathFragmentInputGenNV"
-    ],
-
     "3.3":
     [
         "BindFragDataLocationIndexed",

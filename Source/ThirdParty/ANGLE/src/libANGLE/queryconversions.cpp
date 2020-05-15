@@ -172,7 +172,7 @@ template GLuint CastQueryValueTo<GLuint, GLuint>(GLenum pname, GLuint value);
 template GLuint CastQueryValueTo<GLuint, GLfloat>(GLenum pname, GLfloat value);
 
 template <typename QueryT>
-void CastStateValues(Context *context,
+void CastStateValues(const Context *context,
                      GLenum nativeType,
                      GLenum pname,
                      unsigned int numParams,
@@ -212,7 +212,7 @@ void CastStateValues(Context *context,
     else if (nativeType == GL_INT_64_ANGLEX)
     {
         std::vector<GLint64> int64Params(numParams, 0);
-        context->getInteger64v(pname, int64Params.data());
+        context->getInteger64vImpl(pname, int64Params.data());
 
         for (unsigned int i = 0; i < numParams; ++i)
         {
@@ -227,11 +227,15 @@ void CastStateValues(Context *context,
 // The calls below will make CastStateValues successfully link with the GL state query types
 // The GL state query API types are: bool, int, uint, float, int64, uint64
 
-template void CastStateValues<GLboolean>(Context *, GLenum, GLenum, unsigned int, GLboolean *);
-template void CastStateValues<GLint>(Context *, GLenum, GLenum, unsigned int, GLint *);
-template void CastStateValues<GLuint>(Context *, GLenum, GLenum, unsigned int, GLuint *);
-template void CastStateValues<GLfloat>(Context *, GLenum, GLenum, unsigned int, GLfloat *);
-template void CastStateValues<GLint64>(Context *, GLenum, GLenum, unsigned int, GLint64 *);
+template void CastStateValues<GLboolean>(const Context *,
+                                         GLenum,
+                                         GLenum,
+                                         unsigned int,
+                                         GLboolean *);
+template void CastStateValues<GLint>(const Context *, GLenum, GLenum, unsigned int, GLint *);
+template void CastStateValues<GLuint>(const Context *, GLenum, GLenum, unsigned int, GLuint *);
+template void CastStateValues<GLfloat>(const Context *, GLenum, GLenum, unsigned int, GLfloat *);
+template void CastStateValues<GLint64>(const Context *, GLenum, GLenum, unsigned int, GLint64 *);
 
 template <typename QueryT>
 void CastIndexedStateValues(Context *context,

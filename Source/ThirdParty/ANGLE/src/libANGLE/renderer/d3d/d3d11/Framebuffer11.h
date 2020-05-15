@@ -47,7 +47,7 @@ class Framebuffer11 : public FramebufferD3D
     }
     const RenderTarget11 *getCachedDepthStencilRenderTarget() const
     {
-        return mRenderTargetCache.getDepthStencil();
+        return mRenderTargetCache.getDepthStencil(true);
     }
 
     RenderTarget11 *getFirstRenderTarget() const;

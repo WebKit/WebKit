@@ -69,7 +69,8 @@ class RenderStateCache : angle::NonCopyable
 
     static d3d11::BlendStateKey GetBlendStateKey(const gl::Context *context,
                                                  Framebuffer11 *framebuffer11,
-                                                 const gl::BlendState &blendState);
+                                                 const gl::BlendStateArray &blendStateArray,
+                                                 bool sampleAlphaToCoverage);
     angle::Result getBlendState(const gl::Context *context,
                                 Renderer11 *renderer,
                                 const d3d11::BlendStateKey &key,

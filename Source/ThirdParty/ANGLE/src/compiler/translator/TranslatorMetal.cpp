@@ -67,9 +67,10 @@ bool TranslatorMetal::translate(TIntermBlock *root,
                                 PerformanceDiagnostics *perfDiagnostics)
 {
     TInfoSinkBase &sink = getInfoSink().obj;
+
     TOutputVulkanGLSL outputGLSL(sink, getArrayIndexClampingStrategy(), getHashFunction(),
                                  getNameMap(), &getSymbolTable(), getShaderType(),
-                                 getShaderVersion(), getOutputType(), compileOptions);
+                                 getShaderVersion(), getOutputType(), false, true, compileOptions);
 
     const TVariable *driverUniforms = nullptr;
     if (!TranslatorVulkan::translateImpl(root, compileOptions, perfDiagnostics, &driverUniforms,

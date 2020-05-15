@@ -23,6 +23,10 @@ class SemaphoreGL : public SemaphoreImpl
 
     angle::Result importFd(gl::Context *context, gl::HandleType handleType, GLint fd) override;
 
+    angle::Result importZirconHandle(gl::Context *context,
+                                     gl::HandleType handleType,
+                                     GLuint handle) override;
+
     angle::Result wait(gl::Context *context,
                        const gl::BufferBarrierVector &bufferBarriers,
                        const gl::TextureBarrierVector &textureBarriers) override;

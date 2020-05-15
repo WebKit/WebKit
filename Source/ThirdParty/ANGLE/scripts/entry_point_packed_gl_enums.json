@@ -89,7 +89,8 @@
         "id": "TransformFeedbackID"
     },
     "glBindUniformLocation": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glBindVertexArray": {
         "array": "VertexArrayID"
@@ -574,25 +575,32 @@
         "renderbuffer": "RenderbufferID"
     },
     "glGetnUniformdv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetnUniformfv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetnUniformfvRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetnUniformiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetnUniformivRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetnUniformuiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetnUniformuivRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetPathCommands": {
         "path": "PathID"
@@ -839,31 +847,38 @@
         "program": "ShaderProgramID"
     },
     "glGetUniformdv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetUniformfv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetUniformfvRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetUniformIndices": {
         "program": "ShaderProgramID"
     },
     "glGetUniformiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetUniformivRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetUniformLocation": {
         "program": "ShaderProgramID"
     },
     "glGetUniformuiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetUniformuivRobust": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glGetVertexArrayIndexed64iv": {
         "vaobj": "VertexArrayID"
@@ -878,7 +893,15 @@
         "handleType": "HandleType",
         "memory": "MemoryObjectID"
     },
+    "glImportMemoryZirconHandle": {
+        "handleType": "HandleType",
+        "memory": "MemoryObjectID"
+    },
     "glImportSemaphoreFd": {
+        "handleType": "HandleType",
+        "semaphore": "SemaphoreID"
+    },
+    "glImportSemaphoreZirconHandle": {
         "handleType": "HandleType",
         "semaphore": "SemaphoreID"
     },
@@ -1150,154 +1173,204 @@
         "program": "ShaderProgramID"
     },
     "glProgramUniform1d": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1f": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1i": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1iv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1ui": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform1uiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2d": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2f": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2i": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2iv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2ui": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform2uiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3d": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3f": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3i": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3iv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3ui": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform3uiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4d": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4f": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4i": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4iv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4ui": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniform4uiv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix2dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix2fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix2x3dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix2x3fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix2x4dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix2x4fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix3dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix3fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix3x2dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix3x2fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix3x4dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix3x4fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix4dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix4fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix4x2dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix4x2fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix4x3dv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProgramUniformMatrix4x3fv": {
-        "program": "ShaderProgramID"
+        "program": "ShaderProgramID",
+        "location": "UniformLocation"
     },
     "glProvokingVertex": {
         "mode": "ProvokingVertexConvention"
@@ -1571,6 +1644,156 @@
     },
     "glTransformFeedbackVaryings": {
         "program": "ShaderProgramID"
+    },
+    "glUniform1f": {
+        "location": "UniformLocation"
+    },
+    "glUniform1fv": {
+        "location": "UniformLocation"
+    },
+    "glUniform1i": {
+        "location": "UniformLocation"
+    },
+    "glUniform1iv": {
+        "location": "UniformLocation"
+    },
+    "glUniform1ui": {
+        "location": "UniformLocation"
+    },
+    "glUniform1uiv": {
+        "location": "UniformLocation"
+    },
+    "glUniform2f": {
+        "location": "UniformLocation"
+    },
+    "glUniform2fv": {
+        "location": "UniformLocation"
+    },
+    "glUniform2i": {
+        "location": "UniformLocation"
+    },
+    "glUniform2iv": {
+        "location": "UniformLocation"
+    },
+    "glUniform2ui": {
+        "location": "UniformLocation"
+    },
+    "glUniform2uiv": {
+        "location": "UniformLocation"
+    },
+    "glUniform3f": {
+        "location": "UniformLocation"
+    },
+    "glUniform3fv": {
+        "location": "UniformLocation"
+    },
+    "glUniform3i": {
+        "location": "UniformLocation"
+    },
+    "glUniform3iv": {
+        "location": "UniformLocation"
+    },
+    "glUniform3ui": {
+        "location": "UniformLocation"
+    },
+    "glUniform3uiv": {
+        "location": "UniformLocation"
+    },
+    "glUniform4f": {
+        "location": "UniformLocation"
+    },
+    "glUniform4fv": {
+        "location": "UniformLocation"
+    },
+    "glUniform4i": {
+        "location": "UniformLocation"
+    },
+    "glUniform4iv": {
+        "location": "UniformLocation"
+    },
+    "glUniform4ui": {
+        "location": "UniformLocation"
+    },
+    "glUniform4uiv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix2fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix3fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix4fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix2x3fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix2x4fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix3x2fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix3x4fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix4x2fv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix4x3fv": {
+        "location": "UniformLocation"
+    },
+    "glUniform1d": {
+        "location": "UniformLocation"
+    },
+    "glUniform1dv": {
+        "location": "UniformLocation"
+    },
+    "glUniform2d": {
+        "location": "UniformLocation"
+    },
+    "glUniform2dv": {
+        "location": "UniformLocation"
+    },
+    "glUniform3d": {
+        "location": "UniformLocation"
+    },
+    "glUniform3dv": {
+        "location": "UniformLocation"
+    },
+    "glUniform4d": {
+        "location": "UniformLocation"
+    },
+    "glUniform4dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix2dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix2x3dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix2x4dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix3dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix3x2dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix3x4dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix4dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix4x2dv": {
+        "location": "UniformLocation"
+    },
+    "glUniformMatrix4x3dv": {
+        "location": "UniformLocation"
     },
     "glUniformBlockBinding": {
         "program": "ShaderProgramID"

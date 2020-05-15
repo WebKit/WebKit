@@ -11,21 +11,21 @@
 namespace gl
 {
 
-bool ValidateGetBufferSubData(Context *context,
+bool ValidateGetBufferSubData(const Context *context,
                               GLenum target,
                               GLintptr offset,
                               GLsizeiptr size,
-                              void *data)
+                              const void *data)
 {
     return true;
 }
 
-bool ValidateGetQueryObjectiv(Context *context, QueryID id, GLenum pname, GLint *params)
+bool ValidateGetQueryObjectiv(const Context *context, QueryID id, GLenum pname, const GLint *params)
 {
     return true;
 }
 
-bool ValidateMapBuffer(Context *context, BufferBinding targetPacked, GLenum access)
+bool ValidateMapBuffer(const Context *context, BufferBinding targetPacked, GLenum access)
 {
     return true;
 }
