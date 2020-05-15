@@ -139,7 +139,8 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     gotFlag = false;
 
     ASSERT_EQ(cookies.count, 2u);
-    ASSERT_EQ(observerCallbacks, 4u);
+    while (observerCallbacks != 4u)
+        TestWebKitAPI::Util::spinRunLoop();
 
     for (NSHTTPCookie *cookie : cookies) {
         if ([cookie.name isEqual:@"CookieName"]) {
@@ -175,7 +176,8 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     gotFlag = false;
 
     ASSERT_EQ(cookies.count, 1u);
-    ASSERT_EQ(observerCallbacks, 6u);
+    while (observerCallbacks != 6u)
+        TestWebKitAPI::Util::spinRunLoop();
 
     for (NSHTTPCookie *cookie : cookies) {
         ASSERT_TRUE([cookie1.get().path isEqualToString:cookie.path]);

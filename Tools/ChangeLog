@@ -1,5 +1,20 @@
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
+        TestWebKitAPI.WKHTTPCookieStore.Basic is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211752
+
+        Reviewed by Geoffrey Garen.
+
+        The ordering of cookiesDidChangeInCookieStore callbacks with regard to other callbacks isn't quite deterministic.
+        No problem.  If the number of callbacks isn't what it is expected, wait until it is.
+        When I reproduce this test failure, I need to spin the run loop at max once to have it succeed, but the bots may take a few more run loop spins.
+        Spin until the number of callbacks is the expected value.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (runTestWithWebsiteDataStore):
+
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
         [iOS Simulator] TestWebKitAPI._WKDownload.Resume is a flaky crash
         https://bugs.webkit.org/show_bug.cgi?id=211786
 
