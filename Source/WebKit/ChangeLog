@@ -1,3 +1,16 @@
+2020-05-14  John Wilander  <wilander@apple.com>
+
+        Add quirk for cookie blocking latch mode aolmail.com redirecting to aol.com under aol.com
+        https://bugs.webkit.org/show_bug.cgi?id=211925
+        <rdar://problem/61901041>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Just a new quirk for a pair of domains added by request.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk const):
+
 2020-05-14  Chris Dumez  <cdumez@apple.com>
 
         Regression(r261163) Causes crashes on builds without libwebrtc.dylib
