@@ -194,7 +194,7 @@ void AccessibilityTableColumn::addChildren()
     int numRows = parentTable.rowCount();
     
     for (int i = 0; i < numRows; ++i) {
-        AccessibilityTableCell* cell = parentTable.cellForColumnAndRow(m_columnIndex, i);
+        auto* cell = parentTable.cellForColumnAndRow(m_columnIndex, i);
         if (!cell)
             continue;
         

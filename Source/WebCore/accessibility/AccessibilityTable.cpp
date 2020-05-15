@@ -619,7 +619,7 @@ int AccessibilityTable::tableLevel() const
     return level;
 }
 
-AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
+AXCoreObject* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
 {
     updateChildrenIfNecessary();
     if (column >= columnCount() || row >= rowCount())
@@ -634,8 +634,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         for (unsigned colIndexCounter = std::min(static_cast<unsigned>(children.size()), column + 1); colIndexCounter > 0; --colIndexCounter) {
             unsigned colIndex = colIndexCounter - 1;
             AXCoreObject* child = children[colIndex].get();
-            ASSERT(is<AccessibilityTableCell>(*child));
-            if (!is<AccessibilityTableCell>(*child))
+            if (!child)
                 continue;
 
             auto columnRange = child->columnIndexRange();
@@ -643,7 +642,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
 
             if ((column >= columnRange.first && column < (columnRange.first + columnRange.second))
                 && (row >= rowRange.first && row < (rowRange.first + rowRange.second)))
-                return downcast<AccessibilityTableCell>(child);
+                return child;
         }
     }
 

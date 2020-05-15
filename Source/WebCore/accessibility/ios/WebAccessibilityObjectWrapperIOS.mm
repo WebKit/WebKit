@@ -1267,10 +1267,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!table)
         return nil;
 
-    AccessibilityTableCell* cell = table->cellForColumnAndRow(column, row);
-    if (!cell)
-        return nil;
-    return cell->wrapper();
+    auto* cell = table->cellForColumnAndRow(column, row);
+    return cell ? cell->wrapper() : nil;
 }
 
 - (NSUInteger)accessibilityRowCount

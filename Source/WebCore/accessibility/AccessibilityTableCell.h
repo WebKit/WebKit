@@ -42,8 +42,8 @@ public:
 
     bool isTableCell() const final;
     bool isTableHeaderCell() const;
-    bool isColumnHeaderCell() const;
-    bool isRowHeaderCell() const;
+    bool isColumnHeaderCell() const override;
+    bool isRowHeaderCell() const override;
 
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override;
@@ -77,8 +77,8 @@ private:
     String expandedTextValue() const final;
     bool supportsExpandedTextValue() const final;
 
-    bool isTableCellInSameRowGroup(AccessibilityTableCell*);
-    bool isTableCellInSameColGroup(AccessibilityTableCell*);
+    bool isTableCellInSameRowGroup(AXCoreObject*);
+    bool isTableCellInSameColGroup(AXCoreObject*);
 };
 
 } // namespace WebCore 

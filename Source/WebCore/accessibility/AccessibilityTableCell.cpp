@@ -200,7 +200,7 @@ bool AccessibilityTableCell::isRowHeaderCell() const
     return false;
 }
 
-bool AccessibilityTableCell::isTableCellInSameRowGroup(AccessibilityTableCell* otherTableCell)
+bool AccessibilityTableCell::isTableCellInSameRowGroup(AXCoreObject* otherTableCell)
 {
     Node* parentNode = node();
     for ( ; parentNode; parentNode = parentNode->parentNode()) {
@@ -217,8 +217,7 @@ bool AccessibilityTableCell::isTableCellInSameRowGroup(AccessibilityTableCell* o
     return otherParentNode == parentNode;
 }
 
-
-bool AccessibilityTableCell::isTableCellInSameColGroup(AccessibilityTableCell* tableCell)
+bool AccessibilityTableCell::isTableCellInSameColGroup(AXCoreObject* tableCell)
 {
     auto colRange = columnIndexRange();
     auto otherColRange = tableCell->columnIndexRange();
@@ -255,7 +254,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
     auto colRange = columnIndexRange();
 
     for (unsigned row = 0; row < rowRange.first; row++) {
-        AccessibilityTableCell* tableCell = parent->cellForColumnAndRow(colRange.first, row);
+        auto* tableCell = parent->cellForColumnAndRow(colRange.first, row);
         if (!tableCell || tableCell == this || headers.contains(tableCell))
             continue;
 
@@ -280,7 +279,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
     auto colRange = columnIndexRange();
 
     for (unsigned column = 0; column < colRange.first; column++) {
-        AccessibilityTableCell* tableCell = parent->cellForColumnAndRow(column, rowRange.first);
+        auto* tableCell = parent->cellForColumnAndRow(column, rowRange.first);
         if (!tableCell || tableCell == this || headers.contains(tableCell))
             continue;
         

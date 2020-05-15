@@ -1,3 +1,37 @@
+2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose isColumnHeaderCell and isRowHeaderCell through AXCoreObject.
+        https://bugs.webkit.org/show_bug.cgi?id=211919
+
+        Reviewed by Chris Fleizach.
+
+        Multiple tests including accessibility/crash-table-recursive-layout.html.
+
+        - Expose isColumn/RowHeaderCell through AXCoreObject in order to make the
+        return value of AccessibilityTable::cellForColumnAndRow an AXCoreObject.
+        - Implemented these methods for AXIsolatedObject.
+        - isolatedCopy the accessibilityDescription property.
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::cellForColumnAndRow): Removed incorrect
+        assert since children are AXCoreObjects and not necessarily AccessibilityTableCells.
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::isTableCellInSameRowGroup):
+        (WebCore::AccessibilityTableCell::isTableCellInSameColGroup):
+        (WebCore::AccessibilityTableCell::columnHeaders):
+        (WebCore::AccessibilityTableCell::rowHeaders):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::addChildren):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityElementForRow:andColumn:]):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-05-14  Timothy Hatcher  <timothy@apple.com>
 
         Add baseURL version of _WKUserStyleSheet forWKWebView.

@@ -54,20 +54,18 @@ static AccessibilityObject* core(AtkTable* table)
     return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(table));
 }
 
-static AccessibilityTableCell* cell(AtkTable* table, guint row, guint column)
+static AXCoreObject* cell(AtkTable* table, guint row, guint column)
 {
-    AccessibilityObject* accTable = core(table);
-    if (is<AccessibilityTable>(*accTable))
-        return downcast<AccessibilityTable>(*accTable).cellForColumnAndRow(column, row);
-    return nullptr;
+    auto* accTable = core(table);
+    return accTable ? accTable->cellForColumnAndRow(column, row) : nullptr;
 }
 
-static gint cellIndex(AccessibilityTableCell* axCell, AccessibilityTable* axTable)
+static gint cellIndex(AXCoreObject* axCell, AccessibilityTable* axTable)
 {
     // Calculate the cell's index as if we had a traditional Gtk+ table in
     // which cells are all direct children of the table, arranged row-first.
     auto allCells = axTable->cells();
-    AccessibilityObject::AccessibilityChildrenVector::iterator position;
+    AXCoreObject::AccessibilityChildrenVector::iterator position;
     position = std::find(allCells.begin(), allCells.end(), axCell);
     if (position == allCells.end())
         return -1;
@@ -90,7 +88,7 @@ static AtkObject* webkitAccessibleTableRefAt(AtkTable* table, gint row, gint col
     g_return_val_if_fail(ATK_TABLE(table), 0);
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(table), 0);
 
-    AccessibilityTableCell* axCell = cell(table, row, column);
+    auto* axCell = cell(table, row, column);
     if (!axCell)
         return 0;
 
@@ -108,7 +106,7 @@ static gint webkitAccessibleTableGetIndexAt(AtkTable* table, gint row, gint colu
     g_return_val_if_fail(ATK_TABLE(table), -1);
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(table), -1);
 
-    AccessibilityTableCell* axCell = cell(table, row, column);
+    auto* axCell = cell(table, row, column);
     AccessibilityTable* axTable = downcast<AccessibilityTable>(core(table));
     return cellIndex(axCell, axTable);
 }
@@ -174,7 +172,7 @@ static gint webkitAccessibleTableGetColumnExtentAt(AtkTable* table, gint row, gi
     g_return_val_if_fail(ATK_TABLE(table), 0);
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(table), 0);
 
-    AccessibilityTableCell* axCell = cell(table, row, column);
+    auto* axCell = cell(table, row, column);
     if (axCell) {
         auto columnRange = axCell->columnIndexRange();
         return columnRange.second;
@@ -187,7 +185,7 @@ static gint webkitAccessibleTableGetRowExtentAt(AtkTable* table, gint row, gint 
     g_return_val_if_fail(ATK_TABLE(table), 0);
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(table), 0);
 
-    AccessibilityTableCell* axCell = cell(table, row, column);
+    auto* axCell = cell(table, row, column);
     if (axCell) {
         auto rowRange = axCell->rowIndexRange();
         return rowRange.second;

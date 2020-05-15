@@ -174,6 +174,7 @@ private:
         IsBusy,
         IsChecked,
         IsCollapsed,
+        IsColumnHeaderCell,
         IsControl,
         IsDataTable,
         IsDescriptionList,
@@ -238,6 +239,7 @@ private:
         IsProgressIndicator,
         IsRangeControl,
         IsRequired,
+        IsRowHeaderCell,
         IsScrollbar,
         IsSearchField,
         IsSelected,
@@ -426,6 +428,8 @@ private:
     std::pair<unsigned, unsigned> rowIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::RowIndexRange); }
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::ColumnIndexRange); }
+    bool isColumnHeaderCell() const override { return boolAttributeValue(AXPropertyName::IsColumnHeaderCell); }
+    bool isRowHeaderCell() const override { return boolAttributeValue(AXPropertyName::IsRowHeaderCell); }
     int axColumnIndex() const override { return intAttributeValue(AXPropertyName::AXColumnIndex); }
     int axRowIndex() const override { return intAttributeValue(AXPropertyName::AXRowIndex); }
 
