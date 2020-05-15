@@ -1,3 +1,15 @@
+2020-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Update Sihui Liu's status to reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=211966
+
+        Reviewed by Per Arne Vollan.
+
+        See email thread on webkit-reviewers on 5/7, "Reviewer nomination:
+        Sihui Liu".
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
         TestWebKitAPI.WKHTTPCookieStore.Basic is a flaky failure
