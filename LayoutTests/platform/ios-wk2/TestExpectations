@@ -1761,3 +1761,8 @@ webkit.org/b/209189 http/tests/IndexedDB/storage-limit.https.html [ Pass Failure
 webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
 
 webkit.org/b/211928 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Pass Timeout ]
+
+webkit.org/b/211958 [ Debug ] fast/text/international/system-language/han-quotes.html [ Pass Crash ]
+webkit.org/b/211958 [ Debug ] fast/text/international/system-language/navigator-language/navigator-language-es-419.html [ Pass Crash ]
+webkit.org/b/211958 [ Debug ] fast/text/international/system-language/navigator-language/navigator-language-hi.html [ Pass Crash ]
+webkit.org/b/211958 [ Debug ] fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html [ Pass Crash ]

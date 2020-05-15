@@ -1,3 +1,12 @@
+2020-05-15  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: [ iOS wk2 Debug ] multiple fast/text/international/system-language tests are flaky crashing - WTFCrashWithInfo - WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
+        https://bugs.webkit.org/show_bug.cgi?id=211958
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-15  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MediaStream] Fix missing video size
