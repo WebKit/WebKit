@@ -1,5 +1,24 @@
 2020-05-14  Keith Miller  <keith_miller@apple.com>
 
+        Undecided Arrays shouldn't need to be OriginalArray to covert to GetArrayLength
+        https://bugs.webkit.org/show_bug.cgi?id=211914
+
+        Reviewed by Saam Barati.
+
+        Also, fix a bug that arrayModesThatPassFiltering() can't handle
+        Undecided arrays. Because we can now emit a CheckArray on
+        Undecided AI will try to figure out what types flow out of the
+        check. Since Undecided was unhandled by filtering, AI will assume
+        bottom is the only possible value and the DFG/FTL will insert a
+        breakpoint, causing a crash.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+
+2020-05-14  Keith Miller  <keith_miller@apple.com>
+
         GetArrayLength should be "blessed" during Fixup phase in the DFG
         https://bugs.webkit.org/show_bug.cgi?id=211540
 

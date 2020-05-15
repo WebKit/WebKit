@@ -430,6 +430,8 @@ public:
         switch (type()) {
         case Array::Generic:
             return ALL_ARRAY_MODES;
+        case Array::Undecided:
+            return arrayModesWithIndexingShapes(UndecidedShape);
         case Array::Int32:
             result = arrayModesWithIndexingShapes(Int32Shape);
             break;

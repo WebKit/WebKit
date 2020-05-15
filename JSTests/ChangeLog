@@ -1,5 +1,17 @@
 2020-05-14  Keith Miller  <keith_miller@apple.com>
 
+        Undecided Arrays shouldn't need to be OriginalArray to covert to GetArrayLength
+        https://bugs.webkit.org/show_bug.cgi?id=211914
+
+        Reviewed by Saam Barati.
+
+        * stress/undecided-arrays-should-not-need-original-array-for-length.js: Added.
+        (findFoo):
+        (const.nonUndecidedFrequency.1000.SubArray):
+        (i.i.some):
+
+2020-05-14  Keith Miller  <keith_miller@apple.com>
+
         GetArrayLength should be "blessed" during Fixup phase in the DFG
         https://bugs.webkit.org/show_bug.cgi?id=211540
 
