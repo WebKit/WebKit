@@ -1,3 +1,18 @@
+2020-05-15  Antoine Quint  <graouts@apple.com>
+
+        Cursor should not update on a 20ms timer
+        https://bugs.webkit.org/show_bug.cgi?id=211884
+        <rdar://problem/63220368>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that checks that changing cursor during a rAF callback is applied on the immediate next run loop.
+
+        * fast/events/mouse-cursor-no-mousemove.html: Since cursor update happens in Page::updateRendering() after
+        rAF callbacks have been serviced, wait until the next run loop after an animation frame to check the new cursor.
+        * fast/events/mouse-cursor-udpate-during-raf-expected.txt: Added.
+        * fast/events/mouse-cursor-udpate-during-raf.html: Added.
+
 2020-05-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update test expectations after 261730

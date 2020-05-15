@@ -1,3 +1,19 @@
+2020-05-15  Antoine Quint  <graouts@apple.com>
+
+        Cursor should not update on a 20ms timer
+        https://bugs.webkit.org/show_bug.cgi?id=211884
+        <rdar://problem/63220368>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/events/mouse-cursor-udpate-during-raf.html
+
+        Update cursors after rAF callbacks have been serviced and layout has been updated.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        (WebCore::Page::doAfterUpdateRendering):
+
 2020-05-15  Andres Gonzalez  <andresg_22@apple.com>
 
         Update the isolated tree only if isolated tree mode is enabled.

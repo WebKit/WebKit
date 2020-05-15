@@ -1364,11 +1364,6 @@ void Page::updateRendering()
     // Flush autofocus candidates
 
     forEachDocument([] (Document& document) {
-        if (auto* frame = document.frame())
-            frame->eventHandler().updateCursorIfNeeded();
-    });
-
-    forEachDocument([] (Document& document) {
         document.runResizeSteps();
     });
 
@@ -1424,6 +1419,11 @@ void Page::doAfterUpdateRendering()
 {
     // Code here should do once-per-frame work that needs to be done before painting, and requires
     // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
+
+    forEachDocument([] (Document& document) {
+        if (auto* frame = document.frame())
+            frame->eventHandler().updateCursorIfNeeded();
+    });
 
     forEachDocument([] (Document& document) {
         document.enqueuePaintTimingEntryIfNeeded();

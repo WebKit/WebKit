@@ -1,0 +1,19 @@
+Test that changing the 'cursor' property during a requestAnimationFrame callback is applied by the next run loop.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Moved pointer over the target, cursor should be Pointer.
+Cursor info: type=Pointer hotSpot=0,0
+
+Setting cursor via CSS during next animation frame, cursor should be Pointer still.
+Cursor info: type=Pointer hotSpot=0,0
+
+Waited until next run loop, cursor should be Help.
+Cursor info: type=Help hotSpot=0,0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

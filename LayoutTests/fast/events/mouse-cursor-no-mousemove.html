@@ -43,8 +43,9 @@ if (window.testRunner) {
     });
     node.style.cursor = 'help';
 
-    // Cursor will be updated during the next animation frame.
+    // Cursor will be updated immediately after the next animation frame.
     await new Promise(requestAnimationFrame);
+    await new Promise(setTimeout);
     debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
     debug('');
 
