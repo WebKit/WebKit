@@ -1,3 +1,12 @@
+2020-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed. Fix build warning after r261113
+
+        Remove unused variable.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::preferredScriptedAnimationInterval const):
+
 2020-05-14  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose isColumnHeaderCell and isRowHeaderCell through AXCoreObject.

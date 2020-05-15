@@ -79,9 +79,7 @@ Seconds ScriptedAnimationController::interval() const
 
 Seconds ScriptedAnimationController::preferredScriptedAnimationInterval() const
 {
-    if (auto* page = this->page())
-        return preferredFrameInterval(m_throttlingReasons);
-    return FullSpeedAnimationInterval;
+    return preferredFrameInterval(m_throttlingReasons);
 }
 
 OptionSet<ThrottlingReason> ScriptedAnimationController::throttlingReasons() const
