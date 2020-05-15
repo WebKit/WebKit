@@ -1,3 +1,51 @@
+2020-05-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Move column and row balancing logic to a dedicated class
+        https://bugs.webkit.org/show_bug.cgi?id=211937
+
+        Reviewed by Antti Koivisto.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        (WebCore::Layout::ColumnSpan::hasSpan): Deleted.
+        (WebCore::Layout::ColumnSpan::isSpanned): Deleted.
+        (WebCore::Layout::ColumnSpan::spanCount): Deleted.
+        (WebCore::Layout::ColumnSpan::startSpan): Deleted.
+        (WebCore::Layout::ColumnSpan::endSpan): Deleted.
+        (WebCore::Layout::ColumnSpan::index): Deleted.
+        (WebCore::Layout::ColumnSpan::size): Deleted.
+        (WebCore::Layout::ColumnSpan::spacing): Deleted.
+        (WebCore::Layout::RowSpan::hasSpan): Deleted.
+        (WebCore::Layout::RowSpan::isSpanned): Deleted.
+        (WebCore::Layout::RowSpan::spanCount): Deleted.
+        (WebCore::Layout::RowSpan::startSpan): Deleted.
+        (WebCore::Layout::RowSpan::endSpan): Deleted.
+        (WebCore::Layout::RowSpan::index): Deleted.
+        (WebCore::Layout::RowSpan::size): Deleted.
+        (WebCore::Layout::RowSpan::spacing): Deleted.
+        (WebCore::Layout::GridSpace::isEmpty const): Deleted.
+        (): Deleted.
+        (WebCore::Layout::max): Deleted.
+        (WebCore::Layout::operator-): Deleted.
+        (WebCore::Layout::operator+=): Deleted.
+        (WebCore::Layout::operator-=): Deleted.
+        (WebCore::Layout::operator/): Deleted.
+        (WebCore::Layout::distributeAvailableSpace): Deleted.
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace): Deleted.
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraVerticalSpace): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingState.h:
+        (WebCore::Layout::TableFormattingState::tableGrid const):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::widthConstraints const):
+        (WebCore::Layout::TableGrid::Rows::list const):
+        (WebCore::Layout::TableGrid::widthConstraints): Deleted.
+        (WebCore::Layout::TableGrid::Rows::rowList const): Deleted.
+
 2020-05-15  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MediaStream] Fix missing video size

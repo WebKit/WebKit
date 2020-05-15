@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "TableFormattingState.h"
 #include "TableGrid.h"
 #include <wtf/IsoMalloc.h>
 
@@ -35,7 +36,6 @@ namespace WebCore {
 namespace Layout {
 
 class InvalidationState;
-class TableFormattingState;
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
 class TableFormattingContext final : public FormattingContext {
@@ -45,6 +45,21 @@ public:
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
 
 private:
+    class TableLayout {
+    public:
+        TableLayout(const TableFormattingContext&, const TableGrid&);
+
+        using DistributedSpaces = Vector<LayoutUnit>;
+        DistributedSpaces distributedHorizontalSpace(LayoutUnit availableHorizontalSpace);
+        DistributedSpaces distributedVerticalSpace(Optional<LayoutUnit> availableVerticalSpace);
+
+    private:
+        const TableFormattingContext& formattingContext() const { return m_formattingContext; }
+
+        const TableFormattingContext& m_formattingContext;
+        const TableGrid& m_grid;
+    };
+
     class Geometry : public FormattingContext::Geometry {
     public:
         LayoutUnit cellHeigh(const ContainerBox&) const;
@@ -59,6 +74,7 @@ private:
         const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };
     TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
+    TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     void layoutCell(const TableGrid::Cell&, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight = WTF::nullopt);
@@ -68,8 +84,7 @@ private:
 
     void ensureTableGrid();
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
-    void computeAndDistributeExtraHorizontalSpace(LayoutUnit availableHorizontalSpace);
-    void computeAndDistributeExtraVerticalSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
+    void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }

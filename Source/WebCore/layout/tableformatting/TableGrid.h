@@ -56,7 +56,7 @@ public:
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
 
     void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
-    Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() { return m_intrinsicWidthConstraints; }
+    Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
@@ -132,7 +132,7 @@ public:
     public:
         using RowList = Vector<Row>;
         RowList& list() { return m_rowList; }
-        const RowList& rowList() const { return m_rowList; }
+        const RowList& list() const { return m_rowList; }
 
         void addRow(const ContainerBox&);
 

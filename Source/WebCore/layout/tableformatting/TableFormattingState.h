@@ -42,6 +42,7 @@ public:
     ~TableFormattingState();
 
     TableGrid& tableGrid() { return m_tableGrid; }
+    const TableGrid& tableGrid() const { return m_tableGrid; }
 
 private:
     TableGrid m_tableGrid;
