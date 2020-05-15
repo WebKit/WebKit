@@ -1,3 +1,19 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Regression (iOS 13.4, r249142): WKWebView.loading is never reset after a Back navigation in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=211449
+
+        Reviewed by Geoffrey Garen.
+
+        Always call clearPendingAPIRequest in WebPageProxy::didStartProvisionalLoadForFrameShared.
+        r249142 regressed this and caused more "loading appears to continue forever" bugs fixed in r249890.
+        This should fix both, by removing the problematic half of r249142.
+
+        Covered by an API test.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+
 2020-05-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK3] Bring back usage of GtkMenu for context menus

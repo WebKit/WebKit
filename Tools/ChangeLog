@@ -1,3 +1,15 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Regression (iOS 13.4, r249142): WKWebView.loading is never reset after a Back navigation in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=211449
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[LoadingObserver changesObserved]):
+        (-[LoadingObserver observeValueForKeyPath:ofObject:change:context:]):
+        (TEST):
+
 2020-05-15  Chris Dumez  <cdumez@apple.com>
 
         Make sure we use current data store in WKTR's TestController

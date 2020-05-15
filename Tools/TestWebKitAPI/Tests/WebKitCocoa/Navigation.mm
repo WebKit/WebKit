@@ -25,6 +25,11 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
+#import "PlatformUtilities.h"
+#import "Test.h"
+#import "TestUIDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -33,9 +38,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "TestURLSchemeHandler.h"
 
 static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
@@ -671,4 +673,68 @@ TEST(WKNavigation, ListItemAddedRemoved)
     [[webView backForwardList] _removeAllItems];
     TestWebKitAPI::Util::run(&isDone);
 }
+
 #endif // PLATFORM(MAC)
+
+#if HAVE(NETWORK_FRAMEWORK)
+
+@interface LoadingObserver : NSObject
+@property (nonatomic, readonly) size_t changesObserved;
+@end
+
+@implementation LoadingObserver {
+    size_t _changesObserved;
+}
+
+- (size_t)changesObserved
+{
+    return _changesObserved;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    EXPECT_WK_STREQ(keyPath, "loading");
+    _changesObserved++;
+}
+
+@end
+
+TEST(WKNavigation, FrameBackLoading)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { "<iframe src='frame1.html'></iframe>" } },
+        { "/frame1.html", { "<a href='frame2.html'>link</a>" } },
+        { "/frame2.html", { "<script>alert('frame2 loaded')</script>" } },
+    });
+    auto webView = [[WKWebView new] autorelease];
+    auto delegate = [[TestUIDelegate new] autorelease];
+    auto observer = [[LoadingObserver new] autorelease];
+    webView.UIDelegate = delegate;
+    [webView addObserver:observer forKeyPath:@"loading" options:NSKeyValueObservingOptionNew context:nil];
+    EXPECT_FALSE(webView.loading);
+    EXPECT_EQ(observer.changesObserved, 0u);
+    [webView loadRequest:server.request()];
+    EXPECT_TRUE(webView.loading);
+    EXPECT_EQ(observer.changesObserved, 1u);
+    while (observer.changesObserved < 2u)
+        Util::spinRunLoop();
+    EXPECT_FALSE(webView.loading);
+    EXPECT_EQ(observer.changesObserved, 2u);
+    EXPECT_FALSE(webView.canGoBack);
+    [webView evaluateJavaScript:@"document.querySelector('iframe').contentWindow.document.querySelector('a').click()" completionHandler:nil];
+    EXPECT_WK_STREQ([delegate waitForAlert], "frame2 loaded");
+    EXPECT_EQ(observer.changesObserved, 2u);
+    EXPECT_TRUE(webView.canGoBack);
+    [webView goBack];
+    while (observer.changesObserved < 3)
+        Util::spinRunLoop();
+    EXPECT_TRUE(webView.loading);
+    while (observer.changesObserved < 4)
+        Util::spinRunLoop();
+    EXPECT_FALSE(webView.loading);
+    [webView removeObserver:observer forKeyPath:@"loading"];
+
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK)

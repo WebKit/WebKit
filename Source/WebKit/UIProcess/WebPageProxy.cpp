@@ -4444,9 +4444,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     RELEASE_LOG_IF_ALLOWED(Loading, "didStartProvisionalLoadForFrame: frameID = %" PRIu64, frameID.toUInt64());
 
     auto transaction = m_pageLoadState.transaction();
-    bool fromAlternateHTMLAPI = !unreachableURL.isEmpty() && unreachableURL == m_pageLoadState.pendingAPIRequestURL();
-    if (navigation || fromAlternateHTMLAPI)
-        m_pageLoadState.clearPendingAPIRequest(transaction);
+    m_pageLoadState.clearPendingAPIRequest(transaction);
 
     if (frame->isMainFrame()) {
         process->didStartProvisionalLoadForMainFrame(url);
