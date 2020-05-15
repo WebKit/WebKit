@@ -1,3 +1,9 @@
+2020-05-15  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix internal fast tls build.
+
+        * jit/AssemblyHelpers.cpp:
+
 2020-05-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         [IWYU] Remove unnecessary includes from JSC implementation files

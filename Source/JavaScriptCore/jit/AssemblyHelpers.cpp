@@ -38,6 +38,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 #include "WasmMemoryInformation.h"
+#include "WasmContextInlines.h"
 #endif
 
 namespace JSC {
