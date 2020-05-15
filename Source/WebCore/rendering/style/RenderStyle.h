@@ -1586,7 +1586,7 @@ public:
     static const TransformOperations& initialTransform() { static NeverDestroyed<TransformOperations> ops; return ops; }
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
-    static TransformBox initialTransformBox() { return TransformBox::BorderBox; }
+    static TransformBox initialTransformBox() { return TransformBox::ViewBox; }
     static PointerEvents initialPointerEvents() { return PointerEvents::Auto; }
     static float initialTransformOriginZ() { return 0; }
     static TransformStyle3D initialTransformStyle3D() { return TransformStyle3D::Flat; }

@@ -6385,13 +6385,14 @@
         },
         "transform-box": {
             "values" : [
+                "content-box",
                 "border-box",
                 "fill-box",
-                "view-box",
                 "stroke-box",
-                "content-box"
+                "view-box"
             ],
             "codegen-properties": {
+                "initial": "initialTransformBox"
             },
             "specification": {
                 "category": "css-transforms",

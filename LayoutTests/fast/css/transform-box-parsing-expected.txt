@@ -9,7 +9,7 @@ PASS testPropertyValue("transform-box: view-box", "transform-box") is "view-box"
 PASS testPropertyValue("transform-box: content-box", "transform-box") is "content-box"
 PASS testPropertyValue("transform-box: stroke-box", "transform-box") is "stroke-box"
 
-PASS testComputedStyle("", "transform-box") is "border-box"
+PASS testComputedStyle("", "transform-box") is "view-box"
 PASS testComputedStyle("transform-box: fill-box", "transform-box") is "fill-box"
 PASS testComputedStyle("transform-box: view-box", "transform-box") is "view-box"
 PASS testComputedStyle("transform-box: content-box", "transform-box") is "content-box"
@@ -24,9 +24,9 @@ PASS testSVGComputedStyle("transform-box: stroke-box", "transform-box") is "stro
 PASS testComputedStyleOnElementWithId("foreignObject") is "view-box"
 
 Test default value on elements with CSS layout boxes
-PASS testComputedStyleOnElementWithId("svgRoot") is "border-box"
-PASS testComputedStyleOnElementWithId("nested-svg") is "border-box"
-PASS testComputedStyleOnElementWithId("inside-foreign-object") is "border-box"
+PASS testComputedStyleOnElementWithId("svgRoot") is "view-box"
+PASS testComputedStyleOnElementWithId("nested-svg") is "view-box"
+PASS testComputedStyleOnElementWithId("inside-foreign-object") is "view-box"
 
 PASS successfullyParsed is true
 

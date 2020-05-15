@@ -66,7 +66,7 @@
         shouldBeEqualToString('testPropertyValue("transform-box: stroke-box", "transform-box")', 'stroke-box');
 
         debug('');
-        shouldBeEqualToString('testComputedStyle("", "transform-box")', 'border-box');
+        shouldBeEqualToString('testComputedStyle("", "transform-box")', 'view-box');
         shouldBeEqualToString('testComputedStyle("transform-box: fill-box", "transform-box")', 'fill-box');
         shouldBeEqualToString('testComputedStyle("transform-box: view-box", "transform-box")', 'view-box');
         shouldBeEqualToString('testComputedStyle("transform-box: content-box", "transform-box")', 'content-box');
@@ -84,9 +84,9 @@
 
         debug('');
         debug('Test default value on elements with CSS layout boxes');
-        shouldBeEqualToString('testComputedStyleOnElementWithId("svgRoot")', 'border-box');
-        shouldBeEqualToString('testComputedStyleOnElementWithId("nested-svg")', 'border-box');
-        shouldBeEqualToString('testComputedStyleOnElementWithId("inside-foreign-object")', 'border-box');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("svgRoot")', 'view-box');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("nested-svg")', 'view-box');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("inside-foreign-object")', 'view-box');
 
         debug('');
     </script>
