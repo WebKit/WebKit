@@ -1,3 +1,14 @@
+2020-05-15  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MediaStream] Fix missing video size
+        https://bugs.webkit.org/show_bug.cgi?id=211938
+
+        Reviewed by Philippe Normand.
+
+        Updated test expectations.
+
+        * platform/gtk/TestExpectations:
+
 2020-05-15  Antti Koivisto  <antti@apple.com>
 
         [Wheel event region] Invalidation when changing listeners on elements

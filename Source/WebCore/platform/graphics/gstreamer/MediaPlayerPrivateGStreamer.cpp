@@ -1666,8 +1666,8 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    if (!m_isLegacyPlaybin && !m_currentVideoStreamId.isEmpty()) {
-        RefPtr<VideoTrackPrivateGStreamer> videoTrack = m_videoTracks.get(m_currentVideoStreamId);
+    if (!m_isLegacyPlaybin && !m_wantedVideoStreamId.isEmpty()) {
+        RefPtr<VideoTrackPrivateGStreamer> videoTrack = m_videoTracks.get(m_wantedVideoStreamId);
 
         if (videoTrack) {
             auto tags = adoptGRef(gst_stream_get_tags(videoTrack->stream()));

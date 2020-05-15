@@ -1,3 +1,40 @@
+2020-05-15  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MediaStream] Fix missing video size
+        https://bugs.webkit.org/show_bug.cgi?id=211938
+
+        Reviewed by Philippe Normand.
+
+        r261683 redefined m_currentVideoStreamId. Under the new design, tracks
+        have several states:
+
+        - "wanted": a track has been selected from JavaScript, or chosen by
+          default.
+
+        - "requested": a track that is expected to be chosen by the next
+          STREAMS_SELECTED message.
+
+        - "current": a track that has been selected after the STREAMS_SELECTED
+          message has been handled.
+
+        naturalSize() used to check m_currentVideoStreamId to look for the
+        video size, but this is called relatively early before the track
+        becomes "current" under the new design.
+
+        Since the size tags can't be queried at any time, it makes sense to
+        use m_wantedVideoStreamId instead.
+
+        This fixes the following tests which were previously regressed:
+
+        fast/mediastream/get-user-media-constraints.html
+        fast/mediastream/getUserMedia-video-rescaling.html
+        fast/mediastream/mediastreamtrack-video-clone.html
+        imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html
+        fast/mediastream/media-stream-renders-first-frame.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize const):
+
 2020-05-15  Antti Koivisto  <antti@apple.com>
 
         [Wheel event region] Invalidation when changing listeners on elements

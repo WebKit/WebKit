@@ -1399,10 +1399,6 @@ webkit.org/b/211887 webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadA
 webkit.org/b/211887 webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Failure ]
 
-webkit.org/b/211938 fast/mediastream/get-user-media-constraints.html [ Failure ]
-webkit.org/b/211938 fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
-webkit.org/b/211938 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure ]
-
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
 
@@ -1499,7 +1495,7 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 webkit.org/b/199010 css2.1/t1204-order-01-d.html [ Pass Crash ]
 
 # Bug 211938 is Failure.
-webkit.org/b/199440 webkit.org/b/211938 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Failure Crash ]
+webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Crash ]
 
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
@@ -3340,8 +3336,6 @@ webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-do
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html [ Skip ]
 
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
-
-webkit.org/b/211938 fast/mediastream/media-stream-renders-first-frame.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
