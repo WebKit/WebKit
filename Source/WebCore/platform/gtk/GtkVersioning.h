@@ -152,26 +152,4 @@ gdk_event_get_keycode(const GdkEvent* event, guint16* keycode)
     return TRUE;
 }
 
-static inline GtkWidget* gtk_popover_menu_new()
-{
-    return gtk_popover_menu_new_from_model(nullptr);
-}
-
-static inline void gtk_popover_bind_model(GtkPopover* popover, GMenuModel* model, const char*)
-{
-    ASSERT(GTK_IS_POPOVER_MENU(popover));
-    gtk_popover_menu_set_menu_model(GTK_POPOVER_MENU(popover), model);
-}
-
-static inline void gtk_popover_set_relative_to(GtkPopover* popover, GtkWidget* parent)
-{
-    gtk_widget_set_parent(GTK_WIDGET(popover), parent);
-}
-
-#else
-
-static inline void gtk_popover_set_has_arrow(GtkPopover*, gboolean)
-{
-}
-
 #endif // USE(GTK4)

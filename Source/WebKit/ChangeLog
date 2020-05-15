@@ -1,3 +1,35 @@
+2020-05-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK3] Bring back usage of GtkMenu for context menus
+        https://bugs.webkit.org/show_bug.cgi?id=211557
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (contextMenuDismissed): Removed.
+        (webkitWebViewPopulateContextMenu): Use WebContextMenuProxyGtk::widgetDismissedSignal
+        and move the code from contextMenuDismissed() into an inline lambda.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (activeContextMenuClosed): Removed.
+        (webkitWebViewBaseSetActiveContextMenuProxy): Use WebContextMenuProxyGtk::widgetDismissedSignal
+        and move the code from activeContextMenuClosed() into an inline lambda.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp: Add helper functions to manipulate the actual
+        widget used for context menus depending on whether GTK3 or GTK4 is being used. The GTK3
+        versions bring back bits of code removed in r260889.
+        (WebKit::createMenuWidget): Added.
+        (WebKit::popupMenuWidget): Added.
+        (WebKit::popdownMenuWidget): Added.
+        (WebKit::menuWidgetHasItems): Added.
+        (WebKit::bindModelToMenuWidget): Added.
+        (WebKit::WebContextMenuProxyGtk::populate): Use context menu widget helper functions.
+        (WebKit::WebContextMenuProxyGtk::showContextMenuWithItems): Ditto.
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk): Ditto. Also handle the
+        signal triggered when the context menu is dismissed and arrange to call
+        webkitWebViewContextMenuDismissed() and webkitWebViewBaseContextMenuDismissed().
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk): Use helper functions.
+        * UIProcess/gtk/WebContextMenuProxyGtk.h: Add WebContextMenuProxyGtk::widgetDismissedSignal
+        constant.
+
 2020-05-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Attribute non-network loads and loads with html strings as automatically app-bound

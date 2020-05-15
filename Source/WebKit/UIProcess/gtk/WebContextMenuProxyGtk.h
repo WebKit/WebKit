@@ -51,7 +51,8 @@ public:
     ~WebContextMenuProxyGtk();
 
     void populate(const Vector<WebContextMenuItemGlib>&);
-    GtkWidget* gtkWidget() const { return GTK_WIDGET(m_menu); }
+    GtkWidget* gtkWidget() const { return m_menu; }
+    static const char* widgetDismissedSignal;
 
 private:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, ContextMenuContextData&&, const UserData&);
@@ -64,7 +65,7 @@ private:
 
     GtkWidget* m_webView;
     WebPageProxy* m_page;
-    GtkPopover* m_menu;
+    GtkWidget* m_menu;
     HashMap<unsigned long, void*> m_signalHandlers;
     GRefPtr<GSimpleActionGroup> m_actionGroup { adoptGRef(g_simple_action_group_new()) };
 };

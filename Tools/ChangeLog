@@ -1,3 +1,13 @@
+2020-05-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK3] Bring back usage of GtkMenu for context menus
+        https://bugs.webkit.org/show_bug.cgi?id=211557
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp: Add preprocessor conditionals
+        for GTK4 and bring back some bits previously removed in r260889 for GTK3.
+
 2020-05-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Attribute non-network loads and loads with html strings as automatically app-bound

@@ -1,3 +1,14 @@
+2020-05-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK3] Bring back usage of GtkMenu for context menus
+        https://bugs.webkit.org/show_bug.cgi?id=211557
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * platform/gtk/GtkVersioning.h: Remove GtkPopover functions used only for context menus.
+
 2020-05-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed. Fix build warning after r261113
