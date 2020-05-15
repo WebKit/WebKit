@@ -1,3 +1,30 @@
+2020-05-15  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Treat percentages as auto for the minimum contribution
+        https://bugs.webkit.org/show_bug.cgi?id=195967
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The minimum contribution of a grid item is the outer size resulting from
+        the minimum size if the computed preferred size behaves as auto, or the
+        min-content contribution otherwise.
+
+        If the preferred size is a percentage, it should be resolved with
+        respect to the grid area, which depends on the minimum contribution
+        of the item. Thus the percentage is cyclic and behaves as auto.
+
+        Before this change, WebKit only checked whether the preferred size is
+        auto, not whether it behaves as auto. In fact this was according to
+        an older version of the spec, but it was changed in
+        https://github.com/w3c/csswg-drafts/issues/2367
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-minimum-contribution-with-percentages.html
+
+        Some cases in the test still fail due to bug 209461.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+
 2020-05-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Animation with a single keyframe is not accelerated

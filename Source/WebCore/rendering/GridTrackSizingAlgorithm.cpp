@@ -806,14 +806,14 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
     GridTrackSizingDirection childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, ForColumns);
     bool isRowAxis = direction() == childInlineDirection;
     const Length& childSize = isRowAxis ? child.style().logicalWidth() : child.style().logicalHeight();
-    if (!childSize.isAuto())
+    if (!childSize.isAuto() && !childSize.isPercentOrCalculated())
         return minContentForChild(child);
 
     const Length& childMinSize = isRowAxis ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
     bool overflowIsVisible = isRowAxis ? child.style().overflowInlineDirection() == Overflow::Visible : child.style().overflowBlockDirection() == Overflow::Visible;
     LayoutUnit baselineShim = m_algorithm.baselineOffsetForChild(child, gridAxisForDirection(direction()));
 
-    if (childSize.isAuto() && childMinSize.isAuto() && overflowIsVisible) {
+    if (childMinSize.isAuto() && overflowIsVisible) {
         auto minSize = minContentForChild(child);
         LayoutUnit maxBreadth;
         auto allTracks = m_algorithm.tracks(direction());
