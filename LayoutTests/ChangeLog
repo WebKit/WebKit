@@ -1,5 +1,16 @@
 2020-05-15  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, update test expectations after r261678
+        https://bugs.webkit.org/show_bug.cgi?id=211941
+
+        Unreviewed gardening.
+
+        Two multiple-codeunit-vertical-upright tests are failing after r261678.
+
+        * platform/gtk/TestExpectations:
+
+2020-05-15  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update expectations after r261683
         https://bugs.webkit.org/show_bug.cgi?id=211939
 

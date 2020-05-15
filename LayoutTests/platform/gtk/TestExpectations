@@ -1403,6 +1403,9 @@ webkit.org/b/211938 fast/mediastream/get-user-media-constraints.html [ Failure ]
 webkit.org/b/211938 fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
 webkit.org/b/211938 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure ]
 
+webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
