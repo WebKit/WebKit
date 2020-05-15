@@ -1378,10 +1378,6 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
         }
     }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(*object, AXSelectedTextChanged);
-#endif
-
     postTextStateChangeNotification(object, intent, selection);
 #else
     postTextStateChangeNotification(node, intent, selection);
@@ -1401,8 +1397,17 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
             object = observableObject;
     }
 
-    const AXTextStateChangeIntent& newIntent = (intent.type == AXTextStateChangeTypeUnknown || (m_isSynchronizingSelection && m_textSelectionIntent.type != AXTextStateChangeTypeUnknown)) ? m_textSelectionIntent : intent;
-    postTextStateChangePlatformNotification(object, newIntent, selection);
+    if (!object)
+        object = rootWebArea();
+
+    if (object) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        updateIsolatedTree(*object, AXSelectedTextChanged);
+#endif
+
+        const AXTextStateChangeIntent& newIntent = (intent.type == AXTextStateChangeTypeUnknown || (m_isSynchronizingSelection && m_textSelectionIntent.type != AXTextStateChangeTypeUnknown)) ? m_textSelectionIntent : intent;
+        postTextStateChangePlatformNotification(object, newIntent, selection);
+    }
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(intent);
@@ -1427,6 +1432,12 @@ void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType t
             return;
         object = object->observableObject();
     }
+
+    if (!object)
+        object = rootWebArea();
+
+    if (!object)
+        return;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     updateIsolatedTree(*object, AXValueChanged);
@@ -3293,12 +3304,12 @@ bool isNodeAriaVisible(Node* node)
     return !requiresAriaHiddenFalse || ariaHiddenFalsePresent;
 }
 
-AXCoreObject* AXObjectCache::rootWebArea()
+AccessibilityObject* AXObjectCache::rootWebArea()
 {
-    AXCoreObject* rootObject = this->rootObject();
-    if (!rootObject || !rootObject->isScrollView())
+    auto* root = getOrCreate(m_document.view());
+    if (!root || !root->isScrollView())
         return nullptr;
-    return rootObject->webAreaObject();
+    return root->webAreaObject();
 }
 
 AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)

@@ -426,7 +426,7 @@ protected:
     bool shouldSkipBoundary(const CharacterOffset&, const CharacterOffset&);
 
 private:
-    AXCoreObject* rootWebArea();
+    AccessibilityObject* rootWebArea();
 
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     static AXCoreObject* focusedObject(Document&);
