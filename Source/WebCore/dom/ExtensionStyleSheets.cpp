@@ -127,12 +127,19 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     if (!owningPage)
         return;
 
-    for (const auto& pageSpecificStyleSheet : m_pageSpecificStyleSheets) {
-        if (pageSpecificStyleSheet->contents().isUserStyleSheet())
-            m_injectedUserStyleSheets.append(pageSpecificStyleSheet);
+    auto addStyleSheet = [&](const UserStyleSheet& userStyleSheet) {
+        auto sheet = createExtensionsStyleSheet(const_cast<Document&>(m_document), userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
+
+        m_injectedStyleSheetToSource.set(sheet.copyRef(), userStyleSheet.source());
+
+        if (sheet->contents().isUserStyleSheet())
+            m_injectedUserStyleSheets.append(WTFMove(sheet));
         else
-            m_injectedAuthorStyleSheets.append(pageSpecificStyleSheet);
-    }
+            m_injectedAuthorStyleSheets.append(WTFMove(sheet));
+    };
+
+    for (const auto& userStyleSheet : m_pageSpecificStyleSheets)
+        addStyleSheet(userStyleSheet);
 
     owningPage->userContentProvider().forEachUserStyleSheet([&](const UserStyleSheet& userStyleSheet) {
         if (userStyleSheet.pageID())
@@ -144,28 +151,20 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
         if (!UserContentURLPattern::matchesPatterns(m_document.url(), userStyleSheet.whitelist(), userStyleSheet.blacklist()))
             return;
 
-        auto sheet = createExtensionsStyleSheet(const_cast<Document&>(m_document), userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
-
-        m_injectedStyleSheetToSource.set(sheet.copyRef(), userStyleSheet.source());
-
-        if (userStyleSheet.level() == UserStyleUserLevel)
-            m_injectedUserStyleSheets.append(WTFMove(sheet));
-        else
-            m_injectedAuthorStyleSheets.append(WTFMove(sheet));
+        addStyleSheet(userStyleSheet);
     });
 }
 
 void ExtensionStyleSheets::injectPageSpecificUserStyleSheet(const UserStyleSheet& userStyleSheet)
 {
-    auto sheet = createExtensionsStyleSheet(const_cast<Document&>(m_document), userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
-    m_pageSpecificStyleSheets.append(WTFMove(sheet));
+    m_pageSpecificStyleSheets.append(userStyleSheet);
     invalidateInjectedStyleSheetCache();
 }
 
 void ExtensionStyleSheets::removePageSpecificUserStyleSheet(const UserStyleSheet& userStyleSheet)
 {
-    bool removedStyleSheet = m_pageSpecificStyleSheets.removeFirstMatching([userStyleSheet](auto& cssStyleSheet) {
-        return cssStyleSheet->contents().originalURL() == userStyleSheet.url();
+    bool removedStyleSheet = m_pageSpecificStyleSheets.removeFirstMatching([&](const auto& styleSheet) {
+        return styleSheet.url() == userStyleSheet.url();
     });
 
     if (removedStyleSheet)
@@ -236,8 +235,6 @@ void ExtensionStyleSheets::detachFromDocument()
     for (auto& sheet : m_userStyleSheets)
         sheet->detachFromDocument();
     for (auto& sheet : m_authorStyleSheetsForTesting)
-        sheet->detachFromDocument();
-    for (auto& sheet : m_pageSpecificStyleSheets)
         sheet->detachFromDocument();
 }
 

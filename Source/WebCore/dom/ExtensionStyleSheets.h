@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "UserStyleSheet.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -46,7 +47,6 @@ class Node;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
-class UserStyleSheet;
 
 class ExtensionStyleSheets {
     WTF_MAKE_FAST_ALLOCATED;
@@ -92,7 +92,7 @@ private:
 
     Vector<RefPtr<CSSStyleSheet>> m_userStyleSheets;
     Vector<RefPtr<CSSStyleSheet>> m_authorStyleSheetsForTesting;
-    Vector<RefPtr<CSSStyleSheet>> m_pageSpecificStyleSheets;
+    Vector<UserStyleSheet> m_pageSpecificStyleSheets;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     HashMap<String, RefPtr<CSSStyleSheet>> m_contentExtensionSheets;

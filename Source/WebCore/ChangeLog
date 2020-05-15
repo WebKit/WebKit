@@ -1,3 +1,21 @@
+2020-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Add baseURL version of _WKUserStyleSheet forWKWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=211926
+        rdar://problem/62074675
+
+        Reviewed by Devin Rousso.
+
+        Consolidate the paths taken for adding a UserStyleSheet. The m_injectedStyleSheetToSource
+        was missing for page specific style sheets since it was another loop.
+
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache const):
+        (WebCore::ExtensionStyleSheets::injectPageSpecificUserStyleSheet):
+        (WebCore::ExtensionStyleSheets::removePageSpecificUserStyleSheet):
+        (WebCore::ExtensionStyleSheets::detachFromDocument):
+        * dom/ExtensionStyleSheets.h:
+
 2020-05-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Relaxing signature length requirements for U2fRegister

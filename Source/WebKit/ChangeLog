@@ -1,3 +1,20 @@
+2020-05-14  Timothy Hatcher  <timothy@apple.com>
+
+        Add baseURL version of _WKUserStyleSheet forWKWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=211926
+        rdar://problem/62074675
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:baseURL:level:userContentWorld:]): Added.
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:level:userContentWorld:]): Clean up WebCore::UserStyleSheet initializer.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:]): Ditto.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]): Ditto.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]): Ditto.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:level:userContentWorld:]): Ditto.
+
 2020-05-14  John Wilander  <wilander@apple.com>
 
         Add quirk for cookie blocking latch mode aolmail.com redirecting to aol.com under aol.com
