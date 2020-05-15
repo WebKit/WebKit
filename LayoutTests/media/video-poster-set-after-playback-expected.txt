@@ -1,5 +1,6 @@
 
 EVENT(playing)
+EXPECTED (internals.elementShouldDisplayPosterImage(video) == 'false') OK
 EVENT(pause)
 EXPECTED (internals.elementShouldDisplayPosterImage(video) == 'false') OK
 END OF TEST

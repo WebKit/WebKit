@@ -15,11 +15,13 @@
             video.play();
             await waitFor(video, 'playing');
 
+            await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', false);
+
             video.pause();
             await waitFor(video, 'pause');
-            
+
             video.poster = 'content/green.png';
-            
+
             if (window.internals)
                 await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', false);
             else
