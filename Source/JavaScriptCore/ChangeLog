@@ -1,5 +1,11 @@
 2020-05-15  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix internal arm64e build.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+
+2020-05-15  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix internal fast tls build.
 
         * jit/AssemblyHelpers.cpp:
