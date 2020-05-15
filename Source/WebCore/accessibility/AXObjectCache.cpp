@@ -3119,6 +3119,10 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");
+
+    if (!isIsolatedTreeEnabled())
+        return;
+
     AXLOG(std::make_pair(&object, notification));
     AXLOG(*this);
 
@@ -3155,6 +3159,10 @@ static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F mat
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");
+
+    if (!isIsolatedTreeEnabled())
+        return;
+
     AXLOG(*this);
 
     if (!m_pageID)
