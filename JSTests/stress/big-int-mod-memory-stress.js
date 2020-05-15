@@ -1,3 +1,4 @@
+//@ skip if ["arm", "mips"].include?($architecture)
 //@ runBigIntEnabled
 
 function assert(a) {

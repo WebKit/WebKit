@@ -1,3 +1,14 @@
+2020-05-15  Paulo Matos  <pmatos@igalia.com>
+
+        Skip tests in ARM and MIPS post r261667
+
+        Unreviewed Gardening.
+        These tests started failing on both ARMv7 and MIPS post r261667.
+        Skipping for now until an investigation takes place.
+
+        * stress/big-int-mod-memory-stress.js:
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+
 2020-05-14  Saam Barati  <sbarati@apple.com>
 
         GetByVal and PutByVal runtime operations shouldn't fall off a performance cliff when the property is an integer boxed as a double
