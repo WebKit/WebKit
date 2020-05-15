@@ -1,3 +1,17 @@
+2020-05-15  Paulo Matos  <pmatos@igalia.com>
+
+        Fix ARM NEON only assert
+        https://bugs.webkit.org/show_bug.cgi?id=211889
+
+        Reviewed by Mark Lam.
+
+        Fix assert that breaks if ARM does not contain NEON extensions -
+        the register d16 is only defined if NEON exists.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::RegisterNames::asSingle):
+        (JSC::RegisterNames::asSingleUpper):
+
 2020-05-14  Saam Barati  <sbarati@apple.com>
 
         GetByVal and PutByVal runtime operations shouldn't fall off a performance cliff when the property is an integer boxed as a double
