@@ -131,6 +131,21 @@ void TestController::platformAddTestOptions(TestOptions& options) const
 #endif
 }
 
+void TestController::platformInitializeDataStore(WKPageConfigurationRef, const TestOptions& options)
+{
+    if (options.useEphemeralSession || options.standaloneWebApplicationURL.length()) {
+        auto websiteDataStoreConfig = options.useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+        if (!options.useEphemeralSession)
+            configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
+        if (options.standaloneWebApplicationURL.length())
+            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:options.standaloneWebApplicationURL.c_str()]]];
+        auto *websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
+        [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)websiteDataStore;
+    } else
+        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)globalWebViewConfiguration.websiteDataStore;
+}
+
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
     RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
@@ -157,16 +172,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableEditableImages)
         [copiedConfiguration _setEditableImagesEnabled:YES];
 
-    if (options.useEphemeralSession || options.standaloneWebApplicationURL.length()) {
-        auto websiteDataStoreConfig = options.useEphemeralSession ? [[[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration] autorelease] : [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
-        if (!options.useEphemeralSession)
-            configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
-        if (options.standaloneWebApplicationURL.length())
-            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:options.standaloneWebApplicationURL.c_str()]]];
-        auto websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
-        [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-        [copiedConfiguration setWebsiteDataStore:websiteDataStore];
-    }
+    [copiedConfiguration setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore()];
 
     [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs];
 

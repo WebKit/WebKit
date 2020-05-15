@@ -1,3 +1,36 @@
+2020-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we use current data store in WKTR's TestController
+        https://bugs.webkit.org/show_bug.cgi?id=211920
+
+        Reviewed by Alex Christensen.
+
+        Make sure we use current data store in WKTR's TestController. Currently, a lot of code
+        uses defaultDataStore(), even though the test may be using another data store (e.g. an
+        ephemeral one). I suspect this is contributing to test flakiness.
+
+        We now also make sure that TestController::websiteDataStore() returns the actual store
+        that will be used by the test when resetPreferencesToConsistentValues() is called.
+        Previously, it would not since it would get the store from the m_mainView and m_mainView
+        would only get initialized after calling resetPreferencesToConsistentValues(). To support
+        this, we now initialize a m_websiteDataStore member in platformInitializeDataStore(),
+        which gets called right before resetPreferencesToConsistentValues(). When
+        platformCreateWebView() gets called right after resetPreferencesToConsistentValues(),
+        it now simply relies on m_websiteDataStore instead of creating the data store at this
+        point.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestController::clearServiceWorkerRegistrations):
+        (WTR::TestController::clearDOMCache):
+        (WTR::TestController::clearDOMCaches):
+        (WTR::TestController::hasDOMCache):
+        (WTR::TestController::domCacheSize):
+        (WTR::TestController::clearStatisticsDataForDomain):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2020-05-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [buildbot] Increase blocksize of file transfer in UploadTestResults step

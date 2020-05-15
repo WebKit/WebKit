@@ -556,7 +556,7 @@ WKWebsiteDataStoreRef TestController::defaultWebsiteDataStore()
 
 WKWebsiteDataStoreRef TestController::websiteDataStore()
 {
-    return WKPageConfigurationGetWebsiteDataStore(adoptWK(WKPageCopyPageConfiguration(m_mainWebView->page())).get());
+    return m_websiteDataStore.get();
 }
 
 WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(const TestOptions& options)
@@ -650,6 +650,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
 #endif
 
     auto configuration = generatePageConfiguration(options);
+    platformInitializeDataStore(configuration.get(), options);
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     // FIXME: Migrate these preferences to WKContextConfigurationRef.
@@ -941,7 +942,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetBeaconAPIEnabled(preferences, true);
     WKPreferencesSetDirectoryUploadEnabled(preferences, true);
 
-    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(TestController::defaultWebsiteDataStore()), nullptr, nullptr);
+    WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
     
@@ -1028,7 +1029,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKContextResetServiceWorkerFetchTimeoutForTesting(TestController::singleton().context());
 
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
-    WKWebsiteDataStoreClearAllDeviceOrientationPermissions(TestController::defaultWebsiteDataStore());
 
     clearIndexedDatabases();
     clearLocalStorage();
@@ -2233,7 +2233,7 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
 
     auto setHTTPCookieAcceptPolicy = [&] (WKHTTPCookieAcceptPolicy policy, CompletionHandler<void(WKTypeRef)>&& completionHandler) {
         auto context = new CompletionHandler<void(WKTypeRef)>(WTFMove(completionHandler));
-        WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::defaultWebsiteDataStore()), policy, context, [] (void* context) {
+        WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), policy, context, [] (void* context) {
             auto completionHandlerPointer = static_cast<CompletionHandler<void(WKTypeRef)>*>(context);
             (*completionHandlerPointer)(nullptr);
             delete completionHandlerPointer;
@@ -3116,6 +3116,11 @@ void TestController::platformWillRunTest(const TestInvocation&)
 {
 }
 
+void TestController::platformInitializeDataStore(WKPageConfigurationRef configuration, const TestOptions&)
+{
+    m_websiteDataStore = WKPageConfigurationGetWebsiteDataStore(configuration);
+}
+
 void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const TestOptions& options)
 {
     m_mainWebView = makeUnique<PlatformWebView>(configuration, options);
@@ -3217,7 +3222,7 @@ void TestController::clearServiceWorkerRegistrations()
 {
     ClearServiceWorkerRegistrationsCallbackContext context(*this);
 
-    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(TestController::defaultWebsiteDataStore(), &context, clearServiceWorkerRegistrationsCallback);
+    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore(), &context, clearServiceWorkerRegistrationsCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3243,7 +3248,7 @@ void TestController::clearDOMCache(WKStringRef origin)
     ClearDOMCacheCallbackContext context(*this);
 
     auto cacheOrigin = adoptWK(WKSecurityOriginCreateFromString(origin));
-    WKWebsiteDataStoreRemoveFetchCacheForOrigin(TestController::defaultWebsiteDataStore(), cacheOrigin.get(), &context, clearDOMCacheCallback);
+    WKWebsiteDataStoreRemoveFetchCacheForOrigin(websiteDataStore(), cacheOrigin.get(), &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3251,7 +3256,7 @@ void TestController::clearDOMCaches()
 {
     ClearDOMCacheCallbackContext context(*this);
 
-    WKWebsiteDataStoreRemoveAllFetchCaches(TestController::defaultWebsiteDataStore(), &context, clearDOMCacheCallback);
+    WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore(), &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3335,7 +3340,7 @@ static void fetchCacheOriginsCallback(WKArrayRef origins, void* userData)
 bool TestController::hasDOMCache(WKStringRef origin)
 {
     FetchCacheOriginsCallbackContext context(*this, origin);
-    WKWebsiteDataStoreGetFetchCacheOrigins(TestController::defaultWebsiteDataStore(), &context, fetchCacheOriginsCallback);
+    WKWebsiteDataStoreGetFetchCacheOrigins(websiteDataStore(), &context, fetchCacheOriginsCallback);
     runUntil(context.done, noTimeout);
     return context.result;
 }
@@ -3363,7 +3368,7 @@ static void fetchCacheSizeForOriginCallback(uint64_t size, void* userData)
 uint64_t TestController::domCacheSize(WKStringRef origin)
 {
     FetchCacheSizeForOriginCallbackContext context(*this);
-    WKWebsiteDataStoreGetFetchCacheSizeForOrigin(TestController::defaultWebsiteDataStore(), origin, &context, fetchCacheSizeForOriginCallback);
+    WKWebsiteDataStoreGetFetchCacheSizeForOrigin(websiteDataStore(), origin, &context, fetchCacheSizeForOriginCallback);
     runUntil(context.done, noTimeout);
     return context.result;
 }
@@ -3420,7 +3425,7 @@ void TestController::clearStatisticsDataForDomain(WKStringRef domain)
 {
     ResourceStatisticsCallbackContext context(*this);
 
-    WKWebsiteDataStoreRemoveITPDataForDomain(TestController::defaultWebsiteDataStore(), domain, &context, resourceStatisticsVoidResultCallback);
+    WKWebsiteDataStoreRemoveITPDataForDomain(websiteDataStore(), domain, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
 }
 

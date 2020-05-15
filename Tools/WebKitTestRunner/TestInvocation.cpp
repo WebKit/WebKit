@@ -164,7 +164,7 @@ void TestInvocation::invoke()
 
     TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
 
-    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::defaultWebsiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
+    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::singleton().websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
 
     // FIXME: We should clear out visited links here.
 
@@ -1082,7 +1082,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "SetCacheModel")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t model = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
-        WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(TestController::defaultWebsiteDataStore(), model);
+        WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(TestController::singleton().websiteDataStore(), model);
         return nullptr;
     }
 
@@ -1139,7 +1139,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "DeleteAllIndexedDatabases")) {
-        WKWebsiteDataStoreRemoveAllIndexedDatabases(TestController::defaultWebsiteDataStore(), nullptr, { });
+        WKWebsiteDataStoreRemoveAllIndexedDatabases(TestController::singleton().websiteDataStore(), nullptr, { });
         return nullptr;
     }
 

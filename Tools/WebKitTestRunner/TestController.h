@@ -371,6 +371,7 @@ private:
     bool handleControlCommand(const char* command);
 
     void platformInitialize();
+    void platformInitializeDataStore(WKPageConfigurationRef, const TestOptions&);
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
@@ -623,6 +624,7 @@ private:
 #endif
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
+    WKRetainPtr<WKWebsiteDataStoreRef> m_websiteDataStore;
 
     WorkQueueManager m_workQueueManager;
 
