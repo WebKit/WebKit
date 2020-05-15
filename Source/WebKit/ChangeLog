@@ -1,3 +1,41 @@
+2020-05-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Attribute non-network loads and loads with html strings as automatically app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=211913
+        <rdar://problem/63157801
+
+        Reviewed by Brent Fulgham.
+
+        Move logic from WebsiteDataStoreCocoa to WebPageProxy to check for
+        special app-bound protocols and set m_limitsNavigationToAppBoundDomains
+        to force these WebViews into app-bound mode.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isForcedIntoAppBoundMode:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Testing SPI to see whether m_limitsNavigationsToAppBoundDomains was
+        set.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        Check for html string loads and force WebView into app-bound mode if needed.
+        No need to worry about setting this variable even if the app hasn't
+        opted in because setIsNavigatingToAppBoundDomainAndCheckIfPermitted
+        does an early return before checking this variable if
+        WKAppBoundDomains does not exist.
+
+        (WebKit::shouldTreatURLProtocolAsAppBound):
+        Adds javascript protocols to this check.
+
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        Check for special protocols here and force WebView into app-bound mode.
+
+        (WebKit::WebPageProxy::isForcedIntoAppBoundModeTesting):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        (WebKit::shouldTreatURLProtocolAsAppBound): Deleted.
+
 2020-05-14  Timothy Hatcher  <timothy@apple.com>
 
         Add baseURL version of _WKUserStyleSheet forWKWebView.

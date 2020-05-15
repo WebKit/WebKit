@@ -1391,6 +1391,9 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "loadData:");
 
+    if (MIMEType == "text/html"_s && !WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN)
+        m_limitsNavigationsToAppBoundDomains = true;
+
     if (m_isClosed) {
         RELEASE_LOG_IF_ALLOWED(Loading, "loadData: page is closed");
         return nullptr;
@@ -3111,6 +3114,13 @@ private:
     PolicyCheckIdentifier m_identifier;
 };
 
+#if PLATFORM(IOS_FAMILY)
+static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL)
+{
+    return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile() || requestURL.protocolIsJavaScript();
+}
+#endif
+
 bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL& requestURL, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3124,6 +3134,10 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
         if (m_ignoresAppBoundDomains)
             return true;
         
+        if (shouldTreatURLProtocolAsAppBound(requestURL)) {
+            isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
+            m_limitsNavigationsToAppBoundDomains = true;
+        }
         if (m_limitsNavigationsToAppBoundDomains) {
             if (*isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No)
                 return false;
@@ -3147,6 +3161,11 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
 void WebPageProxy::isNavigatingToAppBoundDomainTesting(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(m_isNavigatingToAppBoundDomain && (*m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::Yes));
+}
+
+void WebPageProxy::isForcedIntoAppBoundModeTesting(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(m_limitsNavigationsToAppBoundDomains);
 }
 
 void WebPageProxy::disableServiceWorkerEntitlementInNetworkProcess()

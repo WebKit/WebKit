@@ -1,3 +1,26 @@
+2020-05-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Attribute non-network loads and loads with html strings as automatically app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=211913
+        <rdar://problem/63157801
+
+        Reviewed by Brent Fulgham.
+
+        Adds new tests to check that WebView loads with HTML strings have
+        proper behavior.
+
+        Some tests need to test behavior on app-bound domains on webviews which do not specify
+        limitsNavigationsToAppBoundDomains. Since local files now do this
+        automatically, this patch updates those to use actual app-bound
+        domains from the WKAppBoundDomains list instead to maintain behavior.
+
+        Remove limitsNavigationsToAppBoundDomains for local files to make sure
+        they are forced into this mode automatically.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[InAppBrowserSchemeHandler webView:startURLSchemeTask:]):
+        (TEST):
+
 2020-05-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Relaxing signature length requirements for U2fRegister

@@ -2621,6 +2621,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     });
 }
 
+- (void)_isForcedIntoAppBoundMode:(void(^)(BOOL))completionHandler
+{
+    _page->isForcedIntoAppBoundModeTesting([completionHandler = makeBlockPtr(completionHandler)] (bool isForcedIntoAppBoundMode) {
+        completionHandler(isForcedIntoAppBoundMode);
+    });
+}
+
 - (void)_serviceWorkersEnabled:(void(^)(BOOL))completionHandler
 {
     auto enabled = [_configuration preferences]->_preferences.get()->serviceWorkersEnabled() || WebCore::RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled();

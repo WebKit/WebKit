@@ -459,11 +459,6 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
     });
 }
 
-static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL)
-{
-    return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile();
-}
-
 void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFramePolicyListenerProxy& listener)
 {
     ASSERT(RunLoop::isMain());
@@ -474,10 +469,6 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const URL& requestURL, WebFrameP
         bool hasAppBoundDomains = keyExists || !domains.isEmpty();
         if (!hasAppBoundDomains) {
             listener->didReceiveAppBoundDomainResult(WTF::nullopt);
-            return;
-        }
-        if (shouldTreatURLProtocolAsAppBound(requestURL)) {
-            listener->didReceiveAppBoundDomainResult(NavigatingToAppBoundDomain::Yes);
             return;
         }
         listener->didReceiveAppBoundDomainResult(domains.contains(WebCore::RegistrableDomain(requestURL)) ? NavigatingToAppBoundDomain::Yes : NavigatingToAppBoundDomain::No);
