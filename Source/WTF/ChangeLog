@@ -1,3 +1,17 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Make host parser fail on ^
+        https://bugs.webkit.org/show_bug.cgi?id=211901
+
+        Reviewed by Geoffrey Garen.
+
+        This matches the behavior of Chrome and Firefox, and now the specification!
+        I updated the URL wpt data, and this introduces new PASSes.
+
+        * wtf/URLParser.cpp:
+        (WTF::isC0Control):
+        (WTF::isForbiddenHostCodePoint):
+
 2020-05-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Update the placeholder icon image for attachment elements with progress="0"

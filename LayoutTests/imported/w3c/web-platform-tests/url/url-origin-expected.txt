@@ -68,7 +68,7 @@ PASS Origin parsing: <ftp:/example.com/> against <http://example.org/foo/bar>
 PASS Origin parsing: <https:/example.com/> against <http://example.org/foo/bar> 
 FAIL Origin parsing: <madeupscheme:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Origin parsing: <ftps:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "ftps://"
-FAIL Origin parsing: <gopher:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "gopher://example.com" but got "gopher://"
+FAIL Origin parsing: <gopher:/example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "gopher://"
 PASS Origin parsing: <ws:/example.com/> against <http://example.org/foo/bar> 
 PASS Origin parsing: <wss:/example.com/> against <http://example.org/foo/bar> 
 PASS Origin parsing: <data:/example.com/> against <http://example.org/foo/bar> 
@@ -79,7 +79,7 @@ PASS Origin parsing: <ftp:example.com/> against <http://example.org/foo/bar>
 PASS Origin parsing: <https:example.com/> against <http://example.org/foo/bar> 
 FAIL Origin parsing: <madeupscheme:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Origin parsing: <ftps:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "ftps://"
-FAIL Origin parsing: <gopher:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "gopher://example.com" but got "gopher://"
+FAIL Origin parsing: <gopher:example.com/> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "gopher://"
 PASS Origin parsing: <ws:example.com/> against <http://example.org/foo/bar> 
 PASS Origin parsing: <wss:example.com/> against <http://example.org/foo/bar> 
 PASS Origin parsing: <data:example.com/> against <http://example.org/foo/bar> 
@@ -92,6 +92,7 @@ PASS Origin parsing: </a/%2f/c> against <http://example.org/foo/bar>
 PASS Origin parsing: <#β> against <http://example.org/foo/bar> 
 PASS Origin parsing: <data:text/html,test#test> against <http://example.org/foo/bar> 
 FAIL Origin parsing: <tel:1234567890> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "tel://"
+FAIL Origin parsing: <ssh://example.com/foo/bar.git> against <http://example.org/> assert_equals: origin expected "null" but got "ssh://example.com"
 PASS Origin parsing: <http://example.com/././foo> against <about:blank> 
 PASS Origin parsing: <http://example.com/./.foo> against <about:blank> 
 PASS Origin parsing: <http://example.com/foo/.> against <about:blank> 
@@ -144,8 +145,8 @@ PASS Origin parsing: <https://foo:443/> against <about:blank>
 PASS Origin parsing: <https://foo:80/> against <about:blank> 
 PASS Origin parsing: <ftp://foo:21/> against <about:blank> 
 PASS Origin parsing: <ftp://foo:80/> against <about:blank> 
-FAIL Origin parsing: <gopher://foo:70/> against <about:blank> assert_equals: origin expected "gopher://foo" but got "gopher://foo:70"
-PASS Origin parsing: <gopher://foo:443/> against <about:blank> 
+FAIL Origin parsing: <gopher://foo:70/> against <about:blank> assert_equals: origin expected "null" but got "gopher://foo:70"
+FAIL Origin parsing: <gopher://foo:443/> against <about:blank> assert_equals: origin expected "null" but got "gopher://foo:443"
 PASS Origin parsing: <ws://foo:80/> against <about:blank> 
 PASS Origin parsing: <ws://foo:81/> against <about:blank> 
 PASS Origin parsing: <ws://foo:443/> against <about:blank> 
@@ -159,7 +160,7 @@ PASS Origin parsing: <ftp:/example.com/> against <about:blank>
 PASS Origin parsing: <https:/example.com/> against <about:blank> 
 FAIL Origin parsing: <madeupscheme:/example.com/> against <about:blank> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Origin parsing: <ftps:/example.com/> against <about:blank> assert_equals: origin expected "null" but got "ftps://"
-FAIL Origin parsing: <gopher:/example.com/> against <about:blank> assert_equals: origin expected "gopher://example.com" but got "gopher://"
+FAIL Origin parsing: <gopher:/example.com/> against <about:blank> assert_equals: origin expected "null" but got "gopher://"
 PASS Origin parsing: <ws:/example.com/> against <about:blank> 
 PASS Origin parsing: <wss:/example.com/> against <about:blank> 
 PASS Origin parsing: <data:/example.com/> against <about:blank> 
@@ -170,7 +171,7 @@ PASS Origin parsing: <ftp:example.com/> against <about:blank>
 PASS Origin parsing: <https:example.com/> against <about:blank> 
 FAIL Origin parsing: <madeupscheme:example.com/> against <about:blank> assert_equals: origin expected "null" but got "madeupscheme://"
 FAIL Origin parsing: <ftps:example.com/> against <about:blank> assert_equals: origin expected "null" but got "ftps://"
-FAIL Origin parsing: <gopher:example.com/> against <about:blank> assert_equals: origin expected "gopher://example.com" but got "gopher://"
+FAIL Origin parsing: <gopher:example.com/> against <about:blank> assert_equals: origin expected "null" but got "gopher://"
 PASS Origin parsing: <ws:example.com/> against <about:blank> 
 PASS Origin parsing: <wss:example.com/> against <about:blank> 
 PASS Origin parsing: <data:example.com/> against <about:blank> 
@@ -227,6 +228,8 @@ FAIL Origin parsing: <#> against <test:test?test> assert_equals: origin expected
 PASS Origin parsing: <https://@test@test@example:800/> against <http://doesnotmatter/> 
 PASS Origin parsing: <https://@@@example> against <http://doesnotmatter/> 
 PASS Origin parsing: <http://`{}:`{}@h/`{}?`{}> against <http://doesnotmatter/> 
+PASS Origin parsing: <http://host/?'> against <about:blank> 
+FAIL Origin parsing: <notspecial://host/?'> against <about:blank> assert_equals: origin expected "null" but got "notspecial://host"
 PASS Origin parsing: </some/path> against <http://user@example.org/smth> 
 PASS Origin parsing: <> against <http://user:pass@example.org:21/smth> 
 PASS Origin parsing: </some/path> against <http://user:pass@example.org:21/smth> 
@@ -252,12 +255,14 @@ PASS Origin parsing: <data:/../> against <about:blank>
 PASS Origin parsing: <javascript:/../> against <about:blank> 
 FAIL Origin parsing: <mailto:/../> against <about:blank> assert_equals: origin expected "null" but got "mailto://"
 FAIL Origin parsing: <sc://ñ.test/> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1.test"
-FAIL Origin parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> Type error
 FAIL Origin parsing: <x> against <sc://ñ> assert_equals: origin expected "null" but got "sc://%c3%b1"
 FAIL Origin parsing: <sc:\../> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 FAIL Origin parsing: <sc::a@example.net> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 FAIL Origin parsing: <wow:%NBD> against <about:blank> assert_equals: origin expected "null" but got "wow://"
 FAIL Origin parsing: <wow:%1G> against <about:blank> assert_equals: origin expected "null" but got "wow://"
+FAIL Origin parsing: <wow:￿> against <about:blank> assert_equals: origin expected "null" but got "wow://"
+PASS Origin parsing: <http://!"$&'()*+,-.;=_`{|}~/> against <about:blank> 
+FAIL Origin parsing: <sc://!"$&'()*+,-.;=_`{|}~/> against <about:blank> assert_equals: origin expected "null" but got "sc://%1f!\"$&'()*+,-.;=_`{|}~"
 PASS Origin parsing: <ftp://%e2%98%83> against <about:blank> 
 PASS Origin parsing: <https://%e2%98%83> against <about:blank> 
 PASS Origin parsing: <http://127.0.0.1:10100/relative_import.html> against <about:blank> 

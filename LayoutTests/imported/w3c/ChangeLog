@@ -1,3 +1,19 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Make host parser fail on ^
+        https://bugs.webkit.org/show_bug.cgi?id=211901
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+        * web-platform-tests/url/urltestdata.json:
+
 2020-05-12  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Implement @isConstructor bytecode intrinsic and bytecode for that

@@ -90,7 +90,7 @@ PASS Parsing: <file://example:test/> against <about:blank>
 PASS Parsing: <file://example%/> against <about:blank> 
 PASS Parsing: <file://[example]/> against <about:blank> 
 PASS Parsing: <ftps:/example.com/> against <http://example.org/foo/bar> 
-FAIL Parsing: <gopher:/example.com/> against <http://example.org/foo/bar> assert_equals: href expected "gopher://example.com/" but got "gopher:/example.com/"
+PASS Parsing: <gopher:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <ws:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <wss:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <data:/example.com/> against <http://example.org/foo/bar> 
@@ -101,7 +101,7 @@ PASS Parsing: <ftp:example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <https:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <madeupscheme:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <ftps:example.com/> against <http://example.org/foo/bar> 
-FAIL Parsing: <gopher:example.com/> against <http://example.org/foo/bar> assert_equals: href expected "gopher://example.com/" but got "gopher:example.com/"
+PASS Parsing: <gopher:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <ws:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <wss:example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <data:example.com/> against <http://example.org/foo/bar> 
@@ -114,6 +114,7 @@ PASS Parsing: </a/%2f/c> against <http://example.org/foo/bar>
 PASS Parsing: <#β> against <http://example.org/foo/bar> 
 PASS Parsing: <data:text/html,test#test> against <http://example.org/foo/bar> 
 PASS Parsing: <tel:1234567890> against <http://example.org/foo/bar> 
+PASS Parsing: <ssh://example.com/foo/bar.git> against <http://example.org/> 
 PASS Parsing: <file:c:\foo\bar.html> against <file:///tmp/mock/path> 
 PASS Parsing: <  File:c|////foo\bar.html> against <file:///tmp/mock/path> 
 PASS Parsing: <C|/foo/bar> against <file:///tmp/mock/path> 
@@ -187,7 +188,7 @@ PASS Parsing: <https://foo:443/> against <about:blank>
 PASS Parsing: <https://foo:80/> against <about:blank> 
 PASS Parsing: <ftp://foo:21/> against <about:blank> 
 PASS Parsing: <ftp://foo:80/> against <about:blank> 
-FAIL Parsing: <gopher://foo:70/> against <about:blank> assert_equals: href expected "gopher://foo/" but got "gopher://foo:70/"
+PASS Parsing: <gopher://foo:70/> against <about:blank> 
 PASS Parsing: <gopher://foo:443/> against <about:blank> 
 PASS Parsing: <ws://foo:80/> against <about:blank> 
 PASS Parsing: <ws://foo:81/> against <about:blank> 
@@ -203,7 +204,7 @@ PASS Parsing: <https:/example.com/> against <about:blank>
 PASS Parsing: <madeupscheme:/example.com/> against <about:blank> 
 PASS Parsing: <file:/example.com/> against <about:blank> 
 PASS Parsing: <ftps:/example.com/> against <about:blank> 
-FAIL Parsing: <gopher:/example.com/> against <about:blank> assert_equals: href expected "gopher://example.com/" but got "gopher:/example.com/"
+PASS Parsing: <gopher:/example.com/> against <about:blank> 
 PASS Parsing: <ws:/example.com/> against <about:blank> 
 PASS Parsing: <wss:/example.com/> against <about:blank> 
 PASS Parsing: <data:/example.com/> against <about:blank> 
@@ -214,7 +215,7 @@ PASS Parsing: <ftp:example.com/> against <about:blank>
 PASS Parsing: <https:example.com/> against <about:blank> 
 PASS Parsing: <madeupscheme:example.com/> against <about:blank> 
 PASS Parsing: <ftps:example.com/> against <about:blank> 
-FAIL Parsing: <gopher:example.com/> against <about:blank> assert_equals: href expected "gopher://example.com/" but got "gopher:example.com/"
+PASS Parsing: <gopher:example.com/> against <about:blank> 
 PASS Parsing: <ws:example.com/> against <about:blank> 
 PASS Parsing: <wss:example.com/> against <about:blank> 
 PASS Parsing: <data:example.com/> against <about:blank> 
@@ -313,6 +314,8 @@ PASS Parsing: <#> against <test:test?test>
 PASS Parsing: <https://@test@test@example:800/> against <http://doesnotmatter/> 
 PASS Parsing: <https://@@@example> against <http://doesnotmatter/> 
 PASS Parsing: <http://`{}:`{}@h/`{}?`{}> against <http://doesnotmatter/> 
+PASS Parsing: <http://host/?'> against <about:blank> 
+PASS Parsing: <notspecial://host/?'> against <about:blank> 
 PASS Parsing: </some/path> against <http://user@example.org/smth> 
 PASS Parsing: <> against <http://user:pass@example.org:21/smth> 
 PASS Parsing: </some/path> against <http://user:pass@example.org:21/smth> 
@@ -346,7 +349,6 @@ PASS Parsing: <data:/../> against <about:blank>
 PASS Parsing: <javascript:/../> against <about:blank> 
 PASS Parsing: <mailto:/../> against <about:blank> 
 PASS Parsing: <sc://ñ.test/> against <about:blank> 
-FAIL Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> Type error
 PASS Parsing: <sc://\0/> against <about:blank> 
 PASS Parsing: <sc:// /> against <about:blank> 
 PASS Parsing: <sc://%/> against <about:blank> 
@@ -362,6 +364,15 @@ PASS Parsing: <sc:\../> against <about:blank>
 PASS Parsing: <sc::a@example.net> against <about:blank> 
 PASS Parsing: <wow:%NBD> against <about:blank> 
 PASS Parsing: <wow:%1G> against <about:blank> 
+FAIL Parsing: <wow:￿> against <about:blank> assert_equals: href expected "wow:%EF%BF%BF" but got "wow:%EF%BF%BD"
+PASS Parsing: <http://a<b> against <about:blank> 
+PASS Parsing: <http://a>b> against <about:blank> 
+PASS Parsing: <http://a^b> against <about:blank> 
+PASS Parsing: <non-special://a<b> against <about:blank> 
+PASS Parsing: <non-special://a>b> against <about:blank> 
+PASS Parsing: <non-special://a^b> against <about:blank> 
+PASS Parsing: <http://!"$&'()*+,-.;=_`{|}~/> against <about:blank> 
+PASS Parsing: <sc://!"$&'()*+,-.;=_`{|}~/> against <about:blank> 
 PASS Parsing: <ftp://example.com%80/> against <about:blank> 
 PASS Parsing: <ftp://example.com%A0/> against <about:blank> 
 PASS Parsing: <https://example.com%80/> against <about:blank> 
@@ -461,6 +472,16 @@ PASS Parsing: <file://C|/> against <about:blank>
 PASS Parsing: <file:> against <about:blank> 
 PASS Parsing: <file:?q=v> against <about:blank> 
 PASS Parsing: <file:#frag> against <about:blank> 
+PASS Parsing: <file:///Y:> against <about:blank> 
+PASS Parsing: <file:///Y:/> against <about:blank> 
+PASS Parsing: <file:///./Y> against <about:blank> 
+PASS Parsing: <file:///./Y:> against <about:blank> 
+PASS Parsing: <\\\.\Y:> against <about:blank> 
+PASS Parsing: <file:///y:> against <about:blank> 
+PASS Parsing: <file:///y:/> against <about:blank> 
+PASS Parsing: <file:///./y> against <about:blank> 
+PASS Parsing: <file:///./y:> against <about:blank> 
+PASS Parsing: <\\\.\y:> against <about:blank> 
 PASS Parsing: <http://[1:0::]> against <http://example.net/> 
 PASS Parsing: <http://[0:1:2:3:4:5:6:7:8]> against <http://example.net/> 
 PASS Parsing: <https://[0::0::0]> against <about:blank> 
@@ -520,14 +541,26 @@ PASS Parsing: <http://example.org/test?%23%23> against <about:blank>
 PASS Parsing: <http://example.org/test?%GH> against <about:blank> 
 PASS Parsing: <http://example.org/test?a#%EF> against <about:blank> 
 PASS Parsing: <http://example.org/test?a#%GH> against <about:blank> 
-PASS Parsing: <test-a.html> against <a> 
-PASS Parsing: <test-a-slash.html> against <a/> 
-PASS Parsing: <test-a-slash-slash.html> against <a//> 
+PASS Parsing: <a> against <about:blank> 
+PASS Parsing: <a/> against <about:blank> 
+PASS Parsing: <a//> against <about:blank> 
 PASS Parsing: <test-a-colon.html> against <a:> 
+PASS Parsing: <test-a-colon-b.html> against <a:b> 
 PASS Parsing: <test-a-colon-slash.html> against <a:/> 
 FAIL Parsing: <test-a-colon-slash-slash.html> against <a://> assert_equals: href expected "a:///test-a-colon-slash-slash.html" but got "a://test-a-colon-slash-slash.html"
-PASS Parsing: <test-a-colon-b.html> against <a:b> 
 PASS Parsing: <test-a-colon-slash-b.html> against <a:/b> 
 PASS Parsing: <test-a-colon-slash-slash-b.html> against <a://b> 
-FAIL Parsing: <http://example.org/test?a#b\0c> against <about:blank> assert_equals: href expected "http://example.org/test?a#bc" but got "http://example.org/test?a#b%00c"
+PASS Parsing: <http://example.org/test?a#b\0c> against <about:blank> 
+PASS Parsing: <non-spec://example.org/test?a#b\0c> against <about:blank> 
+PASS Parsing: <non-spec:/test?a#b\0c> against <about:blank> 
+PASS Parsing: <10.0.0.7:8080/foo.html> against <file:///some/dir/bar.html> 
+PASS Parsing: <a!@$*=/foo.html> against <file:///some/dir/bar.html> 
+PASS Parsing: <a1234567890-+.:foo/bar> against <http://example.com/dir/file> 
+PASS Parsing: <file://a­b/p> against <about:blank> 
+PASS Parsing: <file://a%C2%ADb/p> against <about:blank> 
+PASS Parsing: <file://­/p> against <about:blank> 
+PASS Parsing: <file://%C2%AD/p> against <about:blank> 
+FAIL Parsing: <file://xn--/p> against <about:blank> assert_throws: function "function () {
+          bURL(expected.input, expected.base)
+        }" did not throw
 
