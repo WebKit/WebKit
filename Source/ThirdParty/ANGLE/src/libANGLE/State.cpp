@@ -597,6 +597,10 @@ ANGLE_INLINE void State::unsetActiveTextures(ActiveTextureMask textureMask)
     }
 }
 
+void State::setTextureIndexInactive(size_t textureIndex) {
+    mActiveTexturesCache.reset(textureIndex);
+}
+
 ANGLE_INLINE void State::updateActiveTextureState(const Context *context,
                                                   size_t textureIndex,
                                                   const Sampler *sampler,

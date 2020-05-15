@@ -777,6 +777,7 @@ class State : angle::NonCopyable
                                   size_t textureIndex,
                                   const Sampler *sampler,
                                   Texture *texture);
+    void setTextureIndexInactive(size_t textureIndex);
     Texture *getTextureForActiveSampler(TextureType type, size_t index);
 
     bool hasConstantColor(GLenum sourceRGB, GLenum destRGB) const;

@@ -6466,6 +6466,9 @@ void Context::onSamplerUniformChange(size_t textureUnitIndex)
 {
     mState.onActiveTextureChange(this, textureUnitIndex);
     mStateCache.onActiveTextureChange(this);
+    if (!mState.getProgram()->getExecutable().getActiveSamplersMask()[textureUnitIndex]) {
+        mState.setTextureIndexInactive(textureUnitIndex);
+    }
 }
 
 void Context::uniform1i(UniformLocation location, GLint x)
