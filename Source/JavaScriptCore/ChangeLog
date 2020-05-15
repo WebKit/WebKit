@@ -1,3 +1,14 @@
+2020-05-15  Mark Lam  <mark.lam@apple.com>
+
+        Remove debugging dataLogs in LinkBuffer::copyCompactAndLinkCode() for release builds.
+        https://bugs.webkit.org/show_bug.cgi?id=211961
+        <rdar://problem/63264848>
+
+        Reviewed by Keith Miller.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2020-05-15  Paulo Matos  <pmatos@igalia.com>
 
         Fix ARM NEON only assert
