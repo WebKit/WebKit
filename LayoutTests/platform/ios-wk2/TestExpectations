@@ -1725,8 +1725,6 @@ http/tests/quicklook/secure-document-with-subresources.html [ Skip ]
 
 webkit.org/b/209281 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/frame-removal.html [ Pass Failure ]
 
-webkit.org/b/209350 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
-
 webkit.org/b/209352 http/tests/security/stylesheet-href-redirect.html [ Pass Timeout ]
 
 # Flaky failure is tracked in webkit.org/b/211652
