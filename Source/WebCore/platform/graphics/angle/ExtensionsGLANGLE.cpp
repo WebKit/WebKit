@@ -87,6 +87,11 @@ void ExtensionsGLANGLE::ensureEnabled(const String& name)
         m_context->makeContextCurrent();
         gl::RequestExtensionANGLE(name.ascii().data());
         m_enabledExtensions.add(name);
+
+        if (name == "GL_CHROMIUM_color_buffer_float_rgba"_s)
+            m_webglColorBufferFloatRGBA = true;
+        else if (name == "GL_CHROMIUM_color_buffer_float_rgb"_s)
+            m_webglColorBufferFloatRGB = true;
     }
 }
 
@@ -249,13 +254,11 @@ String ExtensionsGLANGLE::getExtensions()
 GCGLenum ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type)
 {
     // The implementation of WEBGL_color_buffer_float for WebGL 1.0 / ES 2.0 requires a sized
-    // internal format. Adjust it if necessary at this lowest level. Note that it does not matter at
-    // this point whether the WEBGL_color_buffer_float extension has actually been enabled at higher
-    // levels; the enum will be valid or invalid either way.
+    // internal format. Adjust it if necessary at this lowest level.
     if (type == GL_FLOAT) {
-        if (format == GL_RGBA && internalformat == GL_RGBA)
+        if (m_webglColorBufferFloatRGBA && format == GL_RGBA && internalformat == GL_RGBA)
             return GL_RGBA32F;
-        if (format == GL_RGB && internalformat == GL_RGB)
+        if (m_webglColorBufferFloatRGB && format == GL_RGB && internalformat == GL_RGB)
             return GL_RGB32F;
     }
     return internalformat;

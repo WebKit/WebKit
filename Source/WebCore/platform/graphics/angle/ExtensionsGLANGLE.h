@@ -148,7 +148,7 @@ public:
     void getQueryObjectui64vRobustANGLE(GCGLuint id, GCGLenum pname, GCGLsizei bufSize, GCGLsizei *length, GCGLuint64 *params) override;
 
     // Only for non-WebGL 2.0 contexts.
-    static GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
 
 private:
     bool supportsExtension(const WTF::String&);
@@ -174,6 +174,10 @@ private:
 
     String m_vendor;
     String m_renderer;
+
+    // Whether the WebGL 1.0-related floating-point renderability extensions have been enabled.
+    bool m_webglColorBufferFloatRGB { false };
+    bool m_webglColorBufferFloatRGBA { false };
 };
 
 } // namespace WebCore

@@ -1,3 +1,25 @@
+2020-05-15  Kenneth Russell  <kbr@chromium.org>
+
+        OES_texture_float internal format conversion must depend on WEBGL_color_buffer_float
+        https://bugs.webkit.org/show_bug.cgi?id=211971
+
+        Reviewed by Dean Jackson.
+
+        Only adjust the internal formats of textures created for the WebGL
+        1.0 OES_texture_float extension if the WEBGL_color_buffer_float
+        extension has been enabled.
+
+        Covered by the WebGL 1.0 OES_texture_float conformance tests when
+        run on iOS with another forthcoming fix to ANGLE which will enable
+        the OES_texture_float extension on that platform.
+
+        * platform/graphics/angle/ExtensionsGLANGLE.cpp:
+        (WebCore::ExtensionsGLANGLE::ensureEnabled):
+        (WebCore::ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat):
+        * platform/graphics/angle/ExtensionsGLANGLE.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::texImage2DDirect):
+
 2020-05-15  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Treat percentages as auto for the minimum contribution

@@ -1888,8 +1888,8 @@ void GraphicsContextGLOpenGL::dispatchContextChangedNotification()
 void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
 {
     makeContextCurrent();
-    if (!m_isForWebGL2)
-        internalformat = ExtensionsGLANGLE::adjustWebGL1TextureInternalFormat(internalformat, format, type);
+    if (!m_isForWebGL2 && m_extensions)
+        internalformat = m_extensions->adjustWebGL1TextureInternalFormat(internalformat, format, type);
     gl::TexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
     m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
