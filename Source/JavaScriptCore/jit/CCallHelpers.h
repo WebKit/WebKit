@@ -99,9 +99,12 @@ private:
         typedef std::pair<RegType, RegType> RegPair;
         Vector<RegPair, NumberOfRegisters> pairs;
 
-        for (unsigned i = 0; i < NumberOfRegisters; ++i) {
-            if (sources[i] != destinations[i])
-                pairs.append(std::make_pair(sources[i], destinations[i]));
+        // if constexpr avoids warnings when NumberOfRegisters is 0.
+        if constexpr (NumberOfRegisters > 0) {
+            for (unsigned i = 0; i < NumberOfRegisters; ++i) {
+                if (sources[i] != destinations[i])
+                    pairs.append(std::make_pair(sources[i], destinations[i]));
+            }
         }
 
 #if ASSERT_ENABLED
@@ -313,9 +316,12 @@ private:
 
         std::array<RegType, TargetSize> result { };
 
-        for (unsigned i = 0; i < TargetSize; i++) {
-            ASSERT(sourceArray[i] != static_cast<int32_t>(InfoTypeForReg<RegType>::InvalidIndex));
-            result[i] = sourceArray[i];
+        // if constexpr avoids warnings when TargetSize is 0.
+        if constexpr (TargetSize > 0) {
+            for (unsigned i = 0; i < TargetSize; i++) {
+                ASSERT(sourceArray[i] != static_cast<int32_t>(InfoTypeForReg<RegType>::InvalidIndex));
+                result[i] = sourceArray[i];
+            }
         }
 
         return result;

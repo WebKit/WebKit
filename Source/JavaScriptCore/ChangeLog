@@ -1,3 +1,17 @@
+2020-05-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wtype-limits warning spam from CCallHelpers.h
+        https://bugs.webkit.org/show_bug.cgi?id=211701
+
+        Reviewed by Darin Adler.
+
+        Skip the problematic loops when TargetSize or NumberOfRegisters is 0 using constexpr if.
+        Solution suggested by Mark Lam.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupStubArgs):
+        (JSC::CCallHelpers::clampArrayToSize):
+
 2020-05-15  Mark Lam  <mark.lam@apple.com>
 
         Remove debugging dataLogs in LinkBuffer::copyCompactAndLinkCode() for release builds.
