@@ -72,31 +72,9 @@
 #include "config.h"
 #include "JSDateMath.h"
 
-#include "JSObject.h"
-#include "JSScope.h"
-#include "JSCInlines.h"
-
-#include <algorithm>
-#include <limits.h>
+#include "ExceptionHelpers.h"
+#include "VM.h"
 #include <limits>
-#include <stdint.h>
-#include <time.h>
-#include <wtf/ASCIICType.h>
-#include <wtf/Assertions.h>
-#include <wtf/MathExtras.h>
-#include <wtf/StdLibExtras.h>
-
-#if HAVE(ERRNO_H)
-#include <errno.h>
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if HAVE(SYS_TIMEB_H)
-#include <sys/timeb.h>
-#endif
 
 namespace JSC {
 

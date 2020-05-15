@@ -26,12 +26,10 @@
 #include "config.h"
 #include "IntlLocaleConstructor.h"
 
+#include "AuxiliaryBarrierInlines.h"
 #include "Error.h"
 #include "IntlLocale.h"
 #include "IntlLocalePrototype.h"
-#include "IntlObject.h"
-#include "JSCInlines.h"
-#include "Lookup.h"
 
 namespace JSC {
 

@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "LLIntThunks.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCallingConvention.h"
 

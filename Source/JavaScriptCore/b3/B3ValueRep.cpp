@@ -29,7 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AssemblyHelpers.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace B3 {
 

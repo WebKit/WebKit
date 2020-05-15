@@ -22,10 +22,7 @@
 #include "MarkedSpace.h"
 
 #include "BlockDirectoryInlines.h"
-#include "FunctionCodeBlock.h"
 #include "IncrementalSweeper.h"
-#include "JSObject.h"
-#include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
 #include <wtf/ListDump.h>

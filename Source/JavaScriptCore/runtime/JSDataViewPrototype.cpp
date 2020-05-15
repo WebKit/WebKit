@@ -26,11 +26,9 @@
 #include "config.h"
 #include "JSDataViewPrototype.h"
 
-#include "Error.h"
 #include "JSArrayBuffer.h"
-#include "JSDataView.h"
-#include "Lookup.h"
 #include "JSCInlines.h"
+#include "JSDataView.h"
 #include "ToNativeFromValue.h"
 #include "TypedArrayAdaptors.h"
 #include <wtf/FlipBytes.h>

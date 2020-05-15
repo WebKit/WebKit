@@ -22,7 +22,6 @@
 #include "config.h"
 #include "JSWrapperObject.h"
 
-#include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {

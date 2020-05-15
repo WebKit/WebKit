@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSWeakObjectRef.h"
 
-#include "JSCInlines.h"
-
 namespace JSC {
 
 const ClassInfo JSWeakObjectRef::s_info = { "WeakRef", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakObjectRef) };

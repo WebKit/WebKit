@@ -28,10 +28,6 @@
 
 #if ENABLE(JIT)
 
-#include "JSObject.h"
-#include "JSCInlines.h"
-#include "SlotVisitor.h"
-
 namespace JSC {
 
 JITStubRoutine::~JITStubRoutine() { }

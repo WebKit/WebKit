@@ -38,12 +38,10 @@
 #include "FTLState.h"
 #include "GetterSetter.h"
 #include "JSPropertyNameEnumerator.h"
-#include "JSScope.h"
-#include "JSCInlines.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
-#include "ScopedArgumentsTable.h"
 #include "ShadowChicken.h"
+#include "StructureChain.h"
 
 namespace JSC { namespace FTL {
 

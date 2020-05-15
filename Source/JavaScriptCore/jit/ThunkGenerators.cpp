@@ -26,16 +26,9 @@
 #include "config.h"
 #include "ThunkGenerators.h"
 
-#include "CodeBlock.h"
-#include "DFGSpeculativeJIT.h"
-#include "JITExceptions.h"
 #include "JITOperations.h"
-#include "JSArray.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
-#include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
-#include "ProbeContext.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
 #include <wtf/StringPrintStream.h>

@@ -30,22 +30,16 @@
 
 #include "B3Compilation.h"
 #include "JSToWasm.h"
+#include "LinkBuffer.h"
 #include "WasmAirIRGenerator.h"
 #include "WasmB3IRGenerator.h"
-#include "WasmBinding.h"
 #include "WasmCallee.h"
-#include "WasmCallingConvention.h"
-#include "WasmFaultSignalHandler.h"
-#include "WasmMachineThreads.h"
-#include "WasmMemory.h"
+#include "WasmCodeBlock.h"
 #include "WasmSignatureInlines.h"
 #include "WasmTierUpCount.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/SystemTracing.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC { namespace Wasm {
 

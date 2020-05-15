@@ -27,9 +27,7 @@
 #include "MultithreadedMultiVMExecutionTest.h"
 
 #include "InitializeThreading.h"
-#include "JSContextRefPrivate.h"
 #include "JavaScript.h"
-#include "Options.h"
 #include <mutex>
 #include <string>
 #include <thread>

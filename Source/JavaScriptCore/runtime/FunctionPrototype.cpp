@@ -21,16 +21,10 @@
 #include "config.h"
 #include "FunctionPrototype.h"
 
-#include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
-#include "Error.h"
-#include "GetterSetter.h"
+#include "FunctionExecutable.h"
 #include "IntegrityInlines.h"
-#include "JSAsyncFunction.h"
 #include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSStringInlines.h"
-#include "Lexer.h"
 
 namespace JSC {
 

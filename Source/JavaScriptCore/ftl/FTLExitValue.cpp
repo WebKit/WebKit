@@ -28,8 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLExitTimeObjectMaterialization.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "TrackedReferences.h"
 
 namespace JSC { namespace FTL {

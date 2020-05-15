@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ProfilerOrigin.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
-#include "JSCInlines.h"
 #include "ProfilerBytecodes.h"
 #include "ProfilerDatabase.h"
 

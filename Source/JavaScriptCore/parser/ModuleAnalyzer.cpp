@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ModuleAnalyzer.h"
 
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSModuleRecord.h"
 #include "ModuleScopeData.h"

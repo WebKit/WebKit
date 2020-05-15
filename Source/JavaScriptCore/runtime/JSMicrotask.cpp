@@ -28,9 +28,6 @@
 
 #include "CatchScope.h"
 #include "Debugger.h"
-#include "Error.h"
-#include "Exception.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "Microtask.h"

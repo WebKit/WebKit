@@ -31,7 +31,6 @@
 #include "DFGJITCode.h"
 #include "FTLForOSREntryJITCode.h"
 #include "OperandsInlines.h"
-#include "JSCInlines.h"
 #include "VMInlines.h"
 
 #if ENABLE(FTL_JIT)

@@ -26,9 +26,7 @@
 #include "config.h"
 #include "TypedArrayType.h"
 
-#include "JSDataView.h"
 #include "JSTypedArrayConstructors.h"
-#include "JSTypedArrays.h"
 
 namespace JSC {
 

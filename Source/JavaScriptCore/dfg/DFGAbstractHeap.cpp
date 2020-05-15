@@ -28,8 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCInlines.h"
-
 namespace JSC { namespace DFG {
 
 void AbstractHeap::Payload::dump(PrintStream& out) const

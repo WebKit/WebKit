@@ -29,7 +29,7 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "Interpreter.h"
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"

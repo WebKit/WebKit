@@ -22,20 +22,19 @@
 #include "config.h"
 #include "NumberPrototype.h"
 
+#include "AuxiliaryBarrierInlines.h"
 #include "BigInteger.h"
 #include "Error.h"
 #include "IntegrityInlines.h"
 #include "IntlNumberFormat.h"
-#include "IntlObject.h"
-#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
+#include "Operations.h"
 #include "ParseInt.h"
 #include "Uint16WithFraction.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
-#include <wtf/MathExtras.h>
 #include <wtf/dtoa/double-conversion.h>
 
 using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;

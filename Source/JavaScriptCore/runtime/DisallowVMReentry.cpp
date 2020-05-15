@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DisallowVMReentry.h"
 
-#include "JSCInlines.h"
-
 namespace JSC {
     
 #ifndef NDEBUG

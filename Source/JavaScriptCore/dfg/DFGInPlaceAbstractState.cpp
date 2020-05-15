@@ -28,13 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
 #include "DFGBasicBlock.h"
-#include "GetByStatus.h"
-#include "JSCInlines.h"
-#include "PutByIdStatus.h"
-#include "StringObject.h"
-#include "SuperSampler.h"
 
 namespace JSC { namespace DFG {
 

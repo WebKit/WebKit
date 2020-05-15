@@ -29,20 +29,16 @@
 #include "JSBasePrivate.h"
 
 #include "APICast.h"
-#include "CallFrame.h"
 #include "Completion.h"
 #include "Exception.h"
 #include "GCActivityCallback.h"
 #include "Identifier.h"
-#include "InitializeThreading.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObject.h"
 #include "ObjectConstructor.h"
 #include "OpaqueJSString.h"
-#include "JSCInlines.h"
 #include "SourceCode.h"
-#include <wtf/text/StringHash.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectInspectorController.h"

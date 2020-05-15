@@ -27,8 +27,7 @@
 #include "config.h"
 #include "JSWeakValue.h"
 
-#include "JSCInlines.h"
-#include "WeakHandleOwner.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

@@ -27,22 +27,22 @@
 
 #include "AirCode.h"
 #include "AirGenerate.h"
-#include "AirInstInlines.h"
 #include "AirSpecial.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "B3BasicBlockInlines.h"
 #include "B3Compilation.h"
 #include "B3Procedure.h"
 #include "B3PatchpointSpecial.h"
+#include "B3PatchpointValue.h"
+#include "B3StackmapGenerationParams.h"
 #include "CCallHelpers.h"
 #include "InitializeThreading.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
 #include "PureNaN.h"
-#include <cmath>
 #include <regex>
 #include <string>
+#include <wtf/DataLog.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdMap.h>

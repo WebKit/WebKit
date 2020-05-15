@@ -27,12 +27,10 @@
 #include "JSObjectGetProxyTargetTest.h"
 
 #include "APICast.h"
-#include "InitializeThreading.h"
 #include "JSCInlines.h"
 #include "JSObjectRefPrivate.h"
 #include "JSProxy.h"
 #include "JavaScript.h"
-#include "Options.h"
 #include "ProxyObject.h"
 
 using namespace JSC;

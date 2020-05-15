@@ -27,13 +27,9 @@
 #include "Subspace.h"
 
 #include "AlignedMemoryAllocator.h"
-#include "BlockDirectoryInlines.h"
 #include "HeapCellType.h"
-#include "JSCInlines.h"
-#include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "ParallelSourceAdapter.h"
-#include "PreventCollectionScope.h"
 #include "SubspaceInlines.h"
 
 namespace JSC {

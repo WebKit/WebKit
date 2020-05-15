@@ -30,7 +30,6 @@
 
 #include "DFGJITCompiler.h"
 #include "DFGSpeculativeJIT.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

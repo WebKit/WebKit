@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGLazyJSValue.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

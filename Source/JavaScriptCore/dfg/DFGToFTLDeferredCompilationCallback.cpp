@@ -30,7 +30,6 @@
 
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

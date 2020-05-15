@@ -35,7 +35,6 @@
 #include "ExecutableInfo.h"
 #include "FunctionOverrides.h"
 #include "IsoCellSetInlines.h"
-#include "JSCInlines.h"
 #include "Parser.h"
 #include "SourceProvider.h"
 #include "Structure.h"

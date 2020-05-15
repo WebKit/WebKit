@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSSetIterator.h"
 
-#include "JSCInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 #include "JSSet.h"
 

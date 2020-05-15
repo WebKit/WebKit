@@ -26,14 +26,10 @@
 #include "config.h"
 #include "ProxyConstructor.h"
 
-#include "Error.h"
-#include "IdentifierInlines.h"
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 #include "ObjectConstructor.h"
-#include "ObjectPrototype.h"
 #include "ProxyObject.h"
 #include "ProxyRevoke.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

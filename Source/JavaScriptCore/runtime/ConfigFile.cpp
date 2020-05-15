@@ -27,7 +27,6 @@
 #include "ConfigFile.h"
 
 #include "Options.h"
-#include <limits.h>
 #include <mutex>
 #include <stdio.h>
 #include <string.h>

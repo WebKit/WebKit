@@ -28,14 +28,8 @@
 
 #include "AggregateError.h"
 #include "CallFrame.h"
-#include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
-#include "JSCell.h"
-#include "JSGlobalObjectInlines.h"
-#include "JSObjectInlines.h"
 #include "ThrowScope.h"
-#include "VMInlines.h"
-#include <wtf/Locker.h>
 
 namespace JSC {
 

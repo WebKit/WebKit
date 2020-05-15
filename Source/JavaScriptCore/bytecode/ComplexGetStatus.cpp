@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ComplexGetStatus.h"
 
-#include "JSCInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

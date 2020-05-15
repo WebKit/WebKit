@@ -28,7 +28,6 @@
 
 #include "Error.h"
 #include "IteratorOperations.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "JSWeakMap.h"

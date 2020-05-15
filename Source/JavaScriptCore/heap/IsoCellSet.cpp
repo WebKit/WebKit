@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IsoCellSet.h"
 
-#include "BlockDirectoryInlines.h"
 #include "MarkedBlockInlines.h"
 
 namespace JSC {

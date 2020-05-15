@@ -28,9 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3AtomicValue.h"
 #include "B3MemoryValueInlines.h"
-#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 

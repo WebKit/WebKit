@@ -32,7 +32,6 @@
 #include "InjectedScriptManager.h"
 #include "InspectorEnvironment.h"
 #include "JSBigInt.h"
-#include "JSCInlines.h"
 #include "VM.h"
 #include <wtf/Stopwatch.h>
 

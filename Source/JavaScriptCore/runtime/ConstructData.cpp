@@ -27,9 +27,8 @@
 #include "ConstructData.h"
 
 #include "Interpreter.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "ScriptProfilingScope.h"
 
 namespace JSC {

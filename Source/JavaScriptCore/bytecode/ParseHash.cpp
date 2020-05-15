@@ -28,7 +28,6 @@
 
 #include "SourceCode.h"
 #include <wtf/SHA1.h>
-#include <wtf/SixCharacterHash.h>
 
 namespace JSC {
 

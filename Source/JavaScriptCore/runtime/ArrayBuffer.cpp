@@ -27,7 +27,6 @@
 #include "ArrayBuffer.h"
 
 #include "JSArrayBufferView.h"
-#include "JSCInlines.h"
 #include <wtf/Gigacage.h>
 
 namespace JSC {

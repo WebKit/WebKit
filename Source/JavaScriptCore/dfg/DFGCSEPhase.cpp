@@ -35,8 +35,6 @@
 #include "DFGDominators.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
-#include "JSCInlines.h"
-#include <array>
 
 namespace JSC { namespace DFG {
 

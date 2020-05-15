@@ -28,8 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCInlines.h"
-
 namespace WTF {
 
 using namespace JSC::DFG;

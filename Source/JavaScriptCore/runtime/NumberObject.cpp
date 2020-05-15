@@ -22,9 +22,8 @@
 #include "config.h"
 #include "NumberObject.h"
 
+#include "AuxiliaryBarrierInlines.h"
 #include "JSGlobalObject.h"
-#include "NumberPrototype.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

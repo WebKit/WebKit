@@ -28,12 +28,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
+#include "AuxiliaryBarrierInlines.h"
 #include "GetterSetter.h"
 #include "IntegrityInlines.h"
-#include "JSCInlines.h"
 #include "JSWebAssemblyGlobal.h"
-#include "JSWebAssemblyHelpers.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoFuncValueOf(JSGlobalObject*, CallFrame*);

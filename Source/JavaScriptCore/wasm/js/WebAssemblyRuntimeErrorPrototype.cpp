@@ -28,9 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
-#include "JSCInlines.h"
-
 #include "WebAssemblyRuntimeErrorPrototype.lut.h"
 
 namespace JSC {

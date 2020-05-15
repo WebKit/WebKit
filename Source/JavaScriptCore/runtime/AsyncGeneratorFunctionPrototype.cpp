@@ -27,15 +27,6 @@
 #include "config.h"
 #include "AsyncGeneratorFunctionPrototype.h"
 
-#include "BuiltinExecutables.h"
-#include "BuiltinNames.h"
-#include "Error.h"
-#include "JSArray.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSString.h"
-#include "Lexer.h"
-
 namespace JSC {
 
 const ClassInfo AsyncGeneratorFunctionPrototype::s_info = { "AsyncGeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionPrototype) };

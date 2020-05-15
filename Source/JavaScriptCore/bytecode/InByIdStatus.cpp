@@ -30,7 +30,6 @@
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "ICStatusUtils.h"
-#include "JSCInlines.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>

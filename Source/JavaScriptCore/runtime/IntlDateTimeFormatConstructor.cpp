@@ -27,13 +27,10 @@
 #include "config.h"
 #include "IntlDateTimeFormatConstructor.h"
 
-#include "Error.h"
 #include "IntlDateTimeFormat.h"
 #include "IntlDateTimeFormatPrototype.h"
 #include "IntlObject.h"
 #include "IntlObjectInlines.h"
-#include "JSCInlines.h"
-#include "Lookup.h"
 
 namespace JSC {
 

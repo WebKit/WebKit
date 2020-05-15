@@ -27,7 +27,6 @@
 #include "JSMap.h"
 
 #include "JSCInlines.h"
-#include "MapPrototype.h"
 
 namespace JSC {
 

@@ -28,12 +28,10 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirArgInlines.h"
 #include "AirCCallingConvention.h"
 #include "AirCode.h"
 #include "AirEmitShuffle.h"
 #include "AirInsertionSet.h"
-#include "AirInstInlines.h"
 #include "AirPadInterference.h"
 #include "AirRegLiveness.h"
 #include "AirPhaseScope.h"

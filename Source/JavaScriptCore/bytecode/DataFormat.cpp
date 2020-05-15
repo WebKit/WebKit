@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DataFormat.h"
 
-#include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {

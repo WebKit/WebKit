@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "AirInstInlines.h"
-#include "B3Value.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {

@@ -30,8 +30,6 @@
 
 namespace WTF {
 
-class PrintStream;
-
 #define CASE(__type) \
     case JSC::__type: \
         out.print(#__type); \

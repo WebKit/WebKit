@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "EdenGCActivityCallback.h"
-#include "HeapInlines.h"
 
 #include "VM.h"
 

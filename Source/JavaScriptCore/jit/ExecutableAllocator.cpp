@@ -30,8 +30,8 @@
 
 #include "ExecutableAllocationFuzz.h"
 #include "IterationStatus.h"
-#include "JSCInlines.h"
-#include <type_traits>
+#include "LinkBuffer.h"
+#include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
@@ -39,20 +39,15 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
-#if OS(DARWIN)
-#include <mach/mach_time.h>
-#include <sys/mman.h>
-#endif
-
 #if HAVE(IOS_JIT_RESTRICTIONS)
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
-#include "LinkBuffer.h"
-#include "MacroAssembler.h"
-
 #if OS(DARWIN)
+#include <fcntl.h>
 #include <mach/mach.h>
+#include <mach/mach_time.h>
+
 extern "C" {
     /* Routine mach_vm_remap */
 #ifdef mig_external
@@ -75,7 +70,6 @@ extern "C" {
      vm_inherit_t inheritance
      );
 }
-
 #endif
 
 namespace JSC {

@@ -27,8 +27,6 @@
 #include "PutByIdVariant.h"
 
 #include "CallLinkStatus.h"
-#include "JSCInlines.h"
-#include <wtf/ListDump.h>
 
 namespace JSC {
 

@@ -28,12 +28,9 @@
 #include "config.h"
 #include "IntlCollatorConstructor.h"
 
-#include "Error.h"
 #include "IntlCollator.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlObject.h"
-#include "JSCInlines.h"
-#include "Lookup.h"
 
 namespace JSC {
 

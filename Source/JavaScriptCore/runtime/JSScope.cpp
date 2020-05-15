@@ -27,12 +27,10 @@
 #include "JSScope.h"
 
 #include "AbstractModuleRecord.h"
-#include "Exception.h"
 #include "JSGlobalObject.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSWithScope.h"
-#include "JSCInlines.h"
 #include "VariableEnvironment.h"
 
 namespace JSC {

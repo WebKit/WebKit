@@ -27,8 +27,6 @@
 #include "DeleteByIdVariant.h"
 
 #include "CacheableIdentifierInlines.h"
-#include "JSCInlines.h"
-#include <wtf/ListDump.h>
 
 namespace JSC {
 

@@ -30,7 +30,6 @@
 
 #include "JSCJSValueInlines.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/StdLibExtras.h>
 #include <type_traits>
 
 namespace JSC { namespace Wasm {

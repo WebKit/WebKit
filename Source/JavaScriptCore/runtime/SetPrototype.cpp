@@ -29,11 +29,9 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "IteratorOperations.h"
-#include "JSCInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
-#include "Lookup.h"
 
 #include "SetPrototype.lut.h"
 

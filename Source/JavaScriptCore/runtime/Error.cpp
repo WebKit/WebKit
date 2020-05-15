@@ -24,21 +24,12 @@
 #include "config.h"
 #include "Error.h"
 
-#include "ConstructData.h"
-#include "ErrorConstructor.h"
-#include "ExceptionHelpers.h"
-#include "FunctionPrototype.h"
 #include "Interpreter.h"
-#include "JSArray.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include "NativeErrorConstructor.h"
 #include "SourceCode.h"
 #include "StackFrame.h"
-#include "SuperSampler.h"
 
 namespace JSC {
 

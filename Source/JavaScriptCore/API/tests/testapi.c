@@ -33,7 +33,6 @@
 #endif
 
 #include "JSBasePrivate.h"
-#include "JSContextRefPrivate.h"
 #include "JSHeapFinalizerPrivate.h"
 #include "JSMarkingConstraintPrivate.h"
 #include "JSObjectRefPrivate.h"

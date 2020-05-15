@@ -26,9 +26,7 @@
 #include "config.h"
 #include "JSInjectedScriptHost.h"
 
-#include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
-#include "BuiltinNames.h"
 #include "Completion.h"
 #include "DateInstance.h"
 #include "DeferGC.h"
@@ -41,15 +39,12 @@
 #include "InjectedScriptHost.h"
 #include "IterationKind.h"
 #include "IteratorOperations.h"
-#include "IteratorPrototype.h"
 #include "JSArray.h"
 #include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSGlobalObjectFunctions.h"
+#include "JSFunctionInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSInjectedScriptHostPrototype.h"
-#include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
@@ -60,9 +55,6 @@
 #include "JSTypedArrays.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
-#include "JSWithScope.h"
-#include "MapIteratorPrototype.h"
-#include "MapPrototype.h"
 #include "MarkedSpaceInlines.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
@@ -70,15 +62,11 @@
 #include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
-#include "SetIteratorPrototype.h"
-#include "SetPrototype.h"
 #include "SourceCode.h"
-#include "TypedArrayInlines.h"
 #include <wtf/Function.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/StringConcatenate.h>

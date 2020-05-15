@@ -27,11 +27,6 @@
 #include "UnlinkedMetadataTable.h"
 
 #include "BytecodeStructs.h"
-#include "CodeBlock.h"
-#include "JSCInlines.h"
-#include "OpcodeInlines.h"
-#include "UnlinkedMetadataTableInlines.h"
-#include <wtf/FastMalloc.h>
 
 namespace JSC {
 

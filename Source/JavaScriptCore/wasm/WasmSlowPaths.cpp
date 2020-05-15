@@ -29,13 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
-#include "ExceptionFuzz.h"
-#include "FrameTracers.h"
 #include "LLIntData.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
-#include "WasmCompilationMode.h"
-#include "WasmContextInlines.h"
 #include "WasmFunctionCodeBlock.h"
 #include "WasmInstance.h"
 #include "WasmModuleInformation.h"
@@ -43,7 +39,6 @@
 #include "WasmOMGPlan.h"
 #include "WasmOperations.h"
 #include "WasmSignatureInlines.h"
-#include "WasmThunks.h"
 #include "WasmWorklist.h"
 
 namespace JSC { namespace LLInt {

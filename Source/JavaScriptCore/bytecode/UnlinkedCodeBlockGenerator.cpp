@@ -26,28 +26,10 @@
 #include "config.h"
 #include "UnlinkedCodeBlockGenerator.h"
 
-#include "BytecodeGenerator.h"
-#include "BytecodeLivenessAnalysis.h"
 #include "BytecodeRewriter.h"
-#include "ClassInfo.h"
-#include "CodeCache.h"
-#include "ExecutableInfo.h"
-#include "FunctionOverrides.h"
 #include "InstructionStream.h"
-#include "JSCInlines.h"
-#include "JSString.h"
-#include "Opcode.h"
-#include "Parser.h"
-#include "PreciseJumpTargetsInlines.h"
-#include "SourceProvider.h"
-#include "Structure.h"
-#include "SymbolTable.h"
-#include "UnlinkedEvalCodeBlock.h"
-#include "UnlinkedFunctionCodeBlock.h"
+#include "PreciseJumpTargets.h"
 #include "UnlinkedMetadataTableInlines.h"
-#include "UnlinkedModuleProgramCodeBlock.h"
-#include "UnlinkedProgramCodeBlock.h"
-#include <wtf/DataLog.h>
 
 namespace JSC {
 

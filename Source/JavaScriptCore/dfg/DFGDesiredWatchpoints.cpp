@@ -30,7 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGGraph.h"
-#include "JSCInlines.h"
+#include "JSArrayBufferViewInlines.h"
 
 namespace JSC { namespace DFG {
 

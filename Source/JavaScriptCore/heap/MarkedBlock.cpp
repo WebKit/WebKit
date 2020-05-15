@@ -27,13 +27,8 @@
 #include "MarkedBlock.h"
 
 #include "AlignedMemoryAllocator.h"
-#include "BlockDirectoryInlines.h"
 #include "FreeListInlines.h"
-#include "JSCast.h"
-#include "JSDestructibleObject.h"
-#include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
-#include "SuperSampler.h"
 #include "SweepingScope.h"
 #include <wtf/CommaPrinter.h>
 

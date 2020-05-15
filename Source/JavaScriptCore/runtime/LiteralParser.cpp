@@ -27,13 +27,11 @@
 #include "config.h"
 #include "LiteralParser.h"
 
-#include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "JSArray.h"
-#include "JSString.h"
+#include "JSGlobalObjectInlines.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
-#include "JSCInlines.h"
 #include "StrongInlines.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>

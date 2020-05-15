@@ -28,7 +28,6 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlockInlines.h"
 #include "B3BlockWorklist.h"
 #include "B3Dominators.h"
 #include "B3HeapRange.h"
@@ -37,11 +36,7 @@
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
-#include "B3SlotBaseValue.h"
-#include "B3StackSlot.h"
-#include "B3ValueKey.h"
 #include "B3ValueInlines.h"
-#include "B3Variable.h"
 #include "B3VariableValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>

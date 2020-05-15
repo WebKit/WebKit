@@ -23,10 +23,6 @@
 #include "DateInstance.h"
 
 #include "JSDateMath.h"
-#include "JSGlobalObject.h"
-#include "JSCInlines.h"
-#include <math.h>
-#include <wtf/MathExtras.h>
 
 namespace JSC {
 

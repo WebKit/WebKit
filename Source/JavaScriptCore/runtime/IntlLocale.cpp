@@ -28,8 +28,6 @@
 
 #include "Error.h"
 #include "IntlObject.h"
-#include "JSCInlines.h"
-#include "ObjectConstructor.h"
 #include <unicode/uloc.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 

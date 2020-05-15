@@ -29,22 +29,18 @@
 #if ENABLE(DFG_JIT)
 
 #include "AssemblyHelpers.h"
-#include "BytecodeUseDef.h"
+#include "BytecodeStructs.h"
 #include "CheckpointOSRExitSideState.h"
-#include "ClonedArguments.h"
 #include "DFGGraph.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
-#include "DirectArguments.h"
 #include "FrameTracers.h"
 #include "InlineCallFrame.h"
-#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
-#include "ProbeFrame.h"
 
 namespace JSC { namespace DFG {
 

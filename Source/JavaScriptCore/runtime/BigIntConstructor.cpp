@@ -29,11 +29,7 @@
 
 #include "BigIntPrototype.h"
 #include "JSBigInt.h"
-#include "JSCInlines.h"
-#include "JSGlobalObjectFunctions.h"
-#include "Lookup.h"
 #include "ParseInt.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

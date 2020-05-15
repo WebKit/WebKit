@@ -27,10 +27,7 @@
 #include "CallLinkInfo.h"
 
 #include "CallFrameShuffleData.h"
-#include "DFGOperations.h"
-#include "DFGThunks.h"
 #include "FunctionCodeBlock.h"
-#include "JSCInlines.h"
 #include "Opcode.h"
 #include "Repatch.h"
 #include <wtf/ListDump.h>

@@ -27,15 +27,6 @@
 #include "config.h"
 #include "GeneratorFunctionPrototype.h"
 
-#include "BuiltinExecutables.h"
-#include "BuiltinNames.h"
-#include "Error.h"
-#include "JSArray.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSString.h"
-#include "Lexer.h"
-
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GeneratorFunctionPrototype);

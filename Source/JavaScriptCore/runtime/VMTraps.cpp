@@ -26,21 +26,16 @@
 #include "config.h"
 #include "VMTraps.h"
 
-#include "CallFrame.h"
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
 #include "DFGCommonData.h"
 #include "ExceptionHelpers.h"
 #include "HeapInlines.h"
-#include "JSCPtrTag.h"
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
-#include "MachineStackMarker.h"
-#include "MacroAssembler.h"
 #include "MacroAssemblerCodeRef.h"
 #include "VM.h"
-#include "VMInspector.h"
 #include "Watchdog.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ThreadMessage.h>

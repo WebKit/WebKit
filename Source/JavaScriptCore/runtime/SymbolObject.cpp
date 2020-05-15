@@ -27,7 +27,7 @@
 #include "config.h"
 #include "SymbolObject.h"
 
-#include "JSCInlines.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 

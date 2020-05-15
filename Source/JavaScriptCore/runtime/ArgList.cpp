@@ -21,9 +21,7 @@
 #include "config.h"
 #include "ArgList.h"
 
-#include "JSCJSValue.h"
-#include "JSObject.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 
 using std::min;
 

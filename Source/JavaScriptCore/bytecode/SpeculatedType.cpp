@@ -34,7 +34,7 @@
 #include "JSArray.h"
 #include "JSBigInt.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
+#include "JSDataView.h"
 #include "JSFunction.h"
 #include "JSMap.h"
 #include "JSSet.h"
@@ -44,7 +44,6 @@
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "StringObject.h"
-#include "ValueProfile.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 

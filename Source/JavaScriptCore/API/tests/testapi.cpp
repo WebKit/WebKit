@@ -26,13 +26,9 @@
 #include "config.h"
 
 #include "APICast.h"
-#include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
-#include "JSObject.h"
 #include "MarkedJSValueRefArray.h"
-
 #include <JavaScriptCore/JSContextRefPrivate.h>
-#include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <wtf/DataLog.h>
 #include <wtf/Expected.h>

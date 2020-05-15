@@ -31,7 +31,6 @@
 #include "ArithProfile.h"
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

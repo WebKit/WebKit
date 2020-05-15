@@ -29,20 +29,14 @@
 #include "APICast.h"
 #include "APIUtils.h"
 #include "DateInstance.h"
-#include "Exception.h"
-#include "JSAPIWrapperObject.h"
-#include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSCallbackObject.h"
 #include "JSGlobalObject.h"
 #include "JSONObject.h"
-#include "JSObjectRefPrivate.h"
 #include "JSString.h"
 #include "LiteralParser.h"
 #include "Protect.h"
-#include <algorithm>
 #include <wtf/Assertions.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)

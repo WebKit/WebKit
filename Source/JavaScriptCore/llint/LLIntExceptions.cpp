@@ -25,13 +25,8 @@
 
 #include "config.h"
 #include "LLIntExceptions.h"
-#include "CallFrame.h"
-#include "CodeBlock.h"
-#include "Instruction.h"
 #include "LLIntCommon.h"
 #include "LLIntData.h"
-#include "LowLevelInterpreter.h"
-#include "JSCInlines.h"
 
 #if LLINT_TRACING
 #include "Exception.h"

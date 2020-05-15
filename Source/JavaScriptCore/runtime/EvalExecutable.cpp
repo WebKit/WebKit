@@ -26,8 +26,7 @@
 #include "config.h"
 #include "EvalExecutable.h"
 
-#include "EvalCodeBlock.h"
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

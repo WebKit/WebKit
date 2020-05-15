@@ -29,17 +29,12 @@
 #include "ArrayConstructor.h"
 #include "BigIntObject.h"
 #include "BooleanObject.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
 #include "JSArray.h"
 #include "JSArrayInlines.h"
-#include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "LiteralParser.h"
-#include "Lookup.h"
 #include "ObjectConstructor.h"
-#include "JSCInlines.h"
 #include "PropertyNameArray.h"
-#include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

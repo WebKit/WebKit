@@ -30,14 +30,11 @@
 
 #include "CCallHelpers.h"
 #include "CodeBlockWithJITType.h"
-#include "DFGCommon.h"
 #include "FTLJITCode.h"
 #include "JITOperations.h"
 #include "LinkBuffer.h"
-#include "JSCInlines.h"
 #include "ProfilerCompilation.h"
 #include "ThunkGenerators.h"
-#include "VirtualRegister.h"
 
 namespace JSC { namespace FTL {
 

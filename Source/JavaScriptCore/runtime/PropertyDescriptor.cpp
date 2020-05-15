@@ -25,12 +25,10 @@
 
 
 #include "config.h"
-
 #include "PropertyDescriptor.h"
 
 #include "GetterSetter.h"
 #include "JSObject.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 unsigned PropertyDescriptor::defaultAttributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;

@@ -28,30 +28,18 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ArrayPrototype.h"
 #include "AtomicsObject.h"
 #include "CallFrameShuffler.h"
 #include "DFGAbstractInterpreterInlines.h"
-#include "DFGCallArrayAllocatorSlowPathGenerator.h"
-#include "DFGClobberize.h"
 #include "DFGDoesGC.h"
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
 #include "DateInstance.h"
-#include "DirectArguments.h"
-#include "GetterSetter.h"
 #include "HasOwnPropertyCache.h"
-#include "JSCInlines.h"
-#include "JSLexicalEnvironment.h"
-#include "JSMap.h"
-#include "JSPropertyNameEnumerator.h"
-#include "JSSet.h"
-#include "ObjectPrototype.h"
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
-#include "StringPrototype.h"
+#include "StructureChain.h"
 #include "SuperSampler.h"
-#include "Watchdog.h"
 
 namespace JSC { namespace DFG {
 

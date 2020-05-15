@@ -27,7 +27,6 @@
 #include "JSSet.h"
 
 #include "JSCInlines.h"
-#include "SetPrototype.h"
 
 namespace JSC {
 

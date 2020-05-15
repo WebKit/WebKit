@@ -28,8 +28,7 @@
 
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
-#include "JSCInlines.h"
-#include <wtf/ListDump.h>
+#include "JSFunctionInlines.h"
 
 namespace JSC {
 

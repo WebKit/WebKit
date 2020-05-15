@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSWithScope.h"
 
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

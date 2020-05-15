@@ -27,7 +27,6 @@
 #include "ScopedArguments.h"
 
 #include "GenericArgumentsInlines.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

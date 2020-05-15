@@ -27,7 +27,6 @@
 #include "HeapProfiler.h"
 
 #include "HeapSnapshot.h"
-#include "VM.h"
 
 namespace JSC {
 

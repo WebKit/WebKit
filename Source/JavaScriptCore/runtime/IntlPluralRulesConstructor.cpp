@@ -31,8 +31,6 @@
 #include "IntlObject.h"
 #include "IntlPluralRules.h"
 #include "IntlPluralRulesPrototype.h"
-#include "JSCInlines.h"
-#include "Lookup.h"
 
 namespace JSC {
 

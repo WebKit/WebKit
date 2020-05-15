@@ -26,9 +26,6 @@
 #include "config.h"
 #include "DFGDriver.h"
 
-#include "JSObject.h"
-#include "JSString.h"
-
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGPlan.h"
@@ -36,16 +33,10 @@
 #include "DFGWorklist.h"
 #include "FunctionWhitelist.h"
 #include "JITCode.h"
-#include "JSCInlines.h"
 #include "Options.h"
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
-#include <wtf/Atomics.h>
 #include <wtf/NeverDestroyed.h>
-
-#if ENABLE(FTL_JIT)
-#include "FTLThunks.h"
-#endif
 
 namespace JSC { namespace DFG {
 

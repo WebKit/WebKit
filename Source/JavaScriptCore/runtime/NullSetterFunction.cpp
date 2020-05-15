@@ -27,8 +27,6 @@
 #include "NullSetterFunction.h"
 
 #include "CodeBlock.h"
-#include "Error.h"
-#include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "StackVisitor.h"
 

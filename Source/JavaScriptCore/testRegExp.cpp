@@ -23,22 +23,12 @@
 
 #include "InitializeThreading.h"
 #include "JSCInlines.h"
-#include "JSGlobalObject.h"
 #include "YarrFlags.h"
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
-
-#if !OS(WINDOWS)
-#include <unistd.h>
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
 
 #if COMPILER(MSVC)
 #include <crtdbg.h>

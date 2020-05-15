@@ -31,7 +31,6 @@
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "DFGValueSource.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

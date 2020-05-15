@@ -27,9 +27,8 @@
 #include "AsyncIteratorPrototype.h"
 
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "ObjectConstructor.h"
 
 namespace JSC {
 

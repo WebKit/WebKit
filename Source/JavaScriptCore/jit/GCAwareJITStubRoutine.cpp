@@ -33,9 +33,7 @@
 #include "Heap.h"
 #include "VM.h"
 #include "JITStubRoutineSet.h"
-#include "JSCInlines.h"
-#include "SlotVisitor.h"
-#include "Structure.h"
+#include "JSCellInlines.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {

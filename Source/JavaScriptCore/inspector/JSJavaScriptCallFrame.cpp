@@ -29,7 +29,6 @@
 #include "DebuggerScope.h"
 #include "Error.h"
 #include "IdentifierInlines.h"
-#include "JSCInlines.h"
 #include "JSJavaScriptCallFramePrototype.h"
 #include "ObjectConstructor.h"
 

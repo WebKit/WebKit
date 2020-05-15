@@ -28,7 +28,6 @@
 
 #include "BytecodeGenerator.h"
 #include "IndirectEvalExecutable.h"
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 

@@ -28,7 +28,6 @@
 #include "SymbolConstructor.h"
 
 #include "Error.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "Symbol.h"
 #include "SymbolPrototype.h"

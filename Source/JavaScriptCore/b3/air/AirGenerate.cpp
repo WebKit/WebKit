@@ -37,8 +37,6 @@
 #include "AirFixObviousSpills.h"
 #include "AirFixPartialRegisterStalls.h"
 #include "AirGenerationContext.h"
-#include "AirHandleCalleeSaves.h"
-#include "AirLiveness.h"
 #include "AirLogRegisterPressure.h"
 #include "AirLowerAfterRegAlloc.h"
 #include "AirLowerEntrySwitch.h"
@@ -48,16 +46,12 @@
 #include "AirOptimizeBlockOrder.h"
 #include "AirReportUsedRegisters.h"
 #include "AirSimplifyCFG.h"
-#include "AirStackAllocation.h"
-#include "AirTmpMap.h"
 #include "AirValidate.h"
 #include "B3Common.h"
 #include "B3Procedure.h"
 #include "B3TimingScope.h"
-#include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "DisallowMacroScratchRegisterUsage.h"
-#include "LinkBuffer.h"
 #include <wtf/IndexMap.h>
 
 namespace JSC { namespace B3 { namespace Air {

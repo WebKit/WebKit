@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "Error.h"
-#include "FunctionPrototype.h"
-#include "JSCInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "WasmSignatureInlines.h"
 

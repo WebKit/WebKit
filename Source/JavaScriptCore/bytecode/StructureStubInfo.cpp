@@ -27,8 +27,6 @@
 #include "StructureStubInfo.h"
 
 #include "CacheableIdentifierInlines.h"
-#include "JSObject.h"
-#include "JSCInlines.h"
 #include "PolymorphicAccess.h"
 #include "Repatch.h"
 

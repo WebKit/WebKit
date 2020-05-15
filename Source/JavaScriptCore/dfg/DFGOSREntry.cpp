@@ -33,9 +33,7 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGNode.h"
-#include "InterpreterInlines.h"
-#include "JIT.h"
-#include "JSCInlines.h"
+#include "RegisterAtOffsetList.h"
 #include "VMInlines.h"
 #include <wtf/CommaPrinter.h>
 

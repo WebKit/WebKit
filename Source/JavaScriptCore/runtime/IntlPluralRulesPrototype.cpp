@@ -29,8 +29,6 @@
 
 #include "Error.h"
 #include "IntlPluralRules.h"
-#include "JSCInlines.h"
-#include "JSObjectInlines.h"
 
 namespace JSC {
 

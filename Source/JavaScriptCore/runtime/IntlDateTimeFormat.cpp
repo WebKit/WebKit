@@ -27,12 +27,10 @@
 #include "config.h"
 #include "IntlDateTimeFormat.h"
 
-#include "DateInstance.h"
 #include "Error.h"
-#include "IntlDateTimeFormatConstructor.h"
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucal.h>
 #include <unicode/udatpg.h>

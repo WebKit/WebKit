@@ -28,9 +28,8 @@
 
 #if ENABLE(JIT)
 
-#include "JIT.h"
-#include "JSCInlines.h"
-#include "LLIntData.h"
+#include "JITCode.h"
+#include "JSCJSValueInlines.h"
 #include "ThunkGenerators.h"
 #include "VM.h"
 

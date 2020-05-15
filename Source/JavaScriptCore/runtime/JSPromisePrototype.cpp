@@ -27,13 +27,8 @@
 #include "JSPromisePrototype.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
-#include "JSCBuiltins.h"
-#include "JSCInlines.h"
 #include "JSFunction.h"
-#include "JSGlobalObject.h"
-#include "JSPromise.h"
-#include "Microtask.h"
+#include "JSGlobalObjectInlines.h"
 
 namespace JSC {
 

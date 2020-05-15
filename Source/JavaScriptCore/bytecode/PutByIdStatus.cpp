@@ -31,12 +31,8 @@
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
 #include "ICStatusUtils.h"
-#include "LLIntData.h"
-#include "LowLevelInterpreter.h"
-#include "JSCInlines.h"
 #include "PolymorphicAccess.h"
-#include "Structure.h"
-#include "StructureChain.h"
+#include "StructureInlines.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 

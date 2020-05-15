@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JITCode.h"
 
-#include "JSCInlines.h"
-#include "ProtoCallFrame.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {

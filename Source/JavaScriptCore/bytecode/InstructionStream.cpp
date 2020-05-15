@@ -26,9 +26,6 @@
 #include "config.h"
 #include "InstructionStream.h"
 
-#include "Instruction.h"
-#include "Opcode.h"
-
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);

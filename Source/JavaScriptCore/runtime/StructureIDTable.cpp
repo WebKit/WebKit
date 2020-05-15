@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StructureIDTable.h"
 
-#include <limits.h>
 #include <wtf/Atomics.h>
 
 namespace JSC {

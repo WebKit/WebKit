@@ -28,7 +28,7 @@
 
 #if ENABLE(JIT)
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

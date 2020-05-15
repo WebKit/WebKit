@@ -27,11 +27,9 @@
 #include "JSArrayBufferView.h"
 
 #include "GenericTypedArrayViewInlines.h"
-#include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSTypedArrays.h"
-#include "TypeError.h"
 #include "TypedArrayController.h"
 #include "TypedArrays.h"
 #include <wtf/Gigacage.h>

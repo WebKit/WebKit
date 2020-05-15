@@ -23,12 +23,8 @@
 #include "config.h"
 
 #include "ArrayBuffer.h"
-#include "ArrayPrototype.h"
 #include "BigIntConstructor.h"
-#include "BuiltinNames.h"
-#include "ButterflyInlines.h"
 #include "BytecodeCacheError.h"
-#include "CallFrameInlines.h"
 #include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
@@ -38,7 +34,6 @@
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
-#include "HeapProfiler.h"
 #include "HeapSnapshotBuilder.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
@@ -46,11 +41,9 @@
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
 #include "JSBigInt.h"
-#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSInternalPromise.h"
 #include "JSLock.h"
-#include "JSModuleLoader.h"
 #include "JSNativeStdFunction.h"
 #include "JSONObject.h"
 #include "JSObjectInlines.h"
@@ -64,42 +57,32 @@
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
 #include "PromiseTimer.h"
-#include "ProtoCallFrame.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
 #include "StackVisitor.h"
 #include "StructureInlines.h"
-#include "StructureRareDataInlines.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TypedArrayInlines.h"
 #include "VMInspector.h"
 #include "WasmCapabilities.h"
-#include "WasmContext.h"
 #include "WasmMemory.h"
-#include <locale.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <thread>
 #include <type_traits>
-#include <wtf/Box.h>
 #include <wtf/CPUTime.h>
-#include <wtf/CommaPrinter.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if OS(WINDOWS)
 #include <direct.h>
@@ -120,10 +103,6 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #undef Function
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
 #endif
 
 #if HAVE(SIGNAL_H)

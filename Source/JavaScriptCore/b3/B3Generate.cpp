@@ -28,9 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirCode.h"
 #include "AirGenerate.h"
-#include "AirInstInlines.h"
 #include "B3Common.h"
 #include "B3DuplicateTails.h"
 #include "B3EliminateCommonSubexpressions.h"
@@ -46,13 +44,11 @@
 #include "B3MoveConstants.h"
 #include "B3OptimizeAssociativeExpressionTrees.h"
 #include "B3Procedure.h"
-#include "B3PureCSE.h"
 #include "B3ReduceDoubleToFloat.h"
 #include "B3ReduceLoopStrength.h"
 #include "B3ReduceStrength.h"
 #include "B3TimingScope.h"
 #include "B3Validate.h"
-#include "PCToCodeOriginMap.h"
 
 namespace JSC { namespace B3 {
 

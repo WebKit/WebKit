@@ -23,9 +23,6 @@
 #include "config.h"
 #include "RegExp.h"
 
-#include "ExceptionHelpers.h"
-#include "Lexer.h"
-#include "JSCInlines.h"
 #include "RegExpCache.h"
 #include "RegExpInlines.h"
 #include "YarrJIT.h"

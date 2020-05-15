@@ -33,15 +33,10 @@
 #include "BytecodeRewriter.h"
 #include "BytecodeStructs.h"
 #include "BytecodeUseDef.h"
-#include "IdentifierInlines.h"
-#include "InterpreterInlines.h"
-#include "JSCInlines.h"
-#include "JSCJSValueInlines.h"
 #include "JSGenerator.h"
 #include "Label.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
-#include "UnlinkedMetadataTableInlines.h"
 #include <wtf/Optional.h>
 
 namespace JSC {

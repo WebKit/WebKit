@@ -30,7 +30,6 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "HeapInlines.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "PolymorphicAccess.h"

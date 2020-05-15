@@ -26,9 +26,7 @@
 #include "config.h"
 #include "MarkedJSValueRefArray.h"
 
-#include "JSCInlines.h"
 #include "JSCJSValue.h"
-#include "JSObject.h"
 
 namespace JSC {
 

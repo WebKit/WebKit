@@ -26,24 +26,14 @@
 #include "config.h"
 #include "DeleteByStatus.h"
 
-#include "BytecodeStructs.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "ICStatusUtils.h"
-#include "InterpreterInlines.h"
-#include "JSCInlines.h"
-#include "JSScope.h"
-#include "LLIntData.h"
-#include "LowLevelInterpreter.h"
-#include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
-namespace DOMJIT {
-class GetterSetter;
-}
 
 bool DeleteByStatus::appendVariant(const DeleteByIdVariant& variant)
 {

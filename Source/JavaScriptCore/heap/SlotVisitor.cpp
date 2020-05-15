@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SlotVisitor.h"
 
-#include "BlockDirectoryInlines.h"
-#include "CPU.h"
 #include "ConservativeRoots.h"
 #include "GCSegmentedArrayInlines.h"
 #include "HeapAnalyzer.h"
@@ -35,15 +33,11 @@
 #include "HeapProfiler.h"
 #include "IntegrityInlines.h"
 #include "JSArray.h"
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
+#include "JSCellInlines.h"
 #include "JSString.h"
-#include "JSCInlines.h"
-#include "MarkedBlockInlines.h"
 #include "MarkingConstraintSolver.h"
 #include "SlotVisitorInlines.h"
 #include "StopIfNecessaryTimer.h"
-#include "SuperSampler.h"
 #include "VM.h"
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>

@@ -27,13 +27,12 @@
 #include "config.h"
 #include "BytecodeIntrinsicRegistry.h"
 
-#include "ArrayIteratorPrototype.h"
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
+#include "IdentifierInlines.h"
 #include "IterationKind.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
-#include "JSCInlines.h"
 #include "JSGenerator.h"
 #include "JSGlobalObject.h"
 #include "JSMapIterator.h"
@@ -41,6 +40,7 @@
 #include "JSPromise.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
+#include "LinkTimeConstant.h"
 #include "Nodes.h"
 #include "StrongInlines.h"
 

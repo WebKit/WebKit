@@ -31,7 +31,6 @@
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
 #include "FullCodeOrigin.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 
 namespace JSC {

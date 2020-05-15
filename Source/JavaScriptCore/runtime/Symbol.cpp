@@ -28,7 +28,7 @@
 #include "Symbol.h"
 
 #include "Error.h"
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 #include "SymbolObject.h"
 
 namespace JSC {

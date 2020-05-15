@@ -28,12 +28,9 @@
 #include "IntlNumberFormatPrototype.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
 #include "IntlNumberFormat.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
 #include "JSObjectInlines.h"
-#include "Options.h"
 
 namespace JSC {
 

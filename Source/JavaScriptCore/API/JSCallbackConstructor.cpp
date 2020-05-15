@@ -32,7 +32,6 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

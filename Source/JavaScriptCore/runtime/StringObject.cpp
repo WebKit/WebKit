@@ -21,10 +21,9 @@
 #include "config.h"
 #include "StringObject.h"
 
-#include "Error.h"
 #include "JSGlobalObject.h"
-#include "JSCInlines.h"
 #include "PropertyNameArray.h"
+#include "TypeError.h"
 
 namespace JSC {
 

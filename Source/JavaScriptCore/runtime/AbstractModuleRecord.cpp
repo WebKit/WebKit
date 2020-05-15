@@ -27,13 +27,11 @@
 #include "AbstractModuleRecord.h"
 
 #include "Error.h"
-#include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
-#include "UnlinkedModuleProgramCodeBlock.h"
 #include "WebAssemblyModuleRecord.h"
 #include <wtf/Optional.h>
 

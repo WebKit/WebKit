@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ObjectPropertyCondition.h"
 
-#include "JSCInlines.h"
 #include "TrackedReferences.h"
 
 namespace JSC {

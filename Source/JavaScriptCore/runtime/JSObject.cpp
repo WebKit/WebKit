@@ -25,11 +25,8 @@
 #include "JSObject.h"
 
 #include "ArrayConstructor.h"
-#include "ButterflyInlines.h"
 #include "CatchScope.h"
 #include "CustomGetterSetter.h"
-#include "DatePrototype.h"
-#include "ErrorConstructor.h"
 #include "Exception.h"
 #include "GCDeferralContextInlines.h"
 #include "GetterSetter.h"
@@ -38,18 +35,13 @@
 #include "JSCInlines.h"
 #include "JSCustomGetterSetterFunction.h"
 #include "JSFunction.h"
-#include "JSGlobalObject.h"
 #include "JSImmutableButterfly.h"
 #include "Lookup.h"
-#include "NativeErrorConstructor.h"
-#include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
-#include "SlotVisitorInlines.h"
 #include "TypeError.h"
 #include "VMInlines.h"
-#include <math.h>
 #include <wtf/Assertions.h>
 
 namespace JSC {

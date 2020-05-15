@@ -28,20 +28,17 @@
 #include "JSContextRefInternal.h"
 
 #include "APICast.h"
-#include "APIUtils.h"
 #include "CallFrame.h"
 #include "InitializeThreading.h"
 #include "JSAPIGlobalObject.h"
+#include "JSAPIWrapperObject.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSObject.h"
-#include "JSCInlines.h"
-#include "SourceProvider.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
 #include "Watchdog.h"
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringHash.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"

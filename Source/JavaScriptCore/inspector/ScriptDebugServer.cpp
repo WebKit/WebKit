@@ -34,7 +34,6 @@
 #include "DebuggerCallFrame.h"
 #include "DebuggerScope.h"
 #include "Exception.h"
-#include "JSCInlines.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JavaScriptCallFrame.h"
 #include "SourceProvider.h"

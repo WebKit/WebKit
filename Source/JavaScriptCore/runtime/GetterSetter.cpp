@@ -23,10 +23,8 @@
 #include "config.h"
 #include "GetterSetter.h"
 
-#include "Error.h"
 #include "Exception.h"
-#include "JSObject.h"
-#include "JSCInlines.h"
+#include "JSObjectInlines.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {

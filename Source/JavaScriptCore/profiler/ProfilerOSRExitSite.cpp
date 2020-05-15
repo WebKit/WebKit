@@ -27,9 +27,7 @@
 #include "ProfilerOSRExitSite.h"
 
 #include "JSGlobalObject.h"
-#include "JSScope.h"
 #include "JSString.h"
-#include "JSCInlines.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {

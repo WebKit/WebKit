@@ -29,17 +29,10 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
-#include "DisallowMacroScratchRegisterUsage.h"
-#include "FrameTracers.h"
-#include "JSCInlines.h"
-#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyRuntimeError.h"
-#include "MaxFrameExtentForSlowPathCall.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include "WasmOperations.h"
-#include "WasmSignatureInlines.h"
 #include "WasmToJS.h"
 
 namespace JSC { namespace Wasm {

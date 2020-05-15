@@ -27,8 +27,6 @@
 #include "JSInternalPromiseConstructor.h"
 
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
-#include "JSInternalPromise.h"
 #include "JSInternalPromisePrototype.h"
 
 #include "JSInternalPromiseConstructor.lut.h"

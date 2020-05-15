@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IteratorOperations.h"
 
-#include "CatchScope.h"
-#include "Error.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 

@@ -23,9 +23,7 @@
 #include "config.h"
 #include "InternalFunction.h"
 
-#include "FunctionPrototype.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "ProxyObject.h"

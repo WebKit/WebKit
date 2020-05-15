@@ -40,7 +40,6 @@
 #include "UnlinkedMetadataTableInlines.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Optional.h>
 #include <wtf/Packed.h>

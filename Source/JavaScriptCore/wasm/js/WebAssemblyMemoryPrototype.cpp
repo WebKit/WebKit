@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
 #include "JSArrayBuffer.h"
-#include "JSCInlines.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyHelpers.h"
 

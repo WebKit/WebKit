@@ -27,14 +27,10 @@
 
 #include "CallFrame.h"
 #include "CatchScope.h"
-#include "EvalExecutable.h"
 #include "Exception.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "IntlDateTimeFormat.h"
-#include "IntlObject.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
 #include "JSModuleLoader.h"
@@ -42,19 +38,12 @@
 #include "JSString.h"
 #include "Lexer.h"
 #include "LiteralParser.h"
-#include "Nodes.h"
 #include "ObjectConstructor.h"
-#include "JSCInlines.h"
 #include "ParseInt.h"
-#include "Parser.h"
-#include "StackVisitor.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <unicode/utf8.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
-#include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 

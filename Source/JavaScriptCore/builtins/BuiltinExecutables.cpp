@@ -28,7 +28,7 @@
 #include "BuiltinExecutables.h"
 
 #include "BuiltinNames.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "Parser.h"
 #include <wtf/NeverDestroyed.h>
 

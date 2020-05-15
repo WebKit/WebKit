@@ -21,11 +21,9 @@
 #include "config.h"
 #include "ErrorConstructor.h"
 
+#include "CallFrameInlines.h"
 #include "ErrorPrototype.h"
-#include "Interpreter.h"
 #include "JSGlobalObject.h"
-#include "JSString.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

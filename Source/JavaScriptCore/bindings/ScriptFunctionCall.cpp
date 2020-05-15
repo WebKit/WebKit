@@ -32,8 +32,8 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
-#include "JSCInlines.h"
 #include "JSLock.h"
+#include "JSObjectInlines.h"
 #include <wtf/text/WTFString.h>
 
 namespace Deprecated {

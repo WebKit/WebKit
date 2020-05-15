@@ -32,7 +32,6 @@
 #include "CacheableIdentifierInlines.h"
 #include "DFGAbstractValue.h"
 #include "DFGGraph.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

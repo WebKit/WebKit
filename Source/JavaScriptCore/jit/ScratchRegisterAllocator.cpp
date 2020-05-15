@@ -28,7 +28,6 @@
 
 #if ENABLE(JIT)
 
-#include "JSCInlines.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "VM.h"
 

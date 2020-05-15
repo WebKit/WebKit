@@ -27,22 +27,16 @@
 #include "Structure.h"
 
 #include "BuiltinNames.h"
-#include "CodeBlock.h"
 #include "DumpContext.h"
-#include "JSCInlines.h"
 #include "JSObject.h"
-#include "JSPropertyNameEnumerator.h"
 #include "Lookup.h"
 #include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
-#include "StructureChain.h"
-#include "StructureRareDataInlines.h"
+#include "StructureInlines.h"
 #include "WeakGCMapInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ProcessID.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
 
 #define DUMP_STRUCTURE_ID_STATISTICS 0
 

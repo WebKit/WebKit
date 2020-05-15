@@ -31,9 +31,6 @@
 #include "B3Const64Value.h"
 #include "B3ConstDoubleValue.h"
 #include "B3ConstPtrValue.h"
-#include "B3ProcedureInlines.h"
-#include "B3Type.h"
-#include "B3ValueInlines.h"
 
 #if ENABLE(FTL_JIT)
 

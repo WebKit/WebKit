@@ -28,7 +28,6 @@
 
 #include "Options.h"
 #include <wtf/DataLog.h>
-#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

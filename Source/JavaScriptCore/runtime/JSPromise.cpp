@@ -27,7 +27,6 @@
 #include "JSPromise.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 #include "JSPromiseConstructor.h"

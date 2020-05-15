@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSGlobalLexicalEnvironment.h"
 
-#include "JSCInlines.h"
-
 namespace JSC {
 
 const ClassInfo JSGlobalLexicalEnvironment::s_info = { "JSGlobalLexicalEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGlobalLexicalEnvironment) };

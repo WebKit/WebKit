@@ -39,10 +39,8 @@
 #include "B3ProcedureInlines.h"
 #include "B3SlotBaseValue.h"
 #include "B3StackSlot.h"
-#include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
-#include "B3VariableValue.h"
 #include "B3WasmBoundsCheckValue.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>

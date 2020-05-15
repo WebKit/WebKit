@@ -28,15 +28,11 @@
 
 #if ENABLE(B3_JIT)
 
-#include "AirArg.h"
-#include "B3BasicBlockInlines.h"
 #include "B3Dominators.h"
 #include "B3InsertionSetInlines.h"
-#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
-#include "B3ValueKeyInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 

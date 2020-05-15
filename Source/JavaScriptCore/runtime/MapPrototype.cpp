@@ -29,11 +29,8 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "IteratorOperations.h"
-#include "JSCInlines.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
-#include "Lookup.h"
 
 #include "MapPrototype.lut.h"
 

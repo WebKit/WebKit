@@ -26,11 +26,9 @@
 #include "config.h"
 #include "ProfilerCompilation.h"
 
-#include "JSGlobalObject.h"
-#include "ObjectConstructor.h"
 #include "JSCInlines.h"
+#include "ObjectConstructor.h"
 #include "ProfilerDatabase.h"
-#include "Watchpoint.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {

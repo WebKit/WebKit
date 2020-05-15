@@ -1,3 +1,35 @@
+2020-05-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [IWYU] Remove unnecessary includes from JSC implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=211867
+
+        Reviewed by Keith Miller.
+
+        * API/:
+        * assembler/:
+        * b3/:
+        * bindings/:
+        * builtins/BuiltinExecutables.cpp:
+        * bytecode/:
+        * bytecompiler/:
+        * debugger/:
+        * dfg/:
+        * disassembler/:
+        * ftl/:
+        * heap/:
+        * inspector/:
+        * interpreter/:
+        * jit/:
+        * jsc.cpp:
+        * llint/:
+        * parser/:
+        * profiler/:
+        * runtime/:
+        * testRegExp.cpp:
+        * tools/:
+        * wasm/:
+        * yarr/:
+
 2020-05-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wtype-limits warning spam from CCallHelpers.h

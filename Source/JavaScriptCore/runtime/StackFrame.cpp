@@ -28,7 +28,6 @@
 
 #include "CodeBlock.h"
 #include "DebuggerPrimitives.h"
-#include "JSCInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

@@ -29,7 +29,6 @@
 #include "CodeBlock.h"
 #include "FunctionCodeBlock.h"
 #include "JSCInlines.h"
-#include "LLIntData.h"
 
 namespace JSC {
 

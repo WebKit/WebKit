@@ -21,16 +21,12 @@
 #include "config.h"
 #include "ObjectPrototype.h"
 
-#include "Error.h"
 #include "GetterSetter.h"
 #include "HasOwnPropertyCache.h"
 #include "IntegrityInlines.h"
-#include "JSFunction.h"
+#include "JSObjectInlines.h"
 #include "JSString.h"
-#include "JSCInlines.h"
 #include "PropertySlot.h"
-#include "StructureInlines.h"
-#include "StructureRareDataInlines.h"
 
 namespace JSC {
 

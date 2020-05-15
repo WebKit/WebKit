@@ -29,36 +29,12 @@
 #include "Error.h"
 #include "IntegrityInlines.h"
 #include "JSCBuiltins.h"
+#include "JSCInlines.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include "Lookup.h"
-#include "ObjectPrototype.h"
-#include "JSCInlines.h"
-#include <limits.h>
-#include <locale.h>
-#include <math.h>
-#include <stdlib.h>
-#include <time.h>
 #include <wtf/Assertions.h>
-#include <wtf/MathExtras.h>
-
-#if HAVE(LANGINFO_H)
-#include <langinfo.h>
-#endif
-
-#if HAVE(SYS_PARAM_H)
-#include <sys/param.h>
-#endif
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if HAVE(SYS_TIMEB_H)
-#include <sys/timeb.h>
-#endif
 
 #if !(OS(DARWIN) && USE(CF))
 #include <unicode/udat.h>

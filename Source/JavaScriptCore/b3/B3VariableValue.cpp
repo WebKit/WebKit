@@ -28,7 +28,6 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3ValueInlines.h"
 #include "B3Variable.h"
 
 namespace JSC { namespace B3 {

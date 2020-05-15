@@ -31,8 +31,6 @@
 #include "InspectorDebuggerAgent.h"
 #include "InspectorScriptProfilerAgent.h"
 #include "ScriptArguments.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 
 namespace Inspector {
 

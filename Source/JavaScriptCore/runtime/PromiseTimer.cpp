@@ -29,7 +29,6 @@
 #include "JSPromise.h"
 #include "StrongInlines.h"
 #include "VM.h"
-#include <wtf/Locker.h>
 #include <wtf/RunLoop.h>
 
 namespace JSC {

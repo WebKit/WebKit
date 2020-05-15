@@ -30,7 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGPromotedHeapLocation.h"
-#include "JSCInlines.h"
+#include "DOMJITSignature.h"
 #include "JSImmutableButterfly.h"
 
 namespace JSC { namespace DFG {

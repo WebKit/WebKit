@@ -38,10 +38,8 @@
 #include "WasmFunctionCodeBlock.h"
 #include "WasmFunctionParser.h"
 #include "WasmGeneratorTraits.h"
-#include "WasmThunks.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
-#include <wtf/StdUnorderedMap.h>
 #include <wtf/Variant.h>
 
 namespace JSC { namespace Wasm {

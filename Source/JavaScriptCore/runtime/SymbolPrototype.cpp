@@ -29,7 +29,6 @@
 
 #include "Error.h"
 #include "IntegrityInlines.h"
-#include "JSCInlines.h"
 #include "JSString.h"
 #include "SymbolObject.h"
 

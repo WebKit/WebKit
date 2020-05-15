@@ -28,16 +28,12 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlockInlines.h"
+#include "B3BasicBlock.h"
 #include "B3BreakCriticalEdges.h"
-#include "B3Dominators.h"
 #include "B3FixSSA.h"
-#include "B3InsertionSetInlines.h"
+#include "B3InsertionSet.h"
 #include "B3PhaseScope.h"
-#include "B3ProcedureInlines.h"
-#include "B3SwitchValue.h"
-#include "B3UpsilonValue.h"
-#include "B3ValueInlines.h"
+#include "B3Procedure.h"
 #include <wtf/IndexSet.h>
 
 namespace JSC { namespace B3 {

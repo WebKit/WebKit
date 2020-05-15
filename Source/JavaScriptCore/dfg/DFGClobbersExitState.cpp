@@ -28,10 +28,9 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ButterflyInlines.h"
 #include "DFGClobberize.h"
-#include "DFGGraph.h"
 #include "DFGNode.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

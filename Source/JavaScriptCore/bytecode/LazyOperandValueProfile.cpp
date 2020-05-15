@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LazyOperandValueProfile.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

@@ -29,19 +29,12 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "ArrayBuffer.h"
-#include "ExceptionHelpers.h"
-#include "FunctionPrototype.h"
 #include "JSArrayBuffer.h"
-#include "JSCInlines.h"
-#include "JSTypedArrays.h"
-#include "JSWebAssemblyCompileError.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyModule.h"
 #include "ObjectConstructor.h"
-#include "SymbolTable.h"
-#include "WasmCallee.h"
 #include "WasmModuleInformation.h"
-#include "WasmPlan.h"
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>
 

@@ -26,14 +26,10 @@
 #include "config.h"
 #include "JSTypedArrayViewConstructor.h"
 
-#include "CallFrame.h"
 #include "Error.h"
-#include "GetterSetter.h"
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
-#include "JSGenericTypedArrayViewConstructorInlines.h"
+#include "JSGlobalObject.h"
 #include "JSTypedArrayViewPrototype.h"
-#include "JSTypedArrays.h"
 
 namespace JSC {
 

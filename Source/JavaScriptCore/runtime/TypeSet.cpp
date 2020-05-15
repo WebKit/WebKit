@@ -26,9 +26,8 @@
 #include "config.h"
 #include "TypeSet.h"
 
+#include "HeapInlines.h"
 #include "InspectorProtocolObjects.h"
-#include "JSCInlines.h"
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/Vector.h>

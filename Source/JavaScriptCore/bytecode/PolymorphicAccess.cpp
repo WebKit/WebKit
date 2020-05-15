@@ -35,7 +35,6 @@
 #include "FullCodeOrigin.h"
 #include "Heap.h"
 #include "JITOperations.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"

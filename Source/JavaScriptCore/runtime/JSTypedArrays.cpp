@@ -28,7 +28,6 @@
 
 #include "GenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

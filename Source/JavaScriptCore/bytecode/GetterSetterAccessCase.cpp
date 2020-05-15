@@ -31,7 +31,6 @@
 #include "AccessCaseSnippetParams.h"
 #include "DOMJITCallDOMGetterSnippet.h"
 #include "DOMJITGetterSetter.h"
-#include "HeapInlines.h"
 #include "JSCJSValueInlines.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"

@@ -28,11 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGBasicBlock.h"
-#include "DFGNode.h"
 #include "InlineCallFrame.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

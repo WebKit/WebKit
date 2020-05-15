@@ -28,7 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLState.h"
+#include "LinkBuffer.h"
 
 namespace JSC { namespace FTL {
 

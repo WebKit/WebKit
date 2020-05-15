@@ -22,11 +22,10 @@
 #include "ErrorPrototype.h"
 
 #include "Error.h"
+#include "ExceptionHelpers.h"
 #include "IntegrityInlines.h"
-#include "JSFunction.h"
+#include "JSGlobalObject.h"
 #include "JSStringInlines.h"
-#include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "StringRecursionChecker.h"
 
 namespace JSC {

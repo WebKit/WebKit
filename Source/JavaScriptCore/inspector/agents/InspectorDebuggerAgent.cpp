@@ -34,18 +34,12 @@
 #include "ContentSearchUtilities.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "InspectorFrontendRouter.h"
-#include "JSCInlines.h"
 #include "RegularExpression.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptDebugServer.h"
-#include "ScriptObject.h"
-#include <wtf/Function.h>
 #include <wtf/JSONValues.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Stopwatch.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

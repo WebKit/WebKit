@@ -29,19 +29,16 @@
 #if ENABLE(FTL_JIT)
 
 #include "AirCode.h"
-#include "AirGenerationContext.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
 #include "AtomicsObject.h"
 #include "B3CheckValue.h"
-#include "B3FenceValue.h"
 #include "B3PatchpointValue.h"
 #include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
 #include "ButterflyInlines.h"
 #include "CallFrameShuffler.h"
-#include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCapabilities.h"
 #include "DFGClobberize.h"
@@ -54,7 +51,6 @@
 #include "DFGOSRExitFuzz.h"
 #include "DirectArguments.h"
 #include "FTLAbstractHeapRepository.h"
-#include "FTLAvailableRecovery.h"
 #include "FTLExceptionTarget.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLFormattedValue.h"
@@ -87,14 +83,11 @@
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSLexicalEnvironment.h"
-#include "JSMap.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 #include "RegExpObject.h"
-#include "ScopedArguments.h"
-#include "ScopedArgumentsTable.h"
 #include "ScratchRegisterAllocator.h"
 #include "SetupVarargsFrame.h"
 #include "ShadowChicken.h"
@@ -102,10 +95,8 @@
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "VirtualRegister.h"
-#include "Watchdog.h"
 #include <atomic>
 #include <wtf/Box.h>
-#include <wtf/Gigacage.h>
 #include <wtf/RecursableLambda.h>
 #include <wtf/StdUnorderedSet.h>
 

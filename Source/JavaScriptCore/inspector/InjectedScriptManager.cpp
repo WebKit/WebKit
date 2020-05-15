@@ -32,13 +32,10 @@
 #include "InjectedScriptManager.h"
 
 #include "CatchScope.h"
-#include "Completion.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
-#include "JSCInlines.h"
-#include "JSInjectedScriptHost.h"
 #include "JSLock.h"
-#include "ScriptObject.h"
+#include "JSObjectInlines.h"
 #include "SourceCode.h"
 #include <wtf/JSONValues.h>
 

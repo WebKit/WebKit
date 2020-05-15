@@ -25,15 +25,10 @@
 #include "ArrayConstructor.h"
 
 #include "ArrayPrototype.h"
-#include "ButterflyInlines.h"
 #include "Error.h"
-#include "ExceptionHelpers.h"
-#include "GetterSetter.h"
 #include "JSArray.h"
-#include "JSFunction.h"
-#include "Lookup.h"
+#include "JSGlobalObjectInlines.h"
 #include "ProxyObject.h"
-#include "JSCInlines.h"
 
 #include "ArrayConstructor.lut.h"
 

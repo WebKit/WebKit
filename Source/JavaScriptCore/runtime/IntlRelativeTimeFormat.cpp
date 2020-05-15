@@ -29,7 +29,7 @@
 #include "Error.h"
 #include "IntlNumberFormat.h"
 #include "IntlObject.h"
-#include "JSCInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "ObjectConstructor.h"
 #include <wtf/unicode/icu/ICUHelpers.h>
 

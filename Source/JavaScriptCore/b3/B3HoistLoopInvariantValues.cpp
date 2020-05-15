@@ -29,13 +29,11 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BackwardsDominators.h"
-#include "B3BasicBlockInlines.h"
 #include "B3Dominators.h"
 #include "B3EnsureLoopPreHeaders.h"
 #include "B3NaturalLoops.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
-#include "B3ValueInlines.h"
 #include <wtf/RangeSet.h>
 
 namespace JSC { namespace B3 {

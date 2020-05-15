@@ -29,7 +29,6 @@
 #if ENABLE(UDIS86)
 
 #include "MacroAssemblerCodeRef.h"
-#include "Options.h"
 #include "UDis86Disassembler.h"
 
 namespace JSC {

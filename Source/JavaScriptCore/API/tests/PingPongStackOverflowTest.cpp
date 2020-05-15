@@ -27,7 +27,6 @@
 #include "PingPongStackOverflowTest.h"
 
 #include "InitializeThreading.h"
-#include "JSContextRefPrivate.h"
 #include "JavaScript.h"
 #include "Options.h"
 #include <wtf/text/StringBuilder.h>

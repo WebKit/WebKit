@@ -28,8 +28,6 @@
 
 #include "Error.h"
 #include "IntlRelativeTimeFormat.h"
-#include "JSCInlines.h"
-#include "JSObjectInlines.h"
 
 namespace JSC {
 

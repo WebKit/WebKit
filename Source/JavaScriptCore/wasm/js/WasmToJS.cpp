@@ -29,15 +29,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
-#include "FrameTracers.h"
-#include "IteratorOperations.h"
-#include "JITExceptions.h"
-#include "JSCInlines.h"
-#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyRuntimeError.h"
 #include "LinkBuffer.h"
-#include "NativeErrorConstructor.h"
 #include "ThunkGenerators.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
@@ -45,9 +38,7 @@
 #include "WasmInstance.h"
 #include "WasmOperations.h"
 #include "WasmSignatureInlines.h"
-
 #include <wtf/FunctionTraits.h>
-
 
 namespace JSC { namespace Wasm {
 

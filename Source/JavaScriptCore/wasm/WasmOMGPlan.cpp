@@ -29,23 +29,14 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
-#include "WasmContext.h"
-#include "WasmInstance.h"
-#include "WasmMachineThreads.h"
-#include "WasmMemory.h"
 #include "WasmNameSection.h"
 #include "WasmSignatureInlines.h"
-#include "WasmWorklist.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/ThreadMessage.h>
 
 namespace JSC { namespace Wasm {
 

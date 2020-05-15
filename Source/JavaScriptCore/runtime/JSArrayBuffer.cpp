@@ -26,10 +26,8 @@
 #include "config.h"
 #include "JSArrayBuffer.h"
 
-#include "JSCInlines.h"
-#include "TypeError.h"
+#include "JSCellInlines.h"
 #include "TypedArrayController.h"
-#include <wtf/Gigacage.h>
 
 namespace JSC {
 

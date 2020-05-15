@@ -31,7 +31,6 @@
 #include "AirCCallSpecial.h"
 #include "AirCode.h"
 #include "B3CCallValue.h"
-#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {
 

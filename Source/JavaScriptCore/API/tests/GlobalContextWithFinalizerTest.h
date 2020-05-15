@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "JSContextRefPrivate.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

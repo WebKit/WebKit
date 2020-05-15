@@ -26,12 +26,10 @@
 #include "config.h"
 #include "SigillCrashAnalyzer.h"
 
-#include "CallFrame.h"
 #include "CodeBlock.h"
 #include "MachineContext.h"
 #include "VMInspector.h"
 #include <mutex>
-#include <wtf/StdLibExtras.h>
 
 #if ENABLE(ARM64_DISASSEMBLER)
 #include "A64DOpcode.h"

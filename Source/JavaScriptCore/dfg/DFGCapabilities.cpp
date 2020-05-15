@@ -30,8 +30,6 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
-#include "InterpreterInlines.h"
-#include "JSCInlines.h"
 #include "Options.h"
 
 namespace JSC { namespace DFG {

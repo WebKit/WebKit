@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "IdentifierInlines.h"
 #include "WasmNameSection.h"
 
 namespace JSC { namespace Wasm {

@@ -26,9 +26,6 @@
 #include "config.h"
 #include "ValueRecovery.h"
 
-#include "CodeBlock.h"
-#include "JSCInlines.h"
-
 namespace JSC {
 
 JSValue ValueRecovery::recover(CallFrame* callFrame) const

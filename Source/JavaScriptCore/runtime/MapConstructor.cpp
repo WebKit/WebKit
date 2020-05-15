@@ -26,10 +26,7 @@
 #include "config.h"
 #include "MapConstructor.h"
 
-#include "Error.h"
-#include "GetterSetter.h"
 #include "IteratorOperations.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSMap.h"
 #include "JSObjectInlines.h"

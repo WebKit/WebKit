@@ -24,16 +24,11 @@
 
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
-#include "Error.h"
 #include "HeapIterationScope.h"
-#include "Interpreter.h"
-#include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "MarkedSpaceInlines.h"
-#include "Parser.h"
-#include "Protect.h"
 #include "VMEntryScope.h"
 
 namespace JSC {

@@ -28,8 +28,6 @@
 
 #include "ButterflyInlines.h"
 #include "CodeBlockInlines.h"
-#include "HeapIterationScope.h"
-#include "JSCInlines.h"
 #include "JSObject.h"
 #include "MarkedSpaceInlines.h"
 #include "VMInspector.h"

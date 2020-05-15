@@ -22,12 +22,9 @@
 #include "config.h"
 #include "NumberConstructor.h"
 
-#include "Lookup.h"
+#include "JSCJSValueInlines.h"
 #include "NumberObject.h"
 #include "NumberPrototype.h"
-#include "JSCInlines.h"
-#include "JSGlobalObjectFunctions.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

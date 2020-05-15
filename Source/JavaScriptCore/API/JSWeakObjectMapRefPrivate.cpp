@@ -27,11 +27,8 @@
 #include "JSWeakObjectMapRefPrivate.h"
 
 #include "APICast.h"
-#include "JSCJSValue.h"
 #include "JSCallbackObject.h"
 #include "JSWeakObjectMapRefInternal.h"
-#include "JSCInlines.h"
-#include "Weak.h"
 #include "WeakGCMapInlines.h"
 
 using namespace JSC;

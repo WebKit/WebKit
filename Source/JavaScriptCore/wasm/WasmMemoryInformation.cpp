@@ -28,9 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
-#include "WasmMemory.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace Wasm {

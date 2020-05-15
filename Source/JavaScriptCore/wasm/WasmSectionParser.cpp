@@ -29,12 +29,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 #include "WasmMemoryInformation.h"
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
-#include "WasmSections.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/Optional.h>
 

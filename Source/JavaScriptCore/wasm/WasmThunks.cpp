@@ -29,11 +29,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
-#include "HeapCellInlines.h"
-#include "JITExceptions.h"
 #include "LinkBuffer.h"
 #include "ScratchRegisterAllocator.h"
-#include "WasmContext.h"
 #include "WasmExceptionType.h"
 #include "WasmInstance.h"
 #include "WasmOperations.h"

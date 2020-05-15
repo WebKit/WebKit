@@ -35,7 +35,6 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/StackCheck.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {

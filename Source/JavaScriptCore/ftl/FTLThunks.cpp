@@ -30,7 +30,6 @@
 
 #include "AssemblyHelpers.h"
 #include "DFGOSRExitCompilerCommon.h"
-#include "FPRInfo.h"
 #include "FTLOSRExitCompiler.h"
 #include "FTLOperations.h"
 #include "FTLSaveRestore.h"

@@ -35,28 +35,21 @@
 #include "HeapIterationScope.h"
 #include "HeapUtil.h"
 #include "InlineCallFrame.h"
-#include "Interpreter.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
+#include "JSObjectInlines.h"
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
-#include "MarkedBlock.h"
+#include "MarkedBlockInlines.h"
 #include "MarkedBlockSet.h"
-#include "MarkedSpaceInlines.h"
 #include "NativeExecutable.h"
-#include "PCToCodeOriginMap.h"
 #include "SlotVisitor.h"
-#include "StrongInlines.h"
 #include "VM.h"
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
-#include <thread>
 #include <wtf/FilePrintStream.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StackTrace.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 

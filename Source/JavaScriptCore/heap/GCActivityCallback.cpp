@@ -30,8 +30,6 @@
 #include "GCActivityCallback.h"
 
 #include "HeapInlines.h"
-#include "JSLock.h"
-#include "JSObject.h"
 #include "VM.h"
 
 namespace JSC {

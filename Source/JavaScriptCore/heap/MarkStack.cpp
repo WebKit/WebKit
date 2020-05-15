@@ -27,7 +27,6 @@
 #include "MarkStack.h"
 
 #include "GCSegmentedArrayInlines.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

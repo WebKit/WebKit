@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FastMallocAlignedMemoryAllocator.h"
 
-#include <mutex>
 #include <wtf/FastMalloc.h>
 
 namespace JSC {

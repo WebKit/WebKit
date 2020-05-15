@@ -35,7 +35,6 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "ScriptFunctionCall.h"
-#include "ScriptObject.h"
 
 namespace Inspector {
 

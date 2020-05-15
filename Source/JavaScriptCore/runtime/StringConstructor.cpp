@@ -22,10 +22,7 @@
 #include "StringConstructor.h"
 
 #include "Error.h"
-#include "JITCode.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSCInlines.h"
 #include "StringPrototype.h"
 #include <wtf/text/StringBuilder.h>
 

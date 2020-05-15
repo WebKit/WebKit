@@ -30,11 +30,9 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"
-#include "DFGCFG.h"
 #include "DFGGraph.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGPhase.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

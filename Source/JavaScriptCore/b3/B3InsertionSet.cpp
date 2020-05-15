@@ -29,8 +29,8 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlock.h"
-#include "B3ProcedureInlines.h"
-#include "B3ValueInlines.h"
+#include "B3Procedure.h"
+#include "B3Value.h"
 #include <wtf/BubbleSort.h>
 
 namespace JSC { namespace B3 {

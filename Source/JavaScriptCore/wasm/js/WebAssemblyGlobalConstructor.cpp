@@ -28,10 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyGlobal.h"
-#include "JSWebAssemblyHelpers.h"
 #include "WebAssemblyGlobalPrototype.h"
 
 #include "WebAssemblyGlobalConstructor.lut.h"

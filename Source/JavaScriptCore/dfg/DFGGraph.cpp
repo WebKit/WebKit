@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "BytecodeLivenessAnalysisInlines.h"
+#include "ArrayPrototype.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGBackwardsCFG.h"
@@ -41,7 +41,6 @@
 #include "DFGDominators.h"
 #include "DFGFlowIndexing.h"
 #include "DFGFlowMap.h"
-#include "DFGJITCode.h"
 #include "DFGMayExit.h"
 #include "DFGNaturalLoops.h"
 #include "DFGVariableAccessDataDump.h"
@@ -52,7 +51,7 @@
 #include "JSLexicalEnvironment.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
-#include "JSCInlines.h"
+#include "Snippet.h"
 #include "StackAlignment.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>

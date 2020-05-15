@@ -22,20 +22,13 @@
 #include "ObjectConstructor.h"
 
 #include "BuiltinNames.h"
-#include "ButterflyInlines.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
 #include "JSArray.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSGlobalObjectFunctions.h"
 #include "JSImmutableButterfly.h"
-#include "Lookup.h"
+#include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
-#include "StackVisitor.h"
 #include "Symbol.h"
 
 namespace JSC {

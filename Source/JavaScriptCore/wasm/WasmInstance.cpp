@@ -28,8 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCInlines.h"
-#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "Register.h"
 #include "WasmModuleInformation.h"

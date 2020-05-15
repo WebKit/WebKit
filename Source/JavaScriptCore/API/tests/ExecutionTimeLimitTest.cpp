@@ -30,8 +30,6 @@
 #include "JSContextRefPrivate.h"
 #include "JavaScript.h"
 #include "Options.h"
-
-#include <wtf/Atomics.h>
 #include <wtf/CPUTime.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>

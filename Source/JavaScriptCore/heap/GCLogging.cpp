@@ -26,11 +26,6 @@
 #include "config.h"
 #include "GCLogging.h"
 
-#include "ClassInfo.h"
-#include "Heap.h"
-#include "HeapIterationScope.h"
-#include "JSCast.h"
-#include "JSCellInlines.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {

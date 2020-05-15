@@ -27,7 +27,6 @@
 #include "JSWeakPrivate.h"
 
 #include "APICast.h"
-#include "JSCInlines.h"
 #include "Weak.h"
 #include <wtf/ThreadSafeRefCounted.h>
 

@@ -28,7 +28,6 @@
 
 #include <wtf/CommaPrinter.h>
 #include <wtf/PrintStream.h>
-#include <wtf/StringPrintStream.h>
 
 namespace WTF {
 

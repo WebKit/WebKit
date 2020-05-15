@@ -32,27 +32,22 @@
 #include "AirGenerate.h"
 #include "AirHelpers.h"
 #include "AirOpcodeUtils.h"
-#include "AirValidate.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
-#include "B3CCallValue.h"
 #include "B3CheckSpecial.h"
 #include "B3CheckValue.h"
 #include "B3PatchpointSpecial.h"
 #include "B3Procedure.h"
 #include "B3ProcedureInlines.h"
 #include "BinarySwitch.h"
-#include "DisallowMacroScratchRegisterUsage.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
-#include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
 #include "WasmInstance.h"
 #include "WasmMemory.h"
-#include "WasmOMGPlan.h"
 #include "WasmOSREntryData.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmOperations.h"
@@ -60,7 +55,6 @@
 #include "WasmThunks.h"
 #include <limits>
 #include <wtf/Box.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace Wasm {

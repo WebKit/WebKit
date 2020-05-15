@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSDestructibleObjectHeapCellType.h"
 
+#include "JSDestructibleObject.h"
 #include "MarkedBlockInlines.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

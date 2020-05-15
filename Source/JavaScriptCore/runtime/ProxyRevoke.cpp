@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProxyRevoke.h"
 
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 #include "ProxyObject.h"
 
 namespace JSC {

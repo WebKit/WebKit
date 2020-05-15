@@ -29,9 +29,7 @@
 #include "config.h"
 #include "IntlNumberFormat.h"
 
-#include "CatchScope.h"
 #include "Error.h"
-#include "IntlNumberFormatConstructor.h"
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"

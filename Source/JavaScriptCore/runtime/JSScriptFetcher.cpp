@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSScriptFetcher.h"
 
-#include "JSCInlines.h"
-
 namespace JSC {
 
 const ClassInfo JSScriptFetcher::s_info = { "JSScriptFetcher", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSScriptFetcher) };

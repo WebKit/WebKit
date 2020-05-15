@@ -27,13 +27,10 @@
 #include "config.h"
 #include "IntlNumberFormatConstructor.h"
 
-#include "Error.h"
 #include "IntlNumberFormat.h"
 #include "IntlNumberFormatPrototype.h"
 #include "IntlObject.h"
 #include "IntlObjectInlines.h"
-#include "JSCInlines.h"
-#include "Lookup.h"
 
 namespace JSC {
 

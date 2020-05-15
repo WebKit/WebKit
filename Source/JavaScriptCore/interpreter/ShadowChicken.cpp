@@ -27,7 +27,6 @@
 #include "ShadowChicken.h"
 
 #include "CodeBlock.h"
-#include "JSCInlines.h"
 #include "ShadowChickenInlines.h"
 #include <wtf/ListDump.h>
 

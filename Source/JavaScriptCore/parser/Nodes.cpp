@@ -27,7 +27,7 @@
 #include "Nodes.h"
 #include "NodeConstructors.h"
 
-#include "JSCInlines.h"
+#include "ExecutableInfo.h"
 #include "ModuleScopeData.h"
 #include <wtf/Assertions.h>
 

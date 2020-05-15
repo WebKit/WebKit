@@ -27,10 +27,7 @@
 #include "config.h"
 #include "JSCallbackObject.h"
 
-#include "Heap.h"
-#include "JSAPIWrapperObject.h"
 #include "JSCInlines.h"
-#include <wtf/text/StringHash.h>
 
 namespace JSC {
 

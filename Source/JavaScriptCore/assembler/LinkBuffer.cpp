@@ -31,10 +31,8 @@
 #include "CodeBlock.h"
 #include "Disassembler.h"
 #include "JITCode.h"
-#include "JSCInlines.h"
 #include "Options.h"
 #include "WasmCompilationMode.h"
-#include <wtf/CompilationThread.h>
 
 #if OS(LINUX)
 #include "PerfLog.h"

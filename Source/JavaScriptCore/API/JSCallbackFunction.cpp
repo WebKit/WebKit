@@ -27,15 +27,7 @@
 #include "JSCallbackFunction.h"
 
 #include "APICallbackFunction.h"
-#include "APICast.h"
-#include "CodeBlock.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
-#include "FunctionPrototype.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSLock.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

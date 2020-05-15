@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "JIT.h"
-#include "JSCInlines.h"
 #include "VMInlines.h"
 
 namespace JSC {

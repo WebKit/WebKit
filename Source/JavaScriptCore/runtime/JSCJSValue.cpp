@@ -25,17 +25,13 @@
 
 #include "BigIntObject.h"
 #include "BooleanConstructor.h"
-#include "BooleanPrototype.h"
 #include "CustomGetterSetter.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "JSBigInt.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "NumberObject.h"
-#include <wtf/MathExtras.h>
+#include "TypeError.h"
 
 namespace JSC {
 

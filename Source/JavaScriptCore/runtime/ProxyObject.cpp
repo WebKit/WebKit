@@ -26,14 +26,8 @@
 #include "config.h"
 #include "ProxyObject.h"
 
-#include "ArrayConstructor.h"
-#include "Error.h"
-#include "IdentifierInlines.h"
 #include "JSCInlines.h"
-#include "JSObjectInlines.h"
 #include "ObjectConstructor.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 #include "VMInlines.h"
 #include <wtf/NoTailCalls.h>
 

@@ -28,8 +28,7 @@
 
 #include "CatchScope.h"
 #include "Interpreter.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
+#include "JSObjectInlines.h"
 #include "ScriptProfilingScope.h"
 
 namespace JSC {

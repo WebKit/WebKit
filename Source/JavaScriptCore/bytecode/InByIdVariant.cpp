@@ -27,9 +27,6 @@
 #include "config.h"
 #include "InByIdVariant.h"
 
-#include "JSCInlines.h"
-#include <wtf/ListDump.h>
-
 namespace JSC {
 
 InByIdVariant::InByIdVariant(const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet)

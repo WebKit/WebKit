@@ -28,23 +28,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
-#include "JSCInlines.h"
-#include "JSModuleEnvironment.h"
-#include "JSModuleNamespaceObject.h"
-#include "JSToWasm.h"
-#include "JSWebAssemblyHelpers.h"
+#include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyLinkError.h"
-#include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
-#include "WasmOperations.h"
-#include "WasmPlan.h"
-#include "WasmToJS.h"
-#include "WasmWorklist.h"
-#include "WebAssemblyFunction.h"
 #include "WebAssemblyInstancePrototype.h"
-#include "WebAssemblyModuleRecord.h"
 
 #include "WebAssemblyInstanceConstructor.lut.h"
 

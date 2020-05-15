@@ -45,9 +45,6 @@
 #include "IntlRelativeTimeFormatConstructor.h"
 #include "IntlRelativeTimeFormatPrototype.h"
 #include "JSCInlines.h"
-#include "JSCJSValueInlines.h"
-#include "Lookup.h"
-#include "ObjectPrototype.h"
 #include "Options.h"
 #include <unicode/ucol.h>
 #include <unicode/ufieldpositer.h>

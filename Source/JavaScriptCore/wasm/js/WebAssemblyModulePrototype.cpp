@@ -28,8 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCInlines.h"
-
 #include "WebAssemblyModulePrototype.lut.h"
 
 namespace JSC {

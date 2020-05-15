@@ -28,7 +28,6 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlockInlines.h"
 #include "B3CaseCollectionInlines.h"
 #include <wtf/CommaPrinter.h>
 

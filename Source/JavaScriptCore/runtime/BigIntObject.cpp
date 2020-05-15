@@ -27,8 +27,7 @@
 #include "config.h"
 #include "BigIntObject.h"
 
-#include "JSCInlines.h"
-#include "JSGlobalObject.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

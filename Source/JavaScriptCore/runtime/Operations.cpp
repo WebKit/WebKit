@@ -22,12 +22,9 @@
 #include "config.h"
 #include "Operations.h"
 
-#include "Error.h"
 #include "JSBigInt.h"
-#include "JSCInlines.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include <wtf/MathExtras.h>
 
 namespace JSC {
 

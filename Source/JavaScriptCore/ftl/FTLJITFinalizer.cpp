@@ -31,8 +31,6 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGPlan.h"
 #include "FTLState.h"
-#include "FTLThunks.h"
-#include "JSCInlines.h"
 #include "ProfilerDatabase.h"
 
 namespace JSC { namespace FTL {

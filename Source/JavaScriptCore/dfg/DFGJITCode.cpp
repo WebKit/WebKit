@@ -30,8 +30,6 @@
 
 #include "CodeBlock.h"
 #include "FTLForOSREntryJITCode.h"
-#include "JSCInlines.h"
-#include "TrackedReferences.h"
 
 namespace JSC { namespace DFG {
 

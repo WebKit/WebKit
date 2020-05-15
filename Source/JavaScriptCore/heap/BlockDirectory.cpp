@@ -27,14 +27,9 @@
 #include "BlockDirectory.h"
 
 #include "BlockDirectoryInlines.h"
-#include "GCActivityCallback.h"
 #include "Heap.h"
-#include "IncrementalSweeper.h"
-#include "JSCInlines.h"
-#include "MarkedBlockInlines.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
-#include "VM.h"
 
 namespace JSC {
 

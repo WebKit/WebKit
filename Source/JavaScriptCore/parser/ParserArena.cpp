@@ -29,7 +29,6 @@
 #include "CatchScope.h"
 #include "JSBigInt.h"
 #include "Nodes.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

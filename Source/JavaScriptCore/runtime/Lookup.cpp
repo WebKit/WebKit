@@ -22,7 +22,6 @@
 
 #include "GetterSetter.h"
 #include "JSFunction.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

@@ -30,12 +30,11 @@
 
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
-#include "BasicBlockLocation.h"
+#include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "ByValInfo.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeOperandsForCheckpoint.h"
-#include "BytecodeUseDef.h"
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
@@ -43,12 +42,12 @@
 #include "CommonSlowPaths.h"
 #include "DFGAbstractHeap.h"
 #include "DFGArrayMode.h"
-#include "DFGCFG.h"
+#include "DFGBlockSet.h"
 #include "DFGCapabilities.h"
 #include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
 #include "DFGGraph.h"
-#include "DFGJITCode.h"
+#include "DOMJITGetterSetter.h"
 #include "DeleteByStatus.h"
 #include "FunctionCodeBlock.h"
 #include "GetByStatus.h"
@@ -57,7 +56,6 @@
 #include "InByIdStatus.h"
 #include "InstanceOfStatus.h"
 #include "JSArrayIterator.h"
-#include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
@@ -77,11 +75,8 @@
 #include "StringConstructor.h"
 #include "StructureStubInfo.h"
 #include "SymbolConstructor.h"
-#include "Watchdog.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
-#include <wtf/MathExtras.h>
-#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 

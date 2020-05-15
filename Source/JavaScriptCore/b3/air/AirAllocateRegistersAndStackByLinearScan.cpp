@@ -39,7 +39,6 @@
 #include "AirPhaseScope.h"
 #include "AirRegLiveness.h"
 #include "AirStackAllocation.h"
-#include "AirTmpInlines.h"
 #include "AirTmpMap.h"
 #include <wtf/ListDump.h>
 #include <wtf/Range.h>

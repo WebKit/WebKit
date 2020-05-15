@@ -21,7 +21,6 @@
 #include "config.h"
 #include "FunctionConstructor.h"
 
-#include "Completion.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSAsyncFunction.h"

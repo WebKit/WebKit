@@ -28,12 +28,9 @@
 
 #include "AlignedMemoryAllocator.h"
 #include "AllocatorInlines.h"
-#include "BlockDirectoryInlines.h"
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 #include "LocalAllocatorInlines.h"
-#include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
-#include "PreventCollectionScope.h"
 #include "SubspaceInlines.h"
 
 namespace JSC {

@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCInlines.h"
+#include "JSImmutableButterfly.h"
 
 namespace JSC { namespace DFG {
 

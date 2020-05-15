@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAtTailAbstractState.h"
-#include "DFGGraph.h"
 #include "DFGNode.h"
 #include "DFGNullAbstractState.h"
 

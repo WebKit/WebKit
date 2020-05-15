@@ -29,11 +29,9 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Generate.h"
-#include "B3OpaqueByproducts.h"
 #include "B3Procedure.h"
 #include "B3TimingScope.h"
 #include "CCallHelpers.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace B3 {

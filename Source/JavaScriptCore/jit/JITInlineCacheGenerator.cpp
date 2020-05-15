@@ -31,7 +31,6 @@
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "InlineAccess.h"
-#include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "StructureStubInfo.h"
 

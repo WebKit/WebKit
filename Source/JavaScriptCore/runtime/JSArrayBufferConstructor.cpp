@@ -27,13 +27,9 @@
 #include "JSArrayBufferConstructor.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
-#include "GetterSetter.h"
 #include "JSArrayBuffer.h"
-#include "JSArrayBufferPrototype.h"
-#include "JSGlobalObject.h"
-#include "JSCInlines.h"
+#include "JSArrayBufferView.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

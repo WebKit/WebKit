@@ -28,15 +28,10 @@
 #include "config.h"
 #include "IntlCollator.h"
 
-#include "CatchScope.h"
-#include "Error.h"
-#include "IntlCollatorConstructor.h"
 #include "IntlObject.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 #include <unicode/ucol.h>
 
 namespace JSC {

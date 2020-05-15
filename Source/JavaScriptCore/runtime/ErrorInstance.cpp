@@ -25,7 +25,6 @@
 #include "InlineCallFrame.h"
 #include "IntegrityInlines.h"
 #include "Interpreter.h"
-#include "JSScope.h"
 #include "JSCInlines.h"
 #include "ParseInt.h"
 #include "StackFrame.h"

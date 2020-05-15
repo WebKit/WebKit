@@ -27,7 +27,6 @@
 #include "InspectorScriptProfilerAgent.h"
 
 #include "DeferGC.h"
-#include "HeapInlines.h"
 #include "InspectorEnvironment.h"
 #include "SamplingProfiler.h"
 #include "ScriptDebugServer.h"

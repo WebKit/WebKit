@@ -31,7 +31,6 @@
 #include "HeapInlines.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
-#include "MachineContext.h"
 #include "MarkedSpaceInlines.h"
 #include "StackVisitor.h"
 #include <mutex>

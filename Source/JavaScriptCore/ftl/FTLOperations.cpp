@@ -36,7 +36,6 @@
 #include "FTLLazySlowPath.h"
 #include "FrameTracers.h"
 #include "InlineCallFrame.h"
-#include "Interpreter.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"

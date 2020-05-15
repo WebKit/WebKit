@@ -21,10 +21,8 @@
 #include "config.h"
 #include "MathObject.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "MathCommon.h"
-#include "ObjectPrototype.h"
-#include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>

@@ -26,9 +26,6 @@
 #include "config.h"
 #include "WeakObjectRefConstructor.h"
 
-#include "Error.h"
-#include "IteratorOperations.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "JSWeakObjectRef.h"

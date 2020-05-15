@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGClobberize.h"
-#include "JSCInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {

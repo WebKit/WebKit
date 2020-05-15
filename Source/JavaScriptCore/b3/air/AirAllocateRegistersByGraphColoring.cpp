@@ -38,7 +38,6 @@
 #include "AirTmpInlines.h"
 #include "AirTmpWidth.h"
 #include "AirUseCounts.h"
-#include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

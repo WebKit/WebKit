@@ -31,30 +31,19 @@
 
 #include "DisallowVMReentry.h"
 #include "ExecutableAllocator.h"
-#include "Heap.h"
-#include "Identifier.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
-#include "JSDateMath.h"
-#include "JSGlobalObject.h"
-#include "JSLock.h"
 #include "LLIntData.h"
-#include "MacroAssemblerCodeRef.h"
 #include "Options.h"
 #include "SigillCrashAnalyzer.h"
-#include "StructureIDTable.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmThunks.h"
-#include "WriteBarrier.h"
 #include <mutex>
-#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
-#include <wtf/dtoa.h>
-#include <wtf/dtoa/cached-powers.h>
 #include <wtf/threads/Signals.h>
 
 namespace JSC {

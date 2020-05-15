@@ -41,7 +41,6 @@
 #include "DFGSSACalculator.h"
 #include "DFGValidate.h"
 #include "JSArrayIterator.h"
-#include "JSCInlines.h"
 #include "JSInternalPromise.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"

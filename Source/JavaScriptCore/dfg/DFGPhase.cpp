@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGValidate.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 

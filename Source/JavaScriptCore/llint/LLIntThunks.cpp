@@ -26,18 +26,9 @@
 #include "config.h"
 #include "LLIntThunks.h"
 
-#include "CallData.h"
-#include "ExceptionHelpers.h"
-#include "Interpreter.h"
-#include "JSCJSValueInlines.h"
 #include "JSInterfaceJIT.h"
-#include "JSObject.h"
-#include "LLIntCLoop.h"
 #include "LLIntData.h"
 #include "LinkBuffer.h"
-#include "LowLevelInterpreter.h"
-#include "ProtoCallFrame.h"
-#include "StackAlignment.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include <wtf/NeverDestroyed.h>

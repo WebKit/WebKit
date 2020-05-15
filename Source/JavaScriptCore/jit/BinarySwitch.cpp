@@ -28,7 +28,6 @@
 
 #if ENABLE(JIT)
 
-#include "JSCInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {

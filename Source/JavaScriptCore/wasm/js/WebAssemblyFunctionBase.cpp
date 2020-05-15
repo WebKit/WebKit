@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 
 namespace JSC {

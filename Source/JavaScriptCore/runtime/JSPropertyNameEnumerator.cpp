@@ -26,9 +26,7 @@
 #include "config.h"
 #include "JSPropertyNameEnumerator.h"
 
-#include "JSCInlines.h"
-#include "LockDuringMarking.h"
-#include "StrongInlines.h"
+#include "JSObjectInlines.h"
 
 namespace JSC {
 

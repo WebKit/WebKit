@@ -27,7 +27,6 @@
 #include "JSHeapFinalizerPrivate.h"
 
 #include "APICast.h"
-#include "JSCInlines.h"
 
 void JSContextGroupAddHeapFinalizer(JSContextGroupRef group, JSHeapFinalizer finalizer, void *userData)
 {

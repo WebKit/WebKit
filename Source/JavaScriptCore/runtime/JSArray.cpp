@@ -24,11 +24,6 @@
 #include "JSArray.h"
 
 #include "ArrayPrototype.h"
-#include "ButterflyInlines.h"
-#include "CodeBlock.h"
-#include "Error.h"
-#include "GetterSetter.h"
-#include "IndexingHeaderInlines.h"
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"

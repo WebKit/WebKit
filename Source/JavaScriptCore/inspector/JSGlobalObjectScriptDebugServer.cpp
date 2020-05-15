@@ -26,10 +26,9 @@
 #include "config.h"
 #include "JSGlobalObjectScriptDebugServer.h"
 
-#include <wtf/RunLoop.h>
-#include "JSCInlines.h"
+#include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "RemoteInspectionTarget.h"
+#include <wtf/RunLoop.h>
 
 namespace Inspector {
 

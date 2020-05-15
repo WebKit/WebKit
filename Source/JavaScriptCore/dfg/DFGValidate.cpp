@@ -28,12 +28,11 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlockWithJITType.h"
+#include "ButterflyInlines.h"
 #include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
 #include "DFGDominators.h"
 #include "DFGMayExit.h"
-#include "JSCInlines.h"
 #include <wtf/Assertions.h>
 
 namespace JSC { namespace DFG {

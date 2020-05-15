@@ -29,14 +29,10 @@
 #include "config.h"
 #include "ExceptionHelpers.h"
 
-#include "CallFrame.h"
 #include "CatchScope.h"
-#include "CodeBlock.h"
 #include "ErrorHandlingScope.h"
 #include "Exception.h"
-#include "Interpreter.h"
 #include "JSCInlines.h"
-#include "JSGlobalObjectFunctions.h"
 #include "RuntimeType.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>

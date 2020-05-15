@@ -30,7 +30,6 @@
 
 #include "DFGBlockMapInlines.h"
 #include <wtf/CommaPrinter.h>
-#include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {
 

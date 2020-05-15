@@ -34,19 +34,10 @@
 #include "CallFrameShuffler.h"
 #include "CodeBlock.h"
 #include "JITInlines.h"
-#include "JSArray.h"
-#include "JSFunction.h"
-#include "Interpreter.h"
-#include "JSCInlines.h"
-#include "LinkBuffer.h"
-#include "OpcodeInlines.h"
-#include "ResultType.h"
 #include "SetupVarargsFrame.h"
 #include "SlowPathCall.h"
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
-
-#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 

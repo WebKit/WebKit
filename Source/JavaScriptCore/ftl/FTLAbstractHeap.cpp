@@ -28,12 +28,9 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGCommon.h"
 #include "FTLAbbreviatedTypes.h"
-#include "FTLAbstractHeapRepository.h"
 #include "FTLOutput.h"
 #include "FTLTypedPointer.h"
-#include "JSCInlines.h"
 #include "Options.h"
 
 namespace JSC { namespace FTL {

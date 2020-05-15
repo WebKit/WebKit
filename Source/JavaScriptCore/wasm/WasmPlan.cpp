@@ -28,20 +28,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
-#include "WasmB3IRGenerator.h"
-#include "WasmBinding.h"
 #include "WasmCallee.h"
-#include "WasmCallingConvention.h"
 #include "WasmCodeBlock.h"
-#include "WasmFaultSignalHandler.h"
 #include "WasmMachineThreads.h"
-#include "WasmMemory.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/SystemTracing.h>
 
 namespace JSC { namespace Wasm {
 

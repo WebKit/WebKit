@@ -28,18 +28,14 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "B3ArgumentRegValue.h"
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
-#include "B3CCallValue.h"
 #include "B3Const32Value.h"
-#include "B3ConstPtrValue.h"
 #include "B3FenceValue.h"
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
 #include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
-#include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "SuperSampler.h"

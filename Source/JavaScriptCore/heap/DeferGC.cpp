@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DeferGC.h"
 
-#include "JSCInlines.h"
-
 namespace JSC {
 
 #ifndef NDEBUG

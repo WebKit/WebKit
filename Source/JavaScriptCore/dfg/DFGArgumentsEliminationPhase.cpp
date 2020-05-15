@@ -29,10 +29,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
-#include "BytecodeLivenessAnalysisInlines.h"
 #include "ClonedArguments.h"
 #include "DFGArgumentsUtilities.h"
-#include "DFGBasicBlockInlines.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGClobberize.h"
 #include "DFGCombinedLiveness.h"

@@ -28,8 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3BasicBlock.h"
 #include "B3PhaseScope.h"
-#include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"

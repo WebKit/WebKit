@@ -23,8 +23,6 @@
 
 #include "BuiltinNames.h"
 #include "IdentifierInlines.h"
-#include "JSCBuiltins.h"
-#include "PrivateName.h"
 
 namespace JSC {
 

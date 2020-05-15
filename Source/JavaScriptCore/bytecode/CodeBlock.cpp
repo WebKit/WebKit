@@ -34,21 +34,15 @@
 #include "BasicBlockLocation.h"
 #include "ByValInfo.h"
 #include "BytecodeDumper.h"
-#include "BytecodeGenerator.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "BytecodeOperandsForCheckpoint.h"
 #include "BytecodeStructs.h"
-#include "BytecodeUseDef.h"
-#include "CallLinkStatus.h"
-#include "CheckpointOSRExitSideState.h"
 #include "CodeBlockInlines.h"
 #include "CodeBlockSet.h"
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
-#include "DFGDriver.h"
 #include "DFGJITCode.h"
 #include "DFGWorklist.h"
-#include "Debugger.h"
 #include "EvalCodeBlock.h"
 #include "FullCodeOrigin.h"
 #include "FunctionCodeBlock.h"
@@ -57,13 +51,11 @@
 #include "InlineCallFrame.h"
 #include "Instruction.h"
 #include "InstructionStream.h"
-#include "InterpreterInlines.h"
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
 #include "JITMathIC.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
-#include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSSet.h"
@@ -72,37 +64,26 @@
 #include "LLIntData.h"
 #include "LLIntEntrypoint.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
-#include "LowLevelInterpreter.h"
 #include "MetadataTable.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ObjectAllocationProfileInlines.h"
-#include "OpcodeInlines.h"
 #include "PCToCodeOriginMap.h"
-#include "PolymorphicAccess.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
 #include "ReduceWhitespace.h"
-#include "Repatch.h"
 #include "SlotVisitorInlines.h"
 #include "StackVisitor.h"
 #include "StructureStubInfo.h"
 #include "TypeLocationCache.h"
 #include "TypeProfiler.h"
 #include "VMInlines.h"
-#include <wtf/BagToHashMap.h>
-#include <wtf/CommaPrinter.h>
 #include <wtf/Forward.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 #if ENABLE(ASSEMBLER)
 #include "RegisterAtOffsetList.h"
-#endif
-
-#if ENABLE(DFG_JIT)
-#include "DFGOperations.h"
 #endif
 
 #if ENABLE(FTL_JIT)

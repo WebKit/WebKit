@@ -28,7 +28,6 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "JSGlobalObject.h"
 
 namespace Inspector {
 

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SuperSampler.h"
 
-#include "MacroAssembler.h"
 #include "Options.h"
 #include <wtf/DataLog.h>
 #include <wtf/Lock.h>

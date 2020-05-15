@@ -28,17 +28,9 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "AirGenerationContext.h"
 #include "B3StackmapGenerationParams.h"
-#include "B3StackmapValue.h"
-#include "CodeBlock.h"
-#include "DFGBasicBlock.h"
-#include "DFGNode.h"
-#include "FTLExitArgument.h"
 #include "FTLJITCode.h"
-#include "FTLLocation.h"
 #include "FTLState.h"
-#include "JSCInlines.h"
 
 namespace JSC { namespace FTL {
 

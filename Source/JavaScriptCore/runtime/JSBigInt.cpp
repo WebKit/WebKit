@@ -48,8 +48,6 @@
 #include "JSBigInt.h"
 
 #include "BigIntObject.h"
-#include "CatchScope.h"
-#include "JSCInlines.h"
 #include "MathCommon.h"
 #include "ParseInt.h"
 #include <algorithm>

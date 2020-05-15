@@ -33,7 +33,6 @@
 #include "ScriptArguments.h"
 
 #include "CatchScope.h"
-#include "JSCInlines.h"
 #include "ProxyObject.h"
 #include "StrongInlines.h"
 

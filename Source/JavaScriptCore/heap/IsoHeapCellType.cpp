@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IsoHeapCellType.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "MarkedBlockInlines.h"
 
 namespace JSC {

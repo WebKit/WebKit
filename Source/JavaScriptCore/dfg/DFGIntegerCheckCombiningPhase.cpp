@@ -31,11 +31,6 @@
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
-#include "DFGPredictionPropagationPhase.h"
-#include "DFGVariableAccessDataDump.h"
-#include "JSCInlines.h"
-#include <wtf/HashMethod.h>
-#include <wtf/StdUnorderedMap.h>
 
 namespace JSC { namespace DFG {
 

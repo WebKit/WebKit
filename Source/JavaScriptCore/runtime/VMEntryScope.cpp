@@ -27,12 +27,10 @@
 #include "VMEntryScope.h"
 
 #include "DisallowVMReentry.h"
-#include "JSGlobalObject.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "VM.h"
 #include "Watchdog.h"
-#include <wtf/StackBounds.h>
 #include <wtf/SystemTracing.h>
 
 namespace JSC {

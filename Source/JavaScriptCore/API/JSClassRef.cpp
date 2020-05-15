@@ -27,14 +27,9 @@
 #include "JSClassRef.h"
 
 #include "APICast.h"
-#include "Identifier.h"
 #include "InitializeThreading.h"
 #include "JSCallbackObject.h"
 #include "JSGlobalObject.h"
-#include "JSObjectRef.h"
-#include "ObjectPrototype.h"
-#include "JSCInlines.h"
-#include <wtf/text/StringHash.h>
 
 using namespace JSC;
 

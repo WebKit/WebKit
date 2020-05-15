@@ -26,11 +26,8 @@
 #include "config.h"
 #include "WeakSetConstructor.h"
 
-#include "Error.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
-#include "JSGlobalObject.h"
-#include "JSObjectInlines.h"
 #include "JSWeakSet.h"
 #include "WeakSetPrototype.h"
 

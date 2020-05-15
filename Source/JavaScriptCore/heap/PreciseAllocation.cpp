@@ -29,7 +29,7 @@
 #include "AlignedMemoryAllocator.h"
 #include "Heap.h"
 #include "IsoCellSetInlines.h"
-#include "JSCInlines.h"
+#include "JSCellInlines.h"
 #include "Scribble.h"
 #include "SubspaceInlines.h"
 

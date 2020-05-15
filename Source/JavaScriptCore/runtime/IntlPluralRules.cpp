@@ -29,8 +29,7 @@
 
 #include "Error.h"
 #include "IntlObject.h"
-#include "IntlPluralRulesConstructor.h"
-#include "JSCInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "ObjectConstructor.h"
 
 namespace JSC {

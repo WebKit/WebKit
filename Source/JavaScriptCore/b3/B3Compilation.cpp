@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "B3OpaqueByproducts.h"
-#include "CCallHelpers.h"
 
 namespace JSC { namespace B3 {
 

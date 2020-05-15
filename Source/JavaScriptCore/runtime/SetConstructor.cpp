@@ -26,12 +26,8 @@
 #include "config.h"
 #include "SetConstructor.h"
 
-#include "Error.h"
-#include "GetterSetter.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
-#include "JSGlobalObject.h"
-#include "JSObjectInlines.h"
 #include "JSSet.h"
 #include "SetPrototype.h"
 

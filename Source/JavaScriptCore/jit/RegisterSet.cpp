@@ -29,10 +29,8 @@
 #if ENABLE(ASSEMBLER)
 
 #include "GPRInfo.h"
-#include "JSCInlines.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
-#include "assembler/RegisterInfo.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

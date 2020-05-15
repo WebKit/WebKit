@@ -29,8 +29,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCInlines.h"
-
 namespace JSC { namespace DFG {
 
 AtTailAbstractState::AtTailAbstractState(Graph& graph)

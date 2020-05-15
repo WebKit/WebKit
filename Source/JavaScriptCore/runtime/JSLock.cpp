@@ -21,16 +21,12 @@
 #include "config.h"
 #include "JSLock.h"
 
-#include "Heap.h"
-#include "CallFrame.h"
+#include "HeapInlines.h"
 #include "JSGlobalObject.h"
-#include "JSObject.h"
-#include "JSCInlines.h"
 #include "MachineStackMarker.h"
 #include "SamplingProfiler.h"
 #include "WasmCapabilities.h"
 #include "WasmMachineThreads.h"
-#include <thread>
 #include <wtf/StackPointer.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>

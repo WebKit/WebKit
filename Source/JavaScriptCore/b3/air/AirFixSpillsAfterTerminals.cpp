@@ -31,8 +31,6 @@
 #include "AirBlockInsertionSet.h"
 #include "AirCode.h"
 #include "AirInsertionSet.h"
-#include "AirInstInlines.h"
-#include "AirTmpInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {
 

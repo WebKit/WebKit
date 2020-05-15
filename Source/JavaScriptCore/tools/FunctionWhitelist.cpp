@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
-#include "Options.h"
 #include <stdio.h>
 #include <string.h>
 

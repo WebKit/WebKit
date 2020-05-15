@@ -30,9 +30,6 @@
 #include "BytecodeUseDef.h"
 #include "CodeBlock.h"
 #include "FullBytecodeLiveness.h"
-#include "HeapInlines.h"
-#include "InterpreterInlines.h"
-#include "PreciseJumpTargets.h"
 
 namespace JSC {
 

@@ -28,10 +28,8 @@
 
 #include "FunctionOverrides.h"
 #include "InitializeThreading.h"
-#include "JSContextRefPrivate.h"
 #include "JavaScript.h"
 #include "Options.h"
-#include <string>
 
 using JSC::Options;
 

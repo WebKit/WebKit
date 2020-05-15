@@ -30,13 +30,11 @@
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGAtTailAbstractState.h"
-#include "DFGBasicBlockInlines.h"
 #include "DFGClobberSet.h"
 #include "DFGClobberize.h"
 #include "DFGControlEquivalenceAnalysis.h"
 #include "DFGEdgeDominates.h"
 #include "DFGGraph.h"
-#include "DFGInsertionSet.h"
 #include "DFGMayExit.h"
 #include "DFGNaturalLoops.h"
 #include "DFGPhase.h"

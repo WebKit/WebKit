@@ -30,7 +30,7 @@
 
 #include "CCallHelpers.h"
 #include "DFGGraph.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {

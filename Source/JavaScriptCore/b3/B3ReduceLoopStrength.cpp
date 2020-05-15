@@ -31,16 +31,11 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3ConstPtrValue.h"
-#include "B3EnsureLoopPreHeaders.h"
 #include "B3InsertionSet.h"
 #include "B3NaturalLoops.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
-#include "B3Variable.h"
-#include "B3VariableValue.h"
-#include <wtf/GraphNodeWorklist.h>
-#include <wtf/IndexSet.h>
 #include <wtf/SmallPtrSet.h>
 #include <wtf/Vector.h>
 

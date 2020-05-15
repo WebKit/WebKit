@@ -29,18 +29,15 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "Error.h"
-#include "JSCInlines.h"
-#include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyModule.h"
-#include "ProtoCallFrame.h"
 #include "WasmSignatureInlines.h"
 #include "WebAssemblyFunction.h"
-#include <limits>
 
 namespace JSC {
 

@@ -28,8 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
-#include "JSCInlines.h"
 #include "JSWebAssemblyLinkError.h"
 #include "WebAssemblyLinkErrorPrototype.h"
 

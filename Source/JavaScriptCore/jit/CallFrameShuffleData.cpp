@@ -28,8 +28,8 @@
 
 #if ENABLE(JIT)
 
-#include "CCallHelpers.h"
 #include "CodeBlock.h"
+#include "RegisterAtOffsetList.h"
 
 namespace JSC {
 

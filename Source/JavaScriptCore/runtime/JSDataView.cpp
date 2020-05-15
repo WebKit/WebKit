@@ -26,9 +26,6 @@
 #include "config.h"
 #include "JSDataView.h"
 
-#include "ArrayBufferView.h"
-#include "DataView.h"
-#include "Error.h"
 #include "JSCInlines.h"
 #include "TypeError.h"
 

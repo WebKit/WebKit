@@ -24,9 +24,7 @@
 #include "StringPrototype.h"
 
 #include "BuiltinNames.h"
-#include "ButterflyInlines.h"
 #include "CachedCall.h"
-#include "Error.h"
 #include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
 #include "IntegrityInlines.h"
@@ -35,27 +33,18 @@
 #include "IntlObject.h"
 #include "JITCodeInlines.h"
 #include "JSArray.h"
-#include "JSCBuiltins.h"
 #include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSGlobalObjectFunctions.h"
 #include "JSStringIterator.h"
-#include "Lookup.h"
 #include "ObjectConstructor.h"
-#include "ObjectPrototype.h"
 #include "ParseInt.h"
-#include "PropertyNameArray.h"
-#include "RegExpCache.h"
 #include "RegExpConstructor.h"
 #include "RegExpGlobalDataInlines.h"
 #include "StringPrototypeInlines.h"
 #include "SuperSampler.h"
 #include <algorithm>
-#include <unicode/uconfig.h>
 #include <unicode/unorm2.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/icu/ICUHelpers.h>

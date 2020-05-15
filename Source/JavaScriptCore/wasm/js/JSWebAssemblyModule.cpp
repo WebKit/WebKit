@@ -31,12 +31,9 @@
 #include "JSCInlines.h"
 #include "JSWebAssemblyCodeBlock.h"
 #include "JSWebAssemblyCompileError.h"
-#include "JSWebAssemblyMemory.h"
-#include "WasmCallee.h"
 #include "WasmFormat.h"
-#include "WasmMemory.h"
 #include "WasmModule.h"
-#include "WasmPlan.h"
+#include "WasmModuleInformation.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {

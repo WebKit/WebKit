@@ -27,16 +27,8 @@
 #include "JSPromiseConstructor.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
-#include "Exception.h"
-#include "GetterSetter.h"
 #include "JSCBuiltins.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSPromise.h"
 #include "JSPromisePrototype.h"
-#include "Lookup.h"
-#include "NumberObject.h"
 
 namespace JSC {
 

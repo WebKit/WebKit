@@ -30,7 +30,6 @@
 #include "Heap.h"
 #include "HeapAnalyzer.h"
 #include "JSCInlines.h"
-#include "JSObject.h"
 #include "WeakHandleOwner.h"
 
 namespace JSC {

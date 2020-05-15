@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DataView.h"
 
-#include "JSCInlines.h"
 #include "JSDataView.h"
 #include "JSGlobalObject.h"
 

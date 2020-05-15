@@ -32,25 +32,19 @@
 #include "BytecodeGenerator.h"
 #include "BytecodeGeneratorBaseInlines.h"
 #include "CallFrame.h"
-#include "JIT.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
-#include "JSCInlines.h"
-#include "JSFunction.h"
 #include "JSGenerator.h"
-#include "JSGlobalObject.h"
 #include "JSImmutableButterfly.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "LabelScope.h"
-#include "Lexer.h"
-#include "Parser.h"
+#include "LinkTimeConstant.h"
+#include "ModuleScopeData.h"
 #include "StackAlignment.h"
-#include "UnlinkedMetadataTableInlines.h"
 #include "YarrFlags.h"
 #include <wtf/Assertions.h>
-#include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

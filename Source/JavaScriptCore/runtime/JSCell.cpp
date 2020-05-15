@@ -23,20 +23,15 @@
 #include "config.h"
 #include "JSCell.h"
 
-#include "ArrayBufferView.h"
-#include "BlockDirectoryInlines.h"
 #include "IntegrityInlines.h"
 #include "IsoSubspaceInlines.h"
-#include "JSCInlines.h"
-#include "JSCast.h"
-#include "JSFunction.h"
-#include "JSString.h"
+#include "JSBigInt.h"
+#include "JSGlobalObject.h"
 #include "JSObject.h"
+#include "JSString.h"
 #include "MarkedBlockInlines.h"
-#include "NumberObject.h"
 #include "SubspaceInlines.h"
 #include <wtf/LockAlgorithmInlines.h>
-#include <wtf/MathExtras.h>
 
 namespace JSC {
 

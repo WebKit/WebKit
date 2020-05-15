@@ -30,7 +30,6 @@
 
 #include "AirCode.h"
 #include "AirInsertionSet.h"
-#include "AirInstInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {
 

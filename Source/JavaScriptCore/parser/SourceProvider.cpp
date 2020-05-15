@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SourceProvider.h"
 
-#include "JSCInlines.h"
 #include <wtf/Lock.h>
 
 namespace JSC {

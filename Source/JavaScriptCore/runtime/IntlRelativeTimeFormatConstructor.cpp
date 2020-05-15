@@ -30,8 +30,6 @@
 #include "IntlObject.h"
 #include "IntlRelativeTimeFormat.h"
 #include "IntlRelativeTimeFormatPrototype.h"
-#include "JSCInlines.h"
-#include "Lookup.h"
 
 namespace JSC {
 

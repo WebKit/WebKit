@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TypeProfiler.h"
 
-#include "InspectorProtocolObjects.h"
 #include "TypeLocation.h"
 #include <wtf/text/StringBuilder.h>
 

@@ -29,14 +29,14 @@
 #if ENABLE(JIT)
 
 #include "JITOperations.h"
-#include "JSCInlines.h"
+#include "JSArrayBufferView.h"
+#include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 
 #if ENABLE(WEBASSEMBLY)
-#include "WasmContextInlines.h"
 #include "WasmMemoryInformation.h"
 #endif
 

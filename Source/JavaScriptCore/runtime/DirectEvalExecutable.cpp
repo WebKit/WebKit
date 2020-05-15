@@ -29,7 +29,6 @@
 #include "CodeCache.h"
 #include "Debugger.h"
 #include "Error.h"
-#include "HeapInlines.h"
 #include "JSCJSValueInlines.h"
 #include "ParserError.h"
 

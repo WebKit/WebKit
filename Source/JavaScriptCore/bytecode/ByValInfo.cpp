@@ -27,7 +27,6 @@
 #include "ByValInfo.h"
 
 #include "CacheableIdentifierInlines.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

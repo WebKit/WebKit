@@ -30,7 +30,6 @@
 #include "Error.h"
 #include "IntlCollator.h"
 #include "JSBoundFunction.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

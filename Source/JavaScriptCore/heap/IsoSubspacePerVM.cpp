@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IsoSubspacePerVM.h"
 
-#include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
 
 namespace JSC {

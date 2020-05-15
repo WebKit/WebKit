@@ -31,23 +31,15 @@
 #include "BasicBlockLocation.h"
 #include "BytecodeGenerator.h"
 #include "Exception.h"
-#include "Heap.h"
-#include "InterpreterInlines.h"
 #include "JITInlines.h"
-#include "JSArray.h"
 #include "JSCast.h"
 #include "JSFunction.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"
-#include "MaxFrameExtentForSlowPathCall.h"
-#include "OpcodeInlines.h"
-#include "SlowPathCall.h"
 #include "SuperSampler.h"
-#include "ThunkGenerators.h"
 #include "TypeLocation.h"
 #include "TypeProfilerLog.h"
 #include "VirtualRegister.h"
-#include "Watchdog.h"
 
 namespace JSC {
 

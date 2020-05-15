@@ -26,12 +26,7 @@
 #include "config.h"
 #include "JSInternalPromisePrototype.h"
 
-#include "Error.h"
-#include "JSCBuiltins.h"
-#include "JSCInlines.h"
-#include "JSGlobalObject.h"
-#include "JSInternalPromise.h"
-#include "Microtask.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

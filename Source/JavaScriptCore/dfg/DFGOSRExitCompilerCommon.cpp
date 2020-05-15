@@ -28,16 +28,12 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "Bytecodes.h"
-#include "CheckpointOSRExitSideState.h"
 #include "DFGJITCode.h"
 #include "DFGOperations.h"
 #include "JIT.h"
 #include "JSCJSValueInlines.h"
-#include "JSCInlines.h"
 #include "LLIntData.h"
 #include "LLIntThunks.h"
-#include "ProbeContext.h"
 #include "StructureStubInfo.h"
 
 namespace JSC { namespace DFG {

@@ -21,13 +21,10 @@
 #include "config.h"
 #include "BooleanPrototype.h"
 
+#include "AuxiliaryBarrierInlines.h"
 #include "Error.h"
-#include "ExceptionHelpers.h"
 #include "IntegrityInlines.h"
-#include "JSFunction.h"
 #include "JSString.h"
-#include "ObjectPrototype.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

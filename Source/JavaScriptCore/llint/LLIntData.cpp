@@ -27,16 +27,8 @@
 #include "LLIntData.h"
 
 #include "ArithProfile.h"
-#include "BytecodeConventions.h"
 #include "CodeBlock.h"
-#include "CodeType.h"
-#include "Instruction.h"
-#include "JSScope.h"
-#include "LLIntCLoop.h"
-#include "MaxFrameExtentForSlowPathCall.h"
 #include "Opcode.h"
-#include "PropertyOffset.h"
-#include "ShadowChicken.h"
 #include "WriteBarrier.h"
 
 #define STATIC_ASSERT(cond) static_assert(cond, "LLInt assumes " #cond)

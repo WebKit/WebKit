@@ -26,12 +26,11 @@
 #include "config.h"
 #include "DFGWorklist.h"
 
-#include "CodeBlock.h"
 #include "DFGSafepoint.h"
 #include "DeferGC.h"
-#include "JSCInlines.h"
 #include "ReleaseHeapAccessScope.h"
 #include <mutex>
+#include <wtf/CompilationThread.h>
 
 namespace JSC { namespace DFG {
 

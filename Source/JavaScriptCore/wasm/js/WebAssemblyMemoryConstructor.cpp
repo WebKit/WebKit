@@ -28,14 +28,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "FunctionPrototype.h"
-#include "JSCInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyMemory.h"
 #include "WasmMemory.h"
 #include "WasmPageCount.h"
 #include "WebAssemblyMemoryPrototype.h"
-#include <wtf/Optional.h>
 
 #include "WebAssemblyMemoryConstructor.lut.h"
 

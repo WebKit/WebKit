@@ -26,10 +26,7 @@
 #include "config.h"
 #include "SmallStrings.h"
 
-#include "JSGlobalObject.h"
 #include "JSString.h"
-#include "JSCInlines.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

@@ -27,9 +27,8 @@
 #include "MacroAssemblerCodeRef.h"
 
 #include "Disassembler.h"
-#include "JSCInlines.h"
 #include "JSCPtrTag.h"
-#include <mutex>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 

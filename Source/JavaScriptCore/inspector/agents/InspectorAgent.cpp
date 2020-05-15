@@ -32,7 +32,6 @@
 #include "InspectorAgent.h"
 
 #include "InspectorEnvironment.h"
-#include "InspectorFrontendRouter.h"
 #include <wtf/JSONValues.h>
 
 namespace Inspector {

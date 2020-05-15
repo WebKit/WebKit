@@ -32,8 +32,6 @@
 #include "config.h"
 #include "ScriptObject.h"
 
-#include "JSCInlines.h"
-
 namespace Deprecated {
 
 using namespace JSC;

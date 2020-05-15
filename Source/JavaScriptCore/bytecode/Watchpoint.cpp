@@ -30,12 +30,10 @@
 #include "CodeBlockJettisoningWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
 #include "FunctionRareData.h"
-#include "HeapInlines.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 #include "ObjectToStringAdaptiveStructureWatchpoint.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "VM.h"
-#include <wtf/CompilationThread.h>
 
 namespace JSC {
 

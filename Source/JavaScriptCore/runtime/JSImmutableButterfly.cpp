@@ -26,9 +26,6 @@
 #include "config.h"
 #include "JSImmutableButterfly.h"
 
-#include "ButterflyInlines.h"
-#include "CodeBlock.h"
-
 namespace JSC {
 
 const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableButterfly) };

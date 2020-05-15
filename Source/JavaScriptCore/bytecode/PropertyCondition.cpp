@@ -27,7 +27,6 @@
 #include "PropertyCondition.h"
 
 #include "GetterSetter.h"
-#include "JSCInlines.h"
 #include "TrackedReferences.h"
 
 namespace JSC {

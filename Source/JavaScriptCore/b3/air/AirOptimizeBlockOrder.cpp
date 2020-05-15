@@ -30,7 +30,6 @@
 
 #include "AirBlockWorklist.h"
 #include "AirCode.h"
-#include "AirInstInlines.h"
 #include "AirPhaseScope.h"
 #include <wtf/BubbleSort.h>
 

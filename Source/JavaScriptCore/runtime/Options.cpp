@@ -30,10 +30,8 @@
 #include "CPU.h"
 #include "LLIntCommon.h"
 #include "MinimumReservedZoneSize.h"
-#include "SigillCrashAnalyzer.h"
 #include <algorithm>
 #include <limits>
-#include <math.h>
 #include <mutex>
 #include <stdlib.h>
 #include <string.h>
@@ -43,17 +41,12 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/Optional.h>
 #include <wtf/OSLogPrintStream.h>
-#include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
 
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
-#endif
-
-#if ENABLE(JIT)
-#include "MacroAssembler.h"
 #endif
 
 namespace JSC {

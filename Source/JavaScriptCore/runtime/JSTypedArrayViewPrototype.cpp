@@ -30,11 +30,9 @@
 #include "CallFrame.h"
 #include "GetterSetter.h"
 #include "JSArrayIterator.h"
-#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGenericTypedArrayViewPrototypeFunctions.h"
 #include "JSObjectInlines.h"
-#include "TypedArrayAdaptors.h"
 
 namespace JSC {
 

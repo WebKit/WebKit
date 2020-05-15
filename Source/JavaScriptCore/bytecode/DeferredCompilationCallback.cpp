@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DeferredCompilationCallback.h"
 
-#include "CodeBlock.h"
-
 namespace JSC {
 
 DeferredCompilationCallback::DeferredCompilationCallback() { }

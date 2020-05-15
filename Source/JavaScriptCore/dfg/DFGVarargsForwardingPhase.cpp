@@ -34,7 +34,6 @@
 #include "DFGForAllKills.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
-#include "JSCInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {

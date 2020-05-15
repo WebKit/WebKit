@@ -26,9 +26,8 @@
 #include "config.h"
 #include "Watchdog.h"
 
-#include "CallFrame.h"
+#include "VM.h"
 #include <wtf/CPUTime.h>
-#include <wtf/MathExtras.h>
 
 namespace JSC {
 

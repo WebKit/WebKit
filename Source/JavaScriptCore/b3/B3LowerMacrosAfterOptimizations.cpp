@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
-#include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3CCallValue.h"
 #include "B3ConstDoubleValue.h"
@@ -37,7 +36,6 @@
 #include "B3ConstPtrValue.h"
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
-#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 

@@ -28,7 +28,6 @@
 
 #include "ICStatusUtils.h"
 #include "InstanceOfAccessCase.h"
-#include "JSCInlines.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 

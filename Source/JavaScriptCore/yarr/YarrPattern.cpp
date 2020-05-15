@@ -34,7 +34,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/Optional.h>
 #include <wtf/StackCheck.h>
-#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Yarr {

@@ -29,10 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "BytecodeDumper.h"
-#include "BytecodeStructs.h"
 #include "InstructionStream.h"
-#include "LLIntThunks.h"
 
 namespace JSC { namespace Wasm {
 

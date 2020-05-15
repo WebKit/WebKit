@@ -27,14 +27,9 @@
 
 #include "BuiltinNames.h"
 #include "Identifier.h"
-#include "JSCInlines.h"
-#include "JSFunctionInlines.h"
 #include "KeywordLookup.h"
 #include "Lexer.lut.h"
-#include "Nodes.h"
 #include "ParseInt.h"
-#include "Parser.h"
-#include <ctype.h>
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>

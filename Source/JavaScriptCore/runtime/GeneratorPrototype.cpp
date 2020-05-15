@@ -27,9 +27,7 @@
 #include "config.h"
 #include "GeneratorPrototype.h"
 
-#include "JSCBuiltins.h"
-#include "JSCInlines.h"
-#include "JSGlobalObject.h"
+#include "FunctionExecutable.h"
 
 #include "GeneratorPrototype.lut.h"
 

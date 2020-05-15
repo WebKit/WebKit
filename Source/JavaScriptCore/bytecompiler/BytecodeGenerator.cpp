@@ -31,12 +31,10 @@
 #include "config.h"
 #include "BytecodeGenerator.h"
 
-#include "ArithProfile.h"
 #include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
 #include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeGeneratorification.h"
-#include "BytecodeLivenessAnalysis.h"
 #include "BytecodeUseDef.h"
 #include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
@@ -44,18 +42,11 @@
 #include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
-#include "JSFunction.h"
-#include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
-#include "JSLexicalEnvironment.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "LinkTimeConstant.h"
-#include "LowLevelInterpreter.h"
 #include "Options.h"
-#include "PreciseJumpTargetsInlines.h"
-#include "StackAlignment.h"
 #include "StrongInlines.h"
-#include "SuperSamplerBytecodeScope.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedFunctionCodeBlock.h"
@@ -63,7 +54,6 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/BitVector.h>
-#include <wtf/CommaPrinter.h>
 #include <wtf/Optional.h>
 #include <wtf/SmallPtrSet.h>
 #include <wtf/StdLibExtras.h>

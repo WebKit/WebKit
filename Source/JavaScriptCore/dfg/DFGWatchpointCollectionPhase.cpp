@@ -28,11 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ArrayPrototype.h"
-#include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
-#include "JSCInlines.h"
 
 // FIXME: Remove this phase entirely by moving the addLazily() calls into either the backend or
 // into the phase that performs the optimization. Moving the calls into the backend makes the most

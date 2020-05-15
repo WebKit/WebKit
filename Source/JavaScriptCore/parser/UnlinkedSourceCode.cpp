@@ -26,7 +26,6 @@
 #include "config.h"
 #include "UnlinkedSourceCode.h"
 
-#include "JSCInlines.h"
 #include <wtf/text/CString.h>
 
 namespace JSC {

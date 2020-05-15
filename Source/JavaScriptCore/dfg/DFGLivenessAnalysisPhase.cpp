@@ -28,16 +28,12 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBasicBlockInlines.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGFlowIndexing.h"
 #include "DFGGraph.h"
-#include "DFGInsertionSet.h"
 #include "DFGPhase.h"
-#include "JSCInlines.h"
 #include <wtf/BitVector.h>
 #include <wtf/IndexSparseSet.h>
-#include <wtf/LoggingHashSet.h>
 
 namespace JSC { namespace DFG {
 

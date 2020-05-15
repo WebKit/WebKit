@@ -26,22 +26,8 @@
 #include "DateInstance.h"
 #include "DatePrototype.h"
 #include "JSDateMath.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "ObjectPrototype.h"
-#include "JSCInlines.h"
-#include <math.h>
-#include <time.h>
-#include <wtf/MathExtras.h>
-
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if HAVE(SYS_TIMEB_H)
-#include <sys/timeb.h>
-#endif
 
 namespace JSC {
 

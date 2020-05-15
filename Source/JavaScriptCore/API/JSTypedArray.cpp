@@ -32,8 +32,6 @@
 #include "ClassInfo.h"
 #include "Error.h"
 #include "JSArrayBufferViewInlines.h"
-#include "JSCInlines.h"
-#include "JSDataView.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSTypedArrays.h"
 #include "TypedArrayController.h"

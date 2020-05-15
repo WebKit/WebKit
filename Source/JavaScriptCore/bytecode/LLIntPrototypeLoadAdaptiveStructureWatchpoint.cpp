@@ -28,7 +28,6 @@
 
 #include "CodeBlock.h"
 #include "Instruction.h"
-#include "JSCInlines.h"
 
 namespace JSC {
 

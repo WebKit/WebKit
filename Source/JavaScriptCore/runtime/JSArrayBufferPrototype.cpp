@@ -26,12 +26,8 @@
 #include "config.h"
 #include "JSArrayBufferPrototype.h"
 
-#include "Error.h"
-#include "ExceptionHelpers.h"
 #include "JSArrayBuffer.h"
-#include "JSFunction.h"
-#include "JSCInlines.h"
-#include "TypedArrayAdaptors.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

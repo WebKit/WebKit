@@ -27,7 +27,6 @@
 #include "JSCConfig.h"
 
 #include <wtf/Lock.h>
-#include <wtf/ResourceUsage.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFConfig.h>
 
