@@ -1,3 +1,35 @@
+2020-05-14  Saam Barati  <sbarati@apple.com>
+
+        GetByVal and PutByVal runtime operations shouldn't fall off a performance cliff when the property is an integer boxed as a double
+        https://bugs.webkit.org/show_bug.cgi?id=211935
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        There were parts in the runtime for get_by_val that weren't properly handling
+        ints boxed as doubles along the fast path. This could lead to terrible
+        performance as we could go from double -> string -> int while converting the
+        subscript into a property to access.
+        
+        This patch fixes that, and removes the duplicate code we had throughout the
+        codebase that does this conversion. I'm adding a new functions tryGetAsUint32Index
+        and tryGetAsInt32 which will handle the double to int conversion.
+        
+        This is a 10x speedup on the microbenchmark get-and-put-by-val-double-index-dont-fall-off-a-cliff.js
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByValInternal):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jsc.cpp:
+        (functionAsDoubleNumber):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::tryGetAsUint32Index):
+        (JSC::JSValue::tryGetAsInt32):
+
 2020-05-14  Devin Rousso  <drousso@apple.com>
 
         [ESNext] enable logical assignment operators by default

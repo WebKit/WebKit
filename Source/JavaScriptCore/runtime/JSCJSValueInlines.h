@@ -96,6 +96,34 @@ inline double JSValue::asNumber() const
     return isInt32() ? asInt32() : asDouble();
 }
 
+inline Optional<uint32_t> JSValue::tryGetAsUint32Index()
+{
+    if (isUInt32()) {
+        ASSERT(isIndex(asUInt32()));
+        return asUInt32();
+    }
+    if (isNumber()) {
+        double number = asNumber();
+        uint32_t asUint = static_cast<uint32_t>(number);
+        if (static_cast<double>(asUint) == number && isIndex(asUint))
+            return asUint;
+    }
+    return WTF::nullopt;
+}
+
+inline Optional<int32_t> JSValue::tryGetAsInt32()
+{
+    if (isInt32())
+        return asInt32();
+    if (isNumber()) {
+        double number = asNumber();
+        int32_t asInt = static_cast<int32_t>(number);
+        if (static_cast<double>(asInt) == number)
+            return asInt;
+    }
+    return WTF::nullopt;
+}
+
 inline JSValue jsNaN()
 {
     return JSValue(JSValue::EncodeAsDouble, PNaN);

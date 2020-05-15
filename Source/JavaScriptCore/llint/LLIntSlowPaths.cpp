@@ -1012,8 +1012,8 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
         }
     }
     
-    if (subscript.isUInt32()) {
-        uint32_t i = subscript.asUInt32();
+    if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        uint32_t i = *index;
         auto& metadata = bytecode.metadata(codeBlock);
         ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
 
@@ -1091,8 +1091,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     JSValue value = getOperand(callFrame, bytecode.m_value);
     bool isStrictMode = bytecode.m_ecmaMode.isStrict();
     
-    if (LIKELY(subscript.isUInt32())) {
-        uint32_t i = subscript.asUInt32();
+    if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        uint32_t i = *index;
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
             if (object->canSetIndexQuickly(i, value))
@@ -1123,20 +1123,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
     bool isStrictMode = bytecode.m_ecmaMode.isStrict();
-    if (LIKELY(subscript.isUInt32())) {
-        // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
-        ASSERT(isIndex(subscript.asUInt32()));
-        baseObject->putDirectIndex(globalObject, subscript.asUInt32(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+    if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        baseObject->putDirectIndex(globalObject, *index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         LLINT_END();
-    }
-
-    if (subscript.isDouble()) {
-        double subscriptAsDouble = subscript.asDouble();
-        uint32_t subscriptAsUInt32 = static_cast<uint32_t>(subscriptAsDouble);
-        if (subscriptAsDouble == subscriptAsUInt32 && isIndex(subscriptAsUInt32)) {
-            baseObject->putDirectIndex(globalObject, subscriptAsUInt32, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-            LLINT_END();
-        }
     }
 
     // Don't put to an object if toString threw an exception.

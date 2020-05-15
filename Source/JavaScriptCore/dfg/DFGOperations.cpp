@@ -129,22 +129,10 @@ ALWAYS_INLINE static void putByValInternal(JSGlobalObject* globalObject, VM& vm,
     JSValue property = JSValue::decode(encodedProperty);
     JSValue value = JSValue::decode(encodedValue);
 
-    if (LIKELY(property.isUInt32())) {
-        // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
-        ASSERT(isIndex(property.asUInt32()));
+    if (Optional<uint32_t> index = property.tryGetAsUint32Index()) {
         scope.release();
-        putByVal<strict, direct>(globalObject, vm, baseValue, property.asUInt32(), value);
+        putByVal<strict, direct>(globalObject, vm, baseValue, *index, value);
         return;
-    }
-
-    if (property.isDouble()) {
-        double propertyAsDouble = property.asDouble();
-        uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-        if (propertyAsDouble == propertyAsUInt32 && isIndex(propertyAsUInt32)) {
-            scope.release();
-            putByVal<strict, direct>(globalObject, vm, baseValue, propertyAsUInt32, value);
-            return;
-        }
     }
 
     // Don't put to an object if toString throws an exception.
@@ -668,16 +656,10 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(JSGlobalObject* globalObject,
 
     JSValue property = JSValue::decode(encodedProperty);
 
-    if (property.isUInt32())
-        RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, property.asUInt32()));
+    if (Optional<uint32_t> index = property.tryGetAsUint32Index())
+        RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, *index));
 
-    if (property.isDouble()) {
-        double propertyAsDouble = property.asDouble();
-        uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-        if (propertyAsUInt32 == propertyAsDouble)
-            RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, propertyAsUInt32));
-
-    } else if (property.isString()) {
+    if (property.isString()) {
         Structure& structure = *base->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(globalObject);
@@ -1571,8 +1553,8 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject* globalObj
     }
     
     PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
-    if (subscript.isUInt32()) {
-        uint32_t i = subscript.asUInt32();
+    if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        uint32_t i = *index;
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
             return JSValue::encode(asString(baseValue)->getIndex(globalObject, i));
         

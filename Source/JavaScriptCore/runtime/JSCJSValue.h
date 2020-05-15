@@ -216,6 +216,8 @@ public:
 
     int32_t asInt32() const;
     uint32_t asUInt32() const;
+    Optional<uint32_t> tryGetAsUint32Index();
+    Optional<int32_t> tryGetAsInt32();
     int64_t asAnyInt() const;
     uint32_t asUInt32AsAnyInt() const;
     int32_t asInt32AsAnyInt() const;

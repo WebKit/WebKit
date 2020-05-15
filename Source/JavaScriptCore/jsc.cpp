@@ -373,6 +373,7 @@ static EncodedJSValue JSC_HOST_CALL functionMallocInALoop(JSGlobalObject*, CallF
 static EncodedJSValue JSC_HOST_CALL functionTotalCompileTime(JSGlobalObject*, CallFrame*);
 
 static EncodedJSValue JSC_HOST_CALL functionSetUnhandledRejectionCallback(JSGlobalObject*, CallFrame*);
+static EncodedJSValue JSC_HOST_CALL functionAsDoubleNumber(JSGlobalObject*, CallFrame*);
 
 struct Script {
     enum class StrictMode {
@@ -641,6 +642,8 @@ private:
         addFunction(vm, "totalCompileTime", functionTotalCompileTime, 0);
 
         addFunction(vm, "setUnhandledRejectionCallback", functionSetUnhandledRejectionCallback, 1);
+
+        addFunction(vm, "asDoubleNumber", functionAsDoubleNumber, 1);
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
@@ -2490,6 +2493,15 @@ EncodedJSValue JSC_HOST_CALL functionSetUnhandledRejectionCallback(JSGlobalObjec
 
     globalObject->setUnhandledRejectionCallback(vm, object);
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionAsDoubleNumber(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    double num = callFrame->argument(0).toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    return JSValue::encode(jsDoubleNumber(num));
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog
