@@ -1,3 +1,13 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS Simulator] TestWebKitAPI._WKDownload.Resume is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=211786
+
+        Reviewed by Geoffrey Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+        Use CFNetwork SPI to stop it from unlinking the downloaded file after resuming then completing.
+
 2020-05-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Rebuild MobileGestalt cache if needed

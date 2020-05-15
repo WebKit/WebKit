@@ -955,7 +955,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
 {
-    notImplemented();
+#if PLATFORM(IOS_FAMILY)
+    // This is to work around rdar://problem/63249830
+    downloadTask.downloadFile.skipUnlink = YES;
+#endif
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask

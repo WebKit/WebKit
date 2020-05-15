@@ -1279,6 +1279,12 @@ TEST(_WKDownload, Resume)
     EXPECT_EQ(callbacks[5], Callback::ReceiveData);
     EXPECT_EQ(callbacks[6], Callback::Finish);
 
+    // Give CFNetwork enough time to unlink the downloaded file if it would have.
+    // This makes failures like https://bugs.webkit.org/show_bug.cgi?id=211786 more reliable.
+    usleep(10000);
+    Util::spinRunLoop(10);
+    usleep(10000);
+
     NSData *fileContents = [NSData dataWithContentsOfURL:expectedDownloadFile];
     EXPECT_EQ(fileContents.length, 10000u);
     EXPECT_TRUE(fileContents.bytes);
