@@ -359,30 +359,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
         }
     }
 
-    // If the 0% keyframe is missing, create it (but only if there is at least one other keyframe).
-    int initialListSize = list.size();
-    if (initialListSize > 0 && list[0].key()) {
-        static StyleRuleKeyframe* zeroPercentKeyframe;
-        if (!zeroPercentKeyframe) {
-            zeroPercentKeyframe = &StyleRuleKeyframe::create(MutableStyleProperties::create()).leakRef();
-            zeroPercentKeyframe->setKey(0);
-        }
-        KeyframeValue keyframeValue(0, nullptr);
-        keyframeValue.setStyle(styleForKeyframe(element, elementStyle, zeroPercentKeyframe, keyframeValue));
-        list.insert(WTFMove(keyframeValue));
-    }
-
-    // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe).
-    if (initialListSize > 0 && (list[list.size() - 1].key() != 1)) {
-        static StyleRuleKeyframe* hundredPercentKeyframe;
-        if (!hundredPercentKeyframe) {
-            hundredPercentKeyframe = &StyleRuleKeyframe::create(MutableStyleProperties::create()).leakRef();
-            hundredPercentKeyframe->setKey(1);
-        }
-        KeyframeValue keyframeValue(1, nullptr);
-        keyframeValue.setStyle(styleForKeyframe(element, elementStyle, hundredPercentKeyframe, keyframeValue));
-        list.insert(WTFMove(keyframeValue));
-    }
+    list.fillImplicitKeyframes(element, *this, elementStyle);
 }
 
 std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& element, const PseudoElementRequest& pseudoElementRequest, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const SelectorFilter* selectorFilter)

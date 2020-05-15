@@ -23,7 +23,9 @@
 #include "KeyframeList.h"
 
 #include "Animation.h"
+#include "CSSKeyframeRule.h"
 #include "RenderObject.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 
@@ -72,6 +74,61 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
 
     for (auto& property : m_keyframes[i].properties())
         m_properties.add(property);
+}
+
+bool KeyframeList::hasImplicitKeyframes() const
+{
+    return size() && (m_keyframes[0].key() || m_keyframes[size() - 1].key() != 1);
+}
+
+void KeyframeList::copyKeyframes(KeyframeList& other)
+{
+    for (auto& keyframe : other.keyframes()) {
+        KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
+        for (auto propertyId : keyframe.properties())
+            keyframeValue.addProperty(propertyId);
+        insert(WTFMove(keyframeValue));
+    }
+}
+
+static const StyleRuleKeyframe& zeroPercentKeyframe()
+{
+    static LazyNeverDestroyed<Ref<StyleRuleKeyframe>> rule;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
+        rule.get()->setKey(0);
+    });
+    return rule.get().get();
+}
+
+static const StyleRuleKeyframe& hundredPercentKeyframe()
+{
+    static LazyNeverDestroyed<Ref<StyleRuleKeyframe>> rule;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
+        rule.get()->setKey(1);
+    });
+    return rule.get().get();
+}
+
+void KeyframeList::fillImplicitKeyframes(const Element& element, Style::Resolver& styleResolver, const RenderStyle* elementStyle)
+{
+    // If the 0% keyframe is missing, create it (but only if there is at least one other keyframe).
+    auto initialSize = size();
+    if (initialSize > 0 && m_keyframes[0].key()) {
+        KeyframeValue keyframeValue(0, nullptr);
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, elementStyle, &zeroPercentKeyframe(), keyframeValue));
+        insert(WTFMove(keyframeValue));
+    }
+
+    // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe).
+    if (initialSize > 0 && (m_keyframes[size() - 1].key() != 1)) {
+        KeyframeValue keyframeValue(1, nullptr);
+        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, elementStyle, &hundredPercentKeyframe(), keyframeValue));
+        insert(WTFMove(keyframeValue));
+    }
 }
 
 } // namespace WebCore

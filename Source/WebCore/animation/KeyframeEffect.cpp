@@ -565,12 +565,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     updateStaticTimingProperties();
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
-    for (auto& keyframe : source->m_blendingKeyframes.keyframes()) {
-        KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
-        for (auto propertyId : keyframe.properties())
-            keyframeValue.addProperty(propertyId);
-        keyframeList.insert(WTFMove(keyframeValue));
-    }
+    keyframeList.copyKeyframes(source->m_blendingKeyframes);
     setBlendingKeyframes(keyframeList);
 }
 
@@ -1578,11 +1573,24 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
     auto timeOffset = animation()->currentTime().valueOr(0_s).seconds() - delay().seconds();
 
+    auto startAnimation = [&]() -> bool {
+        renderer->animationFinished(m_blendingKeyframes.animationName());
+
+        if (!m_blendingKeyframes.hasImplicitKeyframes())
+            return renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes);
+
+        ASSERT(m_unanimatedStyle);
+        ASSERT(m_target);
+        KeyframeList explicitKeyframes(m_blendingKeyframes.animationName());
+        explicitKeyframes.copyKeyframes(m_blendingKeyframes);
+        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), m_unanimatedStyle.get());
+        return renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), explicitKeyframes);
+    };
+
     for (const auto& action : pendingAcceleratedActions) {
         switch (action) {
         case AcceleratedAction::Play:
-            renderer->animationFinished(m_blendingKeyframes.animationName());
-            m_isRunningAccelerated = renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes);
+            m_isRunningAccelerated = startAnimation();
             if (!m_isRunningAccelerated) {
                 m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
                 return;
@@ -1592,8 +1600,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             renderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
             break;
         case AcceleratedAction::UpdateTiming:
-            renderer->animationFinished(m_blendingKeyframes.animationName());
-            renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes);
+            startAnimation();
             if (animation()->playState() == WebAnimation::PlayState::Paused)
                 renderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
             break;

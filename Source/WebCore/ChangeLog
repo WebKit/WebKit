@@ -1,3 +1,32 @@
+2020-05-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animation with a single keyframe is not accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=188730
+        <rdar://problem/43481113>
+
+        Reviewed by Dean Jackson.
+
+        Test: webanimations/accelerated-animation-single-keyframe.html
+
+        Prior to attempting to run an accelerated effect, ensure that the KeyframeList passed to
+        RenderLayerModelObject::startAnimation() does not have implicit keyframes since eventually
+        GraphicsLayerCA::animationCanBeAccelerated() would be called and would reject a single-keyframe
+        animation. To do this, we use the same code used in Style::Resolver::keyframeStylesForAnimation()
+        which we refactor in the new KeyframeList::fillImplicitKeyframes() method.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::hasImplicitKeyframes const):
+        (WebCore::KeyframeList::copyKeyframes):
+        (WebCore::zeroPercentKeyframe):
+        (WebCore::hundredPercentKeyframe):
+        (WebCore::KeyframeList::fillImplicitKeyframes):
+        * rendering/style/KeyframeList.h:
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::keyframeStylesForAnimation):
+
 2020-05-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The initial value of "transform-box" should be "view-box"
