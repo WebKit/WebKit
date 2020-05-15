@@ -1,3 +1,16 @@
+2020-05-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [buildbot] Increase blocksize of file transfer in UploadTestResults step
+        https://bugs.webkit.org/show_bug.cgi?id=211847
+
+        Reviewed by Aakash Jain.
+
+        All other steps involving file transfer uploads use 256kb as block
+        size. Make this step in line with others.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (UploadTestResults.__init__):
+
 2020-05-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK3] Bring back usage of GtkMenu for context menus

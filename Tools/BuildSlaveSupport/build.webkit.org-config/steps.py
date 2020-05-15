@@ -1018,6 +1018,7 @@ class UploadTestResults(transfer.FileUpload):
         kwargs['slavesrc'] = self.slavesrc
         kwargs['masterdest'] = self.masterdest
         kwargs['mode'] = 0644
+        kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
 
 
