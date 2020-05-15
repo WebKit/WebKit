@@ -202,6 +202,7 @@ public:
     void updateAllowsBackingStoreDetaching(const LayoutRect& absoluteBounds);
 
 #if ENABLE(ASYNC_SCROLLING)
+    bool maintainsEventRegion() const;
     void updateEventRegion();
 #endif
 

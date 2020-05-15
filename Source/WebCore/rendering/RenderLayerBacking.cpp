@@ -1688,41 +1688,42 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 }
 
 #if ENABLE(ASYNC_SCROLLING)
-void RenderLayerBacking::updateEventRegion()
+bool RenderLayerBacking::maintainsEventRegion() const
 {
-    auto needsUpdate = [&] {
-        if (!m_owningLayer.page().scrollingCoordinator())
-            return false;
+    if (!m_owningLayer.page().scrollingCoordinator())
+        return false;
 
-        if (paintsIntoCompositedAncestor())
-            return false;
+    if (paintsIntoCompositedAncestor())
+        return false;
 
-        if (renderer().view().needsEventRegionUpdateForNonCompositedFrame())
-            return true;
-        
+    if (renderer().view().needsEventRegionUpdateForNonCompositedFrame())
+        return true;
+
 #if PLATFORM(IOS_FAMILY)
-        if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
-            return true;
+    if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
+        return true;
 #endif
 #if ENABLE(EDITABLE_REGION)
-        if (renderer().document().mayHaveEditableElements())
-            return true;
+    if (renderer().document().mayHaveEditableElements())
+        return true;
 #endif
 #if !PLATFORM(IOS_FAMILY)
-        if (renderer().document().wheelEventTargets())
-            return true;
-#endif
-        if (m_owningLayer.isRenderViewLayer())
-            return false;
-
-        auto& settings = renderer().settings();
-        if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
-            return false;
-
+    if (renderer().document().wheelEventTargets())
         return true;
-    };
+#endif
+    if (m_owningLayer.isRenderViewLayer())
+        return false;
 
-    if (!needsUpdate())
+    auto& settings = renderer().settings();
+    if (!settings.asyncFrameScrollingEnabled() && !settings.asyncOverflowScrollingEnabled())
+        return false;
+
+    return true;
+}
+
+void RenderLayerBacking::updateEventRegion()
+{
+    if (!maintainsEventRegion())
         return;
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {

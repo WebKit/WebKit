@@ -100,6 +100,10 @@ bool EventRegion::operator==(const EventRegion& other) const
 {
     if (m_touchActionRegions != other.m_touchActionRegions)
         return false;
+    if (m_wheelEventListenerRegion != other.m_wheelEventListenerRegion)
+        return false;
+    if (m_nonPassiveWheelEventListenerRegion != other.m_nonPassiveWheelEventListenerRegion)
+        return false;
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion != other.m_editableRegion)
         return false;

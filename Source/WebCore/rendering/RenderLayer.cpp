@@ -6970,28 +6970,20 @@ bool RenderLayer::isTransparentRespectingParentFrames() const
 
 bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
 {
-    // FIXME: This should not be conditioned on PLATFORM(IOS_FAMILY). See <https://webkit.org/b/210216>.
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(ASYNC_SCROLLING)
     auto* compositingLayer = enclosingCompositingLayerForRepaint();
-    if (!compositingLayer)
-        return false;
 
-    auto maintainsEventRegion = [&] {
-        // UI side scroll overlap testing.
-        if (!compositingLayer->isRenderViewLayer())
+    auto shouldInvalidate = [&] {
+        if (!compositingLayer)
+            return false;
+
+        if (reason == EventRegionInvalidationReason::NonCompositedFrame)
             return true;
-        // UI side touch-action resolution.
-        if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
-            return true;
-#if ENABLE(EDITABLE_REGION)
-        // UI side editable elements resolution.
-        if (renderer().document().mayHaveEditableElements())
-            return true;
-#endif
-        return false;
+
+        return compositingLayer->backing()->maintainsEventRegion();
     };
 
-    if (reason != EventRegionInvalidationReason::NonCompositedFrame && !maintainsEventRegion())
+    if (!shouldInvalidate())
         return false;
 
     compositingLayer->setNeedsCompositingConfigurationUpdate();
@@ -6999,7 +6991,7 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
     if (reason == EventRegionInvalidationReason::NonCompositedFrame) {
         auto& view = renderer().view();
         view.setNeedsEventRegionUpdateForNonCompositedFrame();
-        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion))
+        if (renderer().settings().visibleDebugOverlayRegions() & (TouchActionRegion | EditableElementRegion | WheelEventHandlerRegion))
             view.setNeedsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly();
         view.compositor().scheduleCompositingLayerUpdate();
     }
