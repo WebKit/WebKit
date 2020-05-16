@@ -3472,7 +3472,7 @@ void JIT_OPERATION operationThrowStaticError(JSGlobalObject* globalObject, JSStr
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     String errorMessage = message->value(globalObject);
-    scope.throwException(globalObject, createError(globalObject, static_cast<ErrorType>(errorType), errorMessage));
+    scope.throwException(globalObject, createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), errorMessage));
 }
 
 void JIT_OPERATION operationLinkDirectCall(CallLinkInfo* callLinkInfo, JSFunction* callee)

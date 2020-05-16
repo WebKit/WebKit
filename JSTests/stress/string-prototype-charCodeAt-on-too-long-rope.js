@@ -29,5 +29,5 @@ try {
     exception = e;
 }
 
-shouldEqual(exception, "Error: Out of memory");
+shouldEqual(exception, "RangeError: Out of memory");
 

@@ -39,5 +39,5 @@ function foo(x, y, z) {
 for (let i=0; i<10000; i++) {
     canThrow(() => {
         foo(0);
-    }, `Error: Out of memory`);
+    }, `RangeError: Out of memory`);
 }

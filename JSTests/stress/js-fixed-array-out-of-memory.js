@@ -11,7 +11,7 @@ function test(length) {
         exception = e;
     }
 
-    if (exception && exception != "Error: Out of memory")
+    if (exception && exception != "RangeError: Out of memory")
         throw "ERROR: length " + length + ": unexpected exception " + exception;
 }
 

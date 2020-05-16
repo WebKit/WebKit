@@ -31,7 +31,7 @@ function test() {
             throw "Error: bad result at end: " + result;
         ok = true;
     } catch (e) {
-        if (e.toString() != "Error: Out of memory")
+        if (e.toString() != "RangeError: Out of memory")
             throw e;
     }
 

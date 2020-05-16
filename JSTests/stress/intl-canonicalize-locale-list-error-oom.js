@@ -17,4 +17,4 @@ function shouldThrow(func, errorMessage) {
 
 shouldThrow(() => {
     0..toLocaleString(''.padStart(2**31-1, 'a'));
-}, `Error: Out of memory`);
+}, `RangeError: Out of memory`);

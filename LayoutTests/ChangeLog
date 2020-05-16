@@ -1,3 +1,33 @@
+2020-05-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make OutOfMemory error as instance of RangeError
+        https://bugs.webkit.org/show_bug.cgi?id=211952
+
+        Reviewed by Mark Lam.
+
+        * inspector/debugger/no-pause-out-of-memory-exception-expected.txt:
+        * js/array-join-expected.txt:
+        * js/dom/concat-large-strings-crash-expected.txt:
+        * js/dom/concat-large-strings-crash2-expected.txt:
+        * js/dom/script-tests/string-replacement-outofmemory.js:
+        * js/dom/string-concatenate-outofmemory-expected.txt:
+        * js/dom/string-replacement-outofmemory-expected.txt:
+        * js/large-expressions-expected.txt:
+        * js/resources/string-concatenate-outofmemory.js:
+        * js/script-tests/array-join.js:
+        * js/script-tests/stack-overflow-regexp.js:
+        (shouldThrow.recursiveCall):
+        (shouldThrow):
+        * js/script-tests/string-padend.js:
+        * js/script-tests/string-padstart.js:
+        * js/script-tests/string-repeat.js:
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-1.js:
+        * js/stack-overflow-regexp-expected.txt:
+        * js/string-padend-expected.txt:
+        * js/string-padstart-expected.txt:
+        * js/string-repeat-expected.txt:
+        * js/stringimpl-to-jsstring-on-large-strings-1-expected.txt:
+
 2020-05-15  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash in MediaQueryMatcher::evaluateAll

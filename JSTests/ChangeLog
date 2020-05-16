@@ -1,3 +1,82 @@
+2020-05-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make OutOfMemory error as instance of RangeError
+        https://bugs.webkit.org/show_bug.cgi?id=211952
+
+        Reviewed by Mark Lam.
+
+        * ChakraCore/test/Error/outofmem.baseline-jsc:
+        * es6/String.prototype_methods_String.prototype.padEnd.js:
+        (TestMemoryLimits):
+        * es6/String.prototype_methods_String.prototype.padStart.js:
+        (TestMemoryLimits):
+        * slowMicrobenchmarks/function-constructor-with-huge-strings.js:
+        * stress/array-join-on-strings-need-overflow-checks.js:
+        * stress/big-wasm-memory-grow-no-max.js:
+        (test):
+        * stress/big-wasm-memory-grow.js:
+        (test):
+        * stress/big-wasm-memory.js:
+        (test):
+        * stress/bigint-exponential-oom.js:
+        (shouldThrow):
+        * stress/bigint-int32-min-shift.js:
+        (shouldThrow):
+        * stress/check-symbol-description-oom.js:
+        * stress/constructFunctionSkippingEvalEnabledCheck-should-throw-out-of-memory-error.js:
+        * stress/intl-canonicalize-locale-list-error-oom.js:
+        (shouldThrow):
+        * stress/joined-strings-should-not-exceed-max-string-length.js:
+        * stress/js-fixed-array-out-of-memory.js:
+        (test):
+        * stress/json-stringified-overflow-2.js:
+        (catch):
+        * stress/json-stringified-overflow.js:
+        (catch):
+        * stress/json-stringify-string-builder-overflow.js:
+        * stress/missing-exception-check-in-JSValue-toWTFStringSlowCase.js:
+        * stress/missing-exception-check-in-array-prototype-fastJoin.js:
+        * stress/missing-exception-check-in-canonicalizeLocaleList.js:
+        * stress/missing-exception-check-in-json-stringifier-gap.js:
+        * stress/missing-exception-check-in-string-compare.js:
+        * stress/missing-exception-check-in-string-greater-than-compare.js:
+        * stress/missing-exception-check-in-string-greater-than-or-equal-compare.js:
+        * stress/missing-exception-check-in-string-lastIndexOf.js:
+        * stress/missing-exception-check-in-string-less-than-compare.js:
+        * stress/missing-exception-check-in-string-less-than-or-equal-compare.js:
+        * stress/missing-exception-check-in-string-toLower.js:
+        * stress/missing-exception-check-in-string-toUpper.js:
+        * stress/new_array_with_spread-should-cap-array-size-to-MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.js:
+        * stress/out-of-memory-while-constructing-BytecodeGenerator.js:
+        * stress/regexp-prototype-exec-on-too-long-rope.js:
+        * stress/regexp-prototype-match-on-too-long-rope.js:
+        * stress/regexp-prototype-test-on-too-long-rope.js:
+        * stress/regress-169783.js:
+        (doTest):
+        * stress/regress-178385.js:
+        * stress/regress-178386.js:
+        * stress/regress-185888.js:
+        * stress/regress-189132.js:
+        * stress/regress-190187.js:
+        * stress/regress-191563.js:
+        * stress/scoped-arguments-table-should-be-tolerant-for-oom.js:
+        (i.canThrow):
+        * stress/string-16bit-repeat-overflow.js:
+        * stress/string-overflow-createError-builder.js:
+        * stress/string-overflow-createError-fit.js:
+        * stress/string-overflow-createError.js:
+        * stress/string-prototype-charCodeAt-on-too-long-rope.js:
+        * stress/string-prototype-replace-should-throw-out-of-memory-error-when-using-too-much-memory.js:
+        * stress/switch-string-oom.js:
+        (testLowerTiers):
+        (testFTL):
+        * stress/test-exception-assert-in-ExceptionHelpers-createError.js:
+        * stress/test-out-of-memory.js:
+        * stress/typed-array-subarray-can-throw-oom-error.js:
+        (get bar):
+        * wasm/regress/wasm-memory-requested-more-than-MAX_ARRAY_BUFFER_SIZE-2.js:
+        * wasm/regress/wasm-memory-requested-more-than-MAX_ARRAY_BUFFER_SIZE.js:
+
 2020-05-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] getFunctionRealm should not use recursion

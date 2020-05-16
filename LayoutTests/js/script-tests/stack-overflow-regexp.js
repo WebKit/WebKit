@@ -4,13 +4,13 @@
 description('Test that we do not overflow the stack while handling regular expressions');
 
 // Base case.
-shouldThrow('new RegExp(Array(500000).join("(") + "a" + Array(500000).join(")"))', '"Error: Out of memory: Invalid regular expression: too many nested disjunctions"');
+shouldThrow('new RegExp(Array(500000).join("(") + "a" + Array(500000).join(")"))', '"RangeError: Out of memory: Invalid regular expression: too many nested disjunctions"');
 
 { // Verify that a deep JS stack does not help avoiding the error.
     function recursiveCall(depth) {
         if (!(depth % 10)) {
             debug("Creating RegExp at depth " + depth);
-            shouldThrow('new RegExp(Array(500000).join("(") + "a" + Array(500000).join(")"))', '"Error: Out of memory: Invalid regular expression: too many nested disjunctions"');
+            shouldThrow('new RegExp(Array(500000).join("(") + "a" + Array(500000).join(")"))', '"RangeError: Out of memory: Invalid regular expression: too many nested disjunctions"');
         }
         if (depth < 100) {
             recursiveCall(depth + 1);

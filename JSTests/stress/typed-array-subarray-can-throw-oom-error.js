@@ -43,7 +43,7 @@ for (let i=0; i<100; i++) {
 for (let i=0; i<10000; i++) {
     let result = canThrow(() => {
         new Uint32Array(1000).subarray();
-    }, `Error: Out of memory`);
+    }, `RangeError: Out of memory`);
     if (result)
         break;
 }

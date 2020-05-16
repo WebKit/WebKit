@@ -37,13 +37,13 @@ shouldBe(-0x7fffffffffffn << int32min, -1n);
 shouldBe(-0x7fffffffffffn << (int32min + 1n), -1n);
 shouldThrow(() => {
     1n >> int32min;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     -1n >> int32min;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     0x7fffffffn >> int32min;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     (-0x7fffffffn - 1n) >> int32min;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);

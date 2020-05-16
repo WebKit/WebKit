@@ -40,9 +40,9 @@ PASS 'ABC'.padEnd(10, null) is 'ABCnullnul'
 PASS 'ABC'.padEnd(10, {}) is 'ABC[object'
 PASS 'ABC'.padEnd(10, NaN) is 'ABCNaNNaNN'
 PASS "x".padEnd(Infinity, "") did not throw exception.
-PASS "x".padEnd(Infinity, "x") threw exception Error: Out of memory.
-PASS "x".padEnd(0x80000000, "x") threw exception Error: Out of memory.
-PASS "x".padEnd(0xFFFFFFFF, "x") threw exception Error: Out of memory.
+PASS "x".padEnd(Infinity, "x") threw exception RangeError: Out of memory.
+PASS "x".padEnd(0x80000000, "x") threw exception RangeError: Out of memory.
+PASS "x".padEnd(0xFFFFFFFF, "x") threw exception RangeError: Out of memory.
 PASS String.prototype.padEnd.call(thisObject, lengthObject, fillObject) is "foo barXXX"
 PASS sideEffects is "ABC"
 PASS String.prototype.padEnd.call(thisObject, lengthObject, fillObject) threw exception ERROR.

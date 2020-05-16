@@ -101,9 +101,9 @@ function shouldThrow(func, errorMessage) {
 })();
 
 (function TestMemoryLimits() {
-    shouldThrow(() => ".".padEnd(0x80000000, "o"), "Error: Out of memory");
-    shouldThrow(() => ".".padEnd({ valueOf() { return 0x80000000; } }, "o"), "Error: Out of memory");
-    shouldThrow(() => ".".padEnd("0x80000000", "o"), "Error: Out of memory");
+    shouldThrow(() => ".".padEnd(0x80000000, "o"), "RangeError: Out of memory");
+    shouldThrow(() => ".".padEnd({ valueOf() { return 0x80000000; } }, "o"), "RangeError: Out of memory");
+    shouldThrow(() => ".".padEnd("0x80000000", "o"), "RangeError: Out of memory");
 })();
 
 (function TestFillerRepetition() {

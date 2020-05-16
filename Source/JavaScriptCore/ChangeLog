@@ -1,3 +1,42 @@
+2020-05-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make OutOfMemory error as instance of RangeError
+        https://bugs.webkit.org/show_bug.cgi?id=211952
+
+        Reviewed by Mark Lam.
+
+        The spec sometimes requires "check parameters and throw RangeError" before allocating an object.
+        But we are just allocating an object and throwing an out-of-memory error since wrong parameter will
+        cause out-of-memory. If out-of-memory error is RangeError, then we can keep our current behavior while
+        we can make us spec compliant. And note that out-of-memory error is RangeError in SpiderMonkey and V8.
+
+        This patch makes out-of-memory error as RangeError instead of Error. We also fix @throwOutOfMemoryError
+        in builtin code: the previous thrown errors are not marked as out-of-memory error.
+
+        * bytecode/BytecodeList.rb:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitThrowStaticError):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitThrowRangeError):
+        (JSC::BytecodeGenerator::emitThrowOutOfMemoryError):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwTypeError):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwRangeError):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createOutOfMemoryError):
+        * runtime/Error.h:
+        * runtime/ErrorType.cpp:
+        (JSC::errorTypeName):
+        (WTF::printInternal):
+        * runtime/ErrorType.h: We introduced ErrorTypeWithExtension separately from ErrorType to keep ErrorType one-on-one to spec-specified error types.
+
 2020-05-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] getFunctionRealm should not use recursion

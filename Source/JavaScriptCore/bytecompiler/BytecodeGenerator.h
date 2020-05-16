@@ -949,8 +949,8 @@ namespace JSC {
         void emitThrow(RegisterID*);
         RegisterID* emitArgumentCount(RegisterID*);
 
-        void emitThrowStaticError(ErrorType, RegisterID*);
-        void emitThrowStaticError(ErrorType, const Identifier& message);
+        void emitThrowStaticError(ErrorTypeWithExtension, RegisterID*);
+        void emitThrowStaticError(ErrorTypeWithExtension, const Identifier& message);
         void emitThrowReferenceError(const String& message);
         void emitThrowTypeError(const String& message);
         void emitThrowTypeError(const Identifier& message);

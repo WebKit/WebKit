@@ -30,4 +30,4 @@ try {
 
 if (!caughtException)
     throw("Array.prototype.join should have thrown an exception when string length overflows");
-assert(caughtException, "Error: Out of memory");
+assert(caughtException, "RangeError: Out of memory");

@@ -157,7 +157,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
     const char* messageCharacters = regExp->errorMessage();
     const Identifier& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), bitwise_cast<const LChar*>(messageCharacters), strlen(messageCharacters));
-    generator.emitThrowStaticError(ErrorType::SyntaxError, message);
+    generator.emitThrowStaticError(ErrorTypeWithExtension::SyntaxError, message);
     return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
 
@@ -1464,7 +1464,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwTypeError(BytecodeGenerat
         generator.emitThrowTypeError(ident);
     } else {
         RefPtr<RegisterID> message = generator.emitNode(node);
-        generator.emitThrowStaticError(ErrorType::TypeError, message.get());
+        generator.emitThrowStaticError(ErrorTypeWithExtension::TypeError, message.get());
     }
     return dst;
 }
@@ -1478,7 +1478,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwRangeError(BytecodeGenera
         generator.emitThrowRangeError(ident);
     } else {
         RefPtr<RegisterID> message = generator.emitNode(node);
-        generator.emitThrowStaticError(ErrorType::RangeError, message.get());
+        generator.emitThrowStaticError(ErrorTypeWithExtension::RangeError, message.get());
     }
 
     return dst;

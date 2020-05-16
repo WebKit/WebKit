@@ -63,6 +63,7 @@ JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*);
 JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(JSGlobalObject*, const String&);
 
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, const String&);
+JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
 
 JSObject* createGetterTypeError(JSGlobalObject*, const String&);
 

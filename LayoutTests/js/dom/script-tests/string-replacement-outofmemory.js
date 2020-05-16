@@ -14,5 +14,5 @@ var y = "2";
 x = createStringWithRepeatedChar(x, 1 << 12);
 y = createStringWithRepeatedChar(y, (1 << 20) + 1);
 
-shouldThrow("x.replace(/\\d/g, y)", '"Error: Out of memory"');
+shouldThrow("x.replace(/\\d/g, y)", '"RangeError: Out of memory"');
 var successfullyParsed = true;

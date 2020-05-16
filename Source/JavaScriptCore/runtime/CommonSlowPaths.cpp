@@ -1370,7 +1370,7 @@ SLOW_PATH_DECL(slow_path_throw_static_error)
     JSValue errorMessageValue = GET_C(bytecode.m_message).jsValue();
     RELEASE_ASSERT(errorMessageValue.isString());
     String errorMessage = asString(errorMessageValue)->value(globalObject);
-    ErrorType errorType = bytecode.m_errorType;
+    ErrorTypeWithExtension errorType = bytecode.m_errorType;
     THROW(createError(globalObject, errorType, errorMessage));
 }
 

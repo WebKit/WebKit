@@ -29,7 +29,7 @@ PASS smallSparseArray.join('柰') is "WebKit柰柰柰柰柰柰柰柰柰柰柰柰
 PASS largeSparseArray1.join('') is "WebKit42"
 PASS largeSparseArray2.join('') is "WebKit42"
 Out of memory
-PASS oversizedArray.join('') threw exception Error: Out of memory.
+PASS oversizedArray.join('') threw exception RangeError: Out of memory.
 ToLength is called first on "this", followed by ToString on the separator. Followed by ToString on each element.
 PASS Array.prototype.join.call(calleeObject, separatorObject) is "WebKit0柰WebKit1"
 PASS callSequence.join(', ') is "calle.length, length.valueOf, separator.toString, calle.get 0, index0.toString, calle.get 1, index0.toString"

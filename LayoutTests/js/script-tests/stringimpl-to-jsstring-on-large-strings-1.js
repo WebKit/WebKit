@@ -33,4 +33,4 @@ function createStrings() {
 
     return [p, r, s];
 }
-shouldThrow("createStrings()", '"Error: Out of memory"');
+shouldThrow("createStrings()", '"RangeError: Out of memory"');

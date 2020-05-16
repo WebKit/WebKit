@@ -15,4 +15,4 @@ function shouldThrow(func, errorMessage) {
 
 const s0 = (-1).toLocaleString();
 const s1 = s0.padEnd(2147483647, '  ');
-shouldThrow(() => Symbol(s1), `Error: Out of memory`);
+shouldThrow(() => Symbol(s1), `RangeError: Out of memory`);

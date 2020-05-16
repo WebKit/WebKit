@@ -20,4 +20,4 @@ try {
     exception = e;
 }
 
-shouldEqual(10000, exception, "Error: Out of memory");
+shouldEqual(10000, exception, "RangeError: Out of memory");

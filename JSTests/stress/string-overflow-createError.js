@@ -11,5 +11,5 @@ try {
 
 // Creating the error message for the TypeError overflows
 // the string and therefore an out-of-memory error is thrown.
-if (exception != "Error: Out of memory")
+if (exception != "RangeError: Out of memory")
     throw "FAILED";

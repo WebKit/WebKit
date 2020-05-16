@@ -2,9 +2,9 @@ description(
 'This test checks if repeated string concatenation causes an exception (and not a crash). From WebKit Bug <a href="http://bugs.webkit.org/show_bug.cgi?id=11131">Repeated string concatenation results in OOM crash</a>.'
 );
 
-shouldThrow('s = "a"; while (1) { s += s; }', '"Error: Out of memory"'); // Expand at end of string
-shouldThrow('s = "a"; while (1) { s += ("a" + s); }', '"Error: Out of memory"'); // Expand at beginning of string
-shouldThrow('s = "a"; while (1) { s = [s, s].join(); }', '"Error: Out of memory"'); // Expand using UString::append.
+shouldThrow('s = "a"; while (1) { s += s; }', '"RangeError: Out of memory"'); // Expand at end of string
+shouldThrow('s = "a"; while (1) { s += ("a" + s); }', '"RangeError: Out of memory"'); // Expand at beginning of string
+shouldThrow('s = "a"; while (1) { s = [s, s].join(); }', '"RangeError: Out of memory"'); // Expand using UString::append.
 
 debug('');
 debug(

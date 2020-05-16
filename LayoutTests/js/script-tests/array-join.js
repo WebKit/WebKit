@@ -51,7 +51,7 @@ debug("Out of memory");
 let oversizedArray = new Array(4096);
 let sharedString = "A".repeat(1048576);
 oversizedArray.fill(sharedString);
-shouldThrow("oversizedArray.join('')", "'Error: Out of memory'");
+shouldThrow("oversizedArray.join('')", "'RangeError: Out of memory'");
 
 debug("ToLength is called first on \"this\", followed by ToString on the separator. Followed by ToString on each element.");
 var callSequence = [];

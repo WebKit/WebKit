@@ -30,7 +30,7 @@ function testLowerTiers()
         try {
             test(true);
         } catch(e) {
-            if (e != "Error: Out of memory")
+            if (e != "RangeError: Out of memory")
                 throw "Unexpecte error: \"" + e + "\"";
         }
     }
@@ -42,7 +42,7 @@ function testFTL()
         try {
             test(i >= 50);
         } catch(e) {
-            if (e != "Error: Out of memory")
+            if (e != "RangeError: Out of memory")
                 throw "Unexpecte error: \"" + e + "\"";
         }
     }

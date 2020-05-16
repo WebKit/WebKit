@@ -12,7 +12,7 @@ function doTest(a, shouldThrow) {
     } catch (e) {
         exception = e;
     }
-    if (shouldThrow && exception != "Error: Out of memory")
+    if (shouldThrow && exception != "RangeError: Out of memory")
         throw("FAILED");
 }
 

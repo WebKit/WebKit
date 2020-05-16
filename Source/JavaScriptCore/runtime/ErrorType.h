@@ -29,18 +29,40 @@
 
 namespace JSC {
 
+#define JSC_ERROR_TYPES(macro) \
+    macro(Error) \
+    macro(EvalError) \
+    macro(RangeError) \
+    macro(ReferenceError) \
+    macro(SyntaxError) \
+    macro(TypeError) \
+    macro(URIError) \
+    macro(AggregateError) \
+
+#define JSC_ERROR_TYPES_WITH_EXTENSION(macro) \
+    JSC_ERROR_TYPES(macro) \
+    macro(OutOfMemoryError) \
+
 enum class ErrorType : uint8_t {
-    Error = 0,
-    EvalError,
-    RangeError,
-    ReferenceError,
-    SyntaxError,
-    TypeError,
-    URIError,
-    AggregateError,
+#define DECLARE_ERROR_TYPES_ENUM(name) name,
+    JSC_ERROR_TYPES(DECLARE_ERROR_TYPES_ENUM)
+#undef DECLARE_ERROR_TYPES_ENUM
 };
-static constexpr unsigned NumberOfErrorType { static_cast<unsigned>(ErrorType::AggregateError) + 1 };
+
+#define COUNT_ERROR_TYPES(name) 1 +
+static constexpr unsigned NumberOfErrorType {
+    JSC_ERROR_TYPES(COUNT_ERROR_TYPES) 0
+};
+#undef COUNT_ERROR_TYPES
+
+enum class ErrorTypeWithExtension : uint8_t {
+#define DECLARE_ERROR_TYPES_ENUM(name) name,
+    JSC_ERROR_TYPES_WITH_EXTENSION(DECLARE_ERROR_TYPES_ENUM)
+#undef DECLARE_ERROR_TYPES_ENUM
+};
+
 ASCIILiteral errorTypeName(ErrorType);
+ASCIILiteral errorTypeName(ErrorTypeWithExtension);
 
 } // namespace JSC
 
@@ -49,5 +71,6 @@ namespace WTF {
 class PrintStream;
 
 void printInternal(PrintStream&, JSC::ErrorType);
+void printInternal(PrintStream&, JSC::ErrorTypeWithExtension);
 
 } // namespace WTF

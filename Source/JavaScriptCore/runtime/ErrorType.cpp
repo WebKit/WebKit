@@ -32,15 +32,15 @@ namespace JSC {
 
 ASCIILiteral errorTypeName(ErrorType errorType)
 {
+    return errorTypeName(static_cast<ErrorTypeWithExtension>(errorType));
+}
+
+ASCIILiteral errorTypeName(ErrorTypeWithExtension errorType)
+{
     static const ASCIILiteral errorTypeNames[] = {
-        "Error"_s,
-        "EvalError"_s,
-        "RangeError"_s,
-        "ReferenceError"_s,
-        "SyntaxError"_s,
-        "TypeError"_s,
-        "URIError"_s,
-        "AggregateError"_s,
+#define DECLARE_ERROR_TYPES_STRING(name) #name ""_s,
+        JSC_ERROR_TYPES_WITH_EXTENSION(DECLARE_ERROR_TYPES_STRING)
+#undef DECLARE_ERROR_TYPES_STRING
     };
     return errorTypeNames[static_cast<unsigned>(errorType)];
 }
@@ -50,6 +50,11 @@ ASCIILiteral errorTypeName(ErrorType errorType)
 namespace WTF {
 
 void printInternal(PrintStream& out, JSC::ErrorType errorType)
+{
+    out.print(JSC::errorTypeName(errorType));
+}
+
+void printInternal(PrintStream& out, JSC::ErrorTypeWithExtension errorType)
 {
     out.print(JSC::errorTypeName(errorType));
 }

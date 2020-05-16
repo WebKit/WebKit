@@ -3764,41 +3764,41 @@ int BytecodeGenerator::labelScopeDepth() const
     return depth;
 }
 
-void BytecodeGenerator::emitThrowStaticError(ErrorType errorType, RegisterID* raw)
+void BytecodeGenerator::emitThrowStaticError(ErrorTypeWithExtension errorType, RegisterID* raw)
 {
     RefPtr<RegisterID> message = newTemporary();
     emitToString(message.get(), raw);
     OpThrowStaticError::emit(this, message.get(), errorType);
 }
 
-void BytecodeGenerator::emitThrowStaticError(ErrorType errorType, const Identifier& message)
+void BytecodeGenerator::emitThrowStaticError(ErrorTypeWithExtension errorType, const Identifier& message)
 {
     OpThrowStaticError::emit(this, addConstantValue(addStringConstant(message)), errorType);
 }
 
 void BytecodeGenerator::emitThrowReferenceError(const String& message)
 {
-    emitThrowStaticError(ErrorType::ReferenceError, Identifier::fromString(m_vm, message));
+    emitThrowStaticError(ErrorTypeWithExtension::ReferenceError, Identifier::fromString(m_vm, message));
 }
 
 void BytecodeGenerator::emitThrowTypeError(const String& message)
 {
-    emitThrowStaticError(ErrorType::TypeError, Identifier::fromString(m_vm, message));
+    emitThrowStaticError(ErrorTypeWithExtension::TypeError, Identifier::fromString(m_vm, message));
 }
 
 void BytecodeGenerator::emitThrowTypeError(const Identifier& message)
 {
-    emitThrowStaticError(ErrorType::TypeError, message);
+    emitThrowStaticError(ErrorTypeWithExtension::TypeError, message);
 }
 
 void BytecodeGenerator::emitThrowRangeError(const Identifier& message)
 {
-    emitThrowStaticError(ErrorType::RangeError, message);
+    emitThrowStaticError(ErrorTypeWithExtension::RangeError, message);
 }
 
 void BytecodeGenerator::emitThrowOutOfMemoryError()
 {
-    emitThrowStaticError(ErrorType::Error, Identifier::fromString(m_vm, "Out of memory"));
+    emitThrowStaticError(ErrorTypeWithExtension::OutOfMemoryError, m_vm.propertyNames->emptyIdentifier);
 }
 
 void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* callee, bool isCaptured)

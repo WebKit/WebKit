@@ -9,6 +9,6 @@ try {
     exception = e;
 }
 
-if (exception != "Error: Out of memory")
+if (exception != "RangeError: Out of memory")
     throw "FAILED";
 

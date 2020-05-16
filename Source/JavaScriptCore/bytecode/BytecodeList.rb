@@ -28,7 +28,7 @@ types [
     :BoundLabel,
     :DebugHookType,
     :ECMAMode,
-    :ErrorType,
+    :ErrorTypeWithExtension,
     :GetByIdMode,
     :GetByIdModeMetadata,
     :GetByValHistory,
@@ -1047,7 +1047,7 @@ op :throw,
 op :throw_static_error,
     args: {
         message: VirtualRegister,
-        errorType: ErrorType,
+        errorType: ErrorTypeWithExtension,
     }
 
 op :debug,

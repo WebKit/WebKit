@@ -15,19 +15,19 @@ function shouldThrow(func, errorMessage) {
 
 shouldThrow(() => {
     2n ** 0xfffffffffffffffffn;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     2n ** 0xffffffn;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     2n ** 0xfffffffn;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     2n ** 0xffffffffn;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     2n ** 0xfffffffffffffffn;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);
 shouldThrow(() => {
     10n ** 1000000n;
-}, `Error: Out of memory: BigInt generated from this operation is too big`);
+}, `RangeError: Out of memory: BigInt generated from this operation is too big`);

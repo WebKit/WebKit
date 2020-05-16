@@ -44,9 +44,9 @@ shouldBe("'ABC'.padStart(10, NaN)",   "'NaNNaNNABC'");
 
 // Check out of memory errors.
 shouldNotThrow('"x".padStart(Infinity, "")'); // Empty string filler is fine.
-shouldThrow('"x".padStart(Infinity, "x")', "'Error: Out of memory'");
-shouldThrow('"x".padStart(0x80000000, "x")', "'Error: Out of memory'");
-shouldThrow('"x".padStart(0xFFFFFFFF, "x")', "'Error: Out of memory'");
+shouldThrow('"x".padStart(Infinity, "x")', "'RangeError: Out of memory'");
+shouldThrow('"x".padStart(0x80000000, "x")', "'RangeError: Out of memory'");
+shouldThrow('"x".padStart(0xFFFFFFFF, "x")', "'RangeError: Out of memory'");
 
 // Check side-effects.
 let sideEffects = "";

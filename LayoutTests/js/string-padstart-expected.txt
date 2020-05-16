@@ -40,9 +40,9 @@ PASS 'ABC'.padStart(10, null) is 'nullnulABC'
 PASS 'ABC'.padStart(10, {}) is '[objectABC'
 PASS 'ABC'.padStart(10, NaN) is 'NaNNaNNABC'
 PASS "x".padStart(Infinity, "") did not throw exception.
-PASS "x".padStart(Infinity, "x") threw exception Error: Out of memory.
-PASS "x".padStart(0x80000000, "x") threw exception Error: Out of memory.
-PASS "x".padStart(0xFFFFFFFF, "x") threw exception Error: Out of memory.
+PASS "x".padStart(Infinity, "x") threw exception RangeError: Out of memory.
+PASS "x".padStart(0x80000000, "x") threw exception RangeError: Out of memory.
+PASS "x".padStart(0xFFFFFFFF, "x") threw exception RangeError: Out of memory.
 PASS String.prototype.padStart.call(thisObject, lengthObject, fillObject) is "XXXfoo bar"
 PASS sideEffects is "ABC"
 PASS String.prototype.padStart.call(thisObject, lengthObject, fillObject) threw exception ERROR.

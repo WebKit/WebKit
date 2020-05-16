@@ -48,12 +48,12 @@ shouldThrow("'foo bar'.repeat(Infinity)", "'RangeError: String.prototype.repeat 
 shouldThrow("'foo bar'.repeat(-Infinity)", "'RangeError: String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity'");
 
 // Check out of memory errors.
-shouldThrow("'f'.repeat(0xFFFFFFFF)", "'Error: Out of memory'");
-shouldThrow("'f'.repeat(0xFFFFFFFF + 1)", "'Error: Out of memory'");
-shouldThrow("'foo'.repeat(0xFFFFFFFFF)", "'Error: Out of memory'");
-shouldThrow("'foo'.repeat(0xFFFFFFFFF + 1)", "'Error: Out of memory'");
-shouldThrow("'foo bar'.repeat(0xFFFFFFFF)", "'Error: Out of memory'");
-shouldThrow("'foo bar'.repeat(0xFFFFFFFF + 1)", "'Error: Out of memory'");
+shouldThrow("'f'.repeat(0xFFFFFFFF)", "'RangeError: Out of memory'");
+shouldThrow("'f'.repeat(0xFFFFFFFF + 1)", "'RangeError: Out of memory'");
+shouldThrow("'foo'.repeat(0xFFFFFFFFF)", "'RangeError: Out of memory'");
+shouldThrow("'foo'.repeat(0xFFFFFFFFF + 1)", "'RangeError: Out of memory'");
+shouldThrow("'foo bar'.repeat(0xFFFFFFFF)", "'RangeError: Out of memory'");
+shouldThrow("'foo bar'.repeat(0xFFFFFFFF + 1)", "'RangeError: Out of memory'");
 
 var sideEffect, stringRepeated, count;
 function checkSideEffects(str) {
