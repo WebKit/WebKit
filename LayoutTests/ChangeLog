@@ -1,3 +1,14 @@
+2020-05-15  Antti Koivisto  <antti@apple.com>
+
+        Nullptr crash in MediaQueryMatcher::evaluateAll
+        https://bugs.webkit.org/show_bug.cgi?id=211963
+        <rdar://problem/62850977>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/media/media-query-list-mutation-expected.txt: Added.
+        * fast/media/media-query-list-mutation.html: Added.
+
 2020-05-15  Jack Lee  <shihchieh_lee@apple.com>
 
         Nullptr crash in WebCore::Node::treeScope() when processing nested list insertion commands.

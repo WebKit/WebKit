@@ -118,7 +118,9 @@ void MediaQueryMatcher::evaluateAll()
     LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryMatcher::styleResolverChanged " << m_document->url());
 
     MediaQueryEvaluator evaluator { mediaType(), *m_document, style.get() };
-    for (auto& list : m_mediaQueryLists) {
+
+    auto mediaQueryLists = m_mediaQueryLists;
+    for (auto& list : mediaQueryLists) {
         if (!list)
             continue;
         bool notify;
