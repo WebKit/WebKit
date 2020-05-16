@@ -1,26 +1,37 @@
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../editing.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
 <textarea id="test"></textarea>
-<script src="../../resources/js-test-pre.js"></script>
 <script>
-description("The test verifies if the spelling markers remain if a whitespace "
-    + "is added before or after the misspelled word. "
-    + "The test succeeds if the word 'meagesga' has red underline.");
+description("The test verifies if the spelling markers remain if whitespace "
+    + "is added before or after the misspelled word or the caret is moved. "
+    + "The test succeeds if the word 'meagesga' has a red underline.");
 
 jsTestIsAsync = true;
 
 if (window.internals) {
-    internals.settings.setUnifiedTextCheckerEnabled(true);
-    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+    if (UIHelper.isIOSFamily() || !UIHelper.isWebKit2())
+        internals.setContinuousSpellCheckingEnabled(true);
+    else {
+        internals.settings.setUnifiedTextCheckerEnabled(true);
+        internals.settings.setAsynchronousSpellCheckingEnabled(true);
+    }
 }
 
-function resetText() {
-    document.getElementById('test').focus();
-    execSelectAllCommand();
-    execDeleteCommand();
+let textarea = document.getElementById("test");
+
+async function resetText() {
+    textarea.blur();
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(textarea);
+    else
+        textarea.focus();
+    textarea.value = "";
     typeCharacterCommand('i');
     typeCharacterCommand('t');
     typeCharacterCommand('\'');
@@ -39,52 +50,60 @@ function resetText() {
     typeCharacterCommand(' ');
 }
 
-var expectedMisspelledPosition;
-function checkSpellingMarkerAfterAddingWhitespace(testCase)
+async function checkSpellingMarker(testCase)
 {
-    resetText();
+    await resetText();
 
-    if (testCase.updateCaretPosition) {
-        testCase.updateCaretPosition();
-        evalAndLog("typeCharacterCommand(' ')");
-    }
+    debug(`<br>Test: ${testCase.testName}:`);
+    testCase.run();
 
-   expectedMisspelledPosition = testCase.misspelledPosition;
-
-    if (window.internals) {
-        shouldBecomeEqual("internals.hasSpellingMarker(expectedMisspelledPosition, 8)", "true", function() {
-            debug("");
-            done();
-        });
-    } else
-        done();
+    if (window.internals)
+        shouldBecomeEqual(`internals.hasSpellingMarker(${testCase.expectedMisspelledWordStartPosition}, 8)`, "true", () => runNextTest());
+    else
+        runNextTest();
 }
 
 var testCases = [
     {
-        updateCaretPosition: null,
-        misspelledPosition: 7
+        testName: "Has misspelled word",
+        run: () => { /* Do nothing */ },
+        expectedMisspelledWordStartPosition: 7,
     },
     {
-        updateCaretPosition: function() { evalAndLog("execMoveSelectionBackwardByWordCommand()"); },
-        misspelledPosition: 8
+        testName: "Insert space before misspelled word",
+        run: () => {
+            evalAndLog("test.setSelectionRange(7, 7)");
+            evalAndLog("typeCharacterCommand(' ')");
+        },
+        expectedMisspelledWordStartPosition: 8,
     },
     {
-        updateCaretPosition: function() { evalAndLog("execMoveSelectionBackwardByCharacterCommand()"); },
-        misspelledPosition: 7
+        testName: "Insert space after misspelled word",
+        run: () => {
+            evalAndLog("test.setSelectionRange(15, 15)");
+            evalAndLog("typeCharacterCommand(' ')");
+        },
+        expectedMisspelledWordStartPosition: 7,
+    },
+    {
+        testName: "Move caret",
+        run: () => {
+            evalAndLog("execMoveSelectionBackwardByCharacterCommand()");
+        },
+        expectedMisspelledWordStartPosition: 7,
     }
 ];
 
-function done()
+function runNextTest()
 {
-    var testCase = testCases.shift();
-    if (testCase)
-        return setTimeout(checkSpellingMarkerAfterAddingWhitespace(testCase), 0);
-
+    let testCase = testCases.shift();
+    if (testCase) {
+        setTimeout(() => checkSpellingMarker(testCase), 0);
+        return;
+    }
     finishJSTest();
 }
-done();
+runNextTest();
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

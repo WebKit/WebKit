@@ -1,3 +1,32 @@
+2020-05-16  Daniel Bates  <dabates@apple.com>
+
+        Make editing/spelling/editing-word-with-marker-2.html test what it claims and make it work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211802
+
+        Reviewed by Darin Adler.
+
+        Went back and looked at the originally written version of this test that was added in r70826
+        and brought back the missing "insert whitespace after misspelling" sub-test. While I am here,
+        I also simplified the test and made the test work on iOS by using UIHelper. I also fixed some
+        idiosyncrasies that were introduced in r169687 and did other modernizations.
+
+        The fix for iOS was simple: just enable internals.setContinuousSpellCheckingEnabled() + use UIHelper
+        to activate the textarea + blur the textarea on reset (for maximal code reuse). I didn't enable this
+        via the WKTR option spellCheckingDots because this test should be capable of running in DumpRenderTree
+        though we don't actually run DumpRenderTree for iOS on any bots. So, I did this largely for just for me.
+
+        I removed the use of editing commands to clear the textarea in favor of just setting the element's
+        value attribute because it's simpler and exercises less code in the engine, which I hope will reduce
+        future flakiness + the purpose of the test is to test how a spelling marker is updated not an exercise
+        on how to clear a textarea using editing commands. That kind of exercise is expected to be covered
+        by dedicated editing tests, though I haven't checked that they exist, but would be suprised if they
+        didn't.
+
+        * editing/spelling/editing-word-with-marker-2-expected.txt:
+        * editing/spelling/editing-word-with-marker-2.html:
+        * platform/ios-wk1/TestExpectations: Unskip.
+        * platform/ios-wk2/TestExpectations: Ditto.
+
 2020-05-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Take vertical spacing into account when setting the height of a cell with rowspan
