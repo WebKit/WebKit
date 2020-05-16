@@ -2384,10 +2384,10 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     location += toLayoutSize(layer->location());
 
     if (adjustForColumns == RenderLayer::AdjustForColumns) {
-        if (RenderLayer* parentLayer = layer->parent()) {
+        auto* parentLayer = layer->parent();
+        if (parentLayer && parentLayer != ancestorLayer) {
             if (is<RenderMultiColumnFlow>(parentLayer->renderer())) {
-                RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlow>(parentLayer->renderer()).physicalTranslationFromFlowToFragment(location);
-                if (fragment)
+                if (auto* fragment = downcast<RenderMultiColumnFlow>(parentLayer->renderer()).physicalTranslationFromFlowToFragment(location))
                     location.moveBy(fragment->topLeftLocation() + -parentLayer->renderBox()->topLeftLocation());
             }
         }
@@ -5783,7 +5783,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
 
         if (clipRects.fixed() && &clipRectsContext.rootLayer->renderer() == &renderer().view())
             offset -= toLayoutSize(renderer().view().frameView().scrollPositionForFixedPosition());
-        
+
         if (renderer().hasOverflowClip()) {
             ClipRect newOverflowClip = downcast<RenderBox>(renderer()).overflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy);
             newOverflowClip.setAffectedByRadius(renderer().style().hasBorderRadius());
@@ -5799,7 +5799,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         }
     }
 
-    LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " calculateClipRects " << clipRects);
+    LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " calculateClipRects " << clipRectsContext << " computed " << clipRects);
 }
 
 Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext) const

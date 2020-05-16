@@ -1,3 +1,27 @@
+2020-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r249091): Can't click on a video in the second column of a paginated web view
+        https://bugs.webkit.org/show_bug.cgi?id=211973
+        <rdar://problem/61418775>
+
+        Reviewed by Zalan Bujtas.
+
+        In r249091 I made clip layer computation use offsetFromAncestor() by default, but this turns
+        out to give different behavior from mapping via renderers in columns.
+
+        The bug was that accumulateOffsetTowardsAncestor() would map through the
+        RenderMultiColumnFlow columns if the ancestorLayer was the one that was using columns,
+        but mapping via renderers only maps through columns if converting to some ancestor of
+        the columnated renderer.
+
+        I did not investigate why this only affects video.
+
+        Test: fast/multicol/clipped-video-in-second-column.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2020-05-15  Kenneth Russell  <kbr@chromium.org>
 
         OES_texture_float internal format conversion must depend on WEBGL_color_buffer_float
