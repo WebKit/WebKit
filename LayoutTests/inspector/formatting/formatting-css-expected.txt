@@ -9,5 +9,6 @@ PASS: gradient.css
 PASS: keyframes.css
 PASS: media-query.css
 PASS: selectors.css
+PASS: url.css
 PASS: wrapping.css
 
