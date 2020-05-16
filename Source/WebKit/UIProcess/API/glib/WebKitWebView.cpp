@@ -2320,7 +2320,7 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
 }
 #endif
 
-WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)
+RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)
 {
     WebKitWebView* newWebView;
     g_signal_emit(webView, signals[CREATE], 0, navigationAction, &newWebView);
@@ -2334,8 +2334,7 @@ WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFea
 
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 
-    RefPtr<WebPageProxy> newPage = &getPage(newWebView);
-    return newPage.leakRef();
+    return makeRefPtr(getPage(newWebView));
 }
 
 void webkitWebViewReadyToShowPage(WebKitWebView* webView)
