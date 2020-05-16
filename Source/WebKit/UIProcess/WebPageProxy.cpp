@@ -5753,16 +5753,12 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 #if ENABLE(WEBGL)
 void WebPageProxy::webGLPolicyForURL(URL&& url, Messages::WebPageProxy::WebGLPolicyForURL::DelayedReply&& reply)
 {
-    m_navigationClient->webGLLoadPolicy(*this, url, [reply = WTFMove(reply)] (WebGLLoadPolicy policy) mutable {
-        reply(static_cast<uint32_t>(policy));
-    });
+    m_navigationClient->webGLLoadPolicy(*this, url, WTFMove(reply));
 }
 
 void WebPageProxy::resolveWebGLPolicyForURL(URL&& url, Messages::WebPageProxy::ResolveWebGLPolicyForURL::DelayedReply&& reply)
 {
-    m_navigationClient->resolveWebGLLoadPolicy(*this, url, [reply = WTFMove(reply)] (WebGLLoadPolicy policy) mutable {
-        reply(static_cast<uint32_t>(policy));
-    });
+    m_navigationClient->resolveWebGLLoadPolicy(*this, url, WTFMove(reply));
 }
 #endif // ENABLE(WEBGL)
 

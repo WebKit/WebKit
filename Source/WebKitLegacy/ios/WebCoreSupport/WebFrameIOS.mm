@@ -484,7 +484,7 @@ using namespace WebCore;
 
     // This is a temporary hack until we get the improvements
     // I'm working on for RTL selection.
-    if (frameSelection.granularity() == WordGranularity)
+    if (frameSelection.granularity() == TextGranularity::WordGranularity)
         frameSelection.moveTo(frameSelection.selection().start(), frameSelection.selection().end());
     
     if (frameSelection.selection().isCaret()) {
@@ -604,23 +604,23 @@ using namespace WebCore;
 
 - (void)setSelectionGranularity:(WebTextGranularity)granularity
 {
-    TextGranularity wcGranularity = CharacterGranularity;
+    TextGranularity wcGranularity = TextGranularity::CharacterGranularity;
     switch (granularity) {
         case WebTextGranularityCharacter:
-            wcGranularity = CharacterGranularity;
+            wcGranularity = TextGranularity::CharacterGranularity;
             break;
         case WebTextGranularityWord:
-            wcGranularity = WordGranularity;
+            wcGranularity = TextGranularity::WordGranularity;
             break;
         case WebTextGranularitySentence:
-            wcGranularity = SentenceGranularity;
+            wcGranularity = TextGranularity::SentenceGranularity;
             break;
         case WebTextGranularityParagraph:
-            wcGranularity = ParagraphGranularity;
+            wcGranularity = TextGranularity::ParagraphGranularity;
             break;
         case WebTextGranularityAll:
-            // FIXME: Add DocumentGranularity.
-            wcGranularity = ParagraphGranularity;
+            // FIXME: Add TextGranularity::DocumentGranularity.
+            wcGranularity = TextGranularity::ParagraphGranularity;
             break;
         default:
             ASSERT_NOT_REACHED();

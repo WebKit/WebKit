@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GestureTypes_h
-#define GestureTypes_h
+#pragma once
+
+#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 
-enum class GestureType {
+enum class GestureType : uint8_t {
     Loupe,
     OneFingerTap,
     TapAndAHalf,
@@ -45,7 +46,7 @@ enum class GestureType {
     PhraseBoundary
 };
 
-enum class SelectionTouch {
+enum class SelectionTouch : uint8_t {
     Started,
     Moved,
     Ended,
@@ -54,23 +55,21 @@ enum class SelectionTouch {
     EndedNotMoving
 };
 
-enum class GestureRecognizerState {
+enum class GestureRecognizerState : uint8_t {
     Possible,
     Began,
     Changed,
     Ended,
     Cancelled,
-    Failed,
-    Recognized = Ended
+    Failed
 };
 
-enum class SheetAction {
+enum class SheetAction : bool {
     Copy,
     SaveImage
 };
 
-enum SelectionFlags {
-    None = 0,
+enum SelectionFlags : uint8_t {
     WordIsNearTap = 1 << 0,
     PhraseBoundaryChanged = 1 << 1,
 };
@@ -82,4 +81,51 @@ enum class RespectSelectionAnchor : bool {
 
 } // namespace WebKit
 
-#endif // GestureTypes_h
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::GestureType> {
+    using values = EnumValues<
+        WebKit::GestureType,
+        WebKit::GestureType::Loupe,
+        WebKit::GestureType::OneFingerTap,
+        WebKit::GestureType::TapAndAHalf,
+        WebKit::GestureType::DoubleTap,
+        WebKit::GestureType::TapAndHalf,
+        WebKit::GestureType::DoubleTapInUneditable,
+        WebKit::GestureType::OneFingerTapInUneditable,
+        WebKit::GestureType::OneFingerTapSelectsAll,
+        WebKit::GestureType::OneFingerDoubleTap,
+        WebKit::GestureType::OneFingerTripleTap,
+        WebKit::GestureType::TwoFingerSingleTap,
+        WebKit::GestureType::TwoFingerRangedSelectGesture,
+        WebKit::GestureType::TapOnLinkWithGesture,
+        WebKit::GestureType::PhraseBoundary
+    >;
+};
+
+template<> struct EnumTraits<WebKit::SelectionTouch> {
+    using values = EnumValues<
+        WebKit::SelectionTouch,
+        WebKit::SelectionTouch::Started,
+        WebKit::SelectionTouch::Moved,
+        WebKit::SelectionTouch::Ended,
+        WebKit::SelectionTouch::EndedMovingForward,
+        WebKit::SelectionTouch::EndedMovingBackward,
+        WebKit::SelectionTouch::EndedNotMoving
+    >;
+};
+
+
+template<> struct EnumTraits<WebKit::GestureRecognizerState> {
+    using values = EnumValues<
+        WebKit::GestureRecognizerState,
+        WebKit::GestureRecognizerState::Possible,
+        WebKit::GestureRecognizerState::Began,
+        WebKit::GestureRecognizerState::Changed,
+        WebKit::GestureRecognizerState::Ended,
+        WebKit::GestureRecognizerState::Cancelled,
+        WebKit::GestureRecognizerState::Failed
+    >;
+};
+
+} // namespace WTF

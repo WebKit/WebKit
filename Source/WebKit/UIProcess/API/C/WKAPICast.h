@@ -496,25 +496,25 @@ inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPol
 {
     switch (webGLLoadPolicy) {
     case kWKWebGLLoadPolicyLoadNormally:
-        return WebCore::WebGLAllowCreation;
+        return WebCore::WebGLLoadPolicy::WebGLAllowCreation;
     case kWKWebGLLoadPolicyBlocked:
-        return WebCore::WebGLBlockCreation;
+        return WebCore::WebGLLoadPolicy::WebGLBlockCreation;
     case kWKWebGLLoadPolicyPending:
-        return WebCore::WebGLPendingCreation;
+        return WebCore::WebGLLoadPolicy::WebGLPendingCreation;
     }
     
     ASSERT_NOT_REACHED();
-    return WebCore::WebGLAllowCreation;
+    return WebCore::WebGLLoadPolicy::WebGLAllowCreation;
 }
 
 inline WKWebGLLoadPolicy toAPI(WebCore::WebGLLoadPolicy webGLLoadPolicy)
 {
     switch (webGLLoadPolicy) {
-    case WebCore::WebGLAllowCreation:
+    case WebCore::WebGLLoadPolicy::WebGLAllowCreation:
         return kWKWebGLLoadPolicyLoadNormally;
-    case WebCore::WebGLBlockCreation:
+    case WebCore::WebGLLoadPolicy::WebGLBlockCreation:
         return kWKWebGLLoadPolicyBlocked;
-    case WebCore::WebGLPendingCreation:
+    case WebCore::WebGLLoadPolicy::WebGLPendingCreation:
         return kWKWebGLLoadPolicyPending;
     }
 

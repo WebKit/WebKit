@@ -27,6 +27,7 @@
 
 #include "TextGranularity.h"
 #include "VisiblePosition.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class Position;
 struct SimpleRange;
 
 const EAffinity SEL_DEFAULT_AFFINITY = DOWNSTREAM;
-enum SelectionDirection : uint8_t { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft };
+enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 
 class VisibleSelection {
 public:
@@ -117,7 +118,7 @@ public:
     void setWithoutValidation(const Position&, const Position&);
 
 private:
-    void validate(TextGranularity = CharacterGranularity);
+    void validate(TextGranularity = TextGranularity::CharacterGranularity);
 
     // Support methods for validate()
     void setBaseAndExtentToDeepEquivalents();
@@ -164,3 +165,17 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisibleSelect
 void showTree(const WebCore::VisibleSelection&);
 void showTree(const WebCore::VisibleSelection*);
 #endif
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::SelectionDirection> {
+    using values = EnumValues<
+        WebCore::SelectionDirection,
+        WebCore::SelectionDirection::Forward,
+        WebCore::SelectionDirection::Backward,
+        WebCore::SelectionDirection::Right,
+        WebCore::SelectionDirection::Left
+    >;
+};
+
+} // namespace WTF

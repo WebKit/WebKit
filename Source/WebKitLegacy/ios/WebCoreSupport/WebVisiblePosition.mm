@@ -205,27 +205,27 @@ static inline TextGranularity toTextGranularity(WebTextGranularity webGranularit
     
     switch (webGranularity) {
         case WebTextGranularityCharacter:
-            granularity = CharacterGranularity;
+            granularity = TextGranularity::CharacterGranularity;
             break;
 
         case WebTextGranularityWord:
-            granularity = WordGranularity;
+            granularity = TextGranularity::WordGranularity;
             break;
 
         case WebTextGranularitySentence:
-            granularity = SentenceGranularity;
+            granularity = TextGranularity::SentenceGranularity;
             break;
 
         case WebTextGranularityLine:
-            granularity = LineGranularity;
+            granularity = TextGranularity::LineGranularity;
             break;
 
         case WebTextGranularityParagraph:
-            granularity = ParagraphGranularity;
+            granularity = TextGranularity::ParagraphGranularity;
             break;
 
         case WebTextGranularityAll:
-            granularity = DocumentGranularity;
+            granularity = TextGranularity::DocumentGranularity;
             break;
 
         default:
@@ -242,27 +242,27 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     
     switch (direction) {
         case WebTextAdjustmentForward:
-            result = DirectionForward;
+            result = SelectionDirection::Forward;
             break;
             
         case WebTextAdjustmentBackward:
-            result = DirectionBackward;
+            result = SelectionDirection::Backward;
             break;
             
         case WebTextAdjustmentRight:
-            result = DirectionRight;
+            result = SelectionDirection::Right;
             break;
             
         case WebTextAdjustmentLeft:
-            result = DirectionLeft;
+            result = SelectionDirection::Left;
             break;
         
         case WebTextAdjustmentUp:
-            result = DirectionLeft;
+            result = SelectionDirection::Left;
             break;
         
         case WebTextAdjustmentDown:
-            result = DirectionRight;
+            result = SelectionDirection::Right;
             break;
     }
 

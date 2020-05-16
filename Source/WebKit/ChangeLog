@@ -1,5 +1,87 @@
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
+        Use enum serialization instead of casting to/from uint32_t
+        https://bugs.webkit.org/show_bug.cgi?id=211885
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/webkit/messages.py:
+        * Shared/DocumentEditingContext.h:
+        * Shared/ios/GestureTypes.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWebGLLoadPolicy):
+        (WebKit::toAPI):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::toWebCoreWebGLLoadPolicy):
+        (WebKit::NavigationState::NavigationClient::webGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::resolveWebGLLoadPolicy const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::webGLPolicyForURL):
+        (WebKit::WebPageProxy::resolveWebGLPolicyForURL):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectForWebView:]):
+        (toUIWKSelectionFlags):
+        (toSelectionFlags):
+        (toWKTextGranularity):
+        (toWKSelectionDirection):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:withFlags:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:withFlags:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView selectWordForReplacement]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::gestureCallback):
+        (WebKit::WebPageProxy::touchesCallback):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+        (WebKit::WebPageProxy::extendSelection):
+        (WebKit::WebPageProxy::requestRectsForGranularityWithSelectionOffset):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange rangeByExpandingToWordBoundaryByCharacters:inDirection:]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::webGLPolicyForURL const):
+        (WebKit::WebFrameLoaderClient::resolveWebGLPolicyForURL const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+        (WebKit::WebPage::getSelectionContext):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::rangeAtWordBoundaryForPosition):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::selectWithTwoTouches):
+        (WebKit::WebPage::extendSelection):
+        (WebKit::WebPage::selectWordBackward):
+        (WebKit::WebPage::moveSelectionByOffset):
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPage::rangeForGranularityAtPoint):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::beginSelectionInDirection):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::requestDictationContext):
+        (WebKit::WebPage::applyAutocorrectionInternal):
+        (WebKit::WebPage::autocorrectionContext):
+        (WebKit::dataDetectorLinkPositionInformation):
+        (WebKit::moveByGranularityRespectingWordBoundary):
+        (WebKit::WebPage::requestDocumentEditingContext):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
         [iOS Simulator] TestWebKitAPI._WKDownload.Resume is a flaky crash
         https://bugs.webkit.org/show_bug.cgi?id=211786
 

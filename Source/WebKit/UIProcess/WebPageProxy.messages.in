@@ -34,8 +34,8 @@ messages -> WebPageProxy {
     UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(WEBGL)
-    WebGLPolicyForURL(URL url) -> (uint32_t loadPolicy) Synchronous
-    ResolveWebGLPolicyForURL(URL url) -> (uint32_t loadPolicy) Synchronous
+    WebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
+    ResolveWebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
 #endif // ENABLE(WEBGL)
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
@@ -177,8 +177,8 @@ messages -> WebPageProxy {
 #endif
     FontAttributesCallback(struct WebCore::FontAttributes attributes, WebKit::CallbackID callbackID)
 #if PLATFORM(IOS_FAMILY)
-    GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackID callbackID)
-    TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint32_t flags, WebKit::CallbackID callbackID)
+    GestureCallback(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackID callbackID)
+    TouchesCallback(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackID callbackID)
     SelectionContextCallback(String selectedText, String beforeText, String afterText, WebKit::CallbackID callbackID)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)

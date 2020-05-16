@@ -542,7 +542,7 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
     if (selection.isRange())
         m_selectionInitiationState = ExtendedSelection;
     else {
-        granularity = CharacterGranularity;
+        granularity = TextGranularity::CharacterGranularity;
         m_selectionInitiationState = PlacedCaret;
     }
 
@@ -560,13 +560,13 @@ void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& resul
         VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
         if (pos.isNotNull()) {
             newSelection = VisibleSelection(pos);
-            newSelection.expandUsingGranularity(WordGranularity);
+            newSelection.expandUsingGranularity(TextGranularity::WordGranularity);
         }
 
         if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
             newSelection.appendTrailingWhitespace();
 
-        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), TextGranularity::WordGranularity);
     }
 }
 
@@ -601,14 +601,14 @@ void EventHandler::selectClosestContextualWordFromMouseEvent(const MouseEventWit
             VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
             if (pos.isNotNull()) {
                 newSelection = VisibleSelection(pos);
-                newSelection.expandUsingGranularity(WordGranularity);
+                newSelection.expandUsingGranularity(TextGranularity::WordGranularity);
             }
         }
         
         if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
             newSelection.appendTrailingWhitespace();
         
-        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), TextGranularity::WordGranularity);
     }
 }
     
@@ -632,7 +632,7 @@ void EventHandler::selectClosestContextualWordOrLinkFromMouseEvent(const MouseEv
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(*urlElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(urlElement);
 
-        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), TextGranularity::WordGranularity);
     }
 }
 
@@ -667,10 +667,10 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
     VisiblePosition pos(targetNode->renderer()->positionForPoint(event.localPoint(), nullptr));
     if (pos.isNotNull()) {
         newSelection = VisibleSelection(pos);
-        newSelection.expandUsingGranularity(ParagraphGranularity);
+        newSelection.expandUsingGranularity(TextGranularity::ParagraphGranularity);
     }
 
-    return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), ParagraphGranularity);
+    return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectSelectOnMouseDown(*targetNode, newSelection), TextGranularity::ParagraphGranularity);
 }
 
 static uint64_t textDistance(const Position& start, const Position& end)
@@ -710,7 +710,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     Position pos = visiblePosition.deepEquivalent();
 
     VisibleSelection newSelection = m_frame.selection().selection();
-    TextGranularity granularity = CharacterGranularity;
+    TextGranularity granularity = TextGranularity::CharacterGranularity;
 
     if (!m_frame.editor().client()->shouldAllowSingleClickToChangeSelection(*targetNode, newSelection))
         return true;
@@ -738,7 +738,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         } else
             newSelection.setExtent(pos);
 
-        if (m_frame.selection().granularity() != CharacterGranularity) {
+        if (m_frame.selection().granularity() != TextGranularity::CharacterGranularity) {
             granularity = m_frame.selection().granularity();
             newSelection.expandUsingGranularity(m_frame.selection().granularity());
         }
@@ -1056,7 +1056,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     newSelection.setExtent(targetPosition);
 #endif
 
-    if (m_frame.selection().granularity() != CharacterGranularity)
+    if (m_frame.selection().granularity() != TextGranularity::CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame.selection().granularity());
 
     m_frame.selection().setSelectionByMouseIfDifferent(newSelection, m_frame.selection().granularity(),
@@ -3516,15 +3516,15 @@ static void setInitialKeyboardSelection(Frame& frame, SelectionDirection directi
     VisiblePosition visiblePosition;
 
     switch (direction) {
-    case DirectionBackward:
-    case DirectionLeft:
+    case SelectionDirection::Backward:
+    case SelectionDirection::Left:
         if (focusedElement)
             visiblePosition = VisiblePosition(positionBeforeNode(focusedElement));
         else
             visiblePosition = endOfDocument(document);
         break;
-    case DirectionForward:
-    case DirectionRight:
+    case SelectionDirection::Forward:
+    case SelectionDirection::Right:
         if (focusedElement)
             visiblePosition = VisiblePosition(positionAfterNode(focusedElement));
         else
@@ -3545,8 +3545,8 @@ static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent& event)
     bool isSelection = !selection.isNone();
 
     FrameSelection::EAlteration alternation = event.getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
-    SelectionDirection direction = DirectionForward;
-    TextGranularity granularity = CharacterGranularity;
+    SelectionDirection direction = SelectionDirection::Forward;
+    TextGranularity granularity = TextGranularity::CharacterGranularity;
 
     switch (focusDirectionForKey(event.keyIdentifier())) {
     case FocusDirectionNone:
@@ -3556,20 +3556,20 @@ static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent& event)
         ASSERT_NOT_REACHED();
         return;
     case FocusDirectionUp:
-        direction = DirectionBackward;
-        granularity = isCommanded ? DocumentBoundary : LineGranularity;
+        direction = SelectionDirection::Backward;
+        granularity = isCommanded ? TextGranularity::DocumentBoundary : TextGranularity::LineGranularity;
         break;
     case FocusDirectionDown:
-        direction = DirectionForward;
-        granularity = isCommanded ? DocumentBoundary : LineGranularity;
+        direction = SelectionDirection::Forward;
+        granularity = isCommanded ? TextGranularity::DocumentBoundary : TextGranularity::LineGranularity;
         break;
     case FocusDirectionLeft:
-        direction = DirectionLeft;
-        granularity = (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity;
+        direction = SelectionDirection::Left;
+        granularity = (isCommanded) ? TextGranularity::LineBoundary : (isOptioned) ? TextGranularity::WordGranularity : TextGranularity::CharacterGranularity;
         break;
     case FocusDirectionRight:
-        direction = DirectionRight;
-        granularity = (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity;
+        direction = SelectionDirection::Right;
+        granularity = (isCommanded) ? TextGranularity::LineBoundary : (isOptioned) ? TextGranularity::WordGranularity : TextGranularity::CharacterGranularity;
         break;
     }
 

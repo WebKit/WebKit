@@ -1,3 +1,21 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use enum serialization instead of casting to/from uint32_t
+        https://bugs.webkit.org/show_bug.cgi?id=211885
+
+        Reviewed by Geoffrey Garen.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMRange move:inDirection:]):
+        (-[DOMRange extend:inDirection:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::webGLPolicyForURL const):
+        (WebFrameLoaderClient::resolveWebGLPolicyForURL const):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _canSmartCopyOrDelete]):
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController doCompletion]):
+
 2020-05-14  Chris Dumez  <cdumez@apple.com>
 
         Regression(r254856) Family Health iOS app is broken due to lack for WebSQL support

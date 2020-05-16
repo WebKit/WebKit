@@ -125,7 +125,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
         return rangeForSelection(selection);
 
     VisibleSelection selectionAccountingForLineRules { position };
-    selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
+    selectionAccountingForLineRules.expandUsingGranularity(TextGranularity::WordGranularity);
     position = selectionAccountingForLineRules.start();
 
     // As context, we are going to use 250 characters of text before and after the point.

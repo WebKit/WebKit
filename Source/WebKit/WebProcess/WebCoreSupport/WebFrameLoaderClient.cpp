@@ -1619,7 +1619,7 @@ WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL& url)
     if (auto* webPage = m_frame->page())
         return webPage->webGLPolicyForURL(m_frame.ptr(), url);
 
-    return WebGLAllowCreation;
+    return WebGLLoadPolicy::WebGLAllowCreation;
 }
 
 WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL& url) const
@@ -1627,7 +1627,7 @@ WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const UR
     if (auto* webPage = m_frame->page())
         return webPage->resolveWebGLPolicyForURL(m_frame.ptr(), url);
 
-    return WebGLAllowCreation;
+    return WebGLLoadPolicy::WebGLAllowCreation;
 }
 
 #endif

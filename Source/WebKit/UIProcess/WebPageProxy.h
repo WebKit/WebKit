@@ -223,8 +223,6 @@ class SharedBuffer;
 class TextIndicator;
 class ValidationBubble;
 
-enum SelectionDirection : uint8_t;
-
 enum class AutoplayEvent : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class LockBackForwardList : bool;
@@ -232,6 +230,7 @@ enum class HasInsecureContent : bool;
 enum class MouseEventPolicy : uint8_t;
 enum class NotificationDirection : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
+enum class SelectionDirection : uint8_t;
 enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class WritingDirection : uint8_t;
@@ -244,6 +243,7 @@ struct ContentRuleListResults;
 struct DataListSuggestionInformation;
 struct DictionaryPopupInfo;
 struct DragItem;
+struct ElementContext;
 struct ExceptionDetails;
 struct FileChooserSettings;
 struct GlobalWindowIdentifier;
@@ -278,10 +278,6 @@ typedef struct OpaqueJSContext* JSGlobalContextRef;
 #if PLATFORM(WIN)
 typedef HWND PlatformViewWidget;
 #endif
-
-namespace WebCore {
-struct ElementContext;
-}
 
 namespace WebKit {
 class AudioSessionRoutingArbitratorProxy;
@@ -405,8 +401,8 @@ typedef GenericCallback<const FontInfo&, double, bool> FontAtSelectionCallback;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t> GestureCallback;
-typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t> TouchesCallback;
+typedef GenericCallback<const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>> GestureCallback;
+typedef GenericCallback<const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>> TouchesCallback;
 typedef GenericCallback<const Vector<WebCore::SelectionRect>&> SelectionRectsCallback;
 typedef GenericCallback<const FocusedElementInformation&> FocusedElementInformationCallback;
 #endif
@@ -756,9 +752,9 @@ public:
     void setOverrideViewportArguments(const Optional<WebCore::ViewportArguments>&);
     void willCommitLayerTree(TransactionID);
 
-    void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, WTF::Function<void(const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&&);
-    void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, WTF::Function<void (const WebCore::IntPoint&, uint32_t, uint32_t, CallbackBase::Error)>&&);
-    void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WTF::Function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&&);
+    void selectWithGesture(const WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, WTF::Function<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackBase::Error)>&&);
+    void updateSelectionWithTouches(const WebCore::IntPoint, SelectionTouch, bool baseIsStart, Function<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>, CallbackBase::Error)>&&);
+    void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType, GestureRecognizerState, Function<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackBase::Error)>&&);
     void extendSelection(WebCore::TextGranularity);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&&);
@@ -2097,8 +2093,8 @@ private:
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
-    void gestureCallback(const WebCore::IntPoint&, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID);
-    void touchesCallback(const WebCore::IntPoint&, uint32_t touches, uint32_t flags, CallbackID);
+    void gestureCallback(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackID);
+    void touchesCallback(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>, CallbackID);
     void selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);

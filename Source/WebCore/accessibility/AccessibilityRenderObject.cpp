@@ -2012,7 +2012,7 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // will be a caret at visiblePos.
     FrameSelection selection;
     selection.setSelection(VisibleSelection(visiblePos));
-    selection.modify(FrameSelection::AlterationExtend, DirectionRight, LineBoundary);
+    selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::LineBoundary);
     
     return VisiblePositionRange(selection.selection().visibleStart(), selection.selection().visibleEnd());
 }

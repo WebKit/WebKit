@@ -246,35 +246,35 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
 
     SelectionDirection direction;
     if (equalLettersIgnoringASCIICase(directionString, "forward"))
-        direction = DirectionForward;
+        direction = SelectionDirection::Forward;
     else if (equalLettersIgnoringASCIICase(directionString, "backward"))
-        direction = DirectionBackward;
+        direction = SelectionDirection::Backward;
     else if (equalLettersIgnoringASCIICase(directionString, "left"))
-        direction = DirectionLeft;
+        direction = SelectionDirection::Left;
     else if (equalLettersIgnoringASCIICase(directionString, "right"))
-        direction = DirectionRight;
+        direction = SelectionDirection::Right;
     else
         return;
 
     TextGranularity granularity;
     if (equalLettersIgnoringASCIICase(granularityString, "character"))
-        granularity = CharacterGranularity;
+        granularity = TextGranularity::CharacterGranularity;
     else if (equalLettersIgnoringASCIICase(granularityString, "word"))
-        granularity = WordGranularity;
+        granularity = TextGranularity::WordGranularity;
     else if (equalLettersIgnoringASCIICase(granularityString, "sentence"))
-        granularity = SentenceGranularity;
+        granularity = TextGranularity::SentenceGranularity;
     else if (equalLettersIgnoringASCIICase(granularityString, "line"))
-        granularity = LineGranularity;
+        granularity = TextGranularity::LineGranularity;
     else if (equalLettersIgnoringASCIICase(granularityString, "paragraph"))
-        granularity = ParagraphGranularity;
+        granularity = TextGranularity::ParagraphGranularity;
     else if (equalLettersIgnoringASCIICase(granularityString, "lineboundary"))
-        granularity = LineBoundary;
+        granularity = TextGranularity::LineBoundary;
     else if (equalLettersIgnoringASCIICase(granularityString, "sentenceboundary"))
-        granularity = SentenceBoundary;
+        granularity = TextGranularity::SentenceBoundary;
     else if (equalLettersIgnoringASCIICase(granularityString, "paragraphboundary"))
-        granularity = ParagraphBoundary;
+        granularity = TextGranularity::ParagraphBoundary;
     else if (equalLettersIgnoringASCIICase(granularityString, "documentboundary"))
-        granularity = DocumentBoundary;
+        granularity = TextGranularity::DocumentBoundary;
     else
         return;
 

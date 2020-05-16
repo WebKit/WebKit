@@ -579,7 +579,7 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (position.isNull())
         return false;
 
-    RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward);
+    RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
     if (!wordRange)
         return false;
 

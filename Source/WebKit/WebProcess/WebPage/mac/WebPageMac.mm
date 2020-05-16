@@ -65,6 +65,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsContextGLOpenGL.h>
@@ -773,24 +774,18 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
 }
 
 #if ENABLE(WEBGL)
-WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame* frame, const URL& url)
+WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL& url)
 {
-    uint32_t policyResult = 0;
-
-    if (sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url), Messages::WebPageProxy::WebGLPolicyForURL::Reply(policyResult)))
-        return static_cast<WebGLLoadPolicy>(policyResult);
-
-    return WebGLAllowCreation;
+    WebGLLoadPolicy policyResult = WebGLLoadPolicy::WebGLAllowCreation;
+    sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url), Messages::WebPageProxy::WebGLPolicyForURL::Reply(policyResult));
+    return policyResult;
 }
 
-WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame* frame, const URL& url)
+WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL& url)
 {
-    uint32_t policyResult = 0;
-
-    if (sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url), Messages::WebPageProxy::ResolveWebGLPolicyForURL::Reply(policyResult)))
-        return static_cast<WebGLLoadPolicy>(policyResult);
-
-    return WebGLAllowCreation;
+    WebGLLoadPolicy policyResult = WebGLLoadPolicy::WebGLAllowCreation;
+    sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url), Messages::WebPageProxy::ResolveWebGLPolicyForURL::Reply(policyResult));
+    return policyResult;
 }
 #endif // ENABLE(WEBGL)
 

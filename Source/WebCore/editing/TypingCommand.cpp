@@ -101,16 +101,16 @@ static inline EditAction editActionForTypingCommand(TypingCommand::ETypingComman
     case TypingCommand::DeleteSelection:
         return EditAction::TypingDeleteSelection;
     case TypingCommand::DeleteKey: {
-        if (granularity == WordGranularity)
+        if (granularity == TextGranularity::WordGranularity)
             return EditAction::TypingDeleteWordBackward;
-        if (granularity == LineBoundary)
+        if (granularity == TextGranularity::LineBoundary)
             return EditAction::TypingDeleteLineBackward;
         return EditAction::TypingDeleteBackward;
     }
     case TypingCommand::ForwardDeleteKey:
-        if (granularity == WordGranularity)
+        if (granularity == TextGranularity::WordGranularity)
             return EditAction::TypingDeleteWordForward;
-        if (granularity == LineBoundary)
+        if (granularity == TextGranularity::LineBoundary)
             return EditAction::TypingDeleteLineForward;
         return EditAction::TypingDeleteForward;
     case TypingCommand::InsertText:
@@ -179,7 +179,7 @@ void TypingCommand::deleteSelection(Document& document, Options options, TextCom
 
 void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGranularity granularity)
 {
-    if (granularity == CharacterGranularity) {
+    if (granularity == TextGranularity::CharacterGranularity) {
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document);
             lastTypingCommand->setIsAutocompletion(options & IsAutocompletion);
@@ -196,7 +196,7 @@ void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGr
 void TypingCommand::forwardDeleteKeyPressed(Document& document, Options options, TextGranularity granularity)
 {
     // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
-    if (granularity == CharacterGranularity) {
+    if (granularity == TextGranularity::CharacterGranularity) {
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document);
             lastTypingCommand->setIsAutocompletion(options & IsAutocompletion);
@@ -530,7 +530,7 @@ void TypingCommand::insertTextAndNotifyAccessibility(const String &text, bool se
 
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
-    if (!willAddTypingToOpenCommand(InsertText, CharacterGranularity, text))
+    if (!willAddTypingToOpenCommand(InsertText, TextGranularity::CharacterGranularity, text))
         return;
 
     auto command = InsertTextCommand::create(document(), text, selectInsertedText,
@@ -545,7 +545,7 @@ void TypingCommand::insertLineBreak()
     if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
-    if (!willAddTypingToOpenCommand(InsertLineBreak, LineGranularity))
+    if (!willAddTypingToOpenCommand(InsertLineBreak, TextGranularity::LineGranularity))
         return;
 
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
@@ -565,7 +565,7 @@ void TypingCommand::insertParagraphSeparator()
     if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
-    if (!willAddTypingToOpenCommand(InsertParagraphSeparator, ParagraphGranularity))
+    if (!willAddTypingToOpenCommand(InsertParagraphSeparator, TextGranularity::ParagraphGranularity))
         return;
 
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditAction::TypingInsertParagraph));
@@ -582,7 +582,7 @@ void TypingCommand::insertParagraphSeparatorAndNotifyAccessibility()
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent()
 {
-    if (!willAddTypingToOpenCommand(InsertParagraphSeparatorInQuotedContent, ParagraphGranularity))
+    if (!willAddTypingToOpenCommand(InsertParagraphSeparatorInQuotedContent, TextGranularity::ParagraphGranularity))
         return;
 
     // If the selection starts inside a table, just insert the paragraph separator normally
@@ -650,9 +650,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
         FrameSelection selection;
         selection.setSelection(endingSelection());
-        selection.modify(FrameSelection::AlterationExtend, DirectionBackward, granularity);
-        if (shouldAddToKillRing && selection.isCaret() && granularity != CharacterGranularity)
-            selection.modify(FrameSelection::AlterationExtend, DirectionBackward, CharacterGranularity);
+        selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, granularity);
+        if (shouldAddToKillRing && selection.isCaret() && granularity != TextGranularity::CharacterGranularity)
+            selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::CharacterGranularity);
 
         const VisiblePosition& visibleStart = endingSelection().visibleStart();
         const VisiblePosition& previousPosition = visibleStart.previous(CannotCrossEditingBoundary);
@@ -687,7 +687,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
             if (isLastPositionBeforeTable(visibleStart))
                 return;
             // Extend the selection backward into the last cell, then deletion will handle the move.
-            selection.modify(FrameSelection::AlterationExtend, DirectionBackward, granularity);
+            selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
             setEndingSelection(VisibleSelection(positionBeforeNode(table), endingSelection().start(), DOWNSTREAM, endingSelection().isDirectional()));
@@ -697,7 +697,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
         selectionToDelete = selection.selection();
 
-        if (granularity == CharacterGranularity && selectionToDelete.end().containerNode() == selectionToDelete.start().containerNode()
+        if (granularity == TextGranularity::CharacterGranularity && selectionToDelete.end().containerNode() == selectionToDelete.start().containerNode()
             && selectionToDelete.end().computeOffsetInContainerNode() - selectionToDelete.start().computeOffsetInContainerNode() > 1) {
             // If there are multiple Unicode code points to be deleted, adjust the range to match platform conventions.
             selectionToDelete.setWithoutValidation(selectionToDelete.end(), selectionToDelete.end().previous(BackwardDeletion));
@@ -773,11 +773,11 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         // root editable element or at the start of a document.
         FrameSelection selection;
         selection.setSelection(endingSelection());
-        selection.modify(FrameSelection::AlterationExtend, DirectionForward, granularity);
+        selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, granularity);
         if (selection.isNone())
             return;
-        if (shouldAddToKillRing && selection.isCaret() && granularity != CharacterGranularity)
-            selection.modify(FrameSelection::AlterationExtend, DirectionForward, CharacterGranularity);
+        if (shouldAddToKillRing && selection.isCaret() && granularity != TextGranularity::CharacterGranularity)
+            selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
 
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
@@ -795,8 +795,8 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         }
 
         // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
-        if (granularity == ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
-            selection.modify(FrameSelection::AlterationExtend, DirectionForward, CharacterGranularity);
+        if (granularity == TextGranularity::ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
+            selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
 
         selectionToDelete = selection.selection();
         if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
@@ -856,7 +856,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
 
 void TypingCommand::deleteSelection(bool smartDelete)
 {
-    if (!willAddTypingToOpenCommand(DeleteSelection, CharacterGranularity))
+    if (!willAddTypingToOpenCommand(DeleteSelection, TextGranularity::CharacterGranularity))
         return;
 
     CompositeEditCommand::deleteSelection(smartDelete);

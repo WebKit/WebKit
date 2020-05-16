@@ -178,7 +178,7 @@ using namespace WebCore;
         WebFrame *frame = [_htmlView _frame];
         DOMRange *selection = kit(createLiveRange(core(frame)->selection().selection().toNormalizedRange()).get());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::AlterationExtend
-            direction:DirectionBackward granularity:WordGranularity];
+            direction:SelectionDirection::Backward granularity:TextGranularity::WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
 

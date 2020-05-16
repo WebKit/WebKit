@@ -345,12 +345,12 @@ AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 
 void AccessibilityUIElement::increaseTextSelection()
 {
-    [m_element accessibilityModifySelection:WebCore::CharacterGranularity increase:YES];
+    [m_element accessibilityModifySelection:WebCore::TextGranularity::CharacterGranularity increase:YES];
 }
 
 void AccessibilityUIElement::decreaseTextSelection()
 {
-    [m_element accessibilityModifySelection:WebCore::CharacterGranularity increase:NO];    
+    [m_element accessibilityModifySelection:WebCore::TextGranularity::CharacterGranularity increase:NO];    
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()

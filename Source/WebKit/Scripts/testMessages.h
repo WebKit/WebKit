@@ -28,6 +28,9 @@
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
+#if PLATFORM(IOS_FAMILY)
+#include "GestureTypes.h"
+#endif
 #include "MessageNames.h"
 #include "Plugin.h"
 #include "WebPageMessagesReplies.h"
@@ -37,6 +40,7 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -452,13 +456,13 @@ private:
 #if PLATFORM(MAC)
 class DidCreateWebProcessConnection {
 public:
-    typedef std::tuple<const IPC::MachPort&> Arguments;
+    typedef std::tuple<const IPC::MachPort&, const OptionSet<WebKit::SelectionFlags>&> Arguments;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_DidCreateWebProcessConnection; }
     static const bool isSync = false;
 
-    explicit DidCreateWebProcessConnection(const IPC::MachPort& connectionIdentifier)
-        : m_arguments(connectionIdentifier)
+    DidCreateWebProcessConnection(const IPC::MachPort& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
+        : m_arguments(connectionIdentifier, flags)
     {
     }
 

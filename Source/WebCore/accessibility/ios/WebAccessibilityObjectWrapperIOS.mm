@@ -2010,7 +2010,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (frameSelection.isNone() && (selection.visibleStart() < range.start || selection.visibleEnd() > range.end))
         frameSelection.moveTo(range.start, UserTriggered);
     
-    frameSelection.modify(FrameSelection::AlterationExtend, (increase) ? DirectionRight : DirectionLeft, granularity, UserTriggered);
+    frameSelection.modify(FrameSelection::AlterationExtend, (increase) ? SelectionDirection::Right : SelectionDirection::Left, granularity, UserTriggered);
 }
 
 - (void)accessibilityIncreaseSelection:(TextGranularity)granularity

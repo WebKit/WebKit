@@ -195,10 +195,12 @@ class VisiblePosition;
 enum SyntheticClickType : int8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class DragHandlingMethod : uint8_t;
+enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
+enum class TextGranularity : uint8_t;
 enum class WritingDirection : uint8_t;
 
 struct AttributedString;
@@ -685,19 +687,19 @@ public:
 
     void blurFocusedElement();
     void requestFocusedElementInformation(CallbackID);
-    void selectWithGesture(const WebCore::IntPoint&, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, CallbackID);
-    void updateSelectionWithTouches(const WebCore::IntPoint&, uint32_t touches, bool baseIsStart, CallbackID);
-    void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, CallbackID);
-    void extendSelection(uint32_t granularity);
+    void selectWithGesture(const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CallbackID);
+    void updateSelectionWithTouches(const WebCore::IntPoint&, SelectionTouch, bool baseIsStart, CallbackID);
+    void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType, GestureRecognizerState, CallbackID);
+    void extendSelection(WebCore::TextGranularity);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&&);
-    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
-    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
-    void moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, CompletionHandler<void()>&&);
+    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
+    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, WebCore::TextGranularity, WebCore::SelectionDirection, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
+    void moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity, WebCore::SelectionDirection, CompletionHandler<void()>&&);
     void selectPositionAtPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
-    void beginSelectionInDirection(uint32_t direction, CallbackID);
+    void beginSelectionInDirection(WebCore::SelectionDirection, CallbackID);
     void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CallbackID);
-    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement, CallbackID);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CallbackID);
 
     void requestDictationContext(CallbackID);
     void replaceDictatedText(const String& oldText, const String& newText);
@@ -722,7 +724,7 @@ public:
     void getSelectionContext(CallbackID);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
     void handleStylusSingleTapAtPoint(const WebCore::IntPoint&, uint64_t requestID);
-    void getRectsForGranularityWithSelectionOffset(uint32_t, int32_t, CallbackID);
+    void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CallbackID);
     void getRectsAtSelectionOffsetWithText(int32_t, const String&, CallbackID);
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint&);
@@ -1365,7 +1367,7 @@ private:
     void completeSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::SyntheticClickType, WebCore::PointerID = WebCore::mousePointerID);
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
-    RefPtr<WebCore::Range> rangeForGranularityAtPoint(WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement);
+    RefPtr<WebCore::Range> rangeForGranularityAtPoint(WebCore::Frame&, const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement);
     void setFocusedFrameBeforeSelectingTextAtLocation(const WebCore::IntPoint&);
     void dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch, const WebCore::IntPoint&);
 

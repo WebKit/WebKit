@@ -271,10 +271,10 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
     }
 
     switch (granularity) {
-        case CharacterGranularity:
+        case TextGranularity::CharacterGranularity:
             // Don't do any expansion.
             break;
-        case WordGranularity: {
+        case TextGranularity::WordGranularity: {
             // General case: Select the word the caret is positioned inside of, or at the start of (RightWordIfOnBoundary).
             // Edge case: If the caret is after the last word in a soft-wrapped line or the last word in
             // the document, select that last word (LeftWordIfOnBoundary).
@@ -289,7 +289,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             side = RightWordIfOnBoundary;
             if (isEndOfEditableOrNonEditableContent(originalEnd) || (isEndOfLine(originalEnd) && !isStartOfLine(originalEnd) && !isEndOfParagraph(originalEnd)))
                 side = LeftWordIfOnBoundary;
-                
+
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
             VisiblePosition end(wordEnd);
             
@@ -321,12 +321,12 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             }
             break;
         }
-        case SentenceGranularity: {
+        case TextGranularity::SentenceGranularity: {
             m_start = startOfSentence(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfSentence(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
         }
-        case LineGranularity: {
+        case TextGranularity::LineGranularity: {
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             VisiblePosition end = endOfLine(VisiblePosition(m_end, m_affinity));
             // If the end of this line is at the end of a paragraph, include the space 
@@ -339,11 +339,11 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             m_end = end.deepEquivalent();
             break;
         }
-        case LineBoundary:
+        case TextGranularity::LineBoundary:
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfLine(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        case ParagraphGranularity: {
+        case TextGranularity::ParagraphGranularity: {
             VisiblePosition pos(m_start, m_affinity);
             if (isStartOfLine(pos) && isEndOfEditableOrNonEditableContent(pos))
                 pos = pos.previous();
@@ -353,7 +353,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             // Include the "paragraph break" (the space from the end of this paragraph to the start
             // of the next one) in the selection.
             VisiblePosition end(visibleParagraphEnd.next());
-             
+
             if (Node* table = isFirstPositionAfterTable(end)) {
                 // The paragraph break after the last paragraph in the last cell of a block table ends
                 // at the start of the paragraph after the table, not at the position just after the table.
@@ -363,26 +363,26 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
                 else
                     end = visibleParagraphEnd;
             }
-             
+
             if (end.isNull())
                 end = visibleParagraphEnd;
-                
+
             m_end = end.deepEquivalent();
             break;
         }
-        case DocumentBoundary:
+        case TextGranularity::DocumentBoundary:
             m_start = startOfDocument(m_start.document()).deepEquivalent();
             m_end = endOfDocument(m_end.document()).deepEquivalent();
             break;
-        case ParagraphBoundary:
+        case TextGranularity::ParagraphBoundary:
             m_start = startOfParagraph(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfParagraph(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        case SentenceBoundary:
+        case TextGranularity::SentenceBoundary:
             m_start = startOfSentence(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfSentence(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        case DocumentGranularity:
+        case TextGranularity::DocumentGranularity:
             ASSERT_NOT_REACHED();
             break;
     }

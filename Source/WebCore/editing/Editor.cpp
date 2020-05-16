@@ -528,7 +528,7 @@ bool Editor::shouldSmartDelete()
 {
     if (behavior().shouldAlwaysSmartDelete())
         return true;
-    return m_document.selection().granularity() == WordGranularity;
+    return m_document.selection().granularity() == TextGranularity::WordGranularity;
 }
 
 bool Editor::smartInsertDeleteEnabled()
@@ -568,12 +568,12 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
         if (shouldAddToKillRing)
             options |= TypingCommand::AddsToKillRing;
         switch (direction) {
-        case DirectionForward:
-        case DirectionRight:
+        case SelectionDirection::Forward:
+        case SelectionDirection::Right:
             TypingCommand::forwardDeleteKeyPressed(document(), options, granularity);
             break;
-        case DirectionBackward:
-        case DirectionLeft:
+        case SelectionDirection::Backward:
+        case SelectionDirection::Left:
             TypingCommand::deleteKeyPressed(document(), options, granularity);
             break;
         }
@@ -2331,7 +2331,7 @@ String Editor::misspelledWordAtCaretOrRange(Node* clickedNode) const
         return String();
 
     VisibleSelection wordSelection(selection.base());
-    wordSelection.expandUsingGranularity(WordGranularity);
+    wordSelection.expandUsingGranularity(TextGranularity::WordGranularity);
     auto wordRange = wordSelection.toNormalizedRange();
     if (!wordRange)
         return String();
@@ -2402,7 +2402,7 @@ Vector<String> Editor::guessesForMisspelledOrUngrammatical(bool& misspelled, boo
         VisibleSelection selection = m_document.selection().selection();
         if (selection.isCaret() && behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
             VisibleSelection wordSelection = VisibleSelection(selection.base());
-            wordSelection.expandUsingGranularity(WordGranularity);
+            wordSelection.expandUsingGranularity(TextGranularity::WordGranularity);
             range = wordSelection.toNormalizedRange();
         } else
             range = selection.toNormalizedRange();
@@ -2593,7 +2593,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 
         // Reset the charet one character further.
         m_document.selection().moveTo(m_document.selection().selection().end());
-        m_document.selection().modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
+        m_document.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
     }
 
     if (!isGrammarCheckingEnabled())
@@ -2919,11 +2919,11 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
             auto selectionRange = extendedParagraph.subrange({ 0, selectionOffset });
             m_document.selection().moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
-                m_document.selection().modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
+                m_document.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_document.selection().moveTo(m_document.selection().selection().end());
-            m_document.selection().modify(FrameSelection::AlterationMove, DirectionForward, CharacterGranularity);
+            m_document.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
         }
     }
 }
@@ -4215,7 +4215,7 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
     } else
         insertText(acceptedCandidate.replacement, nullptr);
 
-    RefPtr<Range> insertedCandidateRange = rangeExpandedByCharactersInDirectionAtWordBoundary(selection.visibleStart(), acceptedCandidate.replacement.length(), DirectionBackward);
+    RefPtr<Range> insertedCandidateRange = rangeExpandedByCharactersInDirectionAtWordBoundary(selection.visibleStart(), acceptedCandidate.replacement.length(), SelectionDirection::Backward);
     if (insertedCandidateRange)
         insertedCandidateRange->startContainer().document().markers().addMarker(*insertedCandidateRange, DocumentMarker::AcceptedCandidate, acceptedCandidate.replacement);
 

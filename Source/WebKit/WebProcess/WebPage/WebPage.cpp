@@ -1049,12 +1049,12 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
 #if ENABLE(WEBGL) && !PLATFORM(MAC)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL&)
 {
-    return WebGLAllowCreation;
+    return WebGLLoadPolicy::WebGLAllowCreation;
 }
 
 WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL&)
 {
-    return WebGLAllowCreation;
+    return WebGLLoadPolicy::WebGLAllowCreation;
 }
 #endif
 

@@ -152,7 +152,7 @@ public:
     void moveWithoutValidationTo(const Position&, const Position&, bool selectionHasDirection, bool shouldSetFocus, SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
 
     const VisibleSelection& selection() const { return m_selection; }
-    WEBCORE_EXPORT void setSelection(const VisibleSelection&, OptionSet<SetSelectionOption> = defaultSetSelectionOptions(), AXTextStateChangeIntent = AXTextStateChangeIntent(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
+    WEBCORE_EXPORT void setSelection(const VisibleSelection&, OptionSet<SetSelectionOption> = defaultSetSelectionOptions(), AXTextStateChangeIntent = AXTextStateChangeIntent(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = TextGranularity::CharacterGranularity);
 
     enum class ShouldCloseTyping : bool { No, Yes };
     WEBCORE_EXPORT bool setSelectedRange(Range*, EAffinity, ShouldCloseTyping, EUserTriggered = NotUserTriggered);

@@ -82,15 +82,15 @@ using WebCore::VisiblePosition;
     WebCore::FrameSelection frameSelection;
     frameSelection.moveTo(range);
     
-    WebCore::TextGranularity granularity = WebCore::CharacterGranularity;
+    WebCore::TextGranularity granularity = WebCore::TextGranularity::CharacterGranularity;
     // Until WebKit supports vertical layout, "down" is equivalent to "forward by a line" and
     // "up" is equivalent to "backward by a line".
     if (direction == WebTextAdjustmentDown) {
         direction = WebTextAdjustmentForward;
-        granularity = WebCore::LineGranularity;
+        granularity = WebCore::TextGranularity::LineGranularity;
     } else if (direction == WebTextAdjustmentUp) {
         direction = WebTextAdjustmentBackward;
-        granularity = WebCore::LineGranularity;
+        granularity = WebCore::TextGranularity::LineGranularity;
     }
     
     for (UInt32 i = 0; i < amount; i++)
@@ -111,7 +111,7 @@ using WebCore::VisiblePosition;
     frameSelection.moveTo(range);
     
     for (UInt32 i = 0; i < amount; i++)
-        frameSelection.modify(WebCore::FrameSelection::AlterationExtend, (WebCore::SelectionDirection)direction, WebCore::CharacterGranularity);
+        frameSelection.modify(WebCore::FrameSelection::AlterationExtend, (WebCore::SelectionDirection)direction, WebCore::TextGranularity::CharacterGranularity);
     
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();

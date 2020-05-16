@@ -378,7 +378,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             if (frame->editor().behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
                 ASSERT(selection.isCaretOrRange());
                 VisibleSelection wordSelection(selection.base());
-                wordSelection.expandUsingGranularity(WordGranularity);
+                wordSelection.expandUsingGranularity(TextGranularity::WordGranularity);
                 frame->selection().setSelection(wordSelection);
             } else {
                 ASSERT(frame->editor().selectedText().length());

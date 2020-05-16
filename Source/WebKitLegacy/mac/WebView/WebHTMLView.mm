@@ -5732,7 +5732,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (![[self _webView] smartInsertDeleteEnabled])
         return NO;
     auto* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selection().granularity() == WebCore::WordGranularity;
+    return coreFrame && coreFrame->selection().granularity() == WebCore::TextGranularity::WordGranularity;
 }
 
 #if PLATFORM(MAC)

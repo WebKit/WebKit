@@ -614,7 +614,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             // NSTextView behavior is to always smart delete on moving a selection,
             // but only to smart insert if the selection granularity is word granularity.
             bool smartDelete = editor.smartInsertDeleteEnabled();
-            bool smartInsert = smartDelete && innerFrame->selection().granularity() == WordGranularity && dragData.canSmartReplace();
+            bool smartInsert = smartDelete && innerFrame->selection().granularity() == TextGranularity::WordGranularity && dragData.canSmartReplace();
             MoveSelectionCommand::create(fragment.releaseNonNull(), dragCaret.base(), smartInsert, smartDelete)->apply();
         } else {
             if (setSelectionToDragCaret(innerFrame.get(), dragCaret, point)) {

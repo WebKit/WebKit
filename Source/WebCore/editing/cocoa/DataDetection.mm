@@ -147,7 +147,7 @@ Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTes
         if (position.isNull())
             return { };
 
-        contextRange = enclosingTextUnitOfGranularity(position, LineGranularity, DirectionForward);
+        contextRange = enclosingTextUnitOfGranularity(position, TextGranularity::LineGranularity, SelectionDirection::Forward);
     }
 
     if (!contextRange)

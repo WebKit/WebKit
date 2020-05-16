@@ -3515,7 +3515,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 {
     [_textInteractionAssistant selectWord];
     // We cannot use selectWord command, because we want to be able to select the word even when it is the last in the paragraph.
-    _page->extendSelection(WebCore::WordGranularity);
+    _page->extendSelection(WebCore::TextGranularity::WordGranularity);
 }
 
 - (void)selectAllForWebView:(id)sender
@@ -3823,32 +3823,42 @@ static inline UIGestureRecognizerState toUIGestureRecognizerState(WebKit::Gestur
     }
 }
 
-static inline UIWKSelectionFlags toUIWKSelectionFlags(WebKit::SelectionFlags flags)
+static inline UIWKSelectionFlags toUIWKSelectionFlags(OptionSet<WebKit::SelectionFlags> flags)
 {
     NSInteger uiFlags = UIWKNone;
-    if (flags & WebKit::WordIsNearTap)
+    if (flags.contains(WebKit::WordIsNearTap))
         uiFlags |= UIWKWordIsNearTap;
-    if (flags & WebKit::PhraseBoundaryChanged)
+    if (flags.contains(WebKit::PhraseBoundaryChanged))
         uiFlags |= UIWKPhraseBoundaryChanged;
 
     return static_cast<UIWKSelectionFlags>(uiFlags);
+}
+
+static inline OptionSet<WebKit::SelectionFlags> toSelectionFlags(UIWKSelectionFlags uiFlags)
+{
+    OptionSet<WebKit::SelectionFlags> flags;
+    if (uiFlags & UIWKWordIsNearTap)
+        flags.add(WebKit::WordIsNearTap);
+    if (uiFlags & UIWKPhraseBoundaryChanged)
+        flags.add(WebKit::PhraseBoundaryChanged);
+    return flags;
 }
 
 static inline WebCore::TextGranularity toWKTextGranularity(UITextGranularity granularity)
 {
     switch (granularity) {
     case UITextGranularityCharacter:
-        return WebCore::CharacterGranularity;
+        return WebCore::TextGranularity::CharacterGranularity;
     case UITextGranularityWord:
-        return WebCore::WordGranularity;
+        return WebCore::TextGranularity::WordGranularity;
     case UITextGranularitySentence:
-        return WebCore::SentenceGranularity;
+        return WebCore::TextGranularity::SentenceGranularity;
     case UITextGranularityParagraph:
-        return WebCore::ParagraphGranularity;
+        return WebCore::TextGranularity::ParagraphGranularity;
     case UITextGranularityLine:
-        return WebCore::LineGranularity;
+        return WebCore::TextGranularity::LineGranularity;
     case UITextGranularityDocument:
-        return WebCore::DocumentGranularity;
+        return WebCore::TextGranularity::DocumentGranularity;
     }
 }
 
@@ -3857,29 +3867,29 @@ static inline WebCore::SelectionDirection toWKSelectionDirection(UITextDirection
     switch (direction) {
     case UITextLayoutDirectionDown:
     case UITextLayoutDirectionRight:
-        return WebCore::DirectionRight;
+        return WebCore::SelectionDirection::Right;
     case UITextLayoutDirectionUp:
     case UITextLayoutDirectionLeft:
-        return WebCore::DirectionLeft;
+        return WebCore::SelectionDirection::Left;
     default:
         // UITextDirection is not an enum, but we only want to accept values from UITextLayoutDirection.
         ASSERT_NOT_REACHED();
-        return WebCore::DirectionRight;
+        return WebCore::SelectionDirection::Right;
     }
 }
 
-static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackBase::Error error)
+static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackBase::Error error)
 {
     if (error != WebKit::CallbackBase::Error::None)
         return;
-    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType((WebKit::GestureType)gestureType) withState:toUIGestureRecognizerState(static_cast<WebKit::GestureRecognizerState>(gestureState)) withFlags:(toUIWKSelectionFlags((WebKit::SelectionFlags)flags))];
+    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType(gestureType) withState:toUIGestureRecognizerState(gestureState) withFlags:toUIWKSelectionFlags(flags)];
 }
 
-static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, uint32_t touch, uint32_t flags, WebKit::CallbackBase::Error error)
+static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackBase::Error error)
 {
     if (error != WebKit::CallbackBase::Error::None)
         return;
-    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WebKit::SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
+    [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WebKit::SelectionTouch)touch) withFlags:toUIWKSelectionFlags(flags)];
 }
 
 - (BOOL)_hasFocusedElement
@@ -3895,8 +3905,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
-    _page->selectWithGesture(WebCore::IntPoint(point), WebCore::CharacterGranularity, static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(state)), self._hasFocusedElement, [self, state, flags](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
-        selectionChangedWithGesture(self, point, gestureType, gestureState, flags | innerFlags, error);
+    _page->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags, WebKit::CallbackBase::Error error) {
+        selectionChangedWithGesture(self, point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags, error);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     });
@@ -3905,9 +3915,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), baseIsStart, [self, flags](const WebCore::IntPoint& point, uint32_t touch, uint32_t innerFlags, WebKit::CallbackBase::Error error) {
-        selectionChangedWithTouch(self, point, touch, flags | innerFlags, error);
-        if (touch != UIWKSelectionTouchStarted && touch != UIWKSelectionTouchMoved)
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), toSelectionTouch(touch), baseIsStart, [self, strongSelf = retainPtr(self), flags](const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> innerFlags, WebKit::CallbackBase::Error error) {
+        selectionChangedWithTouch(self, point, touch, toSelectionFlags(flags) | innerFlags, error);
+        if (toUIWKSelectionTouch(touch) != UIWKSelectionTouchStarted && toUIWKSelectionTouch(touch) != UIWKSelectionTouchMoved)
             _usingGestureForSelection = NO;
     });
 }
@@ -3915,9 +3925,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
     _usingGestureForSelection = YES;
-    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), static_cast<uint32_t>(toGestureType(gestureType)), static_cast<uint32_t>(toGestureRecognizerState(gestureState)), [self](const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackBase::Error error) {
+    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toGestureType(gestureType), toGestureRecognizerState(gestureState), [self, strongSelf = retainPtr(self)](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackBase::Error error) {
         selectionChangedWithGesture(self, point, gestureType, gestureState, flags, error);
-        if (gestureState == UIGestureRecognizerStateEnded || gestureState == UIGestureRecognizerStateCancelled)
+        if (toUIGestureRecognizerState(gestureState) == UIGestureRecognizerStateEnded || toUIGestureRecognizerState(gestureState) == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     });
 }
@@ -6509,7 +6519,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)selectWordForReplacement
 {
-    _page->extendSelection(WebCore::WordGranularity);
+    _page->extendSelection(WebCore::TextGranularity::WordGranularity);
 }
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)

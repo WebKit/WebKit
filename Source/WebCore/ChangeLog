@@ -1,3 +1,163 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use enum serialization instead of casting to/from uint32_t
+        https://bugs.webkit.org/show_bug.cgi?id=211885
+        <rdar://problem/60106629> and <rdar://problem/60107663>
+
+        Reviewed by Geoffrey Garen.
+
+        This doesn't change anything except make stricter checks at IPC boundaries.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine const):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityModifySelection:increase:]):
+        * editing/EditingBehavior.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::shouldSmartDelete):
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::misspelledWordAtCaretOrRange const):
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::handleAcceptedCandidate):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDeleteBackward):
+        (WebCore::executeDeleteBackwardByDecomposingPreviousCharacter):
+        (WebCore::executeDeleteForward):
+        (WebCore::executeDeleteToBeginningOfLine):
+        (WebCore::executeDeleteToBeginningOfParagraph):
+        (WebCore::executeDeleteToEndOfLine):
+        (WebCore::executeDeleteToEndOfParagraph):
+        (WebCore::executeDeleteWordBackward):
+        (WebCore::executeDeleteWordForward):
+        (WebCore::executeForwardDelete):
+        (WebCore::executeMoveBackward):
+        (WebCore::executeMoveBackwardAndModifySelection):
+        (WebCore::executeMoveDown):
+        (WebCore::executeMoveDownAndModifySelection):
+        (WebCore::executeMoveForward):
+        (WebCore::executeMoveForwardAndModifySelection):
+        (WebCore::executeMoveLeft):
+        (WebCore::executeMoveLeftAndModifySelection):
+        (WebCore::executeMoveRight):
+        (WebCore::executeMoveRightAndModifySelection):
+        (WebCore::executeMoveToBeginningOfDocument):
+        (WebCore::executeMoveToBeginningOfDocumentAndModifySelection):
+        (WebCore::executeMoveToBeginningOfLine):
+        (WebCore::executeMoveToBeginningOfLineAndModifySelection):
+        (WebCore::executeMoveToBeginningOfParagraph):
+        (WebCore::executeMoveToBeginningOfParagraphAndModifySelection):
+        (WebCore::executeMoveToBeginningOfSentence):
+        (WebCore::executeMoveToBeginningOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfDocument):
+        (WebCore::executeMoveToEndOfDocumentAndModifySelection):
+        (WebCore::executeMoveToEndOfSentence):
+        (WebCore::executeMoveToEndOfSentenceAndModifySelection):
+        (WebCore::executeMoveToEndOfLine):
+        (WebCore::executeMoveToEndOfLineAndModifySelection):
+        (WebCore::executeMoveToEndOfParagraph):
+        (WebCore::executeMoveToEndOfParagraphAndModifySelection):
+        (WebCore::executeMoveParagraphBackwardAndModifySelection):
+        (WebCore::executeMoveParagraphForwardAndModifySelection):
+        (WebCore::executeMoveUp):
+        (WebCore::executeMoveUpAndModifySelection):
+        (WebCore::executeMoveWordBackward):
+        (WebCore::executeMoveWordBackwardAndModifySelection):
+        (WebCore::executeMoveWordForward):
+        (WebCore::executeMoveWordForwardAndModifySelection):
+        (WebCore::executeMoveWordLeft):
+        (WebCore::executeMoveWordLeftAndModifySelection):
+        (WebCore::executeMoveWordRight):
+        (WebCore::executeMoveWordRightAndModifySelection):
+        (WebCore::executeMoveToLeftEndOfLine):
+        (WebCore::executeMoveToLeftEndOfLineAndModifySelection):
+        (WebCore::executeMoveToRightEndOfLine):
+        (WebCore::executeMoveToRightEndOfLineAndModifySelection):
+        (WebCore::executeSelectLine):
+        (WebCore::executeSelectParagraph):
+        (WebCore::executeSelectSentence):
+        (WebCore::executeSelectWord):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::willBeModified):
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingForward):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modifyMovingBackward):
+        (WebCore::isBoundary):
+        (WebCore::FrameSelection::textSelectionIntent):
+        (WebCore::textSelectionWithDirectionAndGranularity):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::clear):
+        (WebCore::FrameSelection::willBeRemovedFromFrame):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::wordSelectionContainingCaretSelection):
+        (WebCore::FrameSelection::rangeByAlteringCurrentSelection const):
+        * editing/FrameSelection.h:
+        * editing/TextGranularity.h:
+        (): Deleted.
+        * editing/TypingCommand.cpp:
+        (WebCore::editActionForTypingCommand):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::deleteSelection):
+        * editing/TypingCommand.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        * editing/VisibleSelection.h:
+        * editing/VisibleUnits.cpp:
+        (WebCore::directionIsDownstream):
+        (WebCore::atBoundaryOfGranularity):
+        (WebCore::withinTextUnitOfGranularity):
+        (WebCore::nextWordBoundaryInDirection):
+        (WebCore::nextSentenceBoundaryInDirection):
+        (WebCore::nextParagraphBoundaryInDirection):
+        (WebCore::positionOfNextBoundaryOfGranularity):
+        (WebCore::enclosingTextUnitOfGranularity):
+        (WebCore::charactersAroundPosition):
+        (WebCore::wordRangeFromPosition):
+        (WebCore::closestWordBoundaryForPosition):
+        (WebCore::rangeExpandedByCharactersInDirectionAtWordBoundary):
+        (WebCore::wordBoundaryForPositionWithoutCrossingLine):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectItemAroundHitTestResult):
+        * editing/cocoa/DictionaryLookup.mm:
+        * editing/mac/DictionaryLookupLegacy.mm:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::webGLPolicyForURL const):
+        (WebCore::FrameLoaderClient::resolveWebGLPolicyForURL const):
+        (): Deleted.
+        * loader/FrameLoaderTypes.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart):
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult):
+        (WebCore::EventHandler::selectClosestContextualWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestContextualWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::setInitialKeyboardSelection):
+        (WebCore::handleKeyboardSelectionMovement):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isOverTextInsideFormControlElement const):
+
 2020-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         Rename the mapLocalToContainer() container argument, since it's not just used for repaint

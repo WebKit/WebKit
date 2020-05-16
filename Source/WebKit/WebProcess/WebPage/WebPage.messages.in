@@ -63,19 +63,19 @@ messages -> WebPage LegacyReceiver {
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
     InspectorNodeSearchEndedAtPosition(WebCore::FloatPoint point)
     BlurFocusedElement()
-    SelectWithGesture(WebCore::IntPoint point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
-    UpdateSelectionWithTouches(WebCore::IntPoint point, uint32_t touches, bool baseIsStart, WebKit::CallbackID callbackID)
-    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WebKit::CallbackID callbackID)
-    ExtendSelection(uint32_t granularity)
+    SelectWithGesture(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    UpdateSelectionWithTouches(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, bool baseIsStart, WebKit::CallbackID callbackID)
+    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, WebKit::CallbackID callbackID)
+    ExtendSelection(enum:uint8_t WebCore::TextGranularity granularity)
     SelectWordBackward()
     MoveSelectionByOffset(int32_t offset) -> () Async
-    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement) -> () Async
-    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement) -> () Async
-    MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction) -> () Async
+    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement) -> () Async
+    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, enum:uint8_t WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement) -> () Async
+    MoveSelectionAtBoundaryWithDirection(enum:uint8_t WebCore::TextGranularity granularity, enum:uint8_t WebCore::SelectionDirection direction) -> () Async
     SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement) -> () Async
-    BeginSelectionInDirection(uint32_t direction, WebKit::CallbackID callbackID)
+    BeginSelectionInDirection(enum:uint8_t WebCore::SelectionDirection direction, WebKit::CallbackID callbackID)
     UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor, WebKit::CallbackID callbackID)
-    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
     RequestDictationContext(WebKit::CallbackID callbackID)
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
@@ -107,7 +107,7 @@ messages -> WebPage LegacyReceiver {
     HandleTwoFingerTapAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t requestID)
     HandleStylusSingleTapAtPoint(WebCore::IntPoint point, uint64_t requestID)
     SetForceAlwaysUserScalable(bool userScalable)
-    GetRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, WebKit::CallbackID callbackID)
+    GetRectsForGranularityWithSelectionOffset(enum:uint8_t WebCore::TextGranularity granularity, int32_t offset, WebKit::CallbackID callbackID)
     GetRectsAtSelectionOffsetWithText(int32_t offset, String text, WebKit::CallbackID callbackID)
     StoreSelectionForAccessibility(bool shouldStore)
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)

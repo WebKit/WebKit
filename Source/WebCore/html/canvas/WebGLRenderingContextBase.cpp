@@ -652,14 +652,14 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         bool forcingPendingPolicy = frame->settings().isForcePendingWebGLPolicy();
 
         if (forcingPendingPolicy || (page && !topDocument.url().isLocalFile())) {
-            WebGLLoadPolicy policy = forcingPendingPolicy ? WebGLPendingCreation : page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
+            WebGLLoadPolicy policy = forcingPendingPolicy ? WebGLLoadPolicy::WebGLPendingCreation : page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
 
-            if (policy == WebGLBlockCreation) {
+            if (policy == WebGLLoadPolicy::WebGLBlockCreation) {
                 LOG(WebGL, "The policy for this URL (%s) is to block WebGL.", topDocument.url().host().utf8().data());
                 return nullptr;
             }
 
-            if (policy == WebGLPendingCreation) {
+            if (policy == WebGLLoadPolicy::WebGLPendingCreation) {
                 LOG(WebGL, "WebGL policy is pending. May need to be resolved later.");
                 isPendingPolicyResolution = true;
             }

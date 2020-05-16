@@ -2112,12 +2112,12 @@ static bool shouldBlockWebGL()
 
 WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL&) const
 {
-    return shouldBlockWebGL() ? WebCore::WebGLBlockCreation : WebCore::WebGLAllowCreation;
+    return shouldBlockWebGL() ? WebCore::WebGLLoadPolicy::WebGLBlockCreation : WebCore::WebGLLoadPolicy::WebGLAllowCreation;
 }
 
 WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL&) const
 {
-    return shouldBlockWebGL() ? WebCore::WebGLBlockCreation : WebCore::WebGLAllowCreation;
+    return shouldBlockWebGL() ? WebCore::WebGLLoadPolicy::WebGLBlockCreation : WebCore::WebGLLoadPolicy::WebGLAllowCreation;
 }
 #endif // ENABLE(WEBGL)
 

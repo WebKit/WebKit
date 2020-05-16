@@ -1,3 +1,17 @@
+2020-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use enum serialization instead of casting to/from uint32_t
+        https://bugs.webkit.org/show_bug.cgi?id=211885
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::increaseTextSelection):
+        (AccessibilityUIElement::decreaseTextSelection):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::increaseTextSelection):
+        (WTR::AccessibilityUIElement::decreaseTextSelection):
+
 2020-05-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS EWS] TestWebKitAPI.WKWebsiteDataStore.RemoveAndFetchData is failing

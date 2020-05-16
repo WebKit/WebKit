@@ -52,7 +52,7 @@ struct DocumentEditingContextRequest {
 
     OptionSet<Options> options;
 
-    WebCore::TextGranularity surroundingGranularity { WebCore::CharacterGranularity };
+    WebCore::TextGranularity surroundingGranularity { WebCore::TextGranularity::CharacterGranularity };
     int64_t granularityCount { 0 };
 
     WebCore::FloatRect rect;

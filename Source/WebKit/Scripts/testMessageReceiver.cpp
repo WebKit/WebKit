@@ -34,6 +34,9 @@
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
 #include "DummyType.h"
 #endif
+#if PLATFORM(MAC)
+#include "GestureTypes.h"
+#endif
 #include "HandleMessage.h"
 #if PLATFORM(MAC)
 #include "MachPort.h"
@@ -52,6 +55,9 @@
 #include <WebCore/PluginData.h>
 #include <utility>
 #include <wtf/HashMap.h>
+#if PLATFORM(MAC)
+#include <wtf/OptionSet.h>
+#endif
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
