@@ -213,7 +213,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
         RefPtr<HTMLElement> listNode = enclosingList(listChildNode);
         if (!listNode) {
             RefPtr<HTMLElement> listElement = fixOrphanedListChild(*listChildNode);
-            if (!listElement)
+            if (!listElement || !listElement->isConnected())
                 return;
 
             listNode = mergeWithNeighboringLists(*listElement);

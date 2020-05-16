@@ -1,3 +1,19 @@
+2020-05-15  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in WebCore::Node::treeScope() when processing nested list insertion commands.
+        https://bugs.webkit.org/show_bug.cgi?id=211964
+        <rdar://problem/63224871>
+
+        Reviewed by Geoffrey Garen.
+
+        Load event may fire in fixOrphanedListChild() and change the node tree. In doApplyForSingleParagraph check for 
+        disconnected node returned by fixOrphanedListChild() and bail out.
+
+        Test: editing/inserting/nested-list-insertion-crash.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Use enum serialization instead of casting to/from uint32_t
