@@ -64,33 +64,6 @@ Optional<WebCore::AttributedString> ArgumentCoder<WebCore::AttributedString>::de
 
 #if ENABLE(APPLE_PAY)
 
-static bool finishDecoding(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest& request)
-{
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
-    Optional<WebCore::PaymentInstallmentConfiguration> installmentConfiguration;
-    decoder >> installmentConfiguration;
-    if (!installmentConfiguration)
-        return false;
-
-    request.setInstallmentConfiguration(WTFMove(*installmentConfiguration));
-    return true;
-#else
-    UNUSED_PARAM(decoder);
-    UNUSED_PARAM(request);
-    return true;
-#endif
-}
-
-static void finishEncoding(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest& request)
-{
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
-    encoder << request.installmentConfiguration();
-#else
-    UNUSED_PARAM(encoder);
-    UNUSED_PARAM(request);
-#endif
-}
-
 #if HAVE(PASSKIT_INSTALLMENTS)
 
 void ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::encode(Encoder& encoder, const WebCore::PaymentInstallmentConfiguration& configuration)
@@ -244,7 +217,9 @@ void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, cons
     encoder << request.applicationData();
     encoder << request.supportedCountries();
     encoder.encodeEnum(request.requester());
-    finishEncoding(encoder, request);
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    encoder << request.installmentConfiguration();
+#endif
 }
 
 bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, ApplePaySessionPaymentRequest& request)
@@ -326,9 +301,15 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
     if (!decoder.decodeEnum(requester))
         return false;
     request.setRequester(requester);
-
-    if (!finishDecoding(decoder, request))
+    
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    Optional<WebCore::PaymentInstallmentConfiguration> installmentConfiguration;
+    decoder >> installmentConfiguration;
+    if (!installmentConfiguration)
         return false;
+
+    request.setInstallmentConfiguration(WTFMove(*installmentConfiguration));
+#endif
 
     return true;
 }

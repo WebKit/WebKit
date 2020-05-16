@@ -42,6 +42,7 @@ public:
     PaymentInstallmentConfiguration(RetainPtr<PKPaymentInstallmentConfiguration>&&);
 
     PKPaymentInstallmentConfiguration *platformConfiguration() const;
+    ApplePayInstallmentConfiguration applePayInstallmentConfiguration() const;
 
 private:
     RetainPtr<PKPaymentInstallmentConfiguration> m_configuration;

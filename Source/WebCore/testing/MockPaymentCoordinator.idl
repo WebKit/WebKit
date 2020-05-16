@@ -43,4 +43,6 @@
     readonly attribute MockPaymentContactFields requiredShippingContactFields;
 
     attribute boolean supportsUnrestrictedApplePay;
+
+    [Conditional=APPLE_PAY_INSTALLMENTS] readonly attribute ApplePayInstallmentConfiguration installmentConfiguration;
 };

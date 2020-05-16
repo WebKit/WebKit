@@ -28,5 +28,4 @@
 ] dictionary ApplePayRequest : ApplePayRequestBase {
     required unsigned long version;
     required DOMString merchantIdentifier;
-    [Conditional=APPLE_PAY_INSTALLMENTS] ApplePayInstallmentConfiguration installmentConfiguration;
 };

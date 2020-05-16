@@ -1,3 +1,14 @@
+2020-05-16  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r260717): installmentConfiguration member is no longer available on ApplePayPaymentRequest
+        https://bugs.webkit.org/show_bug.cgi?id=211911
+        <rdar://problem/63236367>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html: Added.
+
 2020-05-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Ignore table padding when borders are collapsed

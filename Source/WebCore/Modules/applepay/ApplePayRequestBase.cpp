@@ -33,17 +33,6 @@
 
 namespace WebCore {
 
-static void finishConverting(ApplePaySessionPaymentRequest& result, ApplePayRequestBase& request)
-{
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
-    if (request.installmentConfiguration)
-        result.setInstallmentConfiguration(WTFMove(*request.installmentConfiguration));
-#else
-    UNUSED_PARAM(result);
-    UNUSED_PARAM(request);
-#endif
-}
-
 static bool requiresSupportedNetworks(unsigned version, const ApplePayRequestBase& request)
 {
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -116,7 +105,10 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     if (version >= 3)
         result.setSupportedCountries(WTFMove(request.supportedCountries));
 
-    finishConverting(result, request);
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    if (request.installmentConfiguration)
+        result.setInstallmentConfiguration(WTFMove(*request.installmentConfiguration));
+#endif
 
     return WTFMove(result);
 }

@@ -41,6 +41,15 @@ static NSDecimalNumber *toDecimalNumber(const String& amount)
     return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
+static String fromDecimalNumber(NSDecimalNumber *number)
+{
+    auto numberFormatter = adoptNS([[NSNumberFormatter alloc] init]);
+    numberFormatter.numberStyle = NSNumberFormatterNoStyle;
+    numberFormatter.minimumIntegerDigits = 1;
+    numberFormatter.minimumFractionDigits = 2;
+    return [numberFormatter stringFromNumber:number];
+}
+
 static PKPaymentSetupFeatureType platformFeatureType(const ApplePaySetupFeatureType& featureType)
 {
     switch (featureType) {
@@ -50,6 +59,18 @@ static PKPaymentSetupFeatureType platformFeatureType(const ApplePaySetupFeatureT
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return PKPaymentSetupFeatureTypeApplePay_X;
         ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+}
+
+static ApplePaySetupFeatureType applePaySetupFeatureType(PKPaymentSetupFeatureType featureType)
+{
+    switch (featureType) {
+    case PKPaymentSetupFeatureTypeApplePay:
+        return ApplePaySetupFeatureType::ApplePay;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    case PKPaymentSetupFeatureTypeApplePay_X:
+    ALLOW_DEPRECATED_DECLARATIONS_END
+        return ApplePaySetupFeatureType::AppleCard;
     }
 }
 
@@ -92,6 +113,31 @@ PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(RetainPtr<PKPay
 PKPaymentInstallmentConfiguration *PaymentInstallmentConfiguration::platformConfiguration() const
 {
     return m_configuration.get();
+}
+
+ApplePayInstallmentConfiguration PaymentInstallmentConfiguration::applePayInstallmentConfiguration() const
+{
+    ApplePayInstallmentConfiguration installmentConfiguration;
+
+    installmentConfiguration.featureType = applePaySetupFeatureType([m_configuration feature]);
+
+    installmentConfiguration.bindingTotalAmount = fromDecimalNumber([m_configuration bindingTotalAmount]);
+    installmentConfiguration.currencyCode = [m_configuration currencyCode];
+    installmentConfiguration.isInStorePurchase = [m_configuration isInStorePurchase];
+    installmentConfiguration.openToBuyThresholdAmount = fromDecimalNumber([m_configuration openToBuyThresholdAmount]);
+
+    installmentConfiguration.merchandisingImageData = [[m_configuration merchandisingImageData] base64EncodedStringWithOptions:0];
+
+#if HAVE(PASSKIT_INSTALLMENT_IDENTIFIERS)
+#if PLATFORM(MAC)
+    if (![m_configuration respondsToSelector:@selector(installmentMerchantIdentifier)] || ![m_configuration respondsToSelector:@selector(referrerIdentifier)])
+        return installmentConfiguration;
+#endif
+    installmentConfiguration.merchantIdentifier = [m_configuration installmentMerchantIdentifier];
+    installmentConfiguration.referrerIdentifier = [m_configuration referrerIdentifier];
+#endif
+    
+    return installmentConfiguration;
 }
 
 } // namespace WebCore
