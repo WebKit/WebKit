@@ -1,3 +1,17 @@
+2020-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take vertical spacing into account when setting the height of a cell with rowspan
+        https://bugs.webkit.org/show_bug.cgi?id=211976
+
+        Reviewed by Antti Koivisto.
+
+        When a cell spans over multiple rows, the height of the cell includes the vertical spacing between those spanned rows as well.
+
+        Test: fast/layoutformattingcontext/table-simple-rowspan-with-spacing.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+
 2020-05-15  Antti Koivisto  <antti@apple.com>
 
         Nullptr crash in MediaQueryMatcher::evaluateAll

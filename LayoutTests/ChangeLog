@@ -1,3 +1,13 @@
+2020-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take vertical spacing into account when setting the height of a cell with rowspan
+        https://bugs.webkit.org/show_bug.cgi?id=211976
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-rowspan-with-spacing-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-rowspan-with-spacing.html: Added.
+
 2020-05-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make OutOfMemory error as instance of RangeError

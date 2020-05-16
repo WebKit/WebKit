@@ -76,6 +76,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         auto availableVerticalSpace = rowList[cell->startRow()].logicalHeight();
         for (size_t rowIndex = cell->startRow() + 1; rowIndex < cell->endRow(); ++rowIndex)
             availableVerticalSpace += rowList[rowIndex].logicalHeight();
+        availableVerticalSpace += (cell->rowSpan() - 1) * grid.verticalSpacing();
         layoutCell(*cell, availableHorizontalSpace, availableVerticalSpace);
         
         // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to 
