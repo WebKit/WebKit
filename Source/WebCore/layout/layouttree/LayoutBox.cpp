@@ -374,11 +374,16 @@ bool Box::isOverflowVisible() const
 
 bool Box::isPaddingApplicable() const
 {
-    // 8.4 Padding properties:
-    // Applies to: all elements except table-row-group, table-header-group, table-footer-group, table-row, table-column-group and table-column
     if (isAnonymous())
         return false;
 
+    if (isTableBox() && style().borderCollapse() == BorderCollapse::Collapse) {
+        // When the table collapses its borders with inner table elements, there's no room for padding.
+        return false;
+    }
+
+    // 8.4 Padding properties:
+    // Applies to: all elements except table-row-group, table-header-group, table-footer-group, table-row, table-column-group and table-column
     return !isTableHeader()
         && !isTableBody()
         && !isTableFooter()

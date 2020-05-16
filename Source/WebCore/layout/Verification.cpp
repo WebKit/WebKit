@@ -257,6 +257,13 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         displayBox.moveBy(tableWrapperDisplayBox.topLeft());
     }
 
+    if (is<RenderTableRow>(renderer) || is<RenderTableSection>(renderer)) {
+        // Table rows and tbody have 0 width for some reason when border collapsing is on.
+        if (is<RenderTableRow>(renderer) && downcast<RenderTableRow>(renderer).table()->collapseBorders())
+            return false;
+        if (downcast<RenderTableSection>(renderer).table()->collapseBorders())
+            return false;
+    }
     if (!areEssentiallyEqual(frameRect, displayBox.rect())) {
         outputRect("frameBox", renderer.frameRect(), displayBox.rect());
         return true;
@@ -272,8 +279,13 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return true;
     }
 
-    // FIXME: Figure out why trunk/rendering comes back with odd values for <tbody> and <td> content box.
-    auto shouldCheckContentBox = !is<RenderTableCell>(renderer) && !is<RenderTableSection>(renderer);
+    auto shouldCheckContentBox = [&] {
+        // FIXME: Figure out why trunk/rendering comes back with odd values for <tbody> and <td> content box.
+        if (is<RenderTableCell>(renderer) || is<RenderTableSection>(renderer))
+            return false;
+        // Tables have 0 content box size for some reason when border collapsing is on.
+        return !is<RenderTable>(renderer) || !downcast<RenderTable>(renderer).collapseBorders();
+    }();
     if (shouldCheckContentBox && !areEssentiallyEqual(renderer.contentBoxRect(), displayBox.contentBox())) {
         outputRect("contentBox", renderer.contentBoxRect(), displayBox.contentBox());
         return true;

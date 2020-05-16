@@ -1,3 +1,13 @@
+2020-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Ignore table padding when borders are collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=211984
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-border-collapse-with-padding-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-border-collapse-with-padding.html: Added.
+
 2020-05-16  Daniel Bates  <dabates@apple.com>
 
         Make editing/spelling/editing-word-with-marker-2.html test what it claims and make it work on iOS
