@@ -157,20 +157,26 @@ JSGlobalObject* getFunctionRealm(VM& vm, JSObject* object)
 {
     ASSERT(object->isCallable(vm));
 
-    if (object->inherits<JSBoundFunction>(vm))
-        return getFunctionRealm(vm, jsCast<JSBoundFunction*>(object)->targetFunction());
+    while (true) {
+        if (object->inherits<JSBoundFunction>(vm)) {
+            object = jsCast<JSBoundFunction*>(object)->targetFunction();
+            continue;
+        }
 
-    if (object->type() == ProxyObjectType) {
-        auto* proxy = jsCast<ProxyObject*>(object);
-        // Per step 4.a, a TypeError should be thrown for revoked Proxy, yet we skip it since:
-        // a) It is barely observable anyway: "prototype" lookup in createSubclassStructure() will throw for revoked Proxy.
-        // b) Throwing getFunctionRealm() will restrict calling it inline as an argument of createSubclassStructure().
-        // c) There is ongoing discussion on removing it: https://github.com/tc39/ecma262/issues/1798.
-        if (!proxy->isRevoked())
-            return getFunctionRealm(vm, proxy->target());
+        if (object->type() == ProxyObjectType) {
+            auto* proxy = jsCast<ProxyObject*>(object);
+            // Per step 4.a, a TypeError should be thrown for revoked Proxy, yet we skip it since:
+            // a) It is barely observable anyway: "prototype" lookup in createSubclassStructure() will throw for revoked Proxy.
+            // b) Throwing getFunctionRealm() will restrict calling it inline as an argument of createSubclassStructure().
+            // c) There is ongoing discussion on removing it: https://github.com/tc39/ecma262/issues/1798.
+            if (!proxy->isRevoked()) {
+                object = proxy->target();
+                continue;
+            }
+        }
+
+        return object->globalObject(vm);
     }
-
-    return object->globalObject(vm);
 }
 
 
