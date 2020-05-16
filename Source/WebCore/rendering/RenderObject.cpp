@@ -1236,9 +1236,9 @@ FloatQuad RenderObject::absoluteToLocalQuad(const FloatQuad& quad, MapCoordinate
     return transformState.lastPlanarQuad();
 }
 
-void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
-    if (repaintContainer == this)
+    if (ancestorContainer == this)
         return;
 
     auto* parent = this->parent();
@@ -1256,7 +1256,7 @@ void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     if (is<RenderBox>(*parent))
         transformState.move(-toLayoutSize(downcast<RenderBox>(*parent).scrollPosition()));
 
-    parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    parent->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -1322,21 +1322,21 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
 #endif
 }
 
-FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, const RenderLayerModelObject* repaintContainer, MapCoordinatesFlags mode, bool* wasFixed) const
+FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, const RenderLayerModelObject* container, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     // Track the point at the center of the quad's bounding box. As mapLocalToContainer() calls offsetFromContainer(),
     // it will use that point as the reference point to decide which column's transform to apply in multiple-column blocks.
     TransformState transformState(TransformState::ApplyTransformDirection, localQuad.boundingBox().center(), localQuad);
-    mapLocalToContainer(repaintContainer, transformState, mode | ApplyContainerFlip, wasFixed);
+    mapLocalToContainer(container, transformState, mode | ApplyContainerFlip, wasFixed);
     transformState.flatten();
     
     return transformState.lastPlanarQuad();
 }
 
-FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, const RenderLayerModelObject* repaintContainer, MapCoordinatesFlags mode, bool* wasFixed) const
+FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, const RenderLayerModelObject* container, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
-    mapLocalToContainer(repaintContainer, transformState, mode | ApplyContainerFlip, wasFixed);
+    mapLocalToContainer(container, transformState, mode | ApplyContainerFlip, wasFixed);
     transformState.flatten();
 
     return transformState.lastPlanarPoint();

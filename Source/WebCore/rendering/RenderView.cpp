@@ -238,17 +238,17 @@ LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
     return clientLogicalHeight();
 }
 
-void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderView::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     // If a container was specified, and was not nullptr or the RenderView,
     // then we should have found it by now.
-    ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
+    ASSERT_ARG(ancestorContainer, !ancestorContainer || ancestorContainer == this);
     ASSERT_UNUSED(wasFixed, !wasFixed || *wasFixed == (mode & IsFixed));
 
     if (mode & IsFixed)
         transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
 
-    if (!repaintContainer && mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
+    if (!ancestorContainer && mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
         getTransformFromContainer(nullptr, LayoutSize(), t);
         transformState.applyTransform(t);

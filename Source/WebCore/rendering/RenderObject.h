@@ -534,8 +534,8 @@ public:
     FloatQuad absoluteToLocalQuad(const FloatQuad&, MapCoordinatesFlags = UseTransforms) const;
 
     // Convert a local quad into the coordinate system of container, taking transforms into account.
-    WEBCORE_EXPORT FloatQuad localToContainerQuad(const FloatQuad&, const RenderLayerModelObject* repaintContainer, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
-    WEBCORE_EXPORT FloatPoint localToContainerPoint(const FloatPoint&, const RenderLayerModelObject* repaintContainer, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
+    WEBCORE_EXPORT FloatQuad localToContainerQuad(const FloatQuad&, const RenderLayerModelObject* container, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
+    WEBCORE_EXPORT FloatPoint localToContainerPoint(const FloatPoint&, const RenderLayerModelObject* container, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
 
     // Return the offset from the container() renderer (excluding transforms). In multi-column layout,
     // different offsets apply at different points, so return the offset that applies to the given point.

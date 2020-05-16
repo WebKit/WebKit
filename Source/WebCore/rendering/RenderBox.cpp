@@ -2041,12 +2041,12 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return cb->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(logicalHeightLength.value()));
 }
 
-void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
-    if (repaintContainer == this)
+    if (ancestorContainer == this)
         return;
 
-    if (!repaintContainer && view().frameView().layoutContext().isPaintOffsetCacheEnabled()) {
+    if (!ancestorContainer && view().frameView().layoutContext().isPaintOffsetCacheEnabled()) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
         LayoutSize offset = layoutState->paintOffset() + locationOffset();
         if (style().hasInFlowPosition() && layer())
@@ -2056,7 +2056,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     }
 
     bool containerSkipped;
-    RenderElement* container = this->container(repaintContainer, containerSkipped);
+    RenderElement* container = this->container(ancestorContainer, containerSkipped);
     if (!container)
         return;
 
@@ -2082,16 +2082,16 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 
     if (containerSkipped) {
-        // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
-        // to just subtract the delta between the repaintContainer and o.
-        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*container);
+        // There can't be a transform between ancestorContainer and o, because transforms create containers, so it should be safe
+        // to just subtract the delta between the ancestorContainer and o.
+        LayoutSize containerOffset = ancestorContainer->offsetFromAncestorContainer(*container);
         transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
         return;
     }
 
     mode &= ~ApplyContainerFlip;
 
-    container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const

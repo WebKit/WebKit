@@ -1,5 +1,57 @@
 2020-05-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename the mapLocalToContainer() container argument, since it's not just used for repaint
+        https://bugs.webkit.org/show_bug.cgi?id=211974
+
+        Reviewed by Zalan Bujtas.
+
+        mapLocalToContainer() is a generic geometry mapping function, and not just used for repaint,
+        so rename the "repaintContainer" argument to "ancestorContainer".
+
+        Also fix some weirdly named variables in RenderMultiColumnFlow.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer const):
+        * rendering/RenderBox.h:
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::mapLocalToContainer const):
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer const):
+        (WebCore::RenderInline::pushMappingToContainer const):
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::addFragmentToThread):
+        (WebCore::RenderMultiColumnFlow::mapFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlow::physicalTranslationOffsetFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlow::physicalTranslationFromFlowToFragment const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer const):
+        (WebCore::RenderObject::localToContainerQuad const):
+        (WebCore::RenderObject::localToContainerPoint const):
+        * rendering/RenderObject.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer const):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer const):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer const):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer const):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer const):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer const):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+
+2020-05-15  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r249091): Can't click on a video in the second column of a paginated web view
         https://bugs.webkit.org/show_bug.cgi?id=211973
         <rdar://problem/61418775>

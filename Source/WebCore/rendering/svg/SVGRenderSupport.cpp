@@ -100,7 +100,7 @@ const RenderElement& SVGRenderSupport::localToParentTransform(const RenderElemen
     return parent;
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
+void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const RenderLayerModelObject* ancestorContainer, TransformState& transformState, bool* wasFixed)
 {
     AffineTransform transform;
     auto& parent = localToParentTransform(renderer, transform);
@@ -108,7 +108,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const 
     transformState.applyTransform(transform);
 
     MapCoordinatesFlags mode = UseTransforms;
-    parent.mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    parent.mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
 const RenderElement* SVGRenderSupport::pushMappingToContainer(const RenderElement& renderer, const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap)

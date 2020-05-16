@@ -949,12 +949,12 @@ LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const Lay
     return offset;
 }
 
-void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
-    if (repaintContainer == this)
+    if (ancestorContainer == this)
         return;
 
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer) {
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !ancestorContainer) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
         LayoutSize offset = layoutState->paintOffset();
         if (style().hasInFlowPosition() && layer())
@@ -964,7 +964,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     }
 
     bool containerSkipped;
-    RenderElement* container = this->container(repaintContainer, containerSkipped);
+    RenderElement* container = this->container(ancestorContainer, containerSkipped);
     if (!container)
         return;
 
@@ -987,14 +987,14 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 
     if (containerSkipped) {
-        // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
-        // to just subtract the delta between the repaintContainer and o.
-        LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*container);
+        // There can't be a transform between ancestorContainer and o, because transforms create containers, so it should be safe
+        // to just subtract the delta between the ancestorContainer and o.
+        LayoutSize containerOffset = ancestorContainer->offsetFromAncestorContainer(*container);
         transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
         return;
     }
 
-    container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -1008,8 +1008,8 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelO
 
     LayoutSize adjustmentForSkippedAncestor;
     if (ancestorSkipped) {
-        // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
-        // to just subtract the delta between the ancestor and o.
+        // There can't be a transform between ancestorToStopAt and container, because transforms create containers, so it should be safe
+        // to just subtract the delta between the ancestor and container.
         adjustmentForSkippedAncestor = -ancestorToStopAt->offsetFromAncestorContainer(*container);
     }
 

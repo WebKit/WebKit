@@ -193,7 +193,7 @@ protected:
     void clearLinesToFragmentMap();
     void willBeDestroyed() override;
 
-    void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
+    void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
 
     void updateFragmentsFragmentedFlowPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
