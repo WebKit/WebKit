@@ -1,3 +1,24 @@
+2020-05-15  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Add default initialization of WebsiteDataStore to WebKitTestRunner after r261758
+        https://bugs.webkit.org/show_bug.cgi?id=211977
+
+        As GTK/WPE does not explicitly create WebSiteDataStore for the tests,
+        assign the default one.
+
+        Not sure if this is the correct fix, but should allow running tests
+        again.
+
+        Reviewed by Žan Doberšek.
+
+        * WebKitTestRunner/TestController.cpp: Add GTK/WPE guards.
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformInitializeDataStore): Use default
+        WebsiteDataStore.
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformInitializeDataStore): Use default
+        websiteDataStore.
+
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Use enum serialization instead of casting to/from uint32_t

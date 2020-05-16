@@ -3116,10 +3116,12 @@ void TestController::platformWillRunTest(const TestInvocation&)
 {
 }
 
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
 void TestController::platformInitializeDataStore(WKPageConfigurationRef configuration, const TestOptions&)
 {
     m_websiteDataStore = WKPageConfigurationGetWebsiteDataStore(configuration);
 }
+#endif
 
 void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const TestOptions& options)
 {
