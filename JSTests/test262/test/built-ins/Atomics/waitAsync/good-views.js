@@ -8,6 +8,7 @@ description: >
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, Atomics]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
 
 $262.agent.start(`
   (async () => {

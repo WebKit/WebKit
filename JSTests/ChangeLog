@@ -1,3 +1,204 @@
+2020-05-16  Keith Miller  <keith_miller@apple.com>
+
+        [test262] Update to master for May
+        https://bugs.webkit.org/show_bug.cgi?id=211985
+
+        Reviewed by Mark Lam.
+
+        * test262/expectations.yaml:
+        * test262/harness/testIntl.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/annexB/built-ins/Array/from/iterator-method-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/String/prototype/match/custom-matcher-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/String/prototype/matchAll/custom-matcher-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/String/prototype/replace/custom-replacer-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/String/prototype/replaceAll/custom-replacer-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/String/prototype/search/custom-searcher-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/String/prototype/split/custom-splitter-emulates-undefined.js: Added.
+        * test262/test/annexB/built-ins/TypedArrayConstructors/from/iterator-method-emulates-undefined.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/annexB/language/expressions/yield/star-iterable-throw-emulates-undefined-throws-when-called.js:
+        * test262/test/built-ins/AsyncGeneratorFunction/proto-from-ctor-realm-prototype.js: Added.
+        * test262/test/built-ins/Atomics/waitAsync/false-for-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/good-views.js:
+        * test262/test/built-ins/Atomics/waitAsync/nan-for-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/negative-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-no-operation.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-add.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-and.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-compareExchange.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-exchange.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-or.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-store.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-sub.js:
+        * test262/test/built-ins/Atomics/waitAsync/no-spurious-wakeup-on-xor.js:
+        * test262/test/built-ins/Atomics/waitAsync/null-for-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/object-for-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/poisoned-object-for-timeout-throws-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/symbol-for-index-throws-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/symbol-for-timeout-throws-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/symbol-for-value-throws-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/true-for-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/undefined-for-timeout-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/undefined-index-defaults-to-zero-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/value-not-equal-agent.js:
+        * test262/test/built-ins/Atomics/waitAsync/waiterlist-block-indexedposition-wake.js:
+        * test262/test/built-ins/Atomics/waitAsync/was-woken-before-timeout.js:
+        * test262/test/built-ins/BigInt/prototype/toString/a-z.js: Added.
+        * test262/test/built-ins/Function/proto-from-ctor-realm-prototype.js: Added.
+        * test262/test/built-ins/GeneratorFunction/proto-from-ctor-realm-prototype.js: Added.
+        * test262/test/built-ins/NativeErrors/AggregateError/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Number/isSafeInteger/safe-integers.js:
+        * test262/test/built-ins/Number/prototype/toString/a-z.js: Added.
+        * test262/test/built-ins/Object/assign/strings-and-symbol-order-proxy.js: Added.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/built-ins/Object/defineProperties/proxy-no-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        * test262/test/built-ins/Object/freeze/proxy-no-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        * test262/test/built-ins/Object/getOwnPropertyDescriptors/proxy-no-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        * test262/test/built-ins/Object/isFrozen/proxy-no-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        * test262/test/built-ins/Object/isSealed/proxy-no-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        * test262/test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A10.js: Removed.
+        * test262/test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A11.js: Removed.
+        * test262/test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A8.js: Removed.
+        * test262/test/built-ins/Object/prototype/hasOwnProperty/S15.2.4.5_A9.js: Removed.
+        * test262/test/built-ins/Object/prototype/hasOwnProperty/length.js: Added.
+        * test262/test/built-ins/Object/prototype/hasOwnProperty/topropertykey_before_toobject.js: Added.
+        (coercibleKey1.get toString):
+        (coercibleKey1.get valueOf):
+        (coercibleKey2.Symbol.toPrimitive):
+        * test262/test/built-ins/Object/prototype/toString/proxy-revoked-during-get-call.js: Added.
+        * test262/test/built-ins/Object/seal/proxy-no-ownkeys-returned-keys-order.js: Added.
+        (defineProperty):
+        * test262/test/built-ins/Promise/all/invoke-resolve-get-once-no-calls.js:
+        * test262/test/built-ins/Promise/all/resolve-not-callable-close.js: Added.
+        (const.iter.return.return):
+        (const.iter.Symbol.iterator):
+        (Promise.all.iter.then):
+        * test262/test/built-ins/Promise/allSettled/resolve-not-callable-close.js: Added.
+        (const.iter.return.return):
+        (const.iter.Symbol.iterator):
+        (Promise.allSettled.iter.then):
+        * test262/test/built-ins/Promise/any/resolve-not-callable-close.js: Added.
+        (const.iter.return.return):
+        (const.iter.Symbol.iterator):
+        (Promise.any.iter.then):
+        * test262/test/built-ins/Promise/race/resolve-not-callable-close.js: Added.
+        (const.iter.return.return):
+        (const.iter.Symbol.iterator):
+        (Promise.race.iter.then):
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/order-style.js:
+        * test262/test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
+        * test262/test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-long.js:
+        (expected.of.Object.entries):
+        * test262/test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-narrow.js:
+        (expected.of.Object.entries):
+        * test262/test/intl402/RelativeTimeFormat/prototype/format/pl-pl-style-short.js:
+        (expected.of.Object.entries):
+        * test262/test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-long.js:
+        (expected.of.Object.entries):
+        * test262/test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-narrow.js:
+        (expected.of.Object.entries):
+        * test262/test/intl402/RelativeTimeFormat/prototype/formatToParts/pl-pl-style-short.js:
+        (expected.of.Object.entries):
+        * test262/test/language/expressions/async-generator/named-yield-star-sync-return.js:
+        (gen):
+        * test262/test/language/expressions/async-generator/named-yield-star-sync-throw.js:
+        (gen):
+        * test262/test/language/expressions/async-generator/yield-star-sync-return.js:
+        * test262/test/language/expressions/async-generator/yield-star-sync-throw.js:
+        * test262/test/language/expressions/class/async-gen-method-static/yield-star-sync-return.js:
+        (C):
+        * test262/test/language/expressions/class/async-gen-method-static/yield-star-sync-throw.js:
+        (C):
+        * test262/test/language/expressions/class/async-gen-method/yield-star-sync-return.js:
+        * test262/test/language/expressions/class/async-gen-method/yield-star-sync-throw.js:
+        * test262/test/language/expressions/class/elements/async-gen-private-method-static/yield-star-sync-return.js:
+        (C):
+        * test262/test/language/expressions/class/elements/async-gen-private-method-static/yield-star-sync-throw.js:
+        (C):
+        * test262/test/language/expressions/class/elements/async-gen-private-method/yield-star-sync-return.js:
+        * test262/test/language/expressions/class/elements/async-gen-private-method/yield-star-sync-throw.js:
+        * test262/test/language/expressions/class/elements/field-declaration.js: Added.
+        * test262/test/language/expressions/class/elements/fields-anonymous-function-length.js:
+        * test262/test/language/expressions/class/elements/private-method-referenced-from-static-method.js:
+        * test262/test/language/expressions/object/dstr/object-rest-proxy-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/language/expressions/object/method-definition/async-gen-yield-star-sync-return.js:
+        * test262/test/language/expressions/object/method-definition/async-gen-yield-star-sync-throw.js:
+        * test262/test/language/expressions/object/object-spread-proxy-ownkeys-returned-keys-order.js: Added.
+        (getOwnPropertyDescriptor):
+        (ownKeys):
+        * test262/test/language/identifiers/part-unicode-10.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-10.0.0.js:
+        * test262/test/language/identifiers/part-unicode-11.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-11.0.0.js:
+        * test262/test/language/identifiers/part-unicode-12.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-12.0.0.js:
+        * test262/test/language/identifiers/part-unicode-13.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-13.0.0.js:
+        * test262/test/language/identifiers/part-unicode-5.2.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-5.2.0.js:
+        * test262/test/language/identifiers/part-unicode-6.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-6.0.0.js:
+        * test262/test/language/identifiers/part-unicode-6.1.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-6.1.0.js:
+        * test262/test/language/identifiers/part-unicode-7.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-7.0.0.js:
+        * test262/test/language/identifiers/part-unicode-8.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-8.0.0.js:
+        * test262/test/language/identifiers/part-unicode-9.0.0-escaped.js:
+        * test262/test/language/identifiers/part-unicode-9.0.0.js:
+        * test262/test/language/module-code/eval-rqstd-once.js:
+        * test262/test/language/module-code/export-star-as-dflt.js: Added.
+        * test262/test/language/module-code/export-star-as-dflt_FIXTURE.js: Added.
+        * test262/test/language/statements/async-generator/yield-star-sync-return.js:
+        * test262/test/language/statements/async-generator/yield-star-sync-throw.js:
+        * test262/test/language/statements/class/async-gen-method-static/yield-star-sync-return.js:
+        * test262/test/language/statements/class/async-gen-method-static/yield-star-sync-throw.js:
+        * test262/test/language/statements/class/async-gen-method/yield-star-sync-return.js:
+        * test262/test/language/statements/class/async-gen-method/yield-star-sync-throw.js:
+        * test262/test/language/statements/class/elements/async-gen-private-method-static/yield-star-sync-return.js:
+        * test262/test/language/statements/class/elements/async-gen-private-method-static/yield-star-sync-throw.js:
+        * test262/test/language/statements/class/elements/async-gen-private-method/yield-star-sync-return.js:
+        * test262/test/language/statements/class/elements/async-gen-private-method/yield-star-sync-throw.js:
+        * test262/test/language/statements/class/elements/field-declaration.js: Added.
+        (C):
+        * test262/test/language/statements/class/elements/fields-anonymous-function-length.js:
+        * test262/test/language/statements/class/elements/private-method-referenced-from-static-method.js:
+        * test262/test/language/statements/class/subclass/bound-function.js: Removed.
+        * test262/test/language/statements/class/subclass/class-definition-superclass-generator.js: Removed.
+        * test262/test/language/statements/class/subclass/superclass-arrow-function.js: Added.
+        (fn):
+        (A):
+        (C):
+        * test262/test/language/statements/class/subclass/superclass-async-function.js: Added.
+        (async fn):
+        (A):
+        (bound):
+        (C):
+        * test262/test/language/statements/class/subclass/superclass-async-generator-function.js: Added.
+        (async fn):
+        (A):
+        (bound):
+        (async bind):
+        * test262/test/language/statements/class/subclass/superclass-bound-function.js: Added.
+        (bound):
+        * test262/test/language/statements/class/subclass/superclass-generator-function.js: Added.
+        (fn):
+        (A):
+        (bound):
+        (C):
+        * test262/test262-Revision.txt:
+
 2020-05-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make OutOfMemory error as instance of RangeError

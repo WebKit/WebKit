@@ -6,7 +6,7 @@ author: Mathias Bynens
 esid: sec-names-and-keywords
 description: |
   Test that Unicode v6.0.0 ID_Continue characters are accepted as
-  identifier start characters in escaped form, i.e.
+  identifier part characters in escaped form, i.e.
   - \uXXXX or \u{XXXX} for BMP symbols
   - \u{XXXXXX} for astral symbols
 info: |

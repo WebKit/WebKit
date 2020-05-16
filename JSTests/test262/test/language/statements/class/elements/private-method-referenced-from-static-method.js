@@ -4,7 +4,7 @@
 /*---
 description: Private method referenced from a static method (field definitions in a class declaration)
 esid: prod-FieldDefinition
-features: [class-static-methods-private, class]
+features: [class-methods-private, class]
 flags: [generated]
 info: |
     PrivateFieldGet (P, O)

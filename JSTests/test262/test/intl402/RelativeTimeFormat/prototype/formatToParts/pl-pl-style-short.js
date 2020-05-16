@@ -63,9 +63,7 @@ assert.sameValue(typeof rtf.formatToParts, "function", "formatToParts should be 
 for (const [unitArgument, expected] of Object.entries(units)) {
   verifyFormatParts(rtf.formatToParts(1000, unitArgument), [
     { "type": "literal", "value": "za " },
-    { "type": "integer", "value": "1", "unit": unitArgument },
-    { "type": "group", "value": "\u00a0", "unit": unitArgument },
-    { "type": "integer", "value": "000", "unit": unitArgument },
+    { "type": "integer", "value": "1000", "unit": unitArgument },
     { "type": "literal", "value": ` ${expected.many}` },
   ], `formatToParts(1000, ${unitArgument})`);
 
@@ -114,9 +112,7 @@ for (const [unitArgument, expected] of Object.entries(units)) {
   ], `formatToParts(-10, ${unitArgument})`);
 
   verifyFormatParts(rtf.formatToParts(-1000, unitArgument), [
-    { "type": "integer", "value": "1", "unit": unitArgument },
-    { "type": "group", "value": "\u00a0", "unit": unitArgument },
-    { "type": "integer", "value": "000", "unit": unitArgument },
+    { "type": "integer", "value": "1000", "unit": unitArgument },
     { "type": "literal", "value": ` ${expected.many} temu` },
   ], `formatToParts(-1000, ${unitArgument})`);
 

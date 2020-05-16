@@ -173,14 +173,14 @@ iter.next().then(v => {
 
     assert.sameValue(log.length, 6, "log.length");
 
-    iter.throw("throw-arg-2").then(v => {
+    iter.throw().then(v => {
       assert.sameValue(log[6].name, "get throw");
       assert.sameValue(log[6].thisValue.name, "syncIterator", "get throw thisValue");
 
       assert.sameValue(log[7].name, "call throw");
       assert.sameValue(log[7].thisValue.name, "syncIterator", "throw thisValue");
       assert.sameValue(log[7].args.length, 1, "throw args.length");
-      assert.sameValue(log[7].args[0], "throw-arg-2", "throw args[0]");
+      assert.sameValue(log[7].args[0], undefined, "throw args[0]");
 
       assert.sameValue(log[8].name, "get throw done (2)");
       assert.sameValue(log[8].thisValue.name, "throw-result-2", "get throw done thisValue");

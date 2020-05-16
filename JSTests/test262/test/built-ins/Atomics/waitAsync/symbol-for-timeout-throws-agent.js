@@ -20,6 +20,7 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, Atomics]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
 
 const RUNNING = 1;
 

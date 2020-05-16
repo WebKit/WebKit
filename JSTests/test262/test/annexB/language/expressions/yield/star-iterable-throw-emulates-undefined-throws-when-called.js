@@ -35,6 +35,14 @@ var inner = {
 
 var outer = (function* () { yield* inner; })();
 outer.next();
-outer.throw();
+
+assert.throws(TypeError, function() {
+  // `IsHTMLDDA` is called here with `iter` as `this` and `emptyString` as the
+  // sole argument, and it's specified to return `null` under these conditions.
+  // As `iter`'s iteration isn't ending because of a throw, the iteration
+  // protocol will then throw a `TypeError` because `null` isn't an object.
+  var emptyString = "";
+  outer.throw(emptyString);
+});
 
 assert.sameValue(returnCalls, 0);

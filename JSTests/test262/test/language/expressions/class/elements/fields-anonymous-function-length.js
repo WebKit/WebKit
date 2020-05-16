@@ -2,9 +2,9 @@
 // - src/class-elements/fields-anonymous-function-length.case
 // - src/class-elements/default/cls-expr.template
 /*---
-description: Anonymous function in field initilizer have length properly set (field definitions in a class expression)
+description: Anonymous functions in field initializer have length properly set (field definitions in a class expression)
 esid: prod-FieldDefinition
-features: [class-static-fields-private, class-static-fields-public, class]
+features: [class-fields-private, class-fields-public, class]
 flags: [generated]
 info: |
     Updated Productions

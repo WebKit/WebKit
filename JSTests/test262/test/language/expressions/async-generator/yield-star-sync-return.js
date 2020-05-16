@@ -170,14 +170,14 @@ iter.next().then(v => {
 
     assert.sameValue(log.length, 6, "log.length");
 
-    iter.return("return-arg-2").then(v => {
+    iter.return().then(v => {
       assert.sameValue(log[6].name, "get return");
       assert.sameValue(log[6].thisValue.name, "syncIterator", "get return thisValue");
 
       assert.sameValue(log[7].name, "call return");
       assert.sameValue(log[7].thisValue.name, "syncIterator", "get return thisValue");
       assert.sameValue(log[7].args.length, 1, "return args.length");
-      assert.sameValue(log[7].args[0], "return-arg-2", "return args[0]");
+      assert.sameValue(log[7].args[0], undefined, "return args[0]");
 
       assert.sameValue(log[8].name, "get return done (2)");
       assert.sameValue(log[8].thisValue.name, "return-result-2", "get return done thisValue");

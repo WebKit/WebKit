@@ -24,6 +24,8 @@ flags: [async]
 includes: [atomicsHelper.js]
 features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
+
 const NUMAGENT = 2;
 const RUNNING = 4;
 

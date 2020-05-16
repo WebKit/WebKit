@@ -14,7 +14,6 @@ info: |
   1. Repeat,
     ...
     1. Let nextPromise be ? Call(promiseResolve, constructor, &laquo; nextValue &raquo;).
-features: [Promise.all]
 ---*/
 
 var resolve = Promise.resolve;

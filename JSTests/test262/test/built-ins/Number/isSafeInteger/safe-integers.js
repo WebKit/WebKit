@@ -15,9 +15,9 @@ info: |
   [...]
 ---*/
 
-assert.sameValue(Number.isInteger(1), true, "1");
-assert.sameValue(Number.isInteger(-0), true, "-0");
-assert.sameValue(Number.isInteger(0), true, "0");
-assert.sameValue(Number.isInteger(-1), true, "-1");
-assert.sameValue(Number.isInteger(9007199254740991), true, "9007199254740991");
-assert.sameValue(Number.isInteger(-9007199254740991), true, "-9007199254740991");
+assert.sameValue(Number.isSafeInteger(1), true, "1");
+assert.sameValue(Number.isSafeInteger(-0), true, "-0");
+assert.sameValue(Number.isSafeInteger(0), true, "0");
+assert.sameValue(Number.isSafeInteger(-1), true, "-1");
+assert.sameValue(Number.isSafeInteger(9007199254740991), true, "9007199254740991");
+assert.sameValue(Number.isSafeInteger(-9007199254740991), true, "-9007199254740991");

@@ -272,9 +272,9 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
    *
    * Spec: https://unicode.org/reports/tr35/#Unicode_locale_identifier
    */
-  var alpha = "[A-Za-z]",
+  var alpha = "[a-z]",
     digit = "[0-9]",
-    alphanum = "[A-Za-z0-9]",
+    alphanum = "[a-z0-9]",
     variant = "(" + alphanum + "{5,8}|(?:" + digit + alphanum + "{3}))",
     region = "(" + alpha + "{2}|" + digit + "{3})",
     script = "(" + alpha + "{4})",
@@ -292,14 +292,14 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     extension = "(" + unicode_locale_extensions + "|" + transformed_extensions + "|" + other_extensions + ")",
     locale_id = language + "(-" + script + ")?(-" + region + ")?(-" + variant + ")*(-" + extension + ")*(-" + privateuse + ")?",
     languageTag = "^(" + locale_id + ")$",
-    languageTagRE = new RegExp(languageTag);
+    languageTagRE = new RegExp(languageTag, "i");
 
   var duplicateSingleton = "-" + singleton + "-(.*-)?\\1(?!" + alphanum + ")",
-    duplicateSingletonRE = new RegExp(duplicateSingleton),
+    duplicateSingletonRE = new RegExp(duplicateSingleton, "i"),
     duplicateVariant = "(" + alphanum + "{2,8}-)+" + variant + "-(" + alphanum + "{2,8}-)*\\2(?!" + alphanum + ")",
-    duplicateVariantRE = new RegExp(duplicateVariant);
+    duplicateVariantRE = new RegExp(duplicateVariant, "i");
 
-  var transformKeyRE = new RegExp("^" + alpha + digit + "$");
+  var transformKeyRE = new RegExp("^" + alpha + digit + "$", "i");
 
   /**
    * Verifies that the given string is a well-formed Unicode BCP 47 Locale Identifier
