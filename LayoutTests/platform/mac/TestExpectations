@@ -1953,6 +1953,8 @@ webkit.org/b/209692 [ Mojave Catalina ] platform/mac/fast/text/text-security-dis
 
 webkit.org/b/210517 storage/indexeddb/result-request-cycle.html [ Pass Failure ]
 
+webkit.org/b/211856 media/video-poster-set-after-playback.html [ Pass Failure ]
+
 # These media controls tests are not relevant on macOS and iOS.
 media/media-document-audio-repaint.html [ Skip ]
 media/controls-styling.html [ Skip ]

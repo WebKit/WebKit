@@ -1,3 +1,13 @@
+2020-05-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        media/video-poster-set-after-playback.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211856
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+        * platform/mac/TestExpectations: Ditto.
+
 2020-05-15  Antoine Quint  <graouts@apple.com>
 
         Cursor should not update on a 20ms timer
