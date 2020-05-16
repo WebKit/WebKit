@@ -44,9 +44,9 @@ static NSDecimalNumber *toDecimalNumber(const String& amount)
 static String fromDecimalNumber(NSDecimalNumber *number)
 {
     auto numberFormatter = adoptNS([[NSNumberFormatter alloc] init]);
-    numberFormatter.numberStyle = NSNumberFormatterNoStyle;
-    numberFormatter.minimumIntegerDigits = 1;
-    numberFormatter.minimumFractionDigits = 2;
+    [numberFormatter setNumberStyle:NSNumberFormatterNoStyle];
+    [numberFormatter setMinimumIntegerDigits:1];
+    [numberFormatter setMinimumFractionDigits:2];
     return [numberFormatter stringFromNumber:number];
 }
 
