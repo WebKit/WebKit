@@ -105,11 +105,12 @@ static CGColorRef leakCGColor(const Color& color)
 {
     CGFloat components[4];
     if (color.isExtended()) {
-        ExtendedColor& extendedColor = color.asExtended();
-        components[0] = extendedColor.red();
-        components[1] = extendedColor.green();
-        components[2] = extendedColor.blue();
-        components[3] = extendedColor.alpha();
+        const auto& extendedColor = color.asExtended();
+        auto channels = extendedColor.channels();
+        components[0] = channels.components[0];
+        components[1] = channels.components[1];
+        components[2] = channels.components[2];
+        components[3] = channels.components[3];
         switch (extendedColor.colorSpace()) {
         case ColorSpace::SRGB:
             return CGColorCreate(sRGBColorSpaceRef(), components);

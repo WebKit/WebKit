@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-Ref<ExtendedColor> ExtendedColor::create(float red, float green, float blue, float alpha, ColorSpace colorSpace)
+Ref<ExtendedColor> ExtendedColor::create(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
 {
-    return adoptRef(*new ExtendedColor(red, green, blue, alpha, colorSpace));
+    return adoptRef(*new ExtendedColor(c1, c2, c3, alpha, colorSpace));
 }
 
 String ExtendedColor::cssText() const
@@ -53,6 +53,7 @@ String ExtendedColor::cssText() const
 
     if (WTF::areEssentiallyEqual(alpha(), 1.0f))
         return makeString("color(", colorSpace, ' ', red(), ' ', green(), ' ', blue(), ')');
+
     return makeString("color(", colorSpace, ' ', red(), ' ', green(), ' ', blue(), " / ", alpha(), ')');
 }
 

@@ -220,7 +220,7 @@ ColorMatrix::ColorMatrix()
     makeIdentity();
 }
 
-ColorMatrix::ColorMatrix(float values[20])
+ColorMatrix::ColorMatrix(const float values[20])
 {
     m_matrix[0][0] = values[0];
     m_matrix[0][1] = values[1];

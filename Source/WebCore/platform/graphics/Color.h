@@ -54,6 +54,8 @@ typedef struct _GdkRGBA GdkRGBA;
 
 namespace WebCore {
 
+struct FloatComponents;
+
 // Color value with 8-bit components for red, green, blue, and alpha.
 // For historical reasons, stored as a 32-bit integer, with alpha in the high bits: ARGB.
 class SimpleColor {
@@ -169,7 +171,7 @@ public:
     // This creates an ExtendedColor.
     // FIXME: If the colorSpace is sRGB and the values can all be
     // converted exactly to integers, we should make a normal Color.
-    WEBCORE_EXPORT Color(float r, float g, float b, float a, ColorSpace colorSpace);
+    WEBCORE_EXPORT Color(float, float, float, float, ColorSpace);
 
     WEBCORE_EXPORT Color(const Color&);
     WEBCORE_EXPORT Color(Color&&);
@@ -213,6 +215,9 @@ public:
     WEBCORE_EXPORT void getRGBA(double& r, double& g, double& b, double& a) const;
     WEBCORE_EXPORT void getHSL(double& h, double& s, double& l) const;
     WEBCORE_EXPORT void getHSV(double& h, double& s, double& v) const;
+
+    // This will convert non-sRGB colorspace colors into sRGB.
+    FloatComponents toSRGBAComponentsLossy() const;
 
     Color light() const;
     Color dark() const;
@@ -272,7 +277,7 @@ public:
     {
         return !(m_colorData.rgbaAndFlags & invalidRGBAColor);
     }
-    WEBCORE_EXPORT ExtendedColor& asExtended() const;
+    WEBCORE_EXPORT const ExtendedColor& asExtended() const;
 
     WEBCORE_EXPORT Color& operator=(const Color&);
     WEBCORE_EXPORT Color& operator=(Color&&);

@@ -27,6 +27,7 @@
 
 #include "ColorSpace.h"
 
+#include "ColorUtilities.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -35,31 +36,38 @@ namespace WebCore {
 
 class ExtendedColor : public RefCounted<ExtendedColor> {
 public:
-    static Ref<ExtendedColor> create(float red, float green, float blue, float alpha, ColorSpace = ColorSpace::SRGB);
+    static Ref<ExtendedColor> create(float, float, float, float alpha, ColorSpace = ColorSpace::SRGB);
 
-    float red() const { return m_red; }
-    float green() const { return m_green; }
-    float blue() const { return m_blue; }
-    float alpha() const { return m_alpha; }
+    float red() const
+    {
+        return m_channels.components[0];
+    }
+
+    float green() const
+    {
+        return m_channels.components[1];
+    }
+
+    float blue() const
+    {
+        return m_channels.components[2];
+    }
+
+    float alpha() const { return m_channels.components[3]; }
+
+    const FloatComponents& channels() const { return m_channels; }
 
     ColorSpace colorSpace() const { return m_colorSpace; }
 
     WEBCORE_EXPORT String cssText() const;
 
 private:
-    ExtendedColor(float r, float g, float b, float a, ColorSpace colorSpace)
-        : m_red(r)
-        , m_green(g)
-        , m_blue(b)
-        , m_alpha(a)
+    ExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
+        : m_channels(c1, c2, c3, alpha)
         , m_colorSpace(colorSpace)
     { }
 
-    float m_red { 0 };
-    float m_green { 0 };
-    float m_blue { 0 };
-    float m_alpha { 0 };
-
+    FloatComponents m_channels;
     ColorSpace m_colorSpace { ColorSpace::SRGB };
 };
 

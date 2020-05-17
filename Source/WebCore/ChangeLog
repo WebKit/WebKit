@@ -1,3 +1,52 @@
+2020-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Some color-related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=211991
+
+        Reviewed by Sam Weinig.
+
+        Change FloatComponents and ColorComponents to use std::array<>.
+
+        Add Color::toSRGBAComponentsLossy() to make explicit potentially lossy conversions
+        between P3 and sRGB colors, and call it in places where we do that conversion.
+
+        Add const in a few places.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::Color):
+        (WebCore::Color::toSRGBAComponentsLossy const):
+        (WebCore::Color::asExtended const):
+        * platform/graphics/Color.h:
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::ColorMatrix::ColorMatrix):
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::FloatComponents::FloatComponents):
+        (): Deleted.
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::create):
+        (WebCore::ExtendedColor::cssText const):
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::red const):
+        (WebCore::ExtendedColor::green const):
+        (WebCore::ExtendedColor::blue const):
+        (WebCore::ExtendedColor::alpha const):
+        (WebCore::ExtendedColor::channels const):
+        (WebCore::ExtendedColor::ExtendedColor):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::leakCGColor):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::fillRegion const):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::InvertLightnessFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::operator GdkRGBA const):
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::operator D2D1_COLOR_F const):
+        (WebCore::Color::operator D2D1_VECTOR_4F const):
+
 2020-05-16  Andy Estes  <aestes@apple.com>
 
         Fix the build after r261785.

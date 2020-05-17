@@ -28,6 +28,7 @@
 
 #if PLATFORM(WIN)
 
+#include "ColorUtilities.h"
 #include <d2d1.h>
 #include <d2d1_1helper.h>
 
@@ -40,16 +41,19 @@ Color::Color(D2D1_COLOR_F color)
 
 Color::operator D2D1_COLOR_F() const
 {
-    float colorAlpha = alpha() / 255.0f;
+    if (isExtended()) {
+        auto asRGBA = toSRGBAComponentsLossy();
+        return D2D1::ColorF(asRGBA.components[0], asRGBA.components[1], asRGBA.components[2], asRGBA.components[3]);
+    }
 
+    float colorAlpha = alpha() / 255.0f;
     return D2D1::ColorF(rgb().value(), colorAlpha);
 }
 
 Color::operator D2D1_VECTOR_4F() const
 {
-    float r, g, b, a;
-    getRGBA(r, g, b, a);
-    return D2D1::Vector4F(r, g, b, a);
+    auto asRGBA = toSRGBAComponentsLossy();
+    return D2D1::Vector4F(asRGBA.components[0], asRGBA.components[1], asRGBA.components[2], asRGBA.components[3]);
 }
 
 }

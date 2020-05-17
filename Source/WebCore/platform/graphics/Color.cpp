@@ -240,12 +240,12 @@ Color::Color(Color&& other)
     *this = WTFMove(other);
 }
 
-Color::Color(float r, float g, float b, float a, ColorSpace colorSpace)
+Color::Color(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
 {
     // Zero the union, just in case a 32-bit system only assigns the
     // top 32 bits when copying the extendedColor pointer below.
     m_colorData.rgbaAndFlags = 0;
-    auto extendedColorRef = ExtendedColor::create(r, g, b, a, colorSpace);
+    auto extendedColorRef = ExtendedColor::create(c1, c2, c3, alpha, colorSpace);
     m_colorData.extendedColor = &extendedColorRef.leakRef();
     ASSERT(isExtended());
 }
@@ -555,6 +555,23 @@ void Color::getHSV(double& hue, double& saturation, double& value) const
     value = max;
 }
 
+FloatComponents Color::toSRGBAComponentsLossy() const
+{
+    if (isExtended()) {
+        auto& extendedColor = asExtended();
+        switch (extendedColor.colorSpace()) {
+        case ColorSpace::SRGB:
+        case ColorSpace::LinearRGB:
+        case ColorSpace::DisplayP3:
+            // FIXME: This doesn't convert into sRGB and should.
+            return extendedColor.channels();
+        }
+    }
+    float r, g, b, a;
+    getRGBA(r, g, b, a);
+    return { r, g, b, a };
+}
+
 Color colorFromPremultipliedARGB(RGBA32 pixelColor)
 {
     if (pixelColor.isVisible() && !pixelColor.isOpaque())
@@ -607,7 +624,7 @@ void Color::tagAsValid()
     m_colorData.rgbaAndFlags |= validRGBAColor;
 }
 
-ExtendedColor& Color::asExtended() const
+const ExtendedColor& Color::asExtended() const
 {
     ASSERT(isExtended());
     return *m_colorData.extendedColor;

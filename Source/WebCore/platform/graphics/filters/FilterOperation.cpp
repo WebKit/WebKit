@@ -236,7 +236,7 @@ bool InvertLightnessFilterOperation::transformColor(FloatComponents& sRGBColorCo
     sRGBColorComponents = HSLToSRGB(hslComponents);
     
     // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
-    float matrixValues[20] = {
+    const float matrixValues[20] = {
        -0.770,  0.059, -0.089, 0, 1,
         0.030, -0.741, -0.089, 0, 1,
         0.030,  0.059, -0.890, 0, 1,
@@ -252,7 +252,7 @@ bool InvertLightnessFilterOperation::inverseTransformColor(FloatComponents& sRGB
 {
     FloatComponents rgbComponents = sRGBColorComponents;
     // Apply the matrix.
-    float matrixValues[20] = {
+    const float matrixValues[20] = {
         -1.300, -0.097,  0.147, 0, 1.25,
         -0.049, -1.347,  0.146, 0, 1.25,
         -0.049, -0.097, -1.104, 0, 1.25,
