@@ -1,3 +1,24 @@
+2020-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename some API test files
+        https://bugs.webkit.org/show_bug.cgi?id=211992
+
+        Reviewed by Zalan Bujtas.
+
+        I'm tired of Quick Open of Color.cpp opening the test file rather than the one I want.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/Color.cpp.
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/ExtendedColor.cpp.
+        * TestWebKitAPI/Tests/WebCore/FloatPointTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/FloatPoint.cpp.
+        * TestWebKitAPI/Tests/WebCore/FloatRectTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/FloatRect.cpp.
+        * TestWebKitAPI/Tests/WebCore/FloatSizeTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/FloatSize.cpp.
+        * TestWebKitAPI/Tests/WebCore/IntPointTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/IntPoint.cpp.
+        * TestWebKitAPI/Tests/WebCore/IntRectTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/IntRect.cpp.
+        * TestWebKitAPI/Tests/WebCore/IntSizeTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/IntSize.cpp.
+        * TestWebKitAPI/Tests/WebCore/LayoutUnitTests.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp.
+
 2020-05-15  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Add default initialization of WebsiteDataStore to WebKitTestRunner after r261758
