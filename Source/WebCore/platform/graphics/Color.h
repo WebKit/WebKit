@@ -205,9 +205,7 @@ public:
 
     RGBA32 rgb() const;
 
-    // FIXME: Like operator==, this will give different values for ExtendedColors that
-    // should be identical, since the respective pointer will be different.
-    unsigned hash() const { return WTF::intHash(m_colorData.rgbaAndFlags); }
+    unsigned hash() const;
 
     // FIXME: ExtendedColor - these should be renamed (to be clear about their parameter types, or
     // replaced with alternative accessors.
@@ -282,6 +280,7 @@ public:
     WEBCORE_EXPORT Color& operator=(const Color&);
     WEBCORE_EXPORT Color& operator=(Color&&);
 
+    // Extended and non-extended colors will always be non-equal.
     friend bool operator==(const Color& a, const Color& b);
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
 
@@ -313,13 +312,13 @@ private:
     } m_colorData;
 };
 
-// FIXME: These do not work for ExtendedColor because
-// they become just pointer comparison.
 bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
 Color colorFromPremultipliedARGB(RGBA32);
 RGBA32 premultipliedARGBFromColor(const Color&);
+// One or both must be extended colors.
+WEBCORE_EXPORT bool extendedColorsEqual(const Color&, const Color&);
 
 Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied = true);
 
@@ -347,6 +346,9 @@ inline bool operator!=(SimpleColor a, SimpleColor b)
 
 inline bool operator==(const Color& a, const Color& b)
 {
+    if (a.isExtended() || b.isExtended())
+        return extendedColorsEqual(a, b);
+
     return a.m_colorData.rgbaAndFlags == b.m_colorData.rgbaAndFlags;
 }
 
@@ -357,7 +359,17 @@ inline bool operator!=(const Color& a, const Color& b)
 
 inline bool equalIgnoringSemanticColor(const Color& a, const Color& b)
 {
+    if (a.isExtended() || b.isExtended())
+        return extendedColorsEqual(a, b);
     return (a.m_colorData.rgbaAndFlags & ~Color::isSemanticRBGAColorBit) == (b.m_colorData.rgbaAndFlags & ~Color::isSemanticRBGAColorBit);
+}
+
+inline unsigned Color::hash() const
+{
+    if (isExtended())
+        return asExtended().hash();
+
+    return WTF::intHash(m_colorData.rgbaAndFlags);
 }
 
 inline uint8_t roundAndClampColorChannel(int value)

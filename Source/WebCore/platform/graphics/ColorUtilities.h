@@ -104,6 +104,8 @@ struct FloatComponents {
     std::array<float, 4> components;
 };
 
+bool areEssentiallyEqual(const FloatComponents&, const FloatComponents&);
+
 struct ColorComponents {
     ColorComponents(const FloatComponents&);
     
@@ -146,6 +148,16 @@ inline ColorComponents perComponentMin(const ColorComponents& a, const ColorComp
         std::min(a.components[2], b.components[2]),
         std::min(a.components[3], b.components[3])
     };
+}
+
+inline bool operator==(const ColorComponents& a, const ColorComponents& b)
+{
+    return a.components == b.components;
+}
+
+inline bool operator!=(const ColorComponents& a, const ColorComponents& b)
+{
+    return !(a == b);
 }
 
 inline uint8_t clampedColorComponent(float f)

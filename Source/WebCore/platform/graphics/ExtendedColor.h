@@ -59,6 +59,8 @@ public:
 
     ColorSpace colorSpace() const { return m_colorSpace; }
 
+    WEBCORE_EXPORT unsigned hash() const;
+
     WEBCORE_EXPORT String cssText() const;
 
 private:
@@ -70,5 +72,15 @@ private:
     FloatComponents m_channels;
     ColorSpace m_colorSpace { ColorSpace::SRGB };
 };
+
+inline bool operator==(const ExtendedColor& a, const ExtendedColor& b)
+{
+    return a.colorSpace() == b.colorSpace() && areEssentiallyEqual(a.channels(), b.channels());
+}
+
+inline bool operator!=(const ExtendedColor& a, const ExtendedColor& b)
+{
+    return !(a == b);
+}
 
 }

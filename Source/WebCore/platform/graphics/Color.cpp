@@ -593,6 +593,15 @@ RGBA32 premultipliedARGBFromColor(const Color& color)
     return makePremultipliedRGBA(color.red(), color.green(), color.blue(), color.alpha());
 }
 
+bool extendedColorsEqual(const Color& a, const Color& b)
+{
+    if (a.isExtended() && b.isExtended())
+        return a.asExtended() == b.asExtended();
+
+    ASSERT(a.isExtended() || b.isExtended());
+    return false;
+}
+
 Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.

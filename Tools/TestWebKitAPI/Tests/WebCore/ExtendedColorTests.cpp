@@ -77,6 +77,69 @@ TEST(ExtendedColor, Assignment)
     EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
 
+TEST(ExtendedColor, Equality)
+{
+    {
+        Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
+        EXPECT_TRUE(c1.isExtended());
+
+        Color c2(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
+        EXPECT_TRUE(c1.isExtended());
+
+        EXPECT_EQ(c1, c2);
+    }
+
+    {
+        Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
+        EXPECT_TRUE(c1.isExtended());
+
+        Color c2(1.0, 0.5, 0.25, 1.0, ColorSpace::SRGB);
+        EXPECT_TRUE(c1.isExtended());
+
+        EXPECT_NE(c1, c2);
+    }
+
+    int r = 255;
+    int g = 128;
+    int b = 63;
+    int a = 127;
+    Color rgb1(r / 255.0, g / 255.0, b / 255.0, a / 255.0, ColorSpace::SRGB);
+    Color rgb2(r, g, b, a);
+    EXPECT_NE(rgb1, rgb2);
+    EXPECT_NE(rgb2, rgb1);
+}
+
+TEST(ExtendedColor, Hash)
+{
+    {
+        Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
+        EXPECT_TRUE(c1.isExtended());
+
+        Color c2(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
+        EXPECT_TRUE(c1.isExtended());
+
+        EXPECT_EQ(c1.hash(), c2.hash());
+    }
+
+    {
+        Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
+        EXPECT_TRUE(c1.isExtended());
+
+        Color c2(1.0, 0.5, 0.25, 1.0, ColorSpace::SRGB);
+        EXPECT_TRUE(c1.isExtended());
+
+        EXPECT_NE(c1.hash(), c2.hash());
+    }
+
+    int r = 255;
+    int g = 128;
+    int b = 63;
+    int a = 127;
+    Color rgb1(r / 255.0, g / 255.0, b / 255.0, a / 255.0, ColorSpace::SRGB);
+    Color rgb2(r, g, b, a);
+    EXPECT_NE(rgb1.hash(), rgb2.hash());
+}
+
 TEST(ExtendedColor, MoveConstructor)
 {
     Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
