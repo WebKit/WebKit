@@ -85,9 +85,26 @@ bool WebContentReader::readURL(const URL&, const String&)
     return false;
 }
 
-bool WebContentMarkupReader::readHTML(const String&)
+static bool shouldReplaceSubresourceURL(const URL& url)
 {
-    return false;
+    return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
+}
+
+bool WebContentMarkupReader::readHTML(const String& string)
+{
+    if (!frame.document())
+        return false;
+
+    if (shouldSanitize()) {
+        markup = sanitizeMarkup(string, MSOListQuirks::Disabled, Function<void(DocumentFragment&)> { [](DocumentFragment& fragment) {
+            removeSubresourceURLAttributes(fragment, [](const URL& url) {
+                return shouldReplaceSubresourceURL(url);
+            });
+        } });
+    } else
+        markup = string;
+
+    return !markup.isEmpty();
 }
 
 } // namespace WebCore

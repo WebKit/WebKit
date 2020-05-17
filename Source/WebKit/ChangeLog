@@ -1,3 +1,25 @@
+2020-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move to new Pasteboard API
+        https://bugs.webkit.org/show_bug.cgi?id=177633
+
+        Reviewed by Adrian Perez de Castro.
+
+        Enable custom pasteboard data.
+
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::ArgumentCoder<SelectionData>::encode):
+        (IPC::ArgumentCoder<SelectionData>::decode):
+        * UIProcess/WebPasteboardProxy.cpp:
+        * UIProcess/gtk/ClipboardGtk3.cpp:
+        (WebKit::Clipboard::write): Add support for writing URI list and custom data.
+        * UIProcess/gtk/ClipboardGtk4.cpp:
+        (WebKit::Clipboard::write): Ditto.
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+
 2020-05-16  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r260717): installmentConfiguration member is no longer available on ApplePayPaymentRequest

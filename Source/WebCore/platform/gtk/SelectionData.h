@@ -19,6 +19,7 @@
 #pragma once
 
 #include "Image.h"
+#include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
@@ -62,13 +63,13 @@ public:
     bool hasImage() const { return m_image; }
     void clearImage() { m_image = nullptr; }
 
-    void setUnknownTypeData(const String& type, const String& data) { m_unknownTypeData.set(type, data); }
-    String unknownTypeData(const String& type) const { return m_unknownTypeData.get(type); }
-    const HashMap<String, String>& unknownTypes() const { return m_unknownTypeData; }
-    bool hasUnknownTypeData() const { return !m_unknownTypeData.isEmpty(); }
-
     void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
     bool canSmartReplace() const { return m_canSmartReplace; }
+
+    void setCustomData(Ref<SharedBuffer>&& buffer) { m_customData = WTFMove(buffer); }
+    SharedBuffer* customData() const { return m_customData.get(); }
+    bool hasCustomData() const { return !!m_customData; }
+    void clearCustomData() { m_customData = nullptr; }
 
     void clearAll();
     void clearAllExceptFilenames();
@@ -80,8 +81,8 @@ private:
     String m_uriList;
     Vector<String> m_filenames;
     RefPtr<Image> m_image;
-    HashMap<String, String> m_unknownTypeData;
     bool m_canSmartReplace { false };
+    RefPtr<SharedBuffer> m_customData;
 };
 
 } // namespace WebCore

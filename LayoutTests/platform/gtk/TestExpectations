@@ -1075,44 +1075,21 @@ webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
 webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
 webkit.org/b/180370 fast/images/animated-image-mp4-crash.html [ Skip ]
 
-# GTK ought to support the new modern pasteboard API
-webkit.org/b/177633 editing/pasteboard/copy-without-selection.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/copying-html-strips-javascript-url-and-event-handler.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-copying-pasting-malformed-url-in-same-document.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-items-add-custom-data.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-ignore-copied-malformed-url-in-null-origin.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/datatransfer-items-paste-plaintext.html [ Skip ]
-webkit.org/b/177633 editing/pasteboard/dataTransfer-types-pasting-plaintext.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/onpaste-text-html-types.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
-webkit.org/b/177633 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
-webkit.org/b/177633 editing/pasteboard/paste-text-with-style.html [ Failure Pass ]
-webkit.org/b/177633 editing/pasteboard/paste-without-nesting.html [ Failure Pass ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-read-basic.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-same-origin.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-write-basic.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-write-items-twice.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-write-text.html [ Timeout ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
-webkit.org/b/177633 editing/async-clipboard/clipboard-read-text.html [ Failure ]
-webkit.org/b/177633 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
+# GTK ought to support async clipboard
+webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-reading.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-read-basic.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-same-origin.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-write-basic.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-write-items-twice.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-write-text.html [ Timeout ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-read-text.html [ Failure ]
+webkit.org/b/211979 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
+webkit.org/b/211979 editing/async-clipboard/sanitize-when-writing-image.html [ Failure ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -1192,12 +1169,6 @@ webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
 # Server cookie not handled with platform WebSockets API
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
-
-# No Mac system fonts in WebKitGTK
-editing/pasteboard/paste-cocoa-writer-markup-with-system-fonts.html [ Failure ]
-
-# We don't use Cocoa
-editing/pasteboard/paste-cocoa-writer-markup-with-webkit-standard-font-family.html [ Failure ]
 
 webkit.org/b/205857 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
 webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
@@ -1521,6 +1492,8 @@ webkit.org/b/207737 imported/w3c/web-platform-tests/media-source/mediasource-h26
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
+
+webkit.org/b/199224 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -3632,8 +3605,6 @@ webkit.org/b/62204 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
 
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
-webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
-
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
 webkit.org/b/84694 fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
@@ -4289,10 +4260,6 @@ webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html 
 
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 
-webkit.org/b/189737 editing/pasteboard/4930986-1-paste-as-quotation.html [ Failure ]
-webkit.org/b/189737 editing/pasteboard/4930986-2-paste-as-quotation.html [ Failure ]
-webkit.org/b/189737 editing/pasteboard/4930986-3-paste-as-quotation.html [ Failure ]
-
 webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
@@ -4597,6 +4564,8 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin-xhtml.x
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-origin.html [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
 webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
+
+webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

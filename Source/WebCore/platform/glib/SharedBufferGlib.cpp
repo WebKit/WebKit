@@ -38,6 +38,15 @@ Ref<SharedBuffer> SharedBuffer::create(GBytes* bytes)
     return adoptRef(*new SharedBuffer(bytes));
 }
 
+GRefPtr<GBytes> SharedBuffer::createGBytes() const
+{
+    ref();
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data(), size(), [](gpointer data) {
+        static_cast<SharedBuffer*>(data)->deref();
+    }, const_cast<SharedBuffer*>(this)));
+    return bytes;
+}
+
 RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 {
     if (filePath.isEmpty())

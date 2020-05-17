@@ -87,6 +87,7 @@ struct PasteboardWebContent {
     Vector<RefPtr<SharedBuffer>> clientData;
 #endif
 #if PLATFORM(GTK)
+    String contentOrigin;
     bool canSmartCopyOrDelete;
     String text;
     String markup;

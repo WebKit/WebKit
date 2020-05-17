@@ -29,6 +29,7 @@
 #if USE(GTK4)
 
 #include "WebPasteboardProxy.h"
+#include <WebCore/PasteboardCustomData.h>
 #include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
 #include <gtk/gtk.h>
@@ -164,6 +165,12 @@ void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
 
+    if (selectionData->hasURIList()) {
+        CString uriList = selectionData->uriList().utf8();
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(uriList.data(), uriList.length()));
+        providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+    }
+
     if (selectionData->hasImage()) {
         GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selectionData->image()->getGdkPixbuf());
         providers.append(gdk_content_provider_new_typed(GDK_TYPE_PIXBUF, pixbuf.get()));
@@ -175,6 +182,11 @@ void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
     if (selectionData->canSmartReplace()) {
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
         providers.append(gdk_content_provider_new_for_bytes("application/vnd.webkitgtk.smartpaste", bytes.get()));
+    }
+
+    if (selectionData->hasCustomData()) {
+        GRefPtr<GBytes> bytes = selectionData->customData()->createGBytes();
+        providers.append(gdk_content_provider_new_for_bytes(WebCore::PasteboardCustomData::gtkType(), bytes.get()));
     }
 
     if (providers.isEmpty()) {

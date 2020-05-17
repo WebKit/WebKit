@@ -120,8 +120,8 @@ void SelectionData::clearAllExceptFilenames()
     clearURIList();
     clearURL();
     clearImage();
+    clearCustomData();
 
-    m_unknownTypeData.clear();
     m_canSmartReplace = false;
 }
 

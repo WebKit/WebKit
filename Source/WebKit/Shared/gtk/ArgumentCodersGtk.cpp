@@ -92,10 +92,10 @@ void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData&
     if (hasImage)
         encodeImage(encoder, *selection.image());
 
-    bool hasUnknownTypeData = selection.hasUnknownTypeData();
-    encoder << hasUnknownTypeData;
-    if (hasUnknownTypeData)
-        encoder << selection.unknownTypes();
+    bool hasCustomData = selection.hasCustomData();
+    encoder << hasCustomData;
+    if (hasCustomData)
+        encoder << RefPtr<SharedBuffer>(selection.customData());
 
     bool canSmartReplace = selection.canSmartReplace();
     encoder << canSmartReplace;
@@ -155,17 +155,14 @@ bool ArgumentCoder<SelectionData>::decode(Decoder& decoder, SelectionData& selec
         selection.setImage(image.get());
     }
 
-    bool hasUnknownTypeData;
-    if (!decoder.decode(hasUnknownTypeData))
+    bool hasCustomData;
+    if (!decoder.decode(hasCustomData))
         return false;
-    if (hasUnknownTypeData) {
-        HashMap<String, String> unknownTypes;
-        if (!decoder.decode(unknownTypes))
+    if (hasCustomData) {
+        RefPtr<SharedBuffer> buffer;
+        if (!decoder.decode(buffer))
             return false;
-
-        auto end = unknownTypes.end();
-        for (auto it = unknownTypes.begin(); it != end; ++it)
-            selection.setUnknownTypeData(it->key, it->value);
+        selection.setCustomData(Ref<SharedBuffer>(*buffer));
     }
 
     bool canSmartReplace;

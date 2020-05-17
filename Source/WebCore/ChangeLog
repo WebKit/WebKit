@@ -1,3 +1,43 @@
+2020-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move to new Pasteboard API
+        https://bugs.webkit.org/show_bug.cgi?id=177633
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add support for custom data and remove the support for unknown data types that is currently unused.
+
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::writeSelectionToPasteboard): Set the contentOrigin.
+        * editing/gtk/WebContentReaderGtk.cpp:
+        (WebCore::shouldReplaceSubresourceURL): Helper to decide whether to replace the subresource URL.
+        (WebCore::WebContentMarkupReader::readHTML): Create a fragment for HTML sanitizing it if needed.
+        * platform/Pasteboard.h:
+        * platform/PasteboardCustomData.h:
+        (WebCore::PasteboardCustomData::gtkType): Mime type name for GTK custom pasteboard data.
+        * platform/SharedBuffer.h:
+        * platform/glib/SharedBufferGlib.cpp:
+        (WebCore::SharedBuffer::createGBytes const): Create a GBytes wrapping the SharedBuffer data.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeString):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::hasData):
+        (WebCore::Pasteboard::typesSafeForBindings):
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings):
+        (WebCore::Pasteboard::readOrigin):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::readStringInCustomData):
+        (WebCore::Pasteboard::fileContentState):
+        (WebCore::Pasteboard::writeCustomData):
+        * platform/gtk/SelectionData.cpp:
+        (WebCore::SelectionData::clearAllExceptFilenames):
+        * platform/gtk/SelectionData.h:
+        (WebCore::SelectionData::setCustomData):
+        (WebCore::SelectionData::customData const):
+        (WebCore::SelectionData::hasCustomData const):
+        (WebCore::SelectionData::clearCustomData):
+
 2020-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Some color-related cleanup

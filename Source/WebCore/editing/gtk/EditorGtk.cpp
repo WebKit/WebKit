@@ -110,6 +110,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboardContent.text = selectedTextForDataTransfer();
     pasteboardContent.markup = serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy,
         m_document.settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No);
+    pasteboardContent.contentOrigin = m_document.originIdentifierForPasteboard();
     pasteboard.write(pasteboardContent);
 }
 

@@ -30,6 +30,7 @@
 
 #include "WebPasteboardProxy.h"
 #include <WebCore/GRefPtrGtk.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
 #include <gtk/gtk.h>
@@ -155,13 +156,15 @@ struct WriteAsyncData {
     Clipboard& clipboard;
 };
 
-enum ClipboardTargetType { Markup, Text, Image, SmartPaste };
+enum ClipboardTargetType { Markup, Text, Image, URIList, SmartPaste, Custom };
 
 void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
 {
     SetForScope<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, WebPasteboardProxy::singleton().primarySelectionOwner());
 
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
+    if (selectionData->hasURIList())
+        gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/uri-list"), 0, ClipboardTargetType::URIList);
     if (selectionData->hasMarkup())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/html"), 0, ClipboardTargetType::Markup);
     if (selectionData->hasImage())
@@ -170,6 +173,8 @@ void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
         gtk_target_list_add_text_targets(list.get(), ClipboardTargetType::Text);
     if (selectionData->canSmartReplace())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, ClipboardTargetType::SmartPaste);
+    if (selectionData->hasCustomData())
+        gtk_target_list_add(list.get(), gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType()), 0, ClipboardTargetType::Custom);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
@@ -199,8 +204,19 @@ void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
                 }
                 break;
             }
+            case ClipboardTargetType::URIList: {
+                CString uriList = selectionData.uriList().utf8();
+                gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
+                break;
+            }
             case ClipboardTargetType::SmartPaste:
                 gtk_selection_data_set_text(selection, "", -1);
+                break;
+            case ClipboardTargetType::Custom:
+                if (selectionData.hasCustomData()) {
+                    auto* buffer = selectionData.customData();
+                    gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
+                }
                 break;
             }
         },

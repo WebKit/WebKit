@@ -79,6 +79,7 @@ WebProcessProxy* WebPasteboardProxy::webProcessProxyForConnection(IPC::Connectio
 
 #if !PLATFORM(COCOA)
 
+#if !PLATFORM(GTK)
 void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const String&, const String&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     completionHandler({ });
@@ -88,6 +89,7 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<WebCore:
 {
     completionHandler(0);
 }
+#endif
 
 void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection&, const String&, int64_t, CompletionHandler<void(Optional<Vector<WebCore::PasteboardItemInfo>>&&)>&& completionHandler)
 {

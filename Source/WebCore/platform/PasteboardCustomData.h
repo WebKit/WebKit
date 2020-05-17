@@ -75,6 +75,8 @@ public:
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static const char* cocoaType();
+#elif PLATFORM(GTK)
+    static const char* gtkType() { return "org.webkitgtk.WebKit.custom-pasteboard-data"; }
 #endif
 
     void forEachType(Function<void(const String&)>&&) const;

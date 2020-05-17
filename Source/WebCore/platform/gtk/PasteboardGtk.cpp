@@ -116,8 +116,6 @@ void Pasteboard::writeString(const String& type, const String& data)
         m_selectionData->setText(data);
         break;
     case ClipboardDataTypeUnknown:
-        m_selectionData->setUnknownTypeData(type, data);
-        break;
     case ClipboardDataTypeImage:
         break;
     }
@@ -187,6 +185,9 @@ void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
         data.setText(pasteboardContent.text);
         data.setMarkup(pasteboardContent.markup);
         data.setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
+        PasteboardCustomData customData;
+        customData.setOrigin(pasteboardContent.contentOrigin);
+        data.setCustomData(customData.createSharedBuffer());
         platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, WTFMove(data));
     }
 }
@@ -264,6 +265,8 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         return;
     }
 
+    reader.contentOrigin = readOrigin();
+
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
     if (types.contains("text/html"_s)) {
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, "text/html"_s);
@@ -306,14 +309,16 @@ void Pasteboard::read(PasteboardFileReader& reader)
 bool Pasteboard::hasData()
 {
     if (m_selectionData)
-        return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage() || m_selectionData->hasUnknownTypeData();
+        return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage();
     return !platformStrategies()->pasteboardStrategy()->types(m_name).isEmpty();
 }
 
-Vector<String> Pasteboard::typesSafeForBindings(const String&)
+Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
 {
-    notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
-    return { };
+    if (m_selectionData)
+        return { };
+
+    return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin);
 }
 
 Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
@@ -336,15 +341,18 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
         types.append("URL"_s);
     }
 
-    for (auto& key : m_selectionData->unknownTypes().keys())
-        types.append(key);
-
     return types;
 }
 
 String Pasteboard::readOrigin()
 {
-    notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
+    if (m_selectionData)
+        return { };
+
+    // FIXME: cache custom data?
+    if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, PasteboardCustomData::gtkType()))
+        return PasteboardCustomData::fromSharedBuffer(*buffer).origin();
+
     return { };
 }
 
@@ -368,7 +376,6 @@ String Pasteboard::readString(const String& type)
     case ClipboardDataTypeText:
         return m_selectionData->text();
     case ClipboardDataTypeUnknown:
-        return m_selectionData->unknownTypeData(type);
     case ClipboardDataTypeImage:
         break;
     }
@@ -376,9 +383,15 @@ String Pasteboard::readString(const String& type)
     return { };
 }
 
-String Pasteboard::readStringInCustomData(const String&)
+String Pasteboard::readStringInCustomData(const String& type)
 {
-    notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
+    if (m_selectionData)
+        return { };
+
+    // FIXME: cache custom data?
+    if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, PasteboardCustomData::gtkType()))
+        return PasteboardCustomData::fromSharedBuffer(*buffer).readStringInCustomData(type);
+
     return { };
 }
 
@@ -388,8 +401,11 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         return m_selectionData->filenames().isEmpty() ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;
 
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
-    if (types.contains("text/uri-list"_s))
-        return FileContentState::MayContainFilePaths;
+    if (types.contains("text/uri-list"_s)) {
+        auto filePaths = platformStrategies()->pasteboardStrategy()->readFilePathsFromClipboard(m_name);
+        if (!filePaths.isEmpty())
+            return FileContentState::MayContainFilePaths;
+    }
 
     auto result = types.findMatching([](const String& type) {
         return MIMETypeRegistry::isSupportedImageMIMEType(type);
@@ -401,8 +417,12 @@ void Pasteboard::writeMarkup(const String&)
 {
 }
 
-void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>&)
+void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 {
+    if (m_selectionData)
+        return;
+
+    platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name);
 }
 
 void Pasteboard::write(const Color&)
