@@ -278,32 +278,8 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(con
 {
     ASSERT(layoutBox.isInFlow());
 
-    if (!layoutBox.isReplacedBox()) {
-        if (!layoutBox.establishesTableFormattingContext())
-            return inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, overrideHorizontalValues);
-        // This is a special table "fit-content size" behavior handling. Not in the spec though.
-        // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
-        if (overrideHorizontalValues.width)
-            return inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, OverrideHorizontalValues { overrideHorizontalValues.width, overrideHorizontalValues.margin });
-
-        auto& tableBox = downcast<ContainerBox>(layoutBox);
-        auto& formattingStateForTableBox = layoutState().ensureFormattingState(tableBox);
-        auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-        if (auto precomputedIntrinsicWidthConstraints = formattingStateForTableBox.intrinsicWidthConstraints())
-            intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
-        else
-            intrinsicWidthConstraints = LayoutContext::createFormattingContext(tableBox, layoutState())->computedIntrinsicWidthConstraints();
-        auto computedTableWidth = computedWidth(tableBox, horizontalConstraints.logicalWidth);
-        auto usedWidth = computedTableWidth;
-        if (computedTableWidth && intrinsicWidthConstraints.minimum > computedTableWidth) {
-            // Table content needs more space than the table has.
-            usedWidth = intrinsicWidthConstraints.minimum;
-        } else if (!computedTableWidth) {
-            // Use the generic shrink-to-fit-width logic.
-            usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, horizontalConstraints.logicalWidth), intrinsicWidthConstraints.maximum);
-        }
-        return inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, OverrideHorizontalValues { usedWidth, overrideHorizontalValues.margin });
-    }
+    if (!layoutBox.isReplacedBox())
+        return inFlowNonReplacedWidthAndMargin(layoutBox, horizontalConstraints, overrideHorizontalValues);
     return inFlowReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overrideHorizontalValues);
 }
 

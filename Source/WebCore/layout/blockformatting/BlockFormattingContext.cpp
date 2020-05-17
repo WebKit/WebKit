@@ -372,33 +372,22 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
         return { };
     };
 
-    auto usedHeightValue = Optional<LayoutUnit> { };
-    auto ignoreMinMaxHeightCompute = false;
-    if (layoutBox.establishesTableFormattingContext()) {
-        // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all
-        // already been taken into account during the TFC layout.
-        usedHeightValue = geometry().contentHeightForFormattingContextRoot(downcast<ContainerBox>(layoutBox));
-        ignoreMinMaxHeightCompute = true;
+    auto contentHeightAndMargin = compute({ });
+    if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
+        if (contentHeightAndMargin.contentHeight > *maxHeight) {
+            auto maxHeightAndMargin = compute(maxHeight);
+            // Used height should remain the same.
+            ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.contentHeight == *maxHeight);
+            contentHeightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
+        }
     }
 
-    auto contentHeightAndMargin = compute({ usedHeightValue });
-    if (!ignoreMinMaxHeightCompute) {
-        if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
-            if (contentHeightAndMargin.contentHeight > *maxHeight) {
-                auto maxHeightAndMargin = compute(maxHeight);
-                // Used height should remain the same.
-                ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.contentHeight == *maxHeight);
-                contentHeightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
-            }
-        }
-
-        if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
-            if (contentHeightAndMargin.contentHeight < *minHeight) {
-                auto minHeightAndMargin = compute(minHeight);
-                // Used height should remain the same.
-                ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.contentHeight == *minHeight);
-                contentHeightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
-            }
+    if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
+        if (contentHeightAndMargin.contentHeight < *minHeight) {
+            auto minHeightAndMargin = compute(minHeight);
+            // Used height should remain the same.
+            ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.contentHeight == *minHeight);
+            contentHeightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
         }
     }
 

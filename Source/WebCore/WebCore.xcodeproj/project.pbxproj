@@ -2049,6 +2049,7 @@
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0B98B323F268EB00EEC2F2 /* LayoutInlineTextBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F0CD695229ED32700C5994E /* InlineLineBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F0CD694229ED32700C5994E /* InlineLineBuilder.h */; };
+		6F17264F2470C60B00518C96 /* TableWrapperBlockFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F17264E2470C60A00518C96 /* TableWrapperBlockFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F1CC1DE225F8B4900720AD2 /* InlineTextItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F26BB6C23343E6F002F2BEA /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F26BB6B23343E5B002F2BEA /* LayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F26EB48234004A5006906E2 /* LineLayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F26EB46234004A5006906E2 /* LineLayoutContext.h */; };
@@ -9417,6 +9418,8 @@
 		6F0CD692229ED31900C5994E /* InlineLineBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLineBuilder.cpp; sourceTree = "<group>"; };
 		6F0CD694229ED32700C5994E /* InlineLineBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBuilder.h; sourceTree = "<group>"; };
 		6F10B08622B8568D0090E69C /* InlineFormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextQuirks.cpp; sourceTree = "<group>"; };
+		6F17264C2470C5F700518C96 /* TableWrapperBlockFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TableWrapperBlockFormattingContext.cpp; sourceTree = "<group>"; };
+		6F17264E2470C60A00518C96 /* TableWrapperBlockFormattingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableWrapperBlockFormattingContext.h; sourceTree = "<group>"; };
 		6F1CC1DC225F8B4100720AD2 /* InlineTextItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextItem.cpp; sourceTree = "<group>"; };
 		6F1CC1DD225F8B4200720AD2 /* InlineTextItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineTextItem.h; sourceTree = "<group>"; };
 		6F222B741AB52D640094651A /* WebGLVertexArrayObjectBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLVertexArrayObjectBase.h; sourceTree = "<group>"; };
@@ -17073,6 +17076,7 @@
 		115CFA99208BC09A001E6991 /* blockformatting */ = {
 			isa = PBXGroup;
 			children = (
+				6FD4FE3E2470B3AD007374CC /* tablewrapper */,
 				115CFA6D208AFAB6001E6991 /* BlockFormattingContext.cpp */,
 				115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */,
 				6F0830DF20B46951008A945B /* BlockFormattingContextGeometry.cpp */,
@@ -21290,6 +21294,15 @@
 				115CFA80208B8EDA001E6991 /* FloatingState.h */,
 			);
 			path = floats;
+			sourceTree = "<group>";
+		};
+		6FD4FE3E2470B3AD007374CC /* tablewrapper */ = {
+			isa = PBXGroup;
+			children = (
+				6F17264C2470C5F700518C96 /* TableWrapperBlockFormattingContext.cpp */,
+				6F17264E2470C60A00518C96 /* TableWrapperBlockFormattingContext.h */,
+			);
+			path = tablewrapper;
 			sourceTree = "<group>";
 		};
 		6FE7DDDD20EC6E8B008B5B4E /* text */ = {
@@ -33280,6 +33293,7 @@
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
+				6F17264F2470C60B00518C96 /* TableWrapperBlockFormattingContext.h in Headers */,
 				3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */,
 				463EB6231B8789E00096ED51 /* TagCollection.h in Headers */,
 				9B0ABCAE236BB43100B45085 /* TaskSource.h in Headers */,

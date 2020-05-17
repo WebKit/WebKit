@@ -43,15 +43,14 @@ class FloatingContext;
 
 // This class implements the layout logic for block formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
-class BlockFormattingContext final : public FormattingContext {
+class BlockFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingContext);
 public:
     BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
 
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
 
-private:
-
+protected:
     struct ConstraintsPair {
         const ConstraintsForInFlowContent formattingContextRoot;
         const ConstraintsForInFlowContent containingBlock;
@@ -75,6 +74,8 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
+        Geometry(const BlockFormattingContext&);
+
         ContentHeightAndMargin inFlowHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);
         ContentWidthAndMargin inFlowWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
@@ -85,13 +86,9 @@ private:
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
     private:
-        friend class BlockFormattingContext;
-        Geometry(const BlockFormattingContext&);
-
         ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);
         ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
         ContentWidthAndMargin inFlowReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
-        Point staticPositionForOutOfFlowPositioned(const Box&) const;
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
     };

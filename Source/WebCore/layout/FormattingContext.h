@@ -160,12 +160,12 @@ protected:
         ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&);
         ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<EscapeReason> = WTF::nullopt);
 
+        Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
+        Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
+
     protected:
         friend class FormattingContext;
         Geometry(const FormattingContext&);
-
-        Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
-        Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
         const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
         LayoutState& layoutState() { return m_formattingContext.layoutState(); }

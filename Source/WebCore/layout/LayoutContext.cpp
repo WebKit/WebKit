@@ -45,6 +45,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
+#include "TableWrapperBlockFormattingContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -124,6 +125,8 @@ std::unique_ptr<FormattingContext> LayoutContext::createFormattingContext(const 
     if (formattingContextRoot.establishesBlockFormattingContext()) {
         ASSERT(!formattingContextRoot.establishesInlineFormattingContext());
         auto& blockFormattingState = layoutState.ensureBlockFormattingState(formattingContextRoot);
+        if (formattingContextRoot.isTableWrapperBox())
+            return makeUnique<TableWrapperBlockFormattingContext>(formattingContextRoot, blockFormattingState);
         return makeUnique<BlockFormattingContext>(formattingContextRoot, blockFormattingState);
     }
 
