@@ -425,12 +425,6 @@ if (ENABLED_COMPILER_SANITIZERS)
     set(ENABLE_INTROSPECTION OFF)
 endif ()
 
-# Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building.
-if (CMAKE_CROSSCOMPILING)
-    set(ENABLE_GTKDOC OFF)
-    set(ENABLE_INTROSPECTION OFF)
-endif ()
-
 # Override the cached variable, gtk-doc does not really work when building on Mac.
 if (APPLE)
     set(ENABLE_GTKDOC OFF)
