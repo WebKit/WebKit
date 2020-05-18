@@ -1,3 +1,16 @@
+2020-05-18  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/datachannel/bufferedAmountLowThreshold.html is failing flakily
+        https://bugs.webkit.org/show_bug.cgi?id=211953
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/bufferedAmountLowThreshold-default.html:
+        Update test to make it more readable and robust, following changes made to webrtc/datachannel/bufferedAmountLowThreshold.html.
+        * webrtc/datachannel/bufferedAmountLowThreshold.html:
+        Split the tests in two parts to more easily debug which part (connection setup or sending lots of data) might time out.
+        Make sure to not send too much data by sending only one burst of data.
+
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unexpected capitalization of next word after repositioning caret
