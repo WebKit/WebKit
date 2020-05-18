@@ -270,6 +270,7 @@ interface UIScriptController {
     readonly attribute boolean isPresentingModally;
 
     void copyText(DOMString text);
+    void paste();
 
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;

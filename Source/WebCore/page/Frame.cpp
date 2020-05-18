@@ -539,7 +539,13 @@ bool Frame::requestDOMPasteAccess()
     if (m_settings->javaScriptCanAccessClipboard() && m_settings->DOMPasteAllowed())
         return true;
 
-    if (!m_settings->domPasteAccessRequestsEnabled() || !m_doc)
+    if (!m_doc)
+        return false;
+
+    if (editor().isPastingFromMenuOrKeyBinding())
+        return true;
+
+    if (!m_settings->domPasteAccessRequestsEnabled())
         return false;
 
     auto gestureToken = UserGestureIndicator::currentUserGesture();

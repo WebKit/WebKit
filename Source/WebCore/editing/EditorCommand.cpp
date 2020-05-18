@@ -905,7 +905,7 @@ static bool executePaste(Frame& frame, Event*, EditorCommandSource source, const
 {
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
-        frame.editor().paste();
+        frame.editor().paste(Editor::FromMenuOrKeyBinding::Yes);
         return true;
     }
 
@@ -936,7 +936,7 @@ static bool executePasteAndMatchStyle(Frame& frame, Event*, EditorCommandSource 
 {
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
-        frame.editor().pasteAsPlainText();
+        frame.editor().pasteAsPlainText(Editor::FromMenuOrKeyBinding::Yes);
         return true;
     }
 
@@ -951,7 +951,7 @@ static bool executePasteAsPlainText(Frame& frame, Event*, EditorCommandSource so
 {
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
-        frame.editor().pasteAsPlainText();
+        frame.editor().pasteAsPlainText(Editor::FromMenuOrKeyBinding::Yes);
         return true;
     }
 
@@ -966,7 +966,7 @@ static bool executePasteAsQuotation(Frame& frame, Event*, EditorCommandSource so
 {
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
-        frame.editor().pasteAsQuotation();
+        frame.editor().pasteAsQuotation(Editor::FromMenuOrKeyBinding::Yes);
         return true;
     }
 

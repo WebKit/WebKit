@@ -44,6 +44,11 @@ void UIScriptControllerCocoa::setContinuousSpellCheckingEnabled(bool enabled)
     mainFrame.webView.continuousSpellCheckingEnabled = enabled;
 }
 
+void UIScriptControllerCocoa::paste()
+{
+    [mainFrame.webView paste:nil];
+}
+
 } // namespace WTR
 
 #endif // PLATFORM(COCOA)

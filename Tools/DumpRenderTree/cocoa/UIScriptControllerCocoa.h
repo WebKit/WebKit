@@ -34,6 +34,7 @@ namespace WTR {
 class UIScriptControllerCocoa : public UIScriptController {
 public:
     void setContinuousSpellCheckingEnabled(bool) override;
+    void paste() override;
 
 protected:
     explicit UIScriptControllerCocoa(UIScriptContext&);

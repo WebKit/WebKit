@@ -1,3 +1,21 @@
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow clipboard API access when pasting from a menu item or key binding
+        https://bugs.webkit.org/show_bug.cgi?id=211990
+        <rdar://problem/63308916>
+
+        Reviewed by Megan Gardner.
+
+        Add a new layout test to verify that the contents of the clipboard can be read while performing a paste that was
+        not triggered from the DOM.
+
+        * editing/async-clipboard/clipboard-read-while-pasting-expected.txt: Added.
+        * editing/async-clipboard/clipboard-read-while-pasting.html: Added.
+        * platform/win/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.async copyText):
+        (window.UIHelper.async paste):
+
 2020-05-18  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r261493?): media/video-isplayingtoautomotiveheadunit.html is a flaky failure

@@ -189,10 +189,12 @@ public:
 
     WEBCORE_EXPORT void cut();
     WEBCORE_EXPORT void copy();
-    WEBCORE_EXPORT void paste();
-    void paste(Pasteboard&);
-    WEBCORE_EXPORT void pasteAsPlainText();
-    void pasteAsQuotation();
+
+    enum class FromMenuOrKeyBinding : bool { No, Yes };
+    WEBCORE_EXPORT void paste(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
+    void paste(Pasteboard&, FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
+    WEBCORE_EXPORT void pasteAsPlainText(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
+    void pasteAsQuotation(FromMenuOrKeyBinding = FromMenuOrKeyBinding::No);
     WEBCORE_EXPORT void performDelete();
 
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
@@ -571,6 +573,8 @@ public:
     WEBCORE_EXPORT RefPtr<TextPlaceholderElement> insertTextPlaceholder(const IntSize&);
     WEBCORE_EXPORT void removeTextPlaceholder(TextPlaceholderElement&);
 
+    bool isPastingFromMenuOrKeyBinding() const { return m_pastingFromMenuOrKeyBinding; }
+
 private:
     Document& document() const { return m_document; }
 
@@ -654,6 +658,7 @@ private:
     bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar { false };
     bool m_editorUIUpdateTimerWasTriggeredByDictation { false };
     bool m_isHandlingAcceptedCandidate { false };
+    bool m_pastingFromMenuOrKeyBinding { false };
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
     bool shouldDetectTelephoneNumbers() const;

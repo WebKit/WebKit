@@ -118,6 +118,7 @@
 #include <pal/FileSizeFormatter.h>
 #include <pal/system/Sound.h>
 #include <pal/text/KillRing.h>
+#include <wtf/SetForScope.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
@@ -1444,13 +1445,15 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
     }
 }
 
-void Editor::paste()
+void Editor::paste(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
-    paste(*Pasteboard::createForCopyAndPaste());
+    paste(*Pasteboard::createForCopyAndPaste(), fromMenuOrKeyBinding);
 }
 
-void Editor::paste(Pasteboard& pasteboard)
+void Editor::paste(Pasteboard& pasteboard, FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
+    SetForScope<bool> pasteScope { m_pastingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
+
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Paste))
         return; // DHTML did the whole operation
     if (!canPaste())
@@ -1463,8 +1466,10 @@ void Editor::paste(Pasteboard& pasteboard)
         pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
-void Editor::pasteAsPlainText()
+void Editor::pasteAsPlainText(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
+    SetForScope<bool> pasteScope { m_pastingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
+
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteAsPlainText))
         return;
     if (!canPaste())
@@ -1473,8 +1478,10 @@ void Editor::pasteAsPlainText()
     pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste());
 }
 
-void Editor::pasteAsQuotation()
+void Editor::pasteAsQuotation(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 {
+    SetForScope<bool> pasteScope { m_pastingFromMenuOrKeyBinding, fromMenuOrKeyBinding == FromMenuOrKeyBinding::Yes };
+
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteAsQuotation))
         return;
     if (!canPaste())

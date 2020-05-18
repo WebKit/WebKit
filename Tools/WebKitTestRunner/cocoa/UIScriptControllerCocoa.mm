@@ -35,6 +35,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
+@interface WKWebView (WKWebViewInternal)
+- (void)paste:(id)sender;
+@end
+
 namespace WTR {
 
 UIScriptControllerCocoa::UIScriptControllerCocoa(UIScriptContext& context)
@@ -202,6 +206,11 @@ bool UIScriptControllerCocoa::isShowingMenu() const
 void UIScriptControllerCocoa::setContinuousSpellCheckingEnabled(bool enabled)
 {
     [webView() _setContinuousSpellCheckingEnabledForTesting:enabled];
+}
+
+void UIScriptControllerCocoa::paste()
+{
+    [webView() paste:nil];
 }
 
 } // namespace WTR

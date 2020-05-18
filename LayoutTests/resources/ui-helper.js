@@ -1190,8 +1190,12 @@ window.UIHelper = class UIHelper {
     }
 
     static async copyText(text) {
-        const copyTextScript = `uiController.copyText(\`${text.replace(/`/g, "\\`")}\`)()`;
+        const copyTextScript = `uiController.copyText(\`${text.replace(/`/g, "\\`")}\`)`;
         return new Promise(resolve => testRunner.runUIScript(copyTextScript, resolve));
+    }
+
+    static async paste() {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.paste()`, resolve));
     }
 
     static async setContinuousSpellCheckingEnabled(enabled) {

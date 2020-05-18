@@ -1,3 +1,23 @@
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow clipboard API access when pasting from a menu item or key binding
+        https://bugs.webkit.org/show_bug.cgi?id=211990
+        <rdar://problem/63308916>
+
+        Reviewed by Megan Gardner.
+
+        Add a UIScriptController method to trigger a paste from the application process.
+
+        * DumpRenderTree/cocoa/UIScriptControllerCocoa.h:
+        * DumpRenderTree/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::paste):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::paste):
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::paste):
+
 2020-05-18  Darin Adler  <darin@apple.com>
 
         Add iterator checking to ListHashSet
