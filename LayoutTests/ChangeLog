@@ -1,3 +1,14 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Content disappears on CSS parallax example
+        https://bugs.webkit.org/show_bug.cgi?id=212045
+        <rdar://problem/63194217>
+
+        Reviewed by Tim Horton.
+
+        * compositing/tiling/perspective-on-scroller-tile-coverage-expected.txt: Added.
+        * compositing/tiling/perspective-on-scroller-tile-coverage.html: Added.
+
 2020-05-18  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Null Ptr Deref @ WebCore::CSSValue::classType

@@ -1,3 +1,34 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Content disappears on CSS parallax example
+        https://bugs.webkit.org/show_bug.cgi?id=212045
+        <rdar://problem/63194217>
+
+        Reviewed by Tim Horton.
+        
+        In r261632 I fixed parallax scrolling by migrating the perspective transform onto
+        the scroll container layer, and making the scrolled contents layer a "preserve3D" layer.
+        
+        However, scrolling is achieved by changing the boundsOrigin of the scrolled contents layer,
+        so the computation of the perspective matrix, which is a "child layer transform", has to
+        take this boundsOrigin into account, otherwise we compute bad coverage rects, and drop
+        backing store erroneously.
+
+        Test: compositing/tiling/perspective-on-scroller-tile-coverage.html
+
+        * platform/graphics/FloatPoint3D.h:
+        (WebCore::FloatPoint3D::FloatPoint3D):
+        (WebCore::FloatPoint3D::move):
+        (WebCore::operator +=):
+        (WebCore::operator -=):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush const):
+        (WebCore::GraphicsLayerCA::layerTransform const):
+        (WebCore::GraphicsLayerCA::adjustCoverageRect const):
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+
 2020-05-18  David Kilzer  <ddkilzer@apple.com>
 
         Use default initializers in TextIndicatorData

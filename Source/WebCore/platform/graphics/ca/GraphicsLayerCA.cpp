@@ -1336,6 +1336,9 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
     // This may be called at times when layout has not been updated, so we want to avoid calling out to the client
     // for animating transforms.
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulatesTransform(*this), 0);
+    
+    LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " recursiveVisibleRectChangeRequiresFlush: visible rect " << rects.visibleRect << " coverage rect " << rects.coverageRect);
+
     adjustCoverageRect(rects, m_visibleRect);
 
     auto bounds = FloatRect(m_boundsOrigin, size());
@@ -1392,20 +1395,23 @@ TransformationMatrix GraphicsLayerCA::layerTransform(const FloatPoint& position,
         currentTransform = *customTransform;
     else if (m_transform)
         currentTransform = *m_transform;
-    
+
     transform.multiply(transformByApplyingAnchorPoint(currentTransform));
 
     if (GraphicsLayer* parentLayer = parent()) {
         if (parentLayer->hasNonIdentityChildrenTransform()) {
+            FloatPoint boundsOrigin = parentLayer->boundsOrigin();
+
             FloatPoint3D parentAnchorPoint(parentLayer->anchorPoint());
             parentAnchorPoint.scale(parentLayer->size().width(), parentLayer->size().height(), 1);
+            parentAnchorPoint += boundsOrigin;
 
             transform.translateRight3d(-parentAnchorPoint.x(), -parentAnchorPoint.y(), -parentAnchorPoint.z());
             transform = parentLayer->childrenTransform() * transform;
             transform.translateRight3d(parentAnchorPoint.x(), parentAnchorPoint.y(), parentAnchorPoint.z());
         }
     }
-    
+
     return transform;
 }
 
@@ -1497,6 +1503,8 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     if (rects.coverageRect == coverageRect)
         return false;
 
+    LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " adjustCoverageRect: coverage rect adjusted from " << rects.coverageRect << " to  " << coverageRect);
+
     rects.coverageRect = coverageRect;
     return true;
 }
@@ -1517,6 +1525,9 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
 
     // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
     bool intersectsCoverageRect = rects.coverageRect.intersects(bounds);
+
+    LOG_WITH_STREAM(Layers, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setVisibleAndCoverageRects: coverage rect  " << rects.coverageRect << " intersects bounds " << bounds << " " << intersectsCoverageRect);
+
     if (intersectsCoverageRect != m_intersectsCoverageRect) {
         addUncommittedChanges(CoverageRectChanged);
         m_intersectsCoverageRect = intersectsCoverageRect;
