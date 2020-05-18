@@ -22,8 +22,8 @@
 #include <array>
 #include <wtf/Atomics.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdIntExtras.h>
-#include <wtf/StdLibExtras.h>
 #include <string.h>
 #include <type_traits>
 

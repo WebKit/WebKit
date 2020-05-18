@@ -1,3 +1,20 @@
+2020-05-18  Mark Lam  <mark.lam@apple.com>
+
+        Implement a faster findBitInWord() using the hardware ctz instruction.
+        https://bugs.webkit.org/show_bug.cgi?id=212032
+        <rdar://problem/63348086>
+
+        Reviewed by Saam Barati.
+
+        Add tests to make sure that the ctz implementation matches the loop implementation
+        in behavior.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/StdLibExtras.cpp: Added.
+        (TestWebKitAPI::testFindBitInWord):
+        (TestWebKitAPI::TEST):
+
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow clipboard API access when pasting from a menu item or key binding

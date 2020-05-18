@@ -1,3 +1,53 @@
+2020-05-18  Mark Lam  <mark.lam@apple.com>
+
+        Implement a faster findBitInWord() using the hardware ctz instruction.
+        https://bugs.webkit.org/show_bug.cgi?id=212032
+        <rdar://problem/63348086>
+
+        Reviewed by Saam Barati.
+
+        Based on local microbenchmarking, both ARM64 and X86_64 shows a speed up of
+        28% - 95% faster than the loop.
+
+        The largest perf regressions for ctz vs the loop, are when finding 1 in a mostly
+        set word or finding 0 in a mostly cleared word. For example, on X86_64:
+            Find 1 in 0xffffffffffffffff: using loop 8.67 ms, using ctz 6.07 ms, delta 30.0%
+            Find 0 in 0x8000000000000000: using loop 9.01 ms, using ctz 6.54 ms, delta 28.1%
+
+        The largest perf progressions for ctz vs the loop, are the opposite: finding 1 in
+        a mostly cleared word, or finding a 0 in a mostly set word. For example, on X86_64:
+            Find 1 in 0x8000000000000000: using loop 91.4 ms, using ctz 6.48 ms, delta 92.9%
+            Find 0 in 0xffffffffffffffff: using loop 91.7 ms, using ctz 6.95 ms, delta 92.4%
+
+        TL;DR: the microbenchmark methodology used:
+
+        findBitInWord() takes:
+            a. word to scan
+            b. startIndex
+            c. endIndex
+            d. bool value to scan for, either 1 or 0.
+
+        1. Randomly select 1000 startIndex and endIndex pairs.
+           The endIndex is guaranteed to be >= startIndex.
+
+        2. Using a base word of 0xffffffffffffffff (or uint64_t) and 0xffffffff (for uint32_t),
+           shift left by 0 - N (where N is the number of bits in the word) to generate
+           N + 1 words for the test.  This produces words with contiguous lengths of 1s
+           and 0s.  We're choosing these words to deliberately measure the effects o
+           run lengths of 0s or 1s on the algorithm in use.
+
+        3. For each test word, call findBitInWord() with the start and end indexes chosen
+           in 1 for a 100 iterations.
+
+        4. Run (3) once to search for a true value, and once to search for a false value.
+
+        5. Print the results for each test word and value pair.
+
+        * wtf/BitVector.cpp:
+        * wtf/Bitmap.h:
+        * wtf/StdLibExtras.h:
+        (WTF::findBitInWord):
+
 2020-05-18  Darin Adler  <darin@apple.com>
 
         Add iterator checking to ListHashSet

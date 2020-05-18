@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,24 +176,6 @@ constexpr unsigned long log2(unsigned long value)
 
 #define BOFFSETOF(class, field) (reinterpret_cast<ptrdiff_t>(&(reinterpret_cast<class*>(0x4000)->field)) - 0x4000)
 
-template<typename T>
-bool findBitInWord(T word, size_t& index, size_t endIndex, bool value)
-{
-    static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
-    
-    word >>= index;
-    
-    while (index < endIndex) {
-        if ((word & 1) == static_cast<T>(value))
-            return true;
-        index++;
-        word >>= 1;
-    }
-    
-    index = endIndex;
-    return false;
-}
-
 template <typename T>
 constexpr unsigned ctzConstexpr(T value)
 {
@@ -211,6 +193,67 @@ constexpr unsigned ctzConstexpr(T value)
         uValue >>= 1;
     }
     return zeroCount;
+}
+
+template<typename T>
+inline unsigned ctz(T value)
+{
+    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+
+    using UT = typename std::make_unsigned<T>::type;
+    UT uValue = value;
+
+#if BCOMPILER(GCC_COMPATIBLE)
+    if (uValue)
+        return __builtin_ctzll(uValue);
+    return bitSize;
+#elif BCOMPILER(MSVC) && !BCPU(X86)
+    unsigned long ret = 0;
+    if (_BitScanForward64(&ret, uValue))
+        return ret;
+    return bitSize;
+#else
+    UNUSED_PARAM(bitSize);
+    UNUSED_PARAM(uValue);
+    return ctzConstexpr(value);
+#endif
+}
+
+template<typename T>
+bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool value)
+{
+    static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
+    constexpr size_t bitsInWord = sizeof(word) * 8;
+    BASSERT(startOrResultIndex <= bitsInWord && endIndex <= bitsInWord);
+    BUNUSED(bitsInWord);
+    
+    size_t index = startOrResultIndex;
+    word >>= index;
+
+#if BCOMPILER(GCC_COMPATIBLE) && (BCPU(X86_64) || BCPU(ARM64))
+    // We should only use ctz() when we know that ctz() is implementated using
+    // a fast hardware instruction. Otherwise, this will actually result in
+    // worse performance.
+
+    word ^= (static_cast<T>(value) - 1);
+    index += ctz(word);
+    if (index < endIndex) {
+        startOrResultIndex = index;
+        return true;
+    }
+#else
+    while (index < endIndex) {
+        if ((word & 1) == static_cast<T>(value)) {
+            startOrResultIndex = index;
+            return true;
+        }
+        index++;
+        word >>= 1;
+    }
+#endif
+
+    startOrResultIndex = endIndex;
+    return false;
 }
 
 template<typename T>

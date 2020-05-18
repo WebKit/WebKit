@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/MathExtras.h>
 
 namespace WTF {
 

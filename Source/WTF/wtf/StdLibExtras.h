@@ -317,20 +317,42 @@ bool checkAndSet(T& left, U right)
 }
 
 template<typename T>
-bool findBitInWord(T word, size_t& index, size_t endIndex, bool value)
+inline unsigned ctz(T value); // Clients will also need to #include MathExtras.h
+
+template<typename T>
+bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool value)
 {
     static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
-    
+
+    constexpr size_t bitsInWord = sizeof(word) * 8;
+    ASSERT_UNUSED(bitsInWord, startOrResultIndex <= bitsInWord && endIndex <= bitsInWord);
+
+    size_t index = startOrResultIndex;
     word >>= index;
-    
+
+#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+    // We should only use ctz() when we know that ctz() is implementated using
+    // a fast hardware instruction. Otherwise, this will actually result in
+    // worse performance.
+
+    word ^= (static_cast<T>(value) - 1);
+    index += ctz(word);
+    if (index < endIndex) {
+        startOrResultIndex = index;
+        return true;
+    }
+#else
     while (index < endIndex) {
-        if ((word & 1) == static_cast<T>(value))
+        if ((word & 1) == static_cast<T>(value)) {
+            startOrResultIndex = index;
             return true;
+        }
         index++;
         word >>= 1;
     }
-    
-    index = endIndex;
+#endif
+
+    startOrResultIndex = endIndex;
     return false;
 }
 

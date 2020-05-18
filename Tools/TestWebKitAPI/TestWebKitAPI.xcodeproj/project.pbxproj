@@ -1143,6 +1143,7 @@
 		F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6B7BE9617469B7E008A3445 /* associate-form-controls.html */; };
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
 		F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6FDDDD514241C48004F1729 /* push-state.html */; };
+		FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */; };
 		FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2D9473245EB2DF00E48135 /* Bitmap.cpp */; };
 /* End PBXBuildFile section */
 
@@ -2813,6 +2814,7 @@
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
+		FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StdLibExtras.cpp; sourceTree = "<group>"; };
 		FE2D9473245EB2DF00E48135 /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
 		FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NakedPtr.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -4026,6 +4028,7 @@
 				0BCD85691485C98B00EA2003 /* SetForScope.cpp */,
 				CD5393C91757BAC400C07123 /* SHA1.cpp */,
 				E3953F951F2CF32100A76A2E /* Signals.cpp */,
+				FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */,
 				81B50192140F232300D9EB58 /* StringBuilder.cpp */,
 				7CD4C26C1E2C0E6E00929470 /* StringConcatenate.cpp */,
 				93ABA80816DDAB91002DB2FA /* StringHasher.cpp */,
@@ -4694,6 +4697,7 @@
 				7C83DED41D0A590C00FEBCF3 /* HashSet.cpp in Sources */,
 				7C8BFF7123C0107A00C009B3 /* HexNumber.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
+				FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */,
 				53FCDE6B229EFFB900598ECF /* IsoHeap.cpp in Sources */,
 				7CEB62AB223609DE0069CBB0 /* IteratorRange.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
