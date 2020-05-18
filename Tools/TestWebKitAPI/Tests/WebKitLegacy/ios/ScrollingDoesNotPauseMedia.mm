@@ -93,7 +93,7 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
     Util::run(&didFinishLoad);
     Util::run(&gotMainFrame);
 
-    callOnMainThreadAndWait([&] () mutable {
+    callOnMainThread([&] () mutable {
         [mainFrame setTimeoutsPaused:YES];
 
         DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[[mainFrame DOMDocument] querySelector:@"video"];
@@ -109,7 +109,7 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
 
     Util::run(&readyToTest);
 
-    callOnMainThreadAndWait([&] () mutable {
+    callOnMainThread([&] () mutable {
         DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[[mainFrame DOMDocument] querySelector:@"video"];
         ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
 
@@ -118,7 +118,7 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
 
     Util::run(&didReceivePlaying);
 
-    callOnMainThreadAndWait([&] () mutable {
+    callOnMainThread([&] () mutable {
         DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[[mainFrame DOMDocument] querySelector:@"video"];
         ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
 

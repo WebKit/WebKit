@@ -101,7 +101,7 @@ TEST(WebKitLegacy, PreemptVideoFullscreen)
     Util::run(&didFinishLoad);
     Util::run(&gotMainFrame);
 
-    callOnMainThreadAndWait([&] () mutable {
+    callOnMainThread([&] () mutable {
         [mainFrame setTimeoutsPaused:YES];
         DOMHTMLMediaElement* video1 = (DOMHTMLMediaElement*)[[mainFrame DOMDocument] getElementById:@"video1"];
         [video1 addEventListener:@"canplaythrough" listener:uiDelegate.get() useCapture:NO];
@@ -120,7 +120,7 @@ TEST(WebKitLegacy, PreemptVideoFullscreen)
     // Wait until both video elements are ready to play.
     Util::run(&readyToTest);
 
-    callOnMainThreadAndWait([&] () mutable {
+    callOnMainThread([&] () mutable {
         DOMHTMLMediaElement* video1 = (DOMHTMLMediaElement*)[[mainFrame DOMDocument] getElementById:@"video1"];
         DOMHTMLMediaElement* video2 = (DOMHTMLMediaElement*)[[mainFrame DOMDocument] getElementById:@"video2"];
         [video1 play];
