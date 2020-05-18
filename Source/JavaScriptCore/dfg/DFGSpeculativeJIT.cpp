@@ -1868,11 +1868,11 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
             else if (!needsTypeCheck(node->child2(), SpecOther))
                 nonSpeculativePeepholeBranchNullOrUndefined(node->child1(), branchNode);
             else {
-                nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
+                genericJSValuePeepholeBranch(node, branchNode, condition, operation);
                 return true;
             }
         } else {
-            nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
+            genericJSValuePeepholeBranch(node, branchNode, condition, operation);
             return true;
         }
 
@@ -14403,7 +14403,7 @@ void SpeculativeJIT::genericJSValueNonPeepholeCompare(Node* node, MacroAssembler
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, MacroAssembler::RelationalCondition cond, S_JITOperation_GJJ helperFunction)
+void SpeculativeJIT::genericJSValuePeepholeBranch(Node* node, Node* branchNode, MacroAssembler::RelationalCondition cond, S_JITOperation_GJJ helperFunction)
 {
     BasicBlock* taken = branchNode->branchData()->taken.block;
     BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
@@ -14420,8 +14420,11 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
         notTaken = tmp;
     }
 
-    JSValueOperand arg1(this, node->child1());
-    JSValueOperand arg2(this, node->child2());
+    JSValueOperand arg1(this, node->child1(), ManualOperandSpeculation);
+    JSValueOperand arg2(this, node->child2(), ManualOperandSpeculation);
+    speculate(node, node->child1());
+    speculate(node, node->child2());
+
     JSValueRegs arg1Regs = arg1.jsValueRegs();
     JSValueRegs arg2Regs = arg2.jsValueRegs();
 

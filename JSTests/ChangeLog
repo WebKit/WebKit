@@ -1,3 +1,13 @@
+2020-05-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt peephole compare should speculate appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=212037
+        <rdar://problem/63346966>
+
+        Reviewed by Saam Barati.
+
+        * stress/bigint-compare-peephole-branch.js: Added.
+
 2020-05-18  Keith Miller  <keith_miller@apple.com>
 
         OSR loop entry to iterator_next generic needs to CheckNotEmpty on m_next
