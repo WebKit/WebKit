@@ -1,3 +1,39 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement conversion between P3 and sRGB color
+        https://bugs.webkit.org/show_bug.cgi?id=211998
+
+        Reviewed by Daniel Bates.
+        
+        Color::toSRGBAComponentsLossy() was a lie because it didn't actually convert extended
+        colors into sRGB. Fix that by converting P3 and linaerRGB colors into sRGB, using the color
+        math from CSS Color 4.
+
+        Renamed the various "linear to sRGB" functions because they work for any RGB colors,
+        not just sRGB.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::toSRGBAComponentsLossy const):
+        * platform/graphics/Color.h:
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::linearToRGBColorComponent):
+        (WebCore::RGBToLinearColorComponent):
+        (WebCore::sRGBColorToLinearComponents):
+        (WebCore::RGBToLinearComponents):
+        (WebCore::linearToRGBComponents):
+        (WebCore::XYZToLinearSRGB):
+        (WebCore::linearSRGBToXYZ):
+        (WebCore::XYZToLinearP3):
+        (WebCore::linearP3ToXYZ):
+        (WebCore::P3ToSRGB):
+        (WebCore::sRGBToP3):
+        (WebCore::ColorMatrix::transformedColorComponents const):
+        (WebCore::linearToSRGBColorComponent): Deleted.
+        (WebCore::sRGBToLinearColorComponent): Deleted.
+        (WebCore::sRGBToLinearComponents): Deleted.
+        (WebCore::linearToSRGBComponents): Deleted.
+        * platform/graphics/ColorUtilities.h:
+
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow clipboard API access when pasting from a menu item or key binding

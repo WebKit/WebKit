@@ -233,7 +233,7 @@ bool InvertLightnessFilterOperation::transformColor(FloatComponents& sRGBColorCo
     hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
     
     // Convert back to RGB.
-    sRGBColorComponents = HSLToSRGB(hslComponents);
+    sRGBColorComponents = hslToSRGB(hslComponents);
     
     // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
     const float matrixValues[20] = {
@@ -266,7 +266,7 @@ bool InvertLightnessFilterOperation::inverseTransformColor(FloatComponents& sRGB
     // Hue rotate by 180deg.
     hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
     // And return RGB.
-    sRGBColorComponents = HSLToSRGB(hslComponents);
+    sRGBColorComponents = hslToSRGB(hslComponents);
     return true;
 }
 

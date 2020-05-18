@@ -53,7 +53,7 @@ bool areEssentiallyEqual(const FloatComponents& a, const FloatComponents& b)
 }
 
 // These are the standard sRGB <-> linearRGB conversion functions (https://en.wikipedia.org/wiki/SRGB).
-float linearToSRGBColorComponent(float c)
+float linearToRGBColorComponent(float c)
 {
     if (c < 0.0031308f)
         return 12.92f * c;
@@ -61,7 +61,7 @@ float linearToSRGBColorComponent(float c)
     return clampTo<float>(1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f, 0, 1);
 }
 
-float sRGBToLinearColorComponent(float c)
+float rgbToLinearColorComponent(float c)
 {
     if (c <= 0.04045f)
         return c / 12.92f;
@@ -74,31 +74,101 @@ FloatComponents sRGBColorToLinearComponents(const Color& color)
     float r, g, b, a;
     color.getRGBA(r, g, b, a);
     return {
-        sRGBToLinearColorComponent(r),
-        sRGBToLinearColorComponent(g),
-        sRGBToLinearColorComponent(b),
+        rgbToLinearColorComponent(r),
+        rgbToLinearColorComponent(g),
+        rgbToLinearColorComponent(b),
         a
     };
 }
 
-FloatComponents sRGBToLinearComponents(const FloatComponents& sRGBColor)
+FloatComponents rgbToLinearComponents(const FloatComponents& RGBColor)
 {
     return {
-        sRGBToLinearColorComponent(sRGBColor.components[0]),
-        sRGBToLinearColorComponent(sRGBColor.components[1]),
-        sRGBToLinearColorComponent(sRGBColor.components[2]),
-        sRGBColor.components[3]
+        rgbToLinearColorComponent(RGBColor.components[0]),
+        rgbToLinearColorComponent(RGBColor.components[1]),
+        rgbToLinearColorComponent(RGBColor.components[2]),
+        RGBColor.components[3]
     };
 }
 
-FloatComponents linearToSRGBComponents(const FloatComponents& linearRGB)
+FloatComponents linearToRGBComponents(const FloatComponents& linearRGB)
 {
     return {
-        linearToSRGBColorComponent(linearRGB.components[0]),
-        linearToSRGBColorComponent(linearRGB.components[1]),
-        linearToSRGBColorComponent(linearRGB.components[2]),
+        linearToRGBColorComponent(linearRGB.components[0]),
+        linearToRGBColorComponent(linearRGB.components[1]),
+        linearToRGBColorComponent(linearRGB.components[2]),
         linearRGB.components[3]
     };
+}
+
+static FloatComponents xyzToLinearSRGB(const FloatComponents& XYZComponents)
+{
+    // https://en.wikipedia.org/wiki/SRGB
+    // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    const float values[] = {
+         3.2404542f, -1.5371385f, -0.4985314f, 0.0f, 0.0f,
+        -0.9692660f,  1.8760108f,  0.0415560f, 0.0f, 0.0f,
+         0.0556434f, -0.2040259f,  1.0572252f, 0.0f, 0.0f,
+         0.0f,        0.0f,        0.0f,       1.0f, 0.0f,
+    };
+    ColorMatrix xyzToLinearSRGBMatrix(values);
+    return xyzToLinearSRGBMatrix.transformedColorComponents(XYZComponents);
+}
+
+static FloatComponents linearSRGBToXYZ(const FloatComponents& XYZComponents)
+{
+    // https://en.wikipedia.org/wiki/SRGB
+    // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+    const float values[] = {
+        0.4124564f,  0.3575761f,  0.1804375f, 0.0f, 0.0f,
+        0.2126729f,  0.7151522f,  0.0721750f, 0.0f, 0.0f,
+        0.0193339f,  0.1191920f,  0.9503041f, 0.0f, 0.0f,
+        0.0f,        0.0f,        0.0f,       1.0f, 0.0f,
+    };
+    ColorMatrix linearSRGBToXYZMatrix(values);
+    return linearSRGBToXYZMatrix.transformedColorComponents(XYZComponents);
+}
+
+static FloatComponents XYZToLinearP3(const FloatComponents& XYZComponents)
+{
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    const float values[] = {
+         2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f, 0.0f, 0.0f,
+        -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f, 0.0f, 0.0f,
+         0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f, 0.0f, 0.0f,
+         0.0f,                 0.0f,                 0.0f,                1.0f, 0.0f,
+    };
+    ColorMatrix xyzToLinearSRGBMatrix(values);
+    return xyzToLinearSRGBMatrix.transformedColorComponents(XYZComponents);
+}
+
+static FloatComponents linearP3ToXYZ(const FloatComponents& XYZComponents)
+{
+    // https://drafts.csswg.org/css-color/#color-conversion-code
+    const float values[] = {
+        0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f, 0.0f, 0.0f,
+        0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f, 0.0f, 0.0f,
+        0.0f,                0.0451133818589026f, 1.043944368900976f, 0.0f, 0.0f,
+        0.0f,                0.0f,                0.0f,               1.0f, 0.0f,
+    };
+    ColorMatrix linearP3ToXYZMatrix(values);
+    return linearP3ToXYZMatrix.transformedColorComponents(XYZComponents);
+}
+
+FloatComponents p3ToSRGB(const FloatComponents& p3)
+{
+    auto linearP3 = rgbToLinearComponents(p3);
+    auto xyz = linearP3ToXYZ(linearP3);
+    auto linearSRGB = xyzToLinearSRGB(xyz);
+    return linearToRGBComponents(linearSRGB);
+}
+
+FloatComponents sRGBToP3(const FloatComponents& sRGB)
+{
+    auto linearSRGB = rgbToLinearComponents(sRGB);
+    auto xyz = linearSRGBToXYZ(linearSRGB);
+    auto linearP3 = XYZToLinearP3(xyz);
+    return linearToRGBComponents(linearP3);
 }
 
 // This is similar to sRGBToLinearColorComponent but for some reason
@@ -195,7 +265,7 @@ static float calcHue(float temp1, float temp2, float hueVal)
 // Explanation of this algorithm can be found in the CSS Color 4 Module
 // specification at https://drafts.csswg.org/css-color-4/#hsl-to-rgb with
 // further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
-FloatComponents HSLToSRGB(const FloatComponents& hslColor)
+FloatComponents hslToSRGB(const FloatComponents& hslColor)
 {
     float hue = hslColor.components[0];
     float saturation = hslColor.components[1];
@@ -351,17 +421,32 @@ ColorMatrix ColorMatrix::sepiaMatrix(float amount)
     return matrix;
 }
 
-void ColorMatrix::transformColorComponents(FloatComponents& colorComonents) const
+void ColorMatrix::transformColorComponents(FloatComponents& colorComponents) const
 {
-    float red = colorComonents.components[0];
-    float green = colorComonents.components[1];
-    float blue = colorComonents.components[2];
-    float alpha = colorComonents.components[3];
+    float red = colorComponents.components[0];
+    float green = colorComponents.components[1];
+    float blue = colorComponents.components[2];
+    float alpha = colorComponents.components[3];
 
-    colorComonents.components[0] = m_matrix[0][0] * red + m_matrix[0][1] * green + m_matrix[0][2] * blue + m_matrix[0][3] * alpha + m_matrix[0][4];
-    colorComonents.components[1] = m_matrix[1][0] * red + m_matrix[1][1] * green + m_matrix[1][2] * blue + m_matrix[1][3] * alpha + m_matrix[1][4];
-    colorComonents.components[2] = m_matrix[2][0] * red + m_matrix[2][1] * green + m_matrix[2][2] * blue + m_matrix[2][3] * alpha + m_matrix[2][4];
-    colorComonents.components[3] = m_matrix[3][0] * red + m_matrix[3][1] * green + m_matrix[3][2] * blue + m_matrix[3][3] * alpha + m_matrix[3][4];
+    colorComponents.components[0] = m_matrix[0][0] * red + m_matrix[0][1] * green + m_matrix[0][2] * blue + m_matrix[0][3] * alpha + m_matrix[0][4];
+    colorComponents.components[1] = m_matrix[1][0] * red + m_matrix[1][1] * green + m_matrix[1][2] * blue + m_matrix[1][3] * alpha + m_matrix[1][4];
+    colorComponents.components[2] = m_matrix[2][0] * red + m_matrix[2][1] * green + m_matrix[2][2] * blue + m_matrix[2][3] * alpha + m_matrix[2][4];
+    colorComponents.components[3] = m_matrix[3][0] * red + m_matrix[3][1] * green + m_matrix[3][2] * blue + m_matrix[3][3] * alpha + m_matrix[3][4];
+}
+
+FloatComponents ColorMatrix::transformedColorComponents(const FloatComponents& colorComponents) const
+{
+    float red = colorComponents.components[0];
+    float green = colorComponents.components[1];
+    float blue = colorComponents.components[2];
+    float alpha = colorComponents.components[3];
+
+    return {
+        m_matrix[0][0] * red + m_matrix[0][1] * green + m_matrix[0][2] * blue + m_matrix[0][3] * alpha + m_matrix[0][4],
+        m_matrix[1][0] * red + m_matrix[1][1] * green + m_matrix[1][2] * blue + m_matrix[1][3] * alpha + m_matrix[1][4],
+        m_matrix[2][0] * red + m_matrix[2][1] * green + m_matrix[2][2] * blue + m_matrix[2][3] * alpha + m_matrix[2][4],
+        m_matrix[3][0] * red + m_matrix[3][1] * green + m_matrix[3][2] * blue + m_matrix[3][3] * alpha + m_matrix[3][4]
+    };
 }
 
 } // namespace WebCore

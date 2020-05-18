@@ -79,7 +79,7 @@ RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha)
 RGBA32 makeRGBAFromHSLA(float hue, float saturation, float lightness, float alpha)
 {
     const float scaleFactor = 255.0;
-    FloatComponents floatResult = HSLToSRGB({ hue, saturation, lightness, alpha });
+    FloatComponents floatResult = hslToSRGB({ hue, saturation, lightness, alpha });
     return makeRGBA(
         round(floatResult.components[0] * scaleFactor),
         round(floatResult.components[1] * scaleFactor),
@@ -561,10 +561,11 @@ FloatComponents Color::toSRGBAComponentsLossy() const
         auto& extendedColor = asExtended();
         switch (extendedColor.colorSpace()) {
         case ColorSpace::SRGB:
-        case ColorSpace::LinearRGB:
-        case ColorSpace::DisplayP3:
-            // FIXME: This doesn't convert into sRGB and should.
             return extendedColor.channels();
+        case ColorSpace::LinearRGB:
+            return linearToRGBComponents(extendedColor.channels());
+        case ColorSpace::DisplayP3:
+            return p3ToSRGB(extendedColor.channels());
         }
     }
     float r, g, b, a;

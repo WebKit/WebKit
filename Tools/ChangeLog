@@ -1,3 +1,16 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement conversion between P3 and sRGB color
+        https://bugs.webkit.org/show_bug.cgi?id=211998
+
+        Reviewed by Daniel Bates.
+
+        API test for conversions from P3 to sRGB, and linearRGB to sRGB. Values were confirmed
+        as close to those provided by ColorSync Utility.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-05-18  Mark Lam  <mark.lam@apple.com>
 
         Implement a faster findBitInWord() using the hardware ctz instruction.

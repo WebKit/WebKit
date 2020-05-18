@@ -173,15 +173,18 @@ inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
 }
 
 // 0-1 components, result is clamped.
-float linearToSRGBColorComponent(float);
-float sRGBToLinearColorComponent(float);
+float linearToRGBColorComponent(float);
+float rgbToLinearColorComponent(float);
 
 FloatComponents sRGBColorToLinearComponents(const Color&);
-FloatComponents sRGBToLinearComponents(const FloatComponents&);
-FloatComponents linearToSRGBComponents(const FloatComponents&);
+FloatComponents rgbToLinearComponents(const FloatComponents&);
+FloatComponents linearToRGBComponents(const FloatComponents&);
+
+FloatComponents p3ToSRGB(const FloatComponents&);
+FloatComponents sRGBToP3(const FloatComponents&);
 
 FloatComponents sRGBToHSL(const FloatComponents&);
-FloatComponents HSLToSRGB(const FloatComponents&);
+FloatComponents hslToSRGB(const FloatComponents&);
 
 float luminance(const FloatComponents& sRGBCompontents);
 float contrastRatio(const FloatComponents&, const FloatComponents&);
@@ -197,6 +200,7 @@ public:
     ColorMatrix(const float[20]);
     
     void transformColorComponents(FloatComponents&) const;
+    FloatComponents transformedColorComponents(const FloatComponents&) const;
 
 private:
     void makeIdentity();
