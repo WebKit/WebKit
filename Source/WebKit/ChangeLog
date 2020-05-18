@@ -1,3 +1,17 @@
+2020-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Use default initializers in TextIndicatorData
+        <https://webkit.org/b/212039>
+        <rdar://problem/63355619>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextIndicatorData>::encode):
+        (IPC::ArgumentCoder<TextIndicatorData>::decode):
+        - Switch from decodeEnum() and encodeEnum() to modern
+          equivalents that check for valid enum values.
+
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Replace uses of +self with +class

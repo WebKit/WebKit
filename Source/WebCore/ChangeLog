@@ -1,3 +1,21 @@
+2020-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Use default initializers in TextIndicatorData
+        <https://webkit.org/b/212039>
+        <rdar://problem/63355619>
+
+        Reviewed by Alex Christensen.
+
+        Tested by IPC::Decoder::decode() and IPC::Encoder::operator<<()
+        running on WebKit2 API and layout tests.
+
+        * page/TextIndicator.h:
+        (WebCore::TextIndicatorData):
+        - Add default initializers.
+        (WTF::EnumTraits<WebCore::TextIndicatorPresentationTransition>):
+        - Add EnumTraits so TextIndicatorPresentationTransition may be
+          used by IPC::Decoder::decode() and IPC::Encoder::operator<<().
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Fix operator== and hash() for ExtendedColor

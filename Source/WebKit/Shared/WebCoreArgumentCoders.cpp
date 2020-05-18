@@ -2612,7 +2612,7 @@ void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndica
     encoder << textIndicatorData.contentImageWithoutSelectionRectInRootViewCoordinates;
     encoder << textIndicatorData.contentImageScaleFactor;
     encoder << textIndicatorData.estimatedBackgroundColor;
-    encoder.encodeEnum(textIndicatorData.presentationTransition);
+    encoder << textIndicatorData.presentationTransition;
     encoder << static_cast<uint64_t>(textIndicatorData.options);
 
     encodeOptionalImage(encoder, textIndicatorData.contentImage.get());
@@ -2641,7 +2641,7 @@ Optional<TextIndicatorData> ArgumentCoder<TextIndicatorData>::decode(Decoder& de
     if (!decoder.decode(textIndicatorData.estimatedBackgroundColor))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
+    if (!decoder.decode(textIndicatorData.presentationTransition))
         return WTF::nullopt;
 
     uint64_t options;

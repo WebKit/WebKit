@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "FloatRect.h"
 #include "Image.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -105,13 +106,13 @@ struct TextIndicatorData {
     FloatRect textBoundingRectInRootViewCoordinates;
     FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
-    float contentImageScaleFactor;
+    float contentImageScaleFactor { 0 };
     RefPtr<Image> contentImageWithHighlight;
     RefPtr<Image> contentImageWithoutSelection;
     RefPtr<Image> contentImage;
     Color estimatedBackgroundColor;
-    TextIndicatorPresentationTransition presentationTransition;
-    TextIndicatorOptions options;
+    TextIndicatorPresentationTransition presentationTransition { TextIndicatorPresentationTransition::None };
+    TextIndicatorOptions options { TextIndicatorOptionDefault };
 };
 
 class TextIndicator : public RefCounted<TextIndicator> {
@@ -147,3 +148,17 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::TextIndicatorPresentationTransition> {
+    using values = EnumValues<
+        WebCore::TextIndicatorPresentationTransition,
+        WebCore::TextIndicatorPresentationTransition::None,
+        WebCore::TextIndicatorPresentationTransition::Bounce,
+        WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade,
+        WebCore::TextIndicatorPresentationTransition::FadeIn
+    >;
+};
+
+} // namespace WTF
