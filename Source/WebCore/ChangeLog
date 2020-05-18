@@ -1,3 +1,17 @@
+2020-05-18  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null Ptr Deref @ WebCore::CSSValue::classType
+        https://bugs.webkit.org/show_bug.cgi?id=212036
+
+        Reviewed by Geoffrey Garen.
+
+        Calculated value for a primitive value type can be NULL for a CSS property. Added a null check before dereferencing it.
+
+        Test: editing/execCommand/null_calc_primitive_value_for_css_property.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Implement conversion between P3 and sRGB color

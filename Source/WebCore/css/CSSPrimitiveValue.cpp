@@ -1090,6 +1090,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSSUnitType::CSS_PAIR:
         return pairValue()->cssText();
     case CSSUnitType::CSS_CALC:
+        if (!m_value.calc)
+            break;
         return m_value.calc->cssText();
     case CSSUnitType::CSS_SHAPE:
         return m_value.shape->cssText();

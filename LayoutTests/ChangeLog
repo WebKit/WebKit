@@ -1,3 +1,15 @@
+2020-05-18  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null Ptr Deref @ WebCore::CSSValue::classType
+        https://bugs.webkit.org/show_bug.cgi?id=212036
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test.
+
+        * editing/execCommand/null_calc_primitive_value_for_css_property-expected.txt: Added.
+        * editing/execCommand/null_calc_primitive_value_for_css_property.html: Added.
+
 2020-05-15  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Rebaseline security/block-test-no-port.html
