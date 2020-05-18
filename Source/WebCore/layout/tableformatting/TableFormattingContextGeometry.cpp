@@ -28,9 +28,11 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutBox.h"
+#include "DisplayBox.h"
+#include "InlineFormattingState.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutInitialContainingBlock.h"
 #include "TableFormattingState.h"
 
 namespace WebCore {

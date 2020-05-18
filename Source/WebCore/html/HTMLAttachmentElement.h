@@ -28,12 +28,12 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include "HTMLElement.h"
+#include "Image.h"
 
 namespace WebCore {
 
 class File;
 class HTMLImageElement;
-class Image;
 class RenderAttachment;
 class ShareableBitmap;
 class SharedBuffer;

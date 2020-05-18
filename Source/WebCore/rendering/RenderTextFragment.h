@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "RenderBoxModelObject.h"
 #include "RenderText.h"
 
 namespace WebCore {

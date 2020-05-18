@@ -34,6 +34,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXIsolatedTree.h"
+#include "AXLogger.h"
 #include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"

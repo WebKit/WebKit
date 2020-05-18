@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Element;
 class RenderStyle;
 class TimingFunction;
 

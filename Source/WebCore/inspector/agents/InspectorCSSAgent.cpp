@@ -60,6 +60,7 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleScope.h"
+#include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Optional.h>
