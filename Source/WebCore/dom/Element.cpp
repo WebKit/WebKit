@@ -1966,6 +1966,12 @@ void Element::invalidateStyleForSubtreeInternal()
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
 }
 
+void Element::invalidateEventListenerRegions()
+{
+    // Event listener region is updated via style update.
+    invalidateStyleInternal();
+}
+
 bool Element::hasDisplayContents() const
 {
     if (!hasRareData())

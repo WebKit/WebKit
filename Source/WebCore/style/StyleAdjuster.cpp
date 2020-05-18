@@ -32,6 +32,7 @@
 
 #include "AnimationBase.h"
 #include "CSSFontSelector.h"
+#include "DOMWindow.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "FrameView.h"
@@ -191,6 +192,15 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
         return { TouchAction::None };
 
     return sharedTouchActions;
+}
+
+void Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
+{
+    auto regionTypes = computeEventListenerRegionTypes(document, { });
+    if (auto* window = document.domWindow())
+        regionTypes.add(computeEventListenerRegionTypes(*window, { }));
+
+    rootStyle.setEventListenerRegionTypes(regionTypes);
 }
 
 OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)

@@ -132,6 +132,7 @@ private:
     virtual void derefEventTarget() = 0;
     
     void innerInvokeEventListeners(Event&, EventListenerVector, EventInvokePhase);
+    void invalidateEventListenerRegions();
 
     friend class EventListenerIterator;
 };

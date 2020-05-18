@@ -1148,6 +1148,8 @@ public:
     void invalidateRenderingDependentRegions();
     void invalidateEventRegionsForFrame(HTMLFrameOwnerElement&);
 
+    void invalidateEventListenerRegions();
+
     void removeAllEventListeners() final;
 
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
@@ -2175,4 +2177,5 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Document)
     static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isDocument(); }
     static bool isType(const WebCore::Node& node) { return node.isDocumentNode(); }
+    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
 SPECIALIZE_TYPE_TRAITS_END()

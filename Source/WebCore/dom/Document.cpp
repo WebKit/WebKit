@@ -210,6 +210,7 @@
 #include "SocketProvider.h"
 #include "StorageEvent.h"
 #include "StringCallback.h"
+#include "StyleAdjuster.h"
 #include "StyleColor.h"
 #include "StyleProperties.h"
 #include "StyleResolveForDocument.h"
@@ -4270,6 +4271,19 @@ void Document::invalidateEventRegionsForFrame(HTMLFrameOwnerElement& element)
     }
     if (auto* ownerElement = this->ownerElement())
         ownerElement->document().invalidateEventRegionsForFrame(*ownerElement);
+}
+
+void Document::invalidateEventListenerRegions()
+{
+    if (!renderView() || !documentElement())
+        return;
+
+    // We don't track style validity for Document and full rebuild is too big of a hammer.
+    // Instead just mutate the style directly and trigger a minimal style update.
+    auto& rootStyle = renderView()->mutableStyle();
+    Style::Adjuster::adjustEventListenerRegionTypesForRootStyle(rootStyle, *this);
+
+    documentElement()->invalidateStyleInternal();
 }
 
 void Document::invalidateRenderingDependentRegions()

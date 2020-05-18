@@ -591,6 +591,8 @@ public:
     void invalidateStyleInternal();
     void invalidateStyleForSubtreeInternal();
 
+    void invalidateEventListenerRegions();
+
     bool hasDisplayContents() const;
     void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
 

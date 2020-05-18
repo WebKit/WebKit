@@ -1,3 +1,33 @@
+2020-05-18  Antti Koivisto  <antti@apple.com>
+
+        [Wheel event region] Invalidation for root style
+        https://bugs.webkit.org/show_bug.cgi?id=212029
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/scrolling/mac/wheel-event-listener-region-root-invalidation.html
+
+        Invalidate the region when event listeners change on Document or Window.
+
+        * dom/Document.cpp:
+        (WebCore::Document::invalidateEventListenerRegions):
+        * dom/Document.h:
+        (isType):
+        * dom/Element.cpp:
+        (WebCore::Element::invalidateEventListenerRegions):
+        * dom/Element.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::removeAllEventListeners):
+        (WebCore::EventTarget::invalidateEventListenerRegions):
+        * dom/EventTarget.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustEventListenerRegionTypesForRootStyle):
+        * style/StyleAdjuster.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Find doesn't always scroll search results into view

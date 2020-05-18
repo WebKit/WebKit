@@ -95,10 +95,8 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (listenerCreatedFromScript)
         InspectorInstrumentation::didAddEventListener(*this, eventType, listenerRef.get(), options.capture);
 
-    if (eventNames().isWheelEventType(eventType)) {
-        if (is<Element>(*this))
-            downcast<Element>(*this).invalidateStyleInternal();
-    }
+    if (eventNames().isWheelEventType(eventType))
+        invalidateEventListenerRegions();
 
     eventListenersDidChange();
     return true;
@@ -141,10 +139,8 @@ bool EventTarget::removeEventListener(const AtomString& eventType, EventListener
     InspectorInstrumentation::willRemoveEventListener(*this, eventType, listener, options.capture);
 
     if (data->eventListenerMap.remove(eventType, listener, options.capture)) {
-        if (eventNames().isWheelEventType(eventType)) {
-            if (is<Element>(*this))
-                downcast<Element>(*this).invalidateStyleInternal();
-        }
+        if (eventNames().isWheelEventType(eventType))
+            invalidateEventListenerRegions();
 
         eventListenersDidChange();
         return true;
@@ -377,10 +373,8 @@ void EventTarget::removeAllEventListeners()
 
     auto* data = eventTargetData();
     if (data && !data->eventListenerMap.isEmpty()) {
-        if (data->eventListenerMap.contains(eventNames().wheelEvent) || data->eventListenerMap.contains(eventNames().mousewheelEvent)) {
-            if (is<Element>(*this))
-                downcast<Element>(*this).invalidateStyleInternal();
-        }
+        if (data->eventListenerMap.contains(eventNames().wheelEvent) || data->eventListenerMap.contains(eventNames().mousewheelEvent))
+            invalidateEventListenerRegions();
 
         data->eventListenerMap.clear();
         eventListenersDidChange();
@@ -399,6 +393,25 @@ void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
     EventListenerIterator iterator(&data->eventListenerMap);
     while (auto* listener = iterator.nextListener())
         listener->visitJSFunction(visitor);
+}
+
+void EventTarget::invalidateEventListenerRegions()
+{
+    if (is<Element>(*this)) {
+        downcast<Element>(*this).invalidateEventListenerRegions();
+        return;
+    }
+
+    auto* document = [&]() -> Document* {
+        if (is<Document>(*this))
+            return &downcast<Document>(*this);
+        if (is<DOMWindow>(*this))
+            return downcast<DOMWindow>(*this).document();
+        return nullptr;
+    }();
+
+    if (document)
+        document->invalidateEventListenerRegions();
 }
 
 } // namespace WebCore

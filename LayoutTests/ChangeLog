@@ -1,3 +1,13 @@
+2020-05-18  Antti Koivisto  <antti@apple.com>
+
+        [Wheel event region] Invalidation for root style
+        https://bugs.webkit.org/show_bug.cgi?id=212029
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/mac/wheel-event-listener-region-root-invalidation-expected.txt: Added.
+        * fast/scrolling/mac/wheel-event-listener-region-root-invalidation.html: Added.
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Find doesn't always scroll search results into view
