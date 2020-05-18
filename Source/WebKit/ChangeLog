@@ -1,3 +1,18 @@
+2020-05-18  Lauro Moura  <lmoura@igalia.com>
+
+        webkitpy: Update test data after r261776
+        https://bugs.webkit.org/show_bug.cgi?id=212008
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        * Scripts/test-legacyMessageReceiver.cpp:
+        * Scripts/test-legacyMessages.h:
+        (Messages::WebPage::DidCreateWebProcessConnection::DidCreateWebProcessConnection):
+        * Scripts/webkit/messages_unittest.py:
+        * Scripts/webkit/test-legacy.messages.in:
+
 2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.1 release

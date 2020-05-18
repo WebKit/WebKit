@@ -206,6 +206,7 @@ _expected_results = {
             'name': 'DidCreateWebProcessConnection',
             'parameters': (
                 ('IPC::MachPort', 'connectionIdentifier'),
+                ('OptionSet<WebKit::SelectionFlags>', 'flags'),
             ),
             'conditions': ('PLATFORM(MAC)'),
         },
