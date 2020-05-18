@@ -1,3 +1,21 @@
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Single selection <select> with <optgroups> shows multiple selected options
+        https://bugs.webkit.org/show_bug.cgi?id=199485
+        <rdar://problem/52757531>
+
+        Reviewed by Megan Gardner.
+
+        Add a layout test to verify that we don't leave behind a checked select item after scrolling it offscreen and
+        then checking a different item.
+
+        * fast/forms/ios/no-stale-checked-items-in-select-picker-expected.txt: Added.
+        * fast/forms/ios/no-stale-checked-items-in-select-picker.html: Added.
+        * platform/ipad/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.selectFormAccessoryPickerRow):
+        (window.UIHelper.selectFormAccessoryHasCheckedItemAtRow):
+
 2020-05-18  Youenn Fablet  <youenn@apple.com>
 
         webrtc/datachannel/bufferedAmountLowThreshold.html is failing flakily

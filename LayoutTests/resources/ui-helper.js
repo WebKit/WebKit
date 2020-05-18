@@ -722,8 +722,15 @@ window.UIHelper = class UIHelper {
 
     static selectFormAccessoryPickerRow(rowIndex)
     {
-        const selectRowScript = `(() => uiController.selectFormAccessoryPickerRow(${rowIndex}))()`;
+        const selectRowScript = `uiController.selectFormAccessoryPickerRow(${rowIndex})`;
         return new Promise(resolve => testRunner.runUIScript(selectRowScript, resolve));
+    }
+
+    static selectFormAccessoryHasCheckedItemAtRow(rowIndex)
+    {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.selectFormAccessoryHasCheckedItemAtRow(${rowIndex})`, result => {
+            resolve(result === "true");
+        }));
     }
 
     static selectFormPopoverTitle()

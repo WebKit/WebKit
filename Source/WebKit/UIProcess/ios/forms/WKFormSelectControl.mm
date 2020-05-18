@@ -101,6 +101,12 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     return [(WKSelectPopover *)self.control tableViewController].title;
 }
 
+- (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
+{
+    return [self.control respondsToSelector:@selector(selectFormAccessoryHasCheckedItemAtRow:)]
+        && [id<WKSelectTesting>(self.control) selectFormAccessoryHasCheckedItemAtRow:rowIndex];
+}
+
 @end
 
 #endif  // PLATFORM(IOS_FAMILY)

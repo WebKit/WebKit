@@ -205,6 +205,7 @@ public:
     virtual void dismissFilePicker(JSValueRef callback) { notImplemented(); }
     virtual void dismissFormAccessoryView() { notImplemented(); }
     virtual void selectFormAccessoryPickerRow(long) { notImplemented(); }
+    virtual bool selectFormAccessoryHasCheckedItemAtRow(long) const { return false; }
     virtual JSRetainPtr<JSStringRef> textContentType() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> selectFormPopoverTitle() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> formInputLabel() const { notImplemented(); return nullptr; }

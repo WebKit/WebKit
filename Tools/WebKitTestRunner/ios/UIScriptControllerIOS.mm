@@ -606,6 +606,11 @@ void UIScriptControllerIOS::selectFormAccessoryPickerRow(long rowIndex)
     [webView() selectFormAccessoryPickerRow:rowIndex];
 }
 
+bool UIScriptControllerIOS::selectFormAccessoryHasCheckedItemAtRow(long rowIndex) const
+{
+    return [webView() selectFormAccessoryHasCheckedItemAtRow:rowIndex];
+}
+
 void UIScriptControllerIOS::setTimePickerValue(long hour, long minute)
 {
     [webView() setTimePickerValueToHour:hour minute:minute];

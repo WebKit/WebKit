@@ -8,6 +8,9 @@ compositing/contents-format/ipad [ Pass ]
 fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
 
+# The select picker input view is not displayed on iPad.
+fast/forms/ios/no-stale-checked-items-in-select-picker.html
+
 # These tests are designed for iPhone and crash on iPad
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]

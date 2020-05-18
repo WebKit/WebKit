@@ -88,6 +88,7 @@ public:
     JSRetainPtr<JSStringRef> textContentType() const override;
     JSRetainPtr<JSStringRef> formInputLabel() const override;
     void selectFormAccessoryPickerRow(long rowIndex) override;
+    bool selectFormAccessoryHasCheckedItemAtRow(long rowIndex) const override;
     void setTimePickerValue(long hour, long minute) override;
     double timePickerValueHour() const override;
     double timePickerValueMinute() const override;

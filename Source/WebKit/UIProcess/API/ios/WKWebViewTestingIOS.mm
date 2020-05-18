@@ -144,6 +144,11 @@
     [_contentView selectFormAccessoryPickerRow:rowIndex];
 }
 
+- (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
+{
+    return [_contentView selectFormAccessoryHasCheckedItemAtRow:rowIndex];
+}
+
 - (NSString *)selectFormPopoverTitle
 {
     return [_contentView selectFormPopoverTitle];

@@ -212,6 +212,7 @@ interface UIScriptController {
 
     // <select> picker
     void selectFormAccessoryPickerRow(long rowIndex);
+    boolean selectFormAccessoryHasCheckedItemAtRow(long rowIndex);
     readonly attribute DOMString selectFormPopoverTitle;
     readonly attribute DOMString formInputLabel;
 

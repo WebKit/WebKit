@@ -1,5 +1,23 @@
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Single selection <select> with <optgroups> shows multiple selected options
+        https://bugs.webkit.org/show_bug.cgi?id=199485
+        <rdar://problem/52757531>
+
+        Reviewed by Megan Gardner.
+
+        Add a new helper method to check whether the currently presented form accessory is a select menu, and has a
+        checked menu item at the given row.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::selectFormAccessoryHasCheckedItemAtRow const):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::selectFormAccessoryHasCheckedItemAtRow const):
+
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Unexpected capitalization of next word after repositioning caret
         https://bugs.webkit.org/show_bug.cgi?id=211969
         <rdar://problem/62605526>

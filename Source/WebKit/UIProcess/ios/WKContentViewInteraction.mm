@@ -8757,6 +8757,15 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif
 }
 
+- (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
+{
+#if !PLATFORM(WATCHOS)
+    if ([_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
+        return [(WKFormSelectControl *)_inputPeripheral selectFormAccessoryHasCheckedItemAtRow:rowIndex];
+#endif
+    return NO;
+}
+
 - (NSString *)textContentTypeForTesting
 {
 #if PLATFORM(WATCHOS)

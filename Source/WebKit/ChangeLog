@@ -1,5 +1,57 @@
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Single selection <select> with <optgroups> shows multiple selected options
+        https://bugs.webkit.org/show_bug.cgi?id=199485
+        <rdar://problem/52757531>
+
+        Reviewed by Megan Gardner.
+
+        Fixes a long-standing bug in WKMultipleSelectPicker. Prior to this patch, we rely on the delegate method
+        `-pickerView:row:column:checked:` to be called twice whenever an item is selected: one time for the item that is
+        no longer checked, and another for the newly checked item. This method is responsible for updating the cached
+        `FocusedElementInformation` that determines the data model for the select menu, with the expectation that the
+        unchecked item would be updated to have `isSelected = false;`, and the new checked item would have `isSelected`
+        `= true;`.
+
+        However, `-pickerView:row:column:checked:` is only called for visible item cells. This means that if the user
+        checks an item, scrolls the select menu items down so that the checked item is offscreen, and then checks a
+        different item, we only get notified that the new item is checked, and as a result, fail to uncheck the previous
+        item.
+
+        To address this, tweak our logic for handling a single select so that when an item is checked, we additionally
+        update the previously checked item to not be selected. Also, fix what seems to be a bug in the logic for
+        updating `_singleSelectionIndex`, which is currently updated even when the item is unchecked. It seems to work
+        out at the moment, because `-pickerView:row:column:checked:` seems to be called with `checked := YES` after the
+        previous item was unchecked (assuming that it was visible).
+
+        Test: fast/forms/ios/no-stale-checked-items-in-select-picker.html
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView selectFormAccessoryHasCheckedItemAtRow:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectFormAccessoryHasCheckedItemAtRow:]):
+
+        Add plumbing for a new testing hook.
+
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl selectFormAccessoryHasCheckedItemAtRow:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker pickerView:viewForRow:forComponent:reusingView:]):
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+        (-[WKMultipleSelectPicker selectRow:inComponent:extendingSelection:]):
+
+        Also, fix an existing bug in this testing helper method that crashed the test runner due to calling an
+        unimplemented selector. Instead of trying to invoke `-pickerView:didSelectRow:inComponent:`, we should be using
+        `-pickerView:row:column:checked:` instead for multiple select pickers (which, somewhat confusingly, are still
+        used for single select elements that have `optgroup`s.)
+
+        (-[WKMultipleSelectPicker selectFormAccessoryHasCheckedItemAtRow:]):
+
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Unexpected capitalization of next word after repositioning caret
         https://bugs.webkit.org/show_bug.cgi?id=211969
         <rdar://problem/62605526>

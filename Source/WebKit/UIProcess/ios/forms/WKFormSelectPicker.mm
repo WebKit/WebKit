@@ -219,8 +219,8 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)rowIndex forComponent:(NSInteger)columnIndex reusingView:(UIView *)view
 {
-    const OptionItem& item = [_view focusedSelectElementOptions][rowIndex];
-    UIPickerContentView* pickerItem = item.isGroup ? [[[WKOptionGroupPickerCell alloc] initWithOptionItem:item] autorelease] : [[[WKOptionPickerCell alloc] initWithOptionItem:item] autorelease];
+    auto& item = [_view focusedSelectElementOptions][rowIndex];
+    UIPickerContentView *pickerItem = item.isGroup ? [[[WKOptionGroupPickerCell alloc] initWithOptionItem:item] autorelease] : [[[WKOptionPickerCell alloc] initWithOptionItem:item] autorelease];
 
     // The cell starts out with a null frame. We need to set its frame now so we can find the right font size.
     UITableView *table = [pickerView tableViewForColumn:0];
@@ -272,10 +272,11 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
 {
-    if ((size_t)rowIndex >= [_view focusedSelectElementOptions].size())
+    auto numberOfOptions = static_cast<NSUInteger>([_view focusedSelectElementOptions].size());
+    if (numberOfOptions <= static_cast<NSUInteger>(rowIndex))
         return;
 
-    OptionItem& item = [_view focusedSelectElementOptions][rowIndex];
+    auto& item = [_view focusedSelectElementOptions][rowIndex];
 
     // FIXME: Remove this workaround once <rdar://problem/18745253> is fixed.
     // Group rows should not be checkable, but we are getting this delegate for
@@ -291,18 +292,19 @@ static const float GroupOptionTextColorAlpha = 0.5;
     if ([self allowsMultipleSelection]) {
         [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex], true);
         item.isSelected = isChecked;
-    } else {
+    } else if (isChecked) {
         // Single selection.
-        item.isSelected = NO;
+        if (_singleSelectionIndex < numberOfOptions)
+            [_view focusedSelectElementOptions][_singleSelectionIndex].isSelected = false;
+
         _singleSelectionIndex = rowIndex;
 
         // This private delegate often gets called for multiple rows in the picker,
         // so we only activate and set as selected the checked item in single selection.
-        if (isChecked) {
-            [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex]);
-            item.isSelected = YES;
-        }
-    }
+        [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex]);
+        item.isSelected = true;
+    } else
+        item.isSelected = false;
 }
 
 // WKSelectTesting
@@ -311,7 +313,16 @@ static const float GroupOptionTextColorAlpha = 0.5;
     // FIXME: handle extendingSelection.
     [self selectRow:rowIndex inComponent:0 animated:NO];
     // Progammatic selection changes don't call the delegate, so do that manually.
-    [self.delegate pickerView:self didSelectRow:rowIndex inComponent:0];
+    [self pickerView:self row:rowIndex column:0 checked:YES];
+}
+
+- (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
+{
+    auto numberOfRows = [self numberOfRowsInComponent:0];
+    if (rowIndex >= numberOfRows)
+        return NO;
+
+    return [(UIPickerContentView *)[self viewForRow:rowIndex forComponent:0] isChecked];
 }
 
 @end
