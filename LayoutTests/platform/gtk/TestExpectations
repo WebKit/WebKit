@@ -3440,9 +3440,6 @@ Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure Pass ]
 # https://bugs.webkit.org/show_bug.cgi?id=95935
 webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=39160
-webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
-
 # Missing support for the modifierArray argument to EventSendingController::mouseMoveTo().
 Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
 

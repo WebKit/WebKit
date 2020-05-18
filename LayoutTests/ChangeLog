@@ -1,3 +1,22 @@
+2020-05-15  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Rebaseline security/block-test-no-port.html
+
+        Since upstream libsoup commit e337a6f794 it uses soup-http-error-quark
+        GQuark as string for the error domain.
+
+        The error code 4 already maps to SOUP_STATUS_CANT_CONNECT which is the
+        correct counterpart to Mac's NSURLErrorCannotConnectToHost (-1004).
+
+        Unreviewed test gardening.
+
+        * platform/glib/security/block-test-no-port-expected.txt: Renamed from
+          LayoutTests/platform/wpe/security/block-test-no-port-expected.txt.
+          and fixed error string.
+        * platform/gtk/TestExpectations: Removed expected failure.
+        * platform/gtk/security/block-test-no-port-expected.txt: Removed.
+        * platform/wpe/TestExpectations: Removed expected failure.
+
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow clipboard API access when pasting from a menu item or key binding
