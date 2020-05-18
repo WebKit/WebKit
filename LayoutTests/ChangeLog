@@ -1,3 +1,13 @@
+2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations:
+        Remove the imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
+        flaky-crash expectation. The reported crashes are not occurring anymore. Furthermore,
+        the whole subdirectory is skipped globally, so this expectation is re-enabling all
+        the tests that in majority time out, prolonging the testing.
+
 2020-05-17  Daniel Bates  <dabates@apple.com>
 
         Make editing-word-with-marker-1.html work on iOS
