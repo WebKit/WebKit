@@ -1,3 +1,56 @@
+2020-05-18  Keith Miller  <keith_miller@apple.com>
+
+        OSR loop entry to iterator_next generic needs to CheckNotEmpty on m_next
+        https://bugs.webkit.org/show_bug.cgi?id=212001
+
+        Reviewed by Saam Barati.
+
+        If we happen to OSR enter into iterator_next during a for-of loop
+        that has only profiled a generic iterator but is actually running
+        a fast iterator we will incorrectly perform the Call node This
+        could happen if we loop_hint OSR enter the first time have seen a
+        fast iterator. If this happens right now, we generate the following
+        code:
+
+        D@113:<!2:loc15>    GetLocal(Check:Untyped:D@198, JS|MustGen|UseAsOther, Function|Empty, loc13(W~/FlushedJSValue), machine:loc10, R:Stack(loc13),Stack(loc5), bc#46, ExitValid)  predicting Function|Empty
+          0x4913f1806151: mov -0x58(%rbp), %rsi
+        D@114:<!0:->    FilterCallLinkStatus(Check:Untyped:D@113, MustGen, (Function: Object: 0x1053f47e0 with butterfly 0x0 (Structure 0x1053f9260:[0x6dad, Function, {}, NonArray, Proto:0x1050fc248]), StructureID: 28077; Executable: next#Ddkruz:[0x1053c0480->0x1053e4a80, BaselineFunctionCall, 54 (StrictMode)]), R:Stack(loc5), W:SideState, bc#46, ExitValid)
+        D@115:<!6:loc15>    Call(Check:Untyped:D@113, Check:Untyped:D@110, JS|MustGen|VarArgs|UseAsOther, Final, R:World,Stack(loc5), W:Heap, ExitsForExceptions, ClobbersExit, bc#46, ExitValid)  predicting Final
+          0x4913f1806155: mov $0x1, 0x10(%rsp)
+          0x4913f180615d: mov %rax, 0x18(%rsp)
+          0x4913f1806162: mov %rsi, 0x8(%rsp)
+          0x4913f1806167: mov %rax, -0xa0(%rbp)
+          0x4913f180616e: mov $0x0, 0x24(%rbp)
+          0x4913f1806175: mov $0x0, %r11
+          0x4913f180617f: cmp %r11, %rsi
+          0x4913f1806182: jnz 0x4913f1806192
+          0x4913f1806188: call 0x4913f180618d
+          0x4913f180618d: jmp 0x4913f18061ae
+          0x4913f1806192: mov %rsi, %rax
+          0x4913f1806195: mov $0x1050cfcb0, %rdx
+          0x4913f180619f: mov $0x1052fab68, %rcx
+          0x4913f18061a9: call 0x4913f1801680
+          0x4913f18061ae: lea -0xd0(%rbp), %rsp
+        D@116:<!0:->    MovHint(Check:Untyped:D@115, MustGen, tmp0, R:Stack(loc5), W:SideState, ClobbersExit, bc#46, ExitInvalid)
+        D@332:<!0:->    InvalidationPoint(MustGen, R:Stack(loc5), W:SideState, Exits, bc#46, exit: bc#46cp#1, ExitValid)
+        D@335:<!0:->    CheckStructure(Check:Cell:D@115, MustGen, [%B2:Object], R:Stack(loc5),JSCell_structureID, Exits, bc#46, exit: bc#46cp#1, ExitValid)
+          0x4913f18061b5: test %rax, %r15
+          0x4913f18061b8: jnz 0x4913f18068db
+          0x4913f18061be: cmp $0xcaae, (%rax)
+          0x4913f18061c4: jnz 0x4913f18068f1
+
+        Loc13 in this IR is the location of the next function. Since it's
+        nullptr, we will pass the initial fast-path value of 0 and make a
+        garbage call. This is because Call does not know how to handle
+        empty values. Subsequently, we will fail a structure check for the
+        Call's result and OSR exit to the getDone checkpoint. The fix for
+        this is to simply put a CheckNotEmpty at the top of the generic
+        case. 99.9% of the time this check will be eliminated so it
+        doesn't really cost anything.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2020-05-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, link fix for our internal Debug build

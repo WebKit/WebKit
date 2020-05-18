@@ -6997,6 +6997,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 } else
                     ASSERT(!generatedCase);
 
+                // Our profiling could have been incorrect when we got here. For instance, if we LoopHint OSR enter the first time we would
+                // have seen a fast path, next will be the empty value. When that happens we need to make sure the empty value doesn't flow
+                // into the Call node since call can't handle empty values.
+                addToGraph(CheckNotEmpty, get(bytecode.m_next));
+
                 Terminality terminality = handleCall<OpIteratorNext>(currentInstruction, Call, CallMode::Regular, nextCheckpoint());
                 ASSERT_UNUSED(terminality, terminality == NonTerminal);
                 progressToNextCheckpoint();
