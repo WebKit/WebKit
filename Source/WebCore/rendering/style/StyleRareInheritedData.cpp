@@ -49,7 +49,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     TextUnderlineOffset offset;
     TextDecorationThickness thickness;
     void* customPropertyDataRefs[1];
-    unsigned bitfields[4];
+    unsigned bitfields[6];
     short pagedMediaShorts[2];
     TabSize tabSize;
     short hyphenationShorts[3];
