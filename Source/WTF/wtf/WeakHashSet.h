@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,24 +27,23 @@
 
 #include <wtf/Algorithms.h>
 #include <wtf/HashSet.h>
-#include <wtf/HashTraits.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
 
-template<> struct HashTraits<Ref<WeakPtrImpl>> : RefHashTraits<WeakPtrImpl> {
+template<typename Counter> struct HashTraits<Ref<WeakPtrImpl<Counter>>> : RefHashTraits<WeakPtrImpl<Counter>> {
     static constexpr bool hasIsReleasedWeakValueFunction = true;
-    static bool isReleasedWeakValue(const Ref<WeakPtrImpl>& value)
+    static bool isReleasedWeakValue(const Ref<WeakPtrImpl<Counter>>& value)
     {
         return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value.get();
     }
 };
 
-template <typename T>
+template<typename T, typename Counter = EmptyCounter>
 class WeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<Ref<WeakPtrImpl>> WeakPtrImplSet;
+    typedef HashSet<Ref<WeakPtrImpl<Counter>>> WeakPtrImplSet;
     typedef typename WeakPtrImplSet::AddResult AddResult;
 
     class WeakHashSetConstIterator : public std::iterator<std::forward_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
@@ -85,7 +84,7 @@ public:
         }
 
     private:
-        template <typename> friend class WeakHashSet;
+        template <typename, typename> friend class WeakHashSet;
 
         typename WeakPtrImplSet::const_iterator m_position;
         typename WeakPtrImplSet::const_iterator m_endPosition;

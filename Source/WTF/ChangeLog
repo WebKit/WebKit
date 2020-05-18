@@ -1,3 +1,32 @@
+2020-05-18  Darin Adler  <darin@apple.com>
+
+        Add iterator checking to ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=211669
+
+        Reviewed by Anders Carlsson.
+
+        HashSet and HashMap have iterator checking in debug builds.
+        Add similar checking to ListHashSet, controlled by the same
+        macro, CHECK_HASHTABLE_ITERATORS. Use WeakPtr to make the
+        implementation simple.
+
+        * wtf/Forward.h: Update to add a second parameter to WeakPtr.
+        Also rearranged and tweaked the file a bug.
+
+        * wtf/ListHashSet.h: Make ListHashSet and ListHashSetNode derive
+        from CanMakeWeakPtr. Add m_weakSet and m_weakPosition members to
+        ListHashSetConstIterator, and assert their values at the appropriate
+        times so we will get a breakpoint or crash.
+
+        * wtf/WeakHashSet.h: Updated to add a Counter argument for testing.
+
+        * wtf/WeakPtr.h: Removed the DID_CREATE_WEAK_PTR_IMPL and
+        WILL_DESTROY_WEAK_PTR_IMPL macros, which didn't really work because
+        using them violated the C++ one-definition rule. Replaced with
+        a Counter argument, which defaults to EmptyCounter, which is inlines
+        that do nothing. This required some updates to the classes and
+        functions to make them work with a second argument.
+
 2020-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Make host parser fail on ^

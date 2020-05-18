@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -47,47 +47,45 @@ class UniquedStringImpl;
 class URL;
 class WallTime;
 
+struct AnyThreadsAccessTraits;
+struct EmptyCounter;
 struct FastMalloc;
+struct MainThreadAccessTraits;
+
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 struct VectorMalloc;
 #else
 using VectorMalloc = FastMalloc;
 #endif
 
-struct AnyThreadsAccessTraits;
-struct MainThreadAccessTraits;
+template<typename> struct DumbPtrTraits;
+
 template<typename> class CompletionHandler;
-template<typename T> struct DumbPtrTraits;
-template<typename T> struct DumbValueTraits;
 template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
 template<typename> class OptionSet;
 template<typename> class Optional;
-template<typename T> class Packed;
+template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename T, typename = DumbPtrTraits<T>> class Ref;
 template<typename T, typename = DumbPtrTraits<T>> class RefPtr;
 template<typename> class StringBuffer;
 template<typename, typename = void> class StringTypeAdapter;
-template<typename T> class UniqueRef;
-template<typename T> class WeakPtr;
-
-template<typename> struct DefaultHash { using Hash = void; };
-template<typename> struct HashTraits;
-
-template<typename> struct EnumTraits;
-template<typename E, E...> struct EnumValues;
-
+template<typename> class UniqueRef;
 template<typename...> class Variant;
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorMalloc> class Vector;
+template<typename, typename = EmptyCounter> class WeakPtr;
+
+template<typename> struct DefaultHash { using Hash = void; };
+template<typename> struct DumbValueTraits;
+template<typename> struct EnumTraits;
+template<typename E, E...> struct EnumValues;
+template<typename> struct HashTraits;
+
 template<typename Value, typename = typename DefaultHash<Value>::Hash, typename = HashTraits<Value>> class HashCountedSet;
 template<typename KeyArg, typename MappedArg, typename = typename DefaultHash<KeyArg>::Hash, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>> class HashMap;
 template<typename ValueArg, typename = typename DefaultHash<ValueArg>::Hash, typename = HashTraits<ValueArg>> class HashSet;
-
-template<size_t, typename> struct variant_alternative;
-template<ptrdiff_t, typename...> struct __indexed_type;
-template<ptrdiff_t _Index, typename... _Types> constexpr typename __indexed_type<_Index, _Types...>::__type const& get(Variant<_Types...> const&);
 
 }
 

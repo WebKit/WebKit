@@ -29,6 +29,7 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "Element.h"
 #include "PlatformEvent.h"
 #include "RenderStyleConstants.h"
 #include "Timer.h"

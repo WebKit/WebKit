@@ -25,22 +25,22 @@
 
 #include "config.h"
 
-static unsigned s_baseWeakReferences = 0;
-
-#define DID_CREATE_WEAK_PTR_IMPL(p) do { \
-    ++s_baseWeakReferences; \
-} while (0);
-
-#define WILL_DESTROY_WEAK_PTR_IMPL(p) do { \
-    --s_baseWeakReferences; \
-} while (0);
-
 #include "Test.h"
-#include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>
-#include <wtf/WeakPtr.h>
 
 namespace TestWebKitAPI {
+
+static unsigned s_baseWeakReferences = 0;
+
+struct WeakPtrCounter {
+    static void increment() { ++s_baseWeakReferences; }
+    static void decrement() { --s_baseWeakReferences; }
+};
+
+template<typename T> using CanMakeWeakPtr = WTF::CanMakeWeakPtr<T, WeakPtrFactoryInitialization::Lazy, WeakPtrCounter>;
+template<typename T> using WeakHashSet = WTF::WeakHashSet<T, WeakPtrCounter>;
+template<typename T> using WeakPtr = WTF::WeakPtr<T, WeakPtrCounter>;
+template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrCounter>;
 
 struct Int : public CanMakeWeakPtr<Int> {
     Int(int i) : m_i(i) { }
@@ -73,10 +73,6 @@ public:
         return 1;
     }
 };
-
-}
-
-namespace TestWebKitAPI {
 
 TEST(WTF_WeakPtr, Basic)
 {

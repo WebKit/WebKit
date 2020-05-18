@@ -1,3 +1,17 @@
+2020-05-18  Darin Adler  <darin@apple.com>
+
+        Add iterator checking to ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=211669
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp: Removed use of the DID_CREATE_WEAK_PTR_IMPL
+        and WILL_DESTROY_WEAK_PTR_IMPL, which didn't work consistently because of the
+        one-definition rule. Instead, this file parameterizes the WeakPtr family of
+        class templates with a counter class. To avoid having to rewrite test code, used
+        alias templates to insert these class template into the TestWebKitAPI namespace,
+        hiding the class templates from the WTF namespace.
+
 2020-05-18  Peng Liu  <peng.liu6@apple.com>
 
         [iPad Simulator] TestWebKitAPI.WebKitLegacy.ScrollingDoesNotPauseMedia is timing out
