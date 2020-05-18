@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.29.1
+================
+
+What's new in WebKitGTK 2.29.1?
+
+  - Stop using GTK theming to render form controls.
+  - Add API to disable GTK theming for scrollbars too.
+  - Fix several race conditions and threading issues in the media player.
+  - Add USER_AGENT_BRANDING build option.
+  - Add paste as plain text option to the context menu for rich editable content.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.27.4
 ================
 
