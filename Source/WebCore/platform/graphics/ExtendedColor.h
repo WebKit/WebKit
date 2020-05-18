@@ -75,7 +75,7 @@ private:
 
 inline bool operator==(const ExtendedColor& a, const ExtendedColor& b)
 {
-    return a.colorSpace() == b.colorSpace() && areEssentiallyEqual(a.channels(), b.channels());
+    return a.colorSpace() == b.colorSpace() && a.channels() == b.channels();
 }
 
 inline bool operator!=(const ExtendedColor& a, const ExtendedColor& b)
