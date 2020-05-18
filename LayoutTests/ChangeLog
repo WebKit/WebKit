@@ -1,3 +1,11 @@
+2020-05-18  Paulo Matos  <pmatos@igalia.com>
+
+        Skip layout test stack-overflow-regexp.js on MIPS
+
+        Unreviewed Gardening.
+
+        * js/script-tests/stack-overflow-regexp.js:
+
 2020-05-18  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Remove orphaned tracks in updateTracks()

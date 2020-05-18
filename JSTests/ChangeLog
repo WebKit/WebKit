@@ -1,3 +1,11 @@
+2020-05-18  Paulo Matos  <pmatos@igalia.com>
+
+        Skip stress test array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js on MIPS
+
+        Unreviewed Gardening.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2020-05-16  Keith Miller  <keith_miller@apple.com>
 
         [test262] Update to master for May
