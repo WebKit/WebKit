@@ -1,3 +1,9 @@
+2020-05-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, link fix for our internal Debug build
+
+        * heap/AlignedMemoryAllocator.cpp:
+
 2020-05-17  Lauro Moura  <lmoura@igalia.com>
 
         [JSC] Silence unused-but-set-parameter warnings for older compilers
