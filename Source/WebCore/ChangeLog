@@ -1,3 +1,29 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Find doesn't always scroll search results into view
+        https://bugs.webkit.org/show_bug.cgi?id=212007
+        <rdar://problem/36333321>
+
+        Reviewed by Wenson Hsieh.
+
+        HighlightData::collectBounds() could produce overly large bounds, causing the selection
+        to fail to scroll into view.
+        
+        This happened when multiple block ancestors were added to 'renderers', with empty
+        rects. The process of mapping that empty rect to a quad via localToAbsoluteQuad()
+        could produce an empty quad at a fractional offset, then calling enclosingBoundingBox()
+        on the quad would create a 1x1 rectangle, which got unioned with selectionRect.
+
+        Fix by skipping entries with empty rects.
+
+        Add a Selection log channel and some logging that makes this trivial to see.
+
+        Test: editing/selection/selection-bounds-fractional-containing-blocks.html
+
+        * platform/Logging.h:
+        * rendering/HighlightData.cpp:
+        (WebCore::HighlightData::collectBounds const):
+
 2020-05-18  Darin Adler  <darin@apple.com>
 
         Add iterator checking to ListHashSet

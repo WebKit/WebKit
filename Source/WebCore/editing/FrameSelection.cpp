@@ -52,6 +52,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "Logging.h"
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderText.h"
@@ -68,6 +69,7 @@
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "Chrome.h"
@@ -404,6 +406,8 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
 void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<SetSelectionOption> options, AXTextStateChangeIntent intent, CursorAlignOnScroll align, TextGranularity granularity)
 {
+    LOG_WITH_STREAM(Selection, stream << "FrameSelection::setSelection " << selection);
+
     RefPtr<Document> protector(m_document);
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;

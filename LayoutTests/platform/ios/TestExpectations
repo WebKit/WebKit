@@ -1968,6 +1968,10 @@ editing/undo/undo-combined-delete.html [ Pass Failure ]
 editing/undo/undo-forward-delete-boundary.html [ Pass Failure ]
 editing/undo/undo-forward-delete.html [ Pass Failure ]
 
+# selectionBounds() doesn't work.
+webkit.org/b/212033 editing/selection/block-cursor-overtype-mode.html [ Failure ]
+webkit.org/b/212033 editing/selection/selection-bounds-fractional-containing-blocks.html [ Failure ]
+
 # storage tests that fail:
 storage/websql/sql-error-codes.html [ Failure ]
 

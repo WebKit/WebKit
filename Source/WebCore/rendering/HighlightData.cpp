@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "FrameSelection.h"
+#include "Logging.h"
 #include "Position.h"
 #include "Range.h"
 #include "RenderLayer.h"
@@ -40,6 +41,7 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "VisibleSelection.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -235,23 +237,30 @@ void HighlightData::repaint() const
 
 IntRect HighlightData::collectBounds(ClipToVisibleContent clipToVisibleContent) const
 {
+    LOG_WITH_STREAM(Selection, stream << "HighlightData::collectBounds (clip to visible " << (clipToVisibleContent == ClipToVisibleContent::Yes ? "yes" : "no"));
+
     SelectionData::RendererMap renderers;
     auto* start = m_renderRange.start();
     RenderObject* stop = nullptr;
     if (m_renderRange.end())
         stop = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset().value());
+
     HighlightIterator highlightIterator(start);
     while (start && start != stop) {
         if ((start->canBeSelectionLeaf() || start == m_renderRange.start() || start == m_renderRange.end())
             && start->selectionState() != RenderObject::HighlightState::None) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
             renderers.set(start, makeUnique<RenderSelectionInfo>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
+            LOG_WITH_STREAM(Selection, stream << " added start " << *start << " with rect " << renderers.get(start)->rect());
+
             auto* block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
+                LOG_WITH_STREAM(Scrolling, stream << " added block " << *block);
                 std::unique_ptr<RenderSelectionInfo>& blockInfo = renderers.add(block, nullptr).iterator->value;
                 if (blockInfo)
                     break;
                 blockInfo = makeUnique<RenderSelectionInfo>(*block, clipToVisibleContent == ClipToVisibleContent::Yes);
+                LOG_WITH_STREAM(Selection, stream << " added containing block " << *block << " with rect " << blockInfo->rect());
                 block = block->containingBlock();
             }
         }
@@ -263,12 +272,19 @@ IntRect HighlightData::collectBounds(ClipToVisibleContent clipToVisibleContent) 
     for (auto& info : renderers.values()) {
         // RenderSelectionInfo::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
         LayoutRect currentRect = info->rect();
+        if (currentRect.isEmpty())
+            continue;
+
         if (auto* repaintContainer = info->repaintContainer()) {
-            FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(FloatRect(currentRect));
+            FloatRect localRect = currentRect;
+            FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(localRect);
             currentRect = absQuad.enclosingBoundingBox();
+            LOG_WITH_STREAM(Selection, stream << " rect " << localRect << " mapped to " << currentRect << " in container " << *repaintContainer);
         }
         selectionRect.unite(currentRect);
     }
+
+    LOG_WITH_STREAM(Selection, stream << " final rect " << selectionRect);
     return snappedIntRect(selectionRect);
 }
 

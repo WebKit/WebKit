@@ -1,3 +1,14 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Find doesn't always scroll search results into view
+        https://bugs.webkit.org/show_bug.cgi?id=212007
+        <rdar://problem/36333321>
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/selection/selection-bounds-fractional-containing-blocks-expected.txt: Added.
+        * editing/selection/selection-bounds-fractional-containing-blocks.html: Added.
+
 2020-05-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ iOS ] fast/hidpi/filters-and-image-buffer-resolution.html is flaky failing
