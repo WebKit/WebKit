@@ -1,3 +1,22 @@
+2020-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        Rare crash under -[WKContentView resignFirstResponderForWebView]
+        https://bugs.webkit.org/show_bug.cgi?id=212050
+        <rdar://problem/60187111>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView resignFirstResponderForWebView]):
+        Reorganize this block so that it always takes a strong reference /before/
+        null checking and using the pointer. Also, add a _page null check.
+        This is a speculative fix for an unreproducible low-rate crash.
+
+        In theory the existing time-of-check race here should not be a problem,
+        since WKWebView is supposed to be freed on the main thread, and this code
+        runs on the main thread, but we have ample evidence of WKWebView
+        being freed off the main thread in various clients.
+
 2020-05-18  David Kilzer  <ddkilzer@apple.com>
 
         Use default initializers in TextIndicatorData

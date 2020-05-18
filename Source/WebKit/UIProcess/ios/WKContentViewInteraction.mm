@@ -1403,16 +1403,20 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
         if (_keyWebEventHandler) {
             dispatch_async(dispatch_get_main_queue(), [weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
-                if (!weakSelf || !weakHandler)
-                    return;
-
                 auto strongSelf = weakSelf.get();
-                if ([strongSelf isFirstResponder] || weakHandler.get().get() != strongSelf->_keyWebEventHandler.get())
+                if (!strongSelf || [strongSelf isFirstResponder])
                     return;
-
+                auto strongHandler = weakHandler.get();
+                if (!strongHandler)
+                    return;
+                if (strongSelf->_keyWebEventHandler.get() != strongHandler.get())
+                    return;
                 auto keyEventHandler = std::exchange(strongSelf->_keyWebEventHandler, nil);
-                ASSERT(strongSelf->_page->hasQueuedKeyEvent());
-                keyEventHandler(strongSelf->_page->firstQueuedKeyEvent().nativeEvent(), YES);
+                auto page = strongSelf->_page;
+                if (!page)
+                    return;
+                ASSERT(page->hasQueuedKeyEvent());
+                keyEventHandler(page->firstQueuedKeyEvent().nativeEvent(), YES);
             });
         }
     }
