@@ -1,5 +1,30 @@
 2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening. Providing custom baselines for tests
+        that require them.
+
+        * platform/wpe/crypto: Added.
+        * platform/wpe/crypto/subtle: Added.
+        * platform/wpe/crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey-expected.txt: Added.
+        * platform/wpe/crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext: Added.
+        * platform/wpe/fast/layoutformattingcontext/flow-integration-basic-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-basic-row-baseline-align-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-basic-row-vertical-align-baseline-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-fixed-width-colspans-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-fixed-width-with-max-distribution-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-flex-width-border-collapse-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-flex-width-colspans-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-simple-with-fixed-widht-and-inline-content-expected.txt: Added.
+        * platform/wpe/fast/layoutformattingcontext/table-with-column-spanner-first-row-expected.txt: Added.
+        * platform/wpe/webgl/1.0.3: Added.
+        * platform/wpe/webgl/1.0.3/conformance: Added.
+        * platform/wpe/webgl/1.0.3/conformance/context: Added.
+        * platform/wpe/webgl/1.0.3/conformance/context/methods-expected.txt: Added.
+
+2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening.
 
         * platform/wpe/TestExpectations:
