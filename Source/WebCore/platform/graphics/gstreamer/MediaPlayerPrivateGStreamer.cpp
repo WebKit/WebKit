@@ -115,11 +115,6 @@
             m_player->add##Type##Track(*track);                         \
         }                                                               \
     } G_STMT_END
-
-#define CLEAR_TRACKS(tracks, method) \
-    for (auto& track : tracks.values())\
-        method(*track);\
-    tracks.clear();
 #else
 #define CREATE_TRACK(type, Type) G_STMT_START { \
         m_has##Type## = true;                   \
@@ -1507,6 +1502,15 @@ void MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate()
     g_list_free_full(streams, reinterpret_cast<GDestroyNotify>(g_free));
 }
 
+template<typename K, typename V>
+HashSet<K> hashSetFromHashMapKeys(const HashMap<K, V>& hashMap)
+{
+    HashSet<K> keys;
+    for (auto& key : hashMap.keys())
+        keys.add(key);
+    return keys;
+}
+
 void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& streamCollection)
 {
     ASSERT(!m_isLegacyPlaybin);
@@ -1522,10 +1526,17 @@ void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& st
     unsigned audioTrackIndex = 0;
     unsigned videoTrackIndex = 0;
     unsigned textTrackIndex = 0;
+    HashSet<AtomString> orphanedAudioTrackIds = hashSetFromHashMapKeys(m_audioTracks);
+    HashSet<AtomString> orphanedVideoTrackIds = hashSetFromHashMapKeys(m_videoTracks);
+    HashSet<AtomString> orphanedTextTrackIds = hashSetFromHashMapKeys(m_textTracks);
     for (unsigned i = 0; i < length; i++) {
         GRefPtr<GstStream> stream = gst_stream_collection_get_stream(streamCollection.get(), i);
         String streamId(gst_stream_get_stream_id(stream.get()));
         GstStreamType type = gst_stream_get_stream_type(stream.get());
+
+        orphanedAudioTrackIds.remove(streamId);
+        orphanedVideoTrackIds.remove(streamId);
+        orphanedTextTrackIds.remove(streamId);
 
         GST_DEBUG_OBJECT(pipeline(), "Inspecting %s track with ID %s", gst_stream_type_get_name(type), streamId.utf8().data());
         if ((type & GST_STREAM_TYPE_AUDIO && m_audioTracks.contains(streamId)) || (type & GST_STREAM_TYPE_VIDEO && m_videoTracks.contains(streamId))
@@ -1548,6 +1559,17 @@ void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& st
         } else
             GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
     }
+
+#define REMOVE_ORPHANED_TRACKS(type, Type)            \
+    for (auto& trackId : orphaned##Type##TrackIds) {  \
+        auto iter = m_##type##Tracks.find(trackId);   \
+        m_player->remove##Type##Track(*iter->value);  \
+        m_##type##Tracks.remove(iter->key);           \
+    }
+
+    REMOVE_ORPHANED_TRACKS(audio, Audio);
+    REMOVE_ORPHANED_TRACKS(video, Video);
+    REMOVE_ORPHANED_TRACKS(text, Text);
 
     if (oldHasVideo != m_hasVideo || oldHasAudio != m_hasAudio)
         m_player->characteristicChanged();

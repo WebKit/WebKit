@@ -1,3 +1,14 @@
+2020-05-18  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Remove orphaned tracks in updateTracks()
+        https://bugs.webkit.org/show_bug.cgi?id=211980
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Updated test expectations.
+
+        * platform/gtk/TestExpectations:
+
 2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Providing custom baselines for tests
