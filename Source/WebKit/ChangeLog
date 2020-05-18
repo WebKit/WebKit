@@ -1,3 +1,22 @@
+2020-05-18  Alex Christensen  <achristensen@webkit.org>
+
+        WebPageProxy::DidCommitLoadForFrame should use FrameLoadType instead of casting to/from uint32_t for IPC
+        https://bugs.webkit.org/show_bug.cgi?id=212028
+        <rdar://problem/63343021>
+
+        Reviewed by David Kilzer.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
 2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Single selection <select> with <optgroups> shows multiple selected options
