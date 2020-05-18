@@ -202,18 +202,19 @@ struct KeyCombinationEntry {
 };
 
 static const KeyCombinationEntry customKeyBindings[] = {
-    { GDK_KEY_b,         GDK_CONTROL_MASK, "ToggleBold"      },
-    { GDK_KEY_i,         GDK_CONTROL_MASK, "ToggleItalic"    },
-    { GDK_KEY_Escape,    0,                "Cancel"          },
-    { GDK_KEY_greater,   GDK_CONTROL_MASK, "Cancel"          },
-    { GDK_KEY_Tab,       0,                "InsertTab"       },
-    { GDK_KEY_Tab,       GDK_SHIFT_MASK,   "InsertBacktab"   },
-    { GDK_KEY_Return,    0,                "InsertNewLine"   },
-    { GDK_KEY_KP_Enter,  0,                "InsertNewLine"   },
-    { GDK_KEY_ISO_Enter, 0,                "InsertNewLine"   },
-    { GDK_KEY_Return,    GDK_SHIFT_MASK,   "InsertLineBreak" },
-    { GDK_KEY_KP_Enter,  GDK_SHIFT_MASK,   "InsertLineBreak" },
-    { GDK_KEY_ISO_Enter, GDK_SHIFT_MASK,   "InsertLineBreak" },
+    { GDK_KEY_b,         GDK_CONTROL_MASK,                  "ToggleBold"      },
+    { GDK_KEY_i,         GDK_CONTROL_MASK,                  "ToggleItalic"    },
+    { GDK_KEY_Escape,    0,                                 "Cancel"          },
+    { GDK_KEY_greater,   GDK_CONTROL_MASK,                  "Cancel"          },
+    { GDK_KEY_Tab,       0,                                 "InsertTab"       },
+    { GDK_KEY_Tab,       GDK_SHIFT_MASK,                    "InsertBacktab"   },
+    { GDK_KEY_Return,    0,                                 "InsertNewLine"   },
+    { GDK_KEY_KP_Enter,  0,                                 "InsertNewLine"   },
+    { GDK_KEY_ISO_Enter, 0,                                 "InsertNewLine"   },
+    { GDK_KEY_Return,    GDK_SHIFT_MASK,                    "InsertLineBreak" },
+    { GDK_KEY_KP_Enter,  GDK_SHIFT_MASK,                    "InsertLineBreak" },
+    { GDK_KEY_ISO_Enter, GDK_SHIFT_MASK,                    "InsertLineBreak" },
+    { GDK_KEY_V,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "PasteAsPlainText" },
 };
 
 static Vector<String> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)

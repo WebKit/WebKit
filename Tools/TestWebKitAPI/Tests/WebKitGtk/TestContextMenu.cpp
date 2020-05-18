@@ -337,6 +337,7 @@ public:
         Audio,
         VideoLive,
         Editable,
+        RichEditable,
         Selection
     };
 
@@ -459,6 +460,24 @@ public:
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
             break;
+        case RichEditable:
+            g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert_true(webkit_hit_test_result_context_is_editable(hitTestResult));
+            g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_CUT, Visible);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY, Visible);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_PASTE, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_PASTE_AS_PLAIN_TEXT, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DELETE, Visible);
+            iter = checkCurrentItemIsSeparatorAndGetNext(iter);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_INSERT_EMOJI, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_FONT_MENU, Visible | Enabled);
+            iter = checkCurrentItemIsSeparatorAndGetNext(iter);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
+            break;
         case Selection:
             g_assert_false(webkit_hit_test_result_context_is_link(hitTestResult));
             g_assert_false(webkit_hit_test_result_context_is_image(hitTestResult));
@@ -496,7 +515,8 @@ static void prepareContextMenuTestView(ContextMenuDefaultTest* test)
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
         " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='silence.webm' type='video/webm' /></video>"
         " <audio style='position:absolute; left:1; top:60' width='50' height='20' controls='controls' preload='none'><source src='track.ogg' type='audio/ogg' /></audio>"
-        " <p style='position:absolute; left:1; top:90' id='text_to_select'>Lorem ipsum.</p>"
+        " <div contenteditable style='position:absolute; left:1; top: 90; height: 20px; width: 100px'></div>"
+        " <p style='position:absolute; left:1; top:110' id='text_to_select'>Lorem ipsum.</p>"
         " <script>"
         "  window.getSelection().removeAllRanges();"
         "  var select_range = document.createRange();"
@@ -517,7 +537,7 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
     // Context menu for selection.
     // This test should always be the first because any other click removes the selection.
     test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
-    test->showContextMenuAtPositionAndWaitUntilFinished(2, 115);
+    test->showContextMenuAtPositionAndWaitUntilFinished(2, 135);
 
     // Context menu for document.
     test->m_expectedMenuType = ContextMenuDefaultTest::Navigation;
@@ -550,6 +570,10 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
     // Context menu for editable.
     test->m_expectedMenuType = ContextMenuDefaultTest::Editable;
     test->showContextMenuAtPositionAndWaitUntilFinished(5, 35);
+
+    // Context menu for rich editable.
+    test->m_expectedMenuType = ContextMenuDefaultTest::RichEditable;
+    test->showContextMenuAtPositionAndWaitUntilFinished(5, 95);
 }
 
 static void testPopupEventSignal(ContextMenuDefaultTest* test, gconstpointer)

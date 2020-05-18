@@ -54,6 +54,7 @@ enum ContextMenuAction {
     ContextMenuItemTagCut,
     ContextMenuItemTagPaste,
 #if PLATFORM(GTK)
+    ContextMenuItemTagPasteAsPlainText,
     ContextMenuItemTagDelete,
     ContextMenuItemTagSelectAll,
     ContextMenuItemTagInputMethods,

@@ -88,6 +88,11 @@ String contextMenuItemTagEnterVideoFullscreen()
     return String::fromUTF8(_("Switch Video to _Fullscreen"));
 }
 
+String contextMenuItemTagPasteAsPlainText()
+{
+    return String::fromUTF8(_("Paste As Plain _Text"));
+}
+
 String contextMenuItemTagDelete()
 {
     return String::fromUTF8(_("_Delete"));

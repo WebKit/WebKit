@@ -79,6 +79,8 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
     case WEBKIT_CONTEXT_MENU_ACTION_PASTE:
         return ContextMenuItemTagPaste;
 #if PLATFORM(GTK)
+    case WEBKIT_CONTEXT_MENU_ACTION_PASTE_AS_PLAIN_TEXT:
+        return ContextMenuItemTagPasteAsPlainText;
     case WEBKIT_CONTEXT_MENU_ACTION_DELETE:
         return ContextMenuItemTagDelete;
     case WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL:
@@ -181,6 +183,8 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
     case ContextMenuItemTagPaste:
         return WEBKIT_CONTEXT_MENU_ACTION_PASTE;
 #if PLATFORM(GTK)
+    case ContextMenuItemTagPasteAsPlainText:
+        return WEBKIT_CONTEXT_MENU_ACTION_PASTE_AS_PLAIN_TEXT;
     case ContextMenuItemTagDelete:
         return WEBKIT_CONTEXT_MENU_ACTION_DELETE;
     case ContextMenuItemTagSelectAll:
@@ -281,6 +285,8 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
     case WEBKIT_CONTEXT_MENU_ACTION_PASTE:
         return contextMenuItemTagPaste();
 #if PLATFORM(GTK)
+    case WEBKIT_CONTEXT_MENU_ACTION_PASTE_AS_PLAIN_TEXT:
+        return contextMenuItemTagPasteAsPlainText();
     case WEBKIT_CONTEXT_MENU_ACTION_DELETE:
         return contextMenuItemTagDelete();
     case WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL:

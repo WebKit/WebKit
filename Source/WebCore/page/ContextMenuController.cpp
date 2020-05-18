@@ -330,6 +330,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().command("Paste").execute();
         break;
 #if PLATFORM(GTK)
+    case ContextMenuItemTagPasteAsPlainText:
+        frame->editor().command("PasteAsPlainText").execute();
+        break;
     case ContextMenuItemTagDelete:
         frame->editor().performDelete();
         break;
@@ -816,6 +819,7 @@ void ContextMenuController::populate()
     ContextMenuItem CutItem(ActionType, ContextMenuItemTagCut, contextMenuItemTagCut());
     ContextMenuItem PasteItem(ActionType, ContextMenuItemTagPaste, contextMenuItemTagPaste());
 #if PLATFORM(GTK)
+    ContextMenuItem PasteAsPlainTextItem(ActionType, ContextMenuItemTagPasteAsPlainText, contextMenuItemTagPasteAsPlainText());
     ContextMenuItem DeleteItem(ActionType, ContextMenuItemTagDelete, contextMenuItemTagDelete());
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
     ContextMenuItem InsertEmojiItem(ActionType, ContextMenuItemTagInsertEmoji, contextMenuItemTagInsertEmoji());
@@ -1053,6 +1057,8 @@ void ContextMenuController::populate()
         appendItem(CopyItem, m_contextMenu.get());
         appendItem(PasteItem, m_contextMenu.get());
 #if PLATFORM(GTK)
+        if (frame->editor().canEditRichly())
+            appendItem(PasteAsPlainTextItem, m_contextMenu.get());
         appendItem(DeleteItem, m_contextMenu.get());
         appendItem(*separatorItem(), m_contextMenu.get());
         appendItem(SelectAllItem, m_contextMenu.get());
@@ -1208,6 +1214,9 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canPaste();
             break;
 #if PLATFORM(GTK)
+        case ContextMenuItemTagPasteAsPlainText:
+            shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canPaste();
+            break;
         case ContextMenuItemTagDelete:
             shouldEnable = frame->editor().canDelete();
             break;

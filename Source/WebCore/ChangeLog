@@ -1,3 +1,21 @@
+2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitContextMenuItemType for paste as plaintext
+        https://bugs.webkit.org/show_bug.cgi?id=177638
+
+        Reviewed by Michael Catanzaro.
+
+        Add paste as plain text context menu item for rich editable content.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizedStrings.h:
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::contextMenuItemTagPasteAsPlainText):
+
 2020-05-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix operator== and hash() for ExtendedColor
