@@ -659,6 +659,8 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
     if (crossOriginFlag && redirectingToNewOrigin)
         m_origin = SecurityOrigin::createUnique();
 
+    newRequest.redirectAsGETIfNeeded(previousRequest, redirectResponse);
+
     // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 14.
     updateReferrerPolicy(redirectResponse.httpHeaderField(HTTPHeaderName::ReferrerPolicy));
 

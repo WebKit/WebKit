@@ -67,6 +67,7 @@ public:
     WEBCORE_EXPORT const URL& url() const;
     WEBCORE_EXPORT void setURL(const URL& url);
 
+    void redirectAsGETIfNeeded(const ResourceRequestBase &, const ResourceResponse&);
     WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const;
 
     WEBCORE_EXPORT void removeCredentials();

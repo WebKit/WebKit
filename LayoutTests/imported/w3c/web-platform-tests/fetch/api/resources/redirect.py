@@ -1,6 +1,6 @@
-from urllib import urlencode
-from urlparse import urlparse
 import time
+
+from six.moves.urllib.parse import urlencode, urlparse
 
 def main(request, response):
     stashed_data = {'count': 0, 'preflight': "0"}
@@ -38,16 +38,17 @@ def main(request, response):
 
     if "location" in request.GET:
         url = request.GET['location']
-        scheme = urlparse(url).scheme
-        if scheme == "" or scheme == "http" or scheme == "https":
-            url += "&" if '?' in url else "?"
-            #keep url parameters in location
-            url_parameters = {}
-            for item in request.GET.items():
-                url_parameters[item[0]] = item[1][0]
-            url += urlencode(url_parameters)
-            #make sure location changes during redirection loop
-            url += "&count=" + str(stashed_data['count'])
+        if "simple" not in request.GET:
+            scheme = urlparse(url).scheme
+            if scheme == "" or scheme == "http" or scheme == "https":
+                url += "&" if '?' in url else "?"
+                #keep url parameters in location
+                url_parameters = {}
+                for item in request.GET.items():
+                    url_parameters[item[0]] = item[1][0]
+                url += urlencode(url_parameters)
+                #make sure location changes during redirection loop
+                url += "&count=" + str(stashed_data['count'])
         headers.append(("Location", url))
 
     if "redirect_referrerpolicy" in request.GET:

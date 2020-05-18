@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-empty-location.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.js

@@ -129,9 +129,25 @@ void ResourceRequestBase::setURL(const URL& url)
 
 static bool shouldUseGet(const ResourceRequestBase& request, const ResourceResponse& redirectResponse)
 {
+    if (equalLettersIgnoringASCIICase(request.httpMethod(), "get") || equalLettersIgnoringASCIICase(request.httpMethod(), "head"))
+        return false;
     if (redirectResponse.httpStatusCode() == 301 || redirectResponse.httpStatusCode() == 302)
         return equalLettersIgnoringASCIICase(request.httpMethod(), "post");
     return redirectResponse.httpStatusCode() == 303;
+}
+
+// https://fetch.spec.whatwg.org/#concept-http-redirect-fetch Step 11
+void ResourceRequestBase::redirectAsGETIfNeeded(const ResourceRequestBase &redirectRequest, const ResourceResponse& redirectResponse)
+{
+    if (shouldUseGet(redirectRequest, redirectResponse)) {
+        setHTTPMethod("GET"_s);
+        setHTTPBody(nullptr);
+        m_httpHeaderFields.remove(HTTPHeaderName::ContentLength);
+        m_httpHeaderFields.remove(HTTPHeaderName::ContentLanguage);
+        m_httpHeaderFields.remove(HTTPHeaderName::ContentEncoding);
+        m_httpHeaderFields.remove(HTTPHeaderName::ContentLocation);
+        clearHTTPContentType();
+    }
 }
 
 ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& redirectResponse, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const
@@ -145,12 +161,7 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
 
     request.setURL(location.isEmpty() ? URL { } : URL { redirectResponse.url(), location });
 
-    if (shouldUseGet(*this, redirectResponse)) {
-        request.setHTTPMethod("GET"_s);
-        request.setHTTPBody(nullptr);
-        request.clearHTTPContentType();
-        request.m_httpHeaderFields.remove(HTTPHeaderName::ContentLength);
-    }
+    request.redirectAsGETIfNeeded(*this, redirectResponse);
 
     if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && WTF::protocolIs(request.httpReferrer(), "https"))
         request.clearHTTPReferrer();

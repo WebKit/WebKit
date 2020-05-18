@@ -366,10 +366,6 @@ editing/pasteboard/paste-TIFF.html [ Skip ]
 editing/mac/pasteboard/dataTransfer-set-data-file-url.html [ Skip ]
 webkit.org/b/147674 editing/mac/pasteboard/5583362.html [ Skip ]
 
-# Assorted failures that need investigation
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.html [ Skip ]
-
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 webkit.org/b/142258 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 

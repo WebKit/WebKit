@@ -12,6 +12,6 @@ FAIL Redirect 303 with HEAD assert_equals: Request Content-Length after redirect
 PASS Redirect 303 with TESTING 
 PASS Redirect 307 with GET 
 PASS Redirect 307 with POST (string body) 
-PASS Redirect 307 with POST (blob body) 
+FAIL Redirect 307 with POST (blob body) assert_equals: Request Content-Type after redirection is NO expected "NO" but got "application/x-www-form-urlencoded"
 FAIL Redirect 307 with HEAD assert_equals: Request Content-Length after redirection is NO expected "NO" but got "0"
 

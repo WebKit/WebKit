@@ -1,3 +1,28 @@
+2020-05-18  Rob Buis  <rbuis@igalia.com>
+
+        Remove certain headers when a redirect causes a request method change
+        https://bugs.webkit.org/show_bug.cgi?id=205119
+
+        Reviewed by Youenn Fablet.
+
+        Add platform expectations for redirect-method.any.html and
+        redirect-method.any.worker.html. Remove expectations for
+        already removed tests redirect-method.html and
+        redirect-method.worker.html.
+
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-expected.txt.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/mac-mojave-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt.
+
 2020-05-18  Antti Koivisto  <antti@apple.com>
 
         [Wheel event region] Invalidation for root style

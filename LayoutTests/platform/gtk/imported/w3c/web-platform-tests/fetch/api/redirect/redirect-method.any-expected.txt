@@ -9,7 +9,9 @@ PASS Redirect 302 with HEAD
 PASS Redirect 303 with GET 
 PASS Redirect 303 with POST 
 PASS Redirect 303 with HEAD 
+PASS Redirect 303 with TESTING 
 PASS Redirect 307 with GET 
-PASS Redirect 307 with POST 
+PASS Redirect 307 with POST (string body) 
+PASS Redirect 307 with POST (blob body) 
 PASS Redirect 307 with HEAD 
 
