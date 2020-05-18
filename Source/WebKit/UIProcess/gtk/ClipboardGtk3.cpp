@@ -146,34 +146,34 @@ void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCor
 struct WriteAsyncData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    WriteAsyncData(Ref<WebCore::SelectionData>&& selection, Clipboard& clipboard)
+    WriteAsyncData(WebCore::SelectionData&& selection, Clipboard& clipboard)
         : selectionData(WTFMove(selection))
         , clipboard(clipboard)
     {
     }
 
-    Ref<WebCore::SelectionData> selectionData;
+    WebCore::SelectionData selectionData;
     Clipboard& clipboard;
 };
 
 enum ClipboardTargetType { Markup, Text, Image, URIList, SmartPaste, Custom };
 
-void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
+void Clipboard::write(WebCore::SelectionData&& selectionData)
 {
     SetForScope<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, WebPasteboardProxy::singleton().primarySelectionOwner());
 
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
-    if (selectionData->hasURIList())
+    if (selectionData.hasURIList())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/uri-list"), 0, ClipboardTargetType::URIList);
-    if (selectionData->hasMarkup())
+    if (selectionData.hasMarkup())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/html"), 0, ClipboardTargetType::Markup);
-    if (selectionData->hasImage())
+    if (selectionData.hasImage())
         gtk_target_list_add_image_targets(list.get(), ClipboardTargetType::Image, TRUE);
-    if (selectionData->hasText())
+    if (selectionData.hasText())
         gtk_target_list_add_text_targets(list.get(), ClipboardTargetType::Text);
-    if (selectionData->canSmartReplace())
+    if (selectionData.canSmartReplace())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, ClipboardTargetType::SmartPaste);
-    if (selectionData->hasCustomData())
+    if (selectionData.hasCustomData())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType()), 0, ClipboardTargetType::Custom);
 
     int numberOfTargets;
@@ -187,25 +187,24 @@ void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
     gboolean succeeded = gtk_clipboard_set_with_data(m_clipboard, table, numberOfTargets,
         [](GtkClipboard*, GtkSelectionData* selection, guint info, gpointer userData) {
             auto& data = *static_cast<WriteAsyncData*>(userData);
-            auto& selectionData = data.selectionData.get();
             switch (info) {
             case ClipboardTargetType::Markup: {
-                CString markup = selectionData.markup().utf8();
+                CString markup = data.selectionData.markup().utf8();
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/html"), 8, reinterpret_cast<const guchar*>(markup.data()), markup.length());
                 break;
             }
             case ClipboardTargetType::Text:
-                gtk_selection_data_set_text(selection, selectionData.text().utf8().data(), -1);
+                gtk_selection_data_set_text(selection, data.selectionData.text().utf8().data(), -1);
                 break;
             case ClipboardTargetType::Image: {
-                if (selectionData.hasImage()) {
-                    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selectionData.image()->getGdkPixbuf());
+                if (data.selectionData.hasImage()) {
+                    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(data.selectionData.image()->getGdkPixbuf());
                     gtk_selection_data_set_pixbuf(selection, pixbuf.get());
                 }
                 break;
             }
             case ClipboardTargetType::URIList: {
-                CString uriList = selectionData.uriList().utf8();
+                CString uriList = data.selectionData.uriList().utf8();
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
                 break;
             }
@@ -213,8 +212,8 @@ void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
                 gtk_selection_data_set_text(selection, "", -1);
                 break;
             case ClipboardTargetType::Custom:
-                if (selectionData.hasCustomData()) {
-                    auto* buffer = selectionData.customData();
+                if (data.selectionData.hasCustomData()) {
+                    auto* buffer = data.selectionData.customData();
                     gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
                 }
                 break;

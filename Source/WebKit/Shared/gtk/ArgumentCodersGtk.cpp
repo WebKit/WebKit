@@ -101,76 +101,76 @@ void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData&
     encoder << canSmartReplace;
 }
 
-bool ArgumentCoder<SelectionData>::decode(Decoder& decoder, SelectionData& selection)
+Optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decoder)
 {
-    selection.clearAll();
+    SelectionData selection;
 
     bool hasText;
     if (!decoder.decode(hasText))
-        return false;
+        return WTF::nullopt;
     if (hasText) {
         String text;
         if (!decoder.decode(text))
-            return false;
+            return WTF::nullopt;
         selection.setText(text);
     }
 
     bool hasMarkup;
     if (!decoder.decode(hasMarkup))
-        return false;
+        return WTF::nullopt;
     if (hasMarkup) {
         String markup;
         if (!decoder.decode(markup))
-            return false;
+            return WTF::nullopt;
         selection.setMarkup(markup);
     }
 
     bool hasURL;
     if (!decoder.decode(hasURL))
-        return false;
+        return WTF::nullopt;
     if (hasURL) {
         String url;
         if (!decoder.decode(url))
-            return false;
+            return WTF::nullopt;
         selection.setURL(URL(URL(), url), String());
     }
 
     bool hasURIList;
     if (!decoder.decode(hasURIList))
-        return false;
+        return WTF::nullopt;
     if (hasURIList) {
         String uriList;
         if (!decoder.decode(uriList))
-            return false;
+            return WTF::nullopt;
         selection.setURIList(uriList);
     }
 
     bool hasImage;
     if (!decoder.decode(hasImage))
-        return false;
+        return WTF::nullopt;
     if (hasImage) {
         RefPtr<Image> image;
         if (!decodeImage(decoder, image))
-            return false;
+            return WTF::nullopt;
         selection.setImage(image.get());
     }
 
     bool hasCustomData;
     if (!decoder.decode(hasCustomData))
-        return false;
+        return WTF::nullopt;
     if (hasCustomData) {
         RefPtr<SharedBuffer> buffer;
         if (!decoder.decode(buffer))
-            return false;
+            return WTF::nullopt;
         selection.setCustomData(Ref<SharedBuffer>(*buffer));
     }
 
     bool canSmartReplace;
     if (!decoder.decode(canSmartReplace))
-        return false;
+        return WTF::nullopt;
     selection.setCanSmartReplace(canSmartReplace);
 
-    return true;
+    return selection;
 }
 
 static void encodeGKeyFile(Encoder& encoder, GKeyFile* keyFile)

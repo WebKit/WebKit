@@ -44,7 +44,7 @@ DragSource::~DragSource()
 {
 }
 
-void DragSource::begin(Ref<SelectionData>&&, DragOperation, RefPtr<ShareableBitmap>&&)
+void DragSource::begin(SelectionData&&, DragOperation, RefPtr<ShareableBitmap>&&)
 {
 }
 

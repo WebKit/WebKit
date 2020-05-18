@@ -27,7 +27,6 @@
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
-#include "SelectionData.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
@@ -57,7 +56,7 @@ std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection()
 #if ENABLE(DRAG_SUPPORT)
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
-    return makeUnique<Pasteboard>(SelectionData::create());
+    return makeUnique<Pasteboard>(SelectionData());
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
@@ -65,10 +64,15 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dra
     ASSERT(dragData.platformData());
     return makeUnique<Pasteboard>(*dragData.platformData());
 }
+
+Pasteboard::Pasteboard(SelectionData&& selectionData)
+    : m_selectionData(WTFMove(selectionData))
+{
+}
 #endif
 
 Pasteboard::Pasteboard(SelectionData& selectionData)
-    : m_selectionData(&selectionData)
+    : m_selectionData(selectionData)
 {
 }
 
@@ -83,7 +87,7 @@ Pasteboard::~Pasteboard() = default;
 const SelectionData& Pasteboard::selectionData() const
 {
     ASSERT(m_selectionData);
-    return *m_selectionData.get();
+    return *m_selectionData;
 }
 
 static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& type)

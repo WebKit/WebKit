@@ -1,5 +1,66 @@
 2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] "ASSERTION FAILED: !m_adoptionIsRequired" when double clicking on a word
+        https://bugs.webkit.org/show_bug.cgi?id=211957
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove WebSelectionData wrapper since we can just encode/decode WebCore::SelectionData.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::ArgumentCoder<SelectionData>::decode): Use modern decoder.
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/WebSelectionData.cpp: Removed.
+        * Shared/gtk/WebSelectionData.h: Removed.
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/DragSource.h:
+        * UIProcess/API/gtk/DragSourceGtk3.cpp:
+        (WebKit::DragSource::DragSource):
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DragSourceGtk4.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DropTarget.h:
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::accept):
+        (WebKit::DropTarget::enter):
+        (WebKit::DropTarget::update):
+        (WebKit::DropTarget::leaveTimerFired):
+        (WebKit::DropTarget::drop):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::startDrag):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseStartDrag):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::startDrag):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/gtk/Clipboard.h:
+        * UIProcess/gtk/ClipboardGtk3.cpp:
+        (WebKit::WriteAsyncData::WriteAsyncData):
+        (WebKit::Clipboard::write):
+        * UIProcess/gtk/ClipboardGtk4.cpp:
+        (WebKit::Clipboard::write):
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::writeToClipboard):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::writeToClipboard):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitContextMenuItemType for paste as plaintext
         https://bugs.webkit.org/show_bug.cgi?id=177638
 

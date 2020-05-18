@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArgumentCodersGtk_h
-#define ArgumentCodersGtk_h
+#pragma once
 
 #include "ArgumentCoders.h"
 #include <wtf/glib/GRefPtr.h>
@@ -46,9 +45,7 @@ WARN_UNUSED_RETURN bool decode(Decoder&, GRefPtr<GtkPageSetup>&);
 
 template<> struct ArgumentCoder<WebCore::SelectionData> {
     static void encode(Encoder&, const WebCore::SelectionData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::SelectionData&);
+    static Optional<WebCore::SelectionData> decode(Decoder&);
 };
 
 } // namespace IPC
-
-#endif // ArgumentCodersGtk_h

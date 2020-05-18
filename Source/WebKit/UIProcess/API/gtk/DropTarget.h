@@ -29,6 +29,7 @@
 
 #include <WebCore/DragActions.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/SelectionData.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
@@ -40,10 +41,6 @@ typedef struct _GtkWidget GtkWidget;
 typedef struct _GdkDragContext GdkDragContext;
 typedef struct _GtkSelectionData GtkSelectionData;
 #endif
-
-namespace WebCore {
-class SelectionData;
-}
 
 namespace WebKit {
 
@@ -75,7 +72,7 @@ private:
 #endif
     Optional<WebCore::IntPoint> m_position;
     unsigned m_dataRequestCount { 0 };
-    RefPtr<WebCore::SelectionData> m_selectionData;
+    Optional<WebCore::SelectionData> m_selectionData;
     WebCore::DragOperation m_operation { WebCore::DragOperationNone };
 #if !USE(GTK4)
     RunLoop::Timer<DropTarget> m_leaveTimer;

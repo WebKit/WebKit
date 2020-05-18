@@ -84,7 +84,7 @@ DragSource::DragSource(GtkWidget* webView)
         if (!drag.m_selectionData)
             return;
 
-        drag.m_selectionData = nullptr;
+        drag.m_selectionData = WTF::nullopt;
         drag.m_drag = nullptr;
 
         GdkDevice* device = gdk_drag_context_get_device(context);
@@ -106,7 +106,7 @@ DragSource::~DragSource()
     g_signal_handlers_disconnect_by_data(m_webView, this);
 }
 
-void DragSource::begin(Ref<SelectionData>&& selectionData, DragOperation operation, RefPtr<ShareableBitmap>&& image)
+void DragSource::begin(SelectionData&& selectionData, DragOperation operation, RefPtr<ShareableBitmap>&& image)
 {
     if (m_drag) {
         gtk_drag_cancel(m_drag.get());

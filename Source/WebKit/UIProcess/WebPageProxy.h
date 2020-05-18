@@ -219,6 +219,7 @@ class GraphicsLayer;
 class IntSize;
 class ProtectionSpace;
 class RunLoopObserver;
+class SelectionData;
 class SharedBuffer;
 class TextIndicator;
 class ValidationBubble;
@@ -350,7 +351,6 @@ struct WebAutocorrectionData;
 struct WebHitTestResultData;
 struct WebNavigationDataStore;
 struct WebPopupItem;
-struct WebSelectionData;
 struct WebSpeechSynthesisVoice;
 struct URLSchemeTaskParameters;
 struct UserMessage;
@@ -1164,7 +1164,7 @@ public:
                          const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, uint64_t archiveSize);
 #endif
 #if PLATFORM(GTK)
-    void startDrag(WebSelectionData&&, uint64_t dragOperation, const ShareableBitmap::Handle& dragImage);
+    void startDrag(WebCore::SelectionData&&, uint64_t dragOperation, const ShareableBitmap::Handle& dragImage);
 #endif
 #endif
 

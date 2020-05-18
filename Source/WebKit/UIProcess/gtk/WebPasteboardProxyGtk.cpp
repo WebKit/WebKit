@@ -29,11 +29,11 @@
 #include "Clipboard.h"
 #include "SharedBufferDataReference.h"
 #include "WebFrameProxy.h"
-#include "WebSelectionData.h"
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/PasteboardItemInfo.h>
 #include <WebCore/PlatformPasteboard.h>
+#include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/SetForScope.h>
@@ -61,9 +61,9 @@ void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& 
     Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), WTFMove(completionHandler));
 }
 
-void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, WebSelectionData&& selection)
+void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, SelectionData&& selectionData)
 {
-    Clipboard::get(pasteboardName).write(WTFMove(selection.selectionData));
+    Clipboard::get(pasteboardName).write(WTFMove(selectionData));
 }
 
 void WebPasteboardProxy::clearClipboard(const String& pasteboardName)
@@ -123,21 +123,21 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<Pasteboa
         return;
     }
 
-    auto selectionData = SelectionData::create();
+    SelectionData selectionData;
     const auto& customData = data[0];
     customData.forEachPlatformStringOrBuffer([&selectionData] (auto& type, auto& stringOrBuffer) {
         if (WTF::holds_alternative<String>(stringOrBuffer)) {
             if (type == "text/plain"_s)
-                selectionData->setText(WTF::get<String>(stringOrBuffer));
+                selectionData.setText(WTF::get<String>(stringOrBuffer));
             else if (type == "text/html"_s)
-                selectionData->setMarkup(WTF::get<String>(stringOrBuffer));
+                selectionData.setMarkup(WTF::get<String>(stringOrBuffer));
             else if (type == "text/uri-list"_s)
-                selectionData->setURIList(WTF::get<String>(stringOrBuffer));
+                selectionData.setURIList(WTF::get<String>(stringOrBuffer));
         }
     });
 
     if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty())
-        selectionData->setCustomData(customData.createSharedBuffer());
+        selectionData.setCustomData(customData.createSharedBuffer());
 
     Clipboard::get(pasteboardName).write(WTFMove(selectionData));
     completionHandler(0);

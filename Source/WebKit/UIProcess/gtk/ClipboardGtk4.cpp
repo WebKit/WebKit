@@ -156,36 +156,36 @@ void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCor
     }, new ReadBufferAsyncData(WTFMove(completionHandler)));
 }
 
-void Clipboard::write(Ref<WebCore::SelectionData>&& selectionData)
+void Clipboard::write(WebCore::SelectionData&& selectionData)
 {
     Vector<GdkContentProvider*> providers;
-    if (selectionData->hasMarkup()) {
-        CString markup = selectionData->markup().utf8();
+    if (selectionData.hasMarkup()) {
+        CString markup = selectionData.markup().utf8();
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(markup.data(), markup.length()));
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
 
-    if (selectionData->hasURIList()) {
-        CString uriList = selectionData->uriList().utf8();
+    if (selectionData.hasURIList()) {
+        CString uriList = selectionData.uriList().utf8();
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(uriList.data(), uriList.length()));
         providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
     }
 
-    if (selectionData->hasImage()) {
-        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selectionData->image()->getGdkPixbuf());
+    if (selectionData.hasImage()) {
+        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selectionData.image()->getGdkPixbuf());
         providers.append(gdk_content_provider_new_typed(GDK_TYPE_PIXBUF, pixbuf.get()));
     }
 
-    if (selectionData->hasText())
-        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, selectionData->text().utf8().data()));
+    if (selectionData.hasText())
+        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, selectionData.text().utf8().data()));
 
-    if (selectionData->canSmartReplace()) {
+    if (selectionData.canSmartReplace()) {
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
         providers.append(gdk_content_provider_new_for_bytes("application/vnd.webkitgtk.smartpaste", bytes.get()));
     }
 
-    if (selectionData->hasCustomData()) {
-        GRefPtr<GBytes> bytes = selectionData->customData()->createGBytes();
+    if (selectionData.hasCustomData()) {
+        GRefPtr<GBytes> bytes = selectionData.customData()->createGBytes();
         providers.append(gdk_content_provider_new_for_bytes(WebCore::PasteboardCustomData::gtkType(), bytes.get()));
     }
 

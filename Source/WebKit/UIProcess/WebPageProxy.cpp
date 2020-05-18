@@ -225,7 +225,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "WebSelectionData.h"
+#include <WebCore/SelectionData.h>
 #endif
 
 #if USE(CAIRO)
@@ -2410,8 +2410,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
         m_process->assumeReadAccessToBaseURL(*this, url);
 
     ASSERT(dragData.platformData());
-    WebSelectionData selection(*dragData.platformData());
-    send(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), selection, dragData.flags()));
+    send(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()));
 #else
     send(Messages::WebPage::PerformDragControllerAction(action, dragData, sandboxExtensionHandle, sandboxExtensionsForUpload));
 #endif
@@ -2431,10 +2430,10 @@ void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, WebCor
 }
 
 #if PLATFORM(GTK)
-void WebPageProxy::startDrag(WebSelectionData&& selection, uint64_t dragOperation, const ShareableBitmap::Handle& dragImageHandle)
+void WebPageProxy::startDrag(SelectionData&& selectionData, uint64_t dragOperation, const ShareableBitmap::Handle& dragImageHandle)
 {
     RefPtr<ShareableBitmap> dragImage = !dragImageHandle.isNull() ? ShareableBitmap::create(dragImageHandle) : nullptr;
-    pageClient().startDrag(WTFMove(selection.selectionData), static_cast<WebCore::DragOperation>(dragOperation), WTFMove(dragImage));
+    pageClient().startDrag(WTFMove(selectionData), static_cast<WebCore::DragOperation>(dragOperation), WTFMove(dragImage));
 
     didStartDrag();
 }

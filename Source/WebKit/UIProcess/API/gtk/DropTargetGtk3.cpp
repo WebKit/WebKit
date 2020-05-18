@@ -103,7 +103,7 @@ void DropTarget::accept(unsigned time)
     }
 
     m_dataRequestCount = 0;
-    m_selectionData = SelectionData::create();
+    m_selectionData = SelectionData();
 
     // WebCore needs the selection data to decide, so we need to preload the
     // data of targets we support. Once all data requests are done we start
@@ -141,7 +141,7 @@ void DropTarget::enter(IntPoint&& position, unsigned time)
     ASSERT(page);
     page->resetCurrentDragInformation();
 
-    DragData dragData(m_selectionData.get(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())));
     page->dragEntered(dragData);
 }
 
@@ -155,7 +155,7 @@ void DropTarget::update(IntPoint&& position, unsigned time)
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(m_selectionData.get(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())));
     page->dragUpdated(dragData);
 }
 
@@ -229,13 +229,13 @@ void DropTarget::leaveTimerFired()
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(m_selectionData.get(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), DragOperationNone);
+    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), DragOperationNone);
     page->dragExited(dragData);
     page->resetCurrentDragInformation();
 
     m_drop = nullptr;
     m_position = WTF::nullopt;
-    m_selectionData = nullptr;
+    m_selectionData = WTF::nullopt;
 }
 
 void DropTarget::leave()
@@ -256,13 +256,13 @@ void DropTarget::drop(IntPoint&& position, unsigned time)
     uint32_t flags = 0;
     if (gdk_drag_context_get_selected_action(m_drop.get()) == GDK_ACTION_COPY)
         flags |= DragApplicationIsCopyKeyDown;
-    DragData dragData(m_selectionData.get(), position, convertWidgetPointToScreenPoint(m_webView, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())), static_cast<DragApplicationFlags>(flags));
+    DragData dragData(&m_selectionData.value(), position, convertWidgetPointToScreenPoint(m_webView, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())), static_cast<DragApplicationFlags>(flags));
     page->performDragOperation(dragData, { }, { }, { });
     gtk_drag_finish(m_drop.get(), TRUE, FALSE, time);
 
     m_drop = nullptr;
     m_position = WTF::nullopt;
-    m_selectionData = nullptr;
+    m_selectionData = WTF::nullopt;
 }
 
 } // namespace WebKit

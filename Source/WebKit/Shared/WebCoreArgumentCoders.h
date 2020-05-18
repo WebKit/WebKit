@@ -62,6 +62,10 @@
 #include <WebCore/CDMInstanceSession.h>
 #endif
 
+#if PLATFORM(GTK)
+#include "ArgumentCodersGtk.h"
+#endif
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;

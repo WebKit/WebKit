@@ -21,20 +21,14 @@
 #include "Image.h"
 #include "SharedBuffer.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class SelectionData : public RefCounted<SelectionData> {
+class SelectionData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SelectionData> create()
-    {
-        return adoptRef(*new SelectionData);
-    }
-
     void setText(const String&);
     const String& text() const { return m_text; }
     bool hasText() const { return !m_text.isEmpty(); }

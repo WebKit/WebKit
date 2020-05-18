@@ -28,6 +28,7 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #include <WebCore/DragActions.h>
+#include <WebCore/SelectionData.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/glib/GRefPtr.h>
@@ -37,10 +38,6 @@ typedef struct _GtkWidget GtkWidget;
 #if !USE(GTK4)
 typedef struct _GdkDragContext GdkDragContext;
 #endif
-
-namespace WebCore {
-class SelectionData;
-}
 
 namespace WebKit {
 
@@ -53,14 +50,14 @@ public:
     explicit DragSource(GtkWidget*);
     ~DragSource();
 
-    void begin(Ref<WebCore::SelectionData>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&&);
+    void begin(WebCore::SelectionData&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&&);
 
 private:
     GtkWidget* m_webView { nullptr };
 #if !USE(GTK4)
     GRefPtr<GdkDragContext> m_drag;
 #endif
-    RefPtr<WebCore::SelectionData> m_selectionData;
+    Optional<WebCore::SelectionData> m_selectionData;
 };
 
 } // namespace WebKit

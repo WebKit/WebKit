@@ -186,6 +186,7 @@ class PrintContext;
 class Range;
 class ResourceRequest;
 class ResourceResponse;
+class SelectionData;
 class SelectionRect;
 class SharedBuffer;
 class SubstituteData;
@@ -296,7 +297,6 @@ struct WebAutocorrectionData;
 struct WebAutocorrectionContext;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
-struct WebSelectionData;
 struct WebsitePoliciesData;
 
 #if ENABLE(UI_SIDE_COMPOSITING)
@@ -895,7 +895,7 @@ public:
     void restoreSelectionInFocusedEditableElement();
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(GTK)
-    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebSelectionData&&, uint32_t flags);
+    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebCore::SelectionData&&, uint32_t flags);
 #endif
 
 #if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK)

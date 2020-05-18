@@ -56,7 +56,7 @@ public:
     void readText(CompletionHandler<void(String&&)>&&);
     void readFilePaths(CompletionHandler<void(Vector<String>&&)>&&);
     void readBuffer(const char*, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&)>&&);
-    void write(Ref<WebCore::SelectionData>&&);
+    void write(WebCore::SelectionData&&);
     void clear();
 
 private:

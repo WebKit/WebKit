@@ -43,6 +43,10 @@ OBJC_CLASS NSString;
 OBJC_CLASS NSArray;
 #endif
 
+#if PLATFORM(GTK)
+#include "SelectionData.h"
+#endif
+
 #if PLATFORM(WIN)
 #include "COMPtr.h"
 #include "WCDataObject.h"
@@ -62,7 +66,6 @@ class Element;
 class Frame;
 class PasteboardStrategy;
 class Range;
-class SelectionData;
 class SharedBuffer;
 
 enum class PlainTextURLReadingPolicy : bool { IgnoreURL, AllowURL };
@@ -176,6 +179,9 @@ public:
 #if PLATFORM(GTK)
     explicit Pasteboard(const String& name);
     explicit Pasteboard(SelectionData&);
+#if ENABLE(DRAG_SUPPORT)
+    explicit Pasteboard(SelectionData&&);
+#endif
 #endif
 
 #if PLATFORM(WIN)
@@ -317,7 +323,7 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    RefPtr<SelectionData> m_selectionData;
+    Optional<SelectionData> m_selectionData;
     String m_name;
 #endif
 

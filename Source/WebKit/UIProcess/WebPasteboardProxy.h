@@ -41,6 +41,7 @@ class SharedBufferDataReference;
 namespace WebCore {
 class Color;
 class PasteboardCustomData;
+class SelectionData;
 struct PasteboardImage;
 struct PasteboardItemInfo;
 struct PasteboardURL;
@@ -51,7 +52,6 @@ namespace WebKit {
 
 class WebFrameProxy;
 class WebProcessProxy;
-struct WebSelectionData;
 
 class WebPasteboardProxy : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebPasteboardProxy);
@@ -127,7 +127,7 @@ private:
     void readText(const String& pasteboardName, CompletionHandler<void(String&&)>&&);
     void readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
     void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferDataReference&&)>&&);
-    void writeToClipboard(const String& pasteboardName, WebSelectionData&&);
+    void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&);
     void clearClipboard(const String& pasteboardName);
 
     WebFrameProxy* m_primarySelectionOwner { nullptr };

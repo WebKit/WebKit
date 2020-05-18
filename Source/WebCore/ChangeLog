@@ -1,5 +1,21 @@
 2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] "ASSERTION FAILED: !m_adoptionIsRequired" when double clicking on a word
+        https://bugs.webkit.org/show_bug.cgi?id=211957
+
+        Reviewed by Adrian Perez de Castro.
+
+        Make SelectionData non-refcounted. We can just move in most of the cases to avoid copies.
+
+        * platform/Pasteboard.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::createForDragAndDrop):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::selectionData const):
+        * platform/gtk/SelectionData.h:
+
+2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitContextMenuItemType for paste as plaintext
         https://bugs.webkit.org/show_bug.cgi?id=177638
 
