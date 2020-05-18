@@ -76,13 +76,13 @@ void PageClientImplCocoa::didInvalidateDataForAttachment(API::Attachment& attach
 
 NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance() const
 {
-    Class cls = [m_webView configuration]._attachmentFileWrapperClass ?: [NSFileWrapper self];
+    Class cls = [m_webView configuration]._attachmentFileWrapperClass ?: [NSFileWrapper class];
     return [cls alloc];
 }
 
 NSSet *PageClientImplCocoa::serializableFileWrapperClasses() const
 {
-    Class defaultFileWrapperClass = NSFileWrapper.self;
+    Class defaultFileWrapperClass = NSFileWrapper.class;
     Class configuredFileWrapperClass = [m_webView configuration]._attachmentFileWrapperClass;
     if (configuredFileWrapperClass && configuredFileWrapperClass != defaultFileWrapperClass)
         return [NSSet setWithObjects:configuredFileWrapperClass, defaultFileWrapperClass, nil];

@@ -866,7 +866,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setAttachmentFileWrapperClass:(Class)attachmentFileWrapperClass
 {
-    if (attachmentFileWrapperClass && ![attachmentFileWrapperClass isSubclassOfClass:[NSFileWrapper self]])
+    if (attachmentFileWrapperClass && ![attachmentFileWrapperClass isSubclassOfClass:[NSFileWrapper class]])
         [NSException raise:NSInvalidArgumentException format:@"Class %@ does not inherit from NSFileWrapper", attachmentFileWrapperClass];
 
     _attachmentFileWrapperClass = attachmentFileWrapperClass;

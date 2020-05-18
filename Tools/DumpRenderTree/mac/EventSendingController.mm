@@ -1399,9 +1399,9 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
     bool resetLatching = true;
 
-    if (![options isKindOfClass:[WebUndefined self]]) {
+    if (![options isKindOfClass:[WebUndefined class]]) {
         if (id resetLatchingValue = [options valueForKey:@"resetLatching"]) {
-            if ([resetLatchingValue isKindOfClass:[NSNumber self]])
+            if ([resetLatchingValue isKindOfClass:[NSNumber class]])
                 resetLatching = [resetLatchingValue boolValue];
         }
     }

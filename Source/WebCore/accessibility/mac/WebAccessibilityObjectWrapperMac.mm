@@ -3514,13 +3514,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // decode the parameter
     if (AXObjectIsTextMarkerRange(value))
         textMarkerRange = value;
-    else if ([value isKindOfClass:[NSNumber self]])
+    else if ([value isKindOfClass:[NSNumber class]])
         number = value;
-    else if ([value isKindOfClass:[NSString self]])
+    else if ([value isKindOfClass:[NSString class]])
         string = value;
-    else if ([value isKindOfClass:[NSValue self]])
+    else if ([value isKindOfClass:[NSValue class]])
         range = [value rangeValue];
-    else if ([value isKindOfClass:[NSArray self]])
+    else if ([value isKindOfClass:[NSArray class]])
         array = value;
 
     // handle the command
@@ -3898,21 +3898,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         textMarker = parameter;
     else if (AXObjectIsTextMarkerRange(parameter))
         textMarkerRange = parameter;
-    else if ([parameter isKindOfClass:[WebAccessibilityObjectWrapper self]])
+    else if ([parameter isKindOfClass:[WebAccessibilityObjectWrapper class]])
         uiElement = [(WebAccessibilityObjectWrapper*)parameter axBackingObject];
-    else if ([parameter isKindOfClass:[NSNumber self]])
+    else if ([parameter isKindOfClass:[NSNumber class]])
         number = parameter;
-    else if ([parameter isKindOfClass:[NSArray self]])
+    else if ([parameter isKindOfClass:[NSArray class]])
         array = parameter;
-    else if ([parameter isKindOfClass:[NSDictionary self]])
+    else if ([parameter isKindOfClass:[NSDictionary class]])
         dictionary = parameter;
-    else if ([parameter isKindOfClass:[NSValue self]] && !strcmp([(NSValue*)parameter objCType], @encode(NSPoint))) {
+    else if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue*)parameter objCType], @encode(NSPoint))) {
         pointSet = true;
         point = [(NSValue*)parameter pointValue];
-    } else if ([parameter isKindOfClass:[NSValue self]] && !strcmp([(NSValue*)parameter objCType], @encode(NSRange))) {
+    } else if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue*)parameter objCType], @encode(NSRange))) {
         rangeSet = true;
         range = [(NSValue*)parameter rangeValue];
-    } else if ([parameter isKindOfClass:[NSValue self]] && !strcmp([(NSValue*)parameter objCType], @encode(NSRect)))
+    } else if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue*)parameter objCType], @encode(NSRect)))
         rect = [(NSValue*)parameter rectValue];
     else {
         // Attribute type is not supported. Allow super to handle.

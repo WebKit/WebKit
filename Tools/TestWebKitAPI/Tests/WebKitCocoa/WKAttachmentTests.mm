@@ -1470,13 +1470,13 @@ TEST(WKAttachmentTests, CustomFileWrapperSubclass)
     [configuration _setAttachmentElementEnabled:YES];
     RetainPtr<NSException> exception;
     @try {
-        [configuration _setAttachmentFileWrapperClass:[NSArray self]];
+        [configuration _setAttachmentFileWrapperClass:[NSArray class]];
     } @catch(NSException *caught) {
         exception = caught;
     }
     EXPECT_TRUE(exception);
 
-    [configuration _setAttachmentFileWrapperClass:[FileWrapper self]];
+    [configuration _setAttachmentFileWrapperClass:[FileWrapper class]];
 
     auto webView = webViewForTestingAttachments(CGSizeZero, configuration.get());
 
@@ -1486,7 +1486,7 @@ TEST(WKAttachmentTests, CustomFileWrapperSubclass)
     NSArray<_WKAttachment *> * insertedAttachments = observer.observer().inserted;
 
     EXPECT_EQ(1U, insertedAttachments.count);
-    EXPECT_EQ([FileWrapper self], [insertedAttachments.firstObject.info.fileWrapper class]);
+    EXPECT_EQ([FileWrapper class], [insertedAttachments.firstObject.info.fileWrapper class]);
 }
 
 // FIXME: Remove this version guard once rdar://51752593 is resolved.

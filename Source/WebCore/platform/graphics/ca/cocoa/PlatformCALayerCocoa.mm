@@ -1090,7 +1090,7 @@ bool PlatformCALayer::isWebLayer()
 {
     BOOL result = NO;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    result = [m_layer isKindOfClass:[WebLayer self]];
+    result = [m_layer isKindOfClass:[WebLayer class]];
     END_BLOCK_OBJC_EXCEPTIONS
     return result;
 }

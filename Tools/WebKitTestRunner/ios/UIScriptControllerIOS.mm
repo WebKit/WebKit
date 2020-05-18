@@ -682,7 +682,7 @@ void UIScriptControllerIOS::immediateScrollToOffset(long x, long y)
 static UIScrollView *enclosingScrollViewIncludingSelf(UIView *view)
 {
     do {
-        if ([view isKindOfClass:[UIScrollView self]])
+        if ([view isKindOfClass:[UIScrollView class]])
             return static_cast<UIScrollView *>(view);
     } while ((view = [view superview]));
 

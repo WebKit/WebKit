@@ -1,3 +1,17 @@
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Replace uses of +self with +class
+        https://bugs.webkit.org/show_bug.cgi?id=212041
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController monitorWheelEventsWithOptions:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::enclosingScrollViewIncludingSelf):
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Implement conversion between P3 and sRGB color

@@ -42,7 +42,7 @@
     if (object == self)
         return YES;
 
-    if (![object isKindOfClass:[_WKFrameHandle self]])
+    if (![object isKindOfClass:[_WKFrameHandle class]])
         return NO;
 
     return _frameHandle->frameID() == ((_WKFrameHandle *)object)->_frameHandle->frameID();
@@ -77,8 +77,8 @@
     if (!(self = [super init]))
         return nil;
 
-    NSNumber *frameID = [decoder decodeObjectOfClass:[NSNumber self] forKey:@"frameID"];
-    if (![frameID isKindOfClass:[NSNumber self]]) {
+    NSNumber *frameID = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"frameID"];
+    if (![frameID isKindOfClass:[NSNumber class]]) {
         [self release];
         return nil;
     }

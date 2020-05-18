@@ -598,13 +598,13 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         checker->didCallCompletionHandler();
 
         RefPtr<API::WebsitePolicies> apiWebsitePolicies;
-        if ([policiesOrPreferences isKindOfClass:WKWebpagePreferences.self])
+        if ([policiesOrPreferences isKindOfClass:WKWebpagePreferences.class])
             apiWebsitePolicies = ((WKWebpagePreferences *)policiesOrPreferences)->_websitePolicies.get();
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        else if ([policiesOrPreferences isKindOfClass:_WKWebsitePolicies.self])
+        else if ([policiesOrPreferences isKindOfClass:_WKWebsitePolicies.class])
             apiWebsitePolicies = [policiesOrPreferences webpagePreferences]->_websitePolicies.get();
         else if (policiesOrPreferences)
-            [NSException raise:NSInvalidArgumentException format:@"Expected policies of class %@, but got %@", NSStringFromClass(_WKWebsitePolicies.self), [policiesOrPreferences class]];
+            [NSException raise:NSInvalidArgumentException format:@"Expected policies of class %@, but got %@", NSStringFromClass(_WKWebsitePolicies.class), [policiesOrPreferences class]];
 ALLOW_DEPRECATED_DECLARATIONS_END
         else
             apiWebsitePolicies = defaultWebsitePolicies;

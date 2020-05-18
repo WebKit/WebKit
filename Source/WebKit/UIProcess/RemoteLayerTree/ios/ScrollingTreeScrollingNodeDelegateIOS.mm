@@ -201,7 +201,7 @@ ScrollingTreeScrollingNodeDelegateIOS::~ScrollingTreeScrollingNodeDelegateIOS()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate]) {
-        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+        ASSERT([scrollView isKindOfClass:[UIScrollView class]]);
         // The scrollView may have been adopted by another node, so only clear the delegate if it's ours.
         if (scrollView.delegate == m_scrollViewDelegate.get())
             scrollView.delegate = nil;
@@ -213,7 +213,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::resetScrollViewDelegate()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate]) {
-        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+        ASSERT([scrollView isKindOfClass:[UIScrollView class]]);
         scrollView.delegate = nil;
     }
     END_BLOCK_OBJC_EXCEPTIONS
@@ -340,7 +340,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(uns
 UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::scrollView() const
 {
     UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
-    ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+    ASSERT([scrollView isKindOfClass:[UIScrollView class]]);
     return scrollView;
 }
 

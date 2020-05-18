@@ -8752,7 +8752,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKSelectMenuListViewController class]])
         [(WKSelectMenuListViewController *)_presentedFullScreenInputViewController.get() selectItemAtIndex:rowIndex];
 #else
-    if ([_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
+    if ([_inputPeripheral isKindOfClass:[WKFormSelectControl class]])
         [(WKFormSelectControl *)_inputPeripheral selectRow:rowIndex inComponent:0 extendingSelection:NO];
 #endif
 }
@@ -8777,7 +8777,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (NSString *)selectFormPopoverTitle
 {
-    if (![_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
+    if (![_inputPeripheral isKindOfClass:[WKFormSelectControl class]])
         return nil;
 
     return [(WKFormSelectControl *)_inputPeripheral selectFormPopoverTitle];

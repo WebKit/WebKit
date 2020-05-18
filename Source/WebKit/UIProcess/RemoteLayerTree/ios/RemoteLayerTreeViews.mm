@@ -284,7 +284,7 @@ static Class scrollViewScrollIndicatorClass()
 
 + (Class)layerClass
 {
-    return [CATransformLayer self];
+    return [CATransformLayer class];
 }
 
 @end
@@ -293,7 +293,7 @@ static Class scrollViewScrollIndicatorClass()
 
 + (Class)layerClass
 {
-    return [CABackdropLayer self];
+    return [CABackdropLayer class];
 }
 
 @end
@@ -302,7 +302,7 @@ static Class scrollViewScrollIndicatorClass()
 
 + (Class)layerClass
 {
-    return [CAShapeLayer self];
+    return [CAShapeLayer class];
 }
 
 @end
