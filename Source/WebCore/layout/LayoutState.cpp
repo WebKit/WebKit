@@ -185,7 +185,7 @@ TableFormattingState& LayoutState::ensureTableFormattingState(const ContainerBox
 
     auto create = [&] {
         // Table formatting context always establishes a new floating state -and it stays empty.
-        return makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
+        return makeUnique<TableFormattingState>(FloatingState::create(*this, formattingContextRoot), *this, formattingContextRoot);
     };
 
     return *m_tableFormattingStates.ensure(&formattingContextRoot, create).iterator->value;

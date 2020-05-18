@@ -31,6 +31,7 @@
 #include "TableFormattingState.h"
 #include "TableGrid.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 namespace Layout {
@@ -43,6 +44,8 @@ class TableFormattingContext final : public FormattingContext {
 public:
     TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState&);
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+
+    static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
 
 private:
     class TableLayout {
@@ -82,7 +85,6 @@ private:
     void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForSections(const ConstraintsForInFlowContent&);
 
-    void ensureTableGrid();
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 

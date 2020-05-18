@@ -28,6 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "TableFormattingContext.h"
+#include "TableFormattingState.h"
+
 namespace WebCore {
 namespace Layout {
 
@@ -57,9 +60,11 @@ void TableWrapperBlockFormattingContext::layoutInFlowContent(InvalidationState&,
 
 void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent& constraints)
 {
-    computeBorderAndPadding(tableBox, constraints.horizontal);
+    layoutState().ensureTableFormattingState(tableBox);
+
+    computeBorderAndPaddingForTableBox(tableBox, constraints.horizontal);
     computeStaticVerticalPosition(tableBox, constraints.vertical);
-    computeWidthAndMarginForTableBox(tableBox, constraints);
+    computeWidthAndMarginForTableBox(tableBox, constraints.horizontal);
     computeStaticHorizontalPosition(tableBox, constraints.horizontal);
 
     auto invalidationState = InvalidationState { };
@@ -68,27 +73,68 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
     computeHeightAndMarginForTableBox(tableBox, constraints);
 }
 
-void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent& constraints)
+void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
+{
+    ASSERT(tableBox.isTableBox());
+    if (tableBox.style().borderCollapse() == BorderCollapse::Collapse) {
+        // UAs must compute an initial left and right border width for the table by examining
+        // the first and last cells in the first row of the table.
+        // The left border width of the table is half of the first cell's collapsed left border,
+        // and the right border width of the table is half of the last cell's collapsed right border.
+        // The top border width of the table is computed by examining all cells who collapse their top
+        // borders with the top border of the table. The top border width of the table is equal to half of the
+        // maximum collapsed top border. The bottom border width is computed by examining all cells whose bottom borders collapse
+        // with the bottom of the table. The bottom border width is equal to half of the maximum collapsed bottom border.
+        auto& grid = layoutState().establishedTableFormattingState(tableBox).tableGrid();
+        auto tableBorder = geometry().computedBorder(tableBox);
+
+        auto& firstColumnFirstRowBox = grid.slot({ 0 , 0 })->cell().box();
+        auto leftBorder = std::max(tableBorder.horizontal.left, geometry().computedBorder(firstColumnFirstRowBox).horizontal.left);
+
+        auto& lastColumnFirstRow = grid.slot({ grid.columns().size() - 1, 0 })->cell().box();
+        auto rightBorder = std::max(tableBorder.horizontal.right, geometry().computedBorder(lastColumnFirstRow).horizontal.right);
+
+        auto topBorder = tableBorder.vertical.top;
+        auto bottomBorder = tableBorder.vertical.bottom;
+        auto lastRowIndex = grid.rows().size() - 1;
+        for (size_t columnIndex = 0; columnIndex < grid.columns().size(); ++columnIndex) {
+            auto& boxInFirstRox = grid.slot({ columnIndex, 0 })->cell().box();
+            auto& boxInLastRow = grid.slot({ columnIndex, lastRowIndex })->cell().box();
+
+            topBorder = std::max(topBorder, geometry().computedBorder(boxInFirstRox).vertical.top);
+            bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
+        }
+        auto collapsedBorder = Edges { { leftBorder / 2, rightBorder / 2 }, { topBorder / 2, bottomBorder / 2 } };
+
+        auto& displayBox = formattingState().displayBox(tableBox);
+        displayBox.setBorder(collapsedBorder);
+        displayBox.setPadding(geometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
+        return;
+    }
+    BlockFormattingContext::computeBorderAndPadding(tableBox, horizontalConstraints);
+}
+
+void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
 {
     ASSERT(tableBox.isTableBox());
     // This is a special table "fit-content size" behavior handling. Not in the spec though.
     // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
-    auto& formattingStateForTableBox = layoutState().ensureFormattingState(tableBox);
+    auto& formattingStateForTableBox = layoutState().establishedTableFormattingState(tableBox);
     auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
     if (auto precomputedIntrinsicWidthConstraints = formattingStateForTableBox.intrinsicWidthConstraints())
         intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
     else
         intrinsicWidthConstraints = LayoutContext::createFormattingContext(tableBox, layoutState())->computedIntrinsicWidthConstraints();
-    auto computedTableWidth = geometry().computedWidth(tableBox, constraints.horizontal.logicalWidth);
+    auto computedTableWidth = geometry().computedWidth(tableBox, horizontalConstraints.logicalWidth);
     auto usedWidth = computedTableWidth;
     if (computedTableWidth && intrinsicWidthConstraints.minimum > computedTableWidth) {
         // Table content needs more space than the table has.
         usedWidth = intrinsicWidthConstraints.minimum;
     } else if (!computedTableWidth) {
         // Use the generic shrink-to-fit-width logic.
-        usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, constraints.horizontal.logicalWidth), intrinsicWidthConstraints.maximum);
+        usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, horizontalConstraints.logicalWidth), intrinsicWidthConstraints.maximum);
     }
-    auto contentWidthAndMargin = geometry().inFlowWidthAndMargin(tableBox, constraints.horizontal, OverrideHorizontalValues { usedWidth, { } });
+    auto contentWidthAndMargin = geometry().inFlowWidthAndMargin(tableBox, horizontalConstraints, OverrideHorizontalValues { usedWidth, { } });
 
     auto& displayBox = formattingState().displayBox(tableBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);

@@ -35,8 +35,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingState);
 
-TableFormattingState::TableFormattingState(Ref<FloatingState>&& floatingState, LayoutState& layoutState)
+TableFormattingState::TableFormattingState(Ref<FloatingState>&& floatingState, LayoutState& layoutState, const ContainerBox& tableBox)
     : FormattingState(WTFMove(floatingState), Type::Table, layoutState)
+    , m_tableGrid(TableFormattingContext::ensureTableGrid(tableBox))
 {
 }
 

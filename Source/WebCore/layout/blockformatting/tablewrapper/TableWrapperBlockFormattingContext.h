@@ -45,7 +45,8 @@ public:
 private:
     void layoutTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent&);
 
-    void computeWidthAndMarginForTableBox(const ContainerBox&, const ConstraintsForInFlowContent&);
+    void computeBorderAndPaddingForTableBox(const ContainerBox&, const HorizontalConstraints&);
+    void computeWidthAndMarginForTableBox(const ContainerBox&, const HorizontalConstraints&);
     void computeHeightAndMarginForTableBox(const ContainerBox&, const ConstraintsForInFlowContent&);
 };
 

@@ -1,3 +1,38 @@
+2020-05-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for computing the collapsed table border
+        https://bugs.webkit.org/show_bug.cgi?id=212003
+
+        Reviewed by Antti Koivisto.
+
+        UAs must compute an initial left and right border width for the table by examining
+        the first and last cells in the first row of the table.
+        The left border width of the table is half of the first cell's collapsed left border,
+        and the right border width of the table is half of the last cell's collapsed right border.
+        The top border width of the table is computed by examining all cells who collapse their top
+        borders with the top border of the table. The top border width of the table is equal to half of the
+        maximum collapsed top border. The bottom border width is computed by examining all cells whose bottom borders collapse
+        with the bottom of the table. The bottom border width is equal to half of the maximum collapsed bottom border.
+
+        https://www.w3.org/TR/CSS22/tables.html#collapsing-borders
+
+        This patch implements the table box part of the border collapsing. Inner table elements need to implement collapsing as well.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::ensureTableFormattingState):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::layoutTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.h:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingState.cpp:
+        (WebCore::Layout::TableFormattingState::TableFormattingState):
+        * layout/tableformatting/TableFormattingState.h:
+
 2020-05-18  Antoine Quint  <graouts@apple.com>
 
         Clean up media controls content for Apple platforms

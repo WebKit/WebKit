@@ -217,22 +217,19 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
     if (auto computedWidthConstraints = grid.widthConstraints())
         return *computedWidthConstraints;
 
-    // 1. Ensure each cell slot is occupied by at least one cell.
-    ensureTableGrid();
-    // 2. Compute the minimum/maximum width of each column.
+    // Compute the minimum/maximum width of each column.
     auto computedWidthConstraints = computedPreferredWidthForColumns();
     grid.setWidthConstraints(computedWidthConstraints);
     return computedWidthConstraints;
 }
 
-void TableFormattingContext::ensureTableGrid()
+UniqueRef<TableGrid> TableFormattingContext::ensureTableGrid(const ContainerBox& tableBox)
 {
-    auto& tableBox = root();
-    auto& tableGrid = formattingState().tableGrid();
+    auto tableGrid = makeUniqueRef<TableGrid>();
     auto& tableStyle = tableBox.style();
     auto shouldApplyBorderSpacing = tableStyle.borderCollapse() == BorderCollapse::Separate;
-    tableGrid.setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.horizontalBorderSpacing() : 0 });
-    tableGrid.setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.verticalBorderSpacing() : 0 });
+    tableGrid->setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.horizontalBorderSpacing() : 0 });
+    tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.verticalBorderSpacing() : 0 });
 
     auto* firstChild = tableBox.firstChild();
     const Box* tableCaption = nullptr;
@@ -248,7 +245,7 @@ void TableFormattingContext::ensureTableGrid()
         colgroup = colgroupCandidate;
 
     if (colgroup) {
-        auto& columns = tableGrid.columns();
+        auto& columns = tableGrid->columns();
         for (auto* column = downcast<ContainerBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
             ASSERT(column->isTableColumn());
             auto columnSpanCount = column->columnSpan();
@@ -265,10 +262,11 @@ void TableFormattingContext::ensureTableGrid()
             ASSERT(row->isTableRow());
             for (auto* cell = downcast<ContainerBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
                 ASSERT(cell->isTableCell());
-                tableGrid.appendCell(downcast<ContainerBox>(*cell));
+                tableGrid->appendCell(downcast<ContainerBox>(*cell));
             }
         }
     }
+    return tableGrid;
 }
 
 FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
