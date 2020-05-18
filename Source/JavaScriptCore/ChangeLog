@@ -1,3 +1,17 @@
+2020-05-17  Lauro Moura  <lmoura@igalia.com>
+
+        [JSC] Silence unused-but-set-parameter warnings for older compilers
+        https://bugs.webkit.org/show_bug.cgi?id=212006
+
+        Reviewed by Mark Lam.
+
+        GCC up to 9.x will emit unused-but-set-parameter for the sources
+        parameter when NumberOfRegisters is zero (the if block is eliminated)
+        and for destinations when also ASSERT_ENABLED is false.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupStubArgs):
+
 2020-05-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make OutOfMemory error as instance of RangeError

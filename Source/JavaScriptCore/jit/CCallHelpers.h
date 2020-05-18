@@ -105,6 +105,10 @@ private:
                 if (sources[i] != destinations[i])
                     pairs.append(std::make_pair(sources[i], destinations[i]));
             }
+        } else {
+            // Silence some older compilers (GCC up to 9.X) about unused but set parameters.
+            UNUSED_PARAM(sources);
+            UNUSED_PARAM(destinations);
         }
 
 #if ASSERT_ENABLED
