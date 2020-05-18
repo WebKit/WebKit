@@ -74,6 +74,7 @@ enum class SendSyncOption {
 enum class WaitForOption {
     // Use this to make waitForMessage be interrupted immediately by any incoming sync messages.
     InterruptWaitingIfSyncMessageArrives = 1 << 0,
+    DispatchIncomingSyncMessagesWhileWaiting = 1 << 1,
 };
 
 #define MESSAGE_CHECK_BASE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, (void)0)

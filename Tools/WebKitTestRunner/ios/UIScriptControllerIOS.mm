@@ -1205,6 +1205,11 @@ void UIScriptControllerIOS::toggleCapsLock(JSValueRef callback)
     doAsyncTask(callback);
 }
 
+bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
+{
+    return UIKeyboardImpl.activeInstance.isAutoShifted;
+}
+
 JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdentifier)
 {
     auto attachmentIdentifier = toWTFString(toWK(jsAttachmentIdentifier));

@@ -1,3 +1,43 @@
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unexpected capitalization of next word after repositioning caret
+        https://bugs.webkit.org/show_bug.cgi?id=211969
+        <rdar://problem/62605526>
+
+        Reviewed by Alex Christensen.
+
+        The changes in r242551 refactored synchronous autocorrection context request logic such that it uses
+        `waitForAndDispatchImmediately` instead of `sendSync`, in order to make it interruptible by unbounded sync IPC
+        sent from the web process. If the UI process receives sync IPC, it will immediately cancel the autocorrection
+        context request (returning an empty context), before proceeding to handle the incoming sync IPC.
+
+        In a more recent version of iOS, other changes around spellchecking have caused the synchronous message
+        `WebPageProxy::checkTextOfParagraph` to be sent from the web process in such a way that it now frequently
+        coincides with the synchronous autocorrection context request being sent from the UI process. The result is that
+        we now frequently end up cancelling autocorrection requests early by responding with empty contexts. This
+        manifests in the keyboard sometimes losing information about its autocapitalization context and believing that
+        it is in an empty text field, which reverts to default autocorrection suggestions and autocapitalizes the
+        software keyboard.
+
+        To fix this, instead of using the `InterruptWaitingIfSyncMessageArrives` option when waiting for the IPC
+        response, add and use a new flag that allows us to process an incoming sync IPC message if we're waiting for
+        the sync message response. We use this new IPC flag when waiting synchronously for HandleAutocorrectionContext.
+
+        Test: editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.html
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::processIncomingMessage):
+
+        If the new IPC flag is set and the incoming message is synchronous, allow it to immediately dispatch the sync
+        message by enqueueing it and then waking up `m_waitForMessageCondition` so that it can process the message.
+
+        * Platform/IPC/Connection.h:
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
+        Use `DispatchIncomingSyncMessagesWhileWaiting` instead of `InterruptWaitingIfSyncMessageArrives`.
+
 2020-05-18  Lauro Moura  <lmoura@igalia.com>
 
         webkitpy: Update test data after r261776

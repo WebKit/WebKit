@@ -1154,7 +1154,7 @@ TEST(WKAttachmentTests, InsertAndRemoveDuplicateAttachment)
         observer.expectAttachmentUpdates(@[ ], @[ originalAttachment.get() ]);
     }
     [webView selectAll:nil];
-    [webView _executeEditCommand:@"Copy" argument:nil completion:nil];
+    [webView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
     [webView evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
@@ -1196,7 +1196,7 @@ TEST(WKAttachmentTests, InsertDuplicateAttachmentAndUpdateData)
         observer.expectAttachmentUpdates(@[ ], @[ originalAttachment.get() ]);
     }
     [webView selectAll:nil];
-    [webView _executeEditCommand:@"Copy" argument:nil completion:nil];
+    [webView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
     [webView evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());

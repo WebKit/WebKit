@@ -80,6 +80,8 @@ interface UIScriptController {
     void toggleCapsLock(object callback);
     void setContinuousSpellCheckingEnabled(boolean enabled);
 
+    readonly attribute boolean keyboardIsAutomaticallyShifted;
+
     void rawKeyDown(DOMString key);
     void rawKeyUp(DOMString key);
 

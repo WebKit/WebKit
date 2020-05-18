@@ -4238,7 +4238,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _page->requestAutocorrectionContext();
 
     if (useSyncRequest) {
-        _page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+        _page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting);
         [self _cancelPendingAutocorrectionContextHandler];
     }
 }

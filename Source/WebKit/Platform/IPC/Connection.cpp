@@ -754,6 +754,11 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
                 return;
             }
 
+            if (m_waitingForMessage->waitForOptions.contains(WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) && message->isSyncMessage() && SyncMessageState::singleton().processIncomingMessage(*this, message)) {
+                m_waitForMessageCondition.notifyOne();
+                return;
+            }
+
             if (m_waitingForMessage->waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
                 m_waitingForMessage->messageWaitingInterrupted = true;
                 m_waitForMessageCondition.notifyOne();

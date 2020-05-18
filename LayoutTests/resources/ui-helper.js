@@ -308,6 +308,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static keyboardIsAutomaticallyShifted()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.keyboardIsAutomaticallyShifted`, result => resolve(result === "true"));
+        });
+    }
+
     static ensurePresentationUpdate()
     {
         if (!this.isWebKit2()) {

@@ -136,6 +136,7 @@ public:
     long numberOfStrokesInEditableImage() override;
     void setKeyboardInputModeIdentifier(JSStringRef) override;
     void toggleCapsLock(JSValueRef) override;
+    bool keyboardIsAutomaticallyShifted() const override;
     JSObjectRef attachmentInfo(JSStringRef) override;
     UIView *platformContentView() const override;
     JSObjectRef calendarType() const override;

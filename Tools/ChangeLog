@@ -1,3 +1,25 @@
+2020-05-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unexpected capitalization of next word after repositioning caret
+        https://bugs.webkit.org/show_bug.cgi?id=211969
+        <rdar://problem/62605526>
+
+        Reviewed by Alex Christensen.
+
+        Add a new UIScriptController hook to query whether or not the software keyboard is in shifted state.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::keyboardIsAutomaticallyShifted const):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
+        Adjust a couple of API tests that copy and paste back-to-back, so that they wait for the copy to finish before
+        attempting to paste.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::keyboardIsAutomaticallyShifted const):
+
 2020-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitContextMenuItemType for paste as plaintext
