@@ -6398,7 +6398,7 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if !PLATFORM(IOS)
 TEST(ProcessSwap, QuickLookRequestsPasswordAfterSwap)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();

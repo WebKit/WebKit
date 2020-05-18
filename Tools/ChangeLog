@@ -1,3 +1,10 @@
+2020-05-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for rdar://59610140 and rdar://59611168.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+
 2020-05-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r261629. rdar://problem/62213993
