@@ -1,3 +1,25 @@
+2020-05-17  Daniel Bates  <dabates@apple.com>
+
+        Make editing-word-with-marker-1.html work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=211814
+
+        Reviewed by Simon Fraser and David Kilzer.
+
+        Minimal changes needed to make the test work on iOS + rebase the results. I was tempted to go
+        full js-test.js conversion, but I didn't do so to reduce the risk I introduce a bug and I think
+        is good enough.
+
+        To make the test work on iOS I enable internals.setContinuousSpellCheckingEnabled() + use UIHelper
+        to activate the textarea + blur the textarea on reset (for maximal code reuse). I didn't enable this
+        via the WKTR option spellCheckingDots because this test should be capable of running in DumpRenderTree
+        though we don't actually run DumpRenderTree for iOS on any bots. So, I did this largely for just for me.
+
+        * editing/mac/spelling/editing-word-with-marker-1-expected.txt:
+        * editing/mac/spelling/editing-word-with-marker-1.html:
+        * platform/ios/TestExpectations: Temporarily mark this test as PASS here so that iOS runs it even
+        though its in a Mac-specific directory. I will remove this entry when I move the test to editing/spelling
+        in the fix for <https://webkit.org/b/211802>.
+
 2020-05-17  Andy Estes  <aestes@apple.com>
 
         http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html fails in public SDK builds
