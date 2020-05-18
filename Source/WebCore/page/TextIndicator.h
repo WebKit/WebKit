@@ -106,7 +106,7 @@ struct TextIndicatorData {
     FloatRect textBoundingRectInRootViewCoordinates;
     FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
-    float contentImageScaleFactor { 0 };
+    float contentImageScaleFactor { 1 };
     RefPtr<Image> contentImageWithHighlight;
     RefPtr<Image> contentImageWithoutSelection;
     RefPtr<Image> contentImage;

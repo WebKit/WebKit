@@ -1,3 +1,13 @@
+2020-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: Use default initializers in TextIndicatorData
+        <https://webkit.org/b/212039>
+        <rdar://problem/63355619>
+
+        * page/TextIndicator.h:
+        (WebCore::TextIndicatorData::contentImageScaleFactor):
+        - Simon Fraser says 1 is a better default than 0.
+
 2020-05-18  Peng Liu  <peng.liu6@apple.com>
 
         Add a quirk to allow an embedded Twitter video to play with one tapping
