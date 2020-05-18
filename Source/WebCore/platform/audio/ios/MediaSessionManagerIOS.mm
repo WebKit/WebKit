@@ -131,7 +131,7 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& sess
         m_playbackTargetSupportsAirPlayVideo = m_playbackTarget->supportsRemoteVideoPlayback();
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, m_playbackTargetSupportsAirPlayVideo);
+    ALWAYS_LOG(LOGIDENTIFIER, "Playback Target Supports AirPlay Video = ", m_playbackTargetSupportsAirPlayVideo);
     if (m_playbackTargetSupportsAirPlayVideo)
         session.setPlaybackTarget(*m_playbackTarget.copyRef());
     session.setShouldPlayToPlaybackTarget(m_playbackTargetSupportsAirPlayVideo);

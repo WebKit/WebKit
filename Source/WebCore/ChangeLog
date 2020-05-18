@@ -1,3 +1,25 @@
+2020-05-18  Peng Liu  <peng.liu6@apple.com>
+
+        Add a quirk to allow an embedded Twitter video to play with one tapping
+        https://bugs.webkit.org/show_bug.cgi?id=211932
+
+        Reviewed by Maciej Stachowiak.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted const):
+        Need to check the topDocument for the existence of user interactions.
+        (WebCore::MediaElementSession::updateMediaUsageIfChanged): Ditto.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsPerDocumentAutoplayBehavior const):
+        Add the missing needsQuirks() checking.
+        (WebCore::Quirks::shouldAutoplayForArbitraryUserGesture const):
+        Add a the quirk for twitter.com.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::sessionWillBeginPlayback):
+        Clarify the log message.
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Content disappears on CSS parallax example

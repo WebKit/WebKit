@@ -110,6 +110,9 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
     ASSERT(m_document == &m_document->topDocument());
     return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
 #else
+    if (!needsQuirks())
+        return false;
+
     auto host = m_document->topDocument().url().host();
     return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
 #endif
@@ -120,7 +123,11 @@ bool Quirks::shouldAutoplayForArbitraryUserGesture() const
 #if PLATFORM(MAC)
     return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::ArbitraryUserGestures);
 #else
-    return false;
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->url().host();
+    return equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com");
 #endif
 }
 

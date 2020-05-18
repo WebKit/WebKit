@@ -316,7 +316,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
     if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
-    if (document.hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture())
+    if (topDocument.hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture())
         return { };
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document.processingUserGestureForMedia()) {
@@ -1065,7 +1065,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
         document.isMediaDocument() && !document.ownerElement(),
         pageExplicitlyAllowsElementToAutoplayInline(m_element),
         requiresFullscreenForVideoPlayback() && !fullscreenPermitted(),
-        document.hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture(),
+        document.topDocument().hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture(),
         isVideo && hasBehaviorRestriction(RequireUserGestureForVideoRateChange) && !processingUserGesture,
         isAudio && hasBehaviorRestriction(RequireUserGestureForAudioRateChange) && !processingUserGesture && !m_element.muted() && m_element.volume(),
         isVideo && hasBehaviorRestriction(RequireUserGestureForVideoDueToLowPowerMode) && !processingUserGesture,
