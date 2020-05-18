@@ -5,30 +5,48 @@
     <script src="video-test.js"></script>
     <script src="media-file.js"></script>
     <script>
-    window.addEventListener('load', async event => {
+    function start()
+    {
         findMediaElement();
 
+        waitForEventOnce('canplaythrough', canplaythrough);
         run('video.src = findMediaFile("video", "content/test")');
-        await waitFor(video, 'canplaythrough');
+        run("video.loop = true");
+    }
 
+    function canplaythrough()
+    {
+        waitForEventOnce('playing', playing);
         runWithKeyDown('video.play()');
-        await waitFor(video, 'playing');
+    }
 
+    function playing()
+    {
+        waitForEventOnce('pause', pause);
         run('internals.setMediaSessionRestrictions("videoaudio", "suspendedunderlockplaybackrestricted")')
         run('internals.applicationDidEnterBackground(true)');
-        await waitFor(video, 'pause');
+    }
 
+    function pause()
+    {
+        waitForEventOnce('playing', playing2);
         run('internals.applicationWillEnterForeground(true)');
-        await waitFor(video, 'playing');
+    }
 
+    function playing2()
+    {
         run('internals.setIsPlayingToAutomotiveHeadUnit(true)');
         run('internals.applicationDidEnterBackground(true)');
         testExpected('video.paused', false);
+
+        // restore the internals to avoid interferences with other tests
+        run('internals.setIsPlayingToAutomotiveHeadUnit(false)');
+        run('internals.applicationWillEnterForeground(true)');
         endTest();
-    });
+    }
     </script>
 </head>
-<body>
+<body onload="start()">
     <video controls></video>
 </body>
 </html>
