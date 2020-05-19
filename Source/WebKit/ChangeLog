@@ -1,3 +1,21 @@
+2020-05-19  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r243149): createMediaElementSource not working
+        https://bugs.webkit.org/show_bug.cgi?id=211394
+        <rdar://problem/62866132>
+
+        Reviewed by Per Arne Vollan.
+
+        I removed access to some Audio services in r243149, because we believed they were already
+        blocked by a global deny command. However, Sandbox rules override generic rules with
+        explicit rules, so the imported sandbox rules were not being blocked.
+
+        This patch re-adds the rules needed to support these audio routines on iOS hardware.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::mediaRelatedMachServices):
+
 2020-05-19  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Port Foreground process assertion to RunningBoard

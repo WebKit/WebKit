@@ -955,8 +955,8 @@
             "com.apple.webinspector"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.airplay.apsynccontroller.xpc" "com.apple.audio.AURemoteIOServer" "com.apple.audio.AudioComponentRegistrar"
-            "com.apple.audio.AudioComponentRegistrar" "com.apple.audio.AudioSession" "com.apple.coremedia.admin" "com.apple.coremedia.asset.xpc"
+            "com.apple.airplay.apsynccontroller.xpc" "com.apple.audio.AURemoteIOServer" "com.apple.audio.AudioComponentPrefs" "com.apple.audio.AudioComponentRegistrar"
+            "com.apple.audio.AudioQueueServer" "com.apple.audio.AudioSession" "com.apple.coremedia.admin" "com.apple.coremedia.asset.xpc"
             "com.apple.coremedia.assetimagegenerator.xpc" "com.apple.coremedia.audiodeviceclock.xpc" "com.apple.coremedia.audioprocessingtap.xpc"
             "com.apple.coremedia.capturesession" "com.apple.coremedia.capturesource" "com.apple.coremedia.compressionsession" "com.apple.coremedia.cpe.xpc"
             "com.apple.coremedia.cpeprotector.xpc" "com.apple.coremedia.customurlloader.xpc" "com.apple.coremedia.decompressionsession"
