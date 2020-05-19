@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY_SETUP,
-    ExportMacro=WEBCORE_EXPORT,
-] enum ApplePaySetupFeatureType {
-    "applePay",
-    "appleCard"
+#pragma once
+
+#if ENABLE(APPLE_PAY_SETUP)
+
+#include "ApplePaySetupFeatureWebCore.h"
+
+namespace WebCore {
+
+class MockApplePaySetupFeature final : public ApplePaySetupFeature {
+public:
+    static Ref<MockApplePaySetupFeature> create(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
+    
+    ApplePaySetupFeatureState state() const final { return m_state; }
+    ApplePaySetupFeatureType type() const final { return m_type; }
+
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    bool supportsInstallments() const final { return m_supportsInstallments; }
+#endif
+
+private:
+    MockApplePaySetupFeature(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
+
+    ApplePaySetupFeatureState m_state;
+    ApplePaySetupFeatureType m_type;
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    bool m_supportsInstallments;
+#endif
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY_SETUP)

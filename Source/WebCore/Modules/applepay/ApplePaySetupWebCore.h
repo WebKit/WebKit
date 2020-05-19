@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY_SETUP)
 
+#include "ApplePaySetupConfiguration.h"
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <wtf/Forward.h>
@@ -42,14 +43,7 @@ class Document;
 
 class ApplePaySetup : public ActiveDOMObject, public RefCounted<ApplePaySetup> {
 public:
-    struct Configuration {
-        String merchantIdentifier;
-        String referrerIdentifier;
-        String signature;
-        Vector<String> signedFields;
-    };
-
-    static Ref<ApplePaySetup> create(ScriptExecutionContext& context, Configuration&& configuration)
+    static Ref<ApplePaySetup> create(ScriptExecutionContext& context, ApplePaySetupConfiguration&& configuration)
     {
         return adoptRef(*new ApplePaySetup(context, WTFMove(configuration)));
     }
@@ -61,14 +55,14 @@ public:
     void begin(Document&, Vector<RefPtr<ApplePaySetupFeature>>&&, BeginPromise&&);
 
 private:
-    ApplePaySetup(ScriptExecutionContext&, Configuration&&);
+    ApplePaySetup(ScriptExecutionContext&, ApplePaySetupConfiguration&&);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "ApplePaySetup"; }
     void stop() final;
     void suspend(ReasonForSuspension) final;
 
-    Configuration m_configuration;
+    ApplePaySetupConfiguration m_configuration;
     Optional<SetupFeaturesPromise> m_setupFeaturesPromise;
     Optional<BeginPromise> m_beginPromise;
     RefPtr<PendingActivity<ApplePaySetup>> m_pendingActivity;

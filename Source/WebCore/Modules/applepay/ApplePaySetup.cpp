@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,7 +76,7 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
 
     m_setupFeaturesPromise = WTFMove(promise);
 
-    page->paymentCoordinator().client().getSetupFeatures(m_configuration, document.url(), [this, pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
+    page->paymentCoordinator().getSetupFeatures(m_configuration, document.url(), [this, pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
         if (m_setupFeaturesPromise)
             std::exchange(m_setupFeaturesPromise, WTF::nullopt)->settle(WTFMove(setupFeatures));
     });
@@ -109,13 +109,13 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
     m_beginPromise = WTFMove(promise);
     m_pendingActivity = makePendingActivity(*this);
 
-    page->paymentCoordinator().client().beginApplePaySetup(m_configuration, document.url(), WTFMove(features), [this](bool result) {
+    page->paymentCoordinator().beginApplePaySetup(m_configuration, document.url(), WTFMove(features), [this](bool result) {
         if (m_beginPromise)
             std::exchange(m_beginPromise, WTF::nullopt)->settle(result);
     });
 }
 
-ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, Configuration&& configuration)
+ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, ApplePaySetupConfiguration&& configuration)
     : ActiveDOMObject(&context)
     , m_configuration(WTFMove(configuration))
 {
@@ -131,7 +131,7 @@ void ApplePaySetup::stop()
         std::exchange(m_beginPromise, WTF::nullopt)->settle(Exception { AbortError });
 
     if (auto page = downcast<Document>(*scriptExecutionContext()).page())
-        page->paymentCoordinator().client().endApplePaySetup();
+        page->paymentCoordinator().endApplePaySetup();
 
     m_pendingActivity = nullptr;
 }

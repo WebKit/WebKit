@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class ApplePaySetupFeature;
 class Document;
 class Payment;
 class PaymentCoordinatorClient;
@@ -44,6 +45,7 @@ class PaymentMethodUpdate;
 class PaymentSession;
 class PaymentSessionError;
 enum class PaymentAuthorizationStatus;
+struct ApplePaySetupConfiguration;
 struct ExceptionDetails;
 struct PaymentAuthorizationResult;
 struct ShippingContactUpdate;
@@ -84,6 +86,12 @@ public:
 
     bool shouldEnableApplePayAPIs(Document&) const;
     WEBCORE_EXPORT Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
+
+#if ENABLE(APPLE_PAY_SETUP)
+    void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
+    void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);
+    void endApplePaySetup();
+#endif
 
 private:
     bool setApplePayIsActiveIfAllowed(Document&) const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY_SETUP,
-    ExportMacro=WEBCORE_EXPORT,
-] enum ApplePaySetupFeatureType {
-    "applePay",
-    "appleCard"
+#pragma once
+
+#if ENABLE(APPLE_PAY_SETUP)
+
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+struct ApplePaySetupConfiguration {
+    String merchantIdentifier;
+    String referrerIdentifier;
+    String signature;
+    Vector<String> signedFields;
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY_SETUP)

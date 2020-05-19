@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,13 @@
 
 [
     Conditional=APPLE_PAY_SETUP,
-] enum ApplePaySetupFeatureState {
-    "unsupported",
-    "supported",
-    "supplementarySupported",
-    "completed"
-};
-
-[
-    Conditional=APPLE_PAY_SETUP,
     EnabledBySetting=ApplePay,
-    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
     SecureContext,
+    SkipVTableValidation,
 ] interface ApplePaySetupFeature {
     [CachedAttribute] readonly attribute ApplePaySetupFeatureType type;
     [CachedAttribute] readonly attribute ApplePaySetupFeatureState state;
     [CachedAttribute, Conditional=APPLE_PAY_INSTALLMENTS] readonly attribute boolean supportsInstallments;
 };
+
