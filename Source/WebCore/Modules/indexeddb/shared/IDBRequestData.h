@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,7 @@ private:
     std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
     uint64_t m_objectStoreIdentifier { 0 };
     uint64_t m_indexIdentifier { 0 };
-    IndexedDB::IndexRecordType m_indexRecordType;
+    IndexedDB::IndexRecordType m_indexRecordType { IndexedDB::IndexRecordType::Key };
 
     mutable Optional<IDBDatabaseIdentifier> m_databaseIdentifier;
     uint64_t m_requestedVersion { 0 };
@@ -108,7 +108,7 @@ void IDBRequestData::encode(Encoder& encoder) const
 {
     encoder << m_serverConnectionIdentifier << m_objectStoreIdentifier << m_indexIdentifier << m_databaseIdentifier << m_requestedVersion;
 
-    encoder.encodeEnum(m_indexRecordType);
+    encoder << m_indexRecordType;
     encoder.encodeEnum(m_requestType);
 
     encoder << !!m_requestIdentifier;
@@ -145,7 +145,7 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
     if (!decoder.decode(request.m_requestedVersion))
         return false;
 
-    if (!decoder.decodeEnum(request.m_indexRecordType))
+    if (!decoder.decode(request.m_indexRecordType))
         return false;
 
     if (!decoder.decodeEnum(request.m_requestType))

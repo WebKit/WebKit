@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,7 +129,7 @@ protected:
     uint64_t m_objectStoreIdentifier { 0 };
     uint64_t m_indexIdentifier { 0 };
     std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
-    IndexedDB::IndexRecordType m_indexRecordType;
+    IndexedDB::IndexRecordType m_indexRecordType { IndexedDB::IndexRecordType::Key };
     Function<void()> m_performFunction;
     Function<void(const IDBResultData&)> m_completeFunction;
 

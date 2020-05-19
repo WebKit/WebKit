@@ -1,3 +1,28 @@
+2020-05-19  David Kilzer  <ddkilzer@apple.com>
+
+        IDBRequestData and IDBClient::TransactionOperation should initialize IndexedDB::IndexRecordType field
+        <https://webkit.org/b/212096>
+        <rdar://problem/63406376>
+
+        Reviewed by Geoffrey Garen.
+
+        IDBRequestData tested by IPC::Decoder::decode() and
+        IPC::Encoder::operator<<() running on WebKit2 API and layout
+        tests.
+
+        * Modules/indexeddb/IndexedDB.h:
+        (WTF::EnumTraits<WebCore::IndexedDB::IndexRecordType>): Add.
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::m_indexRecordType):
+        - Add default initializer.
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::m_indexRecordType):
+        - Add default initializer.
+        (WebCore::IDBRequestData::encode const):
+        (WebCore::IDBRequestData::decode):
+        - Switch from encodeEnum() and decodeEnum() to modern
+          equivalents that check for valid enum values.
+
 2020-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         Push a PlatformDisplayID to scrolling trees, and allow the scrolling thread to get displayDidRefresh notifications

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,6 +118,14 @@ enum class CursorIterateOption {
 
 namespace WTF {
 
+template<> struct EnumTraits<WebCore::IndexedDB::IndexRecordType> {
+    using values = EnumValues<
+        WebCore::IndexedDB::IndexRecordType,
+        WebCore::IndexedDB::IndexRecordType::Key,
+        WebCore::IndexedDB::IndexRecordType::Value
+    >;
+};
+
 template<> struct EnumTraits<WebCore::IndexedDB::ObjectStoreOverwriteMode> {
     using values = EnumValues<
         WebCore::IndexedDB::ObjectStoreOverwriteMode,
@@ -126,6 +135,6 @@ template<> struct EnumTraits<WebCore::IndexedDB::ObjectStoreOverwriteMode> {
     >;
 };
 
-}
+} // namespace WTF
 
 #endif // ENABLED(INDEXED_DATABASE)
