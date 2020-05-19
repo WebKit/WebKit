@@ -72,7 +72,7 @@ public:
             g_assert_cmpint(m_canExecuteEditingCommand, ==, webkit_editor_state_is_cut_available(editorState()));
         else if (!strcmp(command, WEBKIT_EDITING_COMMAND_COPY))
             g_assert_cmpint(m_canExecuteEditingCommand, ==, webkit_editor_state_is_copy_available(editorState()));
-        else if (!strcmp(command, WEBKIT_EDITING_COMMAND_PASTE))
+        else if (!strcmp(command, WEBKIT_EDITING_COMMAND_PASTE) || !strcmp(command, WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT))
             g_assert_cmpint(m_canExecuteEditingCommand, ==, webkit_editor_state_is_paste_available(editorState()));
         // FIXME: Figure out how to add tests for undo and redo. It will probably require using user
         // scripts to message the UI process when the content has been altered.
@@ -109,6 +109,7 @@ public:
     {
         g_assert_true(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
         g_assert_true(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+        g_assert_true(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
         webkit_web_view_execute_editing_command(m_webView, WEBKIT_EDITING_COMMAND_CUT);
         // There's no way to know when the selection has been cut to
@@ -167,6 +168,7 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+    g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
@@ -178,6 +180,7 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
     // even if there's a selection.
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+    g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
     test->copyClipboard();
     GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
@@ -190,6 +193,7 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+    g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
     g_assert_false(test->isEditable());
     test->setEditable(true);
@@ -204,6 +208,7 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+    g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
     test->copyClipboard();
     GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
@@ -305,6 +310,7 @@ static void testWebViewEditorNonEditable(EditorTest* test)
     // Check if view is indeed non-editable.
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+    g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 }
 
 static void testWebViewEditorEditable(EditorTest* test, gconstpointer)

@@ -63,6 +63,20 @@ G_BEGIN_DECLS
 #define WEBKIT_EDITING_COMMAND_PASTE "Paste"
 
 /**
+ * WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT:
+ *
+ * The paste as plaintext clipboard command. Pastes the contents of the
+ * clipboard to a #WebKitWebView, with formatting removed.
+ * You can check whether it's possible to execute the command with
+ * webkit_web_view_can_execute_editing_command(). In general it's possible
+ * to paste from the clipboard when the #WebKitWebView content is editable
+ * and clipboard is not empty.
+ *
+ * Since: 2.30
+ */
+#define WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT "PasteAsPlainText"
+
+/**
  * WEBKIT_EDITING_COMMAND_SELECT_ALL:
  *
  * The select all command. Selects all the content of the current text field in
