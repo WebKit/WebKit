@@ -32,7 +32,7 @@
 namespace WTF {
 
 // Makes every call to print() atomic.
-class LockedPrintStream : public PrintStream {
+class LockedPrintStream final : public PrintStream {
 public:
     LockedPrintStream(std::unique_ptr<PrintStream> target);
     ~LockedPrintStream() final;
