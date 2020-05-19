@@ -37,8 +37,7 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 http/tests/ssl/applepay/ [ Pass ]
 
 # ApplePayInstallmentConfiguration was first available in Catalina.
-# FIXME: <https://webkit.org/b/212000> http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html fails in public SDK builds
-[ Mojave Catalina ] http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html [ Skip ]
+[ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html [ Skip ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
