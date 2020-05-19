@@ -1028,6 +1028,23 @@ private:
                 m_insertionSet.insertNode(
                     m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
             }
+
+            {
+                auto indexSpeculation = m_graph.varArgChild(node, 1)->prediction();
+                if (!isInt32Speculation(indexSpeculation) 
+                    && isFullNumberSpeculation(indexSpeculation)
+                    && node->arrayMode().isSpecific()
+                    && node->arrayMode().isInBounds()
+                    && !m_graph.hasExitSite(node->origin.semantic, Overflow)) {
+
+                    Node* newIndex = m_insertionSet.insertNode(
+                        m_indexInBlock, SpecInt32Only, DoubleAsInt32, node->origin,
+                        Edge(m_graph.varArgChild(node, 1).node(), DoubleRepUse));
+                    newIndex->setArithMode(Arith::CheckOverflow);
+                    m_graph.varArgChild(node, 1).setNode(newIndex);
+                }
+            }
+            
             
             node->setArrayMode(
                 node->arrayMode().refine(
@@ -1169,6 +1186,22 @@ private:
             Edge& child1 = m_graph.varArgChild(node, 0);
             Edge& child2 = m_graph.varArgChild(node, 1);
             Edge& child3 = m_graph.varArgChild(node, 2);
+
+            {
+                auto indexSpeculation = child2->prediction();
+                if (!isInt32Speculation(indexSpeculation) 
+                    && isFullNumberSpeculation(indexSpeculation)
+                    && node->arrayMode().isSpecific()
+                    && node->arrayMode().isInBounds()
+                    && !m_graph.hasExitSite(node->origin.semantic, Overflow)) {
+
+                    Node* newIndex = m_insertionSet.insertNode(
+                        m_indexInBlock, SpecInt32Only, DoubleAsInt32, node->origin,
+                        Edge(child2.node(), DoubleRepUse));
+                    newIndex->setArithMode(Arith::CheckOverflow);
+                    child2.setNode(newIndex);
+                }
+            }
 
             node->setArrayMode(
                 node->arrayMode().refine(

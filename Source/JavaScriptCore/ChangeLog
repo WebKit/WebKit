@@ -1,3 +1,41 @@
+2020-05-18  Saam Barati  <sbarati@apple.com>
+
+        Do more speculation that a GetByVal/PutByVal will have an int32 index based on data from ArrayProfile
+        https://bugs.webkit.org/show_bug.cgi?id=211877
+
+        Reviewed by Yusuke Suzuki.
+
+        Before this patch, when a GetByVal or PutByVal had a non int32 prediction for
+        their incoming index, they'd fall completely off the fast path. However, there
+        are programs where an int32 is boxed inside a double, but our notion of
+        predicted types don't fully capture this fact. For example, if we have a double Add
+        to produce an array index, that double Add will predict a full double result,
+        not a SpecAnyIntAsDouble. However, for GetByVal and PutByVal, there is information
+        from ArrayProfile we can use to determine if the incoming value is expected to
+        be in int32 range. The heuristic this patch introduces is:
+        
+        isFullNumberSpeculation(indexSpeculation)
+        && node->arrayMode().isSpecific()
+        && node->arrayMode().isInBounds()
+        && !m_graph.hasExitSite(node->origin.semantic, Overflow) // DoubleAsInt32 will exit with Overflow on failure
+        
+        If these conditions are met, we'll now emit a DoubleAsInt32 conversion node
+        for the index. This puts along the fast path for GetByVal and PutByVal on
+        array accesses where the incoming index is an int32 boxed in a double.
+        
+        To make the above isFullNumberSpeculation check more robust, this patch also
+        makes it so non index double accesses result in marking the array profile as
+        out of bounds. So this means indices greater than max safe index, and also,
+        fractional doubles.
+        
+        
+        This is a 3.75x speedup on microbenchmarks/get-and-put-by-val-double-index-dont-fall-off-a-cliff.js
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+
 2020-05-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BigInt peephole compare should speculate appropriately

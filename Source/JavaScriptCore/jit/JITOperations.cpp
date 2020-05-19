@@ -721,7 +721,7 @@ static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue su
         baseValue.putByIndex(globalObject, i, value, ecmaMode.isStrict());
         return;
     } 
-    if (subscript.isInt32()) {
+    if (subscript.isNumber()) {
         byValInfo->tookSlowPath = true;
         if (baseValue.isObject())
             byValInfo->arrayProfile->setOutOfBounds();
@@ -1976,7 +1976,8 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
 
         if (i >= 0)
             RELEASE_AND_RETURN(scope, baseValue.get(globalObject, static_cast<uint32_t>(i)));
-    }
+    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
+        arrayProfile->setOutOfBounds();
 
     baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
