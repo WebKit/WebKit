@@ -9,6 +9,11 @@ window.jsTestIsAsync = true;
 
 description("Showing the tracks panel in fullscreen.");
 
+setTimeout(() => {
+    debug("FAIL: did not end fast enough");
+    finishJSTest();
+}, 10000);
+
 const media = document.querySelector("video");
 
 media.addEventListener("webkitfullscreenchange", () => {
