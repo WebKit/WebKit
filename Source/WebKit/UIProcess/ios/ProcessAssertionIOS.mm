@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "AssertionServicesSPI.h"
 #import "Logging.h"
 #import "RunningBoardServicesSPI.h"
 #import "WebProcessPool.h"
@@ -37,6 +36,10 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
+
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+#import "AssertionServicesSPI.h"
+#endif
 
 using WebKit::ProcessAndUIAssertion;
 
@@ -309,7 +312,7 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
     case ProcessAssertionType::UnboundedNetworking:
         return @"UnboundedNetworking";
     case ProcessAssertionType::Foreground:
-        return nil; // We are not using RunningBoard for the Foreground assertion yet due to <rdar://problem/62535822>.
+        return @"Foreground";
     case ProcessAssertionType::DependentProcessLink:
         return @"DependentProcessLink";
     case ProcessAssertionType::MediaPlayback:
@@ -321,6 +324,8 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
     return nil;
 #endif
 }
+
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
 
 const BKSProcessAssertionFlags suspendedTabFlags = (BKSProcessAssertionAllowIdleSleep);
 const BKSProcessAssertionFlags backgroundTabFlags = (BKSProcessAssertionPreventTaskSuspend);
@@ -360,6 +365,8 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(ProcessAssertionTyp
     }
 }
 
+#endif // !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
+
 ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
     , m_pid(pid)
@@ -367,6 +374,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     auto weakThis = makeWeakPtr(*this);
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
 
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     if (!runningBoardAssertionName) {
         // Legacy code path.
         BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
@@ -391,6 +399,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
         };
         return;
     }
+#endif // !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
 
     ASSERT(runningBoardAssertionName);
     if (!pid) {
@@ -431,10 +440,12 @@ ProcessAssertion::~ProcessAssertion()
         [m_rbsAssertion invalidate];
     }
 
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     if (m_bksAssertion) {
         m_bksAssertion.get().invalidationHandler = nil;
         [m_bksAssertion invalidate];
     }
+#endif
 }
 
 void ProcessAssertion::processAssertionWasInvalidated()
@@ -451,8 +462,10 @@ bool ProcessAssertion::isValid() const
     if (m_rbsAssertion)
         return m_rbsAssertion.get().valid;
 
+#if !HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     if (m_bksAssertion)
         return m_bksAssertion.get().valid;
+#endif
 
     return false;
 }

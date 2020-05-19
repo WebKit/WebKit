@@ -48,8 +48,16 @@ WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
 WK_APPKIT_LDFLAGS_maccatalyst = -framework AppKit;
 
-WK_ASSERTION_SERVICES_LDFLAGS = $(WK_ASSERTION_SERVICES_LDFLAGS_$(WK_COCOA_TOUCH));
-WK_ASSERTION_SERVICES_LDFLAGS_cocoatouch = -framework AssertionServices;
+WK_ASSERTION_SERVICES_LDFLAGS = $(WK_ASSERTION_SERVICES_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_ASSERTION_SERVICES_LDFLAGS_iphoneos = $(WK_ASSERTION_SERVICES_LDFLAGS$(WK_IOS_14));
+WK_ASSERTION_SERVICES_LDFLAGS_iphonesimulator = $(WK_ASSERTION_SERVICES_LDFLAGS$(WK_IOS_14));
+WK_ASSERTION_SERVICES_LDFLAGS_IOS_BEFORE_14 = -framework AssertionServices;
+// FIXME: It is unnecessary to link against AssertionServices with the latest SDK for the following platforms too.
+WK_ASSERTION_SERVICES_LDFLAGS_watchos = -framework AssertionServices;
+WK_ASSERTION_SERVICES_LDFLAGS_watchsimulator = -framework AssertionServices;
+WK_ASSERTION_SERVICES_LDFLAGS_appletvos = -framework AssertionServices;
+WK_ASSERTION_SERVICES_LDFLAGS_appletvsimulator = -framework AssertionServices;
+WK_ASSERTION_SERVICES_LDFLAGS_maccatalyst = -framework AssertionServices;
 
 WK_RUNNINGBOARD_SERVICES_LDFLAGS = $(WK_RUNNINGBOARD_SERVICES_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_RUNNINGBOARD_SERVICES_LDFLAGS_cocoatouch = -framework RunningBoardServices;
