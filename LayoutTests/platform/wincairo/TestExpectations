@@ -637,7 +637,7 @@ css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-css3/flexbox/overflow-auto-resizes-correctly.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Failure ]
 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
 [ Debug ] css3/shapes/shape-outside/values/shape-outside-circle-001.html [ Pass Failure ]
 [ Release ] css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
@@ -1405,7 +1405,7 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
 
-css3/flexbox/flex-item-contains-strict.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict.html [ Failure ]
 
 fast/css/apple-system-colors.html [ Failure ]
 fast/css/image-rendering-parsing.html [ Failure Pass ]

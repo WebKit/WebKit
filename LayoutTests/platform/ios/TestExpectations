@@ -2637,10 +2637,10 @@ imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.h
 webkit.org/b/168053 pageoverlay/overlay-remove-reinsert-view.html [ Pass Failure ]
 
 # Skip some flexbox tests that aren't designed to run in smaller viewports
-css3/flexbox/overflow-auto-resizes-correctly.html [ Skip ]
-css3/flexbox/flexbox-height-with-overflow-auto.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Skip ]
 css3/flexbox/flex-flow-auto-margins-no-available-space-assert.html [ Skip ]
-css3/flexbox/flex-one-sets-flex-basis-to-zero-px.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-flexbox/flex-one-sets-flex-basis-to-zero-px.html [ Skip ]
 
 # Skip test because checkboxes/radio buttons don't behave the same on iOS
 fast/replaced/table-percent-height.html [ Skip ]

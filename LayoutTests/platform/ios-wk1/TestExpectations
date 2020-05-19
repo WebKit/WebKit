@@ -697,7 +697,7 @@ css3/filters/animation-from-initial-values-with-color-matrix.html [ ImageOnlyFai
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
-css3/flexbox/content-height-with-scrollbars.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/content-height-with-scrollbars.html [ ImageOnlyFailure ]
 
 # CSS tests that pass:
 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
@@ -1835,7 +1835,7 @@ css2.1/t100801-c548-ln-ht-02-b-ag.html [ Failure ]
 css2.1/t1507-c526-font-sz-02-b-a.html [ Failure ]
 css2.1/t1601-c547-indent-00-b-a.html [ Failure ]
 css2.1/t1604-c542-letter-sp-00-b-a.html [ Failure ]
-css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ ImageOnlyFailure ]
 [ Debug ] editing/inserting/insert-div-025.html [ Failure ]
 fast/dom/Element/scrolling-funtions-on-body-quirks.html [ Failure ]
 fast/dom/Element/scrolling-funtions-on-body.html [ Failure ]

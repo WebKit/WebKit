@@ -1,4 +1,0 @@
-
-PASS .flexbox 1 
-Test to make sure that we do not assert on this code.
-

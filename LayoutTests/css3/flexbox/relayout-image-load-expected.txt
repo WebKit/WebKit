@@ -1,6 +1,0 @@
-
-PASS #test 1 
-Test to make sure that we properly relayout when an image loads. You should see a green 100x100 image.
-
- 
-

@@ -1,3 +1,1543 @@
+2020-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Import the Flexbox test suite from the W3C Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=191460
+
+        Reviewed by Sergio Villar Senin.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-flexbox/Flexible-order-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/Flexible-order-expected.html.
+        * web-platform-tests/css/css-flexbox/Flexible-order.html: Renamed from LayoutTests/css3/flexbox/csswg/Flexible-order.html.
+        * web-platform-tests/css/css-flexbox/META.yml: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-htb-ltr-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-htb-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-htb-rtl-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-htb-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vlr-ltr-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vlr-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vlr-rtl-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vlr-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vrl-ltr-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vrl-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vrl-rtl-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/abspos-autopos-vrl-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/abspos-descendent-001-expected.txt: Renamed from LayoutTests/css3/flexbox/canvas-dynamic-change-expected.txt.
+        * web-platform-tests/css/css-flexbox/abspos-descendent-001.html: Renamed from LayoutTests/css3/flexbox/stretch-simplified-layout.html.
+        * web-platform-tests/css/css-flexbox/align-baseline-expected.html: Renamed from LayoutTests/css3/flexbox/align-baseline-expected.html.
+        * web-platform-tests/css/css-flexbox/align-baseline.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content-001-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-content-001.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-content-002-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-content-002.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-content-003-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-content-003.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-content-004-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-content-004.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-content-005-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-content-005.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-content-006-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-content-006.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-001.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-002.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-003.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-004.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_center-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_center.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_flex-end-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_flex-end.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_flex-start-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_flex-start.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_space-around-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_space-around.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_space-between-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_space-between.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_stretch-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-content_stretch.html: Added.
+        * web-platform-tests/css/css-flexbox/align-items-001-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-items-001.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-items-002-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-items-002.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-items-003-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-items-003.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-items-004-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-items-004.htm: Added.
+        * web-platform-tests/css/css-flexbox/align-items-005-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-items-005.htm: Copied from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/align-items-006-expected.html: Copied from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/align-items-006.html: Added.
+        * web-platform-tests/css/css-flexbox/align-items-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-items-007.html: Added.
+        * web-platform-tests/css/css-flexbox/align-items-baseline-overflow-non-visible-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/align-items-baseline-overflow-non-visible.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-001.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-002.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-003.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-004.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-005.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-007.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-008.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-009-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-009.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-011-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-011.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-012-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-012.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-013-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/align-self-013.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-014-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-self-014.html: Added.
+        * web-platform-tests/css/css-flexbox/align-self-015-expected.html: Renamed from LayoutTests/css3/flexbox/columns-center-with-margins-and-wrap-expected.html.
+        * web-platform-tests/css/css-flexbox/align-self-015.html: Renamed from LayoutTests/css3/flexbox/columns-center-with-margins-and-wrap.html.
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-composition-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-composition.html: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-interpolation.html: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-grow-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-grow-interpolation.html: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-shrink-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/animation/flex-shrink-interpolation.html: Added.
+        * web-platform-tests/css/css-flexbox/animation/order-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/animation/order-interpolation.html: Added.
+        * web-platform-tests/css/css-flexbox/animation/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-block-expected.html: Renamed from LayoutTests/css3/flexbox/anonymous-block-expected.html.
+        * web-platform-tests/css/css-flexbox/anonymous-block.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-001.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-002.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-003-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-003.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-004-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-004.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-005-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-005.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-006-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/anonymous-flex-item-006.html: Added.
+        * web-platform-tests/css/css-flexbox/auto-height-column-with-border-and-padding-expected.html: Renamed from LayoutTests/css3/flexbox/auto-height-column-with-border-and-padding-expected.html.
+        * web-platform-tests/css/css-flexbox/auto-height-column-with-border-and-padding.html: Added.
+        * web-platform-tests/css/css-flexbox/auto-height-with-flex-expected.html: Renamed from LayoutTests/css3/flexbox/auto-height-with-flex-expected.html.
+        * web-platform-tests/css/css-flexbox/auto-height-with-flex.html: Added.
+        * web-platform-tests/css/css-flexbox/auto-margins-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/auto-margins-001.html: Added.
+        * web-platform-tests/css/css-flexbox/auto-margins-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/auto-margins-002.html: Added.
+        * web-platform-tests/css/css-flexbox/auto-margins-003-expected.html: Renamed from LayoutTests/css3/flexbox/columns-center-with-margins-expected.html.
+        * web-platform-tests/css/css-flexbox/auto-margins-003.html: Renamed from LayoutTests/css3/flexbox/columns-center-with-margins.html.
+        * web-platform-tests/css/css-flexbox/box-sizing-001-expected.txt: Renamed from LayoutTests/css3/flexbox/box-sizing-expected.txt.
+        * web-platform-tests/css/css-flexbox/box-sizing-001.html: Renamed from LayoutTests/css3/flexbox/box-sizing.html.
+        * web-platform-tests/css/css-flexbox/box-sizing-min-max-sizes-001-expected.txt: Renamed from LayoutTests/css3/flexbox/box-sizing-min-max-sizes-expected.txt.
+        * web-platform-tests/css/css-flexbox/box-sizing-min-max-sizes-001.html: Renamed from LayoutTests/css3/flexbox/box-sizing-min-max-sizes.html.
+        * web-platform-tests/css/css-flexbox/canvas-dynamic-change-001-expected.txt: Copied from LayoutTests/css3/flexbox/flexitem-no-margin-collapsing-expected.txt.
+        * web-platform-tests/css/css-flexbox/canvas-dynamic-change-001.html: Added.
+        * web-platform-tests/css/css-flexbox/change-column-flex-width-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/change-column-flex-width.html: Added.
+        * web-platform-tests/css/css-flexbox/column-flex-child-with-overflow-scroll-expected.txt: Renamed from LayoutTests/css3/flexbox/column-flex-child-with-overflow-scroll-expected.txt.
+        * web-platform-tests/css/css-flexbox/column-flex-child-with-overflow-scroll.html: Renamed from LayoutTests/css3/flexbox/column-flex-child-with-overflow-scroll.html.
+        * web-platform-tests/css/css-flexbox/columns-height-set-via-top-bottom-expected.txt: Renamed from LayoutTests/css3/flexbox/columns-height-set-via-top-bottom-expected.txt.
+        * web-platform-tests/css/css-flexbox/columns-height-set-via-top-bottom.html: Renamed from LayoutTests/css3/flexbox/columns-height-set-via-top-bottom.html.
+        * web-platform-tests/css/css-flexbox/content-height-with-scrollbars-expected.html: Renamed from LayoutTests/css3/flexbox/content-height-with-scrollbars-expected.html.
+        * web-platform-tests/css/css-flexbox/content-height-with-scrollbars.html: Renamed from LayoutTests/css3/flexbox/content-height-with-scrollbars.html.
+        * web-platform-tests/css/css-flexbox/cross-axis-scrollbar-expected.html: Renamed from LayoutTests/css3/flexbox/cross-axis-scrollbar-expected.html.
+        * web-platform-tests/css/css-flexbox/cross-axis-scrollbar.html: Renamed from LayoutTests/css3/flexbox/cross-axis-scrollbar.html.
+        * web-platform-tests/css/css-flexbox/css-box-justify-content-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/css-box-justify-content-expected.html.
+        * web-platform-tests/css/css-flexbox/css-box-justify-content.html: Renamed from LayoutTests/css3/flexbox/csswg/css-box-justify-content.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-column-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-column-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-column-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-reverse-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-column-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-reverse.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-column.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-column-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-column-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/css-flexbox-column.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-column.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-height-animation-stretch-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-height-animation-stretch-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-height-animation-stretch.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-height-animation-stretch.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-img-expand-evenly-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-img-expand-evenly-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-img-expand-evenly.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-img-expand-evenly.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-reverse-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-reverse-wrap-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-reverse-wrap-reverse-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-reverse-wrap-reverse.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-reverse-wrap.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-reverse.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-wrap-expected.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-wrap-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-row-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-wrap-reverse.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row-wrap.html: Copied from LayoutTests/css3/flexbox/csswg/css-flexbox-row.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-row.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-row.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-test1-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-test1-expected.html.
+        * web-platform-tests/css/css-flexbox/css-flexbox-test1.html: Renamed from LayoutTests/css3/flexbox/csswg/css-flexbox-test1.html.
+        * web-platform-tests/css/css-flexbox/display-flex-001-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/align-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/display-flex-001.htm: Renamed from LayoutTests/css3/flexbox/csswg/align-content-001.html.
+        * web-platform-tests/css/css-flexbox/display_flex_exist-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/display_flex_exist.html: Added.
+        * web-platform-tests/css/css-flexbox/display_inline-flex_exist-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/display_inline-flex_exist.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-bsize-change-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-bsize-change.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-change-simplified-layout-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-change-simplified-layout-002.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-change-simplified-layout-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-change-simplified-layout.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-001.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-002.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-003-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-003.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-004-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/fit-content-item-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-001-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-001.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/flex-002-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-002.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/flex-003-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-003.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/flex-004-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-004.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-center-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-center-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-center.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-center.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-end-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-end-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-end.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-end.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-space-around-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-align-content-space-around.html: Copied from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-start.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-space-between-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-space-between-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-space-between.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-space-between.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-start-expected.html: Copied from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-start-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-align-content-start.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-start.html.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-003.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-007.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-008.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-009-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-009.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-010-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-010.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-011-expected.txt: Renamed from LayoutTests/css3/flexbox/negative-overflow-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-011.html: Renamed from LayoutTests/css3/flexbox/minimum-size-image.html.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-003.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-base-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-base-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-base.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-base.html.
+        * web-platform-tests/css/css-flexbox/flex-basis-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-003.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-007.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-008.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-009-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-009.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-010-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-010.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-item-margins-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-item-margins-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-box-wrap-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-box-wrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-box-wrap.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-box-wrap.html.
+        * web-platform-tests/css/css-flexbox/flex-child-percent-basis-resize-1-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-child-percent-basis-resize-1.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-column-relayout-assert-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-column-relayout-assert.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-container-margin-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-container-margin-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-container-margin.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-container-margin.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-direction-column-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-overlap-001-expected.txt: Renamed from LayoutTests/css3/flexbox/bug669714-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-overlap-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-direction-column-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-column-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-direction-column-reverse.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-column.html: Copied from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-direction-column.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-direction-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-modify-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-direction-modify-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-modify.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-direction-modify.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-align-content-start-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-direction-column.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-vertical-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-row-vertical.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-direction-with-element-insert-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-direction-with-element-insert-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-direction-with-element-insert.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-direction-with-element-insert.html.
+        * web-platform-tests/css/css-flexbox/flex-direction.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-direction.html.
+        * web-platform-tests/css/css-flexbox/flex-factor-less-than-one-expected.txt: Renamed from LayoutTests/css3/flexbox/flex-factor-less-than-one-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-factor-less-than-one.html: Renamed from LayoutTests/css3/flexbox/flex-factor-less-than-one.html.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-childmargin-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flexitem-childmargin-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-childmargin.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flexitem-childmargin.html.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-percentage-prescation-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flexitem-percentage-prescation-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-percentage-prescation.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flexitem-percentage-prescation.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-001-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-001-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-001.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-001.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-002-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-002.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-003-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-003.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-004-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flow-001-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-004.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flow-001.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-005-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-005.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-006-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-006.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-007-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-007-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-007.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-007.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-008-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-008.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-009-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-009.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-010-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flow-007-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-010.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flow-007.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-011-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-011.html: Copied from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-012-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flow-002-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-012.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-flow-002.html.
+        * web-platform-tests/css/css-flexbox/flex-flow-013-expected.txt: Copied from LayoutTests/css3/flexbox/flex-flow-2-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-flow-013.html: Renamed from LayoutTests/css3/flexbox/flex-flow-2.html.
+        * web-platform-tests/css/css-flexbox/flex-grow-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-001.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-003.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-007.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-height-min-content-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-height-min-content.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-inline-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-inline-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-inline.html: Renamed from LayoutTests/css3/flexbox/csswg/ttwf-reftest-flex-inline.html.
+        * web-platform-tests/css/css-flexbox/flex-item-and-percentage-abspos-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-item-and-percentage-abspos.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-item-contains-strict.html: Renamed from LayoutTests/css3/flexbox/flex-item-contains-strict.html.
+        * web-platform-tests/css/css-flexbox/flex-item-vertical-align-expected.html: Renamed from LayoutTests/css3/flexbox/vertical-align-do-not-effect-flex-items-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-item-vertical-align.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-item-z-ordering-001-expected.html: Renamed from LayoutTests/css3/flexbox/z-index-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-item-z-ordering-001.html: Renamed from LayoutTests/css3/flexbox/z-index.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-reverse-column-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-reverse-column-reverse.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-row-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-reverse-row-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-row-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-reverse-row-reverse.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-with-column-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-with-column-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-with-column-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-with-column-reverse.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-with-row-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-with-row-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-with-row-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-lines/multi-line-wrap-with-row-reverse.html.
+        * web-platform-tests/css/css-flexbox/flex-lines/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/flex-margin-no-collapse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-margin-no-collapse-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-margin-no-collapse.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-margin-no-collapse.html.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-001.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-002.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-003.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-004.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-005.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-006.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-007.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-008.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-009-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-009.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-010-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-010.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-011-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-011.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-012-expected.txt: Renamed from LayoutTests/css3/flexbox/flexitem-stretch-image-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-012.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-013-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-013.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-014-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-014.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-015-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-015.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-016-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-016.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-017-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-017.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-018-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-018.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-019-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-019.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-020-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-020.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-021-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-021.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-022-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-022.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-size-001-expected.txt: Copied from LayoutTests/css3/flexbox/min-size-auto-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-minimum-size-001.html: Renamed from LayoutTests/css3/flexbox/min-size-auto.html.
+        * web-platform-tests/css/css-flexbox/flex-minimum-size-002-expected.txt: Copied from LayoutTests/css3/flexbox/stretch-after-sibling-size-change-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-minimum-size-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-001.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-002.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-003.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-004.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-005.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-006.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-007.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-008.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-009-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-009.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-010-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-010.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-011-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-011.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-012-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-012.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-013-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-013.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-014-expected.txt: Renamed from LayoutTests/css3/flexbox/intrinsic-min-width-applies-with-fixed-width-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-014.html: Renamed from LayoutTests/css3/flexbox/intrinsic-min-width-applies-with-fixed-width.html.
+        * web-platform-tests/css/css-flexbox/flex-one-sets-flex-basis-to-zero-px-expected.txt: Renamed from LayoutTests/css3/flexbox/flex-one-sets-flex-basis-to-zero-px-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-one-sets-flex-basis-to-zero-px.html: Renamed from LayoutTests/css3/flexbox/flex-one-sets-flex-basis-to-zero-px.html.
+        * web-platform-tests/css/css-flexbox/flex-order-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-order-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-order.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-order.html.
+        * web-platform-tests/css/css-flexbox/flex-outer-flexbox-column-recalculate-height-on-resize-001-expected.txt: Renamed from LayoutTests/css3/flexbox/bug527039-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-outer-flexbox-column-recalculate-height-on-resize-001.html: Renamed from LayoutTests/css3/flexbox/bug527039.html.
+        * web-platform-tests/css/css-flexbox/flex-shorthand-flex-basis-middle-expected.txt: Renamed from LayoutTests/css3/flexbox/flex-shorthand-flex-basis-middle-expected.txt.
+        * web-platform-tests/css/css-flexbox/flex-shorthand-flex-basis-middle.html: Renamed from LayoutTests/css3/flexbox/flex-shorthand-flex-basis-middle.html.
+        * web-platform-tests/css/css-flexbox/flex-shrink-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-003.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-007.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-shrink-008.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-vertical-align-effect-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-vertical-align-effect-expected.html.
+        * web-platform-tests/css/css-flexbox/flex-vertical-align-effect.html: Renamed from LayoutTests/css3/flexbox/csswg/flex-vertical-align-effect.html.
+        * web-platform-tests/css/css-flexbox/flex-wrap-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-003.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-004.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-005.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-wrap-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-column-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-column-percentage-ignored-expected.html: Renamed from LayoutTests/css3/flexbox/vertical-flexbox-percentage-ignored-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-column-percentage-ignored.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-column-reverse-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-column-reverse.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-column.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-default-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-default.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-row-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-row-reverse-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-row-reverse.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-direction-row.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-default-expected.htm: Copied from LayoutTests/css3/flexbox/csswg/flexbox-flex-wrap-nowrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-default.htm: Copied from LayoutTests/css3/flexbox/csswg/flexbox-flex-wrap-nowrap.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-flexing-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox-flex-wrap-flexing-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-flexing.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox-flex-wrap-flexing.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-nowrap-expected.htm: Renamed from LayoutTests/css3/flexbox/csswg/flexbox-flex-wrap-nowrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-nowrap.htm: Renamed from LayoutTests/css3/flexbox/csswg/flexbox-flex-wrap-nowrap.html.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-wrap-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-wrap-reverse-expected.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-wrap-reverse.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-wrap-wrap.htm: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-gap-position-absolute-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-gap-position-absolute.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-lines-must-be-stretched-by-default-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-lines-must-be-stretched-by-default.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-order-only-flexitems-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-order-only-flexitems.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-with-multi-column-property-expected.html: Renamed from LayoutTests/css3/flexbox/flexbox-with-multi-column-property-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox-with-multi-column-property.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_absolute-atomic-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_absolute-atomic-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_absolute-atomic.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_absolute-atomic.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-center-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-center-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-center.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-center.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-flexend-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-flexend-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-flexend.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-flexend.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-flexstart-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-flexstart-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-flexstart.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-flexstart.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-spacearound-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-spacearound-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-spacearound.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-spacearound.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-spacebetween-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-spacebetween-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-spacebetween.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-spacebetween.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-stretch-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-stretch-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-stretch-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-stretch-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-stretch-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-stretch-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-content-stretch.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-content-stretch.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-baseline-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-baseline-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-baseline.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-baseline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-center-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-center-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-center-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-center-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-center-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-center-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-center.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-center.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexend-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexend-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexend-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexend-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexend-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexend-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexend.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexend.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexstart-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexstart-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexstart-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexstart-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexstart-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexstart-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-flexstart.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-flexstart.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-stretch-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-stretch-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-3-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-3.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-4-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-4.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-stretch-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-stretch.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-items-stretch.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-baseline-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-baseline-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-baseline.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-baseline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-center-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-center-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-center.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-center.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-flexend-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-flexend-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-flexend.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-flexend.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-flexstart-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-flexstart-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-flexstart.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-flexstart.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-stretch-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-stretch-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-self-stretch.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_align-self-stretch.html.
+        * web-platform-tests/css/css-flexbox/flexbox_block-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_block.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_inline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_box-clear-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_box-clear-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_box-clear.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_box-clear.html.
+        * web-platform-tests/css/css-flexbox/flexbox_columns-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_columns-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_columns-flexitems-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_columns-flexitems-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_columns-flexitems-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_columns-flexitems-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_columns-flexitems-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_columns-flexitems-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_columns-flexitems.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_columns-flexitems.html.
+        * web-platform-tests/css/css-flexbox/flexbox_columns.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_columns.html.
+        * web-platform-tests/css/css-flexbox/flexbox_direction-column-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_direction-column-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_direction-column-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_direction-column-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_direction-column-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_direction-column-reverse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_direction-column.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_direction-column.html.
+        * web-platform-tests/css/css-flexbox/flexbox_direction-row-reverse-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_direction-row-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_display-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_display-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_display.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_display.html.
+        * web-platform-tests/css/css-flexbox/flexbox_fbfc-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_fbfc-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_fbfc.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_fbfc.html.
+        * web-platform-tests/css/css-flexbox/flexbox_fbfc2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_fbfc2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_fbfc2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_fbfc2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_first-letter-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_first-letter.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_first-line-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_first-line-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_first-line.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_first-line.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-1-unitless-basis-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-1-unitless-basis.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-N-unitless-basis-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-N-unitless-basis.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-N.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-auto-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-0.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-1-unitless-basis-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-1-unitless-basis.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-N-unitless-basis-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-N-unitless-basis.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-1.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-0-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-auto-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-initial-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-0-auto.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-initial.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-0.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-1.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-1-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-1-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-0.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-0-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-1.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-1-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-0-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-0-unitless-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-0-unitless.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-0.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-N-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-N-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-N-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-N-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-N-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-N.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-Npercent-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-Npercent-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-Npercent-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-Npercent-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-Npercent-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-Npercent-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-Npercent.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-Npercent.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-auto-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-auto-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-auto-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-auto-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-0-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-N-N.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-N-N-0.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-basis-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-basis-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-basis-shrink-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-basis-shrink-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-basis-shrink.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-basis-shrink.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-basis.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-basis.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-formatting-interop-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-formatting-interop-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-formatting-interop.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-formatting-interop.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-initial-2-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-initial-2-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-initial-2.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-initial-2.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-initial-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-initial-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-initial.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-initial.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-mixed-basis.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-variable-auto-basis-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-variable-auto-basis-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-variable-auto-basis.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-variable-auto-basis.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-variable-zero-basis-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-variable-zero-basis-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural-variable-zero-basis.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural-variable-zero-basis.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-natural.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-natural.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-none-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-none-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-none-wrappable-content-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-none-wrappable-content.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_flex-none.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flex-none.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-reverse-wrap-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-reverse-wrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-reverse-wrap-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-reverse-wrap-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-reverse-wrap-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-reverse-wrap-reverse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-reverse-wrap.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-reverse-wrap.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-wrap-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-wrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-wrap-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-wrap-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-wrap-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-wrap-reverse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-column-wrap.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-column-wrap.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-row-wrap-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-row-wrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-row-wrap-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-row-wrap-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-row-wrap-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-row-wrap-reverse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_flow-row-wrap.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_flow-row-wrap.html.
+        * web-platform-tests/css/css-flexbox/flexbox_generated-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_generated-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_generated-flex-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_generated-flex-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_generated-flex.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_generated-flex.html.
+        * web-platform-tests/css/css-flexbox/flexbox_generated-nested-flex-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_generated-flex-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_generated-nested-flex.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_generated-flex.html.
+        * web-platform-tests/css/css-flexbox/flexbox_generated.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_generated.html.
+        * web-platform-tests/css/css-flexbox/flexbox_inline-abspos-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_inline-abspos.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_inline-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_inline-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_inline-float-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_inline-float.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_inline.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_inline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-bottom-float-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-bottom-float-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-bottom-float.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-bottom-float.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-clear-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-clear-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-clear.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-clear.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-float-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-float-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-float.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-float.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-top-float-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-top-float-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-top-float.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-top-float.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-vertical-align-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-vertical-align-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_item-vertical-align.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_item-vertical-align.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-center-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-overflow-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-center-overflow-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-overflow.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-center-overflow.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-center.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-center.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-end-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-flex-end-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-end.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-flex-end.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-start-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-flex-start-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-flex-start.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-flex-start.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacearound-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-negative-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacearound-negative-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-negative.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacearound-negative.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-only-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacearound-only-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound-only.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacearound-only.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacearound.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacearound.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacebetween-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-negative-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacebetween-negative-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-negative.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacebetween-negative.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-only-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacebetween-only-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween-only.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacebetween-only.html.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-spacebetween.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_justifycontent-spacebetween.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-auto-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-auto-overflow-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-auto-overflow-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-auto-overflow.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-auto-overflow.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-auto.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-auto.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-left-ex-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-left-ex-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin-left-ex.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin-left-ex.html.
+        * web-platform-tests/css/css-flexbox/flexbox_margin.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_margin.html.
+        * web-platform-tests/css/css-flexbox/flexbox_nested-flex-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_generated-flex-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_nested-flex.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_generated-flex.html.
+        * web-platform-tests/css/css-flexbox/flexbox_object-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_object-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_object.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_object.html.
+        * web-platform-tests/css/css-flexbox/flexbox_order-abspos-space-around-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_order-abspos-space-around-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_order-abspos-space-around.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_order-abspos-space-around.html.
+        * web-platform-tests/css/css-flexbox/flexbox_order-box-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_order-box-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_order-box.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_order-box.html.
+        * web-platform-tests/css/css-flexbox/flexbox_order-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_order-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_order-noninteger-invalid-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_order-noninteger-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_order.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_order.html.
+        * web-platform-tests/css/css-flexbox/flexbox_quirks_body-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_quirks_body.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_rowspan-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_rowspan-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rowspan-overflow-automatic-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_rowspan-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rowspan-overflow-automatic.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_rowspan.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rowspan-overflow-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rowspan-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rowspan-overflow.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_rowspan.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rowspan.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rowspan.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-direction-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-direction-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-direction.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-direction.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-flow-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-flow-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-flow-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-flow-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-flow-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-flow-reverse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-flow.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-flow.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-order-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-order-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_rtl-order.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_rtl-order.html.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-abspos-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-abspos.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-fixpos-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-fixpos.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-float-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-float.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_stf-table-singleline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-inline-block-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-inline-block.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-caption-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-caption.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-cell-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-cell.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-row-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-row-group-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-row-group.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-row.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline-2-expected.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_stf-table-singleline-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline-2.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_stf-table-singleline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_stf-table-singleline-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table-singleline.html: Copied from LayoutTests/css3/flexbox/csswg/flexbox_stf-table-singleline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_stf-table.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_stf-table-singleline.html.
+        * web-platform-tests/css/css-flexbox/flexbox_table-fixed-layout-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_table-fixed-layout.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_visibility-collapse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_visibility-collapse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_visibility-collapse-line-wrapping-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_visibility-collapse-line-wrapping-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_visibility-collapse-line-wrapping.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_visibility-collapse-line-wrapping.html.
+        * web-platform-tests/css/css-flexbox/flexbox_visibility-collapse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_visibility-collapse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_width-change-and-relayout-children-expected.txt: Renamed from LayoutTests/css3/flexbox/width-change-and-relayout-children-expected.txt.
+        * web-platform-tests/css/css-flexbox/flexbox_width-change-and-relayout-children.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_width-overflow-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_width-overflow.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_width-wrapping-column-expected.txt: Renamed from LayoutTests/css3/flexbox/wrapping-column-dynamic-changes-expected.txt.
+        * web-platform-tests/css/css-flexbox/flexbox_width-wrapping-column.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_wrap-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_wrap-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_wrap-long-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_wrap-long-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_wrap-long.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_wrap-long.html.
+        * web-platform-tests/css/css-flexbox/flexbox_wrap-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_wrap-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_wrap-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_wrap-reverse.html.
+        * web-platform-tests/css/css-flexbox/flexbox_wrap.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_wrap.html.
+        * web-platform-tests/css/css-flexbox/flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom.html: Renamed from LayoutTests/css3/flexbox/csswg/flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom.html.
+        * web-platform-tests/css/css-flexbox/flexible-box-float-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexible-box-float.html: Added.
+        * web-platform-tests/css/css-flexbox/flexitem-no-margin-collapsing-expected.txt: Renamed from LayoutTests/css3/flexbox/flexitem-no-margin-collapsing-expected.txt.
+        * web-platform-tests/css/css-flexbox/flexitem-no-margin-collapsing.html: Added.
+        * web-platform-tests/css/css-flexbox/flexitem-stretch-image-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexitem-stretch-image.html: Added.
+        * web-platform-tests/css/css-flexbox/flexitem-stretch-range-expected.html: Renamed from LayoutTests/css3/flexbox/flexitem-stretch-range-expected.html.
+        * web-platform-tests/css/css-flexbox/flexitem-stretch-range.html: Added.
+        * web-platform-tests/css/css-flexbox/floated-flexitem-expected.html: Renamed from LayoutTests/css3/flexbox/floated-flexitem-expected.html.
+        * web-platform-tests/css/css-flexbox/floated-flexitem.html: Renamed from LayoutTests/css3/flexbox/floated-flexitem.html.
+        * web-platform-tests/css/css-flexbox/gap-001-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-001-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-002-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-003-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-004-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-005-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-006-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-lr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-lr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-rl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-rl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-rtl-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-007-rtl.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-008-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-008-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-009-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-009-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-010-ltr-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-010-ltr.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-011-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/gap-011.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-012-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/gap-012.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-013-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/gap-013.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-014-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/gap-014.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-015-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/gap-015.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-016-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/gap-016.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-017-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/gap-017.html: Added.
+        * web-platform-tests/css/css-flexbox/gap-018-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/gap-018.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-end-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-end.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-start-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-start.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-space-around-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-space-around.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-space-between-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-space-between.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-baseline-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-baseline.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-center-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-center.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-flex-end-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-flex-end.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-flex-start-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-flex-start.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-stretch-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-stretch.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-baseline-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-baseline.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-center-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-center.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-flex-end-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-flex-end.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-flex-start-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-flex-start.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-stretch-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-stretch.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_display-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_display-inline-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_display-inline.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_display.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-0-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-0.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-0percent-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-0percent.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-auto-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-auto.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-percent-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-percent.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-column-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-column-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-column-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-column.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-row-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-row-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-row-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-row.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-nowrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-nowrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-nowrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-nowrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-wrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-wrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-wrap-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-wrap-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-nowrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-nowrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-nowrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-nowrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-nowrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-nowrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-wrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-wrap-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-wrap-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-wrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-wrap-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-wrap-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-wrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-0-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-0.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-number-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-number.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-0-auto-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-0-auto.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-auto-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-auto.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-initial-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-initial.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-none-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-none.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-number-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-number.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-0-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-0.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-number-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-number.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-nowrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-nowrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-wrap-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-wrap-reverse-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-wrap-reverse.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-wrap.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-center-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-center.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-flex-end-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-flex-end.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-flex-start-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-flex-start.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-space-around-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-space-around.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-space-between-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-space-between.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-auto-size-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-auto-size.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-height-auto-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-height-auto.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-width-auto-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-width-auto.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-inherit-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-inherit.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-integer-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-integer.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-negative-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-negative.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order.html: Added.
+        * web-platform-tests/css/css-flexbox/getcomputedstyle/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-001.html: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-002.html: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-003.html: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/grid-flex-item-004.html: Added.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-margin-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-margin.html: Added.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-order-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-order.html: Added.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-relative-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/hittest-overlapping-relative.html: Added.
+        * web-platform-tests/css/css-flexbox/image-items-flake-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/image-items-flake-001.html: Added.
+        * web-platform-tests/css/css-flexbox/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/inheritance.html: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-expected.txt: Renamed from LayoutTests/css3/flexbox/inline-flex-expected.txt.
+        * web-platform-tests/css/css-flexbox/inline-flex-min-content-height-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex-min-content-height.html: Added.
+        * web-platform-tests/css/css-flexbox/inline-flex.html: Renamed from LayoutTests/css3/flexbox/inline-flex.html.
+        * web-platform-tests/css/css-flexbox/inline-flexbox-wrap-vertically-width-calculation-expected.txt: Renamed from LayoutTests/css3/flexbox/inline-flexbox-wrap-vertically-width-calculation-expected.txt.
+        * web-platform-tests/css/css-flexbox/inline-flexbox-wrap-vertically-width-calculation.html: Renamed from LayoutTests/css3/flexbox/inline-flexbox-wrap-vertically-width-calculation.html.
+        * web-platform-tests/css/css-flexbox/intrinsic-width-orthogonal-writing-mode-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/intrinsic-width-orthogonal-writing-mode.html: Added.
+        * web-platform-tests/css/css-flexbox/item-with-max-height-and-scrollbar-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/item-with-max-height-and-scrollbar.html: Added.
+        * web-platform-tests/css/css-flexbox/item-with-table-with-infinite-max-intrinsic-width-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/item-with-table-with-infinite-max-intrinsic-width.html: Added.
+        * web-platform-tests/css/css-flexbox/justify-content-001-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/justify-content-001.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/justify-content-002-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/justify-content-002.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/justify-content-003-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/justify-content-003.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/justify-content-004-expected.html: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/justify-content-004.htm: Copied from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/justify-content-005-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/justify-content-001-expected.html.
+        * web-platform-tests/css/css-flexbox/justify-content-005.htm: Renamed from LayoutTests/css3/flexbox/csswg/justify-content-001.html.
+        * web-platform-tests/css/css-flexbox/justify-content_space-between-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/justify-content_space-between-002.html: Added.
+        * web-platform-tests/css/css-flexbox/layout-algorithm_algo-cross-line-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/layout-algorithm_algo-cross-line-001.html: Added.
+        * web-platform-tests/css/css-flexbox/layout-algorithm_algo-cross-line-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/layout-algorithm_algo-cross-line-002.html: Added.
+        * web-platform-tests/css/css-flexbox/layout-with-inline-svg-001-expected.txt: Renamed from LayoutTests/css3/flexbox/bug633212-expected.txt.
+        * web-platform-tests/css/css-flexbox/layout-with-inline-svg-001.html: Added.
+        * web-platform-tests/css/css-flexbox/max-width-violation-expected.txt: Renamed from LayoutTests/css3/flexbox/max-width-violation-expected.txt.
+        * web-platform-tests/css/css-flexbox/max-width-violation.html: Renamed from LayoutTests/css3/flexbox/max-width-violation.html.
+        * web-platform-tests/css/css-flexbox/multiline-column-max-height-expected.html: Renamed from LayoutTests/css3/flexbox/multiline-column-overflow-expected.html.
+        * web-platform-tests/css/css-flexbox/multiline-column-max-height.html: Renamed from LayoutTests/css3/flexbox/multiline-column-overflow.html.
+        * web-platform-tests/css/css-flexbox/multiline-min-max-expected.txt: Renamed from LayoutTests/css3/flexbox/multiline-min-max-expected.txt.
+        * web-platform-tests/css/css-flexbox/multiline-min-max.html: Renamed from LayoutTests/css3/flexbox/multiline-min-max.html.
+        * web-platform-tests/css/css-flexbox/multiline-min-preferred-width-expected.txt: Renamed from LayoutTests/css3/flexbox/multiline-min-preferred-width-expected.txt.
+        * web-platform-tests/css/css-flexbox/multiline-min-preferred-width.html: Added.
+        * web-platform-tests/css/css-flexbox/multiline-reverse-wrap-baseline-expected.html: Renamed from LayoutTests/css3/flexbox/multiline-reverse-wrap-baseline-expected.html.
+        * web-platform-tests/css/css-flexbox/multiline-reverse-wrap-baseline.html: Renamed from LayoutTests/css3/flexbox/multiline-reverse-wrap-baseline.html.
+        * web-platform-tests/css/css-flexbox/multiline-shrink-to-fit-expected.html: Renamed from LayoutTests/css3/flexbox/multiline-shrink-to-fit-expected.html.
+        * web-platform-tests/css/css-flexbox/multiline-shrink-to-fit.html: Renamed from LayoutTests/css3/flexbox/multiline-shrink-to-fit.html.
+        * web-platform-tests/css/css-flexbox/negative-margins-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-margins-001.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-overflow-expected.txt: Renamed from LayoutTests/css3/flexbox/flex-flow-2-expected.txt.
+        * web-platform-tests/css/css-flexbox/negative-overflow.html: Renamed from LayoutTests/css3/flexbox/negative-overflow.html.
+        * web-platform-tests/css/css-flexbox/nested-orthogonal-flexbox-relayout-expected.html: Renamed from LayoutTests/css3/flexbox/nested-orthogonal-flexbox-relayout-expected.html.
+        * web-platform-tests/css/css-flexbox/nested-orthogonal-flexbox-relayout.html: Added.
+        * web-platform-tests/css/css-flexbox/order-painting-expected.html: Renamed from LayoutTests/css3/flexbox/order-painting-expected.html.
+        * web-platform-tests/css/css-flexbox/order-painting.html: Renamed from LayoutTests/css3/flexbox/order-painting.html.
+        * web-platform-tests/css/css-flexbox/order/order-with-column-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/order/order-with-column-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/order/order-with-column-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/order/order-with-column-reverse.html.
+        * web-platform-tests/css/css-flexbox/order/order-with-row-reverse-expected.html: Renamed from LayoutTests/css3/flexbox/csswg/order/order-with-row-reverse-expected.html.
+        * web-platform-tests/css/css-flexbox/order/order-with-row-reverse.html: Renamed from LayoutTests/css3/flexbox/csswg/order/order-with-row-reverse.html.
+        * web-platform-tests/css/css-flexbox/order/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/order_value-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/order_value.html: Added.
+        * web-platform-tests/css/css-flexbox/orthogonal-writing-modes-and-intrinsic-sizing-expected.txt: Renamed from LayoutTests/css3/flexbox/orthogonal-writing-modes-and-intrinsic-sizing-expected.txt.
+        * web-platform-tests/css/css-flexbox/orthogonal-writing-modes-and-intrinsic-sizing.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-area-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-area-001.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-area-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-area-002.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-001.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-002-expected.txt: Renamed from LayoutTests/css3/flexbox/bug580586-expected.txt.
+        * web-platform-tests/css/css-flexbox/overflow-auto-002.html: Renamed from LayoutTests/css3/flexbox/bug580586.html.
+        * web-platform-tests/css/css-flexbox/overflow-auto-003-expected.txt: Renamed from LayoutTests/css3/flexbox/bug605682-expected.txt.
+        * web-platform-tests/css/css-flexbox/overflow-auto-003.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-004-expected.txt: Renamed from LayoutTests/css3/flexbox/bug646288-expected.txt.
+        * web-platform-tests/css/css-flexbox/overflow-auto-004.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-005-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-005.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-006-expected.txt: Renamed from LayoutTests/css3/flexbox/min-size-auto-expected.txt.
+        * web-platform-tests/css/css-flexbox/overflow-auto-006.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-007-expected.html: Renamed from LayoutTests/css3/flexbox/overflow-auto-dynamic-changes-abspos-expected.html.
+        * web-platform-tests/css/css-flexbox/overflow-auto-007.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-008-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/overflow-auto-008.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-top-left-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-top-left.html: Added.
+        * web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/padding-overflow-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-direction-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-shorthand.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-flow-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-grow-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-shrink-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-wrap-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/order-computed-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/order-computed.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/order-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/order-invalid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/order-valid-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/parsing/order-valid.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-000-expected.txt: Renamed from LayoutTests/css3/flexbox/percentage-heights-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-heights-000.html: Renamed from LayoutTests/css3/flexbox/percentage-heights.html.
+        * web-platform-tests/css/css-flexbox/percentage-heights-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-001.html: Renamed from LayoutTests/css3/flexbox/definite-cross-sizes.html.
+        * web-platform-tests/css/css-flexbox/percentage-heights-002-expected.html: Renamed from LayoutTests/css3/flexbox/percentage-height-in-abspos-expected.html.
+        * web-platform-tests/css/css-flexbox/percentage-heights-002.html: Renamed from LayoutTests/css3/flexbox/percentage-height-in-abspos.html.
+        * web-platform-tests/css/css-flexbox/percentage-heights-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-003.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-004-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-004.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-005-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-005.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-006.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-007.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-008.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-009-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-009.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-010-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-010.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-011-expected.txt: Renamed from LayoutTests/css3/flexbox/flexitem-percent-height-change-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-heights-011.html: Renamed from LayoutTests/css3/flexbox/flexitem-percent-height-change.html.
+        * web-platform-tests/css/css-flexbox/percentage-heights-012-expected.txt: Renamed from LayoutTests/css3/flexbox/percent-height-children-of-alignSelf-stretch-flex-item-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-heights-012.html: Renamed from LayoutTests/css3/flexbox/percent-height-children-of-alignSelf-stretch-flex-item.html.
+        * web-platform-tests/css/css-flexbox/percentage-heights-013-expected.txt: Renamed from LayoutTests/css3/flexbox/percentage-height-replaced-element-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-heights-013.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-014-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-014.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-margins-001-expected.txt: Renamed from LayoutTests/css3/flexbox/percent-margins-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-margins-001.html: Renamed from LayoutTests/css3/flexbox/percent-margins.html.
+        * web-platform-tests/css/css-flexbox/percentage-max-height-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/percentage-max-height-001.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-max-width-cross-axis-expected.txt: Renamed from LayoutTests/css3/flexbox/percentage-max-width-cross-axis-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-max-width-cross-axis.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-padding-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/percentage-padding-001.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-size-expected.txt: Renamed from LayoutTests/css3/flexbox/percentage-sizes-expected.txt.
+        * web-platform-tests/css/css-flexbox/percentage-size-quirks-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/percentage-size-quirks.html: Copied from LayoutTests/css3/flexbox/percentage-sizes.html.
+        * web-platform-tests/css/css-flexbox/percentage-size-subitems-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-size-subitems-001.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-size.html: Renamed from LayoutTests/css3/flexbox/percentage-sizes.html.
+        * web-platform-tests/css/css-flexbox/percentage-widths-001-expected.html: Renamed from LayoutTests/imported/blink/css3/flexbox/percentage-width-in-abspos.html.
+        * web-platform-tests/css/css-flexbox/percentage-widths-001.html: Renamed from LayoutTests/css3/flexbox/percentage-width-in-abspos.html.
+        * web-platform-tests/css/css-flexbox/position-absolute-001-expected.txt: Renamed from LayoutTests/css3/flexbox/position-absolute-children-expected.txt.
+        * web-platform-tests/css/css-flexbox/position-absolute-001.html: Renamed from LayoutTests/css3/flexbox/position-absolute-children.html.
+        * web-platform-tests/css/css-flexbox/position-absolute-002-expected.txt: Renamed from LayoutTests/css3/flexbox/align-absolute-child-expected.txt.
+        * web-platform-tests/css/css-flexbox/position-absolute-002.html: Renamed from LayoutTests/css3/flexbox/align-absolute-child.html.
+        * web-platform-tests/css/css-flexbox/position-absolute-003-expected.txt: Renamed from LayoutTests/css3/flexbox/border-and-padding-abspos-expected.txt.
+        * web-platform-tests/css/css-flexbox/position-absolute-003.html: Renamed from LayoutTests/css3/flexbox/border-and-padding-abspos.html.
+        * web-platform-tests/css/css-flexbox/position-absolute-004-expected.txt: Renamed from LayoutTests/css3/flexbox/change-flexitem-into-abspos-expected.txt.
+        * web-platform-tests/css/css-flexbox/position-absolute-004.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-005-expected.html: Renamed from LayoutTests/css3/flexbox/overflow-auto-dynamic-changes-expected.html.
+        * web-platform-tests/css/css-flexbox/position-absolute-005.html: Renamed from LayoutTests/css3/flexbox/overflow-auto-dynamic-changes-abspos.html.
+        * web-platform-tests/css/css-flexbox/position-absolute-006-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-006.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-007-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-007.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-008.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-009-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-009.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-010-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-010.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-011-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-011.html: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-012-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/position-absolute-012.html: Added.
+        * web-platform-tests/css/css-flexbox/position-fixed-001-expected.html: Renamed from LayoutTests/css3/flexbox/bug604346-expected.html.
+        * web-platform-tests/css/css-flexbox/position-fixed-001.html: Added.
+        * web-platform-tests/css/css-flexbox/position-relative-percentage-top-001-expected.txt: Renamed from LayoutTests/css3/flexbox/relpos-with-percentage-top-expected.txt.
+        * web-platform-tests/css/css-flexbox/position-relative-percentage-top-001.html: Renamed from LayoutTests/css3/flexbox/relpos-with-percentage-top.html.
+        * web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html: Added.
+        * web-platform-tests/css/css-flexbox/radiobutton-min-size-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/radiobutton-min-size.html: Added.
+        * web-platform-tests/css/css-flexbox/relayout-align-items-expected.txt: Renamed from LayoutTests/css3/flexbox/relayout-align-items-expected.txt.
+        * web-platform-tests/css/css-flexbox/relayout-align-items.html: Renamed from LayoutTests/css3/flexbox/relayout-align-items.html.
+        * web-platform-tests/css/css-flexbox/relayout-image-load-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/relayout-image-load.html: Added.
+        * web-platform-tests/css/css-flexbox/scrollbars-auto-expected.html: Renamed from LayoutTests/css3/flexbox/scrollbars-auto-expected.html.
+        * web-platform-tests/css/css-flexbox/scrollbars-auto.html: Renamed from LayoutTests/css3/flexbox/scrollbars-auto.html.
+        * web-platform-tests/css/css-flexbox/scrollbars-expected.html: Renamed from LayoutTests/css3/flexbox/scrollbars-expected.html.
+        * web-platform-tests/css/css-flexbox/scrollbars.html: Renamed from LayoutTests/css3/flexbox/scrollbars.html.
+        * web-platform-tests/css/css-flexbox/select-element-zero-height-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/select-element-zero-height-001.html: Added.
+        * web-platform-tests/css/css-flexbox/select-element-zero-height-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/select-element-zero-height-002.html: Added.
+        * web-platform-tests/css/css-flexbox/shrinking-column-flexbox-expected.txt: Renamed from LayoutTests/css3/flexbox/shrinking-column-flexbox-expected.txt.
+        * web-platform-tests/css/css-flexbox/shrinking-column-flexbox.html: Renamed from LayoutTests/css3/flexbox/shrinking-column-flexbox.html.
+        * web-platform-tests/css/css-flexbox/stretch-after-sibling-size-change-expected.txt: Renamed from LayoutTests/css3/flexbox/stretch-after-sibling-size-change-expected.txt.
+        * web-platform-tests/css/css-flexbox/stretch-after-sibling-size-change.html: Added.
+        * web-platform-tests/css/css-flexbox/stretch-input-in-column-expected.html: Renamed from LayoutTests/css3/flexbox/stretch-input-in-column-expected.html.
+        * web-platform-tests/css/css-flexbox/stretch-input-in-column.html: Renamed from LayoutTests/css3/flexbox/stretch-input-in-column.html.
+        * web-platform-tests/css/css-flexbox/stretch-obeys-min-max-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/stretch-obeys-min-max-001.html: Added.
+        * web-platform-tests/css/css-flexbox/stretch-obeys-min-max-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/stretch-obeys-min-max-002.html: Added.
+        * web-platform-tests/css/css-flexbox/stretch-obeys-min-max-003-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/stretch-obeys-min-max-003.html: Added.
+        * web-platform-tests/css/css-flexbox/stretched-child-shrink-on-relayout-expected.txt: Renamed from LayoutTests/css3/flexbox/stretched-child-shrink-on-relayout-expected.txt.
+        * web-platform-tests/css/css-flexbox/stretched-child-shrink-on-relayout.html: Renamed from LayoutTests/css3/flexbox/stretched-child-shrink-on-relayout.html.
+        * web-platform-tests/css/css-flexbox/stretching-orthogonal-flows-expected.html: Renamed from LayoutTests/css3/flexbox/stretching-orthogonal-flows-expected.html.
+        * web-platform-tests/css/css-flexbox/stretching-orthogonal-flows.html: Added.
+        * web-platform-tests/css/css-flexbox/support/100x100-blue.png: Added.
+        * web-platform-tests/css/css-flexbox/support/100x100-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/10x10-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/1x1-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/1x1-lime.png: Added.
+        * web-platform-tests/css/css-flexbox/support/1x1-maroon.png: Added.
+        * web-platform-tests/css/css-flexbox/support/1x1-navy.png: Added.
+        * web-platform-tests/css/css-flexbox/support/1x1-red.png: Added.
+        * web-platform-tests/css/css-flexbox/support/1x1-white.png: Added.
+        * web-platform-tests/css/css-flexbox/support/200x200-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/20x50-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/300x150-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/60x60-gg-rr.png: Added.
+        * web-platform-tests/css/css-flexbox/support/60x60-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/README: Added.
+        * web-platform-tests/css/css-flexbox/support/a-green.css: Added.
+        (.a):
+        * web-platform-tests/css/css-flexbox/support/b-green.css: Added.
+        (.b):
+        * web-platform-tests/css/css-flexbox/support/c-red.css: Added.
+        (.c):
+        * web-platform-tests/css/css-flexbox/support/cat.png: Added.
+        * web-platform-tests/css/css-flexbox/support/flexbox.css: Added.
+        (.flexbox):
+        (.inline-flexbox):
+        (.flex-none):
+        (.flex-auto):
+        (.flex-one):
+        (.flex-one-one-auto):
+        (.row):
+        (.row-reverse):
+        (.column):
+        (.column-reverse):
+        (.wrap):
+        (.wrap-reverse):
+        (.align-content-flex-start):
+        (.align-content-flex-end):
+        (.align-content-center):
+        (.align-content-space-between):
+        (.align-content-space-around):
+        (.align-content-stretch):
+        (.align-items-flex-start):
+        (.align-items-flex-end):
+        (.align-items-center):
+        (.align-items-baseline):
+        (.align-items-stretch):
+        (.align-self-auto):
+        (.align-self-flex-start):
+        (.align-self-flex-end):
+        (.align-self-center):
+        (.align-self-baseline):
+        (.align-self-stretch):
+        (.justify-content-flex-start):
+        (.justify-content-flex-end):
+        (.justify-content-center):
+        (.justify-content-space-between):
+        (.justify-content-space-around):
+        * web-platform-tests/css/css-flexbox/support/import-green.css: Added.
+        (.import):
+        * web-platform-tests/css/css-flexbox/support/import-red.css: Added.
+        (.import):
+        * web-platform-tests/css/css-flexbox/support/pattern-grg-rgr-grg.png: Added.
+        * web-platform-tests/css/css-flexbox/support/pattern-grg-rrg-rgg.png: Added.
+        * web-platform-tests/css/css-flexbox/support/pattern-rgr-grg-rgr.png: Added.
+        * web-platform-tests/css/css-flexbox/support/pattern-tr.png: Added.
+        * web-platform-tests/css/css-flexbox/support/ruler-h-50px.png: Added.
+        * web-platform-tests/css/css-flexbox/support/ruler-v-100px.png: Added.
+        * web-platform-tests/css/css-flexbox/support/ruler-v-50px.png: Added.
+        * web-platform-tests/css/css-flexbox/support/scrollbars.js: Added.
+        (createLeafNode):
+        (createContentNode):
+        (createContainerNode):
+        (createContainerRow):
+        * web-platform-tests/css/css-flexbox/support/solidblue.png: Added.
+        * web-platform-tests/css/css-flexbox/support/square-purple.png: Added.
+        * web-platform-tests/css/css-flexbox/support/square-teal.png: Added.
+        * web-platform-tests/css/css-flexbox/support/square-white.png: Added.
+        * web-platform-tests/css/css-flexbox/support/support/README: Added.
+        * web-platform-tests/css/css-flexbox/support/support/swatch-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/support/swatch-red.png: Added.
+        * web-platform-tests/css/css-flexbox/support/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-blue.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-green.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-lime.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-orange.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-red.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-teal.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-white.png: Added.
+        * web-platform-tests/css/css-flexbox/support/swatch-yellow.png: Added.
+        * web-platform-tests/css/css-flexbox/support/test-bl.png: Added.
+        * web-platform-tests/css/css-flexbox/support/test-br.png: Added.
+        * web-platform-tests/css/css-flexbox/support/test-inner-half-size.png: Added.
+        * web-platform-tests/css/css-flexbox/support/test-outer.png: Added.
+        * web-platform-tests/css/css-flexbox/support/test-style.css: Added.
+        (#test01, #test02, #test03):
+        (#test):
+        (#test01):
+        (#test02):
+        (#test03):
+        * web-platform-tests/css/css-flexbox/support/test-tl.png: Added.
+        * web-platform-tests/css/css-flexbox/support/test-tr.png: Added.
+        * web-platform-tests/css/css-flexbox/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/svg-root-as-flex-item-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/svg-root-as-flex-item-001.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-auto-min-width-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-change-cell-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-change-cell.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-cross-size-expected.txt: Renamed from LayoutTests/css3/flexbox/stretch-table-child-expected.txt.
+        * web-platform-tests/css/css-flexbox/table-as-item-cross-size.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-narrow-content-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-narrow-content.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-wide-content-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-wide-content.html: Added.
+        * web-platform-tests/css/css-flexbox/table-with-infinite-max-intrinsic-width-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-with-infinite-max-intrinsic-width.html: Added.
+        * web-platform-tests/css/css-flexbox/text-overflow-on-flexbox-001-expected.html: Renamed from LayoutTests/imported/blink/css3/flexbox/text-overflow-on-flexbox.html.
+        * web-platform-tests/css/css-flexbox/text-overflow-on-flexbox-001.html: Renamed from LayoutTests/css3/flexbox/text-overflow-on-flexbox.html.
+        * web-platform-tests/css/css-flexbox/w3c-import.log: Added.
+        * web-platform-tests/css/css-flexbox/whitespace-in-flexitem-001-expected.html: Renamed from LayoutTests/css3/flexbox/whitespace-in-flexitem-expected.html.
+        * web-platform-tests/css/css-flexbox/whitespace-in-flexitem-001.html: Added.
+
 2020-05-18  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Clear the override width for computing percent margins

@@ -1,6 +1,0 @@
-
-'Test for BUG=647694 - align-content "stretch" is not applied by default when grid is disabled.'
-
-
-PASS .flex-container 1 
-
