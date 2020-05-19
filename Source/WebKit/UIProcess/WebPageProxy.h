@@ -2071,6 +2071,8 @@ private:
     void setCursor(const WebCore::Cursor&);
     void setCursorHiddenUntilMouseMoves(bool);
 
+    void discardQueuedMouseEvents();
+
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
     void voidCallback(CallbackID);

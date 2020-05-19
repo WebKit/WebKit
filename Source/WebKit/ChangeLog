@@ -1,3 +1,67 @@
+2020-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Drag and drop within a contenteditable area duplicates attachment-backed images
+        https://bugs.webkit.org/show_bug.cgi?id=212075
+        <rdar://problem/62434146>
+
+        Reviewed by Andy Estes.
+
+        When the attachment API is enabled, starting a drag on an attachment-element-backed image within a
+        contenteditable area sometimes causes the ranged selection to collapse. This is because `WebViewImpl::startDrag`
+        has a separate codepath for starting a drag with attachment metadata that doesn't invoke `NSView`'s deprecated
+        `-dragImage:at:offset:event:pasteboar:source:slideBack:` method, but instead uses
+        `-beginDraggingSessionWithItems:event:source:`. While the former spins the runloop until the end of the drag
+        session, the latter does not and returns immediately after beginning the drag. As a result,
+        `WebPageProxy::didStartDrag()` is actually invoked after the drag ends when dragging non-attachment content,
+        whereas `WebPageProxy::didStartDrag()` is invoked immediately after beginning the drag when starting a drag in
+        an attachment or attachment-backed image element.
+
+        This call to `didStartDrag()` is used to inform the web process that dragging has begun, and sets the
+        `m_isStartingDrag` flag on `WebPage` to false. As a result, `m_isStartingDrag` is true over the course of the
+        drag session when dragging non-attachment elements, but it's only true while starting the drag when dragging
+        attachments. This flag is consulted in `WebPage::mouseEvent()` to determine whether we should avoid handling the
+        incoming mouse event when beginning a drag. This prevents these incoming mouse events from triggering selection
+        changes while dragging (for more details, refer to <http://trac.webkit.org/r176687>).
+
+        Now, if we combine this with the fact that mouse events can be queued up in the UI process (refer to
+        <https://trac.webkit.org/r230817>), it's possible to end up handling these queued mouse events in the web
+        process after `m_isStartingDrag` has been set back to false when dragging an attachment. This doesn't happen
+        when dragging non-attachment content, since we don't call `didStartDrag()` until the drag has already ended, so
+        any queued mouse events are sent to the web process and immediately dropped on the floor since
+        `m_isStartingDrag` is true.
+
+        To address this, we make a couple of minor adjustments:
+
+        1.  Invoke `didStartDrag()` right before calling into `-dragImage:at:offset:event:pasteboar:source:slideBack:`,
+            so that we don't wait until the drag ends to set `m_isStartingDrag` to false. This makes the behavior of
+            both codepaths for starting a drag (attachment and non-attachment) consistent, and also makes it consistent
+            with iOS.
+
+        2.  In `didStartDrag()`, discard any queued mouse events to prevent them from being handled by the page (e.g.
+            causing the selection to change immediately after starting the drag). We already have identical logic to do
+            this when showing a context menu, so we can factor this out into a private `WebPageProxy` helper and call it
+            from both places.
+
+        Test: WKAttachmentTestsMac.DraggingAttachmentBackedImagePreservesRangedSelection
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::startDrag):
+
+        Invoke `didStartDrag()` earlier when starting a drag using the deprecated method, such that we don't wait until
+        the drag ends to set `m_isStartingDrag` to false in the web process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::discardQueuedMouseEvents):
+
+        Refactor logic to discard all queued mouse events into a separate private helper.
+
+        (WebKit::WebPageProxy::didStartDrag):
+
+        Use the above helper to empty queued mouse events when starting a drag.
+
+        (WebKit::WebPageProxy::showContextMenu):
+        * UIProcess/WebPageProxy.h:
+
 2020-05-19  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add testing and logging for ApplePaySetup

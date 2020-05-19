@@ -1,3 +1,24 @@
+2020-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Drag and drop within a contenteditable area duplicates attachment-backed images
+        https://bugs.webkit.org/show_bug.cgi?id=212075
+        <rdar://problem/62434146>
+
+        Reviewed by Andy Estes.
+
+        Add a new API test to verify that starting a drag on an attachment-backed image in an editable container with
+        queued mouse move events does not cause the selection to collapse. See Source/WebKit/ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView waitForPendingMouseEvents]):
+
+        Move this method from DragAndDropSimulator into TestWKWebView.
+
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropTestWKWebView waitForPendingMouseEvents]): Deleted.
+
 2020-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [buildbot][GTK][WPE] Pass --verbose flag when running JavaScriptCore tests

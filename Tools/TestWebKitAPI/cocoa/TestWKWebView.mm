@@ -753,6 +753,15 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
 }
 
+- (void)waitForPendingMouseEvents
+{
+    __block bool doneProcessingMouseEvents = false;
+    [self _doAfterProcessingAllPendingMouseEvents:^{
+        doneProcessingMouseEvents = true;
+    }];
+    TestWebKitAPI::Util::run(&doneProcessingMouseEvents);
+}
+
 @end
 #endif // PLATFORM(MAC)
 

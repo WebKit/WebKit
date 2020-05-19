@@ -4206,11 +4206,12 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
         return;
     }
 
+    m_page->didStartDrag();
+
     [pasteboard setString:@"" forType:PasteboardTypes::WebDummyPboardType];
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_view dragImage:dragNSImage.get() at:NSPointFromCGPoint(clientDragLocation) offset:NSZeroSize event:m_lastMouseDownEvent.get() pasteboard:pasteboard source:m_view.getAutoreleased() slideBack:YES];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    m_page->didStartDrag();
 }
 
 static bool matchesExtensionOrEquivalent(const String& filename, const String& extension)

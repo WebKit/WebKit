@@ -1567,6 +1567,37 @@ TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
 
 #if PLATFORM(MAC)
 
+TEST(WKAttachmentTestsMac, DraggingAttachmentBackedImagePreservesRangedSelection)
+{
+    platformCopyPNG();
+
+    RetainPtr<_WKAttachment> attachment;
+    auto webView = webViewForTestingAttachments(NSMakeSize(250, 250));
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        attachment = observer.observer().inserted[0];
+    }
+
+    [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
+
+    [webView mouseEnterAtPoint:CGPointMake(125, 125)];
+    [webView mouseMoveToPoint:CGPointMake(125, 125) withFlags:0];
+    [webView mouseDownAtPoint:CGPointMake(125, 125) simulatePressure:NO];
+    [webView waitForPendingMouseEvents];
+
+    [webView mouseDragToPoint:CGPointMake(150, 150)];
+    [webView mouseDragToPoint:CGPointMake(200, 150)];
+    [webView waitForPendingMouseEvents];
+
+    [webView mouseUpAtPoint:CGPointMake(200, 150)];
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_WK_STREQ("Range", [webView stringByEvaluatingJavaScript:@"getSelection().type"]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"getSelection().containsNode(document.querySelector('img'))"] boolValue]);
+}
+
 TEST(WKAttachmentTestsMac, InsertPastedFileURLsAsAttachments)
 {
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];

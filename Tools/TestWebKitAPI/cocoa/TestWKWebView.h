@@ -129,6 +129,7 @@
 - (void)sendClickAtPoint:(NSPoint)pointInWindow;
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character;
+- (void)waitForPendingMouseEvents;
 @end
 #endif
 

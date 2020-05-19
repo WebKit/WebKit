@@ -70,15 +70,6 @@ IGNORE_WARNINGS_END
     return [_dragAndDropSimulator draggingSession];
 }
 
-- (void)waitForPendingMouseEvents
-{
-    __block bool doneProcessMouseEvents = false;
-    [self _doAfterProcessingAllPendingMouseEvents:^{
-        doneProcessMouseEvents = true;
-    }];
-    TestWebKitAPI::Util::run(&doneProcessMouseEvents);
-}
-
 @end
 
 // This exceeds the default drag hysteresis of all potential drag types.
