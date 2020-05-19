@@ -381,11 +381,11 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         architecture = self.getProperty("architecture")
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
         if architecture in ['mips', 'armv7', 'aarch64']:
-            self.command += ['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--verbose']
+            self.command += ['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi']
         # Linux bots have currently problems with JSC tests that try to use large amounts of memory.
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
-        if platform in ('gtk', 'wpe'):
-            self.setCommand(self.command + ['--memory-limited'])
+        if platform in ('gtk', 'wpe', 'jsc-only'):
+            self.setCommand(self.command + ['--memory-limited', '--verbose'])
         # WinCairo uses the Windows command prompt, not Cygwin.
         elif platform == 'wincairo':
             self.setCommand(self.command + ['--test-writer=ruby'])
@@ -414,7 +414,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
 class RunRemoteJavaScriptCoreTests(RunJavaScriptCoreTests):
     def start(self):
-        self.setCommand(self.command + ["--memory-limited", "--remote-config-file", "../../remote-jsc-tests-config.json"])
+        self.setCommand(self.command + ["--remote-config-file", "../../remote-jsc-tests-config.json"])
         return RunJavaScriptCoreTests.start(self)
 
 
