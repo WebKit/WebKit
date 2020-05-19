@@ -33,7 +33,7 @@
 ] interface WebXRSystem : EventTarget {
     // Methods
     Promise<void> isSessionSupported(XRSessionMode mode);
-    [NewObject] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options);
+    [NewObject, CallWith=Document] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options);
 
     // Events
     attribute EventHandler ondevicechange;

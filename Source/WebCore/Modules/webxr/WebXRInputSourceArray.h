@@ -39,6 +39,9 @@ class WebXRInputSourceArray : public RefCounted<WebXRInputSourceArray> {
 public:
     unsigned length() const;
     WebXRInputSource* item(unsigned) const;
+
+private:
+    WebXRInputSourceArray();
 };
 
 } // namespace WebCore

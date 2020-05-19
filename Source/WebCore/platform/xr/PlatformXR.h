@@ -19,12 +19,13 @@
 #pragma once
 
 #include <memory>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace PlatformXR {
 
-enum class SessionMode {
+enum class SessionMode : uint8_t {
     Inline,
     ImmersiveVr,
     ImmersiveAr,
@@ -48,18 +49,19 @@ public:
     Device();
     DeviceId id() const { return m_id; }
 
-    using ListOfSupportedModes = Vector<SessionMode>;
     using ListOfEnabledFeatures = Vector<ReferenceSpaceType>;
-
-    bool supports(SessionMode mode) const { return m_supportedModes.contains(mode); }
-    void setSupportedModes(const ListOfSupportedModes& modes) { m_supportedModes = modes; }
-    void setEnabledFeatures(const ListOfEnabledFeatures& features) { m_enabledFeatures = features; }
+    bool supports(SessionMode mode) const { return m_enabledFeaturesMap.contains(mode); }
+    void setEnabledFeatures(SessionMode mode, const ListOfEnabledFeatures& features) { m_enabledFeaturesMap.set(mode, features); }
+    ListOfEnabledFeatures enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
     inline bool operator==(const Device& other) const { return m_id == other.m_id; }
 
 protected:
-    ListOfSupportedModes m_supportedModes;
-    ListOfEnabledFeatures m_enabledFeatures;
+    // https://immersive-web.github.io/webxr/#xr-device-concept
+    // Each XR device has a list of enabled features for each XRSessionMode in its list of supported modes,
+    // which is a list of feature descriptors which MUST be initially an empty list.
+    using EnabledFeaturesPerModeMap = WTF::HashMap<SessionMode, ListOfEnabledFeatures, WTF::IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
+    EnabledFeaturesPerModeMap m_enabledFeaturesMap;
 
 private:
     DeviceId m_id;

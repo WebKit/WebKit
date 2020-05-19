@@ -24,6 +24,7 @@
 
 #if USE_OPENXR
 #include <openxr/openxr.h>
+#include <wtf/Optional.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 #endif // USE_OPENXR
@@ -67,7 +68,7 @@ public:
     ~Impl();
 
 #if USE_OPENXR
-    void collectSupportedSessionModes(Device&, XrSystemId);
+    Optional<Vector<SessionMode>> collectSupportedSessionModes(Device&, XrSystemId);
     XrInstance m_instance { XR_NULL_HANDLE };
 #endif // USE_OPENXR
 };
@@ -150,13 +151,13 @@ Instance::Impl::~Impl()
 
 #if USE_OPENXR
 
-void Instance::Impl::collectSupportedSessionModes(Device& device, XrSystemId systemId)
+Optional<Vector<SessionMode>> Instance::Impl::collectSupportedSessionModes(Device& device, XrSystemId systemId)
 {
     uint32_t viewConfigurationCount;
     XrResult result = xrEnumerateViewConfigurations(m_instance, systemId, 0, &viewConfigurationCount, nullptr);
     if (result != XR_SUCCESS) {
         WTFLogAlways("xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
-        return;
+        return WTF::nullopt;
     }
 
     XrViewConfigurationType viewConfigurations[viewConfigurationCount];
@@ -164,23 +165,23 @@ void Instance::Impl::collectSupportedSessionModes(Device& device, XrSystemId sys
     if (result != XR_SUCCESS) {
         WTFLogAlways("xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
         WTFLogAlways("xrEnumerateViewConfigurations(): error %s\n", resultToString(result, m_instance).utf8().data());
-        return;
+        return WTF::nullopt;
     }
 
-    Device::ListOfSupportedModes supportedModes;
+    Vector<SessionMode> supportedModes;
     for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
         auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
         result = xrGetViewConfigurationProperties(m_instance, systemId, viewConfigurations[i], &viewConfigurationProperties);
         if (result != XR_SUCCESS) {
             WTFLogAlways("xrGetViewConfigurationProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
-            return;
+            return WTF::nullopt;
         }
         if (viewConfigurationProperties.viewConfigurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO)
             supportedModes.append(SessionMode::ImmersiveAr);
         else if (viewConfigurationProperties.viewConfigurationType == XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO)
             supportedModes.append(SessionMode::ImmersiveVr);
     }
-    device.setSupportedModes(supportedModes);
+    return supportedModes;
 }
 
 #endif // USE_OPENXR
@@ -218,7 +219,14 @@ void Instance::enumerateImmersiveXRDevices()
     }
 
     auto device = makeUnique<Device>();
-    m_impl->collectSupportedSessionModes(*device, systemId);
+    auto sessionModes = m_impl->collectSupportedSessionModes(*device, systemId);
+    if (sessionModes) {
+        for (auto& mode : sessionModes.value()) {
+            // TODO: fill in features
+            device->setEnabledFeatures(mode, { });
+        }
+    }
+
     m_immersiveXRDevices.append(WTFMove(device));
 #endif // USE_OPENXR
 }

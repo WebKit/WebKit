@@ -35,6 +35,7 @@
 #include "WebXRSpace.h"
 #include "XREnvironmentBlendMode.h"
 #include "XRReferenceSpaceType.h"
+#include "XRSessionMode.h"
 #include "XRVisibilityState.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -45,6 +46,7 @@ namespace WebCore {
 
 class XRFrameRequestCallback;
 class WebXRReferenceSpace;
+class WebXRSystem;
 struct XRRenderStateInit;
 
 class WebXRSession final : public RefCounted<WebXRSession>, public EventTargetWithInlineData, public ActiveDOMObject {
@@ -53,6 +55,7 @@ public:
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
     using EndPromise = DOMPromiseDeferred<void>;
 
+    static Ref<WebXRSession> create(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&);
     virtual ~WebXRSession();
 
     using RefCounted<WebXRSession>::ref;
@@ -74,6 +77,8 @@ public:
     bool ended() const { return m_ended; }
 
 private:
+    WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&);
+
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return WebXRSessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
@@ -84,11 +89,18 @@ private:
     const char* activeDOMObjectName() const override;
     void stop() override;
 
+    void shutdown();
+
     XREnvironmentBlendMode m_environmentBlendMode;
     XRVisibilityState m_visibilityState;
-    RefPtr<WebXRRenderState> m_renderState;
     RefPtr<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
+
+    WebXRSystem& m_xrSystem;
+    XRSessionMode m_mode;
+    WeakPtr<PlatformXR::Device> m_device;
+    RefPtr<WebXRRenderState> m_activeRenderState;
+    RefPtr<WebXRRenderState> m_pendingRenderState;
 };
 
 } // namespace WebCore

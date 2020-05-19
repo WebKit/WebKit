@@ -37,26 +37,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRRenderState);
 
-Ref<WebXRRenderState> WebXRRenderState::create(const WebXRSession& session)
+Ref<WebXRRenderState> WebXRRenderState::create(XRSessionMode mode)
 {
-    // When an XRRenderState object is created for an XRSession session, the user agent MUST initialize the render state by running the following steps:
-    //   1. Let state be the newly created XRRenderState object.
-
-    //   2. Initialize state’s depthNear to 0.1.
-    //   3. Initialize state’s depthFar to 1000.0.
-    // (Default-initialized in the XRRenderState class definition.)
-
-    //   4. If session is an immersive session, initialize state’s inlineVerticalFieldOfView to null.
-    //   5. Else initialize state’s inlineVerticalFieldOfView to PI * 0.5.
-    // FIXME: "immersive session" support
-    UNUSED_PARAM(session);
-    Optional<double> inlineVerticalFieldOfView { piOverTwoDouble };
-
-    //   6. Initialize state’s baseLayer to null.
-    //   7. Initialize state’s outputContext to null.
-    // (Initialized to null by default.)
-
-    return adoptRef(*new WebXRRenderState(WTFMove(inlineVerticalFieldOfView)));
+    // https://immersive-web.github.io/webxr/#initialize-the-render-state
+    // depthNear, depthFar and baseLayer are initialized in the class definition
+    return adoptRef(*new WebXRRenderState(mode == XRSessionMode::Inline ? makeOptional(piOverTwoDouble) : WTF::nullopt));
 }
 
 WebXRRenderState::WebXRRenderState(Optional<double>&& inlineVerticalFieldOfView)

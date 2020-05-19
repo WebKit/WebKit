@@ -28,11 +28,30 @@
 
 #if ENABLE(WEBXR)
 
+#include "WebXRSystem.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSession);
+
+Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device)
+{
+    return adoptRef(*new WebXRSession(document, system, mode, device));
+}
+
+WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device)
+    : ActiveDOMObject(&document)
+    , m_xrSystem(system)
+    , m_mode(mode)
+    , m_device(makeWeakPtr(device))
+    , m_activeRenderState(WebXRRenderState::create(mode))
+{
+    // TODO: If no other features of the user agent have done so already,
+    // perform the necessary platform-specific steps to initialize the device’s
+    // tracking and rendering capabilities, including showing any necessary
+    // instructions to the user.
+}
 
 WebXRSession::~WebXRSession() = default;
 
@@ -48,7 +67,7 @@ XRVisibilityState WebXRSession::visibilityState() const
 
 const WebXRRenderState& WebXRSession::renderState() const
 {
-    return *m_renderState;
+    return *m_activeRenderState;
 }
 
 const WebXRInputSourceArray& WebXRSession::inputSources() const
@@ -73,8 +92,44 @@ void WebXRSession::cancelAnimationFrame(int)
 {
 }
 
-void WebXRSession::end(EndPromise&&)
+// https://immersive-web.github.io/webxr/#shut-down-the-session
+void WebXRSession::shutdown()
 {
+    // 1. Let session be the target XRSession object.
+    // 2. Set session's ended value to true.
+    m_ended = true;
+
+    // 3. If the active immersive session is equal to session, set the active immersive session to null.
+    // 4. Remove session from the list of inline sessions.
+    m_xrSystem.sessionEnded(*this);
+
+    // TODO: complete the implementation
+    // 5. Reject any outstanding promises returned by session with an InvalidStateError, except for any promises returned by end().
+    // 6. If no other features of the user agent are actively using them, perform the necessary platform-specific steps to shut down the device's tracking and rendering capabilities. This MUST include:
+    //  6.1. Releasing exclusive access to the XR device if session is an immersive session.
+    //  6.2. Deallocating any graphics resources acquired by session for presentation to the XR device.
+    //  6.3. Putting the XR device in a state such that a different source may be able to initiate a session with the same device if session is an immersive session.
+    // 7. Queue a task that fires an XRSessionEvent named end on session.
+}
+
+// https://immersive-web.github.io/webxr/#dom-xrsession-end
+void WebXRSession::end(EndPromise&& promise)
+{
+    // The shutdown() call bellow might remove the sole reference to session
+    // that could exist (the XRSystem owns the sessions) so let's protect this.
+    Ref<WebXRSession> protectedThis(*this);
+    // 1. Let promise be a new Promise.
+    // 2. Shut down the target XRSession object.
+    shutdown();
+
+    // 3. Queue a task to perform the following steps:
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTFMove(promise)] () mutable {
+        // 3.1 Wait until any platform-specific steps related to shutting down the session have completed.
+        // 3.2 Resolve promise.
+        promise.resolve();
+    });
+
+    // 4. Return promise.
 }
 
 const char* WebXRSession::activeDOMObjectName() const

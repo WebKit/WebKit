@@ -54,13 +54,14 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
             simulatedDevice.views().append(view.releaseReturnValue());
         }
 
+        Vector<XRReferenceSpaceType> features;
         if (init.supportedFeatures) {
-            Vector<XRReferenceSpaceType> features;
-            for (auto& feature : init.supportedFeatures.value()) {
-                if (auto referenceSpaceType = parseEnumeration<XRReferenceSpaceType>(*context.execState(), feature))
-                    features.append(referenceSpaceType.value());
+            if (auto* globalObject = context.execState()) {
+                for (auto& feature : init.supportedFeatures.value()) {
+                    if (auto referenceSpaceType = parseEnumeration<XRReferenceSpaceType>(*globalObject, feature))
+                        features.append(referenceSpaceType.value());
+                }
             }
-            simulatedDevice.setEnabledFeatures(features);
         }
 
         if (init.boundsCoordinates) {
@@ -87,7 +88,9 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
             if (init.supportsImmersive)
                 supportedModes.append(XRSessionMode::ImmersiveVr);
         }
-        simulatedDevice.setSupportedModes(supportedModes);
+
+        for (auto& mode : supportedModes)
+            simulatedDevice.setEnabledFeatures(mode, features);
 
         m_context->registerSimulatedXRDeviceForTesting(simulatedDevice);
 
@@ -107,7 +110,7 @@ void WebXRTest::simulateUserActivation(Document& document, XRSimulateUserActivat
 void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&& promise)
 {
     for (auto& device : m_devices)
-        m_context->unregisterSimulatedXRDeviceForTesting(&device->simulatedXRDevice());
+        m_context->unregisterSimulatedXRDeviceForTesting(device->simulatedXRDevice());
     promise.resolve();
 }
 

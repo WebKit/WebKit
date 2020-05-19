@@ -1,3 +1,19 @@
+2020-05-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement requestSession()
+        https://bugs.webkit.org/show_bug.cgi?id=211888
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive_no_gesture.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_no_mode.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_features_deviceSupport.https-expected.txt: Added.
+
 2020-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Import the Flexbox test suite from the W3C Web Platform Tests

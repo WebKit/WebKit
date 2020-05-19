@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "XRSessionMode.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
@@ -37,12 +38,11 @@ namespace WebCore {
 
 class WebXRWebGLLayer;
 struct XRRenderStateInit;
-class WebXRSession;
 
 class WebXRRenderState : public RefCounted<WebXRRenderState> {
     WTF_MAKE_ISO_ALLOCATED(WebXRRenderState);
 public:
-    static Ref<WebXRRenderState> create(const WebXRSession&);
+    static Ref<WebXRRenderState> create(XRSessionMode);
     ~WebXRRenderState();
 
     double depthNear() const;
@@ -51,14 +51,15 @@ public:
     RefPtr<WebXRWebGLLayer> baseLayer() const;
 
 private:
-    WebXRRenderState(Optional<double>&&);
-    WebXRRenderState(const XRRenderStateInit&);
+    explicit WebXRRenderState(Optional<double>&& fieldOfView);
+    explicit WebXRRenderState(const XRRenderStateInit&);
 
+    // https://immersive-web.github.io/webxr/#initialize-the-render-state
     struct {
-        double near { 0.1 };
-        double far { 1000 };
+        double near { 0.1 }; // in meters
+        double far { 1000 }; // in meters
     } m_depth;
-    Optional<double> m_inlineVerticalFieldOfView;
+    Optional<double> m_inlineVerticalFieldOfView; // in radians
     RefPtr<WebXRWebGLLayer> m_baseLayer;
 };
 
