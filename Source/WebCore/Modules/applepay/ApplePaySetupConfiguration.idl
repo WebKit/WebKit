@@ -24,13 +24,12 @@
  */
 
 [
-    ActiveDOMObject,
     Conditional=APPLE_PAY_SETUP,
-    Constructor(ApplePaySetupConfiguration configuration),
-    ConstructorCallWith=ScriptExecutionContext,
-    EnabledBySetting=ApplePay,
-    SecureContext,
-] interface ApplePaySetup {
-    [CallWith=Document] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
-    [CallWith=Document] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ApplePaySetupConfiguration {
+    DOMString merchantIdentifier;
+    DOMString referrerIdentifier;
+    DOMString signature;
+    sequence<DOMString> signedFields;
 };

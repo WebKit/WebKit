@@ -23,14 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    ActiveDOMObject,
-    Conditional=APPLE_PAY_SETUP,
-    Constructor(ApplePaySetupConfiguration configuration),
-    ConstructorCallWith=ScriptExecutionContext,
-    EnabledBySetting=ApplePay,
-    SecureContext,
-] interface ApplePaySetup {
-    [CallWith=Document] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
-    [CallWith=Document] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
+#pragma once
+
+#if ENABLE(APPLE_PAY_SETUP)
+
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+struct ApplePaySetupConfiguration {
+    String merchantIdentifier;
+    String referrerIdentifier;
+    String signature;
+    Vector<String> signedFields;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY_SETUP)

@@ -3038,6 +3038,10 @@
 		A180AD5B219F81B000DC039A /* WebCoreAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17E4F26219BC01600E1C7EE /* WebCoreAdditions.mm */; };
 		A185B42A1E8211A100DC9118 /* LegacyPreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* LegacyPreviewLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1891045246DF6C6006BA9FC /* ApplePaySetupFeatureState.h in Headers */ = {isa = PBXBuildFile; fileRef = A1891042246DF6C6006BA9FC /* ApplePaySetupFeatureState.h */; };
+		A1891053246E1A34006BA9FC /* MockApplePaySetupFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = A1891051246E1A34006BA9FC /* MockApplePaySetupFeature.h */; };
+		A1891054246E1A34006BA9FC /* MockApplePaySetupFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1891052246E1A34006BA9FC /* MockApplePaySetupFeature.cpp */; };
+		A1891059246F2C1B006BA9FC /* ApplePaySetupConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = A1891056246F2BC8006BA9FC /* ApplePaySetupConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1956F1C2331A6770057E9D2 /* JSApplePayCancelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1956F1B2331A6460057E9D2 /* JSApplePayCancelEvent.h */; };
 		A1956F202331A8C70057E9D2 /* ApplePaySessionError.h in Headers */ = {isa = PBXBuildFile; fileRef = A1956F1D2331A8C70057E9D2 /* ApplePaySessionError.h */; };
 		A1956F232331ACF20057E9D2 /* WHLSLReplaceWith.h in Headers */ = {isa = PBXBuildFile; fileRef = 3351F70B22CAD8DA0015B40D /* WHLSLReplaceWith.h */; };
@@ -11575,6 +11579,12 @@
 		A185B4281E8211A100DC9118 /* LegacyPreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyPreviewLoader.h; sourceTree = "<group>"; };
 		A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ParentalControlsContentFilter.mm; sourceTree = "<group>"; };
 		A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParentalControlsContentFilter.h; sourceTree = "<group>"; };
+		A1891042246DF6C6006BA9FC /* ApplePaySetupFeatureState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePaySetupFeatureState.h; sourceTree = "<group>"; };
+		A1891044246DF6C6006BA9FC /* ApplePaySetupFeatureState.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePaySetupFeatureState.idl; sourceTree = "<group>"; };
+		A1891051246E1A34006BA9FC /* MockApplePaySetupFeature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockApplePaySetupFeature.h; sourceTree = "<group>"; };
+		A1891052246E1A34006BA9FC /* MockApplePaySetupFeature.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockApplePaySetupFeature.cpp; sourceTree = "<group>"; };
+		A1891056246F2BC8006BA9FC /* ApplePaySetupConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePaySetupConfiguration.h; sourceTree = "<group>"; };
+		A1891058246F2BC8006BA9FC /* ApplePaySetupConfiguration.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePaySetupConfiguration.idl; sourceTree = "<group>"; };
 		A18F7A351ECA73640059E1E1 /* RuntimeApplicationChecks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecks.cpp; sourceTree = "<group>"; };
 		A1956F182331A4680057E9D2 /* ApplePayCancelEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayCancelEvent.idl; sourceTree = "<group>"; };
 		A1956F1A2331A6460057E9D2 /* JSApplePayCancelEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayCancelEvent.cpp; sourceTree = "<group>"; };
@@ -17400,8 +17410,12 @@
 				1A58E8641D19D4DF00C0EA73 /* ApplePaySessionPaymentRequest.h */,
 				5C53DCD22446449A00A93124 /* ApplePaySetup.cpp */,
 				5C53DCC62446449700A93124 /* ApplePaySetup.idl */,
+				A1891056246F2BC8006BA9FC /* ApplePaySetupConfiguration.h */,
+				A1891058246F2BC8006BA9FC /* ApplePaySetupConfiguration.idl */,
 				5C53DCCA2446449800A93124 /* ApplePaySetupFeature.idl */,
 				5C53DCC92446449800A93124 /* ApplePaySetupFeature.mm */,
+				A1891042246DF6C6006BA9FC /* ApplePaySetupFeatureState.h */,
+				A1891044246DF6C6006BA9FC /* ApplePaySetupFeatureState.idl */,
 				5C53DCD62446449C00A93124 /* ApplePaySetupFeatureType.idl */,
 				5C53DCD42446449B00A93124 /* ApplePaySetupFeatureTypeWebCore.h */,
 				5C53DCCF2446449900A93124 /* ApplePaySetupFeatureWebCore.h */,
@@ -18457,6 +18471,8 @@
 				A7BE7EDE14C9175A0014489D /* MallocStatistics.idl */,
 				CD5393CB175DCCE600C07123 /* MemoryInfo.h */,
 				CD5393CC175DCCE600C07123 /* MemoryInfo.idl */,
+				A1891052246E1A34006BA9FC /* MockApplePaySetupFeature.cpp */,
+				A1891051246E1A34006BA9FC /* MockApplePaySetupFeature.h */,
 				CDF4B7211E03BF8100E235A2 /* MockCDMFactory.cpp */,
 				CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */,
 				CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */,
@@ -29469,6 +29485,7 @@
 				427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */,
 				EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */,
 				CDC26B41160A8CCE0026757B /* LegacyMockCDM.h in Headers */,
+				A1891053246E1A34006BA9FC /* MockApplePaySetupFeature.h in Headers */,
 				A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */,
 				A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */,
 				51058ADC1D6792C1009A538C /* MockGamepad.h in Headers */,
@@ -29587,6 +29604,8 @@
 				1A8A64591D19FCFC00D0E00F /* ApplePaySession.h in Headers */,
 				A1956F202331A8C70057E9D2 /* ApplePaySessionError.h in Headers */,
 				1A58E8651D19D4EB00C0EA73 /* ApplePaySessionPaymentRequest.h in Headers */,
+				A1891059246F2C1B006BA9FC /* ApplePaySetupConfiguration.h in Headers */,
+				A1891045246DF6C6006BA9FC /* ApplePaySetupFeatureState.h in Headers */,
 				5C53DCE124465DFC00A93124 /* ApplePaySetupFeatureWebCore.h in Headers */,
 				5C53DCEA24468FB400A93124 /* ApplePaySetupWebCore.h in Headers */,
 				1A8A645C1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.h in Headers */,
@@ -34164,6 +34183,7 @@
 				427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* LegacyMockCDM.cpp in Sources */,
+				A1891054246E1A34006BA9FC /* MockApplePaySetupFeature.cpp in Sources */,
 				CDF4B7311E03D00700E235A2 /* MockCDMFactory.cpp in Sources */,
 				A1BF6B821AA96C7D00AF4A8A /* MockContentFilter.cpp in Sources */,
 				A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */,

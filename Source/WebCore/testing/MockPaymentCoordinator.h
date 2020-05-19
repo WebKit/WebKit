@@ -29,6 +29,7 @@
 
 #include "ApplePayInstallmentConfigurationWebCore.h"
 #include "ApplePayLineItem.h"
+#include "ApplePaySetupConfiguration.h"
 #include "ApplePayShippingMethod.h"
 #include "MockPaymentAddress.h"
 #include "MockPaymentContactFields.h"
@@ -53,6 +54,11 @@ public:
     void changePaymentMethod(ApplePayPaymentMethod&&);
     void acceptPayment();
     void cancelPayment();
+    
+#if ENABLE(APPLE_PAY_SETUP)
+    void addSetupFeature(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
+    const ApplePaySetupConfiguration& setupConfiguration() const { return m_setupConfiguration; }
+#endif
 
     const ApplePayLineItem& total() const { return m_total; }
     const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
@@ -90,6 +96,11 @@ private:
 
     bool isAlwaysOnLoggingAllowed() const final { return true; }
 
+#if ENABLE(APPLE_PAY_SETUP)
+    void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&) final;
+    void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
+#endif
+
     void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
     Page& m_page;
@@ -106,6 +117,10 @@ private:
     bool m_supportsUnrestrictedApplePay { true };
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     ApplePayInstallmentConfiguration m_installmentConfiguration;
+#endif
+#if ENABLE(APPLE_PAY_SETUP)
+    ApplePaySetupConfiguration m_setupConfiguration;
+    Vector<Ref<ApplePaySetupFeature>> m_setupFeatures;
 #endif
 };
 

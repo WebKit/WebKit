@@ -31,6 +31,7 @@
 #import "ArgumentCodersCocoa.h"
 #import "Decoder.h"
 #import "Encoder.h"
+#import <WebCore/ApplePaySetupConfiguration.h>
 #import <wtf/URL.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -41,7 +42,7 @@
 
 namespace WebKit {
 
-static RetainPtr<PKPaymentSetupConfiguration> toPlatformConfiguration(const WebCore::ApplePaySetup::Configuration& coreConfiguration, const URL& url)
+static RetainPtr<PKPaymentSetupConfiguration> toPlatformConfiguration(const WebCore::ApplePaySetupConfiguration& coreConfiguration, const URL& url)
 {
 #if PLATFORM(MAC)
     if (!PAL::getPKPaymentSetupConfigurationClass())
@@ -66,7 +67,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return configuration;
 }
 
-PaymentSetupConfiguration::PaymentSetupConfiguration(const WebCore::ApplePaySetup::Configuration& configuration, const URL& url)
+PaymentSetupConfiguration::PaymentSetupConfiguration(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url)
     : m_configuration { toPlatformConfiguration(configuration, url) }
 {
 }

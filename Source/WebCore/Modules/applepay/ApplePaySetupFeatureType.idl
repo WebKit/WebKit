@@ -25,6 +25,7 @@
 
 [
     Conditional=APPLE_PAY_SETUP,
+    ExportMacro=WEBCORE_EXPORT,
 ] enum ApplePaySetupFeatureType {
     "applePay",
     "appleCard"

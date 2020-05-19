@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -284,7 +284,6 @@ bool PaymentCoordinator::setApplePayIsActiveIfAllowed(Document& document) const
         return false;
     }
 
-    RELEASE_LOG_IF_ALLOWED("setApplePayIsActiveIfAllowed() -> true (supportsUnrestrictedApplePay: %d)", supportsUnrestrictedApplePay);
     document.setApplePayIsActive();
     return true;
 }
@@ -299,6 +298,38 @@ Expected<void, ExceptionDetails> PaymentCoordinator::shouldAllowUserAgentScripts
     RELEASE_LOG_ERROR_IF_ALLOWED("shouldAllowUserAgentScripts() -> false (active session)");
     return makeUnexpected(ExceptionDetails { m_client.userAgentScriptsBlockedErrorMessage() });
 }
+
+#if ENABLE(APPLE_PAY_SETUP)
+
+void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED("getSetupFeatures()");
+    m_client.getSetupFeatures(configuration, url, [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
+        if (!weakThis)
+            return;
+        RELEASE_LOG_IF_ALLOWED("getSetupFeatures() completed (features: %zu)", features.size());
+        completionHandler(WTFMove(features));
+    });
+}
+
+void PaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL& url, Vector<RefPtr<ApplePaySetupFeature>>&& features, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED("beginApplePaySetup()");
+    m_client.beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+        if (!weakThis)
+            return;
+        RELEASE_LOG_IF_ALLOWED("beginApplePaySetup() completed (success: %d)", success);
+        completionHandler(success);
+    });
+}
+
+void PaymentCoordinator::endApplePaySetup()
+{
+    RELEASE_LOG_IF_ALLOWED("endApplePaySetup()");
+    m_client.endApplePaySetup();
+}
+
+#endif
 
 } // namespace WebCore
 
