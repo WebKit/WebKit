@@ -907,7 +907,7 @@ class WebkitFlatpak:
             Console.message("Created %s self-contained toolchain archive", archive_filename)
 
             sccache_toolchains = []
-            for (compiler_executable, archive_compiler_executable) in path_mapping.iteritems():
+            for (compiler_executable, archive_compiler_executable) in path_mapping.items():
                 item = {'type': 'path_override',
                         'compiler_executable': compiler_executable,
                         'archive': archive_filename,

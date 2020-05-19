@@ -1,3 +1,12 @@
+2020-05-19  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Use items instead of iteritems to make Python 3 happier.
+
+        Rubber-stamped by Philippe Normand.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.pack_toolchain):
+
 2020-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Drag and drop within a contenteditable area duplicates attachment-backed images
