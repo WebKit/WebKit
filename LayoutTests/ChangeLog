@@ -1,3 +1,11 @@
+2020-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip fast/dom/window-open-ephemeral.html.
+
+        This test no longer appears to be flaky after r261758.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r261866. Fixing the WAV baselines for webaudio tests.
