@@ -1,3 +1,17 @@
+2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Disable modern media controls for testing
+        https://bugs.webkit.org/show_bug.cgi?id=212023
+
+        Reviewed by Philippe Normand.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const):
+        Since using the same Adwaita-based media controls as the GTK port, WPE
+        too should disable modern media controls during testing by overriding
+        the default value. This fixes a couple of obscure crashes in text track
+        tests.
+
 2020-05-18  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] WKTR WebsiteDataStore is being overwritten by the default one

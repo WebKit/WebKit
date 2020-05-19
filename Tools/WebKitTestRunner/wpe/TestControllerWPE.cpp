@@ -136,8 +136,9 @@ void TestController::platformResetPreferencesToConsistentValues()
 {
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string&) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const std::string&) const
 {
+    options.enableModernMediaControls = false;
 }
 
 } // namespace WTR
