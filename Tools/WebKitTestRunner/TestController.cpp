@@ -3116,12 +3116,10 @@ void TestController::platformWillRunTest(const TestInvocation&)
 {
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(WPE)
-void TestController::platformInitializeDataStore(WKPageConfigurationRef configuration, const TestOptions&)
+void TestController::platformInitializeDataStore(WKPageConfigurationRef, const TestOptions&)
 {
-    m_websiteDataStore = WKPageConfigurationGetWebsiteDataStore(configuration);
+    m_websiteDataStore = defaultWebsiteDataStore();
 }
-#endif
 
 void TestController::platformCreateWebView(WKPageConfigurationRef configuration, const TestOptions& options)
 {
@@ -3135,12 +3133,8 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
-#if PLATFORM(GTK) || PLATFORM(WPE)
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(defaultWebsiteDataStore(), true);
     WKContextSetPrimaryWebsiteDataStore(context, defaultWebsiteDataStore());
-#else
-    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKContextGetWebsiteDataStore(context), true);
-#endif
     return context;
 }
 
@@ -3201,7 +3195,7 @@ void TestController::clearLoadedThirdPartyDomains()
     WKPageClearLoadedThirdPartyDomains(m_mainWebView->page());
 }
 
-#endif
+#endif // !PLATFORM(COCOA)
 
 struct ClearServiceWorkerRegistrationsCallbackContext {
     explicit ClearServiceWorkerRegistrationsCallbackContext(TestController& controller)

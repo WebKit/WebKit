@@ -46,11 +46,6 @@ void TestController::platformInitialize()
 {
 }
 
-void TestController::platformInitializeDataStore(WKPageConfigurationRef, const TestOptions& options)
-{
-    m_websiteDataStore = defaultWebsiteDataStore();
-}
-
 WKPreferencesRef TestController::platformPreferences()
 {
     return WKPageGroupGetPreferences(m_pageGroup.get());

@@ -1,3 +1,19 @@
+2020-05-18  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] WKTR WebsiteDataStore is being overwritten by the default one
+        https://bugs.webkit.org/show_bug.cgi?id=212044
+
+        Reviewed by Fujii Hironori.
+
+        Ensure TestController::defaultWebSiteDataStore is being used for WinCairo as done in r259705.
+
+        Also consolidate platformInitializeDataStore implementations with GTK/WPE since WinCairo WKTR
+        also started crashing since r261758.
+
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+
 2020-05-18  Andy Estes  <aestes@apple.com>
 
         http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html fails in public SDK builds
