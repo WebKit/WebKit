@@ -1,3 +1,14 @@
+2020-05-19  Antti Koivisto  <antti@apple.com>
+
+        Animation of font-size with rem values is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=194765
+        <rdar://problem/48171742>
+
+        Reviewed by Antoine Quint.
+
+        * animations/keyframe-rem-unit-expected.html: Added.
+        * animations/keyframe-rem-unit.html: Added.
+
 2020-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Import the Flexbox test suite from the W3C Web Platform Tests

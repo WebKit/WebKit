@@ -260,7 +260,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     MatchResult result;
     result.authorDeclarations.append({ &keyframe->properties() });
 
-    auto state = State(element, nullptr);
+    auto state = State(element, nullptr, m_overrideDocumentElementStyle);
 
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(*elementStyle));

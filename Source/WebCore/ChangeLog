@@ -1,3 +1,20 @@
+2020-05-19  Antti Koivisto  <antti@apple.com>
+
+        Animation of font-size with rem values is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=194765
+        <rdar://problem/48171742>
+
+        Reviewed by Antoine Quint.
+
+        Test: animations/keyframe-rem-unit.html
+
+        'rem' computation fails on first style resolution because the document element style is not available.
+
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::styleForKeyframe):
+
+        Provide the override value, needed because the style can't be found from DOM tree yet.
+
 2020-05-19  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add testing and logging for ApplePaySetup
