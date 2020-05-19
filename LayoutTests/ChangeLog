@@ -1,3 +1,12 @@
+2020-05-19  Truitt Savell  <tsavell@apple.com>
+
+        (r261505) [ Mojave Debug ] webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html and webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=212085
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-05-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Unskipping a few top-level directories to get
