@@ -1,3 +1,15 @@
+2020-05-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r257463): [GTK] Build failure with -DENABLE_GLES2=ON
+        https://bugs.webkit.org/show_bug.cgi?id=212043
+
+        Reviewed by Philippe Normand.
+
+        Fix the typo "Platfom" -> "Platform"
+
+        * platform/graphics/gstreamer/PlatformDisplayGStreamer.cpp:
+        (createGstGLDisplay):
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Move some of the more chatty Scrolling logging to a ScrollingTree channel

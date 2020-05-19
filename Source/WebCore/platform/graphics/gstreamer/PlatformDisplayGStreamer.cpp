@@ -66,7 +66,7 @@ static GstGLDisplay* createGstGLDisplay(const PlatformDisplay& sharedDisplay)
         return GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
 #elif USE(EGL)
     if (is<PlatformDisplayX11>(sharedDisplay))
-        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatfomDisplayX11>(sharedDisplay).eglDisplay()));
+        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
 #endif
 #endif
 
