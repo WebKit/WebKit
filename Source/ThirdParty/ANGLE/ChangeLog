@@ -1,3 +1,17 @@
+2020-05-18  James Darpinian  <jdarpinian@chromium.org>
+
+        Enable regenerateStructNames workaround on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=212056
+
+        Reviewed by Dean Jackson.
+
+        The WebGL conformance test conformance/glsl/misc/shader-struct-scope.html
+        was failing on iOS. The workaround that fixes this test was enabled only on
+        desktop GL, but it's necessary for iOS as well.
+
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+
 2020-05-14  James Darpinian  <jdarpinian@chromium.org>
 
         REGRESSION (r259589): Google Maps background layer fades out and back in
