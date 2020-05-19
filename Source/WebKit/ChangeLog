@@ -1,3 +1,32 @@
+2020-05-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r261884. rdar://problem/63415448
+
+    [iOS] Fix message filter sandbox violation
+    https://bugs.webkit.org/show_bug.cgi?id=212100
+    <rdar://problem/63407155>
+    
+    Reviewed by Andy Estes.
+    
+    A message needs to be added to the message filter in the WebContent sandbox on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261884 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-19  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Fix message filter sandbox violation
+            https://bugs.webkit.org/show_bug.cgi?id=212100
+            <rdar://problem/63407155>
+
+            Reviewed by Andy Estes.
+
+            A message needs to be added to the message filter in the WebContent sandbox on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move to new Pasteboard API
