@@ -31,6 +31,7 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
+#include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/StdSet.h>
@@ -79,11 +80,12 @@ class ResourceLoadStatisticsMemoryStore;
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
 public:
     ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
-
+    ~ResourceLoadStatisticsDatabaseStore();
     void populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore&);
     void mergeStatistics(Vector<ResourceLoadStatistics>&&) override;
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
+    void close();
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> aggregatedThirdPartyData() const override;
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
@@ -148,6 +150,9 @@ private:
     void enableForeignKeys();
     bool isMigrationNecessary();
     void migrateDataToNewTablesIfNecessary();
+    void destroyStatements();
+    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String&, const String&) const;
+
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndUpdateSchemaIfNecessary();
@@ -155,7 +160,7 @@ private:
     String getSubStatisticStatement(const String&) const;
     void appendSubStatisticList(StringBuilder&, const String& tableName, const String& domain) const;
     void mergeStatistic(const ResourceLoadStatistics&);
-    void merge(WebCore::SQLiteStatement&, const ResourceLoadStatistics&);
+    void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void clearDatabaseContents();
     unsigned getNumberOfPrevalentResources() const;
     unsigned getNumberOfPrevalentResourcesWithUI() const;
@@ -167,8 +172,7 @@ private:
     bool insertObservedDomain(const ResourceLoadStatistics&) WARN_UNUSED_RETURN;
     void insertDomainRelationships(const ResourceLoadStatistics&);
     void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
-    bool insertDomainRelationship(WebCore::SQLiteStatement&, unsigned domainID, const RegistrableDomain& topFrameDomain);
-    bool relationshipExists(WebCore::SQLiteStatement&, Optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
+    bool relationshipExists(WebCore::SQLiteStatementAutoResetScope&, Optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
     Optional<unsigned> domainID(const RegistrableDomain&) const;
     bool domainExists(const RegistrableDomain&) const;
     void updateLastSeen(const RegistrableDomain&, WallTime);
@@ -206,7 +210,7 @@ private:
     };
     HashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
 
-    bool predicateValueForDomain(WebCore::SQLiteStatement&, const RegistrableDomain&) const;
+    bool predicateValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;
 
     bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) override;
     CookieAccess cookieAccess(const SubResourceDomain&, const TopFrameDomain&);
@@ -229,50 +233,48 @@ private:
 
     bool createUniqueIndices();
     bool createSchema();
-    bool prepareStatements();
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
-
     
     const String m_storageDirectoryPath;
     mutable WebCore::SQLiteDatabase m_database;
-    mutable WebCore::SQLiteStatement m_observedDomainCount;
-    WebCore::SQLiteStatement m_insertObservedDomainStatement;
-    WebCore::SQLiteStatement m_insertTopLevelDomainStatement;
-    mutable WebCore::SQLiteStatement m_domainIDFromStringStatement;
-    mutable WebCore::SQLiteStatement m_topFrameLinkDecorationsFromExists;
-    mutable WebCore::SQLiteStatement m_topFrameLoadedThirdPartyScriptsExists;
-    mutable WebCore::SQLiteStatement m_subframeUnderTopFrameDomainExists;
-    mutable WebCore::SQLiteStatement m_subresourceUnderTopFrameDomainExists;
-    mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsToExists;
-    WebCore::SQLiteStatement m_mostRecentUserInteractionStatement;
-    WebCore::SQLiteStatement m_updateLastSeenStatement;
-    mutable WebCore::SQLiteStatement m_updateDataRecordsRemovedStatement;
-    WebCore::SQLiteStatement m_updatePrevalentResourceStatement;
-    mutable WebCore::SQLiteStatement m_isPrevalentResourceStatement;
-    WebCore::SQLiteStatement m_updateVeryPrevalentResourceStatement;
-    mutable WebCore::SQLiteStatement m_isVeryPrevalentResourceStatement;
-    WebCore::SQLiteStatement m_clearPrevalentResourceStatement;
-    mutable WebCore::SQLiteStatement m_hadUserInteractionStatement;
-    WebCore::SQLiteStatement m_updateGrandfatheredStatement;
-    mutable WebCore::SQLiteStatement m_updateIsScheduledForAllButCookieDataRemovalStatement;
-    mutable WebCore::SQLiteStatement m_isGrandfatheredStatement;
-    mutable WebCore::SQLiteStatement m_findExpiredUserInteractionStatement;
-    mutable WebCore::SQLiteStatement m_countPrevalentResourcesStatement;
-    mutable WebCore::SQLiteStatement m_countPrevalentResourcesWithUserInteractionStatement;
-    mutable WebCore::SQLiteStatement m_countPrevalentResourcesWithoutUserInteractionStatement;
-    mutable WebCore::SQLiteStatement m_getResourceDataByDomainNameStatement;
-    mutable WebCore::SQLiteStatement m_getAllDomainsStatement;
-    mutable WebCore::SQLiteStatement m_domainStringFromDomainIDStatement;
-    mutable WebCore::SQLiteStatement m_getAllSubStatisticsStatement;
-    mutable WebCore::SQLiteStatement m_storageAccessExistsStatement;
-    mutable WebCore::SQLiteStatement m_getMostRecentlyUpdatedTimestampStatement;
-    mutable WebCore::SQLiteStatement m_linkDecorationExistsStatement;
-    mutable WebCore::SQLiteStatement m_scriptLoadExistsStatement;
-    mutable WebCore::SQLiteStatement m_subFrameExistsStatement;
-    mutable WebCore::SQLiteStatement m_subResourceExistsStatement;
-    mutable WebCore::SQLiteStatement m_uniqueRedirectExistsStatement;
-    mutable WebCore::SQLiteStatement m_observedDomainsExistsStatement;
-    mutable WebCore::SQLiteStatement m_removeAllDataStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainCountStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_insertObservedDomainStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_insertTopLevelDomainStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_domainIDFromStringStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_topFrameLinkDecorationsFromExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_topFrameLoadedThirdPartyScriptsExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_subframeUnderTopFrameDomainExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_subresourceUnderTopFrameDomainExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_subresourceUniqueRedirectsToExistsStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_mostRecentUserInteractionStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_updateLastSeenStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_updateDataRecordsRemovedStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_updatePrevalentResourceStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_isPrevalentResourceStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_updateVeryPrevalentResourceStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_isVeryPrevalentResourceStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_clearPrevalentResourceStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_hadUserInteractionStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_updateGrandfatheredStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_updateIsScheduledForAllButCookieDataRemovalStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_isGrandfatheredStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_findExpiredUserInteractionStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_countPrevalentResourcesStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_countPrevalentResourcesWithUserInteractionStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_countPrevalentResourcesWithoutUserInteractionStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_getResourceDataByDomainNameStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_getAllDomainsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_domainStringFromDomainIDStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_getAllSubStatisticsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_storageAccessExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_getMostRecentlyUpdatedTimestampStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_linkDecorationExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_scriptLoadExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_subFrameExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_subResourceExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_uniqueRedirectExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainsExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeAllDataStatement;
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };
 };
