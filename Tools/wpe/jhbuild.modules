@@ -186,7 +186,9 @@
   </autotools>
 
   <cmake id="libwpe">
-    <branch repo="github.com" module="WebPlatformForEmbedded/libwpe.git" checkoutdir="libwpe" tag="b191f14936a64ae0685f50ce2bb22f7c50bf156d"/>
+    <branch module="WebPlatformForEmbedded/libwpe/releases/download/1.6.0/libwpe-1.6.0.tar.xz" version="1.6.0"
+            repo="github-tarball"
+            hash="3587c6b8a807f4bb76b268ba74ca82c6b395b90235db41ad8252224456193c90"/>
   </cmake>
 
   <cmake id="wpebackend-fdo">
@@ -194,7 +196,7 @@
       <dep package="libwpe"/>
       <dep package="glib"/>
     </dependencies>
-    <branch repo="github.com" module="Igalia/WPEBackend-fdo.git" checkoutdir="wpebackend-fdo" tag="17316d7365f500176138d900f95aae73ef0e223a"/>
+    <branch repo="github.com" module="Igalia/WPEBackend-fdo.git" checkoutdir="wpebackend-fdo" tag="1.3.1-54-g1f58ebdf632fdf90f691949d90c8338a8d7073c7"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="autoreconf">
@@ -249,10 +251,10 @@
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
-            version="0.50.1"
+            version="0.54.1"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
-            hash="sha256:f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc"/>
+            hash="sha256:2f76fb4572762be13ee479292610091b4509af5788bcceb391fe222bcd0296dc"/>
     <dependencies>
       <dep package="ninja"/>
     </dependencies>
