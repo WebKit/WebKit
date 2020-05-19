@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSTypedArrayPrototypes.h"
 
+#include "JSCInlines.h"
 #include "JSTypedArrayViewPrototype.h"
 
 namespace JSC {

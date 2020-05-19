@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSCallee.h"
 
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

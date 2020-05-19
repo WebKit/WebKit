@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "JSCJSValueInlines.h"
+
 namespace JSC { namespace DFG {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);

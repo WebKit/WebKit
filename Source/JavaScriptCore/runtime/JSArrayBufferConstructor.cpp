@@ -29,7 +29,7 @@
 #include "BuiltinNames.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferView.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

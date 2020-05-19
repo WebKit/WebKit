@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSArrayIterator.h"
 
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {

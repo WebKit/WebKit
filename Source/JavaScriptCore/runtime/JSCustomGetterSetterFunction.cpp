@@ -27,7 +27,7 @@
 #include "JSCustomGetterSetterFunction.h"
 
 #include "CustomGetterSetter.h"
-#include "JSCellInlines.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

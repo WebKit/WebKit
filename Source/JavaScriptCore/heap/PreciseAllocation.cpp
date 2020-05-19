@@ -27,9 +27,8 @@
 #include "PreciseAllocation.h"
 
 #include "AlignedMemoryAllocator.h"
-#include "Heap.h"
 #include "IsoCellSetInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "Scribble.h"
 #include "SubspaceInlines.h"
 

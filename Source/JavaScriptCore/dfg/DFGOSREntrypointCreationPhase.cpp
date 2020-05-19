@@ -33,6 +33,7 @@
 #include "DFGGraph.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGPhase.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

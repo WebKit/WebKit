@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProxyConstructor.h"
 
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "ProxyObject.h"
 #include "ProxyRevoke.h"

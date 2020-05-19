@@ -28,6 +28,7 @@
 
 #include "DFGSafepoint.h"
 #include "DeferGC.h"
+#include "JSCellInlines.h"
 #include "ReleaseHeapAccessScope.h"
 #include <mutex>
 #include <wtf/CompilationThread.h>

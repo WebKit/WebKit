@@ -24,8 +24,7 @@
 #include "InternalFunction.h"
 
 #include "JSBoundFunction.h"
-#include "JSGlobalObject.h"
-#include "JSString.h"
+#include "JSCInlines.h"
 #include "ProxyObject.h"
 
 namespace JSC {

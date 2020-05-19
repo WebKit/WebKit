@@ -29,6 +29,7 @@
 
 #include "BigIntPrototype.h"
 #include "JSBigInt.h"
+#include "JSCInlines.h"
 #include "ParseInt.h"
 
 namespace JSC {

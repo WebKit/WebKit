@@ -27,6 +27,7 @@
 #include "MapIteratorPrototype.h"
 
 #include "JSCBuiltins.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

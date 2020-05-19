@@ -30,7 +30,7 @@
 #include "BuiltinNames.h"
 #include "IntlNumberFormat.h"
 #include "JSBoundFunction.h"
-#include "JSObjectInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

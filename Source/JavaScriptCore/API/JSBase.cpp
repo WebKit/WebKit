@@ -30,12 +30,9 @@
 
 #include "APICast.h"
 #include "Completion.h"
-#include "Exception.h"
 #include "GCActivityCallback.h"
-#include "Identifier.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSLock.h"
-#include "JSObject.h"
 #include "ObjectConstructor.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"

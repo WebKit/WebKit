@@ -31,6 +31,7 @@
 #include "IntlCollator.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlObject.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TrackedReferences.h"
 
+#include "JSCJSValueInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {

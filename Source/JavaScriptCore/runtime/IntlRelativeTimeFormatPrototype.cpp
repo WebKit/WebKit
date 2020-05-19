@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IntlRelativeTimeFormatPrototype.h"
 
-#include "Error.h"
 #include "IntlRelativeTimeFormat.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

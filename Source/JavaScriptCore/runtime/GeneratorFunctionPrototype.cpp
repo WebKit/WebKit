@@ -27,6 +27,8 @@
 #include "config.h"
 #include "GeneratorFunctionPrototype.h"
 
+#include "JSCInlines.h"
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GeneratorFunctionPrototype);

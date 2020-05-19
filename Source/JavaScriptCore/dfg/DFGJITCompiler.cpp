@@ -36,6 +36,7 @@
 #include "DFGOSRExit.h"
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
+#include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ThunkGenerators.h"

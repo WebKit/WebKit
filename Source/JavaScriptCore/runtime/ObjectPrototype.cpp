@@ -24,8 +24,7 @@
 #include "GetterSetter.h"
 #include "HasOwnPropertyCache.h"
 #include "IntegrityInlines.h"
-#include "JSObjectInlines.h"
-#include "JSString.h"
+#include "JSCInlines.h"
 #include "PropertySlot.h"
 
 namespace JSC {

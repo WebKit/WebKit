@@ -27,8 +27,7 @@
 #include "NullSetterFunction.h"
 
 #include "CodeBlock.h"
-#include "JSCJSValueInlines.h"
-#include "StackVisitor.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

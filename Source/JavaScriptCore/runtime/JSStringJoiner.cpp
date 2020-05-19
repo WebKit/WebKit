@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSStringJoiner.h"
 
+#include "JSCJSValueInlines.h"
+
 namespace JSC {
 
 JSStringJoiner::~JSStringJoiner()

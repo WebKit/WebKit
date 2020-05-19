@@ -25,9 +25,8 @@
 #include "Error.h"
 
 #include "Interpreter.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
-#include "JSObject.h"
-#include "JSString.h"
 #include "SourceCode.h"
 #include "StackFrame.h"
 

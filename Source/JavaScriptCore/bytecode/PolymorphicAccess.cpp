@@ -36,6 +36,7 @@
 #include "Heap.h"
 #include "JITOperations.h"
 #include "LinkBuffer.h"
+#include "StructureInlines.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
 #include "SuperSampler.h"

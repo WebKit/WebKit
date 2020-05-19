@@ -27,6 +27,7 @@
 #include "ConsoleClient.h"
 
 #include "CatchScope.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"

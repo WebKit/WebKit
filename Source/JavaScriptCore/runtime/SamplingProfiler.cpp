@@ -28,20 +28,17 @@
 
 #if ENABLE(SAMPLING_PROFILER)
 
-#include "CallFrame.h"
-#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
 #include "HeapIterationScope.h"
 #include "HeapUtil.h"
 #include "InlineCallFrame.h"
-#include "JSObjectInlines.h"
+#include "JSCInlines.h"
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
 #include "MarkedBlockInlines.h"
 #include "MarkedBlockSet.h"
 #include "NativeExecutable.h"
-#include "SlotVisitor.h"
 #include "VM.h"
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"

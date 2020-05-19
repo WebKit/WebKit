@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InspectorInstrumentationObject.h"
 
+#include "JSCInlines.h"
 #include <wtf/DataLog.h>
 
 namespace JSC {

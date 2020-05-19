@@ -31,7 +31,7 @@
 #include "DateConstructor.h"
 #include "IntlDateTimeFormat.h"
 #include "JSBoundFunction.h"
-#include "JSObjectInlines.h"
+#include "JSCInlines.h"
 #include <wtf/DateMath.h>
 
 namespace JSC {

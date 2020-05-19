@@ -27,8 +27,7 @@
 #include "JSPromisePrototype.h"
 
 #include "BuiltinNames.h"
-#include "JSFunction.h"
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

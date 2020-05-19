@@ -28,6 +28,7 @@
 #include "GeneratorPrototype.h"
 
 #include "FunctionExecutable.h"
+#include "JSCInlines.h"
 
 #include "GeneratorPrototype.lut.h"
 

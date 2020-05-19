@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CallVariant.h"
 
+#include "JSCInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {

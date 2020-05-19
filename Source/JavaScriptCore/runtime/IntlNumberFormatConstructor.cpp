@@ -29,8 +29,8 @@
 
 #include "IntlNumberFormat.h"
 #include "IntlNumberFormatPrototype.h"
-#include "IntlObject.h"
 #include "IntlObjectInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

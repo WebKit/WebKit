@@ -28,6 +28,7 @@
 
 #include "BuiltinNames.h"
 #include "JSCBuiltins.h"
+#include "JSCInlines.h"
 #include "JSPromisePrototype.h"
 
 namespace JSC {

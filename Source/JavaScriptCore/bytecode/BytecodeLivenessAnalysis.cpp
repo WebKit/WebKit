@@ -30,6 +30,7 @@
 #include "BytecodeUseDef.h"
 #include "CodeBlock.h"
 #include "FullBytecodeLiveness.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

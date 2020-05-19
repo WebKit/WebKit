@@ -21,9 +21,8 @@
 #include "config.h"
 #include "NativeErrorConstructor.h"
 
-#include "CallFrameInlines.h"
 #include "ErrorInstance.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "NativeErrorPrototype.h"
 
 namespace JSC {

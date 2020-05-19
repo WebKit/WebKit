@@ -20,7 +20,7 @@
 #include "config.h"
 #include "StringRecursionChecker.h"
 
-#include "ExceptionHelpers.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {

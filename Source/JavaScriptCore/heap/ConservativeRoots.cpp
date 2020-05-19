@@ -31,7 +31,7 @@
 #include "HeapUtil.h"
 #include "JITStubRoutineSet.h"
 #include "JSCast.h"
-#include "JSObject.h"
+#include "JSCellInlines.h"
 #include "MarkedBlockInlines.h"
 #include <wtf/OSAllocator.h>
 

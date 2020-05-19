@@ -27,9 +27,7 @@
 #include "SetPrototype.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
 

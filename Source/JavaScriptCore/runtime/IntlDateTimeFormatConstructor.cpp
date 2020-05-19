@@ -29,8 +29,8 @@
 
 #include "IntlDateTimeFormat.h"
 #include "IntlDateTimeFormatPrototype.h"
-#include "IntlObject.h"
 #include "IntlObjectInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

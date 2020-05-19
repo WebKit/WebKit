@@ -28,10 +28,8 @@
 
 #include "APICallbackFunction.h"
 #include "APICast.h"
-#include "Error.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSLock.h"
-#include "ObjectPrototype.h"
 
 namespace JSC {
 

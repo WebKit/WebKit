@@ -30,6 +30,7 @@
 #include "BytecodeGenerator.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
+#include "JSCJSValueInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include "WasmFunctionCodeBlock.h"

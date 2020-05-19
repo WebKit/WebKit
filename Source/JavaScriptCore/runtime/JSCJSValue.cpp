@@ -28,8 +28,7 @@
 #include "CustomGetterSetter.h"
 #include "GetterSetter.h"
 #include "JSBigInt.h"
-#include "JSCJSValueInlines.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "NumberObject.h"
 #include "TypeError.h"
 

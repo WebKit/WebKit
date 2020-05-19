@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LLIntEntrypoint.h"
 #include "CodeBlock.h"
+#include "HeapInlines.h"
 #include "JITCode.h"
 #include "LLIntData.h"
 #include "LLIntThunks.h"

@@ -28,6 +28,7 @@
 
 #include "FunctionConstructor.h"
 #include "GeneratorFunctionPrototype.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

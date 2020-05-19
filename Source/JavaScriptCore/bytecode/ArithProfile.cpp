@@ -27,6 +27,7 @@
 #include "ArithProfile.h"
 
 #include "CCallHelpers.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

@@ -27,12 +27,10 @@
 #include "JSTypedArrayViewPrototype.h"
 
 #include "BuiltinNames.h"
-#include "CallFrame.h"
 #include "GetterSetter.h"
 #include "JSArrayIterator.h"
-#include "JSFunction.h"
+#include "JSCInlines.h"
 #include "JSGenericTypedArrayViewPrototypeFunctions.h"
-#include "JSObjectInlines.h"
 
 namespace JSC {
 

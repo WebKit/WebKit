@@ -26,10 +26,9 @@
 #include "config.h"
 #include "IntlRelativeTimeFormat.h"
 
-#include "Error.h"
 #include "IntlNumberFormat.h"
 #include "IntlObject.h"
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <wtf/unicode/icu/ICUHelpers.h>
 

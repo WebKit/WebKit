@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ReflectObject.h"
 
-#include "JSObjectInlines.h"
+#include "JSCInlines.h"
 #include "ObjectConstructor.h"
 
 namespace JSC {

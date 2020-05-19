@@ -22,7 +22,7 @@
 #include "BooleanConstructor.h"
 
 #include "BooleanPrototype.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

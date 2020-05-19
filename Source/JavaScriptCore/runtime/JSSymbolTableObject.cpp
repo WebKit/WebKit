@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSSymbolTableObject.h"
 
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "PropertyNameArray.h"
 
 namespace JSC {

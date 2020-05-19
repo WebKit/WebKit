@@ -27,7 +27,7 @@
 #include "JSArrayBufferPrototype.h"
 
 #include "JSArrayBuffer.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

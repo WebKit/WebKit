@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WeakMapImpl.h"
 
+#include "AuxiliaryBarrierInlines.h"
 #include "WeakMapImplInlines.h"
 
 namespace JSC {

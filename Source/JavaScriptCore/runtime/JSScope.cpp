@@ -27,7 +27,7 @@
 #include "JSScope.h"
 
 #include "AbstractModuleRecord.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSWithScope.h"

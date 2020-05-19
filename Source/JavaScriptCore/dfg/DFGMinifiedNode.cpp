@@ -30,6 +30,7 @@
 
 #include "DFGMinifiedIDInlines.h"
 #include "DFGNode.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

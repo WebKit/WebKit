@@ -29,10 +29,9 @@
 
 #include "CodeBlock.h"
 #include "JSArray.h"
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
-#include "StrongInlines.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringConcatenate.h>

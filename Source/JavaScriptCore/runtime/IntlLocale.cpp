@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IntlLocale.h"
 
-#include "Error.h"
 #include "IntlObject.h"
+#include "JSCInlines.h"
 #include <unicode/uloc.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 

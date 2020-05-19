@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PolyProtoAccessChain.h"
 
-#include "JSObject.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

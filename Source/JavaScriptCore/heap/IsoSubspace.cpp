@@ -26,10 +26,9 @@
 #include "config.h"
 #include "IsoSubspace.h"
 
-#include "AllocatorInlines.h"
 #include "IsoAlignedMemoryAllocator.h"
 #include "IsoCellSetInlines.h"
-#include "IsoSubspaceInlines.h"
+#include "JSCellInlines.h"
 #include "MarkedSpaceInlines.h"
 
 namespace JSC {

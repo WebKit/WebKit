@@ -22,7 +22,7 @@
 #include "config.h"
 #include "RegExpConstructor.h"
 
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpPrototype.h"
 #include "YarrFlags.h"

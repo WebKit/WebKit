@@ -30,6 +30,7 @@
 
 #include "DFGAvailabilityMap.h"
 #include "DFGBlockMapInlines.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

@@ -23,10 +23,8 @@
 
 #include "BuiltinNames.h"
 #include "JSArray.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
-#include "JSObjectInlines.h"
-#include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Symbol.h"

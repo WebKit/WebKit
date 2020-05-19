@@ -32,6 +32,7 @@
 #include "DFGNode.h"
 #include "DFGPlan.h"
 #include "InlineCallFrame.h"
+#include "JSCJSValueInlines.h"
 #include "TrackedReferences.h"
 #include <wtf/NeverDestroyed.h>
 

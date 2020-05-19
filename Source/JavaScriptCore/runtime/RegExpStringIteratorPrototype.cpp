@@ -28,7 +28,7 @@
 #include "RegExpStringIteratorPrototype.h"
 
 #include "JSCBuiltins.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

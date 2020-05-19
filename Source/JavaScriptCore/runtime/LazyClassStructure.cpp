@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LazyClassStructure.h"
 
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
 
 namespace JSC {

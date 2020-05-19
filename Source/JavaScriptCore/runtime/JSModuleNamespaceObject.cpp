@@ -27,9 +27,8 @@
 #include "JSModuleNamespaceObject.h"
 
 #include "AbstractModuleRecord.h"
-#include "Error.h"
+#include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
-#include "SlotVisitorInlines.h"
 
 namespace JSC {
 

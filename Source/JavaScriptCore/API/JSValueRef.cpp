@@ -29,11 +29,9 @@
 #include "APICast.h"
 #include "APIUtils.h"
 #include "DateInstance.h"
-#include "JSCJSValue.h"
+#include "JSCInlines.h"
 #include "JSCallbackObject.h"
-#include "JSGlobalObject.h"
 #include "JSONObject.h"
-#include "JSString.h"
 #include "LiteralParser.h"
 #include "Protect.h"
 #include <wtf/Assertions.h>

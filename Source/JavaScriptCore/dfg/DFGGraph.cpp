@@ -53,6 +53,7 @@
 #include "OperandsInlines.h"
 #include "Snippet.h"
 #include "StackAlignment.h"
+#include "StructureInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 

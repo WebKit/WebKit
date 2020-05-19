@@ -27,7 +27,7 @@
 #include "ConsoleObject.h"
 
 #include "ConsoleClient.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStackFactory.h"
 

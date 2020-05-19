@@ -28,13 +28,11 @@
 #include "BigIntPrototype.h"
 
 #include "BigIntObject.h"
-#include "Error.h"
 #include "IntegrityInlines.h"
 #include "IntlNumberFormat.h"
 #include "JSBigInt.h"
+#include "JSCInlines.h"
 #include "JSCast.h"
-#include "JSGlobalObject.h"
-#include "JSString.h"
 #include "NumberPrototype.h"
 #include <wtf/Assertions.h>
 

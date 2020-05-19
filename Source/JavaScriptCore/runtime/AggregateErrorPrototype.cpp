@@ -28,7 +28,7 @@
 
 #include "AggregateError.h"
 #include "CallFrame.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "ThrowScope.h"
 
 namespace JSC {

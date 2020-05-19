@@ -30,7 +30,7 @@
 #include "config.h"
 #include "ScriptValue.h"
 
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 #include "JSLock.h"
 
 namespace Inspector {

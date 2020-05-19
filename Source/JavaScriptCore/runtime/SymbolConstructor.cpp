@@ -27,9 +27,7 @@
 #include "config.h"
 #include "SymbolConstructor.h"
 
-#include "Error.h"
-#include "JSGlobalObject.h"
-#include "Symbol.h"
+#include "JSCInlines.h"
 #include "SymbolPrototype.h"
 #include <wtf/text/SymbolRegistry.h>
 

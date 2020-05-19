@@ -29,7 +29,7 @@
 #include "ClonedArguments.h"
 #include "DebuggerPrimitives.h"
 #include "InlineCallFrame.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmCallee.h"
 #include "WasmIndexOrName.h"

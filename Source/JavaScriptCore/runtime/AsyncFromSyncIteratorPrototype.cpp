@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AsyncFromSyncIteratorPrototype.h"
 
+#include "JSCInlines.h"
+
 #include "AsyncFromSyncIteratorPrototype.lut.h"
 
 namespace JSC {

@@ -26,10 +26,8 @@
 #include "config.h"
 #include "WeakMapConstructor.h"
 
-#include "Error.h"
 #include "IteratorOperations.h"
-#include "JSGlobalObject.h"
-#include "JSObjectInlines.h"
+#include "JSCInlines.h"
 #include "JSWeakMap.h"
 #include "WeakMapPrototype.h"
 

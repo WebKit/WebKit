@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StopIfNecessaryTimer.h"
 
+#include "HeapInlines.h"
 #include "VM.h"
 
 namespace JSC {

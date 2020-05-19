@@ -28,6 +28,8 @@
 #include "config.h"
 #include "RuntimeType.h"
 
+#include "JSCJSValueInlines.h"
+
 namespace JSC {
 
 RuntimeType runtimeTypeForValue(VM& vm, JSValue value)

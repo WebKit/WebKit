@@ -38,7 +38,7 @@
 #include "DFGSpeculativeJIT.h"
 #include "FrameTracers.h"
 #include "InlineCallFrame.h"
-#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 

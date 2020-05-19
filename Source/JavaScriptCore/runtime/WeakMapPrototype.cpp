@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WeakMapPrototype.h"
 
+#include "JSCInlines.h"
 #include "JSWeakMap.h"
 
 namespace JSC {

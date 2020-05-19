@@ -26,9 +26,8 @@
 #include "config.h"
 #include "IntlLocalePrototype.h"
 
-#include "AuxiliaryBarrierInlines.h"
-#include "Error.h"
 #include "IntlLocale.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

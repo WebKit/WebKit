@@ -31,6 +31,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
 #include "Disassembler.h"
+#include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {

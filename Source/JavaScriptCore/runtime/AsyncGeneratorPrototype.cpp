@@ -27,6 +27,8 @@
 #include "config.h"
 #include "AsyncGeneratorPrototype.h"
 
+#include "JSCInlines.h"
+
 #include "AsyncGeneratorPrototype.lut.h"
 
 namespace JSC {

@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ButterflyInlines.h"
 #include "DFGAbstractHeap.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGClobberSet.h"

@@ -28,7 +28,7 @@
 
 #include "HandleBlock.h"
 #include "HandleBlockInlines.h"
-#include "JSObject.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

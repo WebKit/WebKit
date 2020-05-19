@@ -27,9 +27,8 @@
 #include "MapConstructor.h"
 
 #include "IteratorOperations.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSMap.h"
-#include "JSObjectInlines.h"
 #include "MapPrototype.h"
 
 namespace JSC {

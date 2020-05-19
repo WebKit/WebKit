@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSInternalPromisePrototype.h"
 
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

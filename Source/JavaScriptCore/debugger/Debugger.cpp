@@ -25,9 +25,7 @@
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
 #include "HeapIterationScope.h"
-#include "JSCJSValueInlines.h"
-#include "JSFunction.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "VMEntryScope.h"
 

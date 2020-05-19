@@ -30,7 +30,7 @@
 #include "SymbolTable.h"
 
 #include "CodeBlock.h"
-#include "SlotVisitorInlines.h"
+#include "JSCJSValueInlines.h"
 #include "TypeProfiler.h"
 
 namespace JSC {

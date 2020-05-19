@@ -29,6 +29,7 @@
 #include "BytecodeStructs.h"
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
+#include "JSCInlines.h"
 #include "LLIntCallLinkInfo.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>

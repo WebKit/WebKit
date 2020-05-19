@@ -28,6 +28,7 @@
 #include "APICast.h"
 #include "Completion.h"
 #include "Exception.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSScriptRefPrivate.h"
 #include "OpaqueJSString.h"
 #include "Parser.h"

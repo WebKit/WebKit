@@ -28,6 +28,7 @@
 
 #include "AlignedMemoryAllocator.h"
 #include "FreeListInlines.h"
+#include "JSCJSValueInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SweepingScope.h"
 #include <wtf/CommaPrinter.h>

@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGVariableAccessData.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

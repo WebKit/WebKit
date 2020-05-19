@@ -27,8 +27,8 @@
 #include "config.h"
 #include "IntlPluralRulesPrototype.h"
 
-#include "Error.h"
 #include "IntlPluralRules.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

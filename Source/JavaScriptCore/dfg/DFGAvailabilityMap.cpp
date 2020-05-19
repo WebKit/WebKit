@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"
+#include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
 #include <wtf/ListDump.h>
 

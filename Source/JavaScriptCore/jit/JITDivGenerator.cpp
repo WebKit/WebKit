@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "ArithProfile.h"
+#include "JSCJSValueInlines.h"
 #include "MathCommon.h"
 
 namespace JSC {

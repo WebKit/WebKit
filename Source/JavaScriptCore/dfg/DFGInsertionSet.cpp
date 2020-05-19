@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "JSCJSValueInlines.h"
+
 namespace JSC { namespace DFG {
 
 void InsertionSet::insertSlow(const Insertion& insertion)

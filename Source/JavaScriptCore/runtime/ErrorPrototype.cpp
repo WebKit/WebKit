@@ -21,11 +21,8 @@
 #include "config.h"
 #include "ErrorPrototype.h"
 
-#include "Error.h"
-#include "ExceptionHelpers.h"
 #include "IntegrityInlines.h"
-#include "JSGlobalObject.h"
-#include "JSStringInlines.h"
+#include "JSCInlines.h"
 #include "StringRecursionChecker.h"
 
 namespace JSC {

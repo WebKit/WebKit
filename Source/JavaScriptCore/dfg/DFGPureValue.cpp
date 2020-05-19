@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "JSCJSValueInlines.h"
+
 namespace JSC { namespace DFG {
 
 void PureValue::dump(PrintStream& out) const

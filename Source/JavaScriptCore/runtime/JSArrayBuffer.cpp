@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSArrayBuffer.h"
 
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "TypedArrayController.h"
 
 namespace JSC {

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "AsyncFunctionPrototype.h"
 
+#include "JSCInlines.h"
+
 namespace JSC {
 
 const ClassInfo AsyncFunctionPrototype::s_info = { "AsyncFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncFunctionPrototype) };

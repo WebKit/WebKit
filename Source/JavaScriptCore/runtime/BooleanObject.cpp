@@ -21,7 +21,7 @@
 #include "config.h"
 #include "BooleanObject.h"
 
-#include "AuxiliaryBarrierInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

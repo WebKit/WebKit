@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
+#include "JSCellInlines.h"
 
 namespace JSC { namespace DFG {
 

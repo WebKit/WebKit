@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProfilerUID.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include <wtf/Lock.h>
 

@@ -34,6 +34,7 @@
 #include "DFGPhase.h"
 #include "FTLCapabilities.h"
 #include "FunctionWhitelist.h"
+#include "JSCJSValueInlines.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace DFG {

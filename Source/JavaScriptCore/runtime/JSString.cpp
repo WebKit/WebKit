@@ -23,8 +23,8 @@
 #include "config.h"
 #include "JSString.h"
 
-#include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSGlobalObjectInlines.h"
 #include "StringObject.h"
 #include "StrongInlines.h"
 

@@ -21,8 +21,7 @@
 #include "config.h"
 #include "StringConstructor.h"
 
-#include "Error.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "StringPrototype.h"
 #include <wtf/text/StringBuilder.h>
 

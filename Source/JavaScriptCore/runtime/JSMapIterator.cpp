@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSMapIterator.h"
 
+#include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 #include "JSMap.h"
 

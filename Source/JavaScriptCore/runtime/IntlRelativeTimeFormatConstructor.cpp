@@ -26,10 +26,10 @@
 #include "config.h"
 #include "IntlRelativeTimeFormatConstructor.h"
 
-#include "Error.h"
 #include "IntlObject.h"
 #include "IntlRelativeTimeFormat.h"
 #include "IntlRelativeTimeFormatPrototype.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

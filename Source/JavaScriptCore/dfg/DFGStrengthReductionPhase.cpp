@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ButterflyInlines.h"
 #include "DFGAbstractHeap.h"
 #include "DFGClobberize.h"
 #include "DFGGraph.h"

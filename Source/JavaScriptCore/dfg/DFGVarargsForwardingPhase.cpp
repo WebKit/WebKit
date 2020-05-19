@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ButterflyInlines.h"
 #include "ClonedArguments.h"
 #include "DFGArgumentsUtilities.h"
 #include "DFGClobberize.h"

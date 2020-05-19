@@ -34,6 +34,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

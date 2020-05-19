@@ -27,8 +27,7 @@
 #include "MapPrototype.h"
 
 #include "BuiltinNames.h"
-#include "Error.h"
-#include "ExceptionHelpers.h"
+#include "JSCInlines.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
 

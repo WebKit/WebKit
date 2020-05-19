@@ -21,7 +21,7 @@
 #include "config.h"
 #include "MathObject.h"
 
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "MathCommon.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>

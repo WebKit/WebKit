@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSJavaScriptCallFramePrototype.h"
 
-#include "Error.h"
+#include "JSCInlines.h"
 #include "JSJavaScriptCallFrame.h"
 
 namespace Inspector {

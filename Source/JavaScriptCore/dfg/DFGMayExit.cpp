@@ -31,6 +31,7 @@
 #include "DFGAtTailAbstractState.h"
 #include "DFGNode.h"
 #include "DFGNullAbstractState.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 

@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "FunctionCodeBlock.h"
 #include "FunctionOverrides.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

@@ -48,6 +48,7 @@
 #include "JSBigInt.h"
 
 #include "BigIntObject.h"
+#include "JSCJSValueInlines.h"
 #include "MathCommon.h"
 #include "ParseInt.h"
 #include <algorithm>

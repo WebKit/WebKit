@@ -30,6 +30,7 @@
 #include "JSLexicalEnvironment.h"
 
 #include "HeapAnalyzer.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

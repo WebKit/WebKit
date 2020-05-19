@@ -44,6 +44,7 @@
 #include "JSInternalPromise.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
+#include "StructureInlines.h"
 #include <wtf/StdList.h>
 
 namespace JSC { namespace DFG {

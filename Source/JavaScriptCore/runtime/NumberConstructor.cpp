@@ -22,7 +22,7 @@
 #include "config.h"
 #include "NumberConstructor.h"
 
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "NumberObject.h"
 #include "NumberPrototype.h"
 

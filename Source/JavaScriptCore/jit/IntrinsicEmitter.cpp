@@ -33,6 +33,7 @@
 #include "CCallHelpers.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JSArrayBufferView.h"
+#include "JSCJSValueInlines.h"
 #include "PolymorphicAccess.h"
 #include "StructureStubInfo.h"
 

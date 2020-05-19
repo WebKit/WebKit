@@ -28,12 +28,9 @@
 
 #include "BuiltinNames.h"
 #include "DumpContext.h"
-#include "JSObject.h"
-#include "Lookup.h"
+#include "JSCInlines.h"
 #include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
-#include "StructureInlines.h"
-#include "WeakGCMapInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>

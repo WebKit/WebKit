@@ -30,7 +30,7 @@
 
 #include "CCallHelpers.h"
 #include "DataFormat.h"
-#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 

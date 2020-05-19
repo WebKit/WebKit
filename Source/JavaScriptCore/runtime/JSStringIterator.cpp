@@ -27,7 +27,7 @@
 #include "config.h"
 #include "JSStringIterator.h"
 
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {

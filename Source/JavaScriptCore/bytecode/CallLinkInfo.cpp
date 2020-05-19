@@ -28,6 +28,7 @@
 
 #include "CallFrameShuffleData.h"
 #include "FunctionCodeBlock.h"
+#include "JSCellInlines.h"
 #include "Opcode.h"
 #include "Repatch.h"
 #include <wtf/ListDump.h>

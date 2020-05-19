@@ -1,3 +1,27 @@
+2020-05-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r261755): Win/Linux non-unified builds have hundreds of link failures
+        https://bugs.webkit.org/show_bug.cgi?id=212111
+
+        Unreviewed build fix.
+
+        * API/:
+        * bindings/:
+        * bytecode/:
+        * bytecompiler/NodesCodegen.cpp:
+        * debugger/:
+        * dfg/:
+        * heap/:
+        * inspector/:
+        * interpreter/:
+        * jit/:
+        * llint/LLIntEntrypoint.cpp:
+        * parser/:
+        * profiler/:
+        * runtime/:
+        Restore *Inlines.h includes for >300 files,
+        but try to preserve the spirit of the original patch by pruning redundancies along the way.
+
 2020-05-19  Mark Lam  <mark.lam@apple.com>
 
         Put PtrTagLookup data structures in Configs for freezing.

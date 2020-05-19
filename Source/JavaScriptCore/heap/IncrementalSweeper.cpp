@@ -27,7 +27,7 @@
 #include "IncrementalSweeper.h"
 
 #include "DeferGC.h"
-#include "Heap.h"
+#include "HeapInlines.h"
 #include "MarkedBlock.h"
 #include "VM.h"
 

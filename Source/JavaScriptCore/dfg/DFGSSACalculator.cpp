@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBlockMapInlines.h"
+#include "JSCJSValueInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace DFG {

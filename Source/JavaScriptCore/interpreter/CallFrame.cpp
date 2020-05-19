@@ -29,7 +29,7 @@
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
 #include "InlineCallFrame.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntPCRanges.h"
 #include "WasmContextInlines.h"

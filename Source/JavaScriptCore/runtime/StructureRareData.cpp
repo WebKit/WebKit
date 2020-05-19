@@ -33,6 +33,7 @@
 #include "ObjectPropertyConditionSet.h"
 #include "ObjectToStringAdaptiveStructureWatchpoint.h"
 #include "StructureChain.h"
+#include "StructureRareDataInlines.h"
 
 namespace JSC {
 

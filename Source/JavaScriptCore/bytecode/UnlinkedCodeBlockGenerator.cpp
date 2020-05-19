@@ -28,6 +28,7 @@
 
 #include "BytecodeRewriter.h"
 #include "InstructionStream.h"
+#include "JSCJSValueInlines.h"
 #include "PreciseJumpTargets.h"
 #include "UnlinkedMetadataTableInlines.h"
 

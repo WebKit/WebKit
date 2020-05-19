@@ -30,7 +30,7 @@
 #include "JSModuleEnvironment.h"
 
 #include "AbstractModuleRecord.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

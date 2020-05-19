@@ -22,6 +22,7 @@
 #include "config.h"
 #include "DateInstance.h"
 
+#include "JSCInlines.h"
 #include "JSDateMath.h"
 
 namespace JSC {

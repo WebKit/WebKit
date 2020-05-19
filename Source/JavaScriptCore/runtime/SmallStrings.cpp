@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SmallStrings.h"
 
-#include "JSString.h"
+#include "JSCJSValueInlines.h"
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

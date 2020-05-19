@@ -25,9 +25,7 @@
 #include "ArrayConstructor.h"
 
 #include "ArrayPrototype.h"
-#include "Error.h"
-#include "JSArray.h"
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 #include "ProxyObject.h"
 
 #include "ArrayConstructor.lut.h"

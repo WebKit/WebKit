@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ButterflyInlines.h"
 #include "DFGClobberize.h"
 #include <wtf/ListDump.h>
 

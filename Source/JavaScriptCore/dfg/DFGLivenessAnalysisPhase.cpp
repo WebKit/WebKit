@@ -32,6 +32,7 @@
 #include "DFGFlowIndexing.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include "JSCJSValueInlines.h"
 #include <wtf/BitVector.h>
 #include <wtf/IndexSparseSet.h>
 

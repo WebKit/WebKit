@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSGenerator.h"
 
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {

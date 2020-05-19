@@ -27,6 +27,7 @@
 #include "PutByIdVariant.h"
 
 #include "CallLinkStatus.h"
+#include "HeapInlines.h"
 
 namespace JSC {
 

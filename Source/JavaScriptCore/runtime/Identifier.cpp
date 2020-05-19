@@ -21,6 +21,7 @@
 #include "config.h"
 #include "Identifier.h"
 
+#include "IdentifierInlines.h"
 #include "NumericStrings.h"
 #include <wtf/Assertions.h>
 

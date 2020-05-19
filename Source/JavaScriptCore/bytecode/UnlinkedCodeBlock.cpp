@@ -32,8 +32,7 @@
 #include "ClassInfo.h"
 #include "ExecutableInfo.h"
 #include "InstructionStream.h"
-#include "SlotVisitorInlines.h"
-#include "Structure.h"
+#include "JSCJSValueInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include <wtf/DataLog.h>
 

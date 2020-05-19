@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArrayAllocationProfile.h"
 
+#include "JSCellInlines.h"
 #include <algorithm>
 
 namespace JSC {

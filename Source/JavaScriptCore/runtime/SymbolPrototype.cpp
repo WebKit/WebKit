@@ -27,9 +27,8 @@
 #include "config.h"
 #include "SymbolPrototype.h"
 
-#include "Error.h"
 #include "IntegrityInlines.h"
-#include "JSString.h"
+#include "JSCInlines.h"
 #include "SymbolObject.h"
 
 namespace JSC {

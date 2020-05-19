@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSTypedArrayConstructors.h"
 
+#include "JSCInlines.h"
+
 namespace JSC {
 
 #undef MAKE_S_INFO

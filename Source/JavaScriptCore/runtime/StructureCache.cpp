@@ -26,8 +26,7 @@
 #include "config.h"
 #include "StructureCache.h"
 
-#include "JSGlobalObject.h"
-#include "WeakInlines.h"
+#include "JSCInlines.h"
 #include <wtf/Locker.h>
 
 namespace JSC {

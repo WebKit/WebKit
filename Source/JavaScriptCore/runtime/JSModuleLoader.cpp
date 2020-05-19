@@ -29,12 +29,11 @@
 
 #include "BuiltinNames.h"
 #include "CatchScope.h"
-#include "Exception.h"
+#include "JSCInlines.h"
 #include "JSInternalPromise.h"
 #include "JSMap.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
-#include "JSObjectInlines.h"
 #include "JSSourceCode.h"
 #include "JSWebAssembly.h"
 #include "ModuleAnalyzer.h"

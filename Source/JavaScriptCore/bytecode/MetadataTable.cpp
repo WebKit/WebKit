@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MetadataTable.h"
 
+#include "JSCJSValueInlines.h"
 #include "OpcodeInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
 

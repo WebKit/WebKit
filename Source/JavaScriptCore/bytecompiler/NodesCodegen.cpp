@@ -31,9 +31,9 @@
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeGeneratorBaseInlines.h"
-#include "CallFrame.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
+#include "JSCInlines.h"
 #include "JSGenerator.h"
 #include "JSImmutableButterfly.h"
 #include "JSMapIterator.h"
@@ -43,6 +43,7 @@
 #include "LinkTimeConstant.h"
 #include "ModuleScopeData.h"
 #include "StackAlignment.h"
+#include "UnlinkedMetadataTableInlines.h"
 #include "YarrFlags.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/StringBuilder.h>

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StrictEvalActivation.h"
 
+#include "JSCInlines.h"
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StrictEvalActivation);

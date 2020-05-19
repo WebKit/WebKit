@@ -26,9 +26,7 @@
 #include "IntegrityInlines.h"
 #include "IsoSubspaceInlines.h"
 #include "JSBigInt.h"
-#include "JSGlobalObject.h"
-#include "JSObject.h"
-#include "JSString.h"
+#include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SubspaceInlines.h"
 #include <wtf/LockAlgorithmInlines.h>

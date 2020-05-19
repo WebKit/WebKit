@@ -27,7 +27,7 @@
 #include "JSCallbackFunction.h"
 
 #include "APICallbackFunction.h"
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

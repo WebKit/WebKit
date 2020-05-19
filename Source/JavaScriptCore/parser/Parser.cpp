@@ -26,6 +26,7 @@
 #include "ASTBuilder.h"
 #include "BuiltinNames.h"
 #include "DebuggerParseData.h"
+#include "JSCJSValueInlines.h"
 #include "VM.h"
 #include <utility>
 #include <wtf/Scope.h>

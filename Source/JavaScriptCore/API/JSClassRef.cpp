@@ -28,8 +28,8 @@
 
 #include "APICast.h"
 #include "InitializeThreading.h"
+#include "JSCInlines.h"
 #include "JSCallbackObject.h"
-#include "JSGlobalObject.h"
 
 using namespace JSC;
 

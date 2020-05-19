@@ -26,6 +26,8 @@
 #include "config.h"
 #include "InstanceOfVariant.h"
 
+#include "JSCJSValueInlines.h"
+
 namespace JSC {
 
 InstanceOfVariant::InstanceOfVariant(

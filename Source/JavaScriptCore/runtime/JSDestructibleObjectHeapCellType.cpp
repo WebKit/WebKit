@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDestructibleObjectHeapCellType.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSDestructibleObject.h"
 #include "MarkedBlockInlines.h"
 

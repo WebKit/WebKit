@@ -32,6 +32,7 @@
 #include "GlobalExecutable.h"
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "LLIntEntrypoint.h"
 #include "ModuleProgramCodeBlock.h"

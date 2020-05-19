@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WeakObjectRefPrototype.h"
 
-#include "JSGlobalObject.h"
+#include "JSCInlines.h"
 #include "JSWeakObjectRef.h"
 
 namespace JSC {

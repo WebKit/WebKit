@@ -32,7 +32,7 @@
 #include "config.h"
 #include "InjectedScript.h"
 
-#include "JSGlobalObjectInlines.h"
+#include "JSCInlines.h"
 #include "JSLock.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"

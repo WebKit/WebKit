@@ -28,6 +28,7 @@
 #include "StringIteratorPrototype.h"
 
 #include "JSCBuiltins.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

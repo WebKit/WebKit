@@ -28,6 +28,7 @@
 
 #include "AsyncFunctionPrototype.h"
 #include "FunctionConstructor.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 

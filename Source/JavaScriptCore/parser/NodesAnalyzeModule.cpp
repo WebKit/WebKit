@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Nodes.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSModuleRecord.h"
 #include "ModuleAnalyzer.h"
 

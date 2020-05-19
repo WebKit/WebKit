@@ -25,9 +25,8 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "DatePrototype.h"
+#include "JSCInlines.h"
 #include "JSDateMath.h"
-#include "JSGlobalObject.h"
-#include "JSString.h"
 
 namespace JSC {
 

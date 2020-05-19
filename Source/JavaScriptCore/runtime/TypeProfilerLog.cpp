@@ -29,7 +29,7 @@
 #include "config.h"
 #include "TypeProfilerLog.h"
 
-#include "SlotVisitorInlines.h"
+#include "JSCJSValueInlines.h"
 #include "TypeLocation.h"
 
 namespace JSC {
