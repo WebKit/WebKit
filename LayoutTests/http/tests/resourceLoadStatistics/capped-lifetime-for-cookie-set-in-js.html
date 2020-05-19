@@ -8,7 +8,6 @@
 <script>
     description("Check that cookies created by JavaScript with max-age or expiry longer than a week get capped to a week.");
     jsTestIsAsync = true;
-    testRunner.setUseITPDatabase(false);
 
     if (internals)
         internals.setResourceLoadStatisticsEnabled(true);

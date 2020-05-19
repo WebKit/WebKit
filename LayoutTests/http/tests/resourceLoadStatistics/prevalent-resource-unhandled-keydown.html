@@ -13,7 +13,6 @@ onload = function() {
     const testFrame = document.getElementById("testFrame");
 
     if (window.testRunner && window.internals) {
-        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
         });

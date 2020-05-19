@@ -40,7 +40,6 @@
         }
 
         if (testRunner) {
-            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function() {
                 testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
             });

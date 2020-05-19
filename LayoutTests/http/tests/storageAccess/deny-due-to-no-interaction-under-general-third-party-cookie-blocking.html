@@ -7,8 +7,7 @@
     <script>
         description("Tests that a cross-site iframe can not request storage access under general third-party cookie blocking if it has not received user interaction as first-party.");
         jsTestIsAsync = true;
-        testRunner.setUseITPDatabase(false);
-
+        
         const firstPartyUrl = "http://127.0.0.1:8000";
         const thirdPartyUrl = "http://localhost:8000";
 

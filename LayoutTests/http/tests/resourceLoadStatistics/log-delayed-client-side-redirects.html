@@ -21,7 +21,6 @@
 
     function runTest() {
         if (document.location.origin === navigationStartOrigin) {
-            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, navigateCrossSite);
         } else {
             testRunner.dumpResourceLoadStatistics();

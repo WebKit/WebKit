@@ -59,7 +59,6 @@
 
     function run() {
         if (document.location.hash === "") {
-            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function () {
                 testRunner.dumpChildFramesAsText();
                 document.location.hash = "step1";

@@ -238,7 +238,6 @@
 
     const originUnderTest  = "http://127.0.0.1:8000";
     function runTest() {
-        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function () {
             testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, function() {
                 testRunner.setStatisticsHasHadUserInteraction(originUnderTest, true, function() {

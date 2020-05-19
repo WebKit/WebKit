@@ -6,8 +6,7 @@
     <script>
         description("Tests that a cross-origin window from a prevalent domain without user interaction is denied storage access under its opener.");
         jsTestIsAsync = true;
-        testRunner.setUseITPDatabase(false);
-
+        
         window.addEventListener("message", receiveMessage, false);
 
         function finishTest() {

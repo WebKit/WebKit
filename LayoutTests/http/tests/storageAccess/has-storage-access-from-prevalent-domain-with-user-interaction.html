@@ -24,7 +24,6 @@
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest + "/temp";
         function runTest() {
-            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function() {
                 testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
                     if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))

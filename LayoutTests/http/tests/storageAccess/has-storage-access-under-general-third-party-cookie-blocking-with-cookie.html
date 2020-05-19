@@ -32,7 +32,6 @@
         function runTests() {
             switch (document.location.hash) {
                 case "":
-                    testRunner.setUseITPDatabase(false);
                     setEnableFeature(true, function () {
                         if (testRunner.isStatisticsPrevalentResource(thirdPartyUrl))
                             testFailed("Third-party started out as prevalent resource.");

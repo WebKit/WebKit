@@ -45,7 +45,6 @@
     }
 
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
-        testRunner.setUseITPDatabase(false);
         testRunner.waitUntilDone();
         testRunner.dumpChildFramesAsText();
         setEnableFeature(true, function() {

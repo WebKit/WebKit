@@ -20,7 +20,6 @@
     }
 
     let referrer;
-    testRunner.setUseITPDatabase(false);
     setEnableFeature(true, function() {
         fetch("resources/echo-referrer.php").then(function(response) {
             return response.text();

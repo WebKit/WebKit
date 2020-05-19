@@ -1,3 +1,125 @@
+2020-05-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Revert WebKitTestRunner to reset ITP to the memory store between all tests.
+        https://bugs.webkit.org/show_bug.cgi?id=212094
+        <rdar://problem/63405806>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/resourceLoadStatistics/add-blocking-to-redirect.html:
+        * http/tests/resourceLoadStatistics/aggregate-sorted-data-no-storage-access.html:
+        * http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import.html:
+        * http/tests/resourceLoadStatistics/cap-cache-max-age-for-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site.html:
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-non-prevalent-based-on-subresource-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-redirect-to-prevalent.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-to-prevalent.html:
+        * http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/classify-as-very-prevalent-based-on-mixed-statistics.html:
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html:
+        * http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html:
+        * http/tests/resourceLoadStatistics/cookie-deletion.html:
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-import-in-worker.html:
+        * http/tests/resourceLoadStatistics/count-third-party-script-loads.html:
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies.html:
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html:
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations.html:
+        * http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html:
+        * http/tests/resourceLoadStatistics/dont-count-third-party-image-as-third-party-script.html:
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/enable-debug-mode.html:
+        * http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html:
+        * http/tests/resourceLoadStatistics/grandfathering.html:
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html:
+        * http/tests/resourceLoadStatistics/log-delayed-client-side-redirects.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/prune-statistics.html:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-mixed-statistics-entries.html:
+        * http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-third-party-script-loads.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+        * http/tests/resourceLoadStatistics/set-custom-prevalent-resource-in-debug-mode.html:
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html:
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html:
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html:
+        * http/tests/resourceLoadStatistics/telemetry-generation.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking.html:
+        * http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html:
+        * http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html:
+        * http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html:
+        * http/tests/storageAccess/aggregate-sorted-data-with-storage-access.html:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener.html:
+        * http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html:
+        * http/tests/storageAccess/deny-without-prompt-preserves-gesture.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.html:
+        * http/tests/storageAccess/grant-with-prompt-preserves-gesture.html:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html:
+        * http/tests/storageAccess/has-storage-access-crash.html:
+        * http/tests/storageAccess/has-storage-access-false-by-default.html:
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie.html:
+        * http/tests/storageAccess/remove-requesting-iframe.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-nested-iframe.html:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html:
+        * http/tests/storageAccess/request-storage-access-crash.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html:
+        * http/tests/storageAccess/request-storage-access-top-frame.html:
+
 2020-05-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip fast/dom/window-open-ephemeral.html.

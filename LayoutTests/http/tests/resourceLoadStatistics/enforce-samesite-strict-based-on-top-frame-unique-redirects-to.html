@@ -88,7 +88,6 @@
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             runTest();
         });

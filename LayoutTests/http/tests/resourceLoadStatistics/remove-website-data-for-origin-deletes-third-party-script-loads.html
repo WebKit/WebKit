@@ -24,7 +24,6 @@
         switch (document.location.hash) {
             case "":
                 if (window.testRunner && window.internals) {
-                    testRunner.setUseITPDatabase(false);
                     testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
                         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);

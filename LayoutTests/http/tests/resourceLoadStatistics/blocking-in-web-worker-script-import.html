@@ -72,7 +72,6 @@
     }
 
     if (document.location.host === partitionHost && document.location.hash === "" && window.testRunner && window.internals) {
-        testRunner.setUseITPDatabase(false);
         setEnableFeature(true, function() {
             document.location.hash = "step1";
             testRunner.dumpChildFramesAsText();

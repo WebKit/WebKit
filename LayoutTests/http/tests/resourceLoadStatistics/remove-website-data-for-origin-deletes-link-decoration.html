@@ -20,7 +20,6 @@
     const prevalentResourceOrigin = "http://127.0.0.1:8000";
     function runTest() {
         if (document.location.origin === prevalentResourceOrigin) {
-            testRunner.setUseITPDatabase(false);
             setEnableFeature(true, function () {
                 testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
                     if (!testRunner.isStatisticsPrevalentResource(prevalentResourceOrigin))
