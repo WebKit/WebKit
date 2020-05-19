@@ -629,7 +629,6 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     
     if (options.useEphemeralSession) {
         auto ephemeralDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
-        WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(ephemeralDataStore.get(), true);
         WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), ephemeralDataStore.get());
     }
 
@@ -1028,6 +1027,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextResetServiceWorkerFetchTimeoutForTesting(TestController::singleton().context());
 
+    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
+    WKContextSetStorageAccessAPIEnabled(platformContext(), true);
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
 
     clearIndexedDatabases();
@@ -3133,7 +3134,6 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
-    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(defaultWebsiteDataStore(), true);
     WKContextSetPrimaryWebsiteDataStore(context, defaultWebsiteDataStore());
     return context;
 }

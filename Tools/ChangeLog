@@ -1,3 +1,24 @@
+2020-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Turn on ITP in TestController::resetStateToConsistentValues()
+        https://bugs.webkit.org/show_bug.cgi?id=212076
+
+        Reviewed by Darin Adler.
+
+        Turn on ITP in TestController::resetStateToConsistentValues(), in a single place
+        instead of doing it in different places depending on whether or not the session
+        is ephemeral or not. It is also important to do it in resetStateToConsistentValues()
+        instead of doing it on data store creation because there is a testRunner method
+        that allows tests to turn off ITP.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::platformAdjustContext):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+        (WTR::TestController::platformInitializeDataStore):
+
 2020-05-19  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Use items instead of iteritems to make Python 3 happier.

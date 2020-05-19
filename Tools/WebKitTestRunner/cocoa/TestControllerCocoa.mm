@@ -72,10 +72,6 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration._allowTopNavigationToDataURLs = YES;
     globalWebViewConfiguration._applePayEnabled = YES;
 
-    WKContextSetStorageAccessAPIEnabled(context, true);
-
-    [globalWebViewConfiguration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-
     [globalWebsiteDataStoreDelegateClient release];
     globalWebsiteDataStoreDelegateClient = [[TestWebsiteDataStoreDelegate alloc] init];
     [globalWebViewConfiguration.websiteDataStore set_delegate:globalWebsiteDataStoreDelegateClient];
@@ -139,9 +135,7 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
             configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig);
         if (options.standaloneWebApplicationURL.length())
             [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:options.standaloneWebApplicationURL.c_str()]]];
-        auto *websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
-        [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)websiteDataStore;
+        m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfig] autorelease];
     } else
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)globalWebViewConfiguration.websiteDataStore;
 }
