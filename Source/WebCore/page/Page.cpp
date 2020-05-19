@@ -434,6 +434,8 @@ ScrollingCoordinator* Page::scrollingCoordinator()
         m_scrollingCoordinator = chrome().client().createScrollingCoordinator(*this);
         if (!m_scrollingCoordinator)
             m_scrollingCoordinator = ScrollingCoordinator::create(this);
+
+        m_scrollingCoordinator->windowScreenDidChange(m_displayID);
     }
 
     return m_scrollingCoordinator.get();
@@ -1119,6 +1121,9 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID)
         if (frame->document())
             frame->document()->windowScreenDidChange(displayID);
     }
+
+    if (m_scrollingCoordinator)
+        m_scrollingCoordinator->windowScreenDidChange(displayID);
 
     renderingUpdateScheduler().windowScreenDidChange(displayID);
 

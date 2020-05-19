@@ -527,6 +527,18 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
     return false;
 }
 
+void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    LockHolder locker(m_treeStateMutex);
+    m_treeState.displayID = displayID;
+}
+
+PlatformDisplayID ScrollingTree::displayID()
+{
+    LockHolder locker(m_treeStateMutex);
+    return m_treeState.displayID;
+}
+
 void ScrollingTree::setScrollingPerformanceLoggingEnabled(bool flag)
 {
     m_scrollingPerformanceLoggingEnabled = flag;

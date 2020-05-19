@@ -68,6 +68,8 @@ class ViewportConstraints;
 class ScrollingTree;
 #endif
 
+using PlatformDisplayID = uint32_t;
+
 class ScrollingCoordinator : public ThreadSafeRefCounted<ScrollingCoordinator> {
 public:
     static Ref<ScrollingCoordinator> create(Page*);
@@ -178,6 +180,8 @@ public:
 
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
+
+    virtual void windowScreenDidChange(PlatformDisplayID) { }
 
     static String synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason>);
     String synchronousScrollingReasonsAsText() const;

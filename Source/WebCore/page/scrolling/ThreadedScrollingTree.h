@@ -55,6 +55,8 @@ public:
 
     void invalidate() override;
 
+    WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID);
+
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
 
@@ -75,6 +77,8 @@ protected:
 private:
     bool isThreadedScrollingTree() const override { return true; }
     void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) override;
+
+    void displayDidRefreshOnScrollingThread();
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };

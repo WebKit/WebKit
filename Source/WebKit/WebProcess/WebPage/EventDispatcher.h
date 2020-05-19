@@ -102,6 +102,10 @@ private:
     void displayWasRefreshed(WebCore::PlatformDisplayID);
 #endif
 
+#if ENABLE(SCROLLING_THREAD)
+    void displayDidRefreshOnScrollingThread(WebCore::PlatformDisplayID);
+#endif
+
     Ref<WorkQueue> m_queue;
 
 #if ENABLE(SCROLLING_THREAD)

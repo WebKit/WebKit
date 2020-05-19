@@ -816,6 +816,12 @@ bool AsyncScrollingCoordinator::hasSynchronousScrollingReasons(ScrollingNodeID n
 #endif
 }
 
+void AsyncScrollingCoordinator::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    if (m_scrollingTree)
+        m_scrollingTree->windowScreenDidChange(displayID);
+}
+
 bool AsyncScrollingCoordinator::isRubberBandInProgress() const
 {
     return scrollingTree()->isRubberBandInProgress();

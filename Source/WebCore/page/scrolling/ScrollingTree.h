@@ -54,6 +54,7 @@ class ScrollingTreeOverflowScrollProxyNode;
 class ScrollingTreePositionedNode;
 class ScrollingTreeScrollingNode;
 enum class EventListenerRegionType : uint8_t;
+using PlatformDisplayID = uint32_t;
 
 class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
 friend class ScrollingTreeLatchingController;
@@ -178,6 +179,9 @@ public:
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
 
+    void windowScreenDidChange(PlatformDisplayID);
+    PlatformDisplayID displayID();
+
 protected:
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);
@@ -216,6 +220,7 @@ private:
     struct TreeState {
         EventTrackingRegions eventTrackingRegions;
         FloatPoint mainFrameScrollPosition;
+        PlatformDisplayID displayID { 0 };
         bool mainFrameIsRubberBanding { false };
         bool mainFrameIsScrollSnapping { false };
     };

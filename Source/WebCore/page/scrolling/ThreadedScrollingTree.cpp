@@ -202,6 +202,25 @@ void ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID node
 }
 #endif
 
+void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
+{
+    if (displayID != this->displayID())
+        return;
+
+    // We're on the EventDispatcher thread here.
+
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingThread::dispatch([protectedThis = makeRef(*this)]() {
+        protectedThis->displayDidRefreshOnScrollingThread();
+    });
+#endif
+}
+
+void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
