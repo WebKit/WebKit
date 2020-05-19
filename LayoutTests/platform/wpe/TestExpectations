@@ -10,6 +10,10 @@ webkit.org/b/186759 imported/w3c/web-platform-tests/offscreen-canvas/text [ Skip
 webkit.org/b/206055 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.svg.worker.html [ Skip ]
 webkit.org/b/206055 imported/w3c/web-platform-tests/offscreen-canvas/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.worker.html [ Skip ]
 
+scrollingcoordinator/ [ Pass ]
+scrollingcoordinator/mac/ [ Skip ]
+scrollingcoordinator/ios/ [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -128,6 +132,10 @@ webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
+webarchive/ [ WontFix ]
+http/tests/webarchive [ WontFix ]
+svg/webarchive [ WontFix ]
+svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
 
 # Skip anything related to WebAuthN
 # ---------------------------------
@@ -290,9 +298,6 @@ webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-unwrap-key.html [ S
 webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-wrap-key.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/aes-indexeddb.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/ec-postMessage-worker.html [ Skip ]
-
-svg/webarchive [ Skip ]
-svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 
 # User-installed font infrastructure is ony present on certain OSes.
 webkit.org/b/180062 fast/text/user-installed-fonts/ [ Skip ]
@@ -628,22 +633,6 @@ webkit.org/b/208633 imported/w3c/web-platform-tests/svg/import/text-fonts-203-t-
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
 
-webkit.org/b/208914 webgl/2.0.0/conformance/context/context-lost-restored.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/extensions/webgl-depth-texture.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/glsl/misc/shaders-with-name-conflicts.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/limits/gl-line-width.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/misc/webgl-specific.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/programs/program-test.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/renderbuffers/feedback-loop.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/rendering/point-no-attributes.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/textures/misc/cube-incomplete-fbo.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html [ Failure ]
-webkit.org/b/208914 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Failure ]
-
-webkit.org/b/208915 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Failure ]
-
 webkit.org/b/208979 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-redirect-to-javascript.html [ Failure ]
 
 webkit.org/b/208980 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.sub.tentative.html [ Failure ]
@@ -700,11 +689,6 @@ webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-orde
 
 webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
-webkit.org/b/210236 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Failure ]
-webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/array-assign-constructor.html [ Failure ]
-webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/array-assign.html [ Failure ]
-webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/array-element-increment.html [ Failure ]
-webkit.org/b/210236 webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Failure ]
 webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
@@ -734,18 +718,10 @@ webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-impl
 
 Bug(WPE) compositing/ [ Skip ]
 Bug(WPE) editing/ [ Skip ]
-Bug(WPE) fonts/ [ Skip ]
 Bug(WPE) gamepad/ [ Skip ]
 Bug(WPE) inspector/ [ Skip ]
-Bug(WPE) mathml/ [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/mathml [ Skip ]
 Bug(WPE) media/ [ Skip ]
-Bug(WPE) pageoverlay/ [ Skip ]
 Bug(WPE) plugins/ [ Skip ]
-Bug(WPE) printing/ [ Skip ]
-Bug(WPE) scrollingcoordinator/ [ Skip ]
-Bug(WPE) webarchive/ [ Skip ]
-Bug(WPE) webaudio/ [ Skip ]
 
 Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
@@ -795,7 +771,6 @@ http/tests/quicklook [ Skip ]
 http/tests/security [ Skip ]
 http/tests/ssl [ Skip ]
 http/tests/svg [ Skip ]
-http/tests/webarchive [ Skip ]
 http/tests/webfont [ Skip ]
 http/tests/webrtc [ Skip ]
 http/tests/websocket [ Skip ]
@@ -978,6 +953,7 @@ imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
 
 # PointerEvents not enabled globally, but enabled for WPE (EXPERIMENTAL_FEATURES)
+pointerevents/pointer-id-crash.html [ Pass ]
 pointerevents/mouse [ Pass ]
 imported/w3c/web-platform-tests/pointerevents [ Pass ]
 # PointerEvents currently only supports mouse on WPE (no Touch/Pen support)
@@ -1150,13 +1126,10 @@ webkit.org/b/192894 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 
 webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
-webkit.org/b/178705 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Timeout ]
-Bug(WPE) webgl/2.0.0/conformance/ogles/GL/swizzlers/swizzlers_049_to_056.html [ Timeout Pass ]
-Bug(WPE) webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Failure Pass ]
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Failure Pass ]
@@ -1395,6 +1368,9 @@ webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-
 
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 
+webkit.org/b/212081 mathml/opentype/opentype-stretchy-horizontal.html [ Pass Failure ]
+webkit.org/b/212082 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus.html [ Pass ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1406,14 +1382,6 @@ webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Sl
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
-Bug(WPE) webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
-Bug(WPE) webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Slow ]
-
-# It seems these tests are intermittently slow on recent Intel integrated graphics (tested on i7-8550U)
-Bug(WPE) webgl/2.0.0/conformance2/glsl3/array-assign.html [ Slow ]
-Bug(WPE) webgl/2.0.0/conformance2/glsl3/array-assign-constructor.html [ Slow ]
-Bug(WPE) webgl/2.0.0/conformance2/glsl3/array-element-increment.html [ Slow ]
-Bug(WPE) webgl/2.0.0/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html [ Slow ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
 
@@ -1467,6 +1435,8 @@ webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.htm
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
+
+webkit.org/b/212078 webaudio/silent-audio-interrupted-in-background.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -1523,10 +1493,14 @@ Bug(WPE) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-# Need investigation.
-Bug(WPE) loader/navigation-policy/should-open-external-urls/ [ Skip ]
-Bug(WPE) loader/stateobjects/pushstate-size-iframe.html [ Skip ]
-Bug(WPE) loader/stateobjects/pushstate-size.html [ Skip ]
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
+webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
 
 # webgl/1.0.3:
 #  Failing:
@@ -1555,12 +1529,6 @@ webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-res
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Timeout ]
 #  One of these tests is DDoS-ing Mesa AMD drivers.
 Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
-Bug(WPE) webgl/2.0.0/conformance/glsl/bugs [ Skip ]
-
-# webgl/2.0.0:
-#  Failing
-webkit.org/b/188346 webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object.html [ Failure ]
-webkit.org/b/188346 webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Failure ]
 
 # fast/canvas/
 fast/canvas/canvas-blend-image.html [ Failure ]
@@ -1592,13 +1560,6 @@ Bug(WPE) security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-s
 Bug(WPE) security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 # Require QuickTime support
 Bug(WPE) security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
-# Unknown video-related timeouts
-Bug(WPE) security/contentSecurityPolicy/blocks-video.html [ Skip ]
-Bug(WPE) security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Skip ]
-Bug(WPE) security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Skip ]
-Bug(WPE) security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Skip ]
-
-Bug(WPE) userscripts/user-script-plugin-document.html [ Failure ]
 
 # accessibility/
 webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
@@ -2296,6 +2257,19 @@ webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
 
 webkit.org/b/210843 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
+
+webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
+webkit.org/b/212080 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]
+webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
+webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]
+webkit.org/b/212080 mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
+webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
