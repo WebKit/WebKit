@@ -5,6 +5,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-grid-1/#item-margins">
 <meta name="assert" content="Checks grid items percentage paddings are resolved against the inline size of their grid area (in a fixed size track).">
 <link rel="stylesheet" href="/css/support/grid.css">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 .grid {
   font: 10px/1 Ahem;
@@ -29,8 +30,11 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
 
-<body onload="checkLayout('.grid')">
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 
 <div id="log"></div>
 
