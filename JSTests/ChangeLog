@@ -1,3 +1,15 @@
+2020-05-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fixups for r261689 "stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js failing on ppc64le and s390x"
+        https://bugs.webkit.org/show_bug.cgi?id=211724
+        <rdar://problem/63227393>
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Separately skip 32-bit and 64-bit PowerPC.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+
 2020-05-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BigInt peephole compare should speculate appropriately

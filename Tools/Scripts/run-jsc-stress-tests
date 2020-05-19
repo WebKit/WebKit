@@ -373,28 +373,38 @@ end
 
 def determineArchitectureFromELFBinary
     f = File.open($jscPath.to_s)
-    data = f.read(19)
+    data = f.read(20)
 
     if !(data[0,4] == "\x7F\x45\x4C\x46")
         $stderr.puts "Warning: Missing ELF magic in file #{Shellwords.shellescape($jscPath.to_s)}"
         return nil
     end
 
-    code = data[18].ord
+    # MIPS and PowerPC may be either big- or little-endian. S390 (which includes
+    # S390x) is big-endian. The rest are little-endian.
+    code = data[18, 20]
     case code
-    when 3
+    when "\x03\0"
         "x86"
-    when 8
+    when "\x08\0"
         "mips"
-    when 21
+    when "\0\x08"
+        "mips"
+    when "\x14\0"
         "powerpc"
-    when 22
+    when "\0\x14"
+        "powerpc"
+    when "\x15\0"
+        "powerpc64"
+    when "\0\x15"
+        "powerpc64"
+    when "\0\x16"
         "s390"
-    when 62
-        "x86-64"
-    when 40
+    when "\x28\0"
         "arm"
-    when 183
+    when "\x3E\0"
+        "x86-64"
+    when "\xB7\0"
         "arm64"
     else
         $stderr.puts "Warning: unable to determine architecture from code: #{code}"
