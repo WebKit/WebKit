@@ -1,4 +1,0 @@
-
-
-FAIL IntersectionObserver with `implicit root` in a nested cross-origin iframe works assert_true: The target element is now intersecting in all ancestor viewports expected true got false
-

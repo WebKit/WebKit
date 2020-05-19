@@ -591,11 +591,19 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
         return;
     
-    if (!managesScrollbars()) {
-        if (scrollOriginChanged()) {
-            ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(desiredPosition));
+    auto scrollToPosition = [&](ScrollPosition desiredPosition) {
+        auto adjustedScrollPosition = desiredPosition;
+        if (!isRubberBandInProgress())
+            adjustedScrollPosition = adjustScrollPositionWithinRange(adjustedScrollPosition);
+
+        if (adjustedScrollPosition != scrollPosition() || scrollOriginChanged()) {
+            ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(adjustedScrollPosition));
             resetScrollOriginChanged();
         }
+    };
+
+    if (!managesScrollbars()) {
+        scrollToPosition(desiredPosition);
         return;
     }
 
@@ -772,14 +780,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             invalidateScrollCornerRect(oldScrollCornerRect);
     }
 
-    IntPoint adjustedScrollPosition = desiredPosition;
-    if (!isRubberBandInProgress())
-        adjustedScrollPosition = adjustScrollPositionWithinRange(adjustedScrollPosition);
-
-    if (adjustedScrollPosition != scrollPosition() || scrollOriginChanged()) {
-        ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(adjustedScrollPosition));
-        resetScrollOriginChanged();
-    }
+    scrollToPosition(desiredPosition);
 
     // Make sure the scrollbar offsets are up to date.
     if (m_horizontalScrollbar)

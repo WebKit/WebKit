@@ -1,3 +1,23 @@
+2020-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Programmaic scroll of "scrolling=no" iframe fails
+        https://bugs.webkit.org/show_bug.cgi?id=212063
+        <rdar://problem/57049514>
+
+        Reviewed by Antti Koivisto.
+
+        ScrollView::setScrollPosition() calls requestScrollPositionUpdate(), and if this returns
+        false it relies on the confusingly-named updateScrollbars() to actually do the scroll.
+        This code path is hit for "scrolling=no" frames, which are not scroll-coordinated.
+
+        ScrollView::updateScrollbars() fails to set the scroll position on iOS, where managesScrollbars()
+        returns false, so fix that.
+
+        Test: fast/scrolling/progammatic-scroll-scrolling-no-frame.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2020-05-19  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add testing and logging for ApplePaySetup

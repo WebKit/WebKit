@@ -1,8 +1,10 @@
 <!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <html>
 <head>
+    <script src="../../resources/ui-helper.js"></script>
+    
 <script>
-function navigate()
+async function navigate()
 {
     if (location.hash == "") {
         if (window.testRunner) {
@@ -16,14 +18,14 @@ function navigate()
         return;
     }
 
-    setTimeout(function () { 
-        var scrollPosition = document.scrollingElement.scrollTop;
-        var result = document.getElementById("result");
-        if (scrollPosition == 100)
-            result.innerHTML = "Success! The scroll position was restored after navigation."
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 0);
+    await UIHelper.ensureStablePresentationUpdate();
+
+    var scrollPosition = document.scrollingElement.scrollTop;
+    var result = document.getElementById("result");
+    if (scrollPosition == 100)
+        result.innerHTML = "Success! The scroll position was restored after navigation."
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

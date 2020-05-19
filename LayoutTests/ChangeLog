@@ -1,3 +1,33 @@
+2020-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Programmaic scroll of "scrolling=no" iframe fails
+        https://bugs.webkit.org/show_bug.cgi?id=212063
+        <rdar://problem/57049514>
+
+        Reviewed by Antti Koivisto.
+        
+        New passing results for some WPT tests (iOS-specific results are removed).
+
+        fast/frames/flattening/scrolling-in-object.html relies on mouse events, so skip on iOS. It happened
+        to pass because both test and reference showed the red square.
+
+        fast/loader/scroll-position-restored-on-back.html needs to wait for the UI process to restore the scroll position.
+
+        * fast/loader/scroll-position-restored-on-back.html:
+        * fast/scrolling/progammatic-scroll-scrolling-no-frame-expected.txt: Added.
+        * fast/scrolling/progammatic-scroll-scrolling-no-frame.html: Added.
+        * platform/ios-wk2/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/visual-viewport/viewport-dimensions-iframe-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-cross-origin-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.sub-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root-with-wrapping-scroller-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/visual-viewport/viewport-unscaled-scroll-iframe-expected.txt: Removed.
+
 2020-05-19  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add testing and logging for ApplePaySetup
