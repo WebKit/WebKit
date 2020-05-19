@@ -1,3 +1,17 @@
+2020-05-18  Peng Liu  <peng.liu6@apple.com>
+
+        ASSERTION FAILED: media/modern-media-controls/media-controller/media-controller-resize.html crashes under stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=212052
+
+        Reviewed by Jer Noble.
+
+        Not able to reproduce the crash locally. But it does happen under stress tests
+        on bots.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidExitFullScreen:]):
+        Only call HTMLMediaElement::exitFullscreen() when the element is in fullscreen.
+
 2020-05-18  Andy Estes  <aestes@apple.com>
 
         http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html fails in public SDK builds

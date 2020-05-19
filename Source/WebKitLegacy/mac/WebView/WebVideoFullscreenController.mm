@@ -337,7 +337,9 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
         [self.fullscreenWindow close];
         [NSAnimationContext endGrouping];
     });
-    _videoElement->exitFullscreen();
+
+    if (_videoElement->isFullscreen())
+        _videoElement->exitFullscreen();
 }
 
 @end
