@@ -1,3 +1,38 @@
+2020-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Move some of the more chatty Scrolling logging to a ScrollingTree channel
+        https://bugs.webkit.org/show_bug.cgi?id=212061
+
+        Reviewed by Tim Horton.
+
+        Move logging about the scrolling tree to a new channel.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragmentInternal):
+        (WebCore::FrameView::scrollToAnchor):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::createNode):
+        (WebCore::AsyncScrollingCoordinator::insertNode):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::createUnparentedNode):
+        (WebCore::ScrollingStateTree::insertNode):
+        (WebCore::ScrollingStateTree::unparentNode):
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode):
+        (WebCore::ScrollingStateTree::detachAndDestroySubtree):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::scrollTo):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm:
+        (WebCore::ScrollingTreeOverflowScrollProxyNode::applyLayerPositions):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeStateIfNeeded):
+        * platform/Logging.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+
 2020-05-18  David Kilzer  <ddkilzer@apple.com>
 
         Replace TextIndicatorOptions with OptionSet<TextIndicatorOption>

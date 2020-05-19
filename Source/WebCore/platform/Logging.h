@@ -95,6 +95,7 @@ namespace WebCore {
     M(ResourceLoadObserver) \
     M(ResourceLoadStatistics) \
     M(Scrolling) \
+    M(ScrollingTree) \
     M(ScrollLatching) \
     M(Selection) \
     M(Services) \

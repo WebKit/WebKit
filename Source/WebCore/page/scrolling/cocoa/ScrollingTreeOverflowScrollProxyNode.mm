@@ -87,7 +87,7 @@ void ScrollingTreeOverflowScrollProxyNode::applyLayerPositions()
         }
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollProxyNode " << scrollingNodeID() << " applyLayerPositions: setting bounds origin to " << scrollOffset);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingTreeOverflowScrollProxyNode " << scrollingNodeID() << " applyLayerPositions: setting bounds origin to " << scrollOffset);
     [m_layer _web_setLayerBoundsOrigin:scrollOffset];
 }
 

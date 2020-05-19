@@ -2195,11 +2195,11 @@ bool FrameView::scrollToFragment(const URL& url)
 
 bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
 {
-    LOG(Scrolling, "FrameView::scrollToFragmentInternal %s", fragmentIdentifier.utf8().data());
-
     // If our URL has no ref, then we have no place we need to jump to.
     if (fragmentIdentifier.isNull())
         return false;
+
+    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToFragmentInternal " << fragmentIdentifier);
 
     ASSERT(frame().document());
     auto& document = *frame().document();
@@ -3148,14 +3148,14 @@ bool FrameView::safeToPropagateScrollToParent() const
 void FrameView::scrollToAnchor()
 {
     RefPtr<ContainerNode> anchorNode = m_maintainScrollPositionAnchor;
-
-    LOG_WITH_STREAM(Scrolling, stream << "FrameView::scrollToAnchor() " << anchorNode.get());
-
     if (!anchorNode)
         return;
 
+    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToAnchor() " << anchorNode.get());
+
     if (!anchorNode->renderer())
         return;
+
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
 

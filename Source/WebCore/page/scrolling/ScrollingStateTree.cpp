@@ -96,7 +96,7 @@ bool ScrollingStateTree::nodeTypeAndParentMatch(ScrollingStateNode& node, Scroll
 
 ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " createUnparentedNode " << newNodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " createUnparentedNode " << newNodeID);
 
     if (auto* node = stateNodeForID(newNodeID)) {
         if (node->nodeType() == nodeType) {
@@ -122,7 +122,7 @@ ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeT
 
 ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " in parent " << parentID << " at " << childIndex);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " in parent " << parentID << " at " << childIndex);
     ASSERT(newNodeID);
 
     if (auto* node = stateNodeForID(newNodeID)) {
@@ -176,7 +176,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
         if (parentID) {
             if (auto unparentedNode = m_unparentedNodes.take(newNodeID)) {
-                LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " getting node from unparented nodes");
+                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " getting node from unparented nodes");
                 newNode = unparentedNode.get();
                 nodeWasReattachedRecursive(*unparentedNode);
 
@@ -206,7 +206,7 @@ void ScrollingStateTree::unparentNode(ScrollingNodeID nodeID)
     if (!nodeID)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " unparentNode " << nodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " unparentNode " << nodeID);
 
     // The node may not be found if clear() was recently called.
     auto protectedNode = m_stateNodeMap.get(nodeID);
@@ -225,7 +225,7 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     if (!nodeID)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " unparentChildrenAndDestroyNode " << nodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " unparentChildrenAndDestroyNode " << nodeID);
 
     // The node may not be found if clear() was recently called.
     auto protectedNode = m_stateNodeMap.take(nodeID);
@@ -239,7 +239,7 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
         auto isolatedChildren = protectedNode->takeChildren();
         for (auto child : *isolatedChildren) {
             child->removeFromParent();
-            LOG_WITH_STREAM(Scrolling, stream << " moving " << child->scrollingNodeID() << " to unparented nodes");
+            LOG_WITH_STREAM(ScrollingTree, stream << " moving " << child->scrollingNodeID() << " to unparented nodes");
             m_unparentedNodes.add(child->scrollingNodeID(), WTFMove(child));
         }
     }
@@ -253,7 +253,7 @@ void ScrollingStateTree::detachAndDestroySubtree(ScrollingNodeID nodeID)
     if (!nodeID)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateTree " << this << " detachAndDestroySubtree " << nodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " detachAndDestroySubtree " << nodeID);
 
     // The node may not be found if clear() was recently called.
     auto node = m_stateNodeMap.take(nodeID);
