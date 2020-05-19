@@ -49,6 +49,8 @@ class ViewBackend {
 public:
     virtual ~ViewBackend();
 
+    virtual struct wpe_view_backend* backend() const = 0;
+
     class InputClient {
     public:
         virtual ~InputClient() = default;
@@ -63,15 +65,11 @@ public:
     void setAccessibleChild(AtkObject*);
 #endif
 
-    struct wpe_view_backend* backend() const;
     void addActivityState(uint32_t);
     void removeActivityState(uint32_t);
 
 protected:
     ViewBackend(uint32_t width, uint32_t height);
-
-    bool initialize(EGLDisplay);
-    void deinitialize(EGLDisplay);
 
     void initializeAccessibility();
     void updateAccessibilityState(uint32_t);
@@ -81,16 +79,8 @@ protected:
     void dispatchInputKeyboardEvent(struct wpe_input_keyboard_event*);
     void dispatchInputTouchEvent(struct wpe_input_touch_event*);
 
-    virtual void displayBuffer(struct wpe_fdo_egl_exported_image*) = 0;
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    virtual void displayBuffer(struct wpe_fdo_shm_exported_buffer*) = 0;
-#endif
-
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
-    EGLContext m_eglContext { nullptr };
-    EGLConfig m_eglConfig;
-    struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
     std::unique_ptr<InputClient> m_inputClient;
 };
 

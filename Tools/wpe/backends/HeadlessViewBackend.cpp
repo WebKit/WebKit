@@ -30,47 +30,30 @@
 #include <mutex>
 #include <unistd.h>
 
-// This include order is necessary to enforce the GBM EGL platform.
-#include <gbm.h>
-#include <epoxy/egl.h>
+#if WPE_FDO_CHECK_VERSION(1,7,0)
 #include <wayland-server.h>
-#include <wpe/fdo-egl.h>
-
-#ifndef EGL_WL_bind_wayland_display
-#define EGL_WL_bind_wayland_display 1
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, struct wl_resource* buffer, EGLint attribute, EGLint* value);
-
-#define EGL_WAYLAND_BUFFER_WL 0x31D5 // eglCreateImageKHR target
-#define EGL_WAYLAND_PLANE_WL  0x31D6 // eglCreateImageKHR target
+#include <wpe/unstable/fdo-shm.h>
 #endif
 
 namespace WPEToolingBackends {
 
-struct HeadlessEGLConnection {
-    EGLDisplay eglDisplay { EGL_NO_DISPLAY };
-
-    static const HeadlessEGLConnection& singleton()
+struct HeadlessInstance {
+    static const HeadlessInstance& singleton()
     {
         static std::once_flag s_onceFlag;
-        static HeadlessEGLConnection s_connection;
+        static HeadlessInstance s_instance;
         std::call_once(s_onceFlag,
             [] {
-                EGLDisplay eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-                if (eglDisplay == EGL_NO_DISPLAY)
-                    return;
-
-                if (!eglInitialize(eglDisplay, nullptr, nullptr) || !eglBindAPI(EGL_OPENGL_ES_API))
-                    return;
-
-                s_connection.eglDisplay = eglDisplay;
-                wpe_fdo_initialize_for_egl_display(s_connection.eglDisplay);
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+                wpe_fdo_initialize_shm();
+#endif
             });
 
-        return s_connection;
+        return s_instance;
     }
 };
 
-static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
+static cairo_user_data_key_t s_bufferKey;
 
 // Keep this in sync with wtf/glib/RunLoopSourcePriority.h.
 static int kRunLoopSourcePriorityDispatcher = -70;
@@ -78,129 +61,94 @@ static int kRunLoopSourcePriorityDispatcher = -70;
 HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
 {
-    auto& connection = HeadlessEGLConnection::singleton();
-    if (connection.eglDisplay == EGL_NO_DISPLAY || !initialize(connection.eglDisplay))
-        return;
+    // This should initialize the SHM mode.
+    HeadlessInstance::singleton();
+
+    static struct wpe_view_backend_exportable_fdo_client exportableClient = {
+        nullptr,
+        nullptr,
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+        // export_shm_buffer
+        [](void* data, struct wpe_fdo_shm_exported_buffer* buffer)
+        {
+            auto& backend = *static_cast<HeadlessViewBackend*>(data);
+            backend.m_update.pending = true;
+
+            backend.updateSnapshot(buffer);
+            wpe_view_backend_exportable_fdo_dispatch_release_shm_exported_buffer(backend.m_exportable, buffer);
+        },
+#else
+        nullptr,
+#endif
+        nullptr,
+        nullptr,
+    };
+    m_exportable = wpe_view_backend_exportable_fdo_create(&exportableClient, this, width, height);
 
     addActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
 
-    if (!eglMakeCurrent(connection.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
-        return;
+    {
+        uint32_t stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
+        uint8_t* buffer = new uint8_t[stride * m_height];
+        memset(buffer, 0, stride * m_height);
 
-    imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
+        m_snapshot = cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32,
+            m_width, m_height, stride);
 
-    m_updateSource = g_timeout_source_new(m_frameRate / 1000);
-    g_source_set_callback(m_updateSource, [](gpointer data) -> gboolean {
-        static_cast<HeadlessViewBackend*>(data)->performUpdate();
+        cairo_surface_set_user_data(m_snapshot, &s_bufferKey, buffer,
+            [](void* data) {
+                auto* buffer = static_cast<uint8_t*>(data);
+                delete[] buffer;
+            });
+        cairo_surface_mark_dirty(m_snapshot);
+    }
+
+    m_update.source = g_timeout_source_new(G_USEC_PER_SEC / 60000);
+    g_source_set_callback(m_update.source, [](gpointer data) -> gboolean {
+        static_cast<HeadlessViewBackend*>(data)->vsync();
         return TRUE;
     }, this, nullptr);
-    g_source_set_priority(m_updateSource, kRunLoopSourcePriorityDispatcher);
-    g_source_attach(m_updateSource, g_main_context_default());
+    g_source_set_priority(m_update.source, kRunLoopSourcePriorityDispatcher);
+    g_source_attach(m_update.source, g_main_context_default());
 }
 
 HeadlessViewBackend::~HeadlessViewBackend()
 {
-    if (m_updateSource) {
-        g_source_destroy(m_updateSource);
-        g_source_unref(m_updateSource);
+    if (m_update.source) {
+        g_source_destroy(m_update.source);
+        g_source_unref(m_update.source);
     }
 
-    if (m_egl.lockedImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_egl.lockedImage);
-    if (m_egl.pendingImage)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_egl.pendingImage);
+    if (m_snapshot)
+        cairo_surface_destroy(m_snapshot);
 
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    if (m_shm.lockedBuffer)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_shm_exported_buffer(m_exportable, m_shm.lockedBuffer);
-    if (m_shm.pendingBuffer)
-        wpe_view_backend_exportable_fdo_egl_dispatch_release_shm_exported_buffer(m_exportable, m_shm.pendingBuffer);
-#endif
-
-    deinitialize(HeadlessEGLConnection::singleton().eglDisplay);
+    if (m_exportable)
+        wpe_view_backend_exportable_fdo_destroy(m_exportable);
 }
 
-cairo_surface_t* HeadlessViewBackend::createSnapshot()
+struct wpe_view_backend* HeadlessViewBackend::backend() const
 {
-    performUpdate();
-
-    if (m_egl.lockedImage)
-        return createEGLSnapshot();
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    if (m_shm.lockedBuffer)
-        return createSHMSnapshot();
-#endif
+    if (m_exportable)
+        return wpe_view_backend_exportable_fdo_get_view_backend(m_exportable);
     return nullptr;
 }
 
-cairo_surface_t* HeadlessViewBackend::createEGLSnapshot()
+cairo_surface_t* HeadlessViewBackend::snapshot()
 {
-    if (!m_eglContext)
-        return nullptr;
-
-    uint8_t* buffer = new uint8_t[4 * m_width * m_height];
-    bool successfulSnapshot = false;
-
-    if (!eglMakeCurrent(HeadlessEGLConnection::singleton().eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
-        return nullptr;
-
-    GLuint imageTexture;
-    glGenTextures(1, &imageTexture);
-    glBindTexture(GL_TEXTURE_2D, imageTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, nullptr);
-
-    imageTargetTexture2DOES(GL_TEXTURE_2D, wpe_fdo_egl_exported_image_get_egl_image(m_egl.lockedImage));
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    GLuint imageFramebuffer;
-    glGenFramebuffers(1, &imageFramebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, imageFramebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, imageTexture, 0);
-
-    glFlush();
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-        glReadPixels(0, 0, m_width, m_height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, buffer);
-        successfulSnapshot = true;
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDeleteFramebuffers(1, &imageFramebuffer);
-    glDeleteTextures(1, &imageTexture);
-
-    if (!successfulSnapshot) {
-        delete[] buffer;
-        return nullptr;
-    }
-
-    cairo_surface_t* imageSurface = cairo_image_surface_create_for_data(buffer,
-        CAIRO_FORMAT_ARGB32, m_width, m_height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width));
-    cairo_surface_mark_dirty(imageSurface);
-
-    static cairo_user_data_key_t bufferKey;
-    cairo_surface_set_user_data(imageSurface, &bufferKey, buffer,
-        [](void* data) {
-            auto* buffer = static_cast<uint8_t*>(data);
-            delete[] buffer;
-        });
-
-    return imageSurface;
+    return cairo_surface_reference(m_snapshot);
 }
 
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-cairo_surface_t* HeadlessViewBackend::createSHMSnapshot()
+void HeadlessViewBackend::updateSnapshot(struct wpe_fdo_shm_exported_buffer* exportedBuffer)
 {
-    struct wl_shm_buffer* shmBuffer = wpe_fdo_shm_exported_buffer_get_shm_buffer(m_shm.lockedBuffer);
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+    struct wl_shm_buffer* shmBuffer = wpe_fdo_shm_exported_buffer_get_shm_buffer(exportedBuffer);
     {
         auto format = wl_shm_buffer_get_format(shmBuffer);
         if (format != WL_SHM_FORMAT_ARGB8888 && format != WL_SHM_FORMAT_XRGB8888)
-            return nullptr;
+            return;
     }
 
-    uint32_t bufferStride = 4 * m_width;
+    uint32_t bufferStride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
     uint8_t* buffer = new uint8_t[bufferStride * m_height];
     memset(buffer, 0, bufferStride * m_height);
 
@@ -224,64 +172,31 @@ cairo_surface_t* HeadlessViewBackend::createSHMSnapshot()
         wl_shm_buffer_end_access(shmBuffer);
     }
 
-    cairo_surface_t* imageSurface = cairo_image_surface_create_for_data(buffer,
-        CAIRO_FORMAT_ARGB32, m_width, m_height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width));
-    cairo_surface_mark_dirty(imageSurface);
+    if (m_snapshot)
+        cairo_surface_destroy(m_snapshot);
+
+    m_snapshot = cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32,
+        m_width, m_height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width));
 
     static cairo_user_data_key_t bufferKey;
-    cairo_surface_set_user_data(imageSurface, &bufferKey, buffer,
+    cairo_surface_set_user_data(m_snapshot, &bufferKey, buffer,
         [](void* data) {
             auto* buffer = static_cast<uint8_t*>(data);
             delete[] buffer;
         });
-
-    return imageSurface;
-}
+    cairo_surface_mark_dirty(m_snapshot);
+#else
+    (void)exportedBuffer;
 #endif
+}
 
-void HeadlessViewBackend::performUpdate()
+void HeadlessViewBackend::vsync()
 {
-    if (m_egl.pendingImage) {
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+    if (m_update.pending)
         wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
-
-        if (m_egl.lockedImage)
-            wpe_view_backend_exportable_fdo_egl_dispatch_release_exported_image(m_exportable, m_egl.lockedImage);
-
-        m_egl.lockedImage = m_egl.pendingImage;
-        m_egl.pendingImage = nullptr;
-        return;
-    }
-
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    if (m_shm.pendingBuffer) {
-        wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
-
-        if (m_shm.lockedBuffer)
-            wpe_view_backend_exportable_fdo_egl_dispatch_release_shm_exported_buffer(m_exportable, m_shm.lockedBuffer);
-
-        m_shm.lockedBuffer = m_shm.pendingBuffer;
-        m_shm.pendingBuffer = nullptr;
-        return;
-    }
 #endif
+    m_update.pending = false;
 }
-
-void HeadlessViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
-{
-    if (m_egl.pendingImage)
-        std::abort();
-
-    m_egl.pendingImage = image;
-}
-
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-void HeadlessViewBackend::displayBuffer(struct wpe_fdo_shm_exported_buffer* buffer)
-{
-    if (m_shm.pendingBuffer)
-        std::abort();
-
-    m_shm.pendingBuffer = buffer;
-}
-#endif
 
 } // namespace WPEToolingBackends

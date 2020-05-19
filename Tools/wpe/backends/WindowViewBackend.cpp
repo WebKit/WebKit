@@ -664,6 +664,11 @@ const struct wl_callback_listener WindowViewBackend::s_frameListener = {
     }
 };
 
+struct wpe_view_backend* WindowViewBackend::backend() const
+{
+    return m_exportable ? wpe_view_backend_exportable_fdo_get_view_backend(m_exportable) : nullptr;
+}
+
 void WindowViewBackend::createViewTexture()
 {
     glGenTextures(1, &m_viewTexture);
@@ -695,6 +700,79 @@ void WindowViewBackend::resize(uint32_t width, uint32_t height)
     if (m_viewTexture)
         glDeleteTextures(1, &m_viewTexture);
     createViewTexture();
+}
+
+bool WindowViewBackend::initialize(EGLDisplay eglDisplay)
+{
+    static const EGLint configAttributes[13] = {
+        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+        EGL_RED_SIZE, 1,
+        EGL_GREEN_SIZE, 1,
+        EGL_BLUE_SIZE, 1,
+        EGL_ALPHA_SIZE, 1,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+        EGL_NONE
+    };
+
+    {
+        EGLint count = 0;
+        if (!eglGetConfigs(eglDisplay, nullptr, 0, &count) || count < 1)
+            return false;
+
+        EGLConfig* configs = g_new0(EGLConfig, count);
+        EGLint matched = 0;
+        if (eglChooseConfig(eglDisplay, configAttributes, configs, count, &matched) && !!matched)
+            m_eglConfig = configs[0];
+        g_free(configs);
+    }
+
+    static const EGLint contextAttributes[3] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+        EGL_NONE
+    };
+
+    m_eglContext = eglCreateContext(eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAttributes);
+    if (!m_eglContext)
+        return false;
+
+    static struct wpe_view_backend_exportable_fdo_egl_client exportableClient = {
+        // export_egl_image
+        nullptr,
+        // export_fdo_egl_image
+        [](void* data, struct wpe_fdo_egl_exported_image* image)
+        {
+            static_cast<WindowViewBackend*>(data)->displayBuffer(image);
+        },
+#if WPE_FDO_CHECK_VERSION(1, 5, 0)
+        // export_shm_buffer
+        [](void* data, struct wpe_fdo_shm_exported_buffer* buffer)
+        {
+            static_cast<WindowViewBackend*>(data)->displayBuffer(buffer);
+        },
+        // padding
+        nullptr, nullptr
+#else
+        // padding
+        nullptr, nullptr, nullptr
+#endif
+
+    };
+    m_exportable = wpe_view_backend_exportable_fdo_egl_create(&exportableClient, this, m_width, m_height);
+
+    initializeAccessibility();
+
+    return true;
+}
+
+void WindowViewBackend::deinitialize(EGLDisplay eglDisplay)
+{
+    m_inputClient = nullptr;
+
+    if (m_eglContext)
+        eglDestroyContext(eglDisplay, m_eglContext);
+
+    if (m_exportable)
+        wpe_view_backend_exportable_fdo_destroy(m_exportable);
 }
 
 void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)

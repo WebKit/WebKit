@@ -1,5 +1,57 @@
 2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WPE] HeadlessViewBackend should exclusively use software rasterization mode
+        https://bugs.webkit.org/show_bug.cgi?id=211982
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of using WPEBackend-fdo's EGL mode that optionally allows the
+        GL operations to be done through software rasterization, have the
+        HeadlessViewBackend use the SHM mode which enforces this behavior.
+
+        Under the hood, the graphics library will be forced to set up and use
+        the software rasterization mechanisms, and on our side we are required
+        to properly handle SHM-backed buffers. This avoids any use of EGL or
+        GL operations inside HeadlessViewBackend, enabling to use this setup
+        in systems and environments that don't have GPUs available.
+
+        All GL-y things are pushed into the WindowViewBackend class. Inside
+        HeadlessViewBackend, the whole SHM logic requires WPEBackend-fdo APIs
+        that are part of the current 1.7 development cycle. When building
+        against older versions, HeadlessViewBackend itself remains buildable
+        but is not operational otherwise.
+
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage):
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessInstance::singleton):
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::backend const):
+        (WPEToolingBackends::HeadlessViewBackend::snapshot):
+        (WPEToolingBackends::HeadlessViewBackend::updateSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::vsync):
+        (): Deleted.
+        (WPEToolingBackends::HeadlessEGLConnection::singleton): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::createSnapshot): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::createEGLSnapshot): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::createSHMSnapshot): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::performUpdate): Deleted.
+        (WPEToolingBackends::HeadlessViewBackend::displayBuffer): Deleted.
+        * wpe/backends/HeadlessViewBackend.h:
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::initialize): Deleted.
+        (WPEToolingBackends::ViewBackend::deinitialize): Deleted.
+        (WPEToolingBackends::ViewBackend::backend const): Deleted.
+        * wpe/backends/ViewBackend.h:
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::backend const):
+        (WPEToolingBackends::WindowViewBackend::initialize):
+        (WPEToolingBackends::WindowViewBackend::deinitialize):
+        * wpe/backends/WindowViewBackend.h:
+
+2020-05-18  Zan Dobersek  <zdobersek@igalia.com>
+
         [WPE] Disable modern media controls for testing
         https://bugs.webkit.org/show_bug.cgi?id=212023
 

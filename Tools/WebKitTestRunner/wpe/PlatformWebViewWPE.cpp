@@ -118,8 +118,7 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
         RunLoop::main().run();
     }
 
-    cairo_surface_t* imageSurface = m_window->createSnapshot();
-    return imageSurface;
+    return m_window->snapshot();
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float)

@@ -28,7 +28,6 @@
 #include "ViewBackend.h"
 #include <cairo.h>
 #include <glib.h>
-#include <unordered_map>
 
 namespace WPEToolingBackends {
 
@@ -37,35 +36,22 @@ public:
     HeadlessViewBackend(uint32_t width, uint32_t height);
     virtual ~HeadlessViewBackend();
 
-    cairo_surface_t* createSnapshot();
+    struct wpe_view_backend* backend() const override;
+
+    cairo_surface_t* snapshot();
 
 private:
-    cairo_surface_t* createEGLSnapshot();
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    cairo_surface_t* createSHMSnapshot();
-#endif
+    void updateSnapshot(struct wpe_fdo_shm_exported_buffer*);
+    void vsync();
 
-    void displayBuffer(struct wpe_fdo_egl_exported_image*) override;
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    void displayBuffer(struct wpe_fdo_shm_exported_buffer*) override;
-#endif
+    struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
 
-    void performUpdate();
+    cairo_surface_t* m_snapshot { nullptr };
 
     struct {
-        struct wpe_fdo_egl_exported_image* pendingImage { nullptr };
-        struct wpe_fdo_egl_exported_image* lockedImage { nullptr };
-    } m_egl;
-
-#if WPE_FDO_CHECK_VERSION(1, 5, 0)
-    struct {
-        struct wpe_fdo_shm_exported_buffer* pendingBuffer { nullptr };
-        struct wpe_fdo_shm_exported_buffer* lockedBuffer { nullptr };
-    } m_shm;
-#endif
-
-    GSource* m_updateSource { nullptr };
-    gint64 m_frameRate { G_USEC_PER_SEC / 60 };
+        GSource* source { nullptr };
+        bool pending { false };
+    } m_update;
 };
 
 } // namespace WPEToolingBackends
