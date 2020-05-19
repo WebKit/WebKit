@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@ OBJC_CLASS PKPaymentSetupFeature;
 
 namespace WebCore {
 
-enum class ApplePaySetupFeatureState : uint8_t;
 enum class ApplePaySetupFeatureType : uint8_t;
 
 class ApplePaySetupFeature : public RefCounted<ApplePaySetupFeature> {
@@ -43,20 +42,22 @@ public:
     {
         return adoptRef(*new ApplePaySetupFeature(feature));
     }
-    
-    WEBCORE_EXPORT virtual ~ApplePaySetupFeature();
 
-    virtual ApplePaySetupFeatureState state() const;
-    virtual ApplePaySetupFeatureType type() const;
+    ApplePaySetupFeatureType type() const;
+
+    enum class State : uint8_t {
+        Unsupported,
+        Supported,
+        SupplementarySupported,
+        Completed,
+    };
+    State state() const;
 
     PKPaymentSetupFeature *platformFeature() const { return m_feature.get(); }
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    virtual bool supportsInstallments() const;
+    bool supportsInstallments() const;
 #endif
-
-protected:
-    WEBCORE_EXPORT ApplePaySetupFeature();
 
 private:
     WEBCORE_EXPORT explicit ApplePaySetupFeature(PKPaymentSetupFeature *);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,10 @@
 
 #if ENABLE(APPLE_PAY_SETUP)
 
-#import "ApplePaySetupFeatureState.h"
 #import "ApplePaySetupFeatureTypeWebCore.h"
 #import <pal/spi/cocoa/PassKitSPI.h>
 
 namespace WebCore {
-
-ApplePaySetupFeature::ApplePaySetupFeature() = default;
-ApplePaySetupFeature::~ApplePaySetupFeature() = default;
 
 ApplePaySetupFeatureType ApplePaySetupFeature::type() const
 {
@@ -49,17 +45,17 @@ ApplePaySetupFeatureType ApplePaySetupFeature::type() const
     }
 }
 
-ApplePaySetupFeatureState ApplePaySetupFeature::state() const
+ApplePaySetupFeature::State ApplePaySetupFeature::state() const
 {
     switch ([m_feature state]) {
     case PKPaymentSetupFeatureStateUnsupported:
-        return ApplePaySetupFeatureState::Unsupported;
+        return State::Unsupported;
     case PKPaymentSetupFeatureStateSupported:
-        return ApplePaySetupFeatureState::Supported;
+        return State::Supported;
     case PKPaymentSetupFeatureStateSupplementarySupported:
-        return ApplePaySetupFeatureState::SupplementarySupported;
+        return State::SupplementarySupported;
     case PKPaymentSetupFeatureStateCompleted:
-        return ApplePaySetupFeatureState::Completed;
+        return State::Completed;
     }
 }
 

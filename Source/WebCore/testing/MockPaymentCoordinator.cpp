@@ -29,7 +29,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePaySessionPaymentRequest.h"
-#include "MockApplePaySetupFeature.h"
 #include "MockPayment.h"
 #include "MockPaymentContact.h"
 #include "MockPaymentMethod.h"
@@ -231,28 +230,6 @@ void MockPaymentCoordinator::paymentCoordinatorDestroyed()
     ASSERT(showCount == hideCount);
     delete this;
 }
-
-#if ENABLE(APPLE_PAY_SETUP)
-
-void MockPaymentCoordinator::addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)
-{
-    m_setupFeatures.append(MockApplePaySetupFeature::create(state, type, supportsInstallments));
-}
-
-void MockPaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
-{
-    m_setupConfiguration = configuration;
-    auto setupFeaturesCopy = m_setupFeatures;
-    completionHandler(WTFMove(setupFeaturesCopy));
-}
-
-void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler)
-{
-    m_setupConfiguration = configuration;
-    completionHandler(true);
-}
-
-#endif
 
 } // namespace WebCore
 
