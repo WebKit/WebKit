@@ -48,6 +48,8 @@
 
         var startPosX = iframeTarget.offsetLeft + 20;
         var startPosY = iframeTarget.offsetTop + 20;
+
+        eventSender.monitorWheelEvents();
         eventSender.mouseMoveTo(startPosX, startPosY);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -56,7 +58,7 @@
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
         eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        setTimeout(checkForScroll, 100);
+        eventSender.callAfterScrollingCompletes(checkForScroll);
     }
     
     function startTest()

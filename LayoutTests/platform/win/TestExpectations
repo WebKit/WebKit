@@ -278,6 +278,7 @@ fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 webkit.org/b/208559 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
 webkit.org/b/208559 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
+webkit.org/b/208559 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 
 # TODO Needs testRunner.enableAutoResizeMode()
 fast/autoresize/ [ Skip ]
