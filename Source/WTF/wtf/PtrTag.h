@@ -105,8 +105,13 @@ WTF_EXPORT_PRIVATE void reportBadTag(const void*, PtrTag expectedTag);
 
 #if ASSERT_ENABLED
 constexpr bool enablePtrTagDebugAssert = true;
+#define REPORT_BAD_TAG(success, ptr, expectedTag) do { \
+        if (UNLIKELY(!success)) \
+            reportBadTag(reinterpret_cast<const void*>(ptr), expectedTag); \
+    } while (false)
 #else
 constexpr bool enablePtrTagDebugAssert = false;
+#define REPORT_BAD_TAG(success, ptr, expectedTag)
 #endif
 
 #define WTF_PTRTAG_ASSERT(action, ptr, expectedTag, assertion) \
@@ -114,9 +119,7 @@ constexpr bool enablePtrTagDebugAssert = false;
         if (action == PtrTagAction::ReleaseAssert \
             || (WTF::enablePtrTagDebugAssert && action == PtrTagAction::DebugAssert)) { \
             bool passed = (assertion); \
-            if (UNLIKELY(!passed)) { \
-                reportBadTag(reinterpret_cast<const void*>(ptr), expectedTag); \
-            } \
+            REPORT_BAD_TAG(passed, ptr, expectedTag); \
             RELEASE_ASSERT(passed && #assertion); \
         } \
     } while (false)
