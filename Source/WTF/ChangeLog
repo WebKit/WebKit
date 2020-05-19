@@ -1,5 +1,21 @@
 2020-05-19  Mark Lam  <mark.lam@apple.com>
 
+        Put PtrTagLookup data structures in Configs for freezing.
+        https://bugs.webkit.org/show_bug.cgi?id=212089
+        <rdar://problem/63401487>
+
+        Reviewed by Robin Morisset.
+
+        * wtf/PtrTag.cpp:
+        (WTF::tagForPtr):
+        (WTF::ptrTagName):
+        (WTF::registerPtrTagLookup):
+        * wtf/PtrTag.h:
+        (WTF::PtrTagLookup::initialize):
+        * wtf/WTFConfig.h:
+
+2020-05-19  Mark Lam  <mark.lam@apple.com>
+
         Remove unnecessary debug logging from release builds.
         https://bugs.webkit.org/show_bug.cgi?id=212084
         <rdar://problem/63398704>

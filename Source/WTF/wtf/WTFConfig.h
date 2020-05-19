@@ -29,6 +29,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/PageBlock.h>
+#include <wtf/PtrTag.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/threads/Signals.h>
 
@@ -55,6 +56,7 @@ struct Config {
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
             SignalHandlers signalHandlers;
 #endif
+            PtrTagLookup* ptrTagLookupHead;
         };
         char ensureSize[ConfigSizeToProtect];
     };

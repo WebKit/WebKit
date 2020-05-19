@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "OptionsList.h"
 #include <wtf/PageBlock.h>
+#include <wtf/PtrTag.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -80,6 +81,8 @@ struct Config {
             OptionsStorage options;
 
             void (*shellTimeoutCheckCallback)(VM&);
+
+            WTF::PtrTagLookup ptrTagLookupRecord;
         };
         char ensureSize[ConfigSizeToProtect];
     };
