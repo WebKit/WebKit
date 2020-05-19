@@ -1,3 +1,17 @@
+2020-05-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r261866. Fixing the WAV baselines for webaudio tests.
+
+        * platform/wpe/webaudio/audiobuffersource-loop-points-expected.wav:
+        * platform/wpe/webaudio/audiobuffersource-playbackrate-expected.wav:
+        * platform/wpe/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav:
+        * platform/wpe/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav:
+        * platform/wpe/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav:
+        * platform/wpe/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav:
+        * platform/wpe/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav:
+        * platform/wpe/webaudio/codec-tests/wav/24bit-44khz-expected.wav:
+        * platform/wpe/webaudio/silence-after-playback-expected.wav:
+
 2020-05-19  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Programmaic scroll of "scrolling=no" iframe fails
