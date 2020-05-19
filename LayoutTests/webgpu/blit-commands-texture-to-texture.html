@@ -11,11 +11,11 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-function loadTextureFromCanvas2d(device, canvas2d) {
+async function loadTextureFromCanvas2d(device, canvas2d) {
     const textureSize = {
         width:  canvas2d.width,
         height: canvas2d.height,
-        depth:  1
+        depth:  2
     };
 
     // Mipmap count
@@ -25,7 +25,6 @@ function loadTextureFromCanvas2d(device, canvas2d) {
 
     const textureDescriptor = {
         size: textureSize,
-        arrayLayerCount: 2,
         mipLevelCount: mipLevelCount,
         sampleCount: 1,
         dimension: "2d",
@@ -35,6 +34,7 @@ function loadTextureFromCanvas2d(device, canvas2d) {
 
     // Create texture and also add the descriptor
     const texture = device.createTexture(textureDescriptor);
+    textureSize.depth = 1;
     texture.descriptor = textureDescriptor;
 
     // Texture data 
@@ -43,10 +43,11 @@ function loadTextureFromCanvas2d(device, canvas2d) {
 
     const textureDataBufferDescriptor = {
         size: imageData.data.length,
-        usage: GPUBufferUsage.COPY_SRC
+        usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE
     };
-    const [textureDataBuffer, textureArrayBuffer] = device.createBufferMapped(textureDataBufferDescriptor);
-    
+    const textureDataBuffer = device.createBuffer(textureDataBufferDescriptor);
+
+    const textureArrayBuffer = await textureDataBuffer.mapWriteAsync();
     const textureWriteArray = new Uint8Array(textureArrayBuffer);
     textureWriteArray.set(imageData.data);
     textureDataBuffer.unmap();
@@ -55,7 +56,7 @@ function loadTextureFromCanvas2d(device, canvas2d) {
         buffer: textureDataBuffer,
         offset: 0,
         rowPitch: canvas2d.width * 4,
-        imageHeight: 0
+        imageHeight: canvas2d.width * canvas2d.height * 4
     };
     const textureCopyView = {
         texture: texture,
@@ -78,12 +79,12 @@ async function test(device) {
     // textureA (layer 0, mip 0): Green
     context2d.fillStyle = 'rgb(0, 255, 0)';
     context2d.fillRect(0, 0, canvas2d.width, canvas2d.height);
-    const textureA = loadTextureFromCanvas2d(device, canvas2d);
+    const textureA = await loadTextureFromCanvas2d(device, canvas2d);
 
     // textureB (layer 0, mip 0): Red
     context2d.fillStyle = 'rgb(255, 0, 0)';
     context2d.fillRect(0, 0, canvas2d.width, canvas2d.height);
-    const textureB = loadTextureFromCanvas2d(device, canvas2d); 
+    const textureB = await loadTextureFromCanvas2d(device, canvas2d);
 
     // Clean canvas to blue
     context2d.fillStyle = 'rgb(0, 0, 255)';
@@ -140,7 +141,7 @@ async function test(device) {
     const bufferCopyView = {
         buffer: bufferA,
         rowPitch: canvas2d.width * 4,
-        imageHeight: 0
+        imageHeight: canvas2d.width * canvas2d.height * 4
     };
     const textureCopyView = {
         texture: textureB
@@ -149,14 +150,13 @@ async function test(device) {
 
     device.getQueue().submit([blitCommandEncoder.finish()]);
 
-    await bufferA.mapReadAsync().then(ab => {
-        const array = new Uint8ClampedArray(ab);
-        const resultImageData = new ImageData(array, canvas2d.width, canvas2d.height);
+    const ab = await bufferA.mapReadAsync()
+    const array = new Uint8ClampedArray(ab);
+    const resultImageData = new ImageData(array, canvas2d.width, canvas2d.height);
 
-        context2d.putImageData(resultImageData, 0, 0);
+    context2d.putImageData(resultImageData, 0, 0);
 
-        bufferA.destroy();
-    });
+    bufferA.destroy();
 }
 
 getBasicDevice().then(function(device) {

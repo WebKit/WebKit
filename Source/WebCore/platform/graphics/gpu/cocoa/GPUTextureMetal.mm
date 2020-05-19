@@ -42,12 +42,11 @@ static MTLTextureType mtlTextureTypeForGPUTextureDescriptor(const GPUTextureDesc
 {
     switch (descriptor.dimension) {
     case GPUTextureDimension::_1d:
-        return (descriptor.arrayLayerCount == 1) ? MTLTextureType1D : MTLTextureType1DArray;
+        return (descriptor.size.height == 1) ? MTLTextureType1D : MTLTextureType1DArray;
     case GPUTextureDimension::_2d: {
-        if (descriptor.arrayLayerCount == 1)
+        if (descriptor.size.depth == 1)
             return (descriptor.sampleCount == 1) ? MTLTextureType2D : MTLTextureType2DMultisample;
-
-        return MTLTextureType2DArray;
+        return MTLTextureType2DArray; // MTLTextureType2DMultisampleArray is unavailable on iOS.
     }
     case GPUTextureDimension::_3d:
         return MTLTextureType3D;
@@ -65,7 +64,7 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
         return WTF::nullopt;
     }
 
-    MTLTextureUsage result = MTLTextureUsagePixelFormatView;
+    MTLTextureUsage result = 0;
     if (flags.contains(GPUTextureUsage::Flags::OutputAttachment))
         result |= MTLTextureUsageRenderTarget;
     if (flags.containsAny({ GPUTextureUsage::Flags::Storage, GPUTextureUsage::Flags::Sampled }))
@@ -102,7 +101,24 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
         return nullptr;
     }
 
-    // FIXME: Add more validation as constraints are added to spec.
+    unsigned width = descriptor.size.width;
+    unsigned height = 1;
+    unsigned depth = 1;
+    unsigned arrayLength = 1;
+    switch (descriptor.dimension) {
+    case GPUTextureDimension::_1d:
+        arrayLength = descriptor.size.height;
+        break;
+    case GPUTextureDimension::_2d:
+        height = descriptor.size.height;
+        arrayLength = descriptor.size.depth;
+        break;
+    case GPUTextureDimension::_3d:
+        height = descriptor.size.height;
+        depth = descriptor.size.depth;
+        break;
+    }
+
     auto pixelFormat = static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(descriptor.format));
 
     auto mtlUsage = mtlTextureUsageForGPUTextureUsageFlags(usage, functionName);
@@ -117,10 +133,10 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    [mtlDescriptor setWidth:descriptor.size.width];
-    [mtlDescriptor setHeight:descriptor.size.height];
-    [mtlDescriptor setDepth:descriptor.size.depth];
-    [mtlDescriptor setArrayLength:descriptor.arrayLayerCount];
+    [mtlDescriptor setWidth:width];
+    [mtlDescriptor setHeight:height];
+    [mtlDescriptor setDepth:depth];
+    [mtlDescriptor setArrayLength:arrayLength];
     [mtlDescriptor setMipmapLevelCount:descriptor.mipLevelCount];
     [mtlDescriptor setSampleCount:descriptor.sampleCount];
     [mtlDescriptor setTextureType:mtlTextureTypeForGPUTextureDescriptor(descriptor)];
@@ -134,13 +150,18 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
     return mtlDescriptor;
 }
 
-RefPtr<GPUTexture> GPUTexture::tryCreate(const GPUDevice& device, const GPUTextureDescriptor& descriptor)
+RefPtr<GPUTexture> GPUTexture::tryCreate(const GPUDevice& device, const GPUTextureDescriptor& descriptor, GPUErrorScopes& errorScopes)
 {
     const char* const functionName = "GPUTexture::tryCreate()";
 
     if (!device.platformDevice()) {
         LOG(WebGPU, "%s: Invalid GPUDevice!", functionName);
         return nullptr;
+    }
+
+    if (![device.platformDevice() supportsTextureSampleCount:descriptor.sampleCount]) {
+        errorScopes.generatePrefixedError(makeString("Device does not support ", descriptor.sampleCount, " sample count."));
+        return { };
     }
 
     auto usage = OptionSet<GPUTextureUsage::Flags>::fromRaw(descriptor.usage);

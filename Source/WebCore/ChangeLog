@@ -1,3 +1,52 @@
+2020-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Validation for GPUDevice.createTexture()
+        https://bugs.webkit.org/show_bug.cgi?id=211882
+        <rdar://problem/63215999>
+
+        Reviewed by Dean Jackson.
+
+        Add lots of validation for texture creation. The logic was gathered by
+        trial and error.
+
+        Before this patch, we didn't have any validation. This is a first pass, as
+        the validation logic isn't spelled out in the spec. Next, I will make a pull
+        request to the spec to match this patch.
+
+        This patch also updates three pieces of our IDL files to match the spec for
+        WebGPU: One to remove GPUTextureUsage.NONE which was replaced with just 0,
+        one to remove GPUTextureDescriptor.arrayLayerCount, which was deleted in
+        favor of using regular dimension fields, and one to add [EnforceRange] to
+        various values.
+
+        This patch also updates GPUDevice to have a GPUErrorScopes object, which is
+        required for good error messages.
+
+        Test: webgpu/texture-creation.html
+
+        * Modules/webgpu/GPUExtent3D.idl:
+        * Modules/webgpu/GPUTextureDescriptor.idl:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::tryCreate):
+        (WebCore::WebGPUDevice::createTexture const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::maximumMipLevelCount):
+        (WebCore::GPUDevice::tryCreateTexture const):
+        * platform/graphics/gpu/GPUDevice.h:
+        (WebCore::GPUDevice::setErrorScopes):
+        * platform/graphics/gpu/GPUExtent3D.h:
+        * platform/graphics/gpu/GPUObjectBase.h:
+        (WebCore::GPUObjectBase::errorScopes const):
+        (WebCore::GPUObjectBase::errorScopes): Deleted.
+        * platform/graphics/gpu/GPUTexture.h:
+        * platform/graphics/gpu/GPUTextureDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::mtlTextureTypeForGPUTextureDescriptor):
+        (WebCore::mtlTextureUsageForGPUTextureUsageFlags):
+        (WebCore::tryCreateMtlTextureDescriptor):
+        (WebCore::GPUTexture::tryCreate):
+
 2020-05-18  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Clear the override width for computing percent margins

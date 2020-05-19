@@ -1,3 +1,16 @@
+2020-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Validation for GPUDevice.createTexture()
+        https://bugs.webkit.org/show_bug.cgi?id=211882
+        <rdar://problem/63215999>
+
+        Reviewed by Dean Jackson.
+
+        * webgpu/blit-commands-texture-to-texture.html: Updated.
+          Rewrote part of the test to avoid hitting https://bugs.webkit.org/show_bug.cgi?id=212013
+        * webgpu/texture-creation-expected.txt: Added.
+        * webgpu/texture-creation.html: Added.
+
 2020-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Content disappears on CSS parallax example

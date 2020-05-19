@@ -40,7 +40,7 @@ protected:
     GPUObjectBase(Ref<GPUErrorScopes>&& reporter)
         : m_errorScopes(WTFMove(reporter)) { }
 
-    GPUErrorScopes& errorScopes() { return m_errorScopes; }
+    GPUErrorScopes& errorScopes() const { return m_errorScopes; }
 
 private:
     Ref<GPUErrorScopes> m_errorScopes;

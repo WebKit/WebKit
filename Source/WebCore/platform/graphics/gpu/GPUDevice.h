@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUBindGroupAllocator.h"
+#include "GPUErrorScopes.h"
 #include "GPUQueue.h"
 #include "GPUSwapChain.h"
 #include <wtf/Function.h>
@@ -95,6 +96,8 @@ public:
     GPUSwapChain* swapChain() const { return m_swapChain.get(); }
     void setSwapChain(RefPtr<GPUSwapChain>&&);
 
+    void setErrorScopes(Ref<GPUErrorScopes>&& errorScopes) { m_errorScopes = WTFMove(errorScopes); }
+
     static constexpr bool useWHLSL = true;
 
 private:
@@ -104,6 +107,7 @@ private:
     mutable RefPtr<GPUQueue> m_queue;
     RefPtr<GPUSwapChain> m_swapChain;
     mutable RefPtr<GPUBindGroupAllocator> m_bindGroupAllocator;
+    RefPtr<GPUErrorScopes> m_errorScopes;
 };
 
 } // namespace WebCore

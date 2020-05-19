@@ -24,13 +24,13 @@
  */
 // https://gpuweb.github.io/gpuweb
 
-typedef unsigned long u32;
+typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUExtent3D {
-    required u32 width;
-    required u32 height;
-    required u32 depth;
+    required GPUIntegerCoordinate width;
+    required GPUIntegerCoordinate height;
+    required GPUIntegerCoordinate depth;
 };

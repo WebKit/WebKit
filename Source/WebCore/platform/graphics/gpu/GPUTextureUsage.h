@@ -36,12 +36,12 @@ using GPUTextureUsageFlags = unsigned;
 class GPUTextureUsage : public RefCounted<GPUTextureUsage> {
 public:
     enum class Flags : GPUTextureUsageFlags {
-        None = 0,
-        CopySource = 1 << 0,
-        CopyDestination = 1 << 1,
-        Sampled = 1 << 2,
-        Storage = 1 << 3,
+        CopySource       = 1 << 0,
+        CopyDestination  = 1 << 1,
+        Sampled          = 1 << 2,
+        Storage          = 1 << 3,
         OutputAttachment = 1 << 4,
+        MaximumValue     = 1 << 5,
     };
 };
 

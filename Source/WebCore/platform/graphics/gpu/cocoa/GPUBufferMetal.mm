@@ -228,15 +228,13 @@ void GPUBuffer::copyStagingBufferToGPU(GPUErrorScopes* errorScopes)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     // GPUBuffer creation validation ensures m_byteSize fits in NSUInteger.
-    stagingMtlBuffer = adoptNS([m_device->platformDevice() newBufferWithLength:static_cast<NSUInteger>(m_byteLength) options:MTLResourceCPUCacheModeDefaultCache]);
+    stagingMtlBuffer = adoptNS([m_device->platformDevice() newBufferWithBytes:m_stagingBuffer->data() length:static_cast<NSUInteger>(m_byteLength) options:MTLResourceCPUCacheModeDefaultCache]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!stagingMtlBuffer && errorScopes) {
         errorScopes->generateError("", GPUErrorFilter::OutOfMemory);
         return;
     }
-
-    memcpy(stagingMtlBuffer.get().contents, m_stagingBuffer->data(), m_byteLength);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

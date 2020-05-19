@@ -52,6 +52,7 @@
 #include "GPUTextureDescriptor.h"
 #include <algorithm>
 #include <wtf/Optional.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -60,9 +61,130 @@ RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(const GPUBufferDescriptor& descript
     return GPUBuffer::tryCreate(*this, descriptor, isMapped, errorScopes);
 }
 
+static unsigned maximumMipLevelCount(GPUTextureDimension dimension, GPUExtent3D size)
+{
+    unsigned width = size.width;
+    unsigned height = 1;
+    unsigned depth = 1;
+    switch (dimension) {
+    case GPUTextureDimension::_1d:
+        break;
+    case GPUTextureDimension::_2d:
+        height = size.height;
+        break;
+    case GPUTextureDimension::_3d:
+        height = size.height;
+        depth = size.depth;
+        break;
+    }
+
+    auto maxDimension = std::max(std::max(width, height), depth);
+    int i = sizeof(GPUExtent3D::InnerType) * 8 - 1;
+    while (!(maxDimension & (1 << i)) && i >= 0)
+        --i;
+    ASSERT(i >= 0);
+    return i + 1;
+}
+
 RefPtr<GPUTexture> GPUDevice::tryCreateTexture(const GPUTextureDescriptor& descriptor) const
 {
-    return GPUTexture::tryCreate(*this, descriptor);
+    if (!descriptor.size.width || !descriptor.size.height || !descriptor.size.depth) {
+        m_errorScopes->generatePrefixedError("Textures can't have 0 dimensions.");
+        return { };
+    }
+
+    if (!descriptor.mipLevelCount) {
+        m_errorScopes->generatePrefixedError("Textures can't have 0 miplevels.");
+        return { };
+    }
+
+    if (!descriptor.sampleCount) {
+        m_errorScopes->generatePrefixedError("Textures can't have 0 samples.");
+        return { };
+    }
+
+    // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
+    unsigned maxRegularSize = 8192;
+    unsigned maxDepthSize = 2048;
+    switch (descriptor.dimension) {
+    case GPUTextureDimension::_1d:
+        if (descriptor.size.width > maxRegularSize) {
+            m_errorScopes->generatePrefixedError(makeString("1D texture is too wide: ", descriptor.size.width, " needs to be <= ", maxRegularSize, "."));
+            return { };
+        }
+        if (descriptor.size.height > maxDepthSize) {
+            m_errorScopes->generatePrefixedError(makeString("1D texture array has too many layers: ", descriptor.size.height, " needs to be <= ", maxDepthSize, "."));
+            return { };
+        }
+        break;
+    case GPUTextureDimension::_2d:
+        if (descriptor.size.width > maxRegularSize || descriptor.size.height > maxRegularSize) {
+            m_errorScopes->generatePrefixedError(makeString("2D texture is too large:", descriptor.size.width, " and ", descriptor.size.height, " need to be <= ", maxRegularSize, "."));
+            return { };
+        }
+        if (descriptor.size.depth > maxDepthSize) {
+            m_errorScopes->generatePrefixedError(makeString("2D texture array has too many layers: ", descriptor.size.depth, " needs to be <= ", maxDepthSize, "."));
+            return { };
+        }
+        break;
+    case GPUTextureDimension::_3d:
+        if (descriptor.size.width > maxDepthSize || descriptor.size.height > maxDepthSize || descriptor.size.depth > maxDepthSize) {
+            m_errorScopes->generatePrefixedError(makeString("3D texture is too large: ", descriptor.size.width, ", ", descriptor.size.height, ", and ", descriptor.size.depth, " need to be <= ", maxDepthSize, "."));
+            return { };
+        }
+        break;
+    }
+
+    if (descriptor.dimension == GPUTextureDimension::_1d && descriptor.mipLevelCount != 1) {
+        m_errorScopes->generatePrefixedError("1D textures can't have mipmaps");
+        return { };
+    }
+
+    auto maxLevels = maximumMipLevelCount(descriptor.dimension, descriptor.size);
+    if (descriptor.mipLevelCount > maxLevels) {
+        m_errorScopes->generatePrefixedError(makeString("Too many miplevels: ", descriptor.mipLevelCount, " needs to be <= ", maxLevels, "."));
+        return { };
+    }
+
+    if (descriptor.sampleCount != 1) {
+        if (descriptor.dimension != GPUTextureDimension::_2d) {
+            m_errorScopes->generatePrefixedError("Texture dimension incompatible with multisampling.");
+            return { };
+        }
+        if (descriptor.mipLevelCount != 1) {
+            m_errorScopes->generatePrefixedError("Multisampled textures can't have mipmaps.");
+            return { };
+        }
+        if (descriptor.size.depth != 1) {
+            m_errorScopes->generatePrefixedError("Array textures can't be multisampled.");
+            return { };
+        }
+        // FIXME: Only some pixel formats are capable of MSAA. When we add those new pixel formats, we'll have to add filtering code here.
+    }
+
+    // The height component for 1d textures is the array length.
+    // The depth component for 2d textures is the array length.
+    if (descriptor.dimension == GPUTextureDimension::_1d && descriptor.size.depth != 1) {
+        m_errorScopes->generatePrefixedError("1D textures can't have depth != 1.");
+        return { };
+    }
+
+    if (descriptor.format == GPUTextureFormat::Depth32floatStencil8 && descriptor.dimension != GPUTextureDimension::_2d) {
+        m_errorScopes->generatePrefixedError("Depth/stencil textures must be 2d.");
+        return { };
+    }
+
+    if (descriptor.format == GPUTextureFormat::Depth32floatStencil8 && descriptor.sampleCount != 1) {
+        m_errorScopes->generatePrefixedError("Depth/stencil textures can't be multisampled.");
+        return { };
+    }
+
+    if (static_cast<GPUTextureUsageFlags>(descriptor.usage) >= static_cast<GPUTextureUsageFlags>(GPUTextureUsage::Flags::MaximumValue)) {
+        m_errorScopes->generatePrefixedError("Invalid usage flags.");
+        return { };
+    }
+
+    return GPUTexture::tryCreate(*this, descriptor, makeRef(*m_errorScopes));
 }
 
 RefPtr<GPUSampler> GPUDevice::tryCreateSampler(const GPUSamplerDescriptor& descriptor) const
