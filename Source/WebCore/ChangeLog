@@ -1,3 +1,22 @@
+2020-05-19  Oriol Brufau  <obrufau@igalia.com>
+
+        Fix marginLogicalSizeForChild to check auto margins in the right axis
+        https://bugs.webkit.org/show_bug.cgi?id=212055
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        GridLayoutFunctions::marginLogicalSizeForChild checks for 'auto' margins
+        before retrieving the margin size, since these should be treated as 0.
+        However, for orthogonal grid items, it used to check the wrong axis.
+        So if an item had 'margin-top: auto' and 'margin-left: 5px', when asking
+        for the horizontal margin we could get 0px instead of 5px due to the
+        auto margin in the vertical axis.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001.html
+
+        * rendering/GridLayoutFunctions.cpp:
+        (WebCore::GridLayoutFunctions::marginLogicalSizeForChild):
+
 2020-05-19  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r261856.

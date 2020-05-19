@@ -69,9 +69,10 @@ LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDire
 {
     if (child.needsLayout())
         return computeMarginLogicalSizeForChild(grid, direction, child);
-    bool isRowAxis = flowAwareDirectionForChild(grid, child, direction) == ForColumns;
-    LayoutUnit marginStart = marginStartIsAuto(child, direction) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
-    LayoutUnit marginEnd = marginEndIsAuto(child, direction) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
+    GridTrackSizingDirection flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForChild(grid, child, direction);
+    bool isRowAxis = flowAwareDirection == ForColumns;
+    LayoutUnit marginStart = marginStartIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
+    LayoutUnit marginEnd = marginEndIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
     return marginStart + marginEnd;
 }
 
