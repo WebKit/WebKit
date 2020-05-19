@@ -187,6 +187,8 @@ void RealtimeMediaSource::updateHasStartedProducingData()
 
 void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 {
+    // FIXME: Migrate RealtimeMediaSource clients to non main thread processing.
+    ASSERT(isMainThread());
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;
 
@@ -964,11 +966,8 @@ void RealtimeMediaSource::setIntrinsicSize(const IntSize& size)
     auto currentSize = this->size();
     m_intrinsicSize = size;
 
-    if (currentSize != this->size()) {
-        scheduleDeferredTask([this] {
-            notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
-        });
-    }
+    if (currentSize != this->size())
+        notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
 
 const IntSize RealtimeMediaSource::intrinsicSize() const

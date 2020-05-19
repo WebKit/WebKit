@@ -141,7 +141,6 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
 {
     INFO_LOG(LOGIDENTIFIER);
-    // MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable expects a weak pointer to be created in the constructor.
     m_boundsChangeListener = adoptNS([[WebRootSampleBufferBoundsChangeListener alloc] initWithCallback:[this, weakThis = makeWeakPtr(this)] {
         if (!weakThis)
             return;
@@ -282,16 +281,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSamp
     }
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample)
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sample)
 {
-    if (!isMainThread()) {
-        callOnMainThread([weakThis = makeWeakPtr(this), sample = makeRef(sample)]() mutable {
-            if (weakThis)
-                weakThis->videoSampleAvailable(sample.get());
-        });
-        return;
-    }
-
     if (!m_imagePainter.mediaSample || m_displayMode != PausedImage) {
         m_imagePainter.mediaSample = &sample;
         m_imagePainter.cgImage = nullptr;
@@ -742,6 +733,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::didAddTrack(MediaStreamTrackPrivate&)
 void MediaPlayerPrivateMediaStreamAVFObjC::didRemoveTrack(MediaStreamTrackPrivate&)
 {
     updateTracks();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& mediaSample)
+{
+    if (streamTime().toDouble() < 0)
+        return;
+
+    enqueueVideoSample(mediaSample);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPrivate&)

@@ -193,8 +193,18 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
         break;
     }
 
-    setIntrinsicSize(IntSize(width, height));
-    videoSampleAvailable(MediaSampleAVFObjC::create(sample.get(), rotation));
+    callOnMainThread([protectedThis = makeRef(*this), sample = WTFMove(sample), width, height, rotation] {
+        protectedThis->processNewSample(sample.get(), width, height, rotation);
+    });
+}
+
+void RealtimeIncomingVideoSourceCocoa::processNewSample(CMSampleBufferRef sample, unsigned width, unsigned height, MediaSample::VideoRotation rotation)
+{
+    auto size = this->size();
+    if (WTF::safeCast<int>(width) != size.width() || WTF::safeCast<int>(height) != size.height())
+        setIntrinsicSize(IntSize(width, height));
+
+    videoSampleAvailable(MediaSampleAVFObjC::create(sample, rotation));
 }
 
 } // namespace WebCore

@@ -30,7 +30,7 @@
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/MediaTime.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/AtomString.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -54,7 +54,7 @@ struct PlatformSample {
     } sample;
 };
 
-class MediaSample : public ThreadSafeRefCounted<MediaSample> {
+class MediaSample : public RefCounted<MediaSample> {
 public:
     virtual ~MediaSample() = default;
 
