@@ -78,6 +78,7 @@ Ref<MockRealtimeVideoSource> MockRealtimeVideoSourceMac::createForMockDisplayCap
 
 MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(String&& deviceID, String&& name, String&& hashSalt)
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    , m_workQueue(WorkQueue::create("MockRealtimeVideoSource Render Queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
 {
 }
 
@@ -95,7 +96,9 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     if (!sampleBuffer)
         return;
 
-    dispatchMediaSampleToObservers(*sampleBuffer);
+    m_workQueue->dispatch([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer)]() mutable {
+        dispatchMediaSampleToObservers(*sampleBuffer);
+    });
 }
 
 } // namespace WebCore

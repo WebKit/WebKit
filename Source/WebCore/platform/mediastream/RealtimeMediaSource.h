@@ -102,7 +102,8 @@ public:
     public:
         virtual ~VideoSampleObserver() = default;
 
-        virtual void videoSampleAvailable(MediaSample&) { }
+        // May be called on a background thread.
+        virtual void videoSampleAvailable(MediaSample&) = 0;
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -278,7 +279,9 @@ private:
     mutable RecursiveLock m_videoSampleObserversLock;
     HashSet<VideoSampleObserver*> m_videoSampleObservers;
 
+    // Set on the main thread from constraints.
     IntSize m_size;
+    // Set on sample generation thread.
     IntSize m_intrinsicSize;
     double m_frameRate { 30 };
     double m_aspectRatio { 0 };

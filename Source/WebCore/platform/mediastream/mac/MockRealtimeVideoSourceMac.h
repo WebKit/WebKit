@@ -34,6 +34,7 @@
 
 #include "MockRealtimeVideoSource.h"
 #include "PixelBufferConformerCV.h"
+#include <wtf/WorkQueue.h>
 
 typedef struct __CVBuffer *CVBufferRef;
 typedef CVBufferRef CVImageBufferRef;
@@ -60,6 +61,7 @@ private:
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
     IntSize m_presetSize;
+    Ref<WorkQueue> m_workQueue;
 };
 
 } // namespace WebCore
