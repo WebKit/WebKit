@@ -951,14 +951,14 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
     }
 
     Optional<TextIndicatorData> textIndicatorData;
-    OptionSet<TextIndicatorOption> textIndicatorOptions = {
-        TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection,
-        TextIndicatorOptionExpandClipBeyondVisibleRect,
-        TextIndicatorOptionPaintAllContent,
-        TextIndicatorOptionUseSelectionRectForSizing
+    constexpr OptionSet<TextIndicatorOption> textIndicatorOptions {
+        TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::PaintAllContent,
+        TextIndicatorOption::UseSelectionRectForSizing
     };
 
-    if (auto textIndicator = TextIndicator::createWithRange(*imagePlaceholderRange, textIndicatorOptions.toRaw(), TextIndicatorPresentationTransition::None, { }))
+    if (auto textIndicator = TextIndicator::createWithRange(*imagePlaceholderRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
         textIndicatorData = textIndicator->data();
 
     reply(WTFMove(placeholderRects), WTFMove(textIndicatorData));
@@ -1007,7 +1007,16 @@ void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element
 void WebPage::computeAndSendEditDragSnapshot()
 {
     Optional<TextIndicatorData> textIndicatorData;
-    static auto defaultTextIndicatorOptionsForEditDrag = TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionComputeEstimatedBackgroundColor | TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
+    constexpr OptionSet<TextIndicatorOption> defaultTextIndicatorOptionsForEditDrag {
+        TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::PaintAllContent,
+        TextIndicatorOption::IncludeMarginIfRangeMatchesSelection,
+        TextIndicatorOption::PaintBackgrounds,
+        TextIndicatorOption::ComputeEstimatedBackgroundColor,
+        TextIndicatorOption::UseSelectionRectForSizing,
+        TextIndicatorOption::IncludeSnapshotWithSelectionHighlight
+    };
     if (auto range = std::exchange(m_rangeForDropSnapshot, WTF::nullopt)) {
         if (auto textIndicator = TextIndicator::createWithRange(createLiveRange(*range), defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
@@ -2603,11 +2612,16 @@ static void linkIndicatorPositionInformation(WebPage& page, Element& linkElement
     float deviceScaleFactor = page.corePage()->deviceScaleFactor();
     const float marginInPoints = request.linkIndicatorShouldHaveLegacyMargins ? 4 : 0;
 
-    auto textIndicator = TextIndicator::createWithRange(linkRange.get(),
-        TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds |
-        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges | TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionComputeEstimatedBackgroundColor,
-        TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
-        
+    constexpr OptionSet<TextIndicatorOption> textIndicatorOptions {
+        TextIndicatorOption::TightlyFitContent,
+        TextIndicatorOption::RespectTextColor,
+        TextIndicatorOption::PaintBackgrounds,
+        TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
+        TextIndicatorOption::IncludeMarginIfRangeMatchesSelection,
+        TextIndicatorOption::ComputeEstimatedBackgroundColor
+    };
+    auto textIndicator = TextIndicator::createWithRange(linkRange.get(), textIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
+
     if (textIndicator)
         info.linkIndicator = textIndicator->data();
 }

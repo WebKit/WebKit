@@ -852,7 +852,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
     Element* URLElement = hitTestResult.URLElement();
     if (!absoluteLinkURL.isEmpty() && URLElement)
-        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(*URLElement), TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
+        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(*URLElement), { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
 
     auto lookupResult = lookupTextAtLocation(locationInViewCoordinates);
     if (auto* lookupRange = std::get<RefPtr<Range>>(lookupResult).get()) {
@@ -883,7 +883,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         pageOverlayDidOverrideDataDetectors = true;
         immediateActionResult.detectedDataActionContext = actionContext;
         immediateActionResult.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(*mainResultRange))));
-        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
+        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
         immediateActionResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         break;
     }
@@ -894,7 +894,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
             immediateActionResult.detectedDataActionContext = WTFMove(result->actionContext);
             immediateActionResult.detectedDataBoundingBox = result->boundingBox;
             immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(result->range,
-                TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorPresentationTransition::FadeIn);
+                { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
         }
     }
 

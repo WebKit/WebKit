@@ -66,7 +66,7 @@ Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
     return adoptRef(*new TextIndicator(data));
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
+RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
     auto frame = makeRefPtr(range.startContainer().document().frame());
     if (!frame)
@@ -97,7 +97,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, T
     return TextIndicator::create(data);
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
+RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
     auto range = frame.selection().selection().toNormalizedRange();
     if (!range)
@@ -124,17 +124,17 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
     return false;
 }
 
-static SnapshotOptions snapshotOptionsForTextIndicatorOptions(TextIndicatorOptions options)
+static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndicatorOption> options)
 {
     SnapshotOptions snapshotOptions = SnapshotOptionsPaintWithIntegralScaleFactor;
 
-    if (!(options & TextIndicatorOptionPaintAllContent)) {
-        if (options & TextIndicatorOptionPaintBackgrounds)
+    if (!options.contains(TextIndicatorOption::PaintAllContent)) {
+        if (options.contains(TextIndicatorOption::PaintBackgrounds))
             snapshotOptions |= SnapshotOptionsPaintSelectionAndBackgroundsOnly;
         else {
             snapshotOptions |= SnapshotOptionsPaintSelectionOnly;
 
-            if (!(options & TextIndicatorOptionRespectTextColor))
+            if (!options.contains(TextIndicatorOption::RespectTextColor))
                 snapshotOptions |= SnapshotOptionsForceBlackText;
         }
     } else
@@ -160,13 +160,13 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
     if (!data.contentImage)
         return false;
 
-    if (data.options & TextIndicatorOptionIncludeSnapshotWithSelectionHighlight) {
+    if (data.options.contains(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight)) {
         float snapshotScaleFactor;
         data.contentImageWithHighlight = takeSnapshot(frame, snapshotRect, SnapshotOptionsNone, snapshotScaleFactor, clipRectsInDocumentCoordinates);
         ASSERT(!data.contentImageWithHighlight || data.contentImageScaleFactor >= snapshotScaleFactor);
     }
 
-    if (data.options & TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection) {
+    if (data.options.contains(TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection)) {
         float snapshotScaleFactor;
         auto snapshotRect = frame.view()->visibleContentRect();
         data.contentImageWithoutSelection = takeSnapshot(frame, snapshotRect, SnapshotOptionsPaintEverythingExcludingSelection, snapshotScaleFactor, { });
@@ -256,17 +256,17 @@ static Color estimatedBackgroundColorForRange(const SimpleRange& range, const Fr
 
 static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgroundColor, HashSet<Color>&& textColors)
 {
-    if (data.options & TextIndicatorOptionPaintAllContent)
+    if (data.options.contains(TextIndicatorOption::PaintAllContent))
         return false;
 
-    if (!(data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges))
+    if (!data.options.contains(TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges))
         return false;
 
-    if (!(data.options & TextIndicatorOptionComputeEstimatedBackgroundColor))
+    if (!data.options.contains(TextIndicatorOption::ComputeEstimatedBackgroundColor))
         return false;
 
     bool hasOnlyLegibleTextColors = true;
-    if (data.options & TextIndicatorOptionRespectTextColor) {
+    if (data.options.contains(TextIndicatorOption::RespectTextColor)) {
         for (auto& textColor : textColors) {
             hasOnlyLegibleTextColors = textColorIsLegibleAgainstBackgroundColor(textColor, backgroundColor);
             if (!hasOnlyLegibleTextColors)
@@ -293,7 +293,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
         document->updateLayoutIgnorePendingStylesheets();
 
     bool treatRangeAsComplexDueToIllegibleTextColors = false;
-    if (data.options & TextIndicatorOptionComputeEstimatedBackgroundColor) {
+    if (data.options.contains(TextIndicatorOption::ComputeEstimatedBackgroundColor)) {
         data.estimatedBackgroundColor = estimatedBackgroundColorForRange(range, frame);
         treatRangeAsComplexDueToIllegibleTextColors = hasAnyIllegibleColors(data, data.estimatedBackgroundColor, estimatedTextColorsForRange(range));
     }
@@ -301,25 +301,25 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
     // FIXME (138888): Ideally we wouldn't remove the margin in this case, but we need to
     // ensure that the indicator and indicator-with-highlight overlap precisely, and
     // we can't add a margin to the indicator-with-highlight.
-    if (indicatesCurrentSelection && !(data.options & TextIndicatorOptionIncludeMarginIfRangeMatchesSelection))
+    if (indicatesCurrentSelection && !data.options.contains(TextIndicatorOption::IncludeMarginIfRangeMatchesSelection))
         margin = FloatSize();
 
     Vector<FloatRect> textRects;
 
-    bool useBoundingRectAndPaintAllContentForComplexRanges = data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+    bool useBoundingRectAndPaintAllContentForComplexRanges = data.options.contains(TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges);
     if (useBoundingRectAndPaintAllContentForComplexRanges && containsOnlyWhiteSpaceText(range)) {
         if (auto* containerRenderer = commonInclusiveAncestor(range.start.container, range.end.container)->renderer()) {
-            data.options |= TextIndicatorOptionPaintAllContent;
+            data.options.add(TextIndicatorOption::PaintAllContent);
             textRects.append(containerRenderer->absoluteBoundingBoxRect());
         }
     } else if (useBoundingRectAndPaintAllContentForComplexRanges && (treatRangeAsComplexDueToIllegibleTextColors || hasNonInlineOrReplacedElements(range)))
-        data.options |= TextIndicatorOptionPaintAllContent;
+        data.options.add(TextIndicatorOption::PaintAllContent);
 #if PLATFORM(IOS_FAMILY)
-    else if (data.options & TextIndicatorOptionUseSelectionRectForSizing)
+    else if (data.options.contains(TextIndicatorOption::UseSelectionRectForSizing))
         textRects = selectionRects(range);
 #endif
     else {
-        auto textRectHeight = (data.options & TextIndicatorOptionTightlyFitContent) ? FrameSelection::TextRectangleHeight::TextHeight : FrameSelection::TextRectangleHeight::SelectionHeight;
+        auto textRectHeight = data.options.contains(TextIndicatorOption::TightlyFitContent) ? FrameSelection::TextRectangleHeight::TextHeight : FrameSelection::TextRectangleHeight::SelectionHeight;
         Vector<IntRect> intRects;
         createLiveRange(range)->absoluteTextRects(intRects, textRectHeight == FrameSelection::TextRectangleHeight::SelectionHeight, Range::BoundingRectBehavior::RespectClipping);
         textRects.reserveInitialCapacity(intRects.size());
@@ -343,7 +343,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
         contentsClipRect = frameView->visibleContentRect();
 #endif
 
-    if (data.options & TextIndicatorOptionExpandClipBeyondVisibleRect) {
+    if (data.options.contains(TextIndicatorOption::ExpandClipBeyondVisibleRect)) {
         contentsClipRect.inflateX(contentsClipRect.width() / 2);
         contentsClipRect.inflateY(contentsClipRect.height() / 2);
     }
@@ -354,7 +354,7 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
     Vector<FloatRect> textRectsInRootViewCoordinates;
     for (const FloatRect& textRect : textRects) {
         FloatRect clippedTextRect;
-        if (data.options & TextIndicatorOptionDoNotClipToVisibleRect)
+        if (data.options.contains(TextIndicatorOption::DoNotClipToVisibleRect))
             clippedTextRect = textRect;
         else
             clippedTextRect = intersection(textRect, contentsClipRect);

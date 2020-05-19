@@ -5905,7 +5905,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (!selectionRange)
         return;
 
-    [[self _webView] _showDictionaryLookupPopup:[WebImmediateActionController _dictionaryPopupInfoForRange:*selectionRange inFrame:coreFrame withLookupOptions:nil indicatorOptions:WebCore::TextIndicatorOptionIncludeSnapshotWithSelectionHighlight transition:WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade]];
+    [[self _webView] _showDictionaryLookupPopup:[WebImmediateActionController _dictionaryPopupInfoForRange:*selectionRange inFrame:coreFrame withLookupOptions:nil indicatorOptions:{ WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight } transition:WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade]];
 }
 
 - (void)quickLookWithEvent:(NSEvent *)event

@@ -5562,7 +5562,7 @@ Internals::TextIndicatorInfo::~TextIndicatorInfo() = default;
 
 Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range, TextIndicatorOptions options)
 {
-    auto indicator = TextIndicator::createWithRange(range, options.core(), TextIndicatorPresentationTransition::None);
+    auto indicator = TextIndicator::createWithRange(range, options.coreOptions(), TextIndicatorPresentationTransition::None);
     return indicator->data();
 }
 

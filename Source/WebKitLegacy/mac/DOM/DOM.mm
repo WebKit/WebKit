@@ -523,13 +523,15 @@ id <DOMEventTarget> kit(EventTarget* target)
 
     auto& node = *core(self);
 
+    constexpr OptionSet<TextIndicatorOption> options {
+        TextIndicatorOption::TightlyFitContent,
+        TextIndicatorOption::RespectTextColor,
+        TextIndicatorOption::PaintBackgrounds,
+        TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
+        TextIndicatorOption::IncludeMarginIfRangeMatchesSelection
+    };
     const float margin = 4 / node.document().page()->pageScaleFactor();
-    auto textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(node), TextIndicatorOptionTightlyFitContent |
-        TextIndicatorOptionRespectTextColor |
-        TextIndicatorOptionPaintBackgrounds |
-        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
-        TextIndicatorOptionIncludeMarginIfRangeMatchesSelection,
-        TextIndicatorPresentationTransition::None, FloatSize(margin, margin));
+    auto textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(node), options, TextIndicatorPresentationTransition::None, FloatSize(margin, margin));
 
     if (textIndicator) {
         if (Image* image = textIndicator->contentImage())

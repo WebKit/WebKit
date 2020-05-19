@@ -1,3 +1,35 @@
+2020-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Replace TextIndicatorOptions with OptionSet<TextIndicatorOption>
+        <https://webkit.org/b/212051>
+        <rdar://problem/63368556>
+
+        Reviewed by Simon Fraser.
+
+        Use OptionSet<TextIndicatorOption> everywhere
+        TextIndicatorOptions was previously used, plus:
+        - Make TextIndicatorOption an enum class.  Remove
+          "TextIndicatorOption" prefix so TextIndicatorOptionBar becomes
+          TextIndicatorOption::Bar.
+        - Remove TextIndicatorOptionDefault because OptionSet<>
+          initializes to zero.
+        - Replace static variables (including two globals in WebCore)
+          with constexpr variables.
+
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+        (WebCore::TextIndicator::createWithSelectionInFrame):
+        (WebCore::snapshotOptionsForTextIndicatorOptions):
+        (WebCore::takeSnapshots):
+        (WebCore::hasAnyIllegibleColors):
+        (WebCore::initializeIndicator):
+        * page/TextIndicator.h:
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForLink):
+        (WebCore::createDragImageForSelection):
+        (WebCore::createDragImageForRange):
+        * testing/Internals.h:
+
 2020-05-18  Andy Estes  <aestes@apple.com>
 
         http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html fails in public SDK builds

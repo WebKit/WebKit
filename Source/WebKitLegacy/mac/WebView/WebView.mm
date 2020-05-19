@@ -712,7 +712,7 @@ private:
         }
     }
 
-    if (indicatorData.options & WebCore::TextIndicatorOptionComputeEstimatedBackgroundColor)
+    if (indicatorData.options.contains(WebCore::TextIndicatorOption::ComputeEstimatedBackgroundColor))
         _estimatedBackgroundColor = [PAL::allocUIColorInstance() initWithCGColor:cachedCGColor(indicatorData.estimatedBackgroundColor)];
 
     return self;
@@ -1961,7 +1961,16 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     if (!page)
         return;
 
-    static auto defaultEditDragTextIndicatorOptions = WebCore::TextIndicatorOptionIncludeSnapshotOfAllVisibleContentWithoutSelection | WebCore::TextIndicatorOptionExpandClipBeyondVisibleRect | WebCore::TextIndicatorOptionPaintAllContent | WebCore::TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | WebCore::TextIndicatorOptionPaintBackgrounds | WebCore::TextIndicatorOptionUseSelectionRectForSizing | WebCore::TextIndicatorOptionIncludeSnapshotWithSelectionHighlight | WebCore::TextIndicatorOptionRespectTextColor;
+    constexpr OptionSet<WebCore::TextIndicatorOption> defaultEditDragTextIndicatorOptions {
+        WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+        WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        WebCore::TextIndicatorOption::PaintAllContent,
+        WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection,
+        WebCore::TextIndicatorOption::PaintBackgrounds,
+        WebCore::TextIndicatorOption::UseSelectionRectForSizing,
+        WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight,
+        WebCore::TextIndicatorOption::RespectTextColor
+    };
     auto& frame = page->focusController().focusedOrMainFrame();
     if (auto range = frame.selection().selection().toNormalizedRange()) {
         if (auto textIndicator = WebCore::TextIndicator::createWithRange(createLiveRange(*range), defaultEditDragTextIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize()))

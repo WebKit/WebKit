@@ -1,3 +1,36 @@
+2020-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Replace TextIndicatorOptions with OptionSet<TextIndicatorOption>
+        <https://webkit.org/b/212051>
+        <rdar://problem/63368556>
+
+        Reviewed by Simon Fraser.
+
+        Use OptionSet<TextIndicatorOption> everywhere
+        TextIndicatorOptions was previously used, plus:
+        - Make TextIndicatorOption an enum class.  Remove
+          "TextIndicatorOption" prefix so TextIndicatorOptionBar becomes
+          TextIndicatorOption::Bar.
+        - Remove TextIndicatorOptionDefault because OptionSet<>
+          initializes to zero.
+        - Replace static variables (including two globals in WebCore)
+          with constexpr variables.
+
+        * DOM/DOM.mm:
+        (-[DOMNode getPreviewSnapshotImage:andRects:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        * WebView/WebImmediateActionController.h:
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        (-[WebImmediateActionController _animationControllerForText]):
+        * WebView/WebView.mm:
+        (-[WebUITextIndicatorData initWithImage:textIndicatorData:scale:]):
+        (-[WebView _didConcludeEditDrag]):
+
 2020-05-18  Peng Liu  <peng.liu6@apple.com>
 
         ASSERTION FAILED: media/modern-media-controls/media-controller/media-controller-resize.html crashes under stress tests

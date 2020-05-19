@@ -158,9 +158,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     }];
 #endif // PLATFORM(MAC)
 
-    TextIndicatorOptions indicatorOptions = TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+    OptionSet<TextIndicatorOption> indicatorOptions { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
     if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
-        indicatorOptions |= TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
+        indicatorOptions.add(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight);
     
     auto textIndicator = TextIndicator::createWithRange(range, indicatorOptions, presentationTransition);
     if (!textIndicator) {

@@ -51,7 +51,7 @@ const int cornerRadius = 3;
 const int totalHorizontalMargin = 1;
 const int totalVerticalMargin = 1;
 
-const TextIndicatorOptions findTextIndicatorOptions = TextIndicatorOptionIncludeMarginIfRangeMatchesSelection | TextIndicatorOptionDoNotClipToVisibleRect;
+constexpr OptionSet<TextIndicatorOption> findTextIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, TextIndicatorOption::DoNotClipToVisibleRect };
 
 static Color highlightColor()
 {

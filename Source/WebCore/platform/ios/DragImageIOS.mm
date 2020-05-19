@@ -106,8 +106,6 @@ void deleteDragImage(DragImageRef)
 {
 }
 
-static const TextIndicatorOptions defaultLinkIndicatorOptions = TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges | TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionComputeEstimatedBackgroundColor;
-
 static FontCascade cascadeForSystemFont(CGFloat size)
 {
     UIFont *font = [PAL::getUIFontClass() systemFontOfSize:size];
@@ -147,6 +145,14 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
             urlFontCascade.get().drawText(context, TextRun(truncatedBottomString), FloatPoint(dragImagePadding, 40 + dragImagePadding));
     }];
 
+    constexpr OptionSet<TextIndicatorOption> defaultLinkIndicatorOptions {
+        TextIndicatorOption::TightlyFitContent,
+        TextIndicatorOption::RespectTextColor,
+        TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::ComputeEstimatedBackgroundColor
+    };
+
     if (auto textIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(linkElement), defaultLinkIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize()))
         indicatorData = textIndicator->data();
 
@@ -165,16 +171,21 @@ DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, flo
     return image;
 }
 
-static TextIndicatorOptions defaultSelectionDragImageTextIndicatorOptions = TextIndicatorOptionExpandClipBeyondVisibleRect | TextIndicatorOptionPaintAllContent | TextIndicatorOptionUseSelectionRectForSizing | TextIndicatorOptionComputeEstimatedBackgroundColor;
+constexpr OptionSet<TextIndicatorOption> defaultSelectionDragImageTextIndicatorOptions {
+    TextIndicatorOption::ExpandClipBeyondVisibleRect,
+    TextIndicatorOption::PaintAllContent,
+    TextIndicatorOption::UseSelectionRectForSizing,
+    TextIndicatorOption::ComputeEstimatedBackgroundColor
+};
 
 DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData& indicatorData, bool forceBlackText)
 {
     if (auto document = frame.document())
         document->updateLayout();
 
-    TextIndicatorOptions options = defaultSelectionDragImageTextIndicatorOptions;
+    auto options = defaultSelectionDragImageTextIndicatorOptions;
     if (!forceBlackText)
-        options |= TextIndicatorOptionRespectTextColor;
+        options.add(TextIndicatorOption::RespectTextColor);
 
     auto textIndicator = TextIndicator::createWithSelectionInFrame(frame, options, TextIndicatorPresentationTransition::None, FloatSize());
     if (!textIndicator)
@@ -216,9 +227,9 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
     if (range.collapsed())
         return nil;
 
-    TextIndicatorOptions options = defaultSelectionDragImageTextIndicatorOptions;
+    auto options = defaultSelectionDragImageTextIndicatorOptions;
     if (!forceBlackText)
-        options |= TextIndicatorOptionRespectTextColor;
+        options.add(TextIndicatorOption::RespectTextColor);
 
     auto textIndicator = TextIndicator::createWithRange(range, options, TextIndicatorPresentationTransition::None);
     if (!textIndicator || !textIndicator->contentImage())

@@ -271,7 +271,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
             _type = WebImmediateActionLinkPreview;
 
             RefPtr<WebCore::Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
-            auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, WebCore::TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges, WebCore::TextIndicatorPresentationTransition::FadeIn);
+            auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, { WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, WebCore::TextIndicatorPresentationTransition::FadeIn);
             if (indicator)
                 [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
 
@@ -439,7 +439,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[detectedItem->actionContext mainResult] actionContext:detectedItem->actionContext.get()])
         return nil;
 
-    auto indicator = WebCore::TextIndicator::createWithRange(createLiveRange(detectedItem->range), WebCore::TextIndicatorOptionDefault, WebCore::TextIndicatorPresentationTransition::FadeIn);
+    auto indicator = WebCore::TextIndicator::createWithRange(createLiveRange(detectedItem->range), { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [detectedItem->actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
@@ -474,7 +474,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     RefPtr<WebCore::Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
     if (!linkRange)
         return nullptr;
-    auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, WebCore::TextIndicatorOptionDefault, WebCore::TextIndicatorPresentationTransition::FadeIn);
+    auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
@@ -495,7 +495,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
 #pragma mark Text action
 
-+ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(WebCore::TextIndicatorOptions)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
 {
     auto& editor = frame->editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -562,7 +562,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!dictionaryRange)
         return nil;
 
-    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:WebCore::TextIndicatorOptionDefault transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
+    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:{ } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 

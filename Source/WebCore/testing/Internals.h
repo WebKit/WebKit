@@ -962,16 +962,16 @@ public:
         bool useBoundingRectAndPaintAllContentForComplexRanges { false };
         bool computeEstimatedBackgroundColor { false };
         bool respectTextColor { false };
-        
-        WebCore::TextIndicatorOptions core()
+
+        OptionSet<WebCore::TextIndicatorOption> coreOptions()
         {
-            WebCore::TextIndicatorOptions options = 0;
+            OptionSet<WebCore::TextIndicatorOption> options;
             if (useBoundingRectAndPaintAllContentForComplexRanges)
-                options = options | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+                options.add(TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges);
             if (computeEstimatedBackgroundColor)
-                options = options | TextIndicatorOptionComputeEstimatedBackgroundColor;
+                options.add(TextIndicatorOption::ComputeEstimatedBackgroundColor);
             if (respectTextColor)
-                options = options | TextIndicatorOptionRespectTextColor;
+                options.add(TextIndicatorOption::RespectTextColor);
             return options;
         }
     };
