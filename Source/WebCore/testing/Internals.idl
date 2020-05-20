@@ -402,6 +402,7 @@ enum CompositingPolicy {
     boolean hasSpellingMarker(long from, long length);
     boolean hasGrammarMarker(long from, long length);
     boolean hasAutocorrectedMarker(long from, long length);
+    boolean hasDictationAlternativesMarker(long from, long length);
     void setContinuousSpellCheckingEnabled(boolean enabled);
     void setAutomaticQuoteSubstitutionEnabled(boolean enabled);
     void setAutomaticLinkDetectionEnabled(boolean enabled);

@@ -1,3 +1,51 @@
+2020-05-19  Daniel Bates  <dabates@apple.com>
+
+        Blue dotted underline with alternatives only shown for last word, gets lost for previous insertions
+        https://bugs.webkit.org/show_bug.cgi?id=212097
+        <rdar://problem/61913405>
+
+        Reviewed by Darin Adler.
+
+        Fix up two cases, <space> is a literal ' ' and | is the position of the caret:
+            1. Space inserted after marker, here's what it looks like BEFORE insertion (i.e. endOfFirstWord == startOfSelection):
+                hello|
+
+            This case is detected when the end of the next word (relative to caret) would be at the start of the
+            word that begins before or on the caret.
+
+            2. Space inserted before marker, here's what it looks like BEFORE insertion (i.e. startOfLastWord == endOfSelection):
+                |hello
+
+            This case is detected when the end of the previous word (relative to caret) would be at the end of the
+            word that ends after or on the caret.
+
+        Note ^^^ example uses a caret, but code is slightly more general and works when the current selection
+        is a range. Though I didn't explicitly test that because my bug is specific to having a caret selection.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Do not remove markers if selection starts at the
+        beginning of a new word. This is detected by looking at the character before the selection start to see
+        if it is a space or newline. This will be false when there is no preceding character (e.g. start of document),
+        but that's OK because it doesn't matter what we pass to updateMarkersForWordsAffectedByEditing() - there's
+        no markers to remove anyway, let alone text for markers to exist in. I don't use isStartOfWord() here
+        because that would incorrectly return false if the current selection is at the end of a paragraph. I could have
+        fixed that up by checking isEndOfParagraph() as well, but isStartOfWord() + isEndOfParagraph() is less
+        efficient than just looking at the previous character directly. So, I did that instead.
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing): Save off the original end of the first word and
+        start of the last word positions before mutating them. Update early return checks to use these saved values
+        instead of comparing against the start and end of the current selection, which weren't correct. Saved positioned
+        are aligned by word, but start and end of current selection may NOT be. So, comparison was asymmetric: lhs was
+        word aligned position, but rhs may not be.
+
+        * editing/Editor.h: While I am here, fix up a param name to match what it is called in the .cpp.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasDictationAlternativesMarker): Added
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add new functionality for testing purposes.
+
+
 2020-05-19  Oriol Brufau  <obrufau@igalia.com>
 
         Fix marginLogicalSizeForChild to check auto margins in the right axis

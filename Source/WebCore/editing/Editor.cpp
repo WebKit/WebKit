@@ -1270,7 +1270,10 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (!shouldInsertText(text, createLiveRange(selection.toNormalizedRange()).get(), EditorInsertAction::Typed))
         return true;
 
-    updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]));
+    // FIXME: Should pass false to updateMarkersForWordsAffectedByEditing() to not remove markers if
+    // a leading or trailing no-break space is being inserted. See <https://webkit.org/b/212098>.
+    bool isStartOfNewWord = isSpaceOrNewline(selection.visibleStart().characterBefore());
+    updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]) || isStartOfNewWord);
 
     bool shouldConsiderApplyingAutocorrection = false;
     if (text == " " || text == "\t")
@@ -3028,12 +3031,15 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
         endOfLastWord = endOfWord(endOfSelection, LeftWordIfOnBoundary);
     }
 
+    auto originalEndOfFirstWord = endOfFirstWord;
+    auto originalStartOfLastWord = startOfLastWord;
+
     // If doNotRemoveIfSelectionAtWordBoundary is true, and first word ends at the start of selection,
     // we choose next word as the first word.
     if (doNotRemoveIfSelectionAtWordBoundary && endOfFirstWord == startOfSelection) {
         startOfFirstWord = nextWordPosition(startOfFirstWord);
         endOfFirstWord = endOfWord(startOfFirstWord, RightWordIfOnBoundary);
-        if (startOfFirstWord == endOfSelection)
+        if (startOfFirstWord == originalStartOfLastWord)
             return;
     }
 
@@ -3042,7 +3048,7 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     if (doNotRemoveIfSelectionAtWordBoundary && startOfLastWord == endOfSelection) {
         startOfLastWord = previousWordPosition(startOfLastWord);
         endOfLastWord = endOfWord(startOfLastWord, RightWordIfOnBoundary);
-        if (endOfLastWord == startOfSelection)
+        if (endOfLastWord == originalEndOfFirstWord)
             return;
     }
 

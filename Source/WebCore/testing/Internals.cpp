@@ -2356,6 +2356,17 @@ bool Internals::hasAutocorrectedMarker(int from, int length)
     return document->editor().selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
 }
 
+bool Internals::hasDictationAlternativesMarker(int from, int length)
+{
+    auto* document = contextDocument();
+    if (!document || !document->frame())
+        return false;
+
+    updateEditorUINowIfScheduled();
+
+    return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::DictationAlternatives, from, length);
+}
+
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)
 {
     if (!contextDocument() || !contextDocument()->frame())

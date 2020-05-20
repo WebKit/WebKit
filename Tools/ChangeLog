@@ -1,3 +1,20 @@
+2020-05-19  Daniel Bates  <dabates@apple.com>
+
+        Blue dotted underline with alternatives only shown for last word, gets lost for previous insertions
+        https://bugs.webkit.org/show_bug.cgi?id=212097
+        <rdar://problem/61913405>
+
+        Reviewed by Darin Adler.
+
+        Add tests. As I was writing them I discovered a few bugs in the existing code:
+                1. <https://webkit.org/b/212093> REGRESSION (r259930): Dictation marker at start of text is removed when added trailing whitespace is collapsed
+                2. <https://webkit.org/b/212098> Inserting a no-break space before or after a marker removes the marker
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/InsertTextAlternatives.mm: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::makeNSStringWithCharacter): Added.
+
 2020-05-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [WPE] Sync jhbuild to flatpak
