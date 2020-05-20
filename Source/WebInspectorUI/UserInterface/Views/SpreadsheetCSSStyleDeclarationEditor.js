@@ -95,7 +95,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         let propertyViewPendingStartEditing = null;
         for (let index = 0; index < properties.length; index++) {
             let property = properties[index];
-            let propertyView = new WI.SpreadsheetStyleProperty(this, property);
+            let propertyView = new WI.SpreadsheetStyleProperty(this, property, {selectable: true});
             propertyView.index = index;
             this.element.append(propertyView.element);
             this._propertyViews.push(propertyView);

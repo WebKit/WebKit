@@ -1,3 +1,20 @@
+2020-05-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r260978): Web Inspector: Styles: Pressing Space no longer toggles selected properties
+        https://bugs.webkit.org/show_bug.cgi?id=212121
+
+        Reviewed by Devin Rousso.
+
+        r260978 removed `tabIndex = -1` from the style property element so it wouldn't have a focus outline
+        when in the Computed panel. However, this also made style properties non-focusable in the Styles panel.
+
+        This patch sets `tabIndex = -1` on style property elements when they can be selected (e.g. in the Styles panel).
+        It doesn't set any tabIndex for style property elements in Computed or Changes panels.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+
 2020-05-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Fails to pretty-print a particular CSS file

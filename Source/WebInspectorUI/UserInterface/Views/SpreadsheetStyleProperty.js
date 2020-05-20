@@ -36,6 +36,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._readOnly = options.readOnly || false;
         this._element = document.createElement("div");
 
+        if (options.selectable)
+            this._element.tabIndex = -1;
+
         this._contentElement = null;
         this._nameElement = null;
         this._valueElement = null;
