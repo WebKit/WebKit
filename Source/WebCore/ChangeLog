@@ -1,3 +1,14 @@
+2020-05-19  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r259930): Dictation marker at start of text is removed when added trailing whitespace is collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=212093
+
+        Reviewed by Daniel Bates.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::shiftMarkers): Use int to do the math before clamping to
+        unsigned. This protects against underflow.
+
 2020-05-19  Sam Weinig  <weinig@apple.com>
 
         Remove almost always incorrect Color::getRGBA

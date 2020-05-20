@@ -153,7 +153,7 @@ TEST(InsertTextAlternatives, InsertTrailingSpace)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.hasDictationAlternativesMarker(5, 1)"] boolValue]); // <space>
 }
 
-TEST(InsertTextAlternatives, InsertTrailingSpaceWhitespaceRebalance_ExpectedFailure)
+TEST(InsertTextAlternatives, InsertTrailingSpaceWhitespaceRebalance)
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration]);
@@ -167,8 +167,7 @@ TEST(InsertTextAlternatives, InsertTrailingSpaceWhitespaceRebalance_ExpectedFail
     [[webView textInputContentView] insertText:@" "];
     [webView waitForNextPresentationUpdate];
 
-    // FIXME: Change this to EXPECT_TRUE() once <https://webkit.org/b/212093> is fixed.
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.hasDictationAlternativesMarker(0, 5)"] boolValue]); // hello
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.hasDictationAlternativesMarker(0, 5)"] boolValue]); // hello
 }
 
 TEST(InsertTextAlternatives, InsertTrailingNewline)
