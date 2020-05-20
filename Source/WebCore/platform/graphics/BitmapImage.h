@@ -130,6 +130,9 @@ public:
 
 #if PLATFORM(GTK)
     GdkPixbuf* getGdkPixbuf() override;
+#if USE(GTK4)
+    GdkTexture* gdkTexture() override;
+#endif
 #endif
 
     WEBCORE_EXPORT NativeImagePtr nativeImage(const GraphicsContext* = nullptr) override;

@@ -1,3 +1,20 @@
+2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Add support for drag and drop operations
+        https://bugs.webkit.org/show_bug.cgi?id=211779
+
+        Reviewed by Adrian Perez de Castro.
+
+        Move the code to create a GdkTexture from an Image from CursorGtk to ImageGtk and add Image::gdkTexture().
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::gdkTexture):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::BitmapImage::gdkTexture):
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createCustomCursor):
+
 2020-05-20  Sam Weinig  <weinig@apple.com>
 
         Remove unused Color::getHSV function

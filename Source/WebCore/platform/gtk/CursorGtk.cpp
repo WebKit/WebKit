@@ -55,24 +55,19 @@ static GRefPtr<GdkCursor> createNamedCursor(const char* name)
 
 static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
+#if USE(GTK4)
+    auto texture = adoptGRef(image->gdkTexture());
+    if (!texture)
+        return nullptr;
+
+    IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
+    return adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
+#else
     RefPtr<cairo_surface_t> surface = image->nativeImageForCurrentFrame();
     if (!surface)
         return nullptr;
 
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
-
-#if USE(GTK4)
-    ASSERT(cairo_image_surface_get_format(surface.get()) == CAIRO_FORMAT_ARGB32);
-    auto width = cairo_image_surface_get_width(surface.get());
-    auto height = cairo_image_surface_get_height(surface.get());
-    auto stride = cairo_image_surface_get_stride(surface.get());
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(cairo_image_surface_get_data(surface.get()), height * stride,
-        [](gpointer data) {
-            cairo_surface_destroy(static_cast<cairo_surface_t*>(data));
-        }, surface.leakRef()));
-    auto texture = adoptGRef(gdk_memory_texture_new(width, height, GDK_MEMORY_A8R8G8B8_PREMULTIPLIED, bytes.get(), stride));
-    return adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
-#else
     return adoptGRef(gdk_cursor_new_from_surface(gdk_display_get_default(), surface.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
 #endif // USE(GTK4)
 }

@@ -35,7 +35,9 @@
 
 typedef struct _GtkWidget GtkWidget;
 
-#if !USE(GTK4)
+#if USE(GTK4)
+typedef struct _GdkDrag GdkDrag;
+#else
 typedef struct _GdkDragContext GdkDragContext;
 #endif
 
@@ -54,7 +56,9 @@ public:
 
 private:
     GtkWidget* m_webView { nullptr };
-#if !USE(GTK4)
+#if USE(GTK4)
+    GRefPtr<GdkDrag> m_drag;
+#else
     GRefPtr<GdkDragContext> m_drag;
 #endif
     Optional<WebCore::SelectionData> m_selectionData;

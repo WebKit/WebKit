@@ -37,7 +37,9 @@
 
 typedef struct _GtkWidget GtkWidget;
 
-#if !USE(GTK4)
+#if USE(GTK4)
+typedef struct _GdkDrop GdkDrop;
+#else
 typedef struct _GdkDragContext GdkDragContext;
 typedef struct _GtkSelectionData GtkSelectionData;
 #endif
@@ -61,20 +63,27 @@ private:
     void leave();
     void drop(WebCore::IntPoint&&, unsigned = 0);
 
-#if !USE(GTK4)
+#if USE(GTK4)
+    void loadData(const char* mimeType, CompletionHandler<void(GRefPtr<GBytes>&&)>&&);
+    void didLoadData();
+#else
     void dataReceived(WebCore::IntPoint&&, GtkSelectionData*, unsigned, unsigned);
     void leaveTimerFired();
 #endif
 
     GtkWidget* m_webView { nullptr };
-#if !USE(GTK4)
+#if USE(GTK4)
+    GRefPtr<GdkDrop> m_drop;
+#else
     GRefPtr<GdkDragContext> m_drop;
 #endif
     Optional<WebCore::IntPoint> m_position;
     unsigned m_dataRequestCount { 0 };
     Optional<WebCore::SelectionData> m_selectionData;
     WebCore::DragOperation m_operation { WebCore::DragOperationNone };
-#if !USE(GTK4)
+#if USE(GTK4)
+    GRefPtr<GCancellable> m_cancellable;
+#else
     RunLoop::Timer<DropTarget> m_leaveTimer;
 #endif
 };
