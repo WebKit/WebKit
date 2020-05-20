@@ -1,3 +1,17 @@
+2020-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Deprecate WKBundlePageSetPolicyClient() Injected bundle C API
+        https://bugs.webkit.org/show_bug.cgi?id=212166
+
+        Reviewed by Alex Christensen.
+
+        Deprecate WKBundlePageSetPolicyClient() Injected bundle C API. Approving navigations from
+        the injected bundle can lead to WebProcess terminations like in <rdar://problem/60340647>
+        because the WebProcess is not in a position to do sandbox checks when navigating to file
+        URLs.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2020-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb the display's nominal refresh rate down to ScrollingTree for use in scroll synchronization

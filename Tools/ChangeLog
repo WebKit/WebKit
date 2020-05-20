@@ -1,3 +1,14 @@
+2020-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Deprecate WKBundlePageSetPolicyClient() Injected bundle C API
+        https://bugs.webkit.org/show_bug.cgi?id=212166
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitObjC/CustomProtocolsInvalidScheme_Bundle.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2020-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPadOS] -webkit-text-size-adjust:percentage doesn't work in native apps

@@ -331,7 +331,9 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         decidePolicyForResponse,
         unableToImplementPolicy
     };
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundlePageSetPolicyClient(m_page, &policyClient.base);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     WKBundlePageUIClientV2 uiClient = {
         { 2, this },

@@ -55,7 +55,9 @@ private:
         policyClient.base.version = 0;
         policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
         
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WKBundlePageSetPolicyClient(bundlePage, &policyClient.base);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 };
 
