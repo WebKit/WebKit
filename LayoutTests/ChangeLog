@@ -1,3 +1,12 @@
+2020-05-20  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=212139
+        [ macOS debug ] REGRESSION: fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html is a flaky crash
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-05-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Animation engine should not wake up every tick for steps timing functions
