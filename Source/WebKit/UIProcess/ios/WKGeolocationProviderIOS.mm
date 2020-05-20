@@ -68,7 +68,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @end
 
 namespace WebKit {
-void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const String& urlString, id<WebAllowDenyPolicyListener>, UIView*);
+void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const URL&, id<WebAllowDenyPolicyListener>, UIView*);
 };
 
 struct GeolocationRequestData {

@@ -364,7 +364,7 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
 
     String type = mimeType;
     if (type.isEmpty() && url.protocolIsData())
-        type = mimeTypeFromDataURL(url);
+        type = mimeTypeFromDataURL(url.string());
     
     if (type.isEmpty() && !extension.isEmpty()) {
         for (auto* replacement : replacements) {

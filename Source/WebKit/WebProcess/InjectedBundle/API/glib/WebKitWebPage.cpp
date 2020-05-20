@@ -316,7 +316,7 @@ private:
                 errorMessage.appendLiteral(": ");
                 errorMessage.append(error.localizedDescription());
             }
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, error.failingURL());
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, error.failingURL().string());
         }
     }
 

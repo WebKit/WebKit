@@ -39,21 +39,25 @@
 
 namespace WebCore {
 
-inline DOMURL::DOMURL(URL&& completeURL, URL&& baseURL)
-    : m_baseURL(WTFMove(baseURL))
+inline DOMURL::DOMURL(URL&& completeURL, const URL& baseURL)
+    : m_baseURL(baseURL)
     , m_url(WTFMove(completeURL))
 {
 }
 
-ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
+ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
 {
-    URL baseURL { URL { }, base };
-    if (!baseURL.isValid())
+    if (!base.isValid())
         return Exception { TypeError };
-    URL completeURL { baseURL, url };
+    URL completeURL { base, url };
     if (!completeURL.isValid())
         return Exception { TypeError };
-    return adoptRef(*new DOMURL(WTFMove(completeURL), WTFMove(baseURL)));
+    return adoptRef(*new DOMURL(WTFMove(completeURL), base));
+}
+
+ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
+{
+    return create(url, URL { URL { }, base });
 }
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const DOMURL& base)

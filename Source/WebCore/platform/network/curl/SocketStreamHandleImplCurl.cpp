@@ -122,7 +122,7 @@ void SocketStreamHandleImpl::didFail(CurlStreamID, CURLcode errorCode)
     if (errorCode == CURLE_RECV_ERROR)
         m_client.didFailToReceiveSocketStreamData(*this);
     else
-        m_client.didFailSocketStream(*this, SocketStreamError(errorCode, m_url, CurlHandle::errorDescription(errorCode)));
+        m_client.didFailSocketStream(*this, SocketStreamError(errorCode, m_url.string(), CurlHandle::errorDescription(errorCode)));
 }
 
 void SocketStreamHandleImpl::destructStream()

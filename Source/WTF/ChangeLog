@@ -1,3 +1,19 @@
+2020-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove implicit URL->String conversion operators
+        https://bugs.webkit.org/show_bug.cgi?id=211033
+
+        Reviewed by Darin Adler.
+
+        These operators have been the cause of many subtle bugs related to type inference that are hard to see in the code,
+        as well as performance bugs where we unnecessarily re-parse parsed URLs.
+        After my recent cleanup this was easier than I thought it would be.
+
+        * wtf/URL.h:
+        (WTF::URL::operator const String& const): Deleted.
+        (WTF::URL::operator StringView const): Deleted.
+        (WTF::URL::operator NSString * const): Deleted.
+
 2020-05-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Animation engine should not wake up every tick for steps timing functions

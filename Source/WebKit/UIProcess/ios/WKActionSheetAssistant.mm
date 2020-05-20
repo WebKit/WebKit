@@ -342,7 +342,7 @@ static const CGFloat presentationElementRectPadding = 15;
     if (!_positionInformation)
         return;
 
-    NSURL *targetURL = [NSURL URLWithString:_positionInformation->url];
+    NSURL *targetURL = _positionInformation->url;
     NSString *urlScheme = [targetURL scheme];
     BOOL isJavaScriptURL = [urlScheme length] && [urlScheme caseInsensitiveCompare:@"javascript"] == NSOrderedSame;
     // FIXME: We should check if Javascript is enabled in the preferences.

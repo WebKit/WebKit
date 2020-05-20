@@ -2660,7 +2660,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
         return;
 
     info.isImage = true;
-    info.imageURL = element.document().completeURL(renderImage.cachedImage()->url());
+    info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
     info.isAnimatedImage = image->isAnimated();
 
     if (!request.includeSnapshot)
@@ -3150,7 +3150,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         HTMLInputElement& element = downcast<HTMLInputElement>(*focusedElement);
         HTMLFormElement* form = element.form();
         if (form)
-            information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr);
+            information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr).string();
         if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(element)) {
             information.acceptsAutofilledLoginCredentials = true;
             information.isAutofillableUsernameField = autofillElements->username() == focusedElement;

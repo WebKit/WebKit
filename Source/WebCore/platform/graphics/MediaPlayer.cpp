@@ -441,7 +441,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
     AtomString containerType = m_contentType.containerType();
     if (containerType.isEmpty() || containerType == applicationOctetStream() || containerType == textPlain()) {
         if (m_url.protocolIsData())
-            m_contentType = ContentType(mimeTypeFromDataURL(m_url));
+            m_contentType = ContentType(mimeTypeFromDataURL(m_url.string()));
         else {
             auto lastPathComponent = url.lastPathComponent();
             size_t pos = lastPathComponent.reverseFind('.');

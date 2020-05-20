@@ -151,7 +151,7 @@ void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 
 void NetworkStorageSession::deleteCookie(const URL& url, const String& name) const
 {
-    cookieDatabase().deleteCookie(url, name);
+    cookieDatabase().deleteCookie(url.string(), name);
 }
 
 void NetworkStorageSession::deleteAllCookies()

@@ -701,8 +701,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         COMPtr<IWebURLResponse> urlResponse(AdoptCOM, WebURLResponse::createInstance(loader->response()));
         COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(loader->originalRequestCopy()));
         
-        COMPtr<IWebNavigationData> navigationData(AdoptCOM, WebNavigationData::createInstance(
-            loader->urlForHistory(), loader->title().string, urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), loader->clientRedirectSourceForHistory()));
+        COMPtr<IWebNavigationData> navigationData(AdoptCOM, WebNavigationData::createInstance(loader->urlForHistory().string(), loader->title().string, urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), loader->clientRedirectSourceForHistory()));
 
         historyDelegate->didNavigateWithNavigationData(webView, navigationData.get(), m_webFrame);
         return;

@@ -380,7 +380,7 @@ String Pasteboard::readString(const String& type)
     case ClipboardDataTypeURIList:
         return m_selectionData->uriList();
     case ClipboardDataTypeURL:
-        return m_selectionData->url();
+        return m_selectionData->url().string();
     case ClipboardDataTypeMarkup:
         return m_selectionData->markup();
     case ClipboardDataTypeText:

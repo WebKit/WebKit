@@ -103,7 +103,7 @@ static InstanceMap& instanceMap()
 
 static String scriptStringIfJavaScriptURL(const URL& url)
 {
-    if (!protocolIsJavaScript(url))
+    if (!url.protocolIsJavaScript())
         return String();
 
     // This returns an unescaped string

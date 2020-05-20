@@ -127,10 +127,10 @@ void ResourceHandle::addCacheValidationHeaders(ResourceRequest& request)
     URL cacheUrl = request.url();
     cacheUrl.removeFragmentIdentifier();
 
-    if (cache.isCached(cacheUrl)) {
-        cache.addCacheEntryClient(cacheUrl, this);
+    if (cache.isCached(cacheUrl.string())) {
+        cache.addCacheEntryClient(cacheUrl.string(), this);
 
-        for (const auto& entry : cache.requestHeaders(cacheUrl))
+        for (const auto& entry : cache.requestHeaders(cacheUrl.string()))
             request.addHTTPHeaderField(entry.key, entry.value);
 
         d->m_addedCacheValidationHeaders = true;

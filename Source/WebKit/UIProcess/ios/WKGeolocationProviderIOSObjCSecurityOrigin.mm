@@ -44,17 +44,16 @@
 
 namespace WebKit {
 
-void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const String& urlString, id<WebAllowDenyPolicyListener>, UIView *);
+void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const URL&, id<WebAllowDenyPolicyListener>, UIView *);
 
-void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin* origin, const String& urlString, id<WebAllowDenyPolicyListener> listener, UIView *view)
+void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin* origin, const URL& url, id<WebAllowDenyPolicyListener> listener, UIView *view)
 {
     RetainPtr<WebSecurityOrigin> securityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
-    RetainPtr<NSURL> requestUrl = adoptNS([[NSURL alloc] initWithString:urlString]);
     RetainPtr<UIWebGeolocationPolicyDecider> decider = [UIWebGeolocationPolicyDecider sharedPolicyDecider];
     if ([decider respondsToSelector:@selector(decidePolicyForGeolocationRequestFromOrigin:requestingURL:view:listener:)])
-        [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:requestUrl.get() view:view listener:listener];
+        [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:url view:view listener:listener];
     else
-        [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:requestUrl.get() window:view.window listener:listener];
+        [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:url window:view.window listener:listener];
 }
 
 } // namespace WebKit

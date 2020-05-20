@@ -529,7 +529,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
         return;
 
     NSDictionary *representations = @{
-        (NSString *)kUTTypeUTF8PlainText : (NSString *)_positionInformation.url,
+        (NSString *)kUTTypeUTF8PlainText : (NSString *)_positionInformation.url.string(),
         (NSString *)kUTTypeURL : (NSURL *)_positionInformation.url,
     };
 

@@ -80,7 +80,7 @@ void SelectionData::setURL(const URL& url, const String& label)
 {
     m_url = url;
     if (m_uriList.isEmpty())
-        m_uriList = url;
+        m_uriList = url.string();
 
     if (!hasText())
         setText(url.string());
@@ -90,7 +90,7 @@ void SelectionData::setURL(const URL& url, const String& label)
 
     String actualLabel(label);
     if (actualLabel.isEmpty())
-        actualLabel = url;
+        actualLabel = url.string();
 
     StringBuilder markup;
     markup.append("<a href=\"");
@@ -108,7 +108,7 @@ const String& SelectionData::urlLabel() const
         return text();
 
     if (hasURL())
-        return url();
+        return url().string();
 
     return emptyString();
 }

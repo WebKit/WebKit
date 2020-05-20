@@ -3664,7 +3664,7 @@ String AccessibilityRenderObject::stringValueForMSAA() const
     if (isLinkable(*this)) {
         Element* anchor = anchorElement();
         if (is<HTMLAnchorElement>(anchor))
-            return downcast<HTMLAnchorElement>(*anchor).href();
+            return downcast<HTMLAnchorElement>(*anchor).href().string();
     }
 
     return stringValue();

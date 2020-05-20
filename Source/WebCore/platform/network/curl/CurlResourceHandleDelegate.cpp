@@ -126,7 +126,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
         URL cacheUrl = m_response.url();
         cacheUrl.removeFragmentIdentifier();
 
-        if (CurlCacheManager::singleton().getCachedResponse(cacheUrl, m_response)) {
+        if (CurlCacheManager::singleton().getCachedResponse(cacheUrl.string(), m_response)) {
             if (d()->m_addedCacheValidationHeaders) {
                 m_response.setHTTPStatusCode(200);
                 m_response.setHTTPStatusText("OK");
