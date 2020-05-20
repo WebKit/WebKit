@@ -305,6 +305,12 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
 void Pasteboard::read(PasteboardFileReader& reader)
 {
+    if (m_selectionData) {
+        for (const auto& filePath : m_selectionData->filenames())
+            reader.readFilename(filePath);
+        return;
+    }
+
     auto filePaths = platformStrategies()->pasteboardStrategy()->readFilePathsFromClipboard(m_name);
     for (const auto& filePath : filePaths)
         reader.readFilename(filePath);

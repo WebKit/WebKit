@@ -1,3 +1,13 @@
+2020-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r261554): [GTK] Version 2.29.1 crashes using drag-n-drop API
+        https://bugs.webkit.org/show_bug.cgi?id=212136
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read): Use m_selectionData if present.
+
 2020-05-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] <img> tag needs to support video formats
