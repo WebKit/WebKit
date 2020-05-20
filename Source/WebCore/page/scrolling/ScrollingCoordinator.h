@@ -181,7 +181,7 @@ public:
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
 
-    virtual void windowScreenDidChange(PlatformDisplayID) { }
+    virtual void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> /* nominalFramesPerSecond */) { }
 
     static String synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason>);
     String synchronousScrollingReasonsAsText() const;

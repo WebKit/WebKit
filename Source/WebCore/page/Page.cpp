@@ -435,7 +435,7 @@ ScrollingCoordinator* Page::scrollingCoordinator()
         if (!m_scrollingCoordinator)
             m_scrollingCoordinator = ScrollingCoordinator::create(this);
 
-        m_scrollingCoordinator->windowScreenDidChange(m_displayID);
+        m_scrollingCoordinator->windowScreenDidChange(m_displayID, m_displayNominalFramesPerSecond);
     }
 
     return m_scrollingCoordinator.get();
@@ -1110,12 +1110,13 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageOverlayController().didChangeDeviceScaleFactor();
 }
 
-void Page::windowScreenDidChange(PlatformDisplayID displayID)
+void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
-    if (displayID == m_displayID)
+    if (displayID == m_displayID && nominalFramesPerSecond == m_displayNominalFramesPerSecond)
         return;
 
     m_displayID = displayID;
+    m_displayNominalFramesPerSecond = nominalFramesPerSecond;
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -1123,7 +1124,7 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID)
     }
 
     if (m_scrollingCoordinator)
-        m_scrollingCoordinator->windowScreenDidChange(displayID);
+        m_scrollingCoordinator->windowScreenDidChange(displayID, nominalFramesPerSecond);
 
     renderingUpdateScheduler().windowScreenDidChange(displayID);
 

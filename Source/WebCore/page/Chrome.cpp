@@ -512,12 +512,12 @@ PlatformDisplayID Chrome::displayID() const
     return m_page.displayID();
 }
 
-void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
+void Chrome::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFrameInterval)
 {
-    if (displayID == m_page.displayID())
+    if (displayID == m_page.displayID() && nominalFrameInterval == m_page.displayNominalFramesPerSecond())
         return;
 
-    m_page.windowScreenDidChange(displayID);
+    m_page.windowScreenDidChange(displayID, nominalFrameInterval);
 
 #if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
     GraphicsContextGLOpenGLManager::sharedManager().screenDidChange(displayID, this);

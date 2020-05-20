@@ -992,7 +992,7 @@ public:
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
-    void windowScreenDidChange(WebCore::PlatformDisplayID);
+    void windowScreenDidChange(WebCore::PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
     void accessibilitySettingsDidChange();
 
     void setUseFixedLayout(bool);

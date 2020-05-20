@@ -51,6 +51,8 @@ public:
     bool hasObservers() const;
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
+    
+    Optional<unsigned> nominalFramesPerSecond() const;
 
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);

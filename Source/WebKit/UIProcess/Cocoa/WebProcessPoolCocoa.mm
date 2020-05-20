@@ -791,6 +791,20 @@ void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1
 }
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+Optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
+{
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID)
+            return displayLink->nominalFramesPerSecond();
+    }
+
+    // Note that this creates a DisplayLink with no observers, but it's highly likely that we'll soon call startDisplayLink() for it.
+    auto displayLink = makeUnique<DisplayLink>(displayID);
+    auto frameRate = displayLink->nominalFramesPerSecond();
+    m_displayLinks.append(WTFMove(displayLink));
+    return frameRate;
+}
+
 void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
 {
     for (auto& displayLink : m_displayLinks) {

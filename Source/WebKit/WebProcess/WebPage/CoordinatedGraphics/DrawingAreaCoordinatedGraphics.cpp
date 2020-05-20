@@ -576,7 +576,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     auto changeWindowScreen = [&] {
         // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because ThreadedDisplayRefreshMonitor
         // is driven by the ThreadedCompositor of the drawing area), give each page a unique DisplayID derived from WebPage's unique ID.
-        m_webPage.windowScreenDidChange(m_layerTreeHost->displayID());
+        m_webPage.windowScreenDidChange(m_layerTreeHost->displayID(), WTF::nullopt);
     };
 
     ASSERT(!m_layerTreeHost);
@@ -632,7 +632,7 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
     m_discardPreviousLayerTreeHostTimer.startOneShot(5_s);
 
     // Always use the primary display ID (0) when not in accelerated compositing mode.
-    m_webPage.windowScreenDidChange(0);
+    m_webPage.windowScreenDidChange(0, WTF::nullopt);
 
     m_dirtyRegion = m_webPage.bounds();
 

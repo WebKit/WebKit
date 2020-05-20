@@ -179,7 +179,7 @@ public:
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
 
-    void windowScreenDidChange(PlatformDisplayID);
+    void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
     PlatformDisplayID displayID();
 
 protected:
@@ -221,6 +221,7 @@ private:
         EventTrackingRegions eventTrackingRegions;
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
+        Optional<unsigned> nominalFramesPerSecond;
         bool mainFrameIsRubberBanding { false };
         bool mainFrameIsScrollSnapping { false };
     };

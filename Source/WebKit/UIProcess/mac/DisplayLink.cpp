@@ -36,16 +36,18 @@ namespace WebKit {
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     : m_displayID(displayID)
 {
+    // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case CVDisplayLinkCreateWithCGDisplay()
+    // probably defaults to the main screen.
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
     if (error) {
-        WTFLogAlways("Could not create a display link: %d", error);
+        WTFLogAlways("Could not create a display link for display %u: error %d", displayID, error);
         return;
     }
     
     error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
     if (error) {
-        WTFLogAlways("Could not set the display link output callback: %d", error);
+        WTFLogAlways("Could not set the display link output callback for display %u: error %d", displayID, error);
         return;
     }
 }
@@ -59,6 +61,12 @@ DisplayLink::~DisplayLink()
 
     CVDisplayLinkStop(m_displayLink);
     CVDisplayLinkRelease(m_displayLink);
+}
+
+Optional<unsigned> DisplayLink::nominalFramesPerSecond() const
+{
+    CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(m_displayLink);
+    return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
 void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID observerID)

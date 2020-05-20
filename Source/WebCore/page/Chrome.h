@@ -88,7 +88,7 @@ public:
     void scheduleAnimation() override { }
 
     PlatformDisplayID displayID() const override;
-    void windowScreenDidChange(PlatformDisplayID) override;
+    void windowScreenDidChange(PlatformDisplayID, Optional<unsigned>) override;
 
     FloatSize screenSize() const override;
     FloatSize availableScreenSize() const override;

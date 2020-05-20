@@ -204,6 +204,8 @@ enum class TextIndicatorPresentationTransition : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class WritingDirection : uint8_t;
 
+using PlatformDisplayID = uint32_t;
+
 struct AttributedString;
 struct BackForwardItemIdentifier;
 struct CompositionHighlight;
@@ -517,7 +519,7 @@ public:
     double pageZoomFactor() const;
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
-    void windowScreenDidChange(uint32_t);
+    void windowScreenDidChange(WebCore::PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
     String dumpHistoryForTesting(const String& directory);
     void clearHistory();
 

@@ -96,6 +96,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
@@ -2122,7 +2123,9 @@ void WebViewImpl::windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor
 void WebViewImpl::windowDidChangeScreen()
 {
     NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
-    m_page->windowScreenDidChange([[[[window screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
+    PlatformDisplayID displayID = WebCore::displayID(window.screen);
+    auto framesPerSecond = m_page->process().processPool().nominalFramesPerSecondForDisplay(displayID);
+    m_page->windowScreenDidChange(displayID, framesPerSecond);
 }
 
 void WebViewImpl::windowDidChangeLayerHosting()

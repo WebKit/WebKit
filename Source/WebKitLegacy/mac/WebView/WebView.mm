@@ -192,6 +192,7 @@
 #import <WebCore/PageGroup.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/RenderTheme.h>
 #import <WebCore/RenderView.h>
@@ -6046,7 +6047,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)doWindowDidChangeScreen
 {
     if (_private && _private->page)
-        _private->page->chrome().windowScreenDidChange((WebCore::PlatformDisplayID)[[[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
+        _private->page->chrome().windowScreenDidChange(WebCore::displayID(self.window.screen), WTF::nullopt);
 }
 
 - (void)_windowChangedKeyState

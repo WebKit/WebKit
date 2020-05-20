@@ -527,10 +527,11 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
     return false;
 }
 
-void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID)
+void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
     LockHolder locker(m_treeStateMutex);
     m_treeState.displayID = displayID;
+    m_treeState.nominalFramesPerSecond = nominalFramesPerSecond;
 }
 
 PlatformDisplayID ScrollingTree::displayID()

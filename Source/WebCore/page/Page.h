@@ -362,8 +362,9 @@ public:
     float initialScaleIgnoringContentSize() const { return m_initialScaleIgnoringContentSize; }
     WEBCORE_EXPORT void setInitialScaleIgnoringContentSize(float);
 
-    void windowScreenDidChange(PlatformDisplayID);
+    void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
     PlatformDisplayID displayID() const { return m_displayID; }
+    Optional<unsigned> displayNominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
 
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
@@ -845,6 +846,7 @@ private:
     RTCController m_rtcController;
 
     PlatformDisplayID m_displayID { 0 };
+    Optional<unsigned> m_displayNominalFramesPerSecond;
 
     int m_nestedRunLoopCount { 0 };
     WTF::Function<void()> m_unnestCallback;

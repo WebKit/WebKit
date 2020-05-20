@@ -267,7 +267,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
     SetPageZoomFactor(double zoomFactor)
     SetTextZoomFactor(double zoomFactor)
-    WindowScreenDidChange(uint32_t displayID)
+    WindowScreenDidChange(uint32_t displayID, Optional<unsigned> nominalFramesPerSecond)
 
     AccessibilitySettingsDidChange()
 

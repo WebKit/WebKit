@@ -1,3 +1,36 @@
+2020-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb the display's nominal refresh rate down to ScrollingTree for use in scroll synchronization
+        https://bugs.webkit.org/show_bug.cgi?id=212159
+
+        Reviewed by Tim Horton.
+
+        Plumb an Optional<unsigned> down windowScreenDidChange, which contains the nominal
+        display refresh rate (as frames per second) if available. On macOS, we get this
+        from CVDisplayLinkGetNominalOutputVideoRefreshPeriod().
+
+        To read it, WebProcessPool::nominalFramesPerSecondForDisplay() makes a DisplayLink
+        that doesn't get any observers, but that DisplayLink will very likely get used
+        as soon as we schedule a rendering update.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::windowScreenDidChange):
+        * page/Chrome.h:
+        * page/Page.cpp:
+        (WebCore::Page::scrollingCoordinator):
+        (WebCore::Page::windowScreenDidChange):
+        * page/Page.h:
+        (WebCore::Page::displayNominalFramesPerSecond const):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::windowScreenDidChange):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::windowScreenDidChange):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::windowScreenDidChange):
+        * page/scrolling/ScrollingTree.h:
+        * platform/HostWindow.h:
+
 2020-05-20  Chris Dumez  <cdumez@apple.com>
 
         Disable support for BeforeLoadEvent

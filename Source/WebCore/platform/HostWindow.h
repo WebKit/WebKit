@@ -76,7 +76,7 @@ public:
     virtual void scheduleAnimation() = 0;
 
     virtual PlatformDisplayID displayID() const = 0;
-    virtual void windowScreenDidChange(PlatformDisplayID) = 0;
+    virtual void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond) = 0;
 
     virtual FloatSize screenSize() const = 0;
     virtual FloatSize availableScreenSize() const = 0;

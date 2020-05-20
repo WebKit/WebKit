@@ -138,7 +138,7 @@ private:
     WEBCORE_EXPORT void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) final;
     WEBCORE_EXPORT bool hasSynchronousScrollingReasons(ScrollingNodeID) const final;
 
-    WEBCORE_EXPORT void windowScreenDidChange(PlatformDisplayID) final;
+    WEBCORE_EXPORT void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond) final;
 
     virtual void scheduleTreeStateCommit() = 0;
 
