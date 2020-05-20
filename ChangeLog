@@ -1,3 +1,21 @@
+2020-05-20  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/63461437
+
+    2020-05-20  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION(r243149): createMediaElementSource not working
+            https://bugs.webkit.org/show_bug.cgi?id=211394
+            <rdar://problem/62866132>
+
+            I removed access to some Audio services in r243149, because we believed they were already
+            blocked by a global deny command. However, Sandbox rules override generic rules with
+            explicit rules, so the imported sandbox rules were not being blocked.
+
+            This patch re-adds the rules needed to support these audio routines on iOS hardware.
+
+            * Source/WebKit/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-04-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r257595. rdar://problem/61735200

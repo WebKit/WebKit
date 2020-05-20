@@ -750,8 +750,10 @@
 
 (speech-synthesis-and-voiceover)
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.audio.AudioComponentRegistrar"))
+(allow mach-lookup
+    (global-name "com.apple.audio.AudioComponentPrefs")
+    (global-name "com.apple.audio.AudioComponentRegistrar")
+    (global-name "com.apple.audio.AudioQueueServer"))
 
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
