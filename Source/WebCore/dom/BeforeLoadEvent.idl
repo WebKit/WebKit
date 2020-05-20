@@ -25,7 +25,8 @@
  */
 
 [
-    Constructor(DOMString type, optional BeforeLoadEventInit eventInitDict)
+    Constructor(DOMString type, optional BeforeLoadEventInit eventInitDict),
+    EnabledAtRuntime=LegacyBeforeLoadEvent
 ] interface BeforeLoadEvent : Event {
     readonly attribute DOMString url;
 };

@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+function runTest() {
+	paramElement.appendChild(document.createElement("frame"));
+	objectElement.onbeforeload = () => { preElement.remove(); }
+	preElement.appendChild(paramElement);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>This test passes if it does not crash.</p>
+<pre id="preElement"></pre>
+<object id="objectElement">
+<param id="paramElement"></param>
+</object>
+</body>
+</html>

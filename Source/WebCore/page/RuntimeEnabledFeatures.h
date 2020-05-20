@@ -359,6 +359,9 @@ public:
     void setCSSLogicalEnabled(bool isEnabled) { m_CSSLogicalEnabled = isEnabled; }
     bool cssLogicalEnabled() const { return m_CSSLogicalEnabled; }
 
+    void setLegacyBeforeLoadEventEnabled(bool isEnabled) { m_legacyBeforeLoadEventEnabled = isEnabled; }
+    bool legacyBeforeLoadEventEnabled() const { return m_legacyBeforeLoadEventEnabled; }
+
     void setLineHeightUnitsEnabled(bool isEnabled) { m_lineHeightUnitsEnabled = isEnabled; }
     bool lineHeightUnitsEnabled() const { return m_lineHeightUnitsEnabled; }
 
@@ -630,6 +633,8 @@ private:
 
     bool m_isInAppBrowserPrivacyEnabled { false };
     bool m_needsInAppBrowserPrivacyQuirks { false };
+
+    bool m_legacyBeforeLoadEventEnabled { false };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };

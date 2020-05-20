@@ -1,3 +1,27 @@
+2020-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Disable support for BeforeLoadEvent
+        https://bugs.webkit.org/show_bug.cgi?id=212140
+        <rdar://problem/62847577>
+
+        Reviewed by Antti Koivisto.
+
+        Disable support for BeforeLoadEvent. Other browsers do not support it and
+        Chrome dropped it shortly after the fork:
+        - https://bugs.chromium.org/p/chromium/issues/detail?id=333318
+
+        This is a synchronous event and therefore very dangerous.
+
+        Test: fast/frames/didBecomeCurrentDocumentInFrame-crash.html
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/BeforeLoadEvent.idl:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchBeforeLoadEvent):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLegacyBeforeLoadEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::legacyBeforeLoadEventEnabled const):
+
 2020-05-20  Zalan Bujtas  <zalan@apple.com>
 
         RenderObject::VisibleRectContext members should not be prefixed with m_

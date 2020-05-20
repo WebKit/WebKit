@@ -277,8 +277,6 @@ http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-sub-frame-2-leve
 
 # These tests use Flash, which is not a good idea, because it is not installed on all machines that run tests.
 # WebKitTestRunner detects attempts to use Flash, and raises an assertion.
-fast/dom/beforeload/flash-before-load.html [ Skip ]
-fast/dom/beforeload/remove-flash-in-beforeload-listener.html [ Skip ]
 fast/loader/sandboxed-plugin-crash.html [ Skip ]
 plugins/hidden-iframe-with-swf-plugin.html [ Skip ]
 plugins/plugin-document-load-prevented-userscript.html [ Skip ]

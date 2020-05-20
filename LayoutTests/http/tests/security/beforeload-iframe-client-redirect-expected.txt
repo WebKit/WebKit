@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: http://127.0.0.1:8000/security/resources/client-redir.html?url=http://localhost:8000/security/resources/post-done.html
 This test produces output in the console. Only the initial URL should be logged. 

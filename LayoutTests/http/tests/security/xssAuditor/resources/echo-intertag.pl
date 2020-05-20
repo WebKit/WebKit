@@ -78,11 +78,11 @@ print "\n\n";
 
 print "<!DOCTYPE html>\n";
 print "<html>\n";
-if ($cgi->param('relay-target-ids-for-event')) {
+if ($cgi->param('wait-for-load')) {
     print "<script>\n";
-    print "document.addEventListener('" . $cgi->param('relay-target-ids-for-event') . "', function(event) {\n";
-    print "    window.parent.postMessage(event.target.id, '*');\n";
-    print "}, true);\n";
+     print "onload = function() {\n";
+    print "    window.parent.postMessage('loaded', '*');\n";
+    print "}\n";
     print "</script>\n";
 }
 if ($cgi->param('inHead')) {

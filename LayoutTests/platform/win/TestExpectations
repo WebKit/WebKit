@@ -1057,7 +1057,6 @@ media/audio-only-video-intrinsic-size.html [ Skip ] # Timeout
 media/audio-play-event.html [ Skip ] # Timeout
 media/controls-drag-timebar.html [ Skip ] # Timeout
 media/event-attributes.html [ Skip ] # Timeout
-media/media-blocked-by-beforeload.html [ Skip ] # Timeout
 media/media-captions.html [ Skip ] # Timeout
 media/media-continues-playing-after-replace-source.html [ Skip ] # Timeout
 media/media-controls-cancel-events.html [ Skip ] # Timeout

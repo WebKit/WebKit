@@ -64,6 +64,7 @@
 #include "RenderBox.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
@@ -2410,6 +2411,9 @@ void Node::dispatchDOMActivateEvent(Event& underlyingClickEvent)
 
 bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().legacyBeforeLoadEventEnabled())
+        return true;
+
     if (!document().hasListenerType(Document::BEFORELOAD_LISTENER))
         return true;
 

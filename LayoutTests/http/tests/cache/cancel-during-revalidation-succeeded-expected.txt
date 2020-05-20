@@ -1,1 +1,0 @@
-It's possible for a successful revalidation to cause events to fire synchronously. We shouldn't crash if one of those events stops the load. See https://bugs.webkit.org/show_bug.cgi?id=72762.  

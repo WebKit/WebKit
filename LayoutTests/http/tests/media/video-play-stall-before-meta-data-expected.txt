@@ -1,7 +1,6 @@
 
 Test that stalling very early, while loading meta-data, stops delaying the load event.
 
-EVENT(beforeload)
 EVENT(loadstart)
 EVENT(stalled)
 EVENT(window.onload)

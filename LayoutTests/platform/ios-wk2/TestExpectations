@@ -1169,8 +1169,6 @@ webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-stream
 
 webkit.org/b/171957 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
-webkit.org/b/172772 [ Release ] http/tests/cache/cancel-during-revalidation-succeeded.html [ Skip ]
-
 webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
 
 webkit.org/b/17373 fast/forms/file/input-file-write-files-using-open-panel.html [ Skip ]

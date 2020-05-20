@@ -1,9 +1,0 @@
-Check that forcing a navigation during an object element load is well-behaved.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

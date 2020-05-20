@@ -1,3 +1,126 @@
+2020-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Disable support for BeforeLoadEvent
+        https://bugs.webkit.org/show_bug.cgi?id=212140
+        <rdar://problem/62847577>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/frames/didBecomeCurrentDocumentInFrame-crash-expected.txt: Added.
+        * fast/frames/didBecomeCurrentDocumentInFrame-crash.html: Added.
+        Add layout test coverage for crash in <rdar://problem/62847577>.
+
+        * fast/dom/HTMLLinkElement/event-while-removing-attribute-expected.txt:
+        * fast/dom/HTMLObjectElement/beforeload-set-text-crash-expected.txt: Removed.
+        * fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml: Removed.
+        * fast/dom/HTMLScriptElement/async-onbeforeload-expected.txt: Removed.
+        * fast/dom/HTMLScriptElement/async-onbeforeload.html: Removed.
+        * fast/dom/HTMLScriptElement/defer-onbeforeload-expected.txt: Removed.
+        * fast/dom/HTMLScriptElement/defer-onbeforeload.html: Removed.
+        * fast/dom/HTMLScriptElement/move-in-beforeload-expected.txt: Removed.
+        * fast/dom/HTMLScriptElement/move-in-beforeload.html: Removed.
+        * fast/dom/HTMLScriptElement/remove-in-beforeload-expected.txt: Removed.
+        * fast/dom/HTMLScriptElement/remove-in-beforeload.html: Removed.
+        * fast/dom/beforeload/cached-image-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/cached-image-before-load.html: Removed.
+        * fast/dom/beforeload/clear-video-poster-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/flash-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/flash-before-load.html: Removed.
+        * fast/dom/beforeload/frame-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/frame-before-load.html: Removed.
+        * fast/dom/beforeload/image-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/image-before-load-innerHTML-expected.txt: Removed.
+        * fast/dom/beforeload/image-before-load-innerHTML.html: Removed.
+        * fast/dom/beforeload/image-before-load.html: Removed.
+        * fast/dom/beforeload/image-object-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/image-object-before-load-innerHTML-expected.txt: Removed.
+        * fast/dom/beforeload/image-object-before-load-innerHTML.html: Removed.
+        * fast/dom/beforeload/image-object-before-load.html: Removed.
+        * fast/dom/beforeload/image-removed-during-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/image-removed-during-before-load.html: Removed.
+        * fast/dom/beforeload/link-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/link-before-load.html: Removed.
+        * fast/dom/beforeload/pi-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/pi-before-load.xhtml: Removed.
+        * fast/dom/beforeload/recursive-css-pi-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/recursive-css-pi-before-load.html: Removed.
+        * fast/dom/beforeload/recursive-link-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/recursive-link-before-load.html: Removed.
+        * fast/dom/beforeload/recursive-xsl-pi-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/recursive-xsl-pi-before-load.html: Removed.
+        * fast/dom/beforeload/remove-bad-object-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-bad-object-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-flash-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-flash-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-frame-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-frame-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-image-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-image-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-link-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-link-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-script-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-script-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-video-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-video-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/remove-video-poster-in-beforeload-listener-expected.txt: Removed.
+        * fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html: Removed.
+        * fast/dom/beforeload/resources/content.xhtml: Removed.
+        * fast/dom/beforeload/resources/fail.css: Removed.
+        * fast/dom/beforeload/resources/fail.js: Removed.
+        * fast/dom/beforeload/resources/pass.css: Removed.
+        * fast/dom/beforeload/resources/print.js: Removed.
+        * fast/dom/beforeload/resources/test.xsl: Removed.
+        * fast/dom/beforeload/script-before-load-dynamic-expected.txt: Removed.
+        * fast/dom/beforeload/script-before-load-dynamic.html: Removed.
+        * fast/dom/beforeload/script-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/script-before-load-xhtml-expected.txt: Removed.
+        * fast/dom/beforeload/script-before-load-xhtml.xhtml: Removed.
+        * fast/dom/beforeload/script-before-load.html: Removed.
+        * fast/dom/beforeload/video-before-load-expected.txt: Removed.
+        * fast/dom/beforeload/video-before-load.html: Removed.
+        * fast/events/constructors/before-load-event-constructor-expected.txt: Removed.
+        * fast/events/constructors/before-load-event-constructor.html: Removed.
+        * fast/events/event-attribute-expected.txt:
+        * fast/events/event-handler-regions-layout-expected.txt: Removed.
+        * fast/events/event-handler-regions-layout.html: Removed.
+        * fast/frames/crash-display-none-iframe-during-onbeforeload-expected.txt:
+        * fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update-expected.txt:
+        * fast/html/link-element-removal-during-beforeload-expected.txt: Removed.
+        * fast/html/link-element-removal-during-beforeload.html: Removed.
+        * fast/parser/document-write-fighting-eof-expected.txt: Removed.
+        * fast/parser/document-write-fighting-eof.html: Removed.
+        * fast/parser/document-write-partial-entity-before-load-expected.txt: Removed.
+        * fast/parser/document-write-partial-entity-before-load.html: Removed.
+        * fast/parser/remove-misnested-iframe-in-beforeload-expected.txt: Removed.
+        * fast/parser/remove-misnested-iframe-in-beforeload.html: Removed.
+        * fast/parser/remove-misnested-iframe-parent-in-beforeload-expected.txt: Removed.
+        * fast/parser/remove-misnested-iframe-parent-in-beforeload.html: Removed.
+        * fast/replaced/object-param-spaces-expected.txt: Removed.
+        * fast/replaced/object-param-spaces.html: Removed.
+        * fast/scrolling/marquee-scroll-crash-expected.txt:
+        * fast/tokenizer/write-before-load-expected.txt:
+        * http/tests/security/beforeload-iframe-client-redirect-expected.txt:
+        * http/tests/security/beforeload-iframe-server-redirect-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-control-char.html:
+        * http/tests/security/xssAuditor/object-embed-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-null-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-null-char.html:
+        * http/tests/security/xssAuditor/object-embed-tag.html:
+        * http/tests/security/xssAuditor/object-src-inject.html:
+        * http/tests/security/xssAuditor/object-tag-expected.txt:
+        * http/tests/security/xssAuditor/object-tag-javascript-url-expected.txt:
+        * http/tests/security/xssAuditor/object-tag-javascript-url.html:
+        * http/tests/security/xssAuditor/object-tag.html:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/resources/echo-object-src.pl:
+        * http/tests/security/xssAuditor/resources/utilities.js:
+        (notifyDoneAfterReceivingLoaded):
+        (notifyDoneAfterReceivingBeforeloadFromIds): Deleted.
+        * plugins/unsupported-plugin-with-replacement-in-iframe-crash-expected.txt:
+        Update existing tests accordingly.
+
 2020-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPadOS] -webkit-text-size-adjust:percentage doesn't work in native apps

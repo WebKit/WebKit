@@ -52,6 +52,7 @@ namespace WebCore {
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \
+    macro(BeforeLoadEvent) \
     macro(BlobEvent) \
     macro(Cache) \
     macro(CacheStorage) \

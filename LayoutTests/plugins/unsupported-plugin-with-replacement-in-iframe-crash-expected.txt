@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: 1. Updating the layout with an embed object inside an iframe
-CONSOLE MESSAGE: 2. beforeload for the object fires and dirties the style tree
 CONSOLE MESSAGE: Tried to use an unsupported plug-in.
 CONSOLE MESSAGE: 3. Updated layout. The test passed.
 This tests entering HTMLPlugInElement::isReplacementObscured() while the top document's style tree is dirty.

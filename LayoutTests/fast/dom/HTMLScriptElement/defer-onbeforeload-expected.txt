@@ -1,7 +1,0 @@
-Checks that deferred scripts fire onbeforeload immediately and that it is cancellable.
-cancelled onbeforeload defer
-onbeforeload defer
-onbeforeload external
-external
-defer
-

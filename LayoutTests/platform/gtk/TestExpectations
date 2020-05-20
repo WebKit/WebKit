@@ -1551,7 +1551,6 @@ webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 
-webkit.org/b/89811 media/media-blocked-by-beforeload.html [ Failure Pass ]
 webkit.org/b/84856 media/media-controller-playback.html [ Crash Failure Timeout Pass ]
 
 webkit.org/b/83878 webkit.org/b/198830 media/track/track-mode.html [ Failure Pass ]

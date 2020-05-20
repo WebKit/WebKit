@@ -7,7 +7,6 @@ PASS ArrayBuffer.length is 1
 FAIL AudioContext.length should be 0. Threw exception ReferenceError: Can't find variable: AudioContext
 FAIL AutocompleteErrorEvent.length should be 1. Threw exception ReferenceError: Can't find variable: AutocompleteErrorEvent
 PASS AnimationEvent.length is 1
-PASS BeforeLoadEvent.length is 1
 PASS Blob.length is 0
 PASS CloseEvent.length is 1
 PASS CustomEvent.length is 1

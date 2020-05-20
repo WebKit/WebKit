@@ -3,7 +3,6 @@ Test that setting event handlers with attribute works.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-cancelled onbeforeload async
 PASS /*img*/ typeof (element["onclick"]) is "function"
 PASS /*img*/ typeof (element["oncontextmenu"]) is "function"
 PASS /*img*/ typeof (element["ondblclick"]) is "function"

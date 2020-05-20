@@ -7,12 +7,12 @@ if (window.testRunner) {
   testRunner.dumpAsText();
   testRunner.setXSSAuditorEnabled(true);
   testRunner.waitUntilDone();
-  notifyDoneAfterReceivingBeforeloadFromIds(["object"]);
+  notifyDoneAfterReceivingLoaded();
 }
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-object-src.pl?relay-target-ids-for-event=beforeload&q=http://127.0.0.1:8000/security/xssAuditor/resources/dummy.swf">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-object-src.pl?wait-for-load=1&q=http://127.0.0.1:8000/security/xssAuditor/resources/dummy.swf">
 </iframe>
 </body>
 </html>
