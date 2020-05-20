@@ -1,3 +1,15 @@
+2020-05-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable support for BeforeLoadEvent
+        https://bugs.webkit.org/show_bug.cgi?id=212140
+
+        Unreviewed test gardening.
+
+        Update baselines for Windows.
+
+        * platform/win/fast/events/event-attribute-expected.txt:
+        * platform/win/fast/frames/didBecomeCurrentDocumentInFrame-crash-expected.txt: Added.
+
 2020-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Tests in fast/events and fast/forms are no longer crashing
