@@ -5061,7 +5061,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Email:
     case WebKit::InputType::Month:
-    case WebKit::InputType::None:
     case WebKit::InputType::Number:
     case WebKit::InputType::NumberPad:
     case WebKit::InputType::Password:
@@ -5073,6 +5072,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebKit::InputType::URL:
     case WebKit::InputType::Week:
         [_traits setIsSingleLineDocument:YES];
+        break;
+    case WebKit::InputType::None:
         break;
     }
 
