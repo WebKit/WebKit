@@ -43,12 +43,15 @@ PASS .grid 41
 PASS .grid 42 
 PASS .grid 43 
 PASS .grid 44 
+PASS .grid 45 
+PASS .grid 46 
 Direction LTR
 
 Item width: 60px;
 Item min-width: 60px;
 Item width: 60px; & margin-left: 5px;
 Item min-width: 60px; & margin-left: 5px;
+Item min-width: 60px; & margin-left: 5px; & margin-top: auto
 Item width: 60px; & margin-right: 10px;
 Item min-width: 60px; & margin-right: 10px;
 Item width: 60px; & margin-left: 5px; & margin-right: 10px;
@@ -73,6 +76,7 @@ Item width: 60px;
 Item min-width: 60px;
 Item width: 60px; & margin-left: 5px;
 Item min-width: 60px; & margin-left: 5px;
+Item min-width: 60px; & margin-left: 5px; & margin-top: auto
 Item width: 60px; & margin-right: 10px;
 Item min-width: 60px; & margin-right: 10px;
 Item width: 60px; & margin-left: 5px; & margin-right: 10px;
