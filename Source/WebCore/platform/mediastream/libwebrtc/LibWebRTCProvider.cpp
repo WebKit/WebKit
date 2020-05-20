@@ -189,7 +189,7 @@ static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
     return factoryAndThreads.get();
 }
 
-static inline PeerConnectionFactoryAndThreads& getStaticFactoryAndThreads(bool useNetworkThreadWithSocketServer)
+PeerConnectionFactoryAndThreads& LibWebRTCProvider::getStaticFactoryAndThreads(bool useNetworkThreadWithSocketServer)
 {
     auto& factoryAndThreads = staticFactoryAndThreads();
 
@@ -198,6 +198,7 @@ static inline PeerConnectionFactoryAndThreads& getStaticFactoryAndThreads(bool u
     if (!factoryAndThreads.networkThread) {
         factoryAndThreads.networkThreadWithSocketServer = useNetworkThreadWithSocketServer;
         initializePeerConnectionFactoryAndThreads(factoryAndThreads);
+        startedNetworkThread();
     }
     return factoryAndThreads;
 }
