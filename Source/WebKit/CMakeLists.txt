@@ -177,10 +177,10 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/Geolocation/WebGeolocationManager.messages.in
 
+    WebProcess/Network/webrtc/LibWebRTCNetwork.messages.in
     WebProcess/Network/webrtc/WebMDNSRegister.messages.in
     WebProcess/Network/webrtc/WebRTCMonitor.messages.in
     WebProcess/Network/webrtc/WebRTCResolver.messages.in
-    WebProcess/Network/webrtc/WebRTCSocket.messages.in
 
     WebProcess/Network/NetworkProcessConnection.messages.in
     WebProcess/Network/WebResourceLoader.messages.in

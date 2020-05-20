@@ -54,6 +54,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCCodecsMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCCodecsProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCCodecsProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCCodecsProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCNetworkMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCNetworkMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCNetworkMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/LibWebRTCRemoteCodecsMessagesReplies.h
@@ -297,9 +300,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCMonitorMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCResolverMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCResolverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCResolverMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCSocketMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCSocketMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCSocketMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoaderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoaderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoaderMessagesReplies.h

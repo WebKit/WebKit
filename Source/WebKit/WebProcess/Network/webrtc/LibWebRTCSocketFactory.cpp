@@ -32,7 +32,6 @@
 #include "NetworkRTCMonitorMessages.h"
 #include "NetworkRTCProviderMessages.h"
 #include "WebProcess.h"
-#include "WebRTCSocket.h"
 #include <wtf/MainThread.h>
 
 namespace WebKit {
