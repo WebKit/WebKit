@@ -211,7 +211,6 @@ public:
     // replaced with alternative accessors.
 
     WEBCORE_EXPORT void getHSL(double& h, double& s, double& l) const;
-    WEBCORE_EXPORT void getHSV(double& h, double& s, double& v) const;
 
     WEBCORE_EXPORT std::pair<ColorSpace, FloatComponents> colorSpaceAndComponents() const;
 

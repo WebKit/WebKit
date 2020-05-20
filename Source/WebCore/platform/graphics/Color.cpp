@@ -504,37 +504,6 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
         saturation = (chroma / (2.0 - (max + min)));
 }
 
-void Color::getHSV(double& hue, double& saturation, double& value) const
-{
-    double r = static_cast<double>(red()) / 255.0;
-    double g = static_cast<double>(green()) / 255.0;
-    double b = static_cast<double>(blue()) / 255.0;
-    double max = std::max(std::max(r, g), b);
-    double min = std::min(std::min(r, g), b);
-    double chroma = max - min;
-
-    if (!chroma)
-        hue = 0.0;
-    else if (max == r)
-        hue = (60.0 * ((g - b) / chroma)) + 360.0;
-    else if (max == g)
-        hue = (60.0 * ((b - r) / chroma)) + 120.0;
-    else
-        hue = (60.0 * ((r - g) / chroma)) + 240.0;
-
-    if (hue >= 360.0)
-        hue -= 360.0;
-
-    hue /= 360.0;
-
-    if (!max)
-        saturation = 0;
-    else
-        saturation = chroma / max;
-
-    value = max;
-}
-
 std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
 {
     if (isExtended()) {
