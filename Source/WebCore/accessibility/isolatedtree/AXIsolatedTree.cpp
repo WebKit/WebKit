@@ -129,7 +129,6 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 {
-    AXTRACE("AXIsolatedTree::treeForPageID");
     LockHolder locker(s_cacheLock);
 
     if (auto tree = treePageCache().get(pageID))
@@ -237,21 +236,27 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
         return;
 
-    AXID axObjectID = axObject.objectID();
-
     applyPendingChanges();
     LockHolder locker { m_changeLogLock };
-    auto object = nodeForID(axObjectID);
-    if (!object) {
-        AXLOG("No associated isolated object!");
+
+    // updateChildren may be called as the result of a children changed
+    // notification for an axObject that has no associated isolated object.
+    // An example of this is when an empty element such as a <canvas> or <div>
+    // is added a new child. So find the closest ancestor of axObject that has
+    // an associated isolated object and update its children.
+    RefPtr<AXIsolatedObject> object;
+    auto* axAncestor = Accessibility::findAncestor(axObject, true, [&object, this] (const AXCoreObject& ancestor) {
+        return object = nodeForID(ancestor.objectID());
+    });
+    ASSERT(object && object->objectID() != InvalidAXID);
+    if (!axAncestor || !object)
         return; // nothing to update.
-    }
 
     auto removals = object->m_childrenIDs;
     locker.unlockEarly();
 
-    const auto& axChildren = axObject.children();
-    auto axChildrenIDs = axObject.childrenIDs();
+    const auto& axChildren = axAncestor->children();
+    auto axChildrenIDs = axAncestor->childrenIDs();
 
     for (size_t i = 0; i < axChildrenIDs.size(); ++i) {
         size_t index = removals.find(axChildrenIDs[i]);
@@ -261,7 +266,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
             // This is a new child, add it to the tree.
             AXLOG("Adding a new child for:");
             AXLOG(axChildren[i]);
-            generateSubtree(*axChildren[i], axObjectID, true);
+            generateSubtree(*axChildren[i], object->objectID(), true);
         }
     }
 
@@ -350,35 +355,31 @@ void AXIsolatedTree::applyPendingChanges()
     while (m_pendingNodeRemovals.size()) {
         auto axID = m_pendingNodeRemovals.takeLast();
         AXLOG(makeString("removing axID ", axID));
-        if (axID == InvalidAXID)
-            continue;
-
-        if (auto object = nodeForID(axID))
+        if (auto object = nodeForID(axID)) {
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
+            m_readerThreadNodeMap.remove(axID);
+        }
     }
 
     while (m_pendingSubtreeRemovals.size()) {
         auto axID = m_pendingSubtreeRemovals.takeLast();
         AXLOG(makeString("removing subtree axID ", axID));
-        if (axID == InvalidAXID)
-            continue;
-
         if (auto object = nodeForID(axID)) {
             object->detach(AccessibilityDetachmentType::ElementDestroyed);
             m_pendingSubtreeRemovals.appendVector(object->m_childrenIDs);
+            m_readerThreadNodeMap.remove(axID);
         }
     }
 
     for (const auto& item : m_pendingAppends) {
-        // Either the new object has a wrapper already attached, or one is passed to be attached, not both.
-        ASSERT((item.m_isolatedObject->wrapper() || item.m_wrapper)
-            && !(item.m_isolatedObject->wrapper() && item.m_wrapper));
         AXID axID = item.m_isolatedObject->objectID();
         AXLOG(makeString("appending axID ", axID));
         if (axID == InvalidAXID)
             continue;
 
         auto& wrapper = item.m_wrapper ? item.m_wrapper : item.m_isolatedObject->wrapper();
+        if (!wrapper)
+            continue;
 
         if (auto object = m_readerThreadNodeMap.get(axID)) {
             if (object != &item.m_isolatedObject.get()

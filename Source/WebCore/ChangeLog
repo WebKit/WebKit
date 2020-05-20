@@ -1,3 +1,26 @@
+2020-05-20  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility-node-memory-management.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=212142
+
+        Reviewed by Chris Fleizach.
+
+        LayoutTests/accessibility/accessibility-node-memory-management.html.
+
+        - Fix in applyPendingChanges that was not removing removed nodes from
+        the nodes map. This was causing that some detached AXIsolatedObjects
+        were being returned.
+        - Also handle the case where pending changes can come from a detached
+        AXObject with invalid ID and no platform wrapper.
+        - updateChildren better handles the case when the notification target
+        is not in the isolated tree by walking up the object hierarchy until it
+        finds an associated object that does have a corresponding isolated object.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::treeForPageID):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+
 2020-05-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Animation engine should not wake up every tick for steps timing functions
