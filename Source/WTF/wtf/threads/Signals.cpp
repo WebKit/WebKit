@@ -204,6 +204,14 @@ kern_return_t catch_mach_exception_raise_state(
     if (signal == Signal::BadAccess) {
         ASSERT_UNUSED(dataCount, dataCount == 2);
         info.faultingAddress = reinterpret_cast<void*>(exceptionData[1]);
+#if CPU(ADDRESS64)
+        // If the faulting address is out of the range of any valid memory, we would
+        // not have any reason to handle it. Just let the default handler take care of it.
+        static constexpr unsigned validAddressBits = OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+        static constexpr uintptr_t invalidAddressMask = ~((1ull << validAddressBits) - 1);
+        if (bitwise_cast<uintptr_t>(info.faultingAddress) & invalidAddressMask)
+            return KERN_FAILURE;
+#endif
     }
 
     bool didHandle = false;
