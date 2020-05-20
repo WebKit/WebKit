@@ -1,3 +1,14 @@
+2020-05-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Update some media logging
+        https://bugs.webkit.org/show_bug.cgi?id=212109
+        <rdar://problem/63424816>
+
+        Unreviewed, remove a change unintentionally included in r261899.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _interactivePinchDismissChanged:]):
+
 2020-05-20  Andy Estes  <aestes@apple.com>
 
         [Mac] UI processes spin when creating the "Share" context menu item

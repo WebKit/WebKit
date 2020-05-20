@@ -1050,11 +1050,6 @@ static RetainPtr<UIWindow> makeWindowFromView(UIView *)
         return;
     }
 
-    if (_interactivePinchDismissGestureRecognizer.get().state == UIGestureRecognizerStateCancelled) {
-        [_interactiveDismissTransitionCoordinator cancelInteractiveTransition];
-        return;
-    }
-
     CGFloat scale = [_interactivePinchDismissGestureRecognizer scale];
     CGFloat velocity = [_interactivePinchDismissGestureRecognizer velocity];
     CGFloat progress = std::min(1., std::max(0., 1 - scale));
