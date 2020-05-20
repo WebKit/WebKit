@@ -184,9 +184,10 @@ FloatComponents linearToRGBComponents(const FloatComponents&);
 FloatComponents p3ToSRGB(const FloatComponents&);
 FloatComponents sRGBToP3(const FloatComponents&);
 
-FloatComponents sRGBToHSL(const FloatComponents&);
-FloatComponents hslToSRGB(const FloatComponents&);
+WEBCORE_EXPORT FloatComponents sRGBToHSL(const FloatComponents&);
+WEBCORE_EXPORT FloatComponents hslToSRGB(const FloatComponents&);
 
+float lightness(const FloatComponents& sRGBCompontents);
 float luminance(const FloatComponents& sRGBCompontents);
 float contrastRatio(const FloatComponents&, const FloatComponents&);
 

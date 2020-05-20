@@ -394,6 +394,12 @@ bool Color::isDark() const
     return a > 0.5 && largestNonAlphaChannel < 0.5;
 }
 
+float Color::lightness() const
+{
+    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.
+    return WebCore::lightness(toSRGBAComponentsLossy());
+}
+
 static int blendComponent(int c, int a)
 {
     // We use white.
@@ -465,43 +471,6 @@ Color Color::colorWithAlpha(float alpha) const
     if (isSemantic())
         result.setIsSemantic();
     return result;
-}
-
-// FIXME: Use sRGBToHSL().
-void Color::getHSL(double& hue, double& saturation, double& lightness) const
-{
-    // http://en.wikipedia.org/wiki/HSL_color_space. This is a direct copy of
-    // the algorithm therein, although it's 360^o based and we end up wanting
-    // [0...6) based. It's clearer if we stick to 360^o until the end.
-    double r = static_cast<double>(red()) / 255.0;
-    double g = static_cast<double>(green()) / 255.0;
-    double b = static_cast<double>(blue()) / 255.0;
-    double max = std::max(std::max(r, g), b);
-    double min = std::min(std::min(r, g), b);
-    double chroma = max - min;
-
-    if (!chroma)
-        hue = 0.0;
-    else if (max == r)
-        hue = (60.0 * ((g - b) / chroma)) + 360.0;
-    else if (max == g)
-        hue = (60.0 * ((b - r) / chroma)) + 120.0;
-    else
-        hue = (60.0 * ((r - g) / chroma)) + 240.0;
-
-    if (hue >= 360.0)
-        hue -= 360.0;
-
-    // makeRGBAFromHSLA assumes that hue is in [0...6).
-    hue /= 60.0;
-
-    lightness = 0.5 * (max + min);
-    if (!chroma)
-        saturation = 0.0;
-    else if (lightness <= 0.5)
-        saturation = (chroma / (max + min));
-    else
-        saturation = (chroma / (2.0 - (max + min)));
 }
 
 std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const

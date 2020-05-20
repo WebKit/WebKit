@@ -153,6 +153,16 @@ FloatComponents sRGBToP3(const FloatComponents& sRGB)
     return linearToRGBComponents(linearP3);
 }
 
+float lightness(const FloatComponents& sRGBCompontents)
+{
+    auto [r, g, b, a] = sRGBCompontents;
+
+    float max = std::max({ r, g, b });
+    float min = std::min({ r, g, b });
+
+    return 0.5f * (max + min);
+}
+
 // This is similar to sRGBToLinearColorComponent but for some reason
 // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
 // doesn't use the standard sRGB -> linearRGB threshold of 0.04045.
@@ -185,15 +195,13 @@ float contrastRatio(const FloatComponents& componentsA, const FloatComponents& c
     return (lighterLuminance + 0.05) / (darkerLuminance + 0.05);
 }
 
-FloatComponents sRGBToHSL(const FloatComponents& sRGBColor)
+FloatComponents sRGBToHSL(const FloatComponents& sRGBCompontents)
 {
     // http://en.wikipedia.org/wiki/HSL_color_space.
-    float r = sRGBColor.components[0];
-    float g = sRGBColor.components[1];
-    float b = sRGBColor.components[2];
+    auto [r, g, b, alpha] = sRGBCompontents;
 
-    float max = std::max(std::max(r, g), b);
-    float min = std::min(std::min(r, g), b);
+    float max = std::max({ r, g, b });
+    float min = std::min({ r, g, b });
     float chroma = max - min;
 
     float hue;
@@ -224,7 +232,7 @@ FloatComponents sRGBToHSL(const FloatComponents& sRGBColor)
         hue,
         saturation,
         lightness,
-        sRGBColor.components[3]
+        alpha
     };
 }
 

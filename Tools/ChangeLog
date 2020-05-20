@@ -1,3 +1,15 @@
+2020-05-20  Sam Weinig  <weinig@apple.com>
+
+        Replace Color::getHSL() with sRGBToHSL to ensure it at least gives somewhat sensible results for ExtendedColors and reduce code duplication
+        https://bugs.webkit.org/show_bug.cgi?id=212143
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update tests to use sRGBToHSL instead of Color::getHSL() and add testing of WebCore::lightness() and 
+        round tripping. Update results for hue to be 0->1 rather than 0->6 which allows the round tripping to succeed.
+
 2020-05-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette

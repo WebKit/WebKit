@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <WebCore/Color.h>
+#include <WebCore/ColorUtilities.h>
 
 using namespace WebCore;
 
@@ -36,96 +37,128 @@ TEST(Color, RGBToHSL_White)
 {
     Color color = Color::white;
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(0, hue);
-    EXPECT_DOUBLE_EQ(0, saturation);
-    EXPECT_DOUBLE_EQ(1, lightness);
+    EXPECT_FLOAT_EQ(0, hue);
+    EXPECT_FLOAT_EQ(0, saturation);
+    EXPECT_FLOAT_EQ(1, lightness);
+    
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+    
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_Black)
 {
     Color color = Color::black;
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(0, hue);
-    EXPECT_DOUBLE_EQ(0, saturation);
-    EXPECT_DOUBLE_EQ(0, lightness);
+    EXPECT_FLOAT_EQ(0, hue);
+    EXPECT_FLOAT_EQ(0, saturation);
+    EXPECT_FLOAT_EQ(0, lightness);
+
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_Red)
 {
     Color color(255, 0, 0);
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(0, hue);
-    EXPECT_DOUBLE_EQ(1, saturation);
-    EXPECT_DOUBLE_EQ(0.5, lightness);
+    EXPECT_FLOAT_EQ(0, hue);
+    EXPECT_FLOAT_EQ(1, saturation);
+    EXPECT_FLOAT_EQ(0.5, lightness);
+
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_Green)
 {
     Color color(0, 255, 0);
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(2, hue);
-    EXPECT_DOUBLE_EQ(1, saturation);
-    EXPECT_DOUBLE_EQ(0.5, lightness);
+    EXPECT_FLOAT_EQ(0.33333334, hue);
+    EXPECT_FLOAT_EQ(1, saturation);
+    EXPECT_FLOAT_EQ(0.5, lightness);
+
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_Blue)
 {
     Color color(0, 0, 255);
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(4, hue);
-    EXPECT_DOUBLE_EQ(1, saturation);
-    EXPECT_DOUBLE_EQ(0.5, lightness);
+    EXPECT_FLOAT_EQ(0.66666669, hue);
+    EXPECT_FLOAT_EQ(1, saturation);
+    EXPECT_FLOAT_EQ(0.5, lightness);
+
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_DarkGray)
 {
     Color color = Color::darkGray;
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(0, hue);
-    EXPECT_DOUBLE_EQ(0, saturation);
-    EXPECT_DOUBLE_EQ(0.50196078431372548, lightness);
+    EXPECT_FLOAT_EQ(0, hue);
+    EXPECT_FLOAT_EQ(0, saturation);
+    EXPECT_FLOAT_EQ(0.50196078431372548, lightness);
+    
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_Gray)
 {
     Color color = Color::gray;
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(0, hue);
-    EXPECT_DOUBLE_EQ(0, saturation);
-    EXPECT_DOUBLE_EQ(0.62745098039215685, lightness);
+    EXPECT_FLOAT_EQ(0, hue);
+    EXPECT_FLOAT_EQ(0, saturation);
+    EXPECT_FLOAT_EQ(0.62745098039215685, lightness);
+
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, RGBToHSL_LightGray)
 {
     Color color = Color::lightGray;
 
-    double hue, saturation, lightness;
-    color.getHSL(hue, saturation, lightness);
+    auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
-    EXPECT_DOUBLE_EQ(0, hue);
-    EXPECT_DOUBLE_EQ(0, saturation);
-    EXPECT_DOUBLE_EQ(0.75294117647058822, lightness);
+    EXPECT_FLOAT_EQ(0, hue);
+    EXPECT_FLOAT_EQ(0, saturation);
+    EXPECT_FLOAT_EQ(0.75294117647058822, lightness);
+
+    EXPECT_FLOAT_EQ(color.lightness(), lightness);
+
+    auto roundTrippedColor = Color(makeRGBAFromHSLA(hue, saturation, lightness, alpha));
+    EXPECT_EQ(color, roundTrippedColor);
 }
 
 TEST(Color, Validity)

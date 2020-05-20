@@ -547,9 +547,7 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
         if (!color || !color.value().isVisible() || color.value().isSemantic())
             return { };
 
-        double hue, saturation, lightness;
-        color.value().getHSL(hue, saturation, lightness);
-        return lightness;
+        return color.value().lightness();
     };
 
     const double lightnessDarkEnoughForText = 0.4;

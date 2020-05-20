@@ -66,6 +66,7 @@
     testCopyPaste("<span style=\"color: rgb(153, 153, 153)\">Hello</span>", "<span style=\"caret-color: rgb(127, 128, 127); color: rgb(127, 128, 127);\">Hello</span>");
     testCopyPaste("<span style=\"color: rgb(119, 119, 119)\">Hello</span>", "<span style=\"caret-color: rgb(170, 170, 170); color: rgb(170, 170, 170);\">Hello</span>");
     testCopyPaste("<span style=\"color: rgb(102, 102, 102)\">Hello</span>", "<span style=\"caret-color: rgb(191, 191, 191); color: rgb(191, 191, 191);\">Hello</span>");
+    testCopyPaste("<span style=\"color: color(display-p3 0.93 0.93 0.93); background-color: color(display-p3 0.2 0.2 0.2)\">Hello</span>", "<span style=\"caret-color: rgb(22, 22, 22); color: rgb(22, 22, 22); background-color: rgb(255, 255, 255);\">Hello</span>");
 
     // Transformed list items on paste
     testCopyPaste("<li><span style=\"color: white; background-color: black\">Hello</span></li>", "<li>Item 1</li><li><span style=\"color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);\">Hello</span></li><li>Item 2</li>", true);

@@ -365,9 +365,7 @@ void FrameView::recalculateScrollbarOverlayStyle()
         // Reduce the background color from RGB to a lightness value
         // and determine which scrollbar style to use based on a lightness
         // heuristic.
-        double hue, saturation, lightness;
-        backgroundColor.getHSL(hue, saturation, lightness);
-        if (lightness <= .5 && backgroundColor.isVisible())
+        if (backgroundColor.lightness() <= .5f && backgroundColor.isVisible())
             computedOverlayStyle = ScrollbarOverlayStyleLight;
         else if (!backgroundColor.isVisible() && useDarkAppearance())
             computedOverlayStyle = ScrollbarOverlayStyleLight;

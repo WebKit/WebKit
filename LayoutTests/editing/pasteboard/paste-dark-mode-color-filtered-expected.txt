@@ -7,6 +7,7 @@ PASS pastedMarkup is '<span style="color: rgb(106, 106, 106);">Hello</span><span
 PASS pastedMarkup is '<span style="caret-color: rgb(127, 128, 127); color: rgb(127, 128, 127);">Hello</span>'
 PASS pastedMarkup is '<span style="caret-color: rgb(170, 170, 170); color: rgb(170, 170, 170);">Hello</span>'
 PASS pastedMarkup is '<span style="caret-color: rgb(191, 191, 191); color: rgb(191, 191, 191);">Hello</span>'
+PASS pastedMarkup is '<span style="caret-color: rgb(22, 22, 22); color: rgb(22, 22, 22); background-color: rgb(255, 255, 255);">Hello</span>'
 PASS pastedMarkup is '<li>Item 1</li><li><span style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">Hello</span></li><li>Item 2</li>'
 PASS pastedMarkup is '<li>Item 1</li><li style="color: rgb(21, 21, 21); background-color: rgb(213, 213, 213);">Hello 1</li><li>Hello 2</li><li>Item 2</li>'
 PASS pastedMarkup is '<li>Item 1</li><li>Hello 1</li><li style="color: rgb(127, 128, 127);">Hello 2</li><li>Item 2</li>'

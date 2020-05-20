@@ -96,7 +96,7 @@ WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
 RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha);
 
 WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
-RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
+WEBCORE_EXPORT RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
 RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
 
 uint8_t roundAndClampColorChannel(int);
@@ -207,11 +207,6 @@ public:
 
     unsigned hash() const;
 
-    // FIXME: ExtendedColor - these should be renamed (to be clear about their parameter types, or
-    // replaced with alternative accessors.
-
-    WEBCORE_EXPORT void getHSL(double& h, double& s, double& l) const;
-
     WEBCORE_EXPORT std::pair<ColorSpace, FloatComponents> colorSpaceAndComponents() const;
 
     // This will convert non-sRGB colorspace colors into sRGB.
@@ -221,6 +216,8 @@ public:
     Color dark() const;
 
     bool isDark() const;
+    
+    WEBCORE_EXPORT float lightness() const;
 
     // This is an implementation of Porter-Duff's "source-over" equation
     Color blend(const Color&) const;

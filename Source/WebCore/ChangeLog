@@ -1,3 +1,52 @@
+2020-05-20  Sam Weinig  <weinig@apple.com>
+
+        Replace Color::getHSL() with sRGBToHSL to ensure it at least gives somewhat sensible results for ExtendedColors and reduce code duplication
+        https://bugs.webkit.org/show_bug.cgi?id=212143
+
+        Reviewed by Simon Fraser.
+
+        - Updated API tests to test sRGBToHSL() rather than Color::getHSL() and extended the tests
+          to include lightness tests and round tripping tests.
+        - Update editing/pasteboard/paste-dark-mode-color-filtered.html with extended color test cases.
+
+        Replaces Color::getHSL() with sRGBToHSL(color.toSRGBAComponentsLossy()) and adds
+        an optimized variant, lightness(...) that just extracts the lightness component for 
+        callers that only needed that.
+        
+        It is now required to explicitly use color.toSRGBAComponentsLossy() to indicate that
+        for non-SRGB colors, this will be a lossy transformation and give us an easy way to
+        find all these sites in the future, if we want to make a better conversion for other
+        color spaces. 
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::fragmentNeedsColorTransformed):
+        Switch to using lightness(). This was previously broken for extended colors but now works (though 
+        in a lossy way through sRGB). Update editing/pasteboard/paste-dark-mode-color-filtered.html with extended colors.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        Switch to using sRGBToHSL(color.toSRGBAComponentsLossy()).
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle):
+        Switch to using lightness().
+        
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::getHSL const): Deleted.
+        * platform/graphics/Color.h:
+        Remove Color::getHSL().
+        
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::lightness):
+        Added optimized subset of sRGBToHSL which just computes the lightness component for callers
+        that only need that.
+
+        (WebCore::sRGBToHSL):
+        Simplify/cleanup code a little using initialize-list based std::max/std::min and structured bindings.
+
+        * platform/graphics/ColorUtilities.h:
+        Export functions to allow testing them directly.
+
 2020-05-20  Megan Gardner  <megan_gardner@apple.com>
 
         Hide password echo when screen is being captured.
