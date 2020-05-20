@@ -312,7 +312,11 @@ static void webViewClose(WebKitWebView *webView, BrowserWindow *window)
 {
     int tabsCount = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
     if (tabsCount == 1) {
+#if GTK_CHECK_VERSION(3, 98, 4)
+        gtk_window_destroy(GTK_WINDOW(window));
+#else
         gtk_widget_destroy(GTK_WIDGET(window));
+#endif
         return;
     }
 
@@ -320,7 +324,11 @@ static void webViewClose(WebKitWebView *webView, BrowserWindow *window)
     for (i = 0; i < tabsCount; ++i) {
         BrowserTab *tab = (BrowserTab *)gtk_notebook_get_nth_page(GTK_NOTEBOOK(window->notebook), i);
         if (browser_tab_get_web_view(tab) == webView) {
+#if GTK_CHECK_VERSION(3, 98, 4)
+            gtk_notebook_remove_page(GTK_NOTEBOOK(window->notebook), i);
+#else
             gtk_widget_destroy(GTK_WIDGET(tab));
+#endif
             return;
         }
     }
@@ -944,11 +952,11 @@ static void browserWindowTabAddedOrRemoved(GtkNotebook *notebook, BrowserTab *ta
 }
 
 #if GTK_CHECK_VERSION(3, 98, 0)
-static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkContainer* container, const char* namedIcon, GCallback callback)
+static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkBox* box, const char* namedIcon, GCallback callback)
 {
     GtkWidget *button = gtk_button_new_from_icon_name(namedIcon);
     gtk_button_set_has_frame(GTK_BUTTON(button), FALSE);
-    gtk_container_add(container, button);
+    gtk_box_append(box, button);
     g_signal_connect_swapped(button, "clicked", callback, (gpointer)window);
 
     return button;
@@ -1059,9 +1067,9 @@ static void browser_window_init(BrowserWindow *window)
     gtk_center_box_set_center_widget(GTK_CENTER_BOX(toolbar), window->uriEntry);
 
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    window->backItem = browserWindowSetupToolbarItem(window, GTK_CONTAINER(box), "go-previous", G_CALLBACK(goBackCallback));
-    window->forwardItem = browserWindowSetupToolbarItem(window, GTK_CONTAINER(box), "go-next", G_CALLBACK(goForwardCallback));
-    window->reloadOrStopButton = browserWindowSetupToolbarItem(window, GTK_CONTAINER(box), "view-refresh", G_CALLBACK(reloadOrStopCallback));
+    window->backItem = browserWindowSetupToolbarItem(window, GTK_BOX(box), "go-previous", G_CALLBACK(goBackCallback));
+    window->forwardItem = browserWindowSetupToolbarItem(window, GTK_BOX(box), "go-next", G_CALLBACK(goForwardCallback));
+    window->reloadOrStopButton = browserWindowSetupToolbarItem(window, GTK_BOX(box), "view-refresh", G_CALLBACK(reloadOrStopCallback));
     gtk_center_box_set_start_widget(GTK_CENTER_BOX(toolbar), box);
 #else
     GtkWidget *toolbar = gtk_toolbar_new();
@@ -1101,8 +1109,8 @@ static void browser_window_init(BrowserWindow *window)
 #endif
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     window->mainBox = vbox;
-#if GTK_CHECK_VERSION(3, 98, 0)
-    gtk_container_add(GTK_CONTAINER(vbox), toolbar);
+#if GTK_CHECK_VERSION(3, 98, 4)
+    gtk_box_append(GTK_BOX(vbox), toolbar);
 #else
     gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
     gtk_widget_show(toolbar);
@@ -1114,13 +1122,13 @@ static void browser_window_init(BrowserWindow *window)
     g_signal_connect(window->notebook, "page-removed", G_CALLBACK(browserWindowTabAddedOrRemoved), window);
     gtk_notebook_set_show_tabs(GTK_NOTEBOOK(window->notebook), FALSE);
     gtk_notebook_set_show_border(GTK_NOTEBOOK(window->notebook), FALSE);
-#if !GTK_CHECK_VERSION(3, 98, 0)
+#if !GTK_CHECK_VERSION(3, 98, 4)
     gtk_box_pack_start(GTK_BOX(window->mainBox), window->notebook, TRUE, TRUE, 0);
     gtk_widget_show(window->notebook);
     gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_show(vbox);
 #else
-    gtk_container_add(GTK_CONTAINER(window->mainBox), window->notebook);
+    gtk_box_append(GTK_BOX(window->mainBox), window->notebook);
     gtk_window_set_child(GTK_WINDOW(window), vbox);
 #endif
 }

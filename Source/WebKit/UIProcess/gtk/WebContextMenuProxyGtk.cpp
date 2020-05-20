@@ -280,7 +280,9 @@ WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
     m_signalHandlers.clear();
 
     gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, nullptr);
+#if !USE(GTK4)
     gtk_widget_destroy(m_menu);
+#endif
 }
 
 } // namespace WebKit

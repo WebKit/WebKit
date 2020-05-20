@@ -50,7 +50,11 @@ IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& poin
     if (!toplevelWidget || !gtk_widget_is_toplevel(toplevelWidget) || !GTK_IS_WINDOW(toplevelWidget))
         return point;
 
+#if USE(GTK4)
+    double xInWindow, yInWindow;
+#else
     int xInWindow, yInWindow;
+#endif
     gtk_widget_translate_coordinates(widget, toplevelWidget, point.x(), point.y(), &xInWindow, &yInWindow);
 
     const auto origin = gtkWindowGetOrigin(toplevelWidget);

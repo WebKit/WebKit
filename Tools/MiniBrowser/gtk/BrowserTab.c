@@ -135,18 +135,22 @@ static gboolean decidePolicy(WebKitWebView *webView, WebKitPolicyDecision *decis
     return TRUE;
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 4)
 static void removeChildIfInfoBar(GtkWidget *child, GtkContainer *tab)
 {
     if (GTK_IS_INFO_BAR(child))
         gtk_container_remove(tab, child);
 }
+#endif
 
 static void loadChanged(WebKitWebView *webView, WebKitLoadEvent loadEvent, BrowserTab *tab)
 {
     if (loadEvent != WEBKIT_LOAD_STARTED)
         return;
 
+#if !GTK_CHECK_VERSION(3, 98, 4)
     gtk_container_foreach(GTK_CONTAINER(tab), (GtkCallback)removeChildIfInfoBar, tab);
+#endif
 }
 
 static GtkWidget *createInfoBarQuestionMessage(const char *title, const char *text)
@@ -403,8 +407,12 @@ static void browserTabConstructed(GObject *gObject)
 #endif
 
     GtkWidget *overlay = gtk_overlay_new();
+#if GTK_CHECK_VERSION(3, 98, 4)
+    gtk_box_append(GTK_BOX(tab), overlay);
+#else
     gtk_container_add(GTK_CONTAINER(tab), overlay);
     gtk_widget_show(overlay);
+#endif
 
     tab->statusLabel = gtk_label_new(NULL);
     gtk_widget_set_halign(tab->statusLabel, GTK_ALIGN_START);

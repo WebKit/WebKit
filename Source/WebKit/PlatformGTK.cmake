@@ -76,6 +76,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h
     ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}/WebKitContextMenuItem.h
     ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}/WebKitInputMethodContext.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk${GTK_API_VERSION}/WebKitWebViewBase.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitApplicationInfo.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitAuthenticationRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitAutocleanups.h
@@ -135,7 +136,6 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebInspector.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebResource.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebView.h
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebViewBase.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebViewSessionState.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebsiteData.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebsiteDataManager.h

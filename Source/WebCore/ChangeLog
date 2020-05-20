@@ -1,3 +1,14 @@
+2020-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build with GTK 3.98.4
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::convertWidgetPointToScreenPoint):
+        * platform/gtk/GtkVersioning.h:
+        (gtk_widget_destroy):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDPI):
+
 2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add support for drag and drop operations

@@ -117,7 +117,11 @@ double screenDPI()
     GdkDisplay* display = gdk_display_get_default();
     if (!display)
         return defaultDpi;
+#if USE(GTK4)
+    GdkMonitor* monitor = GDK_MONITOR(g_list_model_get_item(gdk_display_get_monitors(display), 0));
+#else
     GdkMonitor* monitor = gdk_display_get_monitor(display, 0);
+#endif
     if (!monitor)
         return defaultDpi;
 

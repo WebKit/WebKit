@@ -45,6 +45,13 @@ gtk_widget_get_toplevel(GtkWidget* widget)
 }
 
 static inline void
+gtk_widget_destroy(GtkWidget* widget)
+{
+    ASSERT(GTK_IS_WINDOW(widget));
+    gtk_window_destroy(GTK_WINDOW(widget));
+}
+
+static inline void
 gtk_window_get_position(GtkWindow*, int* x, int* y)
 {
     *x = *y = 0;

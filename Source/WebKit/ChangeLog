@@ -1,3 +1,33 @@
+2020-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build with GTK 3.98.4
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialog):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseAddDialog):
+        (webkitWebViewBaseRemoveChild):
+        (webkitWebViewBaseContainerForall):
+        (webkitWebViewBaseAddWebInspector):
+        (webkitWebViewBaseRemoveWebInspector):
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseSizeAllocate):
+        (webkitWebViewBaseConstructed):
+        (webkit_web_view_base_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBase.h: Removed.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSave):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+
 2020-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add support for drag and drop operations

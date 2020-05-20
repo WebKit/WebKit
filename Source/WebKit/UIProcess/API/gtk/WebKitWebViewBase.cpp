@@ -144,7 +144,9 @@ private:
 };
 #endif
 
+#if !USE(GTK4)
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
+#endif
 typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 
 struct _WebKitWebViewBasePrivate {
@@ -177,7 +179,9 @@ struct _WebKitWebViewBasePrivate {
     }
 #endif
 
+#if !USE(GTK4)
     WebKitWebViewChildrenMap children;
+#endif
     std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
     bool shouldForwardNextKeyEvent { false };
@@ -240,7 +244,11 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<PointerLockManager> pointerLockManager;
 };
 
+#if USE(GTK4)
+WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET)
+#else
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
+#endif
 
 static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webViewBase, OptionSet<ActivityState::Flag> flagsToUpdate)
 {
@@ -465,6 +473,7 @@ static void webkitWebViewBaseUnrealize(GtkWidget* widget)
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unrealize(widget);
 }
 
+#if !USE(GTK4)
 static bool webkitWebViewChildIsInternalWidget(WebKitWebViewBase* webViewBase, GtkWidget* widget)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -486,34 +495,45 @@ static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* wi
 
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
 }
+#endif
 
 void webkitWebViewBaseAddDialog(WebKitWebViewBase* webViewBase, GtkWidget* dialog)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->dialog = dialog;
-    gtk_container_add(GTK_CONTAINER(webViewBase), dialog);
+    gtk_widget_set_parent(dialog, GTK_WIDGET(webViewBase));
     gtk_widget_show(dialog);
 
     // We need to draw the shadow over the widget.
     gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
 }
 
-void webkitWebViewBaseAddWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector, AttachmentSide attachmentSide)
+#if USE(GTK4)
+static void webkitWebViewBaseRemoveChild(WebKitWebViewBase* webViewBase, GtkWidget* widget)
 {
-    if (webViewBase->priv->inspectorView == inspector && webViewBase->priv->inspectorAttachmentSide == attachmentSide)
+    if (!widget)
         return;
 
-    webViewBase->priv->inspectorAttachmentSide = attachmentSide;
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->inspectorView == widget) {
+        priv->inspectorView = nullptr;
+        priv->inspectorViewSize = 0;
+    } else if (priv->dialog == widget) {
+        priv->dialog = nullptr;
+        if (gtk_widget_get_visible(GTK_WIDGET(webViewBase)))
+            gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+    } else if (priv->keyBindingTranslator.widget() == widget)
+        priv->keyBindingTranslator.invalidate();
+    else
+        RELEASE_ASSERT_NOT_REACHED();
 
-    if (webViewBase->priv->inspectorView == inspector) {
+    gboolean wasVisible = gtk_widget_get_visible(widget);
+    gtk_widget_unparent(widget);
+
+    if (wasVisible && gtk_widget_get_visible(GTK_WIDGET(webViewBase)))
         gtk_widget_queue_resize(GTK_WIDGET(webViewBase));
-        return;
-    }
-
-    webViewBase->priv->inspectorView = inspector;
-    gtk_container_add(GTK_CONTAINER(webViewBase), inspector);
 }
-
+#else
 static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget* widget)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
@@ -540,15 +560,8 @@ static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget*
         gtk_widget_queue_resize(widgetContainer);
 }
 
-#if USE(GTK4)
-static void webkitWebViewBaseContainerForall(GtkContainer* container, GtkCallback callback, gpointer callbackData)
-#else
 static void webkitWebViewBaseContainerForall(GtkContainer* container, gboolean includeInternals, GtkCallback callback, gpointer callbackData)
-#endif
 {
-#if USE(GTK4)
-    bool includeInternals = true;
-#endif
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
     WebKitWebViewBasePrivate* priv = webView->priv;
 
@@ -576,6 +589,35 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* chi
     webView->priv->children.set(child, childRect);
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webView));
 }
+#endif
+
+void webkitWebViewBaseAddWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector, AttachmentSide attachmentSide)
+{
+    if (webViewBase->priv->inspectorView == inspector && webViewBase->priv->inspectorAttachmentSide == attachmentSide)
+        return;
+
+    webViewBase->priv->inspectorAttachmentSide = attachmentSide;
+
+    if (webViewBase->priv->inspectorView == inspector) {
+        gtk_widget_queue_resize(GTK_WIDGET(webViewBase));
+        return;
+    }
+
+    webViewBase->priv->inspectorView = inspector;
+    gtk_widget_set_parent(inspector, GTK_WIDGET(webViewBase));
+}
+
+void webkitWebViewBaseRemoveWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector)
+{
+    if (webViewBase->priv->inspectorView != inspector)
+        return;
+
+#if USE(GTK4)
+    webkitWebViewBaseRemoveChild(webViewBase, inspector);
+#else
+    gtk_container_remove(GTK_CONTAINER(webViewBase), inspector);
+#endif
+}
 
 #if GTK_CHECK_VERSION(3, 24, 0) && !USE(GTK4)
 static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webView, const String& text)
@@ -588,7 +630,13 @@ static void webkitWebViewBaseCompleteEmojiChooserRequest(WebKitWebViewBase* webV
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
+#if USE(GTK4)
+    webkitWebViewBaseRemoveChild(webView, webView->priv->dialog);
+    webkitWebViewBaseRemoveChild(webView, webView->priv->inspectorView);
+    webkitWebViewBaseRemoveChild(webView, webView->priv->keyBindingTranslator.widget());
+#else
     g_clear_pointer(&webView->priv->dialog, gtk_widget_destroy);
+#endif
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
     if (webView->priv->accessible)
         webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
@@ -660,6 +708,7 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 }
 #endif
 
+#if !USE(GTK4)
 static void webkitWebViewBaseChildAllocate(GtkWidget* child, gpointer userData)
 {
     if (!gtk_widget_get_visible(child))
@@ -675,6 +724,7 @@ static void webkitWebViewBaseChildAllocate(GtkWidget* child, gpointer userData)
     gtk_widget_size_allocate(child, &childAllocation);
     priv->children.set(child, IntRect());
 }
+#endif
 
 #if USE(GTK4)
 static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, int width, int height, int baseline)
@@ -691,7 +741,9 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 #endif
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+#if !USE(GTK4)
     gtk_container_foreach(GTK_CONTAINER(webViewBase), webkitWebViewBaseChildAllocate, webViewBase);
+#endif
 
     IntRect viewRect(allocation->x, allocation->y, allocation->width, allocation->height);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -1630,7 +1682,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
 
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
     priv->pageClient = makeUnique<PageClientImpl>(viewWidget);
-    gtk_container_add(GTK_CONTAINER(viewWidget), priv->keyBindingTranslator.widget());
+    gtk_widget_set_parent(priv->keyBindingTranslator.widget(), viewWidget);
 
 #if ENABLE(DRAG_SUPPORT)
     priv->dropTarget = makeUnique<DropTarget>(viewWidget);
@@ -1716,10 +1768,12 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     gobjectClass->constructed = webkitWebViewBaseConstructed;
     gobjectClass->dispose = webkitWebViewBaseDispose;
 
+#if !USE(GTK4)
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webkitWebViewBaseClass);
     containerClass->add = webkitWebViewBaseContainerAdd;
     containerClass->remove = webkitWebViewBaseContainerRemove;
     containerClass->forall = webkitWebViewBaseContainerForall;
+#endif
 
     // Before creating a WebKitWebViewBasePriv we need to be sure that WebKit is started.
     // Usually starting a context triggers InitializeWebKit2, but in case

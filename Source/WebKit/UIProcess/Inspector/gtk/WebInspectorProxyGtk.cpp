@@ -264,8 +264,12 @@ void WebInspectorProxy::platformCreateFrontendWindow()
 
     ASSERT(!m_inspectorWindow);
     m_inspectorWindow = webkitInspectorWindowNew();
+#if USE(GTK4)
+    gtk_window_set_child(GTK_WINDOW(m_inspectorWindow), m_inspectorView);
+#else
     gtk_container_add(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
     gtk_widget_show(m_inspectorView);
+#endif
 
     if (!m_inspectedURLString.isEmpty())
         updateInspectorWindowTitle();
@@ -390,9 +394,13 @@ void WebInspectorProxy::platformAttach()
 {
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
     if (m_inspectorWindow) {
+#if USE(GTK4)
+        gtk_window_set_child(GTK_WINDOW(m_inspectorWindow), nullptr);
+#else
         gtk_container_remove(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
+#endif
         gtk_widget_destroy(m_inspectorWindow);
-        m_inspectorWindow = 0;
+        m_inspectorWindow = nullptr;
     }
 
     // Set a default sizes based on InspectorFrontendClientLocal.
@@ -426,7 +434,7 @@ void WebInspectorProxy::platformDetach()
         // the inspector is opened if the inspector is shown/closed quickly. So,
         // we might not have a parent yet.
         if (GtkWidget* parent = gtk_widget_get_parent(m_inspectorView))
-            gtk_container_remove(GTK_CONTAINER(parent), m_inspectorView);
+            webkitWebViewBaseRemoveWebInspector(WEBKIT_WEB_VIEW_BASE(parent), m_inspectorView);
     }
 
     // Return early if we are not visible. This means the inspector was closed while attached
@@ -486,7 +494,7 @@ static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* res
 void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     UNUSED_PARAM(forceSaveDialog);
-
+#if !USE(GTK4)
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
     if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
         return;
@@ -495,9 +503,7 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
 
     GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
-#if !USE(GTK4)
     gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
-#endif
 
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
@@ -524,6 +530,7 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, m_inspectorPage);
+#endif
 }
 
 void WebInspectorProxy::platformAppend(const String&, const String&)

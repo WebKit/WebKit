@@ -71,6 +71,7 @@ bool webkitWebViewBaseIsInWindow(WebKitWebViewBase*);
 
 void webkitWebViewBaseAddDialog(WebKitWebViewBase*, GtkWidget*);
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, WebKit::AttachmentSide);
+void webkitWebViewBaseRemoveWebInspector(WebKitWebViewBase*, GtkWidget*);
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase*, const WebKit::LayerTreeContext&);
 void webkitWebViewBaseUpdateAcceleratedCompositingMode(WebKitWebViewBase*, const WebKit::LayerTreeContext&);
