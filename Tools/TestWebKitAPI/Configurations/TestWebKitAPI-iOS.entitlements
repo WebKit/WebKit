@@ -8,5 +8,7 @@
 	</array>
 	<key>com.apple.developer.WebKit.ServiceWorkers</key>
 	<true/>
+	<key>com.apple.Pasteboard.paste-unchecked</key>
+	<true/>
 </dict>
 </plist>
