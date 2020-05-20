@@ -1,3 +1,83 @@
+2020-05-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Update some media logging
+        https://bugs.webkit.org/show_bug.cgi?id=212109
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::insertedIntoAncestor):
+        (WebCore::HTMLMediaElement::didFinishInsertingNode):
+        (WebCore::HTMLMediaElement::removedFromAncestor):
+        (WebCore::HTMLMediaElement::checkPlaybackTargetCompatablity):
+        (WebCore::HTMLMediaElement::canPlayType const):
+        (WebCore::HTMLMediaElement::waitForSourceChange):
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        (WebCore::HTMLMediaElement::fastSeek):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::seekInternal):
+        (WebCore::HTMLMediaElement::seekTask):
+        (WebCore::HTMLMediaElement::finishSeek):
+        (WebCore::HTMLMediaElement::currentMediaTime const):
+        (WebCore::HTMLMediaElement::setPreload):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setLoop):
+        (WebCore::HTMLMediaElement::setControls):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::hardwareMutedStateDidChange):
+        (WebCore::HTMLMediaElement::configureTextTrackGroup):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerMuteChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerResourceNotSupported):
+        (WebCore::HTMLMediaElement::mediaPlayerSizeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingModeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated):
+        (WebCore::HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::stop):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::setShouldPlayToPlaybackTarget):
+        (WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::didBecomeFullscreenElement):
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible):
+        (WebCore::HTMLMediaElement::mediaCanStart):
+        (WebCore::HTMLMediaElement::setShouldDelayLoadEvent):
+        (WebCore::HTMLMediaElement::suspendPlayback):
+        (WebCore::HTMLMediaElement::resumeAutoplaying):
+        (WebCore::HTMLMediaElement::mayResumePlayback):
+        (WebCore::HTMLMediaElement::didReceiveRemoteControlCommand):
+        (WebCore::HTMLMediaElement::setBufferingPolicy):
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible):
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::setState):
+        (WebCore::PlatformMediaSession::beginInterruption):
+        (WebCore::PlatformMediaSession::endInterruption):
+        (WebCore::PlatformMediaSession::clientWillBeginAutoplaying):
+        (WebCore::PlatformMediaSession::clientWillBeginPlayback):
+        (WebCore::PlatformMediaSession::processClientWillPausePlayback):
+        (WebCore::PlatformMediaSession::clientWillPausePlayback):
+        (WebCore::PlatformMediaSession::clientWillBeDOMSuspended):
+        (WebCore::PlatformMediaSession::pauseSession):
+        (WebCore::PlatformMediaSession::stopSession):
+        (WebCore::PlatformMediaSession::didReceiveRemoteControlCommand):
+
 2020-05-19  Daniel Bates  <dabates@apple.com>
 
         Blue dotted underline with alternatives only shown for last word, gets lost for previous insertions

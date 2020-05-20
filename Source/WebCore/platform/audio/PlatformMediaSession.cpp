@@ -66,6 +66,7 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
         MAKE_STATIC_STRING_IMPL("SuspendedUnderLock"),
         MAKE_STATIC_STRING_IMPL("InvisibleAutoplay"),
         MAKE_STATIC_STRING_IMPL("ProcessInactive"),
+        MAKE_STATIC_STRING_IMPL("PlaybackSuspended"),
     };
     static_assert(!static_cast<size_t>(PlatformMediaSession::NoInterruption), "PlatformMediaSession::NoInterruption is not 0 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::SystemSleep) == 1, "PlatformMediaSession::SystemSleep is not 1 as expected");
@@ -74,6 +75,7 @@ String convertEnumerationToString(PlatformMediaSession::InterruptionType type)
     static_assert(static_cast<size_t>(PlatformMediaSession::SuspendedUnderLock) == 4, "PlatformMediaSession::SuspendedUnderLock is not 4 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::InvisibleAutoplay) == 5, "PlatformMediaSession::InvisibleAutoplay is not 5 as expected");
     static_assert(static_cast<size_t>(PlatformMediaSession::ProcessInactive) == 6, "PlatformMediaSession::ProcessInactive is not 6 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::PlaybackSuspended) == 7, "PlatformMediaSession::PlaybackSuspended is not 7 as expected");
     ASSERT(static_cast<size_t>(type) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(type)];
 }
@@ -139,7 +141,7 @@ void PlatformMediaSession::setState(State state)
     if (state == m_state)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, state);
+    ALWAYS_LOG(LOGIDENTIFIER, state);
     m_state = state;
     if (m_state == State::Playing)
         m_hasPlayedSinceLastInterruption = true;
@@ -148,7 +150,7 @@ void PlatformMediaSession::setState(State state)
 
 void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
-    INFO_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption type = ", type, ", interruption count = ", m_interruptionCount);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state, ", interruption type = ", type, ", interruption count = ", m_interruptionCount);
 
     // When interruptions are overridden, m_interruptionType doesn't get set.
     // Give nested interruptions a chance when the previous interruptions were overridden.
@@ -156,7 +158,7 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
         return;
 
     if (client().shouldOverrideBackgroundPlaybackRestriction(type)) {
-        INFO_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning early because client says to override interruption");
         return;
     }
 
@@ -170,10 +172,10 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
 
 void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
 {
-    INFO_LOG(LOGIDENTIFIER, "flags = ", (int)flags, ", stateToRestore = ", m_stateToRestore, ", interruption count = ", m_interruptionCount);
+    ALWAYS_LOG(LOGIDENTIFIER, "flags = ", (int)flags, ", stateToRestore = ", m_stateToRestore, ", interruption count = ", m_interruptionCount);
 
     if (!m_interruptionCount) {
-        INFO_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
+        ALWAYS_LOG(LOGIDENTIFIER, "!! ignoring spurious interruption end !!");
         return;
     }
 
@@ -200,10 +202,10 @@ void PlatformMediaSession::clientWillBeginAutoplaying()
     if (m_notifyingClient)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "state = ", m_state);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
     if (state() == Interrupted) {
         m_stateToRestore = Autoplaying;
-        INFO_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Autoplaying\"");
+        ALWAYS_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Autoplaying\"");
         return;
     }
 
@@ -215,7 +217,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
     if (m_notifyingClient)
         return true;
 
-    INFO_LOG(LOGIDENTIFIER, "state = ", m_state);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
 
     if (!m_manager->sessionWillBeginPlayback(*this)) {
         if (state() == Interrupted)
@@ -232,10 +234,10 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
     if (m_notifyingClient)
         return true;
 
-    INFO_LOG(LOGIDENTIFIER, "state = ", m_state);
+    ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
     if (state() == Interrupted) {
         m_stateToRestore = Paused;
-        INFO_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Paused\"");
+        ALWAYS_LOG(LOGIDENTIFIER, "      setting stateToRestore to \"Paused\"");
         return false;
     }
     
@@ -246,23 +248,25 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
 
 bool PlatformMediaSession::clientWillPausePlayback()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     return processClientWillPausePlayback(DelayCallingUpdateNowPlaying::No);
 }
 
 void PlatformMediaSession::clientWillBeDOMSuspended()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     processClientWillPausePlayback(DelayCallingUpdateNowPlaying::Yes);
 }
 
 void PlatformMediaSession::pauseSession()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_client.suspendPlayback();
 }
 
 void PlatformMediaSession::stopSession()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_client.suspendPlayback();
     m_manager->removeSession(*this);
 }
@@ -284,7 +288,7 @@ bool PlatformMediaSession::canReceiveRemoteControlCommands() const
 
 void PlatformMediaSession::didReceiveRemoteControlCommand(RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument* argument)
 {
-    INFO_LOG(LOGIDENTIFIER, command);
+    ALWAYS_LOG(LOGIDENTIFIER, command);
 
     m_client.didReceiveRemoteControlCommand(command, argument);
 }
