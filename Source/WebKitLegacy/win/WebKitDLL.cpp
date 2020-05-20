@@ -163,9 +163,6 @@ STDAPI LocalServerDidDie()
 void shutDownWebKit()
 {
     WebKit::WebStorageNamespaceProvider::closeLocalStorage();
-#if USE(EGL)
-    PlatformDisplay::shutDownEglDisplays();
-#endif
 }
 
 //FIXME: We should consider moving this to a new file for cross-project functionality

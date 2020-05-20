@@ -158,7 +158,7 @@ PlatformDisplay::PlatformDisplay(NativeDisplayOwned displayOwned)
 
 PlatformDisplay::~PlatformDisplay()
 {
-#if USE(EGL)
+#if USE(EGL) && !PLATFORM(WIN)
     ASSERT(m_eglDisplay == EGL_NO_DISPLAY);
 #endif
     if (s_sharedDisplayForCompositing == this)
@@ -232,7 +232,12 @@ void PlatformDisplay::initializeEGLDisplay()
         // EGL atexit handlers and the PlatformDisplay destructor.
         // See https://bugs.webkit.org/show_bug.cgi?id=157973.
         eglAtexitHandlerInitialized = true;
-        std::atexit(shutDownEglDisplays);
+        std::atexit([] {
+            while (!eglDisplays().isEmpty()) {
+                auto* display = eglDisplays().takeAny();
+                display->terminateEGLDisplay();
+            }
+        });
     }
 #endif
 }
@@ -249,14 +254,6 @@ void PlatformDisplay::terminateEGLDisplay()
         return;
     eglTerminate(m_eglDisplay);
     m_eglDisplay = EGL_NO_DISPLAY;
-}
-
-void PlatformDisplay::shutDownEglDisplays()
-{
-    while (!eglDisplays().isEmpty()) {
-        auto* display = eglDisplays().takeAny();
-        display->terminateEGLDisplay();
-    }
 }
 
 #endif // USE(EGL)

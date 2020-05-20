@@ -1,3 +1,13 @@
+2020-05-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] ASSERT(m_eglDisplay == EGL_NO_DISPLAY) fails in ~PlatformDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=212065
+
+        Reviewed by Don Olmstead.
+
+        * WebKitDLL.cpp:
+        (shutDownWebKit): Don't call PlatformDisplay::shutDownEglDisplays().
+
 2020-05-12  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Neuter WKFrameIsFrameSet() / WKPageGetFrameSetLargestFrame() C API

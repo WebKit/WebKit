@@ -1,3 +1,31 @@
+2020-05-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] ASSERT(m_eglDisplay == EGL_NO_DISPLAY) fails in ~PlatformDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=212065
+
+        Reviewed by Don Olmstead.
+
+        PlatformDisplay destoys m_eglDisplay by using std::atexit to
+        ensure they are destructed before EGL's atexit handler (Bug 157973).
+        However, calling eglTerminate in atexit handler causes a
+        crash on Windows (Bug 145832, Bug 170331).
+
+        Then, r214688 added shutDownEglDisplays() and explicitly call it
+        in shutDownWebKit() to destory m_eglDisplay in Windows WebKit1.
+        However, Windows WebKit2 may call _exit() in IPC::Connection's
+        WorkQueue thread. It doesn't seem a good idea that explicitly
+        destructing m_eglDisplay by calling shutDownEglDisplays().
+
+        Remove shutDownEglDisplays() and the assertion for Windows.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::~PlatformDisplay): Conditioned out the
+        assertion for PLATFORM(WIN).
+        (WebCore::PlatformDisplay::initializeEGLDisplay): Restored the
+        original atexit handler of r201595.
+        (WebCore::PlatformDisplay::shutDownEglDisplays): Deleted.
+        * platform/graphics/PlatformDisplay.h:
+
 2020-05-19  Darin Adler  <darin@apple.com>
 
         REGRESSION (r259930): Dictation marker at start of text is removed when added trailing whitespace is collapsed

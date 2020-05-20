@@ -75,7 +75,6 @@ public:
 #if USE(EGL)
     EGLDisplay eglDisplay() const;
     bool eglCheckVersion(int major, int minor) const;
-    static void shutDownEglDisplays();
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
