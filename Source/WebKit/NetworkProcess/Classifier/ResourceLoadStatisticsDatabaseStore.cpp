@@ -352,6 +352,7 @@ Optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTab
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema schema is missing table: %s", this, table.ascii().data());
             missingTables.append(String(table));
         }
+        statement.reset();
     }
     if (missingTables.isEmpty())
         return WTF::nullopt;
