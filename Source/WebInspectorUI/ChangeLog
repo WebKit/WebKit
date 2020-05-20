@@ -1,5 +1,25 @@
 2020-05-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Left/Right arrow keys should collapse/expand details sections
+        https://bugs.webkit.org/show_bug.cgi?id=212064
+        <rdar://problem/63384091>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DetailsSection.js:
+        (WI.DetailsSection):
+        (WI.DetailsSection.prototype._headerElementClicked):
+        (WI.DetailsSection.prototype._handleHeaderElementKeyDown):
+        Use keydown event instead of keypress because the latter doesn't fire for arrow keys.
+        Drive-by: remove unused `expandedByUser`.
+
+        * UserInterface/Views/ExpandableView.js:
+        (WI.ExpandableView):
+        (WI.ExpandableView.prototype._handleDisclosureButtonKeyDown):
+        Computed panel items should also collapse/expand by pressing Left/Right keys.
+
+2020-05-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
         REGRESSION(r260978): Web Inspector: Styles: Pressing Space no longer toggles selected properties
         https://bugs.webkit.org/show_bug.cgi?id=212121
 

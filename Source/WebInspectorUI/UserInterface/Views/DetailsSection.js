@@ -37,7 +37,7 @@ WI.DetailsSection = class DetailsSection extends WI.Object
         this._headerElement = document.createElement("div");
         this._headerElement.addEventListener("mousedown", this._headerElementMouseDown.bind(this));
         this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
-        this._headerElement.addEventListener("keypress", this._headerElementKeyPress.bind(this));
+        this._headerElement.addEventListener("keydown", this._handleHeaderElementKeyDown.bind(this));
         this._headerElement.className = "header";
         this._headerElement.tabIndex = 0;
         this._element.appendChild(this._headerElement);
@@ -63,7 +63,6 @@ WI.DetailsSection = class DetailsSection extends WI.Object
 
         this._collapsedSetting = new WI.Setting(identifier + "-details-section-collapsed", !!defaultCollapsedSettingValue);
         this.collapsed = this._collapsedSetting.value;
-        this._expandedByUser = false;
     }
 
     // Public
@@ -127,11 +126,6 @@ WI.DetailsSection = class DetailsSection extends WI.Object
             this._contentElement.appendChild(this._groups[i].element);
     }
 
-    get expandedByUser()
-    {
-        return this._expandedByUser;
-    }
-
     // Private
 
     _headerElementMouseDown(event)
@@ -153,21 +147,32 @@ WI.DetailsSection = class DetailsSection extends WI.Object
 
         let collapsed = this.collapsed;
         this.collapsed = !collapsed;
-        this._expandedByUser = collapsed;
 
         this._element.scrollIntoViewIfNeeded(false);
     }
 
-    _headerElementKeyPress(event)
+    _handleHeaderElementKeyDown(event)
     {
-        if (event.code === "Space" || event.code === "Enter") {
-            if (this._optionsElement?.contains(event.target))
-                return;
+        let isSpaceOrEnterKey = event.code === "Space" || event.code === "Enter";
+        if (!isSpaceOrEnterKey && event.code !== "ArrowLeft" && event.code !== "ArrowRight")
+            return;
 
-            let collapsed = this.collapsed;
-            this.collapsed = !collapsed;
-            this._expandedByUser = collapsed;
+        if (this._optionsElement?.contains(event.target))
+            return;
+
+        event.preventDefault();
+
+        if (isSpaceOrEnterKey) {
+            this.collapsed = !this.collapsed;
+            return;
         }
+
+        let collapsed = event.code === "ArrowLeft";
+
+        if (WI.resolveLayoutDirectionForElement(this._headerElement) === WI.LayoutDirection.RTL)
+            collapsed = !collapsed;
+
+        this.collapsed = collapsed;
     }
 
     _optionsElementMouseDown(event)

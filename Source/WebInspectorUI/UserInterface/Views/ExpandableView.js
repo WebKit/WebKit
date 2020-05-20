@@ -32,6 +32,7 @@ WI.ExpandableView = class ExpandableView
         if (childElement) {
             this._disclosureButton = this._element.createChild("button", "disclosure-button");
             this._disclosureButton.addEventListener("click", this._onDisclosureButtonClick.bind(this));
+            this._disclosureButton.addEventListener("keydown", this._handleDisclosureButtonKeyDown.bind(this));
         }
 
         this._element.append(titleElement);
@@ -55,6 +56,21 @@ WI.ExpandableView = class ExpandableView
     _onDisclosureButtonClick(event)
     {
         this._expandedSetting.value = !this._expandedSetting.value;
+        this._update();
+    }
+
+    _handleDisclosureButtonKeyDown(event)
+    {
+        if (event.code !== "ArrowRight" && event.code !== "ArrowLeft")
+            return;
+
+        event.preventDefault();
+
+        let collapsed = event.code === "ArrowLeft";
+        if (WI.resolveLayoutDirectionForElement(this._disclosureButton) === WI.LayoutDirection.RTL)
+            collapsed = !collapsed;
+
+        this._expandedSetting.value = !collapsed;
         this._update();
     }
 
