@@ -1,5 +1,14 @@
 2020-05-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        Layout Test media/video-zoom-controls.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=183424
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-05-20  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         [ macOS iOS ] http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html is a rare flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=212165
 
