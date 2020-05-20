@@ -471,6 +471,10 @@ textAutosizingUsesIdempotentMode:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
   conditional: TEXT_AUTOSIZING
+idempotentModeAutosizingOnlyHonorsPercentages:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+  conditional: TEXT_AUTOSIZING
 
 subpixelAntialiasedLayerTextEnabled:
   initial: false

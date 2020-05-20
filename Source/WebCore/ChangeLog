@@ -1,3 +1,47 @@
+2020-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPadOS] -webkit-text-size-adjust:percentage doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=212122
+        <rdar://problem/54560875>
+
+        Reviewed by Wenson Hsieh.
+
+        We've gotten many bug reports that -webkit-text-size-adjust:X% no longer works in
+        WebKit on iPads. We don't want to just start honoring the value, because our
+        testing indicates that, with desktop-class browsing on iPad, more sites work better
+        when we don't honor percentages. However, if Safari is using the mobile content mode,
+        or if a native app has local content, it should be possible to get the old behavior
+        of honoring percentages.
+
+        This patch adds a new Setting, idempotentModeAutosizingOnlyHonorsPercentages, which
+        is hooked up to the desktop-class browsing feature. When
+        WebPageProxy::effectiveContentModeAfterAdjustingPolicies() determines that the
+        WebContentMode::Mobile mode should be used, it sets the new setting, which
+        causes idempotent text autosizing mode to have the same behavior that WKWebViews
+        on iPadOS used to have: -w-t-s-a:auto and -w-t-s-a:none have no effect, but
+        -w-t-s-a:X% is honored. This affects both Safari and WKWebView apps.
+
+        If a native app wants the old behavior, they can set
+        WKWebpagePreferences.preferredContentMode = WKContentModeMobile to force the old
+        iPad behavior. It's expected that apps with legacy content would be doing this
+        anyway.
+
+        Tests: fast/text-autosizing/ios/idempotentmode/idempotent-percentage.html
+               TestWebKitAPI.PreferredContentMode.IdempotentModeAutosizingOnlyHonorsPercentages
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::applyPoliciesToSettings):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setIdempotentModeAutosizingOnlyHonorsPercentages):
+        (WebCore::DocumentLoader::idempotentModeAutosizingOnlyHonorsPercentages const):
+        * page/Settings.yaml:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustmentForTextAutosizing):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::computeBaseSpecifiedFontSize):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::updateFontForTextSizeAdjust):
+
 2020-05-20  ChangSeok Oh  <changseok@webkit.org>
 
         Move the TextStream logging definition in VisibleSelection.cpp to the outside of the TREE_DEBUGGING guard

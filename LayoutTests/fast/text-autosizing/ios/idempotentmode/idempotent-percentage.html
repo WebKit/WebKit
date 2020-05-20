@@ -6,26 +6,40 @@
 if (window.internals) {
     window.internals.settings.setTextAutosizingEnabled(true);
     window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+    window.internals.settings.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
 }
 </script>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 </head>
 <body>
 <div style="background: green;"><span id="target" style="font-size: 12px;">Test</span></div>
 <div style="background: green;"><span style="font-size: 12px;">Test</span></div>
 <div style="background: green;"><span id="target2" style="font-size: 6px;">Test</span></div>
 <div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+<div style="background: green;"><span id="target3" style="-webkit-text-size-adjust: none; font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+<div style="background: green;"><span id="target4" style="-webkit-text-size-adjust: 200%; font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
 <script>
 let target = document.getElementById("target");
 target.offsetWidth;
 let result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
-shouldBeGreaterThanOrEqual("result", "13");
+shouldBeEqualToNumber("result", 12);
 
 target = document.getElementById("target2");
 target.offsetWidth;
 result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
-shouldBeGreaterThanOrEqual("result", "7");
+shouldBeEqualToNumber("result", 6);
+
+target = document.getElementById("target3");
+target.offsetWidth;
+result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+shouldBeEqualToNumber("result", 6);
+
+target = document.getElementById("target4");
+target.offsetWidth;
+result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+shouldBeEqualToNumber("result", 12);
 </script>
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

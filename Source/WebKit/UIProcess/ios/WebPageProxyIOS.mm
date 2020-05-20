@@ -1511,6 +1511,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     if (!useDesktopBrowsingMode) {
         policies.setAllowContentChangeObserverQuirk(true);
+        policies.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
         return WebContentMode::Mobile;
     }
 

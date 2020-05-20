@@ -54,6 +54,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << allowContentChangeObserverQuirk;
     encoder << allowsContentJavaScript;
     encoder << mouseEventPolicy;
+    encoder << idempotentModeAutosizingOnlyHonorsPercentages;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -140,6 +141,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!mouseEventPolicy)
         return WTF::nullopt;
 
+    Optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
+    decoder >> idempotentModeAutosizingOnlyHonorsPercentages;
+    if (!idempotentModeAutosizingOnlyHonorsPercentages)
+        return WTF::nullopt;
+
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
@@ -159,6 +165,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*allowContentChangeObserverQuirk),
         WTFMove(*allowsContentJavaScript),
         WTFMove(*mouseEventPolicy),
+        WTFMove(*idempotentModeAutosizingOnlyHonorsPercentages),
     } };
 }
 
@@ -281,6 +288,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     }
 
     documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
+    documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
 
     auto* frame = documentLoader.frame();
     if (!frame)

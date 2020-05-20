@@ -1,3 +1,26 @@
+2020-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPadOS] -webkit-text-size-adjust:percentage doesn't work in native apps
+        https://bugs.webkit.org/show_bug.cgi?id=212122
+        <rdar://problem/54560875>
+
+        Reviewed by Wenson Hsieh.
+
+        Update existing idempotent autosizing tests to force desktop mode.
+        Also add idempotent-percentage.html which doesn't force any mode.
+
+        * fast/text-autosizing/ios/idempotentmode/css-exposure.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidate-special-cases.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-candidates.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-identity.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-reaches-stable-state.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing.html:
+        * fast/text-autosizing/ios/idempotentmode/idempotent-percentage-expected.txt: Added.
+        * fast/text-autosizing/ios/idempotentmode/idempotent-percentage.html: Added.
+        * fast/text-autosizing/ios/idempotentmode/line-height-boosting.html:
+        * fast/text-autosizing/ios/idempotentmode/viewport-change-relayout.html:
+
 2020-05-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable support for BeforeLoadEvent

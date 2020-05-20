@@ -435,6 +435,19 @@ TEST(PreferredContentMode, ApplicationNameForDesktopUserAgent)
     }
 }
 
+TEST(PreferredContentMode, IdempotentModeAutosizingOnlyHonorsPercentages)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+    {
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeMobile);
+        [webView loadTestPageNamed:@"idempotent-mode-autosizing-only-honors-percentages" andExpectEffectiveContentMode:WKContentModeMobile withPolicyDecisionHandler:nil];
+        EXPECT_EQ(static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"run1()"]).intValue, 12);
+        EXPECT_EQ(static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"run2()"]).intValue, 6);
+        EXPECT_EQ(static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"run3()"]).intValue, 6);
+        EXPECT_EQ(static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"run4()"]).intValue, 12);
+    }
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

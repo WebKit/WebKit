@@ -375,7 +375,9 @@ void BuilderState::updateFontForTextSizeAdjust()
 {
     if (m_style.textSizeAdjust().isAuto()
         || !document().settings().textAutosizingEnabled()
-        || (document().settings().textAutosizingUsesIdempotentMode() && !m_style.textSizeAdjust().isNone()))
+        || (document().settings().textAutosizingUsesIdempotentMode()
+            && !m_style.textSizeAdjust().isNone()
+            && !document().settings().idempotentModeAutosizingOnlyHonorsPercentages()))
         return;
 
     auto newFontDescription = m_style.fontDescription();

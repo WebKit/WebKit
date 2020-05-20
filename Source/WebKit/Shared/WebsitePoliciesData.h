@@ -70,6 +70,7 @@ struct WebsitePoliciesData {
     bool allowContentChangeObserverQuirk { false };
     WebCore::AllowsContentJavaScript allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
     WebCore::MouseEventPolicy mouseEventPolicy { WebCore::MouseEventPolicy::Default };
+    bool idempotentModeAutosizingOnlyHonorsPercentages { false };
 
     void encode(IPC::Encoder&) const;
     static Optional<WebsitePoliciesData> decode(IPC::Decoder&);

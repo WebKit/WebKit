@@ -414,6 +414,9 @@ public:
     void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
     bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
 
+    void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
+    bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
+
 #if ENABLE(SERVICE_WORKER)
     WEBCORE_EXPORT bool setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&&);
 #endif
@@ -630,6 +633,7 @@ private:
     String m_customUserAgent;
     String m_customUserAgentAsSiteSpecificQuirks;
     bool m_allowContentChangeObserverQuirk { false };
+    bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
 #if ENABLE(DEVICE_ORIENTATION)

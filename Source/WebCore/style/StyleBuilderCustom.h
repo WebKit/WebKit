@@ -621,7 +621,8 @@ static inline float computeBaseSpecifiedFontSize(const Document& document, const
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
     result *= style.effectiveZoom();
-    if (percentageAutosizingEnabled && !document.settings().textAutosizingUsesIdempotentMode())
+    if (percentageAutosizingEnabled
+        && (!document.settings().textAutosizingUsesIdempotentMode() || document.settings().idempotentModeAutosizingOnlyHonorsPercentages()))
         result *= style.textSizeAdjust().multiplier();
     return result;
 }

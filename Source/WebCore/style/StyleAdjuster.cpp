@@ -637,7 +637,9 @@ auto Adjuster::adjustmentForTextAutosizing(const RenderStyle& style, const Eleme
     AdjustmentForTextAutosizing adjustmentForTextAutosizing;
 
     auto& document = element.document();
-    if (!document.settings().textAutosizingEnabled() || !document.settings().textAutosizingUsesIdempotentMode())
+    if (!document.settings().textAutosizingEnabled()
+        || !document.settings().textAutosizingUsesIdempotentMode()
+        || document.settings().idempotentModeAutosizingOnlyHonorsPercentages())
         return adjustmentForTextAutosizing;
 
     auto newStatus = AutosizeStatus::computeStatus(style);
