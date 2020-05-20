@@ -1,3 +1,13 @@
+2020-05-20  Youenn Fablet  <youenn@apple.com>
+
+        [Mac] Use preferedPixelBufferFormat for AVVideoCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=212071
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+        Add HAVE_DISPLAY_LAYER_BIPLANAR_SUPPORT macro.
+
 2020-05-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         WTF::LockedPrintStream should be final

@@ -75,11 +75,10 @@ namespace WebCore {
 
 static inline OSType avVideoCapturePixelBufferFormat()
 {
-    // FIXME: Use preferedPixelBufferFormat() once rdar://problem/44391444 is fixed.
-#if PLATFORM(MAC)
-    return kCVPixelFormatType_420YpCbCr8Planar;
-#else
+#if HAVE(DISPLAY_LAYER_BIPLANAR_SUPPORT)
     return preferedPixelBufferFormat();
+#else
+    return kCVPixelFormatType_420YpCbCr8Planar;
 #endif
 }
 
