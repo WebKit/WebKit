@@ -66,8 +66,8 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    StartDisplayLink(unsigned observerID, uint32_t displayID)
-    StopDisplayLink(unsigned observerID, uint32_t displayID)
+    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
+    StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
 #endif
 
     # Plug-in messages.

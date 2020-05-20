@@ -28,6 +28,7 @@
 #include "APIUserInitiatedAction.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
+#include "DisplayLinkObserverID.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessProxy.h"
 #include "PluginInfoStore.h"
@@ -74,6 +75,7 @@ struct PluginInfo;
 struct PrewarmInformation;
 struct SecurityOriginData;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
+using PlatformDisplayID = uint32_t;
 }
 
 namespace WebKit {
@@ -281,8 +283,8 @@ public:
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    void startDisplayLink(unsigned observerID, uint32_t displayID);
-    void stopDisplayLink(unsigned observerID, uint32_t displayID);
+    void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
+    void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
 #endif
 
     // Called when the web process has crashed or we know that it will terminate soon.

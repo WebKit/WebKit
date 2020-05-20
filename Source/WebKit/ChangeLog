@@ -1,3 +1,33 @@
+2020-05-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an ObjectIdentifier<> for DisplayLink observer IDs
+        https://bugs.webkit.org/show_bug.cgi?id=212112
+
+        Reviewed by Per Arne Vollan.
+
+        Replace unsigned observerID with DisplayLinkObserverID, which is a typesafe ObjectIdentifier<>.
+
+        Use PlatformDisplayID in more places.
+
+        * Scripts/webkit/messages.py:
+        * Shared/DisplayLinkObserverID.h: Copied from Source/WebKit/UIProcess/mac/DisplayLink.h.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::startDisplayLink):
+        (WebKit::WebProcessPool::stopDisplayLink):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::removeObserver):
+        * UIProcess/mac/DisplayLink.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::startDisplayLink):
+        (WebKit::WebProcessProxy::stopDisplayLink):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+
 2020-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Add _WKDownloadDelegate callback including totalBytesWritten

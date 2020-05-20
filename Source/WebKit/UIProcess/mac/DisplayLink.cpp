@@ -61,7 +61,7 @@ DisplayLink::~DisplayLink()
     CVDisplayLinkRelease(m_displayLink);
 }
 
-void DisplayLink::addObserver(IPC::Connection& connection, unsigned observerID)
+void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID observerID)
 {
     ASSERT(RunLoop::isMain());
     bool isRunning = !m_observers.isEmpty();
@@ -69,7 +69,7 @@ void DisplayLink::addObserver(IPC::Connection& connection, unsigned observerID)
     {
         LockHolder locker(m_observersLock);
         m_observers.ensure(&connection, [] {
-            return Vector<unsigned> { };
+            return Vector<DisplayLinkObserverID> { };
         }).iterator->value.append(observerID);
     }
 
@@ -80,7 +80,7 @@ void DisplayLink::addObserver(IPC::Connection& connection, unsigned observerID)
     }
 }
 
-void DisplayLink::removeObserver(IPC::Connection& connection, unsigned observerID)
+void DisplayLink::removeObserver(IPC::Connection& connection, DisplayLinkObserverID observerID)
 {
     ASSERT(RunLoop::isMain());
 

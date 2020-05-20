@@ -112,6 +112,7 @@
 		0F08CF521D63C13A00B48DF1 /* WKFormSelectPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */; };
 		0F08CF541D63C14000B48DF1 /* WKFormSelectPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF531D63C14000B48DF1 /* WKFormSelectPopover.h */; };
 		0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* APIGeometry.h */; };
+		0F189CAC24749F2F00E58D81 /* DisplayLinkObserverID.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */; };
 		0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */; };
 		0F45A331239D89A100294ABF /* WKWebViewPrivateForTestingIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45A32F239D89A000294ABF /* WKWebViewPrivateForTestingIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F45A335239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45A333239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2200,6 +2201,7 @@
 		0F11781422E39BE6008BD570 /* TransactionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransactionID.h; sourceTree = "<group>"; };
 		0F174AA2142A4CB60039250F /* APIGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeometry.h; sourceTree = "<group>"; };
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
+		0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayLinkObserverID.h; sourceTree = "<group>"; };
 		0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorHighlightView.mm; sourceTree = "<group>"; };
 		0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorHighlightView.h; sourceTree = "<group>"; };
 		0F45A32F239D89A000294ABF /* WKWebViewPrivateForTestingIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTestingIOS.h; sourceTree = "<group>"; };
@@ -6031,6 +6033,7 @@
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
 				99036AE723A970870000B06A /* DebuggableInfoData.h */,
+				0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */,
 				2D7FD190223C730F007887F1 /* DocumentEditingContext.h */,
 				2D7FD191223C7310007887F1 /* DocumentEditingContext.mm */,
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
@@ -10782,6 +10785,7 @@
 				2DAADA8F2298C21000E36B0C /* DeviceManagementSPI.h in Headers */,
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				C18173612058424700DFDA65 /* DisplayLink.h in Headers */,
+				0F189CAC24749F2F00E58D81 /* DisplayLinkObserverID.h in Headers */,
 				5C1427021C23F84C00D41183 /* Download.h in Headers */,
 				A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */,
 				5C1427051C23F84C00D41183 /* DownloadID.h in Headers */,

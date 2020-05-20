@@ -60,14 +60,14 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 }
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-void WebProcessProxy::startDisplayLink(unsigned observerID, uint32_t displayID)
+void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     ASSERT(connection());
     processPool().startDisplayLink(*connection(), observerID, displayID);
 }
 
-void WebProcessProxy::stopDisplayLink(unsigned observerID, uint32_t displayID)
+void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
 {
     ASSERT(connection());
     processPool().stopDisplayLink(*connection(), observerID, displayID);

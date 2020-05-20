@@ -228,6 +228,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::ActivityStateChangeID',
         'WebKit::AudioMediaStreamTrackRendererIdentifier',
         'WebKit::ContentWorldIdentifier',
+        'WebKit::DisplayLinkObserverID',
         'WebKit::GeolocationIdentifier',
         'WebKit::ImageBufferBackendHandle',
         'WebKit::ImageBufferFlushIdentifier',

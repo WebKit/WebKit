@@ -791,7 +791,7 @@ void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1
 }
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-void WebProcessPool::startDisplayLink(IPC::Connection& connection, unsigned observerID, uint32_t displayID)
+void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
 {
     for (auto& displayLink : m_displayLinks) {
         if (displayLink->displayID() == displayID) {
@@ -804,7 +804,7 @@ void WebProcessPool::startDisplayLink(IPC::Connection& connection, unsigned obse
     m_displayLinks.append(WTFMove(displayLink));
 }
 
-void WebProcessPool::stopDisplayLink(IPC::Connection& connection, unsigned observerID, uint32_t displayID)
+void WebProcessPool::stopDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
 {
     for (auto& displayLink : m_displayLinks) {
         if (displayLink->displayID() == displayID) {

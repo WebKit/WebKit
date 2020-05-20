@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,11 @@
 
 #pragma once
 
-#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-
-#include "DisplayLinkObserverID.h"
-#include <CoreVideo/CVDisplayLink.h>
-#include <WebCore/PlatformScreen.h>
-#include <wtf/HashMap.h>
-#include <wtf/Lock.h>
-
-namespace IPC {
-class Connection;
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
-    
-class DisplayLink {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit DisplayLink(WebCore::PlatformDisplayID);
-    ~DisplayLink();
-    
-    void addObserver(IPC::Connection&, DisplayLinkObserverID);
-    void removeObserver(IPC::Connection&, DisplayLinkObserverID);
-    void removeObservers(IPC::Connection&);
-    bool hasObservers() const;
 
-    WebCore::PlatformDisplayID displayID() const { return m_displayID; }
-
-private:
-    static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
-    
-    CVDisplayLinkRef m_displayLink { nullptr };
-    Lock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
-    WebCore::PlatformDisplayID m_displayID;
-};
+enum DisplayLinkObserverIDType { };
+using DisplayLinkObserverID = ObjectIdentifier<DisplayLinkObserverIDType>;
 
 } // namespace WebKit
-
-#endif
-
