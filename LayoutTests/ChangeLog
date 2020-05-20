@@ -1,3 +1,13 @@
+2020-05-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable support for BeforeLoadEvent
+        https://bugs.webkit.org/show_bug.cgi?id=212140
+
+        Unreviewed.
+
+        * http/tests/cache/cancel-during-revalidation-succeeded.html:
+        Remove <CR> characters from line endings in an attempt to get `svn-apply` work on EWS bots.
+
 2020-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Also enable the imported Blink and Mozilla
