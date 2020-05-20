@@ -53,6 +53,8 @@ depends:
 - sdk/python2-six.bst
 - sdk/python2-subprocess32.bst
 - sdk/python2.bst
+- sdk/ruby-json.bst
+- sdk/ruby-highline.bst
 - sdk/shared-mime-info.bst
 - sdk/subversion.bst
 - sdk/v4lutils.bst

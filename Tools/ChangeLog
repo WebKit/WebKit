@@ -1,3 +1,17 @@
+2020-05-20  Philippe Normand  <pnormand@igalia.com>
+
+        [FlatPak SDK] Missing ruby gems json and highline
+        https://bugs.webkit.org/show_bug.cgi?id=212086
+
+        Reviewed by Žan Doberšek.
+
+        Add the json and highline Ruby gems in the Flatpak SDK.
+
+        * buildstream/elements/sdk-platform.bst:
+        * buildstream/elements/sdk/ruby-highline.bst: Added.
+        * buildstream/elements/sdk/ruby-json.bst: Added.
+        * buildstream/project.conf:
+
 2020-05-20  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, reverting r261909.
