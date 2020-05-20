@@ -1,3 +1,28 @@
+2020-05-20  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Fix auto repeat with multiple tracks and gutters
+        https://bugs.webkit.org/show_bug.cgi?id=182922
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The code that computes the number of auto repeat tracks wrongly assumes
+        that the second argument of the repeat() notation is a single track
+        function. That was true in the beginning, however specs were later on
+        modified to allow a <track-list>. We support a <track-list> as a second
+        argument since long ago but the code that computes the number of
+        auto-repeat tracks was never updated.
+
+        This patch modifies two places that relate to the gaps between the
+        auto-repeat tracks, which ensures the proper total length.
+
+        This is a port of https://crrev.com/620278 from Chromium.
+
+        Tests: fast/css-grid-layout/grid-auto-repeat-huge-grid.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-001.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount const):
+
 2020-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb the display's nominal refresh rate down to ScrollingTree for use in scroll synchronization

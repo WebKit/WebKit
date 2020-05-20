@@ -507,16 +507,16 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         tracksSize += valueForLength(hasDefiniteMaxTrackBreadth ? track.maxTrackBreadth().length() : track.minTrackBreadth().length(), availableSize.value());
     }
 
-    // Add gutters as if there where only 1 auto repeat track. Gaps between auto repeat tracks will be added later when
-    // computing the repetitions.
+    // Add gutters as if auto repeat tracks were only repeated once. Gaps between different repetitions will be added later when
+    // computing the number of repetitions of the auto repeat().
     LayoutUnit gapSize = gridGap(direction, availableSize);
-    tracksSize += gapSize * trackSizes.size();
+    tracksSize += gapSize * (trackSizes.size() + autoRepeatTrackListLength - 1);
 
     LayoutUnit freeSpace = availableSize.value() - tracksSize;
     if (freeSpace <= 0)
         return autoRepeatTrackListLength;
 
-    LayoutUnit autoRepeatSizeWithGap = autoRepeatTracksSize + gapSize;
+    LayoutUnit autoRepeatSizeWithGap = autoRepeatTracksSize + gapSize * autoRepeatTrackListLength;
     unsigned repetitions = 1 + (freeSpace / autoRepeatSizeWithGap).toUnsigned();
     freeSpace -= autoRepeatSizeWithGap * (repetitions - 1);
     ASSERT(freeSpace >= 0);

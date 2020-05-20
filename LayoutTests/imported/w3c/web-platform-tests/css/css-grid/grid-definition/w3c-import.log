@@ -23,6 +23,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-max-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-change-auto-repeat-tracks.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-change-fit-content-argument-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-auto-repeat-001.html

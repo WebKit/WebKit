@@ -180,8 +180,8 @@ test(function() {
     autoFillGridElementCols.style.gridGap = "1000000px";
     autoFitGridElementCols.style.gridGap = "1000000px";
 
-    getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", 130, ["wideGrid", "lotsOfAutoRepeatWithAutoFillCols"]);
-    getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", 82, ["wideGrid", "lotsOfAutoRepeatWithAutoFitCols"]);
+    getTracksCheckingLength(autoFillGridElementCols, "grid-template-columns", 30, ["wideGrid", "lotsOfAutoRepeatWithAutoFillCols"]);
+    getTracksCheckingLength(autoFitGridElementCols, "grid-template-columns", 34, ["wideGrid", "lotsOfAutoRepeatWithAutoFitCols"]);
 
     autoFillGridElementCols.style.gridGap = "0px";
     autoFitGridElementCols.style.gridGap = "0px";
@@ -202,8 +202,8 @@ test(function() {
     autoFillGridElementRows.style.gridGap = "1000000px";
     autoFitGridElementRows.style.gridGap = "1000000px";
 
-    getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", 130, ["tallGrid", "lotsOfAutoRepeatWithAutoFillRows"]);
-    getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", 82, ["tallGrid", "lotsOfAutoRepeatWithAutoFitRows"]);
+    getTracksCheckingLength(autoFillGridElementRows, "grid-template-rows", 30, ["tallGrid", "lotsOfAutoRepeatWithAutoFillRows"]);
+    getTracksCheckingLength(autoFitGridElementRows, "grid-template-rows", 34, ["tallGrid", "lotsOfAutoRepeatWithAutoFitRows"]);
 
     autoFillGridElementRows.style.gridGap = "0px";
     autoFitGridElementRows.style.gridGap = "0px";
