@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderBlock {DIV} at (0,0) size 800x18
+        RenderText {#text} at (0,0) size 462x17
+          text run at (0,0) width 462: "Three green 16x16 pixel squares should appear below, stacked vertically."
+      RenderBlock {DIV} at (0,18) size 18x18 [bgcolor=#FF0000] [border: (1px solid #000000)]
+        RenderImage {IMG} at (1,1) size 16x16
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,36) size 800x36
+        RenderIFrame {IFRAME} at (0,0) size 18x18 [bgcolor=#FF0000] [border: (1px solid #000000)]
+          layer at (0,0) size 16x16
+            RenderView at (0,0) size 16x16
+          layer at (0,0) size 16x16
+            RenderBlock {HTML} at (0,0) size 16x16
+              RenderBody {BODY} at (0,0) size 16x16
+                RenderImage {IMG} at (0,0) size 16x16
+        RenderBR {BR} at (18,18) size 0x0
+        RenderIFrame {IFRAME} at (0,18) size 18x18 [bgcolor=#FF0000] [border: (1px solid #000000)]
+          layer at (0,0) size 16x16
+            RenderView at (0,0) size 16x16
+          layer at (0,0) size 16x16
+            RenderBlock {HTML} at (0,0) size 16x16
+              RenderBody {BODY} at (0,0) size 16x16
+                RenderImage {IMG} at (0,0) size 16x16
+        RenderText {#text} at (0,0) size 0x0

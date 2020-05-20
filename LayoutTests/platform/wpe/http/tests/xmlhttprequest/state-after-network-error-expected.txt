@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/network-simulator.php?test=xmlhttprequest-state-after-network-error&path=/ due to access control checks.
+Test that request state reaches DONE even if a network error occurs.
+
+Should say SUCCESS:
+
+SUCCESS
+

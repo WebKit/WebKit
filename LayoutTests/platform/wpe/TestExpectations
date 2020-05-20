@@ -724,7 +724,9 @@ Bug(WPE) editing/ [ Skip ]
 Bug(WPE) gamepad/ [ Skip ]
 Bug(WPE) inspector/ [ Skip ]
 Bug(WPE) media/ [ Skip ]
+
 Bug(WPE) plugins/ [ Skip ]
+http/tests/plugins [ Skip ]
 
 Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
@@ -741,34 +743,14 @@ Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
 Bug(WPE) fast/text-autosizing [ Skip ]
 
-http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/download [ Skip ]
-http/tests/fileapi [ Skip ]
-http/tests/frame-throttling [ Skip ]
-http/tests/globalhistory [ Skip ]
-http/tests/history [ Skip ]
 http/tests/inspector [ Skip ]
-http/tests/loading [ Skip ]
 http/tests/local [ Skip ]
 http/tests/media [ Skip ]
-http/tests/messaging [ Skip ]
-http/tests/misc [ Skip ]
-http/tests/multipart [ Skip ]
-http/tests/navigation [ Skip ]
+http/tests/navigation/ping-attribute/ [ Skip ]
 http/tests/notifications [ Skip ]
-http/tests/permissionclient [ Skip ]
-http/tests/plugins [ Skip ]
 http/tests/pointer-lock [ Skip ]
-http/tests/preconnect [ Skip ]
-http/tests/preload [ Skip ]
-http/tests/quicklook [ Skip ]
 http/tests/security [ Skip ]
-http/tests/ssl [ Skip ]
-http/tests/svg [ Skip ]
-http/tests/webfont [ Skip ]
-http/tests/webrtc [ Skip ]
-http/tests/websocket [ Skip ]
-http/tests/xmlhttprequest [ Skip ]
 
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
@@ -1431,6 +1413,13 @@ webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Tim
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
 
 webkit.org/b/212078 webaudio/silent-audio-interrupted-in-background.html [ Timeout ]
+
+webkit.org/b/212144 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
+
+webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
+webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
+
+webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -2282,6 +2271,40 @@ webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+
+webkit.org/b/168433 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
+
+webkit.org/b/212146 http/tests/xmlhttprequest/logout.html [ Failure ]
+webkit.org/b/212147 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
+
+webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
+webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
+webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
+webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
+
+webkit.org/b/212148 http/tests/navigation/page-cache-mediakeysession.html [ Failure ]
+
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Failure ]
+webkit.org/b/202242 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked.https.html [ Failure ]
+
+webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
+webkit.org/b/212149 http/tests/websocket/tests/hybi/send-after-close-on-unload.html [ Failure ]
+webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/212150 http/tests/misc/bubble-drag-events.html [ Failure ]
+webkit.org/b/212151 http/tests/misc/copy-resolves-urls.html [ Failure ]
+
+webkit.org/b/212152 http/tests/multipart/multipart-async-image.html [ Failure ]
+
+webkit.org/b/131347 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
+webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
+webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
+
+webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-http.html [ Timeout ]
+webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeout ]
+webkit.org/b/177934 http/tests/preconnect/link-header-rel-preconnect-http.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

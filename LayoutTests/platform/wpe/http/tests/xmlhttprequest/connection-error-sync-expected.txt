@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/infinite-loop.php due to access control checks.
+Test the behavior of a sync XMLHttpRequest that encounters an infinite redirection loop.
+
+Exception NetworkError; code=19; number=undefined (0); message=' A network error occurred.'

@@ -1,3 +1,16 @@
+2020-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Unskipped half of pending HTTP tests,
+        providing test baselines and text expectations as required.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http/tests/loading: 2 baselines added.
+        * platform/wpe/http/tests/misc: 11 baselines added.
+        * platform/wpe/http/tests/multipart: 2 baselines added.
+        * platform/wpe/http/tests/navigation: 6 baselines added.
+        * platform/wpe/http/tests/websocket: 6 baselines added.
+        * platform/wpe/http/tests/xmlhttprequest: 11 baselines added.
+
 2020-05-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=212139
