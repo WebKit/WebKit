@@ -1,3 +1,25 @@
+2020-05-20  Zalan Bujtas  <zalan@apple.com>
+
+        RenderObject::VisibleRectContext members should not be prefixed with m_
+        https://bugs.webkit.org/show_bug.cgi?id=212154
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::applyCachedClipAndScrollPosition const):
+        (WebCore::RenderBox::computeVisibleRectInContainer const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeVisibleRectInContainer const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeVisibleRectInContainer const):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeVisibleRectInContainer const):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeVisibleRectInContainer const):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeFloatVisibleRectInContainer const):
+
 2020-05-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iPadOS] -webkit-text-size-adjust:percentage doesn't work

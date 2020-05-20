@@ -365,7 +365,7 @@ Optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const Floa
 
     // Apply initial viewport clip
     if (shouldApplyViewportClip()) {
-        if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) {
+        if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) {
             if (!adjustedRect.edgeInclusiveIntersect(snappedIntRect(borderBoxRect())))
                 return WTF::nullopt;
         } else

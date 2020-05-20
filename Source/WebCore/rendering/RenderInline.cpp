@@ -887,7 +887,7 @@ LayoutRect RenderInline::computeVisibleRectUsingPaintOffset(const LayoutRect& re
 Optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // Repaint offset cache is only valid for root-relative repainting
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && !context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && !context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
         return computeVisibleRectUsingPaintOffset(rect);
 
     if (container == this)
@@ -913,11 +913,11 @@ Optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const LayoutRec
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     adjustedRect.setLocation(topLeft);
     if (localContainer->hasOverflowClip()) {
-        // FIXME: Respect the value of context.m_options.
-        SetForScope<OptionSet<VisibleRectContextOption>> change(context.m_options, context.m_options | VisibleRectContextOption::ApplyCompositedContainerScrolls);
+        // FIXME: Respect the value of context.options.
+        SetForScope<OptionSet<VisibleRectContextOption>> change(context.options, context.options | VisibleRectContextOption::ApplyCompositedContainerScrolls);
         bool isEmpty = !downcast<RenderBox>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
-            if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+            if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return WTF::nullopt;
             return adjustedRect;
         }

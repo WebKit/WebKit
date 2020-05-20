@@ -972,7 +972,7 @@ Optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRec
     if (parent->hasOverflowClip()) {
         bool isEmpty = !downcast<RenderBox>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
-            if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+            if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return WTF::nullopt;
             return adjustedRect;
         }

@@ -619,14 +619,14 @@ public:
     };
     struct VisibleRectContext {
         VisibleRectContext(bool hasPositionFixedDescendant = false, bool dirtyRectIsFlipped = false, OptionSet<VisibleRectContextOption> options = { })
-            : m_hasPositionFixedDescendant(hasPositionFixedDescendant)
-            , m_dirtyRectIsFlipped(dirtyRectIsFlipped)
-            , m_options(options)
+            : hasPositionFixedDescendant(hasPositionFixedDescendant)
+            , dirtyRectIsFlipped(dirtyRectIsFlipped)
+            , options(options)
             {
             }
-        bool m_hasPositionFixedDescendant;
-        bool m_dirtyRectIsFlipped;
-        OptionSet<VisibleRectContextOption> m_options;
+        bool hasPositionFixedDescendant;
+        bool dirtyRectIsFlipped;
+        OptionSet<VisibleRectContextOption> options;
     };
     virtual Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
     virtual Optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;

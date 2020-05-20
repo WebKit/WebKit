@@ -533,7 +533,7 @@ Optional<LayoutRect> RenderView::computeVisibleRectInContainer(const LayoutRect&
             adjustedRect.setX(viewWidth() - adjustedRect.maxX());
     }
 
-    if (context.m_hasPositionFixedDescendant)
+    if (context.hasPositionFixedDescendant)
         adjustedRect.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
     
     // Apply our transform if we have one (because of full page zooming).

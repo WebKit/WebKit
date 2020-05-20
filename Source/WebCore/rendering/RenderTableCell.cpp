@@ -400,7 +400,7 @@ Optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const Layout
     if (container == this)
         return rect;
     LayoutRect adjustedRect = rect;
-    if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || container || context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) && parent())
+    if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || container || context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) && parent())
         adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
     return RenderBlockFlow::computeVisibleRectInContainer(adjustedRect, container, context);
 }

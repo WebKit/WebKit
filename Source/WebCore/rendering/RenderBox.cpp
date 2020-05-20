@@ -1029,12 +1029,12 @@ bool RenderBox::applyCachedClipAndScrollPosition(LayoutRect& rect, const RenderL
 {
     flipForWritingMode(rect);
 
-    if (context.m_options.contains(VisibleRectContextOption::ApplyCompositedContainerScrolls) || this != container || !usesCompositedScrolling())
+    if (context.options.contains(VisibleRectContextOption::ApplyCompositedContainerScrolls) || this != container || !usesCompositedScrolling())
         rect.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
 
     // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
-    if ((!context.m_options.contains(VisibleRectContextOption::ApplyCompositedClips) && usesCompositedScrolling())
-        || (!context.m_options.contains(VisibleRectContextOption::ApplyContainerClip) && this == container)) {
+    if ((!context.options.contains(VisibleRectContextOption::ApplyCompositedClips) && usesCompositedScrolling())
+        || (!context.options.contains(VisibleRectContextOption::ApplyContainerClip) && this == container)) {
         flipForWritingMode(rect);
         return true;
     }
@@ -1044,7 +1044,7 @@ bool RenderBox::applyCachedClipAndScrollPosition(LayoutRect& rect, const RenderL
     // anyway if its size does change.
     LayoutRect clipRect(LayoutPoint(), cachedSizeForOverflowClip());
     bool intersects;
-    if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+    if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
         intersects = rect.edgeInclusiveIntersect(clipRect);
     else {
         rect.intersect(clipRect);
@@ -2267,7 +2267,7 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
     // physical coordinate space of the container.
     const RenderStyle& styleToUse = style();
     // Paint offset cache is only valid for root-relative, non-fixed position repainting
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
         return computeVisibleRectUsingPaintOffset(rect);
 
     LayoutRect adjustedRect = rect;
@@ -2301,9 +2301,9 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
     }
 
     if (isWritingModeRoot()) {
-        if (!isOutOfFlowPositioned() || !context.m_dirtyRectIsFlipped) {
+        if (!isOutOfFlowPositioned() || !context.dirtyRectIsFlipped) {
             flipForWritingMode(adjustedRect);
-            context.m_dirtyRectIsFlipped = true;
+            context.dirtyRectIsFlipped = true;
         }
     }
 
@@ -2335,12 +2335,12 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (hasLayer() && layer()->transform()) {
-        context.m_hasPositionFixedDescendant = position == PositionType::Fixed;
+        context.hasPositionFixedDescendant = position == PositionType::Fixed;
         adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
         topLeft = adjustedRect.location();
         topLeft.move(locationOffset);
     } else if (position == PositionType::Fixed)
-        context.m_hasPositionFixedDescendant = true;
+        context.hasPositionFixedDescendant = true;
 
     if (position == PositionType::Absolute && localContainer->isInFlowPositioned() && is<RenderInline>(*localContainer))
         topLeft += downcast<RenderInline>(*localContainer).offsetForInFlowPositionedInline(this);
@@ -2359,7 +2359,7 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
         RenderBox& containerBox = downcast<RenderBox>(*localContainer);
         bool isEmpty = !containerBox.applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
-            if (context.m_options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+            if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return WTF::nullopt;
             return adjustedRect;
         }
