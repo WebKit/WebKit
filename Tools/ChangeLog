@@ -1,3 +1,51 @@
+2020-05-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        update-test-expectations-from-bugzilla tool not working with new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=210975
+
+        Reviewed by Youenn Fablet.
+
+        With the new EWS, the layout test archive results are not longer
+        posted to bugzilla as attachment. Now we need to inspect the EWS
+        server to get the status of the runs for the patch id, and then
+        query the EWS builbot server in order to get the details of each
+        run to finally obtain the URL with the zip file for the results.
+
+        The tool now automatically applies platform-specific and generic
+        results automatically (its not longer needed to specify whether
+        the result its generic or not). It uses mac-wk2 results as generic.
+
+        Also now it updates the test results for tests where the result
+        is MISSING.
+
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater.py:
+        (configure_logging):
+        (argument_parser):
+        (TestExpectationUpdater.__init__):
+        (TestExpectationUpdater._platform_name):
+        (TestExpectationUpdater):
+        (TestExpectationUpdater._get_layout_tests_run):
+        (TestExpectationUpdater._lookup_ews_results):
+        (TestExpectationUpdater._tests_to_update):
+        (TestExpectationUpdater._update_for_generic_bot):
+        (TestExpectationUpdater._update_for_platform_specific_bot):
+        (TestExpectationUpdater.do_update):
+        (main):
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater_unittest.py:
+        (MockAttachment.__init__):
+        (MockAttachment.is_patch):
+        (MockAttachment):
+        (MockAttachment.is_obsolete):
+        (MockBugzilla):
+        (MockBugzilla.attachments):
+        (MockRequests):
+        (MockRequests.__init__):
+        (MockRequests.get):
+        (MockRequests.content):
+        (MockRequests.text):
+        (MockZip.__init__):
+        (TestExpectationUpdaterTest.test_update_test_expectations):
+
 2020-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build with GTK 3.98.4
