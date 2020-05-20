@@ -1,5 +1,31 @@
 2020-05-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261719. rdar://problem/63156066
+
+    Regression(r261163) Causes crashes on builds without libwebrtc.dylib
+    https://bugs.webkit.org/show_bug.cgi?id=211924
+    <rdar://problem/63206792>
+    
+    Reviewed by Jer Noble.
+    
+    * WebProcess/Network/NetworkProcessConnection.cpp:
+    (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261719 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-14  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r261163) Causes crashes on builds without libwebrtc.dylib
+            https://bugs.webkit.org/show_bug.cgi?id=211924
+            <rdar://problem/63206792>
+
+            Reviewed by Jer Noble.
+
+            * WebProcess/Network/NetworkProcessConnection.cpp:
+            (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+
+2020-05-19  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/63156066
 
     2020-05-19  Youenn Fablet  <youenn@apple.com>
