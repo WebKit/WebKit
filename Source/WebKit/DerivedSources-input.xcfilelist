@@ -108,10 +108,10 @@ $(PROJECT_DIR)/WebProcess/Network/NetworkProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebResourceLoader.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketChannel.messages.in
 $(PROJECT_DIR)/WebProcess/Network/WebSocketStream.messages.in
+$(PROJECT_DIR)/WebProcess/Network/webrtc/LibWebRTCNetwork.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebMDNSRegister.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebRTCMonitor.messages.in
 $(PROJECT_DIR)/WebProcess/Network/webrtc/WebRTCResolver.messages.in
-$(PROJECT_DIR)/WebProcess/Network/webrtc/WebRTCSocket.messages.in
 $(PROJECT_DIR)/WebProcess/Notifications/WebNotificationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Plugins/PluginProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Plugins/PluginProcessConnectionManager.messages.in

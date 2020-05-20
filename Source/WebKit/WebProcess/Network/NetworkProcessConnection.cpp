@@ -44,7 +44,6 @@
 #include "WebRTCMonitor.h"
 #include "WebRTCMonitorMessages.h"
 #include "WebRTCResolverMessages.h"
-#include "WebRTCSocketMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWClientConnection.h"
 #include "WebSWClientConnectionMessages.h"
@@ -72,6 +71,7 @@ NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier c
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
 {
     m_connection->open();
+    WebProcess::singleton().libWebRTCNetwork().setConnection(m_connection.copyRef());
 }
 
 NetworkProcessConnection::~NetworkProcessConnection()
@@ -107,10 +107,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     }
 
 #if USE(LIBWEBRTC)
-    if (decoder.messageReceiverName() == Messages::WebRTCSocket::messageReceiverName()) {
-        WebProcess::singleton().libWebRTCNetwork().socket(makeObjectIdentifier<LibWebRTCSocketIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
-        return;
-    }
     if (decoder.messageReceiverName() == Messages::WebRTCMonitor::messageReceiverName()) {
         WebProcess::singleton().libWebRTCNetwork().monitor().didReceiveMessage(connection, decoder);
         return;

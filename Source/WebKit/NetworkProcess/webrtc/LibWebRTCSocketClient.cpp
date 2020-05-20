@@ -30,8 +30,8 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include "LibWebRTCNetworkMessages.h"
 #include "NetworkRTCProvider.h"
-#include "WebRTCSocketMessages.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
 
@@ -92,7 +92,7 @@ void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, con
     auto buffer = WebCore::SharedBuffer::create(value, length);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, buffer = WTFMove(buffer), address = RTCNetwork::isolatedCopy(address), packetTime](IPC::Connection& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
-        connection.send(Messages::WebRTCSocket::SignalReadPacket(data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime), identifier);
+        connection.send(Messages::LibWebRTCNetwork::SignalReadPacket(identifier, data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime), 0);
     });
 }
 
@@ -100,7 +100,7 @@ void LibWebRTCSocketClient::signalSentPacket(rtc::AsyncPacketSocket* socket, con
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, sentPacket](IPC::Connection& connection) {
-        connection.send(Messages::WebRTCSocket::SignalSentPacket(sentPacket.packet_id, sentPacket.send_time_ms), identifier);
+        connection.send(Messages::LibWebRTCNetwork::SignalSentPacket(identifier, sentPacket.packet_id, sentPacket.send_time_ms), 0);
     });
 }
 
@@ -114,7 +114,7 @@ void LibWebRTCSocketClient::signalAddressReady(rtc::AsyncPacketSocket* socket, c
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, address = RTCNetwork::isolatedCopy(address)](IPC::Connection& connection) {
-        connection.send(Messages::WebRTCSocket::SignalAddressReady(RTCNetwork::SocketAddress(address)), identifier);
+        connection.send(Messages::LibWebRTCNetwork::SignalAddressReady(identifier, RTCNetwork::SocketAddress(address)), 0);
     });
 }
 
@@ -127,7 +127,7 @@ void LibWebRTCSocketClient::signalConnect(rtc::AsyncPacketSocket* socket)
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier](IPC::Connection& connection) {
-        connection.send(Messages::WebRTCSocket::SignalConnect(), identifier);
+        connection.send(Messages::LibWebRTCNetwork::SignalConnect(identifier), 0);
     });
 }
 
@@ -135,7 +135,7 @@ void LibWebRTCSocketClient::signalClose(rtc::AsyncPacketSocket* socket, int erro
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, error](IPC::Connection& connection) {
-        connection.send(Messages::WebRTCSocket::SignalClose(error), identifier);
+        connection.send(Messages::LibWebRTCNetwork::SignalClose(identifier, error), 0);
     });
     // We want to remove 'this' from the socket map now but we will destroy it asynchronously
     // so that the socket parameter of signalClose remains alive as the caller of signalClose may actually being using it afterwards.
