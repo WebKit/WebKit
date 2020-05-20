@@ -179,6 +179,7 @@ public:
     virtual void monitorOrientation(OrientationNotifier&) { }
 
     virtual void captureFailed();
+    virtual bool isSameAs(RealtimeMediaSource& source) const { return this == &source; }
 
     virtual bool isIncomingAudioSource() const { return false; }
     virtual bool isIncomingVideoSource() const { return false; }

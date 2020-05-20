@@ -469,7 +469,7 @@ static MediaStreamTrack* findActiveCaptureTrackForDocument(Document& document, R
         if (captureTrack->document() != &document || captureTrack->ended())
             continue;
 
-        if (&captureTrack->source() == activeSource)
+        if (activeSource && captureTrack->source().isSameAs(*activeSource))
             return captureTrack;
 
         // If the document has a live capture track, which is not the active one, we pick the first one.
@@ -484,13 +484,19 @@ static MediaStreamTrack* findActiveCaptureTrackForDocument(Document& document, R
 void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
 #if PLATFORM(IOS_FAMILY)
+    if (!document.page())
+        return;
+
     auto* activeAudioSource = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource();
     if (auto* audioCaptureTrack = findActiveCaptureTrackForDocument(document, activeAudioSource, RealtimeMediaSource::Type::Audio))
         audioCaptureTrack->setMuted(document.page()->mutedState());
 
     auto* activeVideoSource = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource();
-    if (auto* videoCaptureTrack = findActiveCaptureTrackForDocument(document, activeVideoSource, RealtimeMediaSource::Type::Video))
+    if (auto* videoCaptureTrack = findActiveCaptureTrackForDocument(document, activeVideoSource, RealtimeMediaSource::Type::Video)) {
         videoCaptureTrack->setMuted(document.page()->mutedState());
+        if (activeVideoSource && videoCaptureTrack->source().isSameAs(*activeVideoSource))
+            activeVideoSource->setMuted(document.page()->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted);
+    }
 #else
     for (auto* captureTrack : allCaptureTracks()) {
         if (captureTrack->document() != &document || captureTrack->ended())
