@@ -237,8 +237,10 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
 
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
     if (verifyUncompactedHash.finalHash() != expectedFinalHash) {
+#ifndef NDEBUG
         dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(verifyUncompactedHash.finalHash()))), " ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(expectedFinalHash))));
         dataLogLn("Crashing!");
+#endif
         CRASH();
     }
 #endif
