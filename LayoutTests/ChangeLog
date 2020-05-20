@@ -1,3 +1,18 @@
+2020-05-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Update some expectations
+
+        Some pageoverlay tests were also failing in WPE, and one of them has
+        not crashed since r253467.
+
+        Also moved the webaudio/codec/aac test to glib as WPE was also
+        failing.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-05-19  Daniel Bates  <dabates@apple.com>
 
         Move editing/mac/spelling/editing-word-with-marker-1.html to editing/spelling

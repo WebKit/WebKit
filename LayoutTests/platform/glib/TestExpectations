@@ -113,11 +113,11 @@ webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
 # 6. TESTS TIMING OUT
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/212020 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/212020 webanimations/accelerated-animation-single-keyframe.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
@@ -138,6 +138,14 @@ webkit.org/b/212020 webanimations/accelerated-animation-single-keyframe.html [ S
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/152908 pageoverlay/overlay-installation.html [ Failure ]
+webkit.org/b/152908 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
+webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
+webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Pass Failure ]
+webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
+
+webkit.org/b/211770 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
