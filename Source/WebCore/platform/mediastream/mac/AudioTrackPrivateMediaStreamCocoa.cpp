@@ -53,10 +53,10 @@ AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa()
 void AudioTrackPrivateMediaStreamCocoa::clear()
 {
     ASSERT(isMainThread());
+    streamTrack().source().removeObserver(*this);
     if (!m_isPlaying)
         return;
 
-    streamTrack().source().removeObserver(*this);
     m_isPlaying = false;
 
     if (m_remoteIOUnit) {

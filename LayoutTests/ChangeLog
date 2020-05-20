@@ -1,3 +1,17 @@
+2020-05-20  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/63393729
+
+    2020-05-20  Youenn Fablet  <youennf@gmail.com>
+
+            Follow-up fix to https://trac.webkit.org/changeset/261583/webkit
+            rdar://problem/63393729
+
+            Add a test to ensure we unregister from the source even if not playing.
+
+            * webrtc/remoteAudio-never-played-expected.txt: Added.
+            * webrtc/remoteAudio-never-played.html: Added.
+
 2020-05-19  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/63156096
