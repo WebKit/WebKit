@@ -1,3 +1,17 @@
+2020-05-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animation engine should not wake up every tick for steps timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=212103
+        <rdar://problem/62737868>
+
+        Reviewed by Simon Fraser.
+
+        Allow Seconds to be divided or multiplied by a double with operands in any order.
+
+        * wtf/Seconds.h:
+        (WTF::operator*):
+        (WTF::operator/):
+
 2020-05-20  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Use preferedPixelBufferFormat for AVVideoCaptureSource

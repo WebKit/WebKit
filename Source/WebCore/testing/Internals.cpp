@@ -196,6 +196,7 @@
 #include "ViewportArguments.h"
 #include "VoidCallback.h"
 #include "WebAnimation.h"
+#include "WebAnimationUtilities.h"
 #include "WebCoreJSClientData.h"
 #include "WindowProxy.h"
 #include "WorkerThread.h"
@@ -1198,6 +1199,11 @@ unsigned Internals::numberOfAnimationTimelineInvalidations() const
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled())
         return frame()->document()->timeline().numberOfAnimationTimelineInvalidationsForTesting();
     return 0;
+}
+
+double Internals::timeToNextAnimationTick(WebAnimation& animation) const
+{
+    return secondsToWebAnimationsAPITime(animation.timeToNextTick());
 }
 
 ExceptionOr<RefPtr<Element>> Internals::pseudoElement(Element& element, const String& pseudoId)

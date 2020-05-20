@@ -120,7 +120,7 @@ public:
 
     bool needsTick() const;
     virtual void tick();
-    Seconds timeToNextTick() const;
+    WEBCORE_EXPORT Seconds timeToNextTick() const;
     virtual void resolve(RenderStyle&);
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
     void acceleratedStateDidChange();

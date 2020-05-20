@@ -41,7 +41,8 @@ enum AnimationReplaceState {
     EnabledAtRuntime=WebAnimations,
     InterfaceName=Animation,
     CustomConstructor(),
-    CustomToJSObject
+    CustomToJSObject,
+    ExportMacro=WEBCORE_EXPORT
 ] interface WebAnimation : EventTarget {
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;

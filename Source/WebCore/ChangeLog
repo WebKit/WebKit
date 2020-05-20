@@ -1,3 +1,50 @@
+2020-05-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animation engine should not wake up every tick for steps timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=212103
+        <rdar://problem/62737868>
+
+        Reviewed by Simon Fraser.
+
+        Tests: webanimations/scheduling-of-animation-with-steps-timing-function-on-effect.html
+               webanimations/scheduling-of-animation-with-steps-timing-function-on-keyframe.html
+               webanimations/scheduling-of-css-animation-with-explicit-steps-timing-function-on-some-keyframes.html
+               webanimations/scheduling-of-css-animation-with-implicit-steps-timing-function.html
+
+        When an animation uses a steps() timing function, it will appear to animate discretely between values such
+        that there is only n visual changes, where n is the number of steps provided. This gives us an opportunity
+        to be more efficient when scheduling animations using steps() timing functions.
+
+        In WebAnimation::timeToNextTick() we now ask the associated effect for the amount of progress until the next
+        step. For an effect-wide steps() timing function, we can use the provided iteration progress. For animations
+        with a linear effect-wide timing function (the default), we have to map the provided iteration progress to
+        a keyframe interval, provided that interval uses a steps() timing function.
+
+        The new {Animation|Keyframe}Effect::progressUntilNextStep() method returns WTF::nullopt for any other case.
+
+        In order to test this, we add a new internals.timeToNextAnimationTick(animation) method which we use in the
+        two new tests.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::progressUntilNextStep const):
+        * animation/AnimationEffect.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::setBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeSomeKeyframesUseStepsTimingFunction):
+        (WebCore::KeyframeEffect::timingFunctionForKeyframeAtIndex const): Avoid any out-of-bounds use of the underlying data
+        structures by returning nullptr for cases where we don't have an explicit keyframe. We also make the function const
+        such that it may be called from progressUntilNextStep(), it always was const but wasn't marked as such.
+        (WebCore::KeyframeEffect::progressUntilNextStep const):
+        * animation/KeyframeEffect.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timeToNextTick const):
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::timeToNextAnimationTick const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-05-20  Noam Rosenthal  <noam@webkit.org>
 
         Fix table sizing when 'max-width' is used

@@ -1,0 +1,17 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div></div>
+<script>
+
+async_test(async t => {
+    const animation = document.querySelector("div").animate({ marginLeft: "100px" }, { duration: 1000, easing: "steps(10)" });
+
+    await animation.ready;
+    
+    animation.currentTime = 225;
+    assert_equals(internals.timeToNextAnimationTick(animation), 75, "Computing the time until the next tick when partly through a steps interval.");
+    
+    t.done();
+}, "Computing the time until the next tick for an effect with a steps() easing.");
+
+</script>

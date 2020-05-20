@@ -846,6 +846,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
     computedNeedsForcedLayout();
     computeStackingContextImpact();
     computeAcceleratedPropertiesState();
+    computeSomeKeyframesUseStepsTimingFunction();
 
     checkForMatchingTransformFunctionLists();
     checkForMatchingFilterFunctionLists();
@@ -1265,6 +1266,36 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
         m_acceleratedPropertiesState = AcceleratedProperties::All;
 }
 
+void KeyframeEffect::computeSomeKeyframesUseStepsTimingFunction()
+{
+    m_someKeyframesUseStepsTimingFunction = false;
+
+    size_t numberOfKeyframes = m_blendingKeyframes.size();
+
+    // If we're dealing with a CSS Animation and it specifies a default steps() timing function,
+    // we need to check that any of the specified keyframes either does not have an explicit timing
+    // function or specifies an explicit steps() timing function.
+    if (is<CSSAnimation>(animation()) && is<StepsTimingFunction>(downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction())) {
+        for (size_t i = 0; i < numberOfKeyframes; i++) {
+            auto* timingFunction = m_blendingKeyframes[i].timingFunction();
+            if (!timingFunction || is<StepsTimingFunction>(timingFunction)) {
+                m_someKeyframesUseStepsTimingFunction = true;
+                return;
+            }
+        }
+        return;
+    }
+
+    // For any other type of animation, we just need to check whether any of the keyframes specify
+    // an explicit steps() timing function.
+    for (size_t i = 0; i < numberOfKeyframes; i++) {
+        if (is<StepsTimingFunction>(m_blendingKeyframes[i].timingFunction())) {
+            m_someKeyframesUseStepsTimingFunction = true;
+            return;
+        }
+    }
+}
+
 void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
     if (!renderer() || !animation())
@@ -1439,15 +1470,20 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     }
 }
 
-TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index)
+TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index) const
 {
-    if (!m_parsedKeyframes.isEmpty())
+    if (!m_parsedKeyframes.isEmpty()) {
+        if (index >= m_parsedKeyframes.size())
+            return nullptr;
         return m_parsedKeyframes[index].timingFunction.get();
+    }
 
     auto effectAnimation = animation();
     if (is<DeclarativeAnimation>(effectAnimation)) {
         // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself.
         if (is<CSSAnimation>(effectAnimation)) {
+            if (index >= m_blendingKeyframes.size())
+                return nullptr;
             if (auto* timingFunction = m_blendingKeyframes[index].timingFunction())
                 return timingFunction;
         }
@@ -1793,6 +1829,59 @@ bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& renderer
 bool KeyframeEffect::requiresPseudoElement() const
 {
     return m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation && targetsPseudoElement();
+}
+
+Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress) const
+{
+    ASSERT(iterationProgress >= 0 && iterationProgress <= 1);
+
+    if (auto progress = AnimationEffect::progressUntilNextStep(iterationProgress))
+        return progress;
+
+    if (!is<LinearTimingFunction>(timingFunction()) || !m_someKeyframesUseStepsTimingFunction)
+        return WTF::nullopt;
+
+    if (m_blendingKeyframes.isEmpty())
+        return WTF::nullopt;
+
+    auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, TimingFunction* timingFunction) -> Optional<double> {
+        if (!is<StepsTimingFunction>(timingFunction))
+            return WTF::nullopt;
+
+        auto numberOfSteps = downcast<StepsTimingFunction>(*timingFunction).numberOfSteps();
+        auto intervalProgress = intervalEndProgress - intervalStartProgress;
+        auto iterationProgressMappedToCurrentInterval = (iterationProgress - intervalStartProgress) / intervalProgress;
+        auto nextStepProgress = ceil(iterationProgressMappedToCurrentInterval * numberOfSteps) / numberOfSteps;
+        return (nextStepProgress - iterationProgressMappedToCurrentInterval) * intervalProgress;
+    };
+
+    for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
+        auto intervalEndProgress = m_blendingKeyframes[i].key();
+        // We can stop once we find a keyframe for which the progress is more than the provided iteration progress.
+        if (intervalEndProgress <= iterationProgress)
+            continue;
+
+        // In case we're on the first keyframe, then this means we are dealing with an implicit 0% keyframe.
+        // This will be a linear timing function unless we're dealing with a CSS Animation which might have
+        // the default timing function for its keyframes defined on its backing Animation object.
+        if (!i) {
+            if (is<CSSAnimation>(animation()))
+                return progressUntilNextStepInInterval(0, intervalEndProgress, downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction());
+            return WTF::nullopt;
+        }
+
+        return progressUntilNextStepInInterval(m_blendingKeyframes[i - 1].key(), intervalEndProgress, timingFunctionForKeyframeAtIndex(i - 1));
+    }
+
+    // If we end up here, then this means we are dealing with an implicit 100% keyframe.
+    // This will be a linear timing function unless we're dealing with a CSS Animation which might have
+    // the default timing function for its keyframes defined on its backing Animation object.
+    auto& lastExplicitKeyframe = m_blendingKeyframes[m_blendingKeyframes.size() - 1];
+    if (is<CSSAnimation>(animation()))
+        return progressUntilNextStepInInterval(lastExplicitKeyframe.key(), 1, downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction());
+
+    // In any other case, we are not dealing with an interval with a steps() timing function.
+    return WTF::nullopt;
 }
 
 } // namespace WebCore

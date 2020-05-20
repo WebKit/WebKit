@@ -1,3 +1,24 @@
+2020-05-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animation engine should not wake up every tick for steps timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=212103
+        <rdar://problem/62737868>
+
+        Reviewed by Simon Fraser.
+
+        Add tests that check that an animation using a steps() timing function correctly computes the time to
+        the next tick accouning for the fact that it won't compute a different iteration progress until the
+        next step.
+
+        * webanimations/scheduling-of-animation-with-steps-timing-function-on-effect-expected.txt: Added.
+        * webanimations/scheduling-of-animation-with-steps-timing-function-on-effect.html: Added.
+        * webanimations/scheduling-of-animation-with-steps-timing-function-on-keyframe-expected.txt: Added.
+        * webanimations/scheduling-of-animation-with-steps-timing-function-on-keyframe.html: Added.
+        * webanimations/scheduling-of-css-animation-with-explicit-steps-timing-function-on-some-keyframes-expected.txt: Added.
+        * webanimations/scheduling-of-css-animation-with-explicit-steps-timing-function-on-some-keyframes.html: Added.
+        * webanimations/scheduling-of-css-animation-with-implicit-steps-timing-function-expected.txt: Added.
+        * webanimations/scheduling-of-css-animation-with-implicit-steps-timing-function.html: Added.
+
 2020-05-20  Noam Rosenthal  <noam@webkit.org>
 
         Fix table sizing when 'max-width' is used

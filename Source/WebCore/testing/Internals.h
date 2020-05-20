@@ -106,6 +106,7 @@ class TimeRanges;
 class TypeConversions;
 class UnsuspendableActiveDOMObject;
 class VoidCallback;
+class WebAnimation;
 class WebGLRenderingContext;
 class WindowProxy;
 class XMLHttpRequest;
@@ -239,6 +240,7 @@ public:
     };
     Vector<AcceleratedAnimation> acceleratedAnimationsForElement(Element&);
     unsigned numberOfAnimationTimelineInvalidations() const;
+    double timeToNextAnimationTick(WebAnimation&) const;
 
     // For animations testing, we need a way to get at pseudo elements.
     ExceptionOr<RefPtr<Element>> pseudoElement(Element&, const String&);

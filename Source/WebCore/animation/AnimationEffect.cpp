@@ -541,4 +541,14 @@ void AnimationEffect::setTimingFunction(const RefPtr<TimingFunction>& timingFunc
     m_timingFunction = timingFunction;
 }
 
+Optional<double> AnimationEffect::progressUntilNextStep(double iterationProgress) const
+{
+    if (!is<StepsTimingFunction>(m_timingFunction))
+        return WTF::nullopt;
+
+    auto numberOfSteps = downcast<StepsTimingFunction>(*m_timingFunction).numberOfSteps();
+    auto nextStepProgress = ceil(iterationProgress * numberOfSteps) / numberOfSteps;
+    return nextStepProgress - iterationProgress;
+}
+
 } // namespace WebCore

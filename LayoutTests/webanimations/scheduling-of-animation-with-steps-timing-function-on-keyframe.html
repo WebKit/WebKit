@@ -1,0 +1,20 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div></div>
+<script>
+
+async_test(async t => {
+    const animation = document.querySelector("div").animate({
+        marginLeft: ["0", "250px", "500px", "750px", "1000px"],
+        easing: ["linear", "linear", "steps(10)", "linear"]
+    }, 1000);
+
+    await animation.ready;
+    
+    animation.currentTime = 535;
+    assert_equals(internals.timeToNextAnimationTick(animation), 15);
+
+    t.done();
+}, "Computing the time until the next tick for a keyframe with a steps() timing function.");
+
+</script>

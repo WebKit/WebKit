@@ -297,6 +297,7 @@ enum CompositingPolicy {
     // Web Animations testing.
     sequence<AcceleratedAnimation> acceleratedAnimationsForElement(Element element);
     unsigned long numberOfAnimationTimelineInvalidations();
+    double timeToNextAnimationTick(WebAnimation animation);
 
     // For animations testing, we need a way to get at pseudo elements.
     [MayThrowException] Element? pseudoElement(Element element, DOMString pseudoId);

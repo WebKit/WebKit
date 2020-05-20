@@ -102,6 +102,8 @@ public:
 
     void updateStaticTimingProperties();
 
+    virtual Optional<double> progressUntilNextStep(double) const;
+
 protected:
     explicit AnimationEffect();
 

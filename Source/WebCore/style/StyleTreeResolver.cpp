@@ -317,6 +317,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
             if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
                 m_document.timeline().updateCSSTransitionsForElement(element, *oldStyle, *newStyle);
 
+            // FIXME: Maybe need to do this first such that CSS Transitions are aware of newly created or canceled animations
             if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
                 m_document.timeline().updateCSSAnimationsForElement(element, oldStyle, *newStyle);
         }

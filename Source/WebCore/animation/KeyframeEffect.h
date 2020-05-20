@@ -181,16 +181,18 @@ private:
     void addPendingAcceleratedAction(AcceleratedAction);
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
-    TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
+    TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computedNeedsForcedLayout();
     void computeStackingContextImpact();
+    void computeSomeKeyframesUseStepsTimingFunction();
     void clearBlendingKeyframes();
     void updateBlendingKeyframes(RenderStyle&);
     void computeCSSAnimationBlendingKeyframes(const RenderStyle&);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);
+    Optional<double> progressUntilNextStep(double) const final;
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();
     void checkForMatchingColorFilterFunctionLists();
@@ -222,6 +224,7 @@ private:
 #endif
     bool m_colorFilterFunctionListsMatch { false };
     bool m_inTargetEffectStack { false };
+    bool m_someKeyframesUseStepsTimingFunction { false };
 };
 
 } // namespace WebCore

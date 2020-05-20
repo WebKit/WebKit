@@ -1482,6 +1482,11 @@ Seconds WebAnimation::timeToNextTick() const
             // Fully-accelerated running animations in the "active" phase can wait until they ended.
             return (effect.endTime() - timing.localTime.value()) / playbackRate;
         }
+        if (auto iterationProgress = effect.getComputedTiming().simpleIterationProgress) {
+            // In case we're in a range that uses a steps() timing function, we can compute the time until the next step starts.
+            if (auto progressUntilNextStep = effect.progressUntilNextStep(*iterationProgress))
+                return effect.iterationDuration() * *progressUntilNextStep / playbackRate;
+        }
         // Other animations in the "active" phase will need to update their animated value at the immediate next opportunity.
         return 0_s;
     case AnimationEffectPhase::After:

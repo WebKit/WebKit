@@ -1,0 +1,3 @@
+
+PASS Computing the time until the next tick for a CSS Animation with implicit steps() timing functions. 
+

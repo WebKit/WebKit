@@ -1,0 +1,31 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+
+    div {
+        animation: anim 1s steps(10);
+    }
+
+    @keyframes anim {
+        50% { margin-left: 500px; }
+    }
+
+</style>
+<div></div>
+<script>
+
+async_test(async t => {
+    const animation = document.querySelector("div").getAnimations()[0];
+
+    await animation.ready;
+    
+    animation.currentTime = 10;
+    assert_equals(internals.timeToNextAnimationTick(animation), 40, "Progress contained in the interval for an implicit 0% keyframe.");
+
+    animation.currentTime = 920;
+    assert_equals(internals.timeToNextAnimationTick(animation), 30, "Progress contained in the interval for an implicit 100% keyframe.");
+
+    t.done();
+}, "Computing the time until the next tick for a CSS Animation with implicit steps() timing functions.");
+
+</script>
