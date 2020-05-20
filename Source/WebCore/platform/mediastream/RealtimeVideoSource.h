@@ -56,6 +56,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return m_source->deviceType(); }
     void monitorOrientation(OrientationNotifier& notifier) final { m_source->monitorOrientation(notifier); }
     bool interrupted() const final { return m_source->interrupted(); }
+    bool isSameAs(RealtimeMediaSource& source) const final { return this == &source || m_source.ptr() == &source; }
 
     // Observer
     void sourceMutedChanged() final;
