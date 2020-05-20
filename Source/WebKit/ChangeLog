@@ -1,3 +1,31 @@
+2020-05-20  Andy Estes  <aestes@apple.com>
+
+        [Mac] UI processes spin when creating the "Share" context menu item
+        https://bugs.webkit.org/show_bug.cgi?id=212137
+        <rdar://problem/54498394>
+
+        Reviewed by Wenson Hsieh.
+
+        On Mac, WebKit has been using the +[NSMenuItem standardShareMenuItemForItems:] SPI to create
+        the "Share" context submenu and menu item. This call performs synchronous IPC and can result
+        in UI process spins.
+
+        Where available, switch to using the asynchronous
+        -[NSSharingServicePicker getMenuWithCompletion:] SPI instead. This method only creates the
+        submenu, not the menu item, so when using this new method we must create the "Share" menu
+        item ourselves.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::getStandardShareMenuItem):
+        (WebKit::WebContextMenuProxyMac::getShareMenuItem):
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        (WebKit::WebContextMenuProxyMac::getContextMenuItem):
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem): Deleted.
+        (WebKit::WebContextMenuProxyMac::createContextMenuFromItems): Deleted.
+        (WebKit::WebContextMenuProxyMac::createContextMenuItem): Deleted.
+
 2020-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build with GTK 3.98.4

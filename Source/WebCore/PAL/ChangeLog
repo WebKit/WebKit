@@ -1,3 +1,13 @@
+2020-05-20  Andy Estes  <aestes@apple.com>
+
+        [Mac] UI processes spin when creating the "Share" context menu item
+        https://bugs.webkit.org/show_bug.cgi?id=212137
+        <rdar://problem/54498394>
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/mac/NSSharingServicePickerSPI.h: Declared -getMenuWithCompletion:.
+
 2020-05-18  Andy Estes  <aestes@apple.com>
 
         http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html fails in public SDK builds

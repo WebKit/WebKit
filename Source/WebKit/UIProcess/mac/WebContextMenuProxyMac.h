@@ -68,12 +68,12 @@ private:
     void show() override;
 
     RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
-    RetainPtr<NSMenuItem> createContextMenuItem(const WebContextMenuItemData&);
-    RetainPtr<NSMenu> createContextMenuFromItems(const Vector<WebContextMenuItemData>&);
+    void getContextMenuItem(const WebContextMenuItemData&, CompletionHandler<void(NSMenuItem *)>&&);
+    void getContextMenuFromItems(const Vector<WebContextMenuItemData>&, CompletionHandler<void(NSMenu *)>&&);
     void showContextMenu();
 
 #if ENABLE(SERVICE_CONTROLS)
-    RetainPtr<NSMenuItem> createShareMenuItem();
+    void getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&&);
     void showServicesMenu();
     void setupServicesMenu();
 #endif

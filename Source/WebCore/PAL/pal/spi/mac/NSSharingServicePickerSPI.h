@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
 @interface NSSharingServicePicker (Private)
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
+- (void)getMenuWithCompletion:(void(^)(NSMenu *))completion;
 - (void)hide;
 @end
 

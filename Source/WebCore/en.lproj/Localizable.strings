@@ -1,9 +1,3 @@
-/* Allow the specified bundle to use Touch ID to sign in to the specified website on this device */
-"“%@” would like to use Touch ID for “%@”." = "“%@” would like to use Touch ID for “%@”.";
-
-/* "Allow the specified bundle to sign in to the specified website */
-"“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
-
 /* accessibility help text for media controller time value >= 1 day */
 "%1$d days %2$d hours %3$d minutes %4$d seconds" = "%1$d days %2$d hours %3$d minutes %4$d seconds";
 
@@ -229,7 +223,7 @@
 /* Continue */
 "Continue" = "Continue";
 
-/* Continue with Touch ID */
+/* Continue with Touch ID. */
 "Continue with Touch ID." = "Continue with Touch ID.";
 
 /* Media Controls context menu item */
@@ -646,6 +640,9 @@
 /* default label for Reset buttons in forms on web pages */
 "Reset" = "Reset";
 
+/* Reset button in date input context menu */
+"Reset Button Date/Time Context Menu" = "Reset";
+
 /* Right to Left context menu item */
 "Right to Left" = "Right to Left";
 
@@ -696,6 +693,9 @@
 
 /* Label for the set up with Apple Pay button. */
 "Set up with Apple Pay" = "Set up with Apple Pay";
+
+/* Title for Share context menu item. */
+"Share" = "Share";
 
 /* Title for Share action button */
 "Share…" = "Share…";
@@ -1324,9 +1324,6 @@
 /* HTTP result code string */
 "requested range not satisfiable" = "requested range not satisfiable";
 
-/* Reset button in date input popover */
-"Reset Button Date/Time Context Menu" = "Reset";
-
 /* HTTP result code string */
 "reset content" = "reset content";
 
@@ -1467,6 +1464,12 @@
 
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
+
+/* Allow the specified bundle to sign in to the specified website */
+"“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
+
+/* Allow the specified bundle to use Touch ID to sign in to the specified website on this device */
+"“%@” would like to use Touch ID for “%@”." = "“%@” would like to use Touch ID for “%@”.";
 
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
