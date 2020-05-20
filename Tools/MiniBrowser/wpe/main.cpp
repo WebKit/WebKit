@@ -169,6 +169,7 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
     auto* newWebView = webkit_web_view_new_with_related_view(viewBackend, webView);
     webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
 
+    g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), nullptr);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), nullptr);
 
     g_hash_table_add(openViews, newWebView);
