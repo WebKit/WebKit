@@ -131,6 +131,11 @@ struct Edges {
     VerticalEdges vertical;
 };
 
+inline Edges operator/(const Edges& edge, size_t value)
+{
+    return { { edge.horizontal.left / value, edge.horizontal.right / value }, { edge.vertical.top / value, edge.vertical.bottom / value } };
+}
+
 struct ContentWidthAndMargin {
     LayoutUnit contentWidth;
     UsedHorizontalMargin usedMargin;

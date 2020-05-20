@@ -110,10 +110,11 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
             topBorder = std::max(topBorder, geometry().computedBorder(boxInFirstRox).vertical.top);
             bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
         }
-        auto collapsedBorder = Edges { { leftBorder / 2, rightBorder / 2 }, { topBorder / 2, bottomBorder / 2 } };
+        auto collapsedBorder = Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
+        grid.setCollapsedBorder(collapsedBorder);
 
         auto& displayBox = formattingState().displayBox(tableBox);
-        displayBox.setBorder(collapsedBorder);
+        displayBox.setBorder(collapsedBorder / 2);
         displayBox.setPadding(geometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
         return;
     }

@@ -115,10 +115,25 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
 
     auto rowWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
     auto rowLogicalTop = grid.verticalSpacing();
-    for (auto& row : rows) {
+    for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+        auto& row = rows[rowIndex];
         auto& rowBox = row.box();
         auto& rowDisplayBox = formattingState().displayBox(rowBox);
-        computeBorderAndPadding(rowBox, HorizontalConstraints { { }, availableHorizontalSpace });
+
+        auto computedRowBorder = [&] {
+            auto border = geometry().computedBorder(rowBox);
+            if (!grid.collapsedBorder())
+                return border;
+            // Border collapsing delegates borders to table/cells.
+            border.horizontal = { };
+            if (!rowIndex)
+                border.vertical.top = { };
+            if (rowIndex == rows.size() - 1)
+                border.vertical.bottom = { };
+            return border;
+        }();
+        rowDisplayBox.setBorder(computedRowBorder);
+        rowDisplayBox.setPadding(geometry().computedPadding(rowBox, availableHorizontalSpace));
         // Internal table elements do not have margins.
         rowDisplayBox.setHorizontalMargin({ });
         rowDisplayBox.setHorizontalComputedMargin({ });
@@ -158,7 +173,9 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     auto logicalTop = constraints.vertical.logicalTop;
     for (auto& section : childrenOfType<ContainerBox>(root())) {
         auto& sectionDisplayBox = formattingState().displayBox(section);
-        computeBorderAndPadding(section, HorizontalConstraints { { }, constraints.horizontal.logicalWidth });
+        // FIXME: Multiple sections can have their own borders.
+        sectionDisplayBox.setBorder(grid.collapsedBorder() ? Edges(): geometry().computedBorder(section));
+        sectionDisplayBox.setPadding(geometry().computedPadding(section, constraints.horizontal.logicalWidth));
         // Internal table elements do not have margins.
         sectionDisplayBox.setHorizontalMargin({ });
         sectionDisplayBox.setHorizontalComputedMargin({ });
@@ -178,17 +195,34 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
+    auto& grid = formattingState().tableGrid();
     auto& cellBox = cell.box();
     auto& cellDisplayBox = formattingState().displayBox(cellBox);
 
-    computeBorderAndPadding(cellBox, HorizontalConstraints { { }, availableHorizontalSpace });
+    auto computedCellBorder = [&] {
+        auto border = geometry().computedBorder(cellBox);
+        auto collapsedBorder = grid.collapsedBorder();
+        if (!collapsedBorder)
+            return border;
+        auto cellPosition = cell.position();
+        if (!cellPosition.column)
+            border.horizontal.left = collapsedBorder->horizontal.left / 2;
+        if (cellPosition.column == grid.columns().size() - 1)
+            border.horizontal.right = collapsedBorder->horizontal.right / 2;
+        if (!cellPosition.row)
+            border.vertical.top = collapsedBorder->vertical.top / 2;
+        if (cellPosition.row == grid.rows().size() - 1)
+            border.vertical.bottom = collapsedBorder->vertical.bottom / 2;
+        return border;
+    }();
+    cellDisplayBox.setBorder(computedCellBorder);
+    cellDisplayBox.setPadding(geometry().computedPadding(cellBox, availableHorizontalSpace));
     // Internal table elements do not have margins.
     cellDisplayBox.setHorizontalMargin({ });
     cellDisplayBox.setHorizontalComputedMargin({ });
     cellDisplayBox.setVerticalMargin({ { }, { } });
 
     auto availableSpaceForContent = [&] {
-        auto& grid = formattingState().tableGrid();
         auto& columnList = grid.columns().list();
         auto logicalWidth = LayoutUnit { };
         for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)

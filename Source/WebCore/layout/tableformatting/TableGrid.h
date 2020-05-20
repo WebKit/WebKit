@@ -55,6 +55,9 @@ public:
     void setVerticalSpacing(LayoutUnit verticalSpacing) { m_verticalSpacing = verticalSpacing; }
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
 
+    void setCollapsedBorder(const Edges& collapsedBorder) { m_collapsedBorder = collapsedBorder; }
+    Optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
+
     void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
     Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
@@ -228,6 +231,7 @@ private:
     LayoutUnit m_horizontalSpacing;
     LayoutUnit m_verticalSpacing;
     Optional<FormattingContext::IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
+    Optional<Edges> m_collapsedBorder;
 };
 
 }

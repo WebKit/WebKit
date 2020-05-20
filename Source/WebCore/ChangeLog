@@ -1,3 +1,27 @@
+2020-05-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Internal table boxes should take collapsed border into account
+        https://bugs.webkit.org/show_bug.cgi?id=212135
+
+        Reviewed by Antti Koivisto.
+
+        Use the collapsed border value to compute the borders for sections, rows and cells.
+        The collapsed border is propagated to the table box and the adjacent cell boxes.  
+
+        Test: fast/layoutformattingcontext/table-simple-border-collapse.html
+
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::operator/):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::setCollapsedBorder):
+        (WebCore::Layout::TableGrid::collapsedBorder const):
+
 2020-05-20  Youenn Fablet  <youenn@apple.com>
 
         [Mac] Use preferedPixelBufferFormat for AVVideoCaptureSource
