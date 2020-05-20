@@ -1,3 +1,34 @@
+2020-05-20  Michael Saboff  <msaboff@apple.com>
+
+        [Wasm] Limit the size of Wasm function we optimize in OMG mode
+        https://bugs.webkit.org/show_bug.cgi?id=212105
+
+        Reviewed by Filip Pizlo.
+
+        Given that memory grows O(N^2) compiling Wasm code through the OMG path,
+        we can run out of memory when compiling large Wasm functions.  This change adds
+        a limit option, webAssemblyBBQFallbackSize,  When the Wasm function size is
+        equal to or greater than this limit we always compile using BBQ optimization
+        parameters.
+
+        As part of this change, we still go through the OMG loop entry OSR code
+        generation path for functions that are at or above the threshold, but we
+        compile such functions with BBQ compilation optimization levels.
+        Also for Wasm functions at or above  the threashold, we don't tier up to an
+        OMG compiled normal entry function.  Instead we stay with the BBQ compiled version.
+
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmCompilationMode.cpp:
+        (JSC::Wasm::wasmFunctionSizeCanBeOMGCompiled):
+        * wasm/WasmCompilationMode.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::operationWasmTriggerOSREntryNow):
+
 2020-05-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r261755): Win/Linux non-unified builds have hundreds of link failures

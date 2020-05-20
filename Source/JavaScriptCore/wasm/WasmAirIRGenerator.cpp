@@ -893,7 +893,8 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         }
     }
 
-    emitEntryTierUpCheck();
+    if (wasmFunctionSizeCanBeOMGCompiled(m_info.functions[m_functionIndex].data.size()))
+        emitEntryTierUpCheck();
 }
 
 B3::Type AirIRGenerator::toB3ResultType(BlockSignature returnType)

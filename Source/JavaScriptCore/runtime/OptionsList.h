@@ -453,6 +453,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Unsigned, webAssemblyBBQAirOptimizationLevel, 0, Normal, "Air Optimization level for BBQ Web Assembly module compilations.") \
     v(Unsigned, webAssemblyBBQB3OptimizationLevel, 1, Normal, "B3 Optimization level for BBQ Web Assembly module compilations.") \
     v(Unsigned, webAssemblyOMGOptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for OMG Web Assembly module compilations.") \
+    v(Unsigned, webAssemblyBBQFallbackSize, 50000, Normal, "Limit of Wasm function size above which we fallback to BBQ compilation mode.") \
     \
     v(Bool, useBBQTierUpChecks, true, Normal, "Enables tier up checks for our BBQ code.") \
     v(Bool, useWebAssemblyOSR, true, Normal, nullptr) \

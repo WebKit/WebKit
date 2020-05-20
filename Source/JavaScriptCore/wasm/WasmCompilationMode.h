@@ -36,5 +36,6 @@ enum class CompilationMode : uint8_t {
 };
 
 const char* makeString(CompilationMode);
+bool wasmFunctionSizeCanBeOMGCompiled(size_t);
 
 } } // namespace JSC::Wasm
