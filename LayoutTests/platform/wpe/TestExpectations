@@ -725,8 +725,10 @@ Bug(WPE) gamepad/ [ Skip ]
 Bug(WPE) inspector/ [ Skip ]
 Bug(WPE) media/ [ Skip ]
 
-Bug(WPE) plugins/ [ Skip ]
+plugins/ [ Skip ]
 http/tests/plugins [ Skip ]
+imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
+imported/blink/plugins/empty-per-context-data.html [ Skip ]
 
 Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
@@ -762,9 +764,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting.https.html [ Skip ]
-
-Bug(WPE) imported/blink [ Skip ]
-Bug(WPE) imported/mozilla [ Skip ]
 
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
@@ -985,6 +984,10 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html
 
 # Passing since r260259.
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/video-controls-vertical-writing-mode.html
+
+imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
+imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
@@ -1346,6 +1349,9 @@ webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/insta
 
 webkit.org/b/212081 mathml/opentype/opentype-stretchy-horizontal.html [ Pass Failure ]
 webkit.org/b/212082 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-minus-plus.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass ]
+webkit.org/b/212158 imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
@@ -2305,6 +2311,29 @@ webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failu
 webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-http.html [ Timeout ]
 webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeout ]
 webkit.org/b/177934 http/tests/preconnect/link-header-rel-preconnect-http.html [ Failure ]
+
+webkit.org/b/212155 imported/mozilla/svg/blend-overlay.svg [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/pattern-scale-01a.svg [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/pattern-scale-01b.svg [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml [ ImageOnlyFailure ]
+webkit.org/b/212155 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
+
+webkit.org/b/212157 imported/blink/editing/execCommand/4128080-2.html [ Failure ]
+
+webkit.org/b/151267 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/160119 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
+webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

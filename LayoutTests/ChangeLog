@@ -1,3 +1,19 @@
+2020-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Also enable the imported Blink and Mozilla
+        layout tests, along with the necessary handful of baselines and expectations.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/blink: Added.
+        * platform/wpe/imported/blink/http: Added.
+        * platform/wpe/imported/blink/http/tests: Added.
+        * platform/wpe/imported/blink/http/tests/security: Added.
+        * platform/wpe/imported/blink/http/tests/security/contentSecurityPolicy: Added.
+        * platform/wpe/imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase-expected.txt: Added.
+        * platform/wpe/imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive-expected.txt: Added.
+        * platform/wpe/imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase-expected.txt: Added.
+        * platform/wpe/imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-expected.txt: Added.
+
 2020-05-20  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=198195
