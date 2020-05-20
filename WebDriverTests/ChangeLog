@@ -1,3 +1,14 @@
+2020-05-19  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Skip windowing tests.
+
+        These tests are related to window operations not directly supported by
+        WPE.
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-05-06  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] gardening flaky test.

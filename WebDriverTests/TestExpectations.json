@@ -533,6 +533,13 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/new_session/response.py": {
+        "subtests": {
+            "test_capability_default_value[setWindowRect-True]": {
+                "expected": {"wpe": {"status": ["SKIP"]}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/get_element_tag_name/user_prompts.py": {
         "subtests": {
             "test_handle_prompt_dismiss": {
@@ -569,5 +576,33 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}
             }
         }
+    },
+
+    "imported/w3c/webdriver/tests/maximize_window/user_prompts.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+    "imported/w3c/webdriver/tests/maximize_window/stress.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+    "imported/w3c/webdriver/tests/maximize_window/maximize.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+
+    "imported/w3c/webdriver/tests/minimize_window/user_prompts.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+    "imported/w3c/webdriver/tests/minimize_window/stress.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+    "imported/w3c/webdriver/tests/minimize_window/minimize.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+
+
+    "imported/w3c/webdriver/tests/set_window_rect/user_prompts.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+    "imported/w3c/webdriver/tests/set_window_rect/set.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
     }
 }
