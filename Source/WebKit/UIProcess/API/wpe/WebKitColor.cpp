@@ -82,8 +82,7 @@ void webkitColorFillFromWebCoreColor(const WebCore::Color& webCoreColor, WebKitC
 {
     RELEASE_ASSERT(webCoreColor.isValid());
 
-    double r, g, b, a;
-    webCoreColor.getRGBA(r, g, b, a);
+    auto [r, g, b, a] = webCoreColor.toSRGBAComponentsLossy();
     color->red = r;
     color->green = g;
     color->blue = b;

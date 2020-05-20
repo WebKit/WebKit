@@ -133,9 +133,7 @@ struct HistoricMemoryCategoryInfo {
         , isSubcategory(subcategory)
         , type(category)
     {
-        float r, g, b, a;
-        Color { SimpleColor { argb } }.getRGBA(r, g, b, a);
-        color = adoptCF(createColor(r, g, b, a));
+        color = cachedCGColor(SimpleColor { argb });
     }
 
     String name;

@@ -111,8 +111,7 @@ bool FilterOperations::transformColor(Color& color) const
     if (color.isSemantic())
         return false;
 
-    FloatComponents components;
-    color.getRGBA(components.components[0], components.components[1], components.components[2], components.components[3]);
+    FloatComponents components = color.toSRGBAComponentsLossy();
 
     for (auto& operation : m_operations) {
         if (!operation->transformColor(components))
@@ -131,8 +130,7 @@ bool FilterOperations::inverseTransformColor(Color& color) const
     if (color.isSemantic())
         return false;
 
-    FloatComponents components;
-    color.getRGBA(components.components[0], components.components[1], components.components[2], components.components[3]);
+    FloatComponents components = color.toSRGBAComponentsLossy();
 
     for (auto& operation : m_operations) {
         if (!operation->inverseTransformColor(components))

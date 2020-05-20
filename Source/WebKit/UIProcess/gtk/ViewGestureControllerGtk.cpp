@@ -337,8 +337,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         if (color.isValid()) {
             m_backgroundColorForCurrentSnapshot = color;
             if (!m_currentSwipeSnapshotPattern) {
-                double red, green, blue, alpha;
-                color.getRGBA(red, green, blue, alpha);
+                auto [red, green, blue, alpha] = color.toSRGBAComponentsLossy();
                 m_currentSwipeSnapshotPattern = adoptRef(cairo_pattern_create_rgba(red, green, blue, alpha));
             }
         }

@@ -170,24 +170,6 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     CGContextRestoreGState(context);
 }
 
-// Pulled from GraphicsContextCG
-static void setCGStrokeColor(CGContextRef context, const Color& color)
-{
-    CGFloat red, green, blue, alpha;
-    color.getRGBA(red, green, blue, alpha);
-    CGContextSetRGBStrokeColor(context, red, green, blue, alpha);
-}
-
-static const Color& spellingPatternColor() {
-    static const Color spellingColor(255, 0, 0);
-    return spellingColor;
-}
-
-static const Color& grammarPatternColor() {
-    static const Color grammarColor(0, 128, 0);
-    return grammarColor;
-}
-
 void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
@@ -216,8 +198,11 @@ void GraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, DocumentM
     CGContextRef context = platformContext();
     CGContextSaveGState(context);
 
-    const Color& patternColor = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor() : spellingPatternColor();
-    setCGStrokeColor(context, patternColor);
+    static constexpr SimpleColor spellingPatternColor { makeRGB(255, 0, 0) };
+    static constexpr SimpleColor grammarPatternColor { makeRGB(0, 128, 0) };
+
+    const SimpleColor& patternColor = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor : spellingPatternColor;
+    CGContextSetRGBStrokeColor(context, patternColor.redComponent(), patternColor.greenComponent(), patternColor.blueComponent(), patternColor.alphaComponent());
 
     CGAffineTransform userToBase = getUserToBaseCTM(context);
     CGPoint phase = CGPointApplyAffineTransform(point, userToBase);

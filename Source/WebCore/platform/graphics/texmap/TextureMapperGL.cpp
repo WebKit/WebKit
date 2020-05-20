@@ -253,8 +253,8 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
     glUseProgram(program->programID());
 
-    float r, g, b, a;
-    Color(premultipliedARGBFromColor(color)).getRGBA(r, g, b, a);
+    // FIXME: Do the premultiply on FloatComponents directly.
+    auto [r, g, b, a] = Color(premultipliedARGBFromColor(color)).toSRGBAComponentsLossy();
     glUniform4f(program->colorLocation(), r, g, b, a);
     glLineWidth(width);
 
@@ -276,13 +276,8 @@ void TextureMapperGL::drawNumber(int number, const Color& color, const FloatPoin
     cairo_t* cr = cairo_create(surface);
 
     // Since we won't swap R+B when uploading a texture, paint with the swapped R+B color.
-    if (color.isExtended())
-        cairo_set_source_rgba(cr, color.asExtended().blue(), color.asExtended().green(), color.asExtended().red(), color.asExtended().alpha());
-    else {
-        float r, g, b, a;
-        color.getRGBA(r, g, b, a);
-        cairo_set_source_rgba(cr, b, g, r, a);
-    }
+    auto [r, g, b, a] = color.toSRGBAComponentsLossy();
+    cairo_set_source_rgba(cr, b, g, r, a);
 
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
@@ -420,8 +415,8 @@ static void prepareFilterProgram(TextureMapperShaderProgram& program, const Filt
             break;
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
-            float r, g, b, a;
-            Color(premultipliedARGBFromColor(shadow.color())).getRGBA(r, g, b, a);
+            // FIXME: Do the premultiply on FloatComponents directly.
+            auto [r, g, b, a] = Color(premultipliedARGBFromColor(shadow.color())).toSRGBAComponentsLossy();
             glUniform4f(program.colorLocation(), r, g, b, a);
             glUniform2f(program.blurRadiusLocation(), 0, shadow.stdDeviation() / float(size.height()));
             glUniform2f(program.shadowOffsetLocation(), 0, 0);
@@ -683,8 +678,8 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     glUseProgram(program->programID());
 
-    float r, g, b, a;
-    Color(premultipliedARGBFromColor(color)).getRGBA(r, g, b, a);
+    // FIXME: Do the premultiply on FloatComponents directly.
+    auto [r, g, b, a] = Color(premultipliedARGBFromColor(color)).toSRGBAComponentsLossy();
     glUniform4f(program->colorLocation(), r, g, b, a);
     if (a < 1 && isBlendingAllowed)
         flags |= ShouldBlend;

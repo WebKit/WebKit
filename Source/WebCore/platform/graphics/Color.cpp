@@ -350,14 +350,14 @@ Color Color::light() const
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
 
-    float r, g, b, a;
-    getRGBA(r, g, b, a);
+    auto [r, g, b, a] = toSRGBAComponentsLossy();
 
-    float v = std::max(r, std::max(g, b));
+    float v = std::max({ r, g, b });
 
-    if (v == 0.0f)
+    if (v == 0.0f) {
         // Lightened black with alpha.
         return Color(0x54, 0x54, 0x54, alpha());
+    }
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
@@ -375,10 +375,9 @@ Color Color::dark() const
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
 
-    float r, g, b, a;
-    getRGBA(r, g, b, a);
+    auto [r, g, b, a] = toSRGBAComponentsLossy();
 
-    float v = std::max(r, std::max(g, b));
+    float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
     return Color(static_cast<int>(multiplier * r * scaleFactor),
@@ -389,13 +388,10 @@ Color Color::dark() const
 
 bool Color::isDark() const
 {
-    float red;
-    float green;
-    float blue;
-    float alpha;
-    getRGBA(red, green, blue, alpha);
-    float largestNonAlphaChannel = std::max(red, std::max(green, blue));
-    return alpha > 0.5 && largestNonAlphaChannel < 0.5;
+    // FIXME: This should probably be using luminance.
+    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    float largestNonAlphaChannel = std::max({ r, g, b });
+    return a > 0.5 && largestNonAlphaChannel < 0.5;
 }
 
 static int blendComponent(int c, int a)
@@ -471,22 +467,6 @@ Color Color::colorWithAlpha(float alpha) const
     return result;
 }
 
-void Color::getRGBA(float& r, float& g, float& b, float& a) const
-{
-    r = red() / 255.0f;
-    g = green() / 255.0f;
-    b = blue() / 255.0f;
-    a = alpha() / 255.0f;
-}
-
-void Color::getRGBA(double& r, double& g, double& b, double& a) const
-{
-    r = red() / 255.0;
-    g = green() / 255.0;
-    b = blue() / 255.0;
-    a = alpha() / 255.0;
-}
-
 // FIXME: Use sRGBToHSL().
 void Color::getHSL(double& hue, double& saturation, double& lightness) const
 {
@@ -555,22 +535,29 @@ void Color::getHSV(double& hue, double& saturation, double& value) const
     value = max;
 }
 
-FloatComponents Color::toSRGBAComponentsLossy() const
+std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
 {
     if (isExtended()) {
         auto& extendedColor = asExtended();
-        switch (extendedColor.colorSpace()) {
-        case ColorSpace::SRGB:
-            return extendedColor.channels();
-        case ColorSpace::LinearRGB:
-            return linearToRGBComponents(extendedColor.channels());
-        case ColorSpace::DisplayP3:
-            return p3ToSRGB(extendedColor.channels());
-        }
+        return { extendedColor.colorSpace(), extendedColor.channels() };
     }
-    float r, g, b, a;
-    getRGBA(r, g, b, a);
-    return { r, g, b, a };
+
+    return { ColorSpace::SRGB, FloatComponents { red() / 255.0f, green() / 255.0f, blue() / 255.0f,  alpha() / 255.0f } };
+}
+
+FloatComponents Color::toSRGBAComponentsLossy() const
+{
+    auto [colorSpace, components] = colorSpaceAndComponents();
+    switch (colorSpace) {
+    case ColorSpace::SRGB:
+        return components;
+    case ColorSpace::LinearRGB:
+        return linearToRGBComponents(components);
+    case ColorSpace::DisplayP3:
+        return p3ToSRGB(components);
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 Color colorFromPremultipliedARGB(RGBA32 pixelColor)

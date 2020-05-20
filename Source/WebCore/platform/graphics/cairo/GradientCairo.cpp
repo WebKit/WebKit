@@ -43,14 +43,8 @@ void Gradient::platformDestroy()
 
 static void addColorStopRGBA(cairo_pattern_t *gradient, Gradient::ColorStop stop, float globalAlpha)
 {
-    if (stop.color.isExtended()) {
-        cairo_pattern_add_color_stop_rgba(gradient, stop.offset, stop.color.asExtended().red(), stop.color.asExtended().green(),
-            stop.color.asExtended().blue(), stop.color.asExtended().alpha() * globalAlpha);
-    } else {
-        float r, g, b, a;
-        stop.color.getRGBA(r, g, b, a);
-        cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
-    }
+    auto [r, g, b, a] = stop.color.toSRGBAComponentsLossy();
+    cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
 }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -61,14 +55,8 @@ typedef struct point_t {
 
 static void setCornerColorRGBA(cairo_pattern_t* gradient, int id, Gradient::ColorStop stop, float globalAlpha)
 {
-    if (stop.color.isExtended()) {
-        cairo_mesh_pattern_set_corner_color_rgba(gradient, id, stop.color.asExtended().red(), stop.color.asExtended().green(),
-            stop.color.asExtended().blue(), stop.color.asExtended().alpha() * globalAlpha);
-    } else {
-        float r, g, b, a;
-        stop.color.getRGBA(r, g, b, a);
-        cairo_mesh_pattern_set_corner_color_rgba(gradient, id, r, g, b, a * globalAlpha);
-    }
+    auto [r, g, b, a] = stop.color.toSRGBAComponentsLossy();
+    cairo_mesh_pattern_set_corner_color_rgba(gradient, id, r, g, b, a * globalAlpha);
 }
 
 static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float r, float angleRadians,
@@ -147,24 +135,8 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
 
 static Gradient::ColorStop interpolateColorStop(Gradient::ColorStop from, Gradient::ColorStop to)
 {
-    float r1, g1, b1, a1;
-    float r2, g2, b2, a2;
-
-    if (from.color.isExtended()) {
-        r1 = from.color.asExtended().red();
-        g1 = from.color.asExtended().green();
-        b1 = from.color.asExtended().blue();
-        a1 = from.color.asExtended().alpha();
-    } else
-        from.color.getRGBA(r1, g1, b1, a1);
-
-    if (to.color.isExtended()) {
-        r2 = to.color.asExtended().red();
-        g2 = to.color.asExtended().green();
-        b2 = to.color.asExtended().blue();
-        a2 = to.color.asExtended().alpha();
-    } else
-        to.color.getRGBA(r2, g2, b2, a2);
+    auto [r1, g1, b1, a1] = from.color.toSRGBAComponentsLossy();
+    auto [r2, g2, b2, a2] = to.color.toSRGBAComponentsLossy();
 
     float offset = from.offset + (to.offset - from.offset) * 0.5f;
     float r = r1 + (r2 - r1) * 0.5f;

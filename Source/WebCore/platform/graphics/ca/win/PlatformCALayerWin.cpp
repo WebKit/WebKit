@@ -576,13 +576,7 @@ Color PlatformCALayerWin::backgroundColor() const
 
 void PlatformCALayerWin::setBackgroundColor(const Color& value)
 {
-    CGFloat components[4];
-    value.getRGBA(components[0], components[1], components[2], components[3]);
-
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
-
-    CACFLayerSetBackgroundColor(m_layer.get(), color.get());
+    CACFLayerSetBackgroundColor(m_layer.get(), cachedCGColor(value));
     setNeedsCommit();
 }
 

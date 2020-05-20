@@ -312,15 +312,7 @@ void PlatformCALayerWinInternal::setBorderWidth(float value)
 
 void PlatformCALayerWinInternal::setBorderColor(const Color& value)
 {
-    CGFloat components[4] = { 0, 0, 0, 0 };
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-
-    if (value.isValid())
-        value.getRGBA(components[0], components[1], components[2], components[3]);
-
-    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
-
-    CACFLayerSetBorderColor(owner()->platformLayer(), color.get());
+    CACFLayerSetBorderColor(owner()->platformLayer(), cachedCGColor(value));
 }
 
 #endif

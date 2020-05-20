@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class Color;
-
 struct FloatComponents {
     FloatComponents(float a = 0, float b = 0, float c = 0, float d = 0)
     {
@@ -49,8 +47,6 @@ struct FloatComponents {
         components[2] = values[2];
         components[3] = values[3];
     }
-
-    FloatComponents(const Color&);
 
     FloatComponents& operator+=(const FloatComponents& rhs)
     {
@@ -99,6 +95,12 @@ struct FloatComponents {
         result.components[2] = fabs(components[2]);
         result.components[3] = fabs(components[3]);
         return result;
+    }
+
+    template<std::size_t N>
+    float get() const
+    {
+        return components[N];
     }
 
     std::array<float, 4> components;
@@ -176,7 +178,6 @@ inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
 float linearToRGBColorComponent(float);
 float rgbToLinearColorComponent(float);
 
-FloatComponents sRGBColorToLinearComponents(const Color&);
 FloatComponents rgbToLinearComponents(const FloatComponents&);
 FloatComponents linearToRGBComponents(const FloatComponents&);
 
@@ -210,3 +211,16 @@ private:
 
 } // namespace WebCore
 
+namespace std {
+
+template<>
+class tuple_size<WebCore::FloatComponents> : public std::integral_constant<std::size_t, 4> {
+};
+
+template<std::size_t N>
+class tuple_element<N, WebCore::FloatComponents> {
+public:
+    using type = float;
+};
+
+}

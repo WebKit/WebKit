@@ -72,11 +72,7 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
     Vector<D2D1_GRADIENT_STOP> gradientStops;
     // FIXME: Add support for ExtendedColor.
     for (auto stop : m_stops) {
-        float r;
-        float g;
-        float b;
-        float a;
-        stop.color.getRGBA(r, g, b, a);
+        auto [r, g, b, a] stop.color.toSRGBAComponentsLossy();
         gradientStops.append(D2D1::GradientStop(stop.offset, D2D1::ColorF(r, g, b, a)));
     }
 

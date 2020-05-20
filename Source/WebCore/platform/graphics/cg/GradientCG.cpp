@@ -70,11 +70,8 @@ CGGradientRef Gradient::platformGradient()
         if (stop.color.isExtended())
             hasExtendedColors = true;
 
-        float r;
-        float g;
-        float b;
-        float a;
-        stop.color.getRGBA(r, g, b, a);
+        auto [colorSpace, components] = stop.color.colorSpaceAndComponents();
+        auto [r, g, b, a] = components;
         colorComponents.uncheckedAppend(r);
         colorComponents.uncheckedAppend(g);
         colorComponents.uncheckedAppend(b);

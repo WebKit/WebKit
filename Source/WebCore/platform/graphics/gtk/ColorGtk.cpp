@@ -36,18 +36,8 @@ Color::Color(const GdkRGBA& c)
 
 Color::operator GdkRGBA() const
 {
-    if (isExtended()) {
-        auto asRGBA = toSRGBAComponentsLossy();
-        return { asRGBA.components[0], asRGBA.components[1], asRGBA.components[2], asRGBA.components[3] };
-    }
-
-#if USE(GTK4)
-    float red, green, blue, alpha;
-#else
-    double red, green, blue, alpha;
-#endif
-    getRGBA(red, green, blue, alpha);
-    return { red, green, blue, alpha };
+    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    return { r, g, b, a };
 }
 
 }

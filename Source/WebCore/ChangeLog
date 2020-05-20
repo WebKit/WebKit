@@ -1,3 +1,114 @@
+2020-05-19  Sam Weinig  <weinig@apple.com>
+
+        Remove almost always incorrect Color::getRGBA
+        https://bugs.webkit.org/show_bug.cgi?id=212059
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        Removes the awkward and almost always incorrect out parameter based Color::getRGBA. Most existing callsites
+        were updated to use Color::toSRGBAComponentsLossy() or other more ExtendedColor supporting functions (like 
+        cachedCGColor()). 
+        
+        Also adds tuple-like adaptors for FloatComponents to allow it to be used
+        with structured bindings. For example:
+        
+            auto [r, g, b, a] = myFloatComponents;
+
+        * platform/graphics/Color.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::light const):
+        (WebCore::Color::dark const):
+        (WebCore::Color::isDark const):
+        Adopt toSRGBAComponentsLossy() to make these not return totally incorrect values.
+
+        (WebCore::Color::colorSpaceAndComponents const):
+        Added. Returns a std::pair<ColorSpace, FloatComponents> for functions that need
+        to operate on the components in a ColorSpace aware way. Used by toSRGBAComponentsLossy
+        and leakCGColor() for now, but will be useful going forward as well.
+
+        (WebCore::Color::toSRGBAComponentsLossy const):
+        Re-implement using colorSpaceAndComponents() to simplify implementation.
+
+        (WebCore::Color::getRGBA const): Deleted.
+        
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::FloatComponents::FloatComponents): Deleted.
+        (WebCore::sRGBColorToLinearComponents): Deleted.
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::FloatComponents::get const):
+        Remove uses of the Color class to simplify inlining (Color.h already needs to know about
+        FloatComponents). 
+            - FloatComponents constructor replaced by Color::toSRGBAComponentsLossy(). 
+            - sRGBColorToLinearComponents replaced by calling rgbToLinearComponents(color.toSRGBAComponentsLossy()).
+        
+        Also adds std::tuple adaptors for FloatComponents to allow using with stuctured bindings. 
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricMemoryCategoryInfo::HistoricMemoryCategoryInfo):
+        Replace getRGBA with cachedCGColor.
+        
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::setBackgroundColor):
+        Replace getRGBA with cachedCGColor.
+
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::setBorderColor):
+        Replace getRGBA with cachedCGColor.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::setSourceRGBAFromColor):
+        Replace getRGBA with toSRGBAComponentsLossy.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::addColorStopRGBA):
+        (WebCore::setCornerColorRGBA):
+        (WebCore::interpolateColorStop):
+        Replace getRGBA with toSRGBAComponentsLossy.
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::leakCGColor):
+        (WebCore::cachedCGColor):
+        Simplify implementation (and remove use of getRGBA) by using colorSpaceAndComponents().
+
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformGradient):
+        Replace getRGBA with colorSpaceAndComponent(). 
+        
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        Replace FloatComponents constructor taking a Color (which used getRGBA) with toSRGBAComponentsLossy.
+    
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+        Replace getRGBA with toSRGBAComponentsLossy.
+
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::operator GdkRGBA const):
+        Replace getRGBA with toSRGBAComponentsLossy.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::TextureMapperGL::drawNumber):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        Replace getRGBA with toSRGBAComponentsLossy.
+
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+        Replace getRGBA with toSRGBAComponentsLossy.
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        (WebCore::setCGStrokeColor): Deleted.
+        (WebCore::spellingPatternColor): Deleted.
+        (WebCore::grammarPatternColor): Deleted.
+        Replace use of getRGBA with direct use of SimpleColor instead.
+        
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::textColorIsLegibleAgainstBackgroundColor):
+        Replace implicit FloatComponents construction taking a Color (which used getRGBA) with explicit toSRGBAComponentsLossy.
+
 2020-05-19  Eric Carlson  <eric.carlson@apple.com>
 
         Update some media logging

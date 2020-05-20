@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,9 @@
 #include "config.h"
 #include "ColorUtilities.h"
 
-#include "Color.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
-
-FloatComponents::FloatComponents(const Color& color)
-{
-    color.getRGBA(components[0], components[1], components[2], components[3]);
-}
 
 ColorComponents::ColorComponents(const FloatComponents& floatComponents)
 {
@@ -67,18 +61,6 @@ float rgbToLinearColorComponent(float c)
         return c / 12.92f;
 
     return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
-}
-
-FloatComponents sRGBColorToLinearComponents(const Color& color)
-{
-    float r, g, b, a;
-    color.getRGBA(r, g, b, a);
-    return {
-        rgbToLinearColorComponent(r),
-        rgbToLinearColorComponent(g),
-        rgbToLinearColorComponent(b),
-        a
-    };
 }
 
 FloatComponents rgbToLinearComponents(const FloatComponents& RGBColor)

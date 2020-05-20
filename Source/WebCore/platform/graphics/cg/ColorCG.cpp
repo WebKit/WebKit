@@ -103,27 +103,22 @@ Color::Color(CGColorRef color, SemanticTag)
 
 static CGColorRef leakCGColor(const Color& color)
 {
-    CGFloat components[4];
-    if (color.isExtended()) {
-        const auto& extendedColor = color.asExtended();
-        auto channels = extendedColor.channels();
-        components[0] = channels.components[0];
-        components[1] = channels.components[1];
-        components[2] = channels.components[2];
-        components[3] = channels.components[3];
-        switch (extendedColor.colorSpace()) {
-        case ColorSpace::SRGB:
-            return CGColorCreate(sRGBColorSpaceRef(), components);
-        case ColorSpace::DisplayP3:
-            return CGColorCreate(displayP3ColorSpaceRef(), components);
-        case ColorSpace::LinearRGB:
-            // FIXME: Do we ever create CGColorRefs in these spaces? It may only be ImageBuffers.
-            return CGColorCreate(sRGBColorSpaceRef(), components);
-        }
+    auto [colorSpace, components] = color.colorSpaceAndComponents();
+    auto [r, g, b, a] = components;
+    CGFloat cgFloatComponents[4] { r, g, b, a };
+
+    switch (colorSpace) {
+    case ColorSpace::SRGB:
+        return CGColorCreate(sRGBColorSpaceRef(), cgFloatComponents);
+    case ColorSpace::DisplayP3:
+        return CGColorCreate(displayP3ColorSpaceRef(), cgFloatComponents);
+    case ColorSpace::LinearRGB:
+        // FIXME: Do we ever create CGColorRefs in these spaces? It may only be ImageBuffers.
+        return CGColorCreate(sRGBColorSpaceRef(), cgFloatComponents);
     }
 
-    color.getRGBA(components[0], components[1], components[2], components[3]);
-    return CGColorCreate(sRGBColorSpaceRef(), components);
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 CGColorRef cachedCGColor(const Color& color)
