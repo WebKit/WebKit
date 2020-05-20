@@ -222,6 +222,7 @@ public:
     void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName);
     void setStatisticsLastSeen(WKStringRef hostName, double seconds);
     void setStatisticsMergeStatistic(WKStringRef host, WKStringRef topFrameDomain1, WKStringRef topFrameDomain2, double lastSeen, bool hadUserInteraction, double mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, int dataRecordsRemoved);
+    void setStatisticsExpiredStatistic(WKStringRef host, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent);
     void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
     void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value);
     String dumpResourceLoadStatistics();

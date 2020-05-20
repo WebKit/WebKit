@@ -169,6 +169,17 @@ void WKWebsiteDataStoreSetStatisticsMergeStatistic(WKWebsiteDataStoreRef dataSto
 #endif
 }
 
+void WKWebsiteDataStoreSetStatisticsExpiredStatistic(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, void* context, WKWebsiteDataStoreStatisticsMergeStatisticFunction completionHandler)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->insertExpiredStatisticForTesting(URL(URL(), WebKit::toImpl(host)->string()), hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    completionHandler(context);
+#endif
+}
+
 void WKWebsiteDataStoreSetStatisticsPrevalentResource(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value, void* context, WKWebsiteDataStoreStatisticsPrevalentResourceFunction completionHandler)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

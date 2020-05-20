@@ -386,6 +386,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->statisticsCallDidSetMergeStatisticCallback();
         return;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetExpiredStatistic")) {
+        m_testRunner->statisticsCallDidSetExpiredStatisticCallback();
+        return;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetPrevalentResource")) {
         m_testRunner->statisticsCallDidSetPrevalentResourceCallback();

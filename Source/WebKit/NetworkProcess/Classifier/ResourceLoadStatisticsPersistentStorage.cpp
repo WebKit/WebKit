@@ -208,7 +208,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk(Comple
         return;
     }
 
-    // Debug mode has a prepoulated memory store.
+    // Debug mode has a prepopulated memory store.
     ASSERT_WITH_MESSAGE(m_memoryStore.isEmpty() || m_memoryStore.isDebugModeEnabled(), "This is the initial import so the store should be empty");
     m_memoryStore.mergeWithDataFromDecoder(*decoder);
 

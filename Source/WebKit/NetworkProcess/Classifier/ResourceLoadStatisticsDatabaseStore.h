@@ -143,8 +143,15 @@ public:
     void removeDataForDomain(const RegistrableDomain&) override;
     bool domainIDExistsInDatabase(int);
     Optional<Vector<String>> checkForMissingTablesInSchema();
+    void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
 
 private:
+    void includeTodayAsOperatingDateIfNecessary() override;
+    void clearOperatingDates() override { }
+    bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const override;
+    Optional<Seconds> statisticsExpirationTime() const;
+    void updateOperatingDatesParameters();
+
     void openITPDatabase();
     void addMissingTablesIfNecessary();
     void enableForeignKeys();
@@ -277,6 +284,9 @@ private:
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeAllDataStatement;
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };
+    unsigned m_operatingDatesSize { 0 };
+    OperatingDate m_leastRecentOperatingDate;
+    OperatingDate m_mostRecentOperatingDate;
 };
 
 } // namespace WebKit

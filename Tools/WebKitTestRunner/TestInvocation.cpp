@@ -871,6 +871,25 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::singleton().setStatisticsMergeStatistic(hostName, topFrameDomain1, topFrameDomain2, WKDoubleGetValue(lastSeen), WKBooleanGetValue(hadUserInteraction), WKDoubleGetValue(mostRecentUserInteraction), WKBooleanGetValue(isGrandfathered), WKBooleanGetValue(isPrevalent), WKBooleanGetValue(isVeryPrevalent), WKUInt64GetValue(dataRecordsRemoved));
         return;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsExpiredStatistic")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> hostNameKey = adoptWK(WKStringCreateWithUTF8CString("HostName"));
+        WKRetainPtr<WKStringRef> hadUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("HadUserInteraction"));
+        WKRetainPtr<WKStringRef> mostRecentUserInteractionKey = adoptWK(WKStringCreateWithUTF8CString("MostRecentUserInteraction"));
+        WKRetainPtr<WKStringRef> isScheduledForAllButCookieDataRemovalKey = adoptWK(WKStringCreateWithUTF8CString("IsScheduledForAllButCookieDataRemoval"));
+        WKRetainPtr<WKStringRef> isPrevalentKey = adoptWK(WKStringCreateWithUTF8CString("IsPrevalent"));
+
+        WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
+        WKBooleanRef hadUserInteraction = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hadUserInteractionKey.get()));
+        WKBooleanRef isScheduledForAllButCookieDataRemoval = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, isScheduledForAllButCookieDataRemovalKey.get()));
+        WKBooleanRef isPrevalent = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, isPrevalentKey.get()));
+
+        TestController::singleton().setStatisticsExpiredStatistic(hostName, WKBooleanGetValue(hadUserInteraction), WKBooleanGetValue(isScheduledForAllButCookieDataRemoval), WKBooleanGetValue(isPrevalent));
+        return;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsPrevalentResource")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
@@ -1974,6 +1993,12 @@ void TestInvocation::didSetLastSeen()
 void TestInvocation::didMergeStatistic()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidMergeStatistic"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didSetExpiredStatistic()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetExpiredStatistic"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 

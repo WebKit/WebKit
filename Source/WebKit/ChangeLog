@@ -1,3 +1,94 @@
+2020-05-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Support operating dates in ResourceLoadStatisticsDatabaseStore
+        https://bugs.webkit.org/show_bug.cgi?id=212034
+        <rdar://problem/63349242>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-database.html
+               http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed.html
+               http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed-database.html
+               http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html
+
+        Patch to support Operating Dates in the ResourceLoadStatisticsDatabaseStore.
+        Moves functions out of ResourceLoadStatisticsStore now that each store
+        needs its own implementation.
+
+        Adds a new function for testing which inserts an expired statistic
+        and makes sure the proper behavior occurs depending on additional
+        parameters.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::createTableQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getLeastRecentOperatingDate):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeOperatingDates):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        Migrated Operating Dates functions from ResourceLoadStatisticsStore and implemented
+        them using SQLite instead of a vector. Functionality is
+        identical to the original in-memory implementation.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::mergeOperatingDates):
+        (WebKit::ResourceLoadStatisticsMemoryStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStatisticsExpired const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        Migrated Operating Dates functions from ResourceLoadStatisticsStore
+        now that the database store does not use them.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        Spelling error.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore):
+        (WebKit::ResourceLoadStatisticsStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsStore::statisticsEpirationTime const): Deleted.
+        (WebKit::ResourceLoadStatisticsStore::mergeOperatingDates): Deleted.
+        (WebKit::ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary): Deleted.
+        (WebKit::ResourceLoadStatisticsStore::hasStatisticsExpired const): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::OperatingDate::year const):
+        (WebKit::OperatingDate::month const):
+        (WebKit::OperatingDate::monthDay const):
+        These functions should be public now that they are needed outside
+        of this file after migrating OperatingDates functions.
+
+        (WebKit::ResourceLoadStatisticsStore::parameters const):
+        (WebKit::ResourceLoadStatisticsStore::operatingDates const): Deleted.
+        (WebKit::ResourceLoadStatisticsStore::clearOperatingDates): Deleted.
+        Moved OperatingDates functions to the memory store. Moved
+        operatingDatesWindow constexpr variables to the header file so that
+        the database and memory stores can both use them.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::insertExpiredStatisticForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::mergeStatisticForTesting):
+        (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Function to add expired statistic to the ITP store.
+
 2020-05-20  Chris Dumez  <cdumez@apple.com>
 
         Deprecate WKBundlePageSetPolicyClient() Injected bundle C API

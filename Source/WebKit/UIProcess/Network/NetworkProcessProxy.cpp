@@ -593,6 +593,11 @@ void NetworkProcessProxy::mergeStatisticForTesting(PAL::SessionID sessionID, con
     sendWithAsyncReply(Messages::NetworkProcess::MergeStatisticForTesting(sessionID, resourceDomain, topFrameDomain1, topFrameDomain2, lastSeen, hadUserInteraction, mostRecentUserInteraction, isGrandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::insertExpiredStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::InsertExpiredStatisticForTesting(sessionID, resourceDomain, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::clearPrevalentResource(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

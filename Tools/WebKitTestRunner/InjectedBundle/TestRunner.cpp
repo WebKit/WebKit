@@ -741,6 +741,7 @@ enum {
     SetStatisticsPrevalentResourceForDebugModeCallbackID,
     SetStatisticsLastSeenCallbackID,
     SetStatisticsMergeStatisticCallbackID,
+    SetStatisticsExpiredStatisticCallbackID,
     SetStatisticsPrevalentResourceCallbackID,
     SetStatisticsVeryPrevalentResourceCallbackID,
     SetStatisticsHasHadUserInteractionCallbackID,
@@ -1573,6 +1574,42 @@ void TestRunner::setStatisticsMergeStatistic(JSStringRef hostName, JSStringRef t
 void TestRunner::statisticsCallDidSetMergeStatisticCallback()
 {
     callTestRunnerCallback(SetStatisticsMergeStatisticCallbackID);
+}
+
+void TestRunner::setStatisticsExpiredStatistic(JSStringRef hostName, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(SetStatisticsExpiredStatisticCallbackID, completionHandler);
+
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("HostName")));
+    values.append(adoptWK(WKStringCreateWithJSString(hostName)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("HadUserInteraction")));
+    values.append(adoptWK(WKBooleanCreate(hadUserInteraction)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("IsScheduledForAllButCookieDataRemoval")));
+    values.append(adoptWK(WKBooleanCreate(isScheduledForAllButCookieDataRemoval)));
+
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("IsPrevalent")));
+    values.append(adoptWK(WKBooleanCreate(isPrevalent)));
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsExpiredStatistic"));
+    WKRetainPtr<WKDictionaryRef> messageBody = adoptWK(WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::statisticsCallDidSetExpiredStatisticCallback()
+{
+    callTestRunnerCallback(SetStatisticsExpiredStatisticCallbackID);
 }
 
 void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value, JSValueRef completionHandler)

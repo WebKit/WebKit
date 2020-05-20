@@ -80,6 +80,8 @@ ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResource
         if (weakThis)
             weakThis->calculateAndSubmitTelemetry();
     });
+
+    includeTodayAsOperatingDateIfNecessary();
 }
 
 bool ResourceLoadStatisticsMemoryStore::isEmpty() const
@@ -1079,6 +1081,109 @@ void ResourceLoadStatisticsMemoryStore::setVeryPrevalentResource(const Registrab
     
     auto& resourceStatistic = ensureResourceStatisticsForRegistrableDomain(domain);
     setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::VeryHigh);
+}
+
+Vector<OperatingDate> ResourceLoadStatisticsMemoryStore::mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates)
+{
+    if (existingDates.isEmpty())
+        return WTFMove(newDates);
+
+    Vector<OperatingDate> mergedDates(existingDates.size() + newDates.size());
+
+    // Merge the two sorted vectors of dates.
+    std::merge(existingDates.begin(), existingDates.end(), newDates.begin(), newDates.end(), mergedDates.begin());
+    // Remove duplicate dates.
+    removeRepeatedElements(mergedDates);
+
+    // Drop old dates until the Vector size reaches operatingDatesWindowLong.
+    while (mergedDates.size() > operatingDatesWindowLong)
+        mergedDates.remove(0);
+
+    return mergedDates;
+}
+
+void ResourceLoadStatisticsMemoryStore::mergeOperatingDates(Vector<OperatingDate>&& newDates)
+{
+    ASSERT(!RunLoop::isMain());
+
+    m_operatingDates = mergeOperatingDates(m_operatingDates, WTFMove(newDates));
+}
+
+void ResourceLoadStatisticsMemoryStore::includeTodayAsOperatingDateIfNecessary()
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto today = OperatingDate::today();
+    if (!m_operatingDates.isEmpty() && today <= m_operatingDates.last())
+        return;
+
+    while (m_operatingDates.size() >= operatingDatesWindowLong)
+        m_operatingDates.remove(0);
+
+    m_operatingDates.append(today);
+}
+
+bool ResourceLoadStatisticsMemoryStore::hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow operatingDatesWindow) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    unsigned operatingDatesWindowInDays = 0;
+    switch (operatingDatesWindow) {
+    case OperatingDatesWindow::Long:
+        operatingDatesWindowInDays = operatingDatesWindowLong;
+        break;
+    case OperatingDatesWindow::Short:
+        operatingDatesWindowInDays = operatingDatesWindowShort;
+        break;
+    case OperatingDatesWindow::ForLiveOnTesting:
+        return WallTime::now() > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
+    case OperatingDatesWindow::ForReproTesting:
+        return true;
+    }
+
+    if (m_operatingDates.size() >= operatingDatesWindowInDays) {
+        if (OperatingDate::fromWallTime(mostRecentUserInteractionTime) < m_operatingDates.first())
+            return true;
+    }
+
+    // If we don't meet the real criteria for an expired statistic, check the user setting for a tighter restriction (mainly for testing).
+    if (this->parameters().timeToLiveUserInteraction) {
+        if (WallTime::now() > mostRecentUserInteractionTime + this->parameters().timeToLiveUserInteraction.value())
+            return true;
+    }
+
+    return false;
+}
+
+bool ResourceLoadStatisticsMemoryStore::hasStatisticsExpired(const ResourceLoadStatistics& resourceStatistic, OperatingDatesWindow operatingDatesWindow) const
+{
+    return hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow);
+}
+
+void ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
+{
+    // Populate the Operating Dates table with enough days to require pruning.
+    double daysAgoInSeconds = 0;
+    for (unsigned i = 1; i <= operatingDatesWindowLong; i++) {
+        double daysToSubtract = Seconds::fromHours(24 * i).value();
+        daysAgoInSeconds = WallTime::now().secondsSinceEpoch().value() - daysToSubtract;
+        auto dateToInsert = OperatingDate::fromWallTime(WallTime::fromRawSeconds(daysAgoInSeconds));
+        m_operatingDates.append(OperatingDate(dateToInsert.year(), dateToInsert.month(), dateToInsert.monthDay()));
+    }
+
+    // Make sure mostRecentUserInteractionTime is the least recent of all entries.
+    daysAgoInSeconds -= Seconds::fromHours(24).value();
+
+    auto statistic = ResourceLoadStatistics(domain);
+    statistic.lastSeen = WallTime::fromRawSeconds(daysAgoInSeconds);
+    statistic.hadUserInteraction = hasUserInteraction;
+    statistic.mostRecentUserInteractionTime = WallTime::fromRawSeconds(daysAgoInSeconds);
+    statistic.isPrevalentResource = isPrevalent;
+    statistic.gotLinkDecorationFromPrevalentResource = isScheduledForAllButCookieDataRemoval;
+
+    m_resourceStatisticsMap.ensure(statistic.registrableDomain, [&statistic] {
+        return WTFMove(statistic);
+    });
 }
 
 } // namespace WebKit

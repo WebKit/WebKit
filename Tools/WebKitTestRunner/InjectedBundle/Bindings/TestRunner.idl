@@ -303,6 +303,7 @@ interface TestRunner {
     void setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
     void setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
     void setStatisticsMergeStatistic(DOMString hostName, DOMString topFrameDomain1, DOMString topFrameDomain2, double lastSeen, boolean hadUserInteraction, double mostRecentUserInteraction, boolean isGrandfathered, boolean isPrevalent, boolean isVeryPrevalent, unsigned long dataRecordsRemoved, object completionHandler);
+    void setStatisticsExpiredStatistic(DOMString hostName, boolean hadUserInteraction, boolean isScheduledForAllButCookieDataRemoval, boolean isPrevalent, object completionHandler);
     void setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
     void setStatisticsVeryPrevalentResource(DOMString hostName, boolean value, object completionHandler);
     boolean isStatisticsPrevalentResource(DOMString hostName);

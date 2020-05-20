@@ -1451,6 +1451,17 @@ void WebResourceLoadStatisticsStore::resume()
         suspendedStateChangeCondition.notifyOne();
 }
 
+void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, domain = domain.isolatedCopy(), hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->insertExpiredStatisticForTesting(WTFMove(domain), hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent);
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
 } // namespace WebKit
 
 #endif

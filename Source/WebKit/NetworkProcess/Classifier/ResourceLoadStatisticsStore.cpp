@@ -52,9 +52,6 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
-constexpr unsigned operatingDatesWindowLong { 30 };
-constexpr unsigned operatingDatesWindowShort { 7 };
-constexpr Seconds operatingTimeWindowForLiveOnTesting { 1_h };
 
 static String domainsToString(const Vector<RegistrableDomain>& domains)
 {
@@ -133,8 +130,6 @@ ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisti
     , m_shouldIncludeLocalhost(shouldIncludeLocalhost)
 {
     ASSERT(!RunLoop::isMain());
-
-    includeTodayAsOperatingDateIfNecessary();
 }
 
 ResourceLoadStatisticsStore::~ResourceLoadStatisticsStore()
@@ -450,97 +445,6 @@ void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const Registrab
             });
         });
     });
-}
-    
-
-Optional<Seconds> ResourceLoadStatisticsStore::statisticsEpirationTime() const
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (m_parameters.timeToLiveUserInteraction)
-        return WallTime::now().secondsSinceEpoch() - m_parameters.timeToLiveUserInteraction.value();
-    
-    if (m_operatingDates.size() >= operatingDatesWindowLong)
-        return m_operatingDates.first().secondsSinceEpoch();
-    
-    return WTF::nullopt;
-}
-
-Vector<OperatingDate> ResourceLoadStatisticsStore::mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates)
-{
-    if (existingDates.isEmpty())
-        return WTFMove(newDates);
-    
-    Vector<OperatingDate> mergedDates(existingDates.size() + newDates.size());
-    
-    // Merge the two sorted vectors of dates.
-    std::merge(existingDates.begin(), existingDates.end(), newDates.begin(), newDates.end(), mergedDates.begin());
-    // Remove duplicate dates.
-    removeRepeatedElements(mergedDates);
-    
-    // Drop old dates until the Vector size reaches operatingDatesWindowLong.
-    while (mergedDates.size() > operatingDatesWindowLong)
-        mergedDates.remove(0);
-    
-    return mergedDates;
-}
-
-void ResourceLoadStatisticsStore::mergeOperatingDates(Vector<OperatingDate>&& newDates)
-{
-    ASSERT(!RunLoop::isMain());
-
-    m_operatingDates = mergeOperatingDates(m_operatingDates, WTFMove(newDates));
-}
-
-void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto today = OperatingDate::today();
-    if (!m_operatingDates.isEmpty() && today <= m_operatingDates.last())
-        return;
-
-    while (m_operatingDates.size() >= operatingDatesWindowLong)
-        m_operatingDates.remove(0);
-
-    m_operatingDates.append(today);
-}
-
-bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow operatingDatesWindow) const
-{
-    ASSERT(!RunLoop::isMain());
-
-    unsigned operatingDatesWindowInDays = 0;
-    switch (operatingDatesWindow) {
-    case OperatingDatesWindow::Long:
-        operatingDatesWindowInDays = operatingDatesWindowLong;
-        break;
-    case OperatingDatesWindow::Short:
-        operatingDatesWindowInDays = operatingDatesWindowShort;
-        break;
-    case OperatingDatesWindow::ForLiveOnTesting:
-        return WallTime::now() > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
-    case OperatingDatesWindow::ForReproTesting:
-        return true;
-    }
-
-    if (m_operatingDates.size() >= operatingDatesWindowInDays) {
-        if (OperatingDate::fromWallTime(mostRecentUserInteractionTime) < m_operatingDates.first())
-            return true;
-    }
-    
-    // If we don't meet the real criteria for an expired statistic, check the user setting for a tighter restriction (mainly for testing).
-    if (m_parameters.timeToLiveUserInteraction) {
-        if (WallTime::now() > mostRecentUserInteractionTime + m_parameters.timeToLiveUserInteraction.value())
-            return true;
-    }
-    
-    return false;
-}
-
-bool ResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatistics& resourceStatistic, OperatingDatesWindow operatingDatesWindow) const
-{
-    return hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow);
 }
 
 bool ResourceLoadStatisticsStore::shouldEnforceSameSiteStrictForSpecificDomain(const RegistrableDomain& domain) const

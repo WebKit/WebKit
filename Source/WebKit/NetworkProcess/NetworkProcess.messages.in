@@ -95,6 +95,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds) -> () Async
     SetLastSeen(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, Seconds seconds) -> () Async
     MergeStatisticForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, WebCore::RegistrableDomain topFrameDomain1, WebCore::RegistrableDomain topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, uint64_t dataRecordsRemoved) -> () Async
+    InsertExpiredStatisticForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) -> () Async
     SetPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
     SetPrevalentResourceForDebugMode(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
     IsResourceLoadStatisticsEphemeral(PAL::SessionID sessionID) -> (bool isEphemeral) Async

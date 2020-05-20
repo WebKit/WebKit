@@ -113,8 +113,17 @@ public:
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
     void removeDataForDomain(const RegistrableDomain&) override;
+    void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
 
 private:
+    void includeTodayAsOperatingDateIfNecessary() override;
+    const Vector<OperatingDate>& operatingDates() const { return m_operatingDates; }
+    void clearOperatingDates() override { m_operatingDates.clear(); }
+    void mergeOperatingDates(Vector<OperatingDate>&&);
+    bool hasStatisticsExpired(const ResourceLoadStatistics&, OperatingDatesWindow) const;
+    static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates);
+    bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const override;
+
     static bool shouldBlockAndKeepCookies(const ResourceLoadStatistics&);
     static bool shouldBlockAndPurgeCookies(const ResourceLoadStatistics&);
     static WebCore::StorageAccessPromptWasShown hasUserGrantedStorageAccessThroughPrompt(const ResourceLoadStatistics&, const RegistrableDomain&);
@@ -137,6 +146,7 @@ private:
 
     WeakPtr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
     HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
+    Vector<OperatingDate> m_operatingDates;
 };
 
 } // namespace WebKit

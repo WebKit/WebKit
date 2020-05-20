@@ -222,6 +222,10 @@ constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceU
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
 
+constexpr auto createOperatingDates = "CREATE TABLE OperatingDates ("
+    "year INTEGER NOT NULL, month INTEGER NOT NULL, monthDay INTEGER NOT NULL);"_s;
+
+
 // CREATE UNIQUE INDEX Queries
 constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID );"_s;
@@ -233,6 +237,7 @@ constexpr auto createUniqueIndexSubframeUnderTopFrameDomains = "CREATE UNIQUE IN
 constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUnderTopFrameDomains_subresourceDomainID_topFrameDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, topFrameDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
+constexpr auto createUniqueIndexOperatingDates = "CREATE UNIQUE INDEX IF NOT EXISTS OperatingDates_year_month_monthDay on OperatingDates ( year, month, monthDay );"_s;
 
 const unsigned minimumPrevalentResourcesForTelemetry = 3;
 
@@ -265,7 +270,8 @@ static const HashMap<String, String>& createTableQueries()
         { "SubframeUnderTopFrameDomains"_s, createSubframeUnderTopFrameDomains},
         { "SubresourceUnderTopFrameDomains"_s, createSubresourceUnderTopFrameDomains},
         { "SubresourceUniqueRedirectsTo"_s, createSubresourceUniqueRedirectsTo},
-        { "SubresourceUniqueRedirectsFrom"_s, createSubresourceUniqueRedirectsFrom}
+        { "SubresourceUniqueRedirectsFrom"_s, createSubresourceUniqueRedirectsFrom},
+        { "OperatingDates"_s, createOperatingDates}
     });
     
     return createTableQueries;
@@ -292,6 +298,8 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
         if (weakThis)
             weakThis->calculateAndSubmitTelemetry();
     });
+
+    includeTodayAsOperatingDateIfNecessary();
 }
 
 ResourceLoadStatisticsDatabaseStore::~ResourceLoadStatisticsDatabaseStore()
@@ -540,7 +548,8 @@ bool ResourceLoadStatisticsDatabaseStore::createUniqueIndices()
         || !m_database.executeCommand(createUniqueIndexSubframeUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsTo)
-        || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)) {
+        || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
+        || !m_database.executeCommand(createUniqueIndexOperatingDates)) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::createUniqueIndices failed to execute, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
         return false;
     }
@@ -608,6 +617,11 @@ bool ResourceLoadStatisticsDatabaseStore::createSchema()
 
     if (!m_database.executeCommand(createSubresourceUniqueRedirectsFrom)) {
         LOG_ERROR("Could not create SubresourceUniqueRedirectsFrom table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
+        return false;
+    }
+    
+    if (!m_database.executeCommand(createOperatingDates)) {
+        LOG_ERROR("Could not create OperatingDates table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
         return false;
     }
     
@@ -2411,7 +2425,7 @@ Vector<unsigned> ResourceLoadStatisticsDatabaseStore::findExpiredUserInteraction
     ASSERT(!RunLoop::isMain());
 
     Vector<unsigned> results;
-    Optional<Seconds> expirationDateTime = statisticsEpirationTime();
+    Optional<Seconds> expirationDateTime = statisticsExpirationTime();
     if (!expirationDateTime)
         return results;
     
@@ -2923,6 +2937,167 @@ bool ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase(int domainID)
     }
 
     return m_linkDecorationExistsStatement->getColumnInt(0) || m_scriptLoadExistsStatement->getColumnInt(0) || m_subFrameExistsStatement->getColumnInt(0) || m_subResourceExistsStatement->getColumnInt(0) || m_uniqueRedirectExistsStatement->getColumnInt(0) || m_observedDomainsExistsStatement->getColumnInt(0);
+}
+
+void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
+{
+    SQLiteStatement countOperatingDatesStatement(m_database, "SELECT COUNT(*) FROM OperatingDates;"_s);
+    SQLiteStatement getMostRecentOperatingDateStatement(m_database, "SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1;"_s);
+    SQLiteStatement getLeastRecentOperatingDateStatement(m_database, "SELECT * FROM OperatingDates ORDER BY year, month, monthDay LIMIT 1;"_s);
+
+    if (countOperatingDatesStatement.prepare() != SQLITE_OK
+        || countOperatingDatesStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters countOperatingDatesStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_operatingDatesSize = countOperatingDatesStatement.getColumnInt(0);
+
+    if (getMostRecentOperatingDateStatement.prepare() != SQLITE_OK
+        || getMostRecentOperatingDateStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getFirstOperatingDateStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_mostRecentOperatingDate = OperatingDate(getMostRecentOperatingDateStatement.getColumnInt(0), getMostRecentOperatingDateStatement.getColumnInt(1), getMostRecentOperatingDateStatement.getColumnInt(2));
+
+    if (getLeastRecentOperatingDateStatement.prepare() != SQLITE_OK
+        || getLeastRecentOperatingDateStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getLeastRecentOperatingDateStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_leastRecentOperatingDate = OperatingDate(getLeastRecentOperatingDateStatement.getColumnInt(0), getLeastRecentOperatingDateStatement.getColumnInt(1), getLeastRecentOperatingDateStatement.getColumnInt(2));
+}
+
+Optional<Seconds> ResourceLoadStatisticsDatabaseStore::statisticsExpirationTime() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (this->parameters().timeToLiveUserInteraction)
+        return WallTime::now().secondsSinceEpoch() - this->parameters().timeToLiveUserInteraction.value();
+
+    if (m_operatingDatesSize >= operatingDatesWindowLong)
+        return m_leastRecentOperatingDate.secondsSinceEpoch();
+
+    return WTF::nullopt;
+}
+
+void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary()
+{
+    ASSERT(!RunLoop::isMain());
+    
+    auto today = OperatingDate::today();
+    if (m_operatingDatesSize > 0) {
+        if (today <= m_mostRecentOperatingDate)
+            return;
+    }
+
+    int rowsToPrune = m_operatingDatesSize - operatingDatesWindowLong + 1;
+    if (rowsToPrune > 0) {
+        SQLiteStatement deleteLeastRecentOperatingDateStatement(m_database, "DELETE FROM OperatingDates ORDER BY year, month, monthDay LIMIT ?;"_s);
+        if (deleteLeastRecentOperatingDateStatement.prepare() != SQLITE_OK
+            || deleteLeastRecentOperatingDateStatement.bindInt(1, rowsToPrune) != SQLITE_OK
+            || deleteLeastRecentOperatingDateStatement.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary deleteLeastRecentOperatingDateStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+        }
+    }
+    
+    SQLiteStatement insertOperatingDateStatement(m_database, "INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
+    if (insertOperatingDateStatement.prepare() != SQLITE_OK
+        || insertOperatingDateStatement.bindInt(1, today.year()) != SQLITE_OK
+        || insertOperatingDateStatement.bindInt(2, today.month()) != SQLITE_OK
+        || insertOperatingDateStatement.bindInt(3, today.monthDay()) != SQLITE_OK
+        || insertOperatingDateStatement.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary insertOperatingDateStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
+
+    updateOperatingDatesParameters();
+}
+
+bool ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow operatingDatesWindow) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    unsigned operatingDatesWindowInDays = 0;
+    switch (operatingDatesWindow) {
+    case OperatingDatesWindow::Long:
+        operatingDatesWindowInDays = operatingDatesWindowLong;
+        break;
+    case OperatingDatesWindow::Short:
+        operatingDatesWindowInDays = operatingDatesWindowShort;
+        break;
+    case OperatingDatesWindow::ForLiveOnTesting:
+        return WallTime::now() > mostRecentUserInteractionTime + operatingTimeWindowForLiveOnTesting;
+    case OperatingDatesWindow::ForReproTesting:
+        return true;
+    }
+
+    if (m_operatingDatesSize >= operatingDatesWindowInDays) {
+        if (OperatingDate::fromWallTime(mostRecentUserInteractionTime) < m_leastRecentOperatingDate)
+            return true;
+    }
+
+    // If we don't meet the real criteria for an expired statistic, check the user setting for a tighter restriction (mainly for testing).
+    if (this->parameters().timeToLiveUserInteraction) {
+        if (WallTime::now() > mostRecentUserInteractionTime + this->parameters().timeToLiveUserInteraction.value())
+            return true;
+    }
+    return false;
+}
+
+void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
+{
+    // Populate the Operating Dates table with enough days to require pruning.
+    double daysAgoInSeconds = 0;
+    for (unsigned i = 1; i <= operatingDatesWindowLong; i++) {
+        double daysToSubtract = Seconds::fromHours(24 * i).value();
+        daysAgoInSeconds = WallTime::now().secondsSinceEpoch().value() - daysToSubtract;
+        auto dateToInsert = OperatingDate::fromWallTime(WallTime::fromRawSeconds(daysAgoInSeconds));
+
+        SQLiteStatement insertOperatingDateStatement(m_database, "INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
+        if (insertOperatingDateStatement.prepare() != SQLITE_OK
+            || insertOperatingDateStatement.bindInt(1, dateToInsert.year()) != SQLITE_OK
+            || insertOperatingDateStatement.bindInt(2, dateToInsert.month()) != SQLITE_OK
+            || insertOperatingDateStatement.bindInt(3, dateToInsert.monthDay()) != SQLITE_OK
+            || insertOperatingDateStatement.step() != SQLITE_DONE) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting insertOperatingDateStatement failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+        }
+        insertOperatingDateStatement.reset();
+    }
+
+    updateOperatingDatesParameters();
+
+    // Make sure mostRecentUserInteractionTime is the least recent of all entries.
+    daysAgoInSeconds -= Seconds::fromHours(24).value();
+    auto scopedInsertObservedDomainStatement = this->scopedStatement(m_insertObservedDomainStatement, insertObservedDomainQuery, "insertExpiredStatisticForTesting"_s);
+    if (scopedInsertObservedDomainStatement->bindText(RegistrableDomainIndex, domain.string()) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindDouble(LastSeenIndex, daysAgoInSeconds) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(HadUserInteractionIndex, hasUserInteraction) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindDouble(MostRecentUserInteractionTimeIndex, daysAgoInSeconds) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(GrandfatheredIndex, false) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(IsPrevalentIndex, isPrevalent) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(IsVeryPrevalentIndex, false) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(DataRecordsRemovedIndex, 0) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(TimesAccessedAsFirstPartyDueToUserInteractionIndex, 0) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(TimesAccessedAsFirstPartyDueToStorageAccessAPIIndex, 0) != SQLITE_OK
+        || scopedInsertObservedDomainStatement->bindInt(IsScheduledForAllButCookieDataRemovalIndex, isScheduledForAllButCookieDataRemoval) != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (scopedInsertObservedDomainStatement->step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting failed to commit, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
 }
 
 } // namespace WebKit

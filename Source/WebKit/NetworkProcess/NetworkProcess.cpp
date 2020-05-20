@@ -1034,6 +1034,19 @@ void NetworkProcess::mergeStatisticForTesting(PAL::SessionID sessionID, const Re
     }
 }
 
+void NetworkProcess::insertExpiredStatisticForTesting(PAL::SessionID sessionID, const RegistrableDomain& domain, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->insertExpiredStatisticForTesting(domain, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
+        else
+            completionHandler();
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler();
+    }
+}
+
 void NetworkProcess::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String> domains)>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
