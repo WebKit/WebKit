@@ -399,9 +399,6 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
             // If we already have a keyframe effect targeting this property, we should use its unanimated style to determine what the potential
             // start value of the transition shoud be to make sure that we don't account for animated values that would have been blended onto
             // the style applied during the last style resolution.
-
-            // FIXME: NO. We should be applying animations with the current time.
-
             if (auto* unanimatedStyle = keyframeEffect->unanimatedStyle())
                 return RenderStyle::clone(*unanimatedStyle);
 
