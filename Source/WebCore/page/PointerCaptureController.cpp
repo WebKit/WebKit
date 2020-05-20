@@ -460,12 +460,12 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     capturingData.previousTarget = nullptr;
 #endif
 
-    auto& target = capturingData.targetOverride;
-    if (!target) {
+    auto target = [&]() -> RefPtr<Element> {
+        if (capturingData.targetOverride)
+            return capturingData.targetOverride;
         constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
-        // FIXME: The target will always be nullptr when we exit this scope.
-        target = m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
-    }
+        return m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
+    }();
 
     if (!target)
         return;

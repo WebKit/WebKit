@@ -1,3 +1,14 @@
+2020-05-20  Antoine Quint  <graouts@apple.com>
+
+        Potential crash in PointerCaptureController::cancelPointer()
+        https://bugs.webkit.org/show_bug.cgi?id=208347
+        <rdar://problem/59866247>
+
+        Reviewed by David Kilzer and Daniel Bates.
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::cancelPointer):
+
 2020-05-20  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Fix auto repeat with multiple tracks and gutters
