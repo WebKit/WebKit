@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "JSCPtrTag.h"
+
+#include "JSCConfig.h"
 
 namespace JSC {
 
@@ -52,7 +54,8 @@ static const char* ptrTagName(PtrTag tag)
 
 void initializePtrTagLookup()
 {
-    static WTF::PtrTagLookup lookup = { tagForPtr, ptrTagName };
+    WTF::PtrTagLookup& lookup = g_jscConfig.ptrTagLookupRecord;
+    lookup.initialize(tagForPtr, ptrTagName);
     WTF::registerPtrTagLookup(&lookup);
 }
 
