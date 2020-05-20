@@ -1031,6 +1031,8 @@ webkit.org/b/210433 swipe/basic-cached-back-swipe.html [ Pass Crash Timeout ]
 
 webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
 
+webkit.org/b/212091 platform/mac/media/media-source/media-source-change-source.html [ Pass Failure ]
+
 webkit.org/b/212085 [ Mojave Debug ] webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/212085 [ Mojave Debug ] webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 
