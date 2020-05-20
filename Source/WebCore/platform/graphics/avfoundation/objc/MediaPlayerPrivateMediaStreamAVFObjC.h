@@ -139,7 +139,6 @@ private:
 
     MediaTime calculateTimelineOffset(const MediaSample&, double);
     
-    void enqueueVideoSample(MediaSample&);
     void enqueueCorrectedVideoSample(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
 

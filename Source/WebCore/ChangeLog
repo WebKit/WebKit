@@ -1,3 +1,42 @@
+2020-05-20  Youenn Fablet  <youenn@apple.com>
+
+        Allow calling VideoSampleObserver::videoSampleAvailable from a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=212024
+
+        Reviewed by Eric Carlson.
+
+        Allow RealtimeMediaSource::videoSampleAvailable to be called on a background thread, typically the capture thread.
+        Make WebRTC remote sources and mock capture sources do that.
+
+        RealtimeMediaSource is then updating its intrinsic size from the generation thread while updating its size in the main thread.
+        The size() getter can be called from both threads.
+
+        Existing consumers do the following:
+        - media player will hop to the main thread.
+        - media recorder will do processing from the background thread.
+        - WebRTC sender will do processing from the background thread, except when sending black frames where this will still be done on the main thread.
+        This is ok as we ensure either we send black frames on the main thread (and we do not observe the source) or we observe the source to send.
+
+        Follow-ups will migrate the real capture sources as well as migrating media player processing out of the main thread.
+        Covered by existing tests.
+
+        * platform/MediaSample.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::videoSampleAvailable):
+        (WebCore::RealtimeMediaSource::setIntrinsicSize):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac):
+        (WebCore::MockRealtimeVideoSourceMac::updateSampleBuffer):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::OnFrame):
+        (WebCore::RealtimeIncomingVideoSourceCocoa::processNewSample): Deleted.
+
 2020-05-20  Oriol Brufau  <obrufau@igalia.com>
 
         Fix computeMarginLogicalSizeForChild to check auto margins in the right axis
