@@ -1,3 +1,17 @@
+2020-05-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add bubblewrap ... wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=212077
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The bind-mounts are now handled through webkit-bwrap.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.execute_command):
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap: Added.
+
 2020-05-19  Darin Adler  <darin@apple.com>
 
         REGRESSION (r259930): Dictation marker at start of text is removed when added trailing whitespace is collapsed
