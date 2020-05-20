@@ -85,9 +85,18 @@ FOR_EACH_ADDITIONAL_WTF_PTRTAG(WTF_DECLARE_PTRTAG)
 #endif
 
 struct PtrTagLookup {
-    const char* (*tagForPtr)(const void*);
-    const char* (*ptrTagName)(PtrTag);
-    PtrTagLookup* next { nullptr };
+    using TagForPtrFunc = const char* (*)(const void*);
+    using PtrTagNameFunc = const char* (*)(PtrTag);
+
+    void initialize(TagForPtrFunc tagForPtr, PtrTagNameFunc ptrTagName)
+    {
+        this->tagForPtr = tagForPtr;
+        this->ptrTagName = ptrTagName;
+    }
+
+    TagForPtrFunc tagForPtr;
+    PtrTagNameFunc ptrTagName;
+    PtrTagLookup* next;
 };
 
 #if CPU(ARM64E)
