@@ -1,3 +1,18 @@
+2020-05-20  ChangSeok Oh  <changseok@webkit.org>
+
+        Move the TextStream logging definition in VisibleSelection.cpp to the outside of the TREE_DEBUGGING guard
+        https://bugs.webkit.org/show_bug.cgi?id=212127
+
+        Reviewed by Simon Fraser.
+
+        A linking failure occurs after r261819 where ENABLE_TREE_DEBUGGING is disabled.
+        The TextStream logging defining is placed inside the guard while its declaration is not since r218976.
+
+        Build fix, no functionality changed.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::operator<<):
+
 2020-05-20  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility-node-memory-management.html in isolated tree mode.

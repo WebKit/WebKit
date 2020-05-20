@@ -734,21 +734,21 @@ void VisibleSelection::showTreeForThis() const
         end().showAnchorTypeAndOffset();
     }
 }
-    
+
+#endif
+
 TextStream& operator<<(TextStream& stream, const VisibleSelection& v)
 {
     TextStream::GroupScope scope(stream);
     stream << "VisibleSelection " << &v;
-    
+
     stream.dumpProperty("base", v.base());
     stream.dumpProperty("extent", v.extent());
     stream.dumpProperty("start", v.start());
     stream.dumpProperty("end", v.end());
-    
+
     return stream;
 }
-
-#endif
 
 } // namespace WebCore
 
