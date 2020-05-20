@@ -1,3 +1,12 @@
+2020-05-20  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=198195
+        REGRESSION (r244353) [Mac WK2] Layout Test fast/css/sticky/sticky-left-percentage.html is a flaky ImageOnlyFailure
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-05-20  Youenn Fablet  <youenn@apple.com>
 
         Add a test to check for creation and deletion of an audio renderer without playing it

@@ -845,7 +845,7 @@ webkit.org/b/197289 [ Mojave Debug ] webgl/2.0.0/conformance/state/gl-object-get
 
 webkit.org/b/189672 [ Mojave Debug ] webgl/2.0.0/conformance2/textures/misc/tex-new-formats.html [ Skip ]
 
-webkit.org/b/198195 [ Release ] fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnlyFailure ]
+webkit.org/b/198195 fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
