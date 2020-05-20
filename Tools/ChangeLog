@@ -1,3 +1,17 @@
+2020-05-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Bump rr and bst
+        https://bugs.webkit.org/show_bug.cgi?id=212074
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update Buildstream to 1.4.3 which is their latest stable release. Also bump rr to their
+        latest git master commit, which makes it usable in the Flatpak sandbox.
+
+        * buildstream/Pipfile:
+        * buildstream/Pipfile.lock:
+        * buildstream/elements/sdk/rr.bst:
+
 2020-05-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         update-test-expectations-from-bugzilla tool not working with new EWS
