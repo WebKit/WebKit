@@ -71,6 +71,7 @@ public:
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) = 0;
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
+    virtual bool shouldSuppressPasswordEcho() const { return false; };
     
     virtual bool shouldApplyStyle(StyleProperties*, Range*) = 0;
     virtual void didApplyStyle() = 0;

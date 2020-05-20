@@ -167,6 +167,7 @@ struct WebPageCreationParameters {
     int32_t deviceOrientation { 0 };
     bool keyboardIsAttached { false };
     bool canShowWhileLocked { false };
+    bool isCapturingScreen { false };
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;

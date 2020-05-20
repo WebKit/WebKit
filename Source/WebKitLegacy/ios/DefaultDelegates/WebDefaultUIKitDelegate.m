@@ -268,6 +268,11 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 }
 #endif
 
+- (BOOL)shouldSuppressPasswordEcho
+{
+    return NO;
+}
+
 - (BOOL)hasRichlyEditableSelection
 {
     return NO;

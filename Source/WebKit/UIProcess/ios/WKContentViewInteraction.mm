@@ -896,6 +896,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 
     _page->process().updateTextCheckerState();
+    _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
 
     _hasSetUpInteractions = YES;
 }

@@ -830,6 +830,13 @@ bool WebEditorClient::shouldRevealCurrentSelectionAfterInsertion() const
     return true;
 }
 
+bool WebEditorClient::shouldSuppressPasswordEcho() const
+{
+    if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(shouldSuppressPasswordEcho)])
+        return [[m_webView _UIKitDelegateForwarder] shouldSuppressPasswordEcho];
+    return false;
+}
+
 RefPtr<WebCore::DocumentFragment> WebEditorClient::documentFragmentFromDelegate(int index)
 {
     if ([[m_webView _editingDelegateForwarder] respondsToSelector:@selector(documentFragmentForPasteboardItemAtIndex:)]) {

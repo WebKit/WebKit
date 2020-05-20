@@ -1581,6 +1581,12 @@ void WebPageProxy::setShouldRevealCurrentSelectionAfterInsertion(bool shouldReve
         send(Messages::WebPage::SetShouldRevealCurrentSelectionAfterInsertion(shouldRevealCurrentSelectionAfterInsertion));
 }
 
+void WebPageProxy::setScreenIsBeingCaptured(bool captured)
+{
+    if (hasRunningProcess())
+        send(Messages::WebPage::SetScreenIsBeingCaptured(captured));
+}
+
 void WebPageProxy::willOpenAppLink()
 {
     if (m_openingAppLinkActivity && m_openingAppLinkActivity->isValid())

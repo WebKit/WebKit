@@ -245,6 +245,7 @@ private:
 #if ENABLE(ORIENTATION_EVENTS)
     NSUInteger deviceOrientation;
 #endif
+    BOOL shouldSuppressPasswordEcho;
 #endif
     BOOL shouldCloseWithWindow;
     BOOL mainFrameDocumentReady;

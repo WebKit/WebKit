@@ -1,3 +1,18 @@
+2020-05-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Hide password echo when screen is being captured.
+        https://bugs.webkit.org/show_bug.cgi?id=212060
+        <rdar://problem/47653578>
+
+        Reviewed by Wenson Hsieh.
+
+        When the screen is being captured, turn off the password echo. 
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        * page/EditorClient.h:
+        (WebCore::EditorClient::isScreenCaptured const):
+
 2020-05-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette

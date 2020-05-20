@@ -667,6 +667,9 @@ public:
     WebCore::FloatSize overrideScreenSize() const;
     int32_t deviceOrientation() const { return m_deviceOrientation; }
     void didReceiveMobileDocType(bool);
+    
+    bool screenIsBeingCaptured() const { return m_screenIsBeingCaptured; }
+    void setScreenIsBeingCaptured(bool);
 
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
@@ -1016,6 +1019,7 @@ public:
     bool platformPrefersTextLegibilityBasedZoomScaling() const;
 
     void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
+    bool hardwareKeyboardIsAttached() const { return m_keyboardIsAttached; }
 
     void updateStringForFind(const String&);
     
@@ -1990,6 +1994,7 @@ private:
     bool m_hasStablePageScaleFactor { true };
     bool m_isInStableState { true };
     bool m_shouldRevealCurrentSelectionAfterInsertion { true };
+    bool m_screenIsBeingCaptured { false };
     MonotonicTime m_oldestNonStableUpdateVisibleContentRectsTimestamp;
     Seconds m_estimatedLatency { 0 };
     WebCore::FloatSize m_screenSize;

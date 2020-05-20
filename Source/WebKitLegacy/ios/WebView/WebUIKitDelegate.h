@@ -128,6 +128,8 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 
 - (BOOL)shouldRevealCurrentSelectionAfterInsertion;
 
+- (BOOL)shouldSuppressPasswordEcho;
+
 #if ENABLE_ORIENTATION_EVENTS
 - (int)deviceOrientation;
 #endif

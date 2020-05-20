@@ -188,6 +188,7 @@ private:
     void updateStringForFind(const String&) final;
     bool shouldAllowSingleClickToChangeSelection(WebCore::Node&, const WebCore::VisibleSelection&) const final;
     bool shouldRevealCurrentSelectionAfterInsertion() const final;
+    bool shouldSuppressPasswordEcho() const final;
 #endif
 
     bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool isMove) final;

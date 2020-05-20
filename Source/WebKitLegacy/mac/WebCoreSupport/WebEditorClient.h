@@ -149,8 +149,8 @@ private:
     RefPtr<WebCore::DocumentFragment> documentFragmentFromDelegate(int index) final;
     bool performsTwoStepPaste(WebCore::DocumentFragment*) final;
     void updateStringForFind(const String&) final { }
-
     bool shouldRevealCurrentSelectionAfterInsertion() const final;
+    bool shouldSuppressPasswordEcho() const final;
 #endif
 
     bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range& destination, bool isMove) final;

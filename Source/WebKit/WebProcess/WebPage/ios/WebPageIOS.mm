@@ -4292,6 +4292,11 @@ void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCur
     scheduleFullEditorStateUpdate();
 }
 
+void WebPage::setScreenIsBeingCaptured(bool captured)
+{
+    m_screenIsBeingCaptured = captured;
+}
+
 void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
 {
     auto contexts = m_page->editableElementsInRect(searchRect).map([&] (const auto& element) {

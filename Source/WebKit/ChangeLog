@@ -1,3 +1,32 @@
+2020-05-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Hide password echo when screen is being captured.
+        https://bugs.webkit.org/show_bug.cgi?id=212060
+        <rdar://problem/47653578>
+
+        Reviewed by Wenson Hsieh.
+
+        Use the UIScreen state and notification to determine if the
+        screen is being shared or captured. This flag is for all
+        capture methods, Air Play, Screen Recording, etc. If the screen is
+        being captured, turn off the password echo to prevent the password from
+        being leaked.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView _screenCapturedDidChange:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setIsScreenCaptured):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::isScreenCaptured const):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isScreenCaptured const):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setIsScreenCaptured):
+
 2020-05-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette
