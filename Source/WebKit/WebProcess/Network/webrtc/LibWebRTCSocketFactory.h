@@ -37,11 +37,12 @@
 
 namespace WebKit {
 
+class LibWebRTCNetwork;
 class LibWebRTCSocket;
 
 class LibWebRTCSocketFactory {
 public:
-    LibWebRTCSocketFactory() { }
+    LibWebRTCSocketFactory() = default;
 
     void addSocket(LibWebRTCSocket&);
     void removeSocket(LibWebRTCSocket&);
@@ -59,6 +60,9 @@ public:
     
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
+    void setConnection(RefPtr<IPC::Connection>&&);
+    IPC::Connection* connection();
+
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.
     HashMap<WebCore::LibWebRTCSocketIdentifier, LibWebRTCSocket*> m_sockets;
@@ -67,6 +71,8 @@ private:
     HashMap<uint64_t, std::unique_ptr<LibWebRTCResolver>> m_resolvers;
     static uint64_t s_uniqueResolverIdentifier;
     bool m_disableNonLocalhostConnections { false };
+
+    RefPtr<IPC::Connection> m_connection;
 };
 
 } // namespace WebKit

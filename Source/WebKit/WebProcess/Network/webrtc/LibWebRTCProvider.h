@@ -57,6 +57,7 @@ private:
     void unregisterMDNSNames(uint64_t documentIdentifier) final;
     void registerMDNSName(uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
     void disableNonLocalhostConnections() final;
+    void startedNetworkThread() final;
 
 #if PLATFORM(COCOA)
     std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() final;

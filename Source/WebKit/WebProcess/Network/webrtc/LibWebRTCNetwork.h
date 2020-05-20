@@ -41,10 +41,12 @@ public:
     LibWebRTCNetwork() = default;
     ~LibWebRTCNetwork();
 
+    IPC::Connection* connection() { return m_connection.get(); }
     void setConnection(RefPtr<IPC::Connection>&&);
+
     void networkProcessCrashed();
 
-    bool isActive() const;
+    bool isActive() const { return m_isActive; }
 
 #if USE(LIBWEBRTC)
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -60,6 +62,8 @@ public:
 #if ENABLE(WEB_RTC)
     WebMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
 #endif
+
+    void setAsActive();
 
 private:
 #if USE(LIBWEBRTC)
@@ -81,6 +85,7 @@ private:
 #if ENABLE(WEB_RTC)
     WebMDNSRegister m_mdnsRegister;
 #endif
+    bool m_isActive { false };
     RefPtr<IPC::Connection> m_connection;
 };
 

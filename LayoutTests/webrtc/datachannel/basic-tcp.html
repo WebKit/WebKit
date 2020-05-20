@@ -62,7 +62,7 @@ promise_test((test) => {
                 remoteChannel = event.channel;
                 remoteChannel.onmessage = receiveMessages;
             };
-        }, { filterOutICECandidate: (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("tcp") == -1; } });
+        }, { filterOutICECandidate: (candidate) => { return !candidate || candidate.candidate.toLowerCase().indexOf("tcp") !== -1; } });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
 }, "Basic data channel exchange from offerer to receiver using TCP only");
