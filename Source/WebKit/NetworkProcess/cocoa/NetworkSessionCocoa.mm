@@ -950,7 +950,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     auto* download = _session->networkProcess().downloadManager().download(downloadID);
     if (!download)
         return;
-    download->didReceiveData(bytesWritten);
+    download->didReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes

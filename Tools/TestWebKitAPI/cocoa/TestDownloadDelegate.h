@@ -30,7 +30,7 @@
 @property (nonatomic, copy) void (^downloadDidStart)(_WKDownload *);
 @property (nonatomic, copy) void (^didReceiveServerRedirectToURL)(_WKDownload *, NSURL *);
 @property (nonatomic, copy) void (^didReceiveResponse)(_WKDownload *, NSURLResponse *);
-@property (nonatomic, copy) void (^didReceiveData)(_WKDownload *, uint64_t);
+@property (nonatomic, copy) void (^didWriteData)(_WKDownload *, uint64_t, uint64_t, uint64_t);
 @property (nonatomic, copy) void (^decideDestinationWithSuggestedFilename)(_WKDownload *, NSString *, void (^)(BOOL, NSString *));
 @property (nonatomic, copy) void (^downloadDidFinish)(_WKDownload *);
 @property (nonatomic, copy) void (^didFailWithError)(_WKDownload *, NSError *);

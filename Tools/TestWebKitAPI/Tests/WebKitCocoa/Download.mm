@@ -1223,7 +1223,7 @@ TEST(_WKDownload, Resume)
         completionHandler(_WKNavigationResponsePolicyBecomeDownload);
     };
 
-    enum class Callback : uint8_t { Start, ReceiveData, DecideDestination, CreateDestination, Cancel, Finish };
+    enum class Callback : uint8_t { Start, WriteData, DecideDestination, CreateDestination, Cancel, Finish };
     __block Vector<Callback> callbacks;
     __block bool didCancel = false;
     __block bool didFinish = false;
@@ -1236,9 +1236,11 @@ TEST(_WKDownload, Resume)
         callbacks.append(Callback::DecideDestination);
         completionHandler(YES, [tempDir URLByAppendingPathComponent:suggestedFilename].path);
     };
-    downloadDelegate.get().didReceiveData = ^(_WKDownload *download, uint64_t length) {
-        callbacks.append(Callback::ReceiveData);
-        EXPECT_EQ(length, 5000u);
+    downloadDelegate.get().didWriteData = ^(_WKDownload *download, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) {
+        callbacks.append(Callback::WriteData);
+        EXPECT_EQ(bytesWritten, 5000u);
+        EXPECT_EQ(totalBytesWritten, didCancel ? 10000u : 5000u);
+        EXPECT_EQ(totalBytesExpectedToWrite, 10000u);
         receivedData = true;
     };
     downloadDelegate.get().downloadDidStart = ^(_WKDownload *downloadFromDelegate) {
@@ -1274,9 +1276,9 @@ TEST(_WKDownload, Resume)
     EXPECT_EQ(callbacks[0], Callback::Start);
     EXPECT_EQ(callbacks[1], Callback::DecideDestination);
     EXPECT_EQ(callbacks[2], Callback::CreateDestination);
-    EXPECT_EQ(callbacks[3], Callback::ReceiveData);
+    EXPECT_EQ(callbacks[3], Callback::WriteData);
     EXPECT_EQ(callbacks[4], Callback::Cancel);
-    EXPECT_EQ(callbacks[5], Callback::ReceiveData);
+    EXPECT_EQ(callbacks[5], Callback::WriteData);
     EXPECT_EQ(callbacks[6], Callback::Finish);
 
     // Give CFNetwork enough time to unlink the downloaded file if it would have.

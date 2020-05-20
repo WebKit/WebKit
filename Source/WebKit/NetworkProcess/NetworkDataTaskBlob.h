@@ -108,6 +108,7 @@ private:
     long long m_rangeEnd { kPositionNotSpecified };
     long long m_rangeSuffixLength { kPositionNotSpecified };
     long long m_totalSize { 0 };
+    long long m_downloadBytesWritten { 0 };
     long long m_totalRemainingSize { 0 };
     long long m_currentItemReadSize { 0 };
     unsigned m_sizeItemCount { 0 };

@@ -27,7 +27,7 @@ messages -> DownloadProxy {
     DecideDestinationWithSuggestedFilenameAsync(WebKit::DownloadID downloadID, String suggestedFilename)
 
     DidReceiveResponse(WebCore::ResourceResponse response)
-    DidReceiveData(uint64_t length)
+    DidReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
     DidCreateDestination(String path)
     DidFinish()
     DidFail(WebCore::ResourceError error, IPC::DataReference resumeData)

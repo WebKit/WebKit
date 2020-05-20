@@ -166,12 +166,12 @@ void DownloadProxy::didReceiveResponse(const ResourceResponse& response)
     m_processPool->downloadClient().didReceiveResponse(*this, response);
 }
 
-void DownloadProxy::didReceiveData(uint64_t length)
+void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
     if (!m_processPool)
         return;
 
-    m_processPool->downloadClient().didReceiveData(*this, length);
+    m_processPool->downloadClient().didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downloadID, const String& suggestedFilename)

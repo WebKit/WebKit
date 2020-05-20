@@ -68,7 +68,7 @@ private:
         webkitDownloadSetResponse(download.get(), response.get());
     }
 
-    void didReceiveData(DownloadProxy& downloadProxy, uint64_t length) override
+    void didReceiveData(DownloadProxy& downloadProxy, uint64_t length, uint64_t, uint64_t) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(&downloadProxy);
         webkitDownloadNotifyProgress(download.get(), length);

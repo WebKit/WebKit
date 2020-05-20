@@ -35,6 +35,7 @@
 - (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response;
 - (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length;
+- (void)_download:(_WKDownload *)download didWriteData:(uint64_t)bytesWritten totalBytesWritten:(uint64_t)totalBytesWritten totalBytesExpectedToWrite:(uint64_t)totalBytesExpectedToWrite WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler;
 - (void)_downloadDidFinish:(_WKDownload *)download;
 - (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error;

@@ -483,15 +483,15 @@ bool NetworkDataTaskBlob::writeDownload(const char* data, int bytesRead)
 {
     ASSERT(isDownload());
     int bytesWritten = FileSystem::writeToFile(m_downloadFile, data, bytesRead);
-    if (bytesWritten == -1) {
+    if (bytesWritten != bytesRead) {
         didFailDownload(cancelledError(m_firstRequest));
         return false;
     }
 
-    ASSERT(bytesWritten == bytesRead);
+    m_downloadBytesWritten += bytesWritten;
     auto* download = m_networkProcess->downloadManager().download(m_pendingDownloadID);
     ASSERT(download);
-    download->didReceiveData(bytesWritten);
+    download->didReceiveData(bytesWritten, m_downloadBytesWritten, m_totalSize);
     return true;
 }
 

@@ -1,3 +1,45 @@
+2020-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add _WKDownloadDelegate callback including totalBytesWritten
+        https://bugs.webkit.org/show_bug.cgi?id=212110
+        <rdar://problem/63358981>
+
+        Reviewed by Geoffrey Garen.
+
+        Without this new callback, after resuming a download, a client has no way to tell whether the download was successfully
+        resumed by a server that has proper etag and range request support or whether the download began at the beginning again.
+        A client was guessing that the download did not restart, causing incorrect reported download sizes when the download did restart.
+        Luckily, the data on disk was not corrupted, just the UI.  This allows us to fix the UI.
+
+        Testing covered by expanding the API test for resuming downloads.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveData):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::writeDownload):
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didReceiveData):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveData):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::expectedContentLength const): Deleted.
+        (WebKit::DownloadProxy::setExpectedContentLength): Deleted.
+        (WebKit::DownloadProxy::bytesLoaded const): Deleted.
+        (WebKit::DownloadProxy::setBytesLoaded): Deleted.
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2020-05-19  Kate Cheney  <katherine_cheney@apple.com>
 
         ITP database should finalize all prepared statements before closing

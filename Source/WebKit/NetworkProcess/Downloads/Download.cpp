@@ -117,16 +117,16 @@ void Download::didCreateDestination(const String& path)
     send(Messages::DownloadProxy::DidCreateDestination(path));
 }
 
-void Download::didReceiveData(uint64_t length)
+void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
     if (!m_hasReceivedData) {
         RELEASE_LOG_IF_ALLOWED("didReceiveData: Started receiving data (id = %" PRIu64 ")", downloadID().downloadID());
         m_hasReceivedData = true;
     }
     
-    m_monitor.downloadReceivedBytes(length);
+    m_monitor.downloadReceivedBytes(bytesWritten);
 
-    send(Messages::DownloadProxy::DidReceiveData(length));
+    send(Messages::DownloadProxy::DidReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite));
 }
 
 void Download::didFinish()

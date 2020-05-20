@@ -46,10 +46,10 @@
         _didReceiveResponse(download, response);
 }
 
-- (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length
+- (void)_download:(_WKDownload *)download didWriteData:(uint64_t)bytesWritten totalBytesWritten:(uint64_t)totalBytesWritten totalBytesExpectedToWrite:(uint64_t)totalBytesExpectedToWrite
 {
-    if (_didReceiveData)
-        _didReceiveData(download, length);
+    if (_didWriteData)
+        _didWriteData(download, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 - (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler

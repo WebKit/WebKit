@@ -992,7 +992,7 @@ void NetworkDataTaskSoup::didWriteDownload(gsize bytesWritten)
     ASSERT(bytesWritten == m_readBuffer.size());
     auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
     ASSERT(download);
-    download->didReceiveData(bytesWritten);
+    download->didReceiveData(bytesWritten, 0, 0);
     read();
 }
 

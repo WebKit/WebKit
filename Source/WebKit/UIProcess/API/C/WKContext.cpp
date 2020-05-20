@@ -196,7 +196,7 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
                 return;
             m_client.didReceiveResponse(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(API::URLResponse::create(response).ptr()), m_client.base.clientInfo);
         }
-        void didReceiveData(WebKit::DownloadProxy& downloadProxy, uint64_t length) final
+        void didReceiveData(WebKit::DownloadProxy& downloadProxy, uint64_t length, uint64_t, uint64_t) final
         {
             if (!m_client.didReceiveData)
                 return;

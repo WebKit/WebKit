@@ -49,7 +49,7 @@ private:
     // From API::DownloadClient
     void didStart(DownloadProxy&) final;
     void didReceiveResponse(DownloadProxy&, const WebCore::ResourceResponse&) final;
-    void didReceiveData(DownloadProxy&, uint64_t length) final;
+    void didReceiveData(DownloadProxy&, uint64_t, uint64_t, uint64_t) final;
     void decideDestinationWithSuggestedFilename(DownloadProxy&, const String& suggestedFilename, Function<void(AllowOverwrite, String)>&&) final;
     void didFinish(DownloadProxy&) final;
     void didFail(DownloadProxy&, const WebCore::ResourceError&) final;
@@ -74,6 +74,7 @@ private:
         bool downloadDidStart : 1;            
         bool downloadDidReceiveResponse : 1;
         bool downloadDidReceiveData : 1;
+        bool downloadDidWriteDataTotalBytesWrittenTotalBytesExpectedToWrite : 1;
         bool downloadDecideDestinationWithSuggestedFilenameAllowOverwrite : 1;
         bool downloadDecideDestinationWithSuggestedFilenameCompletionHandler : 1;
         bool downloadDidFinish : 1;
