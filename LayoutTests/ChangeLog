@@ -1,3 +1,17 @@
+2020-05-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] <img> tag needs to support video formats
+        https://bugs.webkit.org/show_bug.cgi?id=180370
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update TestExpectations for tests using videos for the <img> tag.
+        
+        * http/conf/flatpak-httpd.conf:
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-05-20  Alan Kinsley  <zalan@apple.com>
 
         [LFC][TFC] Internal table boxes should take collapsed border into account

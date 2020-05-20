@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class MediaSampleGStreamer final : public MediaSample {
+class MediaSampleGStreamer : public MediaSample {
 public:
     static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId)
     {
@@ -55,10 +55,12 @@ public:
     PlatformSample platformSample() override;
     void dump(PrintStream&) const override;
 
-private:
+protected:
     MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const AtomString& trackId);
-    MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId);
     virtual ~MediaSampleGStreamer() = default;
+
+private:
+    MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId);
 
     MediaTime m_pts;
     MediaTime m_dts;

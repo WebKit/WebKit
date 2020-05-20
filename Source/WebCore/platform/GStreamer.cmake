@@ -13,6 +13,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
         platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
         platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp
+        platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
         platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp

@@ -42,6 +42,8 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
     // Right now the TextureMapper only supports chromas with one plane
     ASSERT(GST_VIDEO_INFO_N_PLANES(&videoInfo) == 1);
 
+    m_hasAlpha = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo);
+
     GstBuffer* buffer = gst_sample_get_buffer(sample);
     if (UNLIKELY(!GST_IS_BUFFER(buffer)))
         return;

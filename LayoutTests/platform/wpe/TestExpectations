@@ -369,11 +369,6 @@ Bug(WPE) fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
 Bug(WPE) fast/hidpi/pdf-image-scaled.html [ Skip ]
 
-# Loading MP4 as an image is not supported
-webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
-webkit.org/b/180370 fast/images/animated-image-mp4-crash.html [ Skip ]
-webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
-
 # Only Mac has implemented DictionaryLookup
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 

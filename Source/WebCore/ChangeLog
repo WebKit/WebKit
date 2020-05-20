@@ -1,3 +1,56 @@
+2020-05-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] <img> tag needs to support video formats
+        https://bugs.webkit.org/show_bug.cgi?id=180370
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        GStreamer implementation of the ImageDecoder. It currently doesn't support zero-copy
+        rendering though due to the the NativeImagePtr requirement.
+
+        * platform/GStreamer.cmake:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType):
+        * platform/graphics/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoder::supportsMediaType):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp: Added.
+        (WebCore::toSample):
+        (WebCore::ImageDecoderGStreamer::create):
+        (WebCore::ImageDecoderGStreamer::ImageDecoderGStreamer):
+        (WebCore::ImageDecoderGStreamer::supportsContainerType):
+        (WebCore::ImageDecoderGStreamer::canDecodeType):
+        (WebCore::ImageDecoderGStreamer::encodedDataStatus const):
+        (WebCore::ImageDecoderGStreamer::size const):
+        (WebCore::ImageDecoderGStreamer::repetitionCount const):
+        (WebCore::ImageDecoderGStreamer::uti const):
+        (WebCore::ImageDecoderGStreamer::frameOrientationAtIndex const):
+        (WebCore::ImageDecoderGStreamer::frameDurationAtIndex const):
+        (WebCore::ImageDecoderGStreamer::frameHasAlphaAtIndex const):
+        (WebCore::ImageDecoderGStreamer::frameBytesAtIndex const):
+        (WebCore::ImageDecoderGStreamer::createFrameImageAtIndex):
+        (WebCore::ImageDecoderGStreamer::setData):
+        (WebCore::ImageDecoderGStreamer::clearFrameBufferCache):
+        (WebCore::ImageDecoderGStreamer::sampleAtIndex const):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::decodebinPadAddedCallback):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::connectDecoderPad):
+        (WebCore::ImageDecoderGStreamer::handleSample):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::handleMessage):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::preparePipeline):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::run):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::encodedDataStatus const):
+        (WebCore::ImageDecoderGStreamer::pushEncodedData):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h: Added.
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        (WebCore::ImageGStreamer::createImage):
+        (WebCore::ImageGStreamer::image):
+        (WebCore::ImageGStreamer::setCropRect):
+        (WebCore::ImageGStreamer::rect):
+        (WebCore::ImageGStreamer::hasAlpha const):
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (WebCore::ImageGStreamer::ImageGStreamer):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+
 2020-05-20  Andy Estes  <aestes@apple.com>
 
         [Mac] UI processes spin when creating the "Share" context menu item

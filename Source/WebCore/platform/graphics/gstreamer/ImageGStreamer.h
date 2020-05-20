@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef ImageGStreamer_h
-#define ImageGStreamer_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -37,42 +36,44 @@ namespace WebCore {
 class IntSize;
 
 class ImageGStreamer : public RefCounted<ImageGStreamer> {
-    public:
-        static RefPtr<ImageGStreamer> createImage(GstSample* sample)
-        {
-            auto image = adoptRef(new ImageGStreamer(sample));
-            if (!image->m_image)
-                return nullptr;
+public:
+    static RefPtr<ImageGStreamer> createImage(GstSample* sample)
+    {
+        auto image = adoptRef(new ImageGStreamer(sample));
+        if (!image->m_image)
+            return nullptr;
 
-            return image;
-        }
-        ~ImageGStreamer();
+        return image;
+    }
+    ~ImageGStreamer();
 
-        BitmapImage& image()
-        {
-            ASSERT(m_image);
-            return *m_image.get();
-        }
+    BitmapImage& image()
+    {
+        ASSERT(m_image);
+        return *m_image.get();
+    }
 
-        void setCropRect(FloatRect rect) { m_cropRect = rect; }
-        FloatRect rect()
-        {
-            ASSERT(m_image);
-            if (!m_cropRect.isEmpty())
-                return FloatRect(m_cropRect);
-            return FloatRect(0, 0, m_image->size().width(), m_image->size().height());
-        }
+    void setCropRect(FloatRect rect) { m_cropRect = rect; }
+    FloatRect rect()
+    {
+        ASSERT(m_image);
+        if (!m_cropRect.isEmpty())
+            return FloatRect(m_cropRect);
+        return FloatRect(0, 0, m_image->size().width(), m_image->size().height());
+    }
 
-    private:
-        ImageGStreamer(GstSample*);
-        RefPtr<BitmapImage> m_image;
-        FloatRect m_cropRect;
+    bool hasAlpha() const { return m_hasAlpha; }
+
+private:
+    ImageGStreamer(GstSample*);
+    RefPtr<BitmapImage> m_image;
+    FloatRect m_cropRect;
 #if USE(CAIRO)
-        GstVideoFrame m_videoFrame;
-        bool m_frameMapped { false };
+    GstVideoFrame m_videoFrame;
+    bool m_frameMapped { false };
 #endif
-    };
-}
+    bool m_hasAlpha { false };
+};
 
-#endif // USE(GSTREAMER)
-#endif
+}
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

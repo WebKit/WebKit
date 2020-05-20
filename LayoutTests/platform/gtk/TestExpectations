@@ -1068,11 +1068,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure Pass ]
 
-# Loading MP4 as an image is not supported by GTK
-webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
-webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
-webkit.org/b/180370 fast/images/animated-image-mp4-crash.html [ Skip ]
-
 # GTK ought to support async clipboard
 webkit.org/b/211979 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
 webkit.org/b/211979 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
