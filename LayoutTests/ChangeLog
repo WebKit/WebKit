@@ -1,3 +1,21 @@
+2020-05-19  Daniel Bates  <dabates@apple.com>
+
+        Move editing/mac/spelling/editing-word-with-marker-1.html to editing/spelling
+        https://bugs.webkit.org/show_bug.cgi?id=211813
+
+        Reviewed by Simon Fraser.
+
+        As of r261796 this test runs on iOS. It is a misnomer for it to be in a Mac-specific
+        test directory. Let's move it to a platform-independent one.
+
+        I fixed up the external JavaScript files referenced in the test to be relative to its
+        new location. All other lines are identical.
+
+        * editing/spelling/editing-word-with-marker-1-expected.txt: Renamed from LayoutTests/editing/mac/spelling/editing-word-with-marker-1-expected.txt.
+        * editing/spelling/editing-word-with-marker-1.html: Renamed from LayoutTests/editing/mac/spelling/editing-word-with-marker-1.html.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-05-19  Kate Cheney  <katherine_cheney@apple.com>
 
         <rdar://problem/57979087>
