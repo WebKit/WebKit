@@ -1,3 +1,49 @@
+2020-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Enabling the remaining unskippable CSS3 tests
+        and providing the necessary baselines.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css3/filters: Added.
+        * platform/wpe/css3/filters/composited-during-animation-layertree-expected.txt: Added.
+        * platform/wpe/css3/filters/composited-during-transition-layertree-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-blur-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-blur-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-brightness-clamping-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-brightness-clamping-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-brightness-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-brightness-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-combined-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-combined-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-contrast-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-contrast-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-drop-shadow-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-drop-shadow-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-grayscale-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-grayscale-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-hue-rotate-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-hue-rotate-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-invert-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-invert-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-opacity-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-opacity-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-reference-composite-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-reference-composite-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-reference-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-reference-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-reference-ordering-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-reference-ordering-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-saturate-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-saturate-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-sepia-expected.txt: Added.
+        * platform/wpe/css3/filters/effect-sepia-hw-expected.txt: Added.
+        * platform/wpe/css3/filters/regions-expanding-expected.txt: Added.
+        * platform/wpe/css3/masking: Added.
+        * platform/wpe/css3/masking/clip-path-circle-border-box-expected.txt: Added.
+        * platform/wpe/css3/masking/clip-path-circle-content-box-expected.txt: Added.
+        * platform/wpe/css3/masking/clip-path-circle-padding-box-expected.txt: Added.
+        * platform/wpe/css3/masking/mask-luminance-png-expected.txt: Added.
+
 2020-05-19  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Update some expectations
