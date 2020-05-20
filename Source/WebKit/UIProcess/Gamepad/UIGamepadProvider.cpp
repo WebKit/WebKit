@@ -223,7 +223,7 @@ Vector<GamepadData> UIGamepadProvider::snapshotGamepads()
     return gamepadDatas;
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(MANETTE)
 
 void UIGamepadProvider::platformSetDefaultGamepadProvider()
 {
@@ -244,7 +244,7 @@ void UIGamepadProvider::platformStartMonitoringInput()
 {
 }
 
-#endif // !PLATFORM(MAC)
+#endif // !PLATFORM(COCOA) && !USE(MANETTE)
 
 }
 

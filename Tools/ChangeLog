@@ -1,3 +1,17 @@
+2020-05-20  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette
+        https://bugs.webkit.org/show_bug.cgi?id=133854
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch brings initial GAMEPAD API support to the gtk port. We use libmanette,
+        a simple GObject game controller library to handle gamepad connection and input.
+        In particular, we use libmanette-0.2.4 which is the latest version and minimum
+        version to build in c++.
+
+        * gtk/jhbuild.modules:
+
 2020-05-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Support operating dates in ResourceLoadStatisticsDatabaseStore

@@ -29,6 +29,7 @@
       <dep package="libsecret"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
+      <dep package="manette"/>
       <dep package="openjpeg"/>
       <dep package="wpebackend-fdo"/>
       <if condition-set="linux">
@@ -444,6 +445,17 @@
       <dep package="libgpg-error"/>
     </dependencies>
   </autotools>
+
+  <meson id="manette" mesonargs="-Dintrospection=false -Dvapi=false">
+    <branch repo="ftp.gnome.org"
+            module="/pub/gnome/sources/libmanette/0.2/libmanette-0.2.4.tar.xz"
+            version="0.2.4"
+            hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
 
   <cmake id="openjpeg">
     <branch repo="github-tarball"

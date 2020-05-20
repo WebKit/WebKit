@@ -222,6 +222,9 @@ UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+UIProcess/Gamepad/gtk/UIGamepadProviderGtk.cpp
+UIProcess/Gamepad/manette/UIGamepadProviderManette.cpp
+
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
 UIProcess/Inspector/glib/RemoteInspectorClient.cpp

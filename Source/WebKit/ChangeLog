@@ -1,3 +1,25 @@
+2020-05-20  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette
+        https://bugs.webkit.org/show_bug.cgi?id=133854
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch brings initial GAMEPAD API support to the gtk port. We use libmanette,
+        a simple GObject game controller library to handle gamepad connection and input.
+
+        * SourcesGTK.txt:
+        * UIProcess/Gamepad/UIGamepadProvider.cpp: Add a build flag to void default interface
+        * UIProcess/Gamepad/gtk/UIGamepadProviderGtk.cpp: Added to retrieve WebPageProxy to which
+          a gamepad connects. The returned WebPageProxy handles input events from the gamepad.
+        (WebKit::getWebPageProxy):
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        * UIProcess/Gamepad/manette/UIGamepadProviderManette.cpp: Added.
+        (WebKit::UIGamepadProvider::platformSetDefaultGamepadProvider):
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        (WebKit::UIGamepadProvider::platformStopMonitoringInput):
+        (WebKit::UIGamepadProvider::platformStartMonitoringInput):
+
 2020-05-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Support operating dates in ResourceLoadStatisticsDatabaseStore

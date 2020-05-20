@@ -67,6 +67,9 @@ platform/UserAgentQuirks.cpp
 platform/adwaita/ScrollbarThemeAdwaita.cpp
 platform/adwaita/ThemeAdwaita.cpp
 
+platform/gamepad/manette/ManetteGamepad.cpp
+platform/gamepad/manette/ManetteGamepadProvider.cpp
+
 platform/generic/ScrollAnimatorGeneric.cpp
 
 platform/graphics/GLContext.cpp @no-unify

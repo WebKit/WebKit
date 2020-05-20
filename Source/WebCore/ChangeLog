@@ -1,3 +1,42 @@
+2020-05-20  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette
+        https://bugs.webkit.org/show_bug.cgi?id=133854
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch brings initial GAMEPAD API support to the gtk port. We use libmanette,
+        a simple GObject game controller library to handle gamepad connection and input.
+        This change aims to implement two GAMEPAD API events: 'gamepadconnected' and 'gamepaddisconnected'
+        on top of libmanette. Rest of API will be implemented by following patches.
+
+        No new tests since existing tests can cover this change.
+
+        * PlatformGTK.cmake: Add header & library paths for libmanette.
+        * SourcesGTK.txt:
+        * platform/gamepad/manette/GUniquePtrManette.h: Added to define a smart pointer for ManetteMonitor.
+        * platform/gamepad/manette/ManetteGamepad.cpp: Added. A wrapper class for ManetteDevice.
+          A ManetteGamepad instance is created per a physically connected gamepad. Currently,
+          it is empty but input handling login will be placed in this class.
+        (WebCore::ManetteGamepad::ManetteGamepad):
+        * platform/gamepad/manette/ManetteGamepad.h: Added.
+        * platform/gamepad/manette/ManetteGamepadProvider.cpp: Added. A manager class
+          for ManetteGamepad instances. This class represents ManetteMonitor that
+          handles connection and disconnection of gamepads. Many parts of this class implementation
+          is brought from HIDGamepad.cpp
+        (WebCore::ManetteGamepadProvider::singleton):
+        (WebCore::onDeviceConnected):
+        (WebCore::onDeviceDisconnected):
+        (WebCore::ManetteGamepadProvider::ManetteGamepadProvider):
+        (WebCore::ManetteGamepadProvider::startMonitoringGamepads):
+        (WebCore::ManetteGamepadProvider::stopMonitoringGamepads):
+        (WebCore::ManetteGamepadProvider::deviceConnected):
+        (WebCore::ManetteGamepadProvider::deviceDisconnected):
+        (WebCore::ManetteGamepadProvider::indexForNewlyConnectedDevice):
+        (WebCore::ManetteGamepadProvider::connectionDelayTimerFired):
+        (WebCore::ManetteGamepadProvider::removeGamepadForDevice):
+        * platform/gamepad/manette/ManetteGamepadProvider.h: Added.
+
 2020-05-20  Antoine Quint  <graouts@apple.com>
 
         Potential crash in PointerCaptureController::cancelPointer()
