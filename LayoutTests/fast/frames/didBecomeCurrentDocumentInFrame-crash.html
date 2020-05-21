@@ -1,6 +1,9 @@
 <html>
 <head>
 <script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
 function runTest() {
 	paramElement.appendChild(document.createElement("frame"));
 	objectElement.onbeforeload = () => { preElement.remove(); }

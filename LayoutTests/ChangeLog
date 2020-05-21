@@ -1,3 +1,16 @@
+2020-05-20  Chris Dumez  <cdumez@apple.com>
+
+        (r261946) [ iOS ] fast/frames/didBecomeCurrentDocumentInFrame-crash.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212179
+        <rdar://problem/63469486>
+
+        Unreviewed, add testRunner.dumpAsText() call in the test to get nicer expected
+        result.
+
+        * fast/frames/didBecomeCurrentDocumentInFrame-crash-expected.txt:
+        * fast/frames/didBecomeCurrentDocumentInFrame-crash.html:
+        * platform/win/fast/frames/didBecomeCurrentDocumentInFrame-crash-expected.txt: Removed.
+
 2020-05-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable support for BeforeLoadEvent
