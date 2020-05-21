@@ -57,6 +57,11 @@ public:
 
     WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID);
 
+    void willStartRenderingUpdate();
+    void didCompleteRenderingUpdate();
+
+    Lock& treeMutex() { return m_treeMutex; }
+
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
 
@@ -79,8 +84,21 @@ private:
     void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) override;
 
     void displayDidRefreshOnScrollingThread();
+    void waitForRenderingUpdateCompletionOrTimeout();
+    
+    Seconds maxAllowableRenderingUpdateDurationForSynchronization();
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
+
+    enum class SynchronizationState : uint8_t {
+        Idle,
+        WaitingForRenderingUpdate,
+        InRenderingUpdate,
+        Desynchronized,
+    };
+
+    SynchronizationState m_state { SynchronizationState::Idle };
+    Condition m_stateCondition;
 };
 
 } // namespace WebCore

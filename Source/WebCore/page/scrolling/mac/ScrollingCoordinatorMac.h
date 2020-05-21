@@ -46,6 +46,9 @@ public:
 private:
     void scheduleTreeStateCommit() final;
 
+    void willStartRenderingUpdate() final;
+    void didCompleteRenderingUpdate() final;
+
     void updateTiledScrollingIndicator();
 
     void startMonitoringWheelEvents(bool clearLatchingState) final;

@@ -158,9 +158,6 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
         return ScrollingEventResult::DidNotHandleEvent;
     }();
 
-    if (result == ScrollingEventResult::DidHandleEvent)
-        applyLayerPositionsInternal();
-    
     return result;
 }
 
@@ -187,15 +184,19 @@ void ScrollingTree::traverseScrollingTree(VisitorFunction&& visitorFunction)
 
 void ScrollingTree::traverseScrollingTreeRecursive(ScrollingTreeNode& node, const VisitorFunction& visitorFunction)
 {
+    bool scrolledSinceLastCommit = false;
     Optional<FloatPoint> scrollPosition;
-    if (is<ScrollingTreeScrollingNode>(node))
-        scrollPosition = downcast<ScrollingTreeScrollingNode>(node).currentScrollPosition();
+    if (is<ScrollingTreeScrollingNode>(node)) {
+        auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(node);
+        scrollPosition = scrollingNode.currentScrollPosition();
+        scrolledSinceLastCommit = scrollingNode.scrolledSinceLastCommit();
+    }
 
     Optional<FloatPoint> layoutViewportOrigin;
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
-    visitorFunction(node.scrollingNodeID(), node.nodeType(), scrollPosition, layoutViewportOrigin);
+    visitorFunction(node.scrollingNodeID(), node.nodeType(), scrollPosition, layoutViewportOrigin, scrolledSinceLastCommit);
 
     for (auto& child : node.children())
         traverseScrollingTreeRecursive(child.get(), visitorFunction);
@@ -217,9 +218,9 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
     LockHolder locker(m_treeMutex);
 
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
-    
+
     LOG(ScrollingTree, "\nScrollingTree %p commitTreeState", this);
-    
+
     auto* rootNode = scrollingStateTree->rootStateNode();
     if (rootNode
         && (rootStateNodeChanged
@@ -327,7 +328,8 @@ void ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
     }
 
     node->commitStateAfterChildren(*stateNode);
-    
+    node->didCompleteCommitForNode();
+
 #if ENABLE(SCROLLING_THREAD)
     if (is<ScrollingTreeScrollingNode>(*node) && !downcast<ScrollingTreeScrollingNode>(*node).synchronousScrollingReasons().isEmpty())
         state.synchronousScrollingNodes.add(nodeID);
@@ -354,6 +356,7 @@ void ScrollingTree::applyLayerPositions()
 
 void ScrollingTree::applyLayerPositionsInternal()
 {
+    ASSERT(m_treeMutex.isLocked());
     if (!m_rootNode)
         return;
 
@@ -538,6 +541,12 @@ PlatformDisplayID ScrollingTree::displayID()
 {
     LockHolder locker(m_treeStateMutex);
     return m_treeState.displayID;
+}
+
+Optional<unsigned> ScrollingTree::nominalFramesPerSecond()
+{
+    LockHolder locker(m_treeStateMutex);
+    return m_treeState.nominalFramesPerSecond;
 }
 
 void ScrollingTree::setScrollingPerformanceLoggingEnabled(bool flag)

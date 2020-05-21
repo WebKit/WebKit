@@ -90,6 +90,10 @@ enum TracePointCode {
     ParseHTMLEnd,
     DisplayListReplayStart,
     DisplayListReplayEnd,
+    ScrollingThreadRenderUpdateSyncStart,
+    ScrollingThreadRenderUpdateSyncEnd,
+    ScrollingThreadDisplayDidRefreshStart,
+    ScrollingThreadDisplayDidRefreshEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

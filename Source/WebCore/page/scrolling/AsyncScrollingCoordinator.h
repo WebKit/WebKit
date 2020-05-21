@@ -82,6 +82,7 @@ protected:
     WEBCORE_EXPORT String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
     WEBCORE_EXPORT void willCommitTree() override;
+    void synchronizeStateFromScrollingTree();
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
 
@@ -102,7 +103,6 @@ private:
     WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const IntPoint&, ScrollType, ScrollClamping) override;
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
-    WEBCORE_EXPORT void synchronizeStateFromScrollingTree() override;
 
     WEBCORE_EXPORT ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) override;
     WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;

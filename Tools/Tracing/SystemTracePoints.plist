@@ -339,6 +339,30 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Scrolling Sync</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5040</string>
+                 <key>CodeEnd</key>
+                 <string>5041</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Scrolling Thread DisplayDidRefresh</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5042</string>
+                 <key>CodeEnd</key>
+                 <string>5043</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

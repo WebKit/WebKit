@@ -38,7 +38,9 @@
 #include "ScrollingTreeScrollingNode.h"
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -202,6 +204,94 @@ void ThreadedScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID node
 }
 #endif
 
+void ThreadedScrollingTree::willStartRenderingUpdate()
+{
+    ASSERT(isMainThread());
+
+    tracePoint(ScrollingThreadRenderUpdateSyncStart);
+
+    // Wait for the scrolling thread to acquire m_treeMutex. This ensures that any pending wheel events are processed.
+    BinarySemaphore semaphore;
+    ScrollingThread::dispatch([protectedThis = makeRef(*this), &semaphore]() {
+        LockHolder treeLocker(protectedThis->m_treeMutex);
+        semaphore.signal();
+        protectedThis->waitForRenderingUpdateCompletionOrTimeout();
+    });
+    semaphore.wait();
+    m_state = SynchronizationState::InRenderingUpdate;
+}
+
+Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
+{
+    constexpr double allowableFrameFraction = 0.5;
+    auto displayFPS = nominalFramesPerSecond().valueOr(60);
+    Seconds frameDuration = 1_s / (double)displayFPS;
+    return allowableFrameFraction * frameDuration;
+}
+
+// This code allows the main thread about half a frame to complete its rendering udpate. If the main thread
+// is responsive (i.e. managing to render every frame), then we expect to get a didCompleteRenderingUpdate()
+// within 8ms of willStartRenderingUpdate(). We time this via m_stateCondition, which blocks the scrolling
+// thread (with m_treeMutex locked at the start and end) so that we don't handle wheel events while waiting.
+// If the condition times out, we know the main thread is being slow, and allow the scrolling thread to
+// commit layer positions.
+void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+    ASSERT(m_treeMutex.isLocked());
+
+    auto startTime = MonotonicTime::now();
+    auto timeoutTime = startTime + maxAllowableRenderingUpdateDurationForSynchronization();
+
+    bool becameIdle = m_stateCondition.waitUntil(m_treeMutex, timeoutTime, [&] {
+        return m_state == SynchronizationState::Idle;
+    });
+
+    ASSERT(m_treeMutex.isLocked());
+
+    if (!becameIdle) {
+        m_state = SynchronizationState::Desynchronized;
+        // At this point we know the main thread is taking too long in the rendering update,
+        // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
+        applyLayerPositionsInternal();
+        tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
+    } else
+        tracePoint(ScrollingThreadRenderUpdateSyncEnd);
+}
+
+void ThreadedScrollingTree::didCompleteRenderingUpdate()
+{
+    ASSERT(isMainThread());
+    LockHolder treeLocker(m_treeMutex);
+
+    if (m_state == SynchronizationState::InRenderingUpdate)
+        m_stateCondition.notifyOne();
+
+    m_state = SynchronizationState::Idle;
+}
+
+void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
+{
+    TraceScope tracingScope(ScrollingThreadDisplayDidRefreshStart, ScrollingThreadDisplayDidRefreshEnd);
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    LockHolder treeLocker(m_treeMutex);
+
+    if (m_state != SynchronizationState::Idle)
+        applyLayerPositionsInternal();
+
+    switch (m_state) {
+    case SynchronizationState::Idle: {
+        m_state = SynchronizationState::WaitingForRenderingUpdate;
+        break;
+    }
+    case SynchronizationState::WaitingForRenderingUpdate:
+    case SynchronizationState::InRenderingUpdate:
+    case SynchronizationState::Desynchronized:
+        break;
+    }
+}
+
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
 {
     if (displayID != this->displayID())
@@ -214,11 +304,6 @@ void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
         protectedThis->displayDidRefreshOnScrollingThread();
     });
 #endif
-}
-
-void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
-{
-    ASSERT(ScrollingThread::isCurrentThread());
 }
 
 } // namespace WebCore

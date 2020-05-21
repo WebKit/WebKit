@@ -1,3 +1,74 @@
+2020-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS] Scrolling synchronization part 1: Have the scrolling thread wait half a frame for the main thread to complete the rendering update
+        https://bugs.webkit.org/show_bug.cgi?id=212168
+
+        Reviewed by Tim Horton.
+
+        Currently the scrolling thread is a free-running thread that moves layers around in response
+        to wheel events, and asynchronously posts data about scrolled layers back to the main thread.
+        That results in an almost guaranteed lack of synchronization between the displayed layer
+        positions, and the web-exposed values for scroll position (element.scrollTop, window.pageYOffset etc).
+        This is a frequent source of stuttering or jumpy web content when scrolling.
+
+        The first step to fixing this is to synchronize the scrolling thread layer positions
+        and the main thread state for the case where the main thread is responsive enough to
+        render once per frame. This is achieved as follow:
+            - When the main thread is starting a rendering update, Page::updateRendering() informs
+              the scrolling tree via ScrollingCoordinatorMac::willStartRenderingUpdate(). This
+              atomically waits for the scrolling thread to take the m_treeMutex (via a BinarySemaphore)
+              and starts waiting on the m_stateCondition Condition. Now the main thread pulls the
+              state of the scrolling tree via synchronizeStateFromScrollingTree() and uses it for
+              the rendering update.
+            - If the rendering update finishes within half a frame (8ms), then m_stateCondition
+              is released, and the scrolling thread assumes that the main thread is going to
+              commit layers rapidly enough to preserve 60fps scrolling.
+            - If the rendering update takes too long, m_stateCondition times out, and the scrolling
+              thread applies layer positions, triggering a CA commit on that thread.
+
+        We no longer apply layer positions directly when handling wheel events.
+
+        synchronizeStateFromScrollingTree() has to only pull state from nodes that have moved on the scrolling thread,
+        so track that via ScrollingTreeScrollingNode::scrolledSinceLastCommit() and adjust the visitor function to
+        make it available during scrolling tree traversal.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        (WebCore::Page::finalizeRenderingUpdate):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::synchronizeStateFromScrollingTree):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::willStartRenderingUpdate):
+        (WebCore::ScrollingCoordinator::didCompleteRenderingUpdate):
+        (WebCore::ScrollingCoordinator::synchronizeStateFromScrollingTree): Deleted.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::traverseScrollingTreeRecursive):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNodeRecursive):
+        (WebCore::ScrollingTree::applyLayerPositionsInternal):
+        (WebCore::ScrollingTree::nominalFramesPerSecond):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::didCompleteCommitForNode):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::didCompleteCommitForNode):
+        (WebCore::ScrollingTreeScrollingNode::currentScrollPositionChanged):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::willStartRenderingUpdate):
+        (WebCore::ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization):
+        (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+        (WebCore::ThreadedScrollingTree::didCompleteRenderingUpdate):
+        (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+        * page/scrolling/ThreadedScrollingTree.h:
+        (WebCore::ThreadedScrollingTree::treeMutex):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::willStartRenderingUpdate):
+        (WebCore::ScrollingCoordinatorMac::didCompleteRenderingUpdate):
+
 2020-05-20  Chris Fleizach  <cfleizach@apple.com>
 
         REGRESSION (iOS 13.4.1): SpeechSynthesisUtterance.onend event won't fire on cancel().

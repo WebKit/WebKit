@@ -110,6 +110,18 @@ void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
     updateTiledScrollingIndicator();
 }
 
+void ScrollingCoordinatorMac::willStartRenderingUpdate()
+{
+    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    threadedScrollingTree->willStartRenderingUpdate();
+    synchronizeStateFromScrollingTree();
+}
+
+void ScrollingCoordinatorMac::didCompleteRenderingUpdate()
+{
+    downcast<ThreadedScrollingTree>(scrollingTree())->didCompleteRenderingUpdate();
+}
+
 void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 {
     FrameView* frameView = m_page->mainFrame().view();

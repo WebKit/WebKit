@@ -90,7 +90,7 @@ public:
     
     WEBCORE_EXPORT ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
-    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin)>;
+    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit)>;
     void traverseScrollingTree(VisitorFunction&&);
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
@@ -188,11 +188,14 @@ protected:
 
     WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
+    Optional<unsigned> nominalFramesPerSecond();
+
+    void applyLayerPositionsInternal();
+    Lock m_treeMutex; // Protects the scrolling tree.
+
 private:
     void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&);
     virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) { }
-
-    void applyLayerPositionsInternal();
 
     void applyLayerPositionsRecursive(ScrollingTreeNode&);
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
@@ -201,8 +204,6 @@ private:
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
-
-    Lock m_treeMutex; // Protects the scrolling tree.
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 

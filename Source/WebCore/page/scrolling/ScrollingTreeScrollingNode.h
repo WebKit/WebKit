@@ -52,6 +52,7 @@ public:
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
+    void didCompleteCommitForNode() final;
 
     virtual bool canHandleWheelEvent(const PlatformWheelEvent&) const;
     virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
@@ -103,6 +104,8 @@ public:
     bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
 
     bool eventCanScrollContents(const PlatformWheelEvent&) const;
+    
+    bool scrolledSinceLastCommit() const { return m_scrolledSinceLastCommit; }
 
     const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
@@ -162,6 +165,7 @@ private:
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif
     bool m_isFirstCommit { true };
+    bool m_scrolledSinceLastCommit { false };
 
     LayerRepresentation m_scrollContainerLayer;
     LayerRepresentation m_scrolledContentsLayer;

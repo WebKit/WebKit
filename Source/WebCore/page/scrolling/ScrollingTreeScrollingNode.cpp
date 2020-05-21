@@ -124,6 +124,11 @@ void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
     m_isFirstCommit = false;
 }
 
+void ScrollingTreeScrollingNode::didCompleteCommitForNode()
+{
+    m_scrolledSinceLastCommit = false;
+}
+
 bool ScrollingTreeScrollingNode::isLatchedNode() const
 {
     return scrollingTree().latchedNodeID() == scrollingNodeID();
@@ -250,6 +255,7 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
 void ScrollingTreeScrollingNode::currentScrollPositionChanged()
 {
     scrollingTree().scrollingTreeNodeDidScroll(*this);
+    m_scrolledSinceLastCommit = true;
 }
 
 bool ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect>)

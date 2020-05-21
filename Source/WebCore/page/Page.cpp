@@ -1360,6 +1360,11 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
+#if ENABLE(ASYNC_SCROLLING)
+    if (auto* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->willStartRenderingUpdate();
+#endif
+
     // Timestamps should not change while serving the rendering update steps.
     Vector<WeakPtr<Document>> initialDocuments;
     forEachDocument([&initialDocuments] (Document& document) {
@@ -1478,6 +1483,8 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
         scrollingCoordinator->commitTreeStateIfNeeded();
         if (flags.contains(FinalizeRenderingUpdateFlags::ApplyScrollingTreeLayerPositions))
             scrollingCoordinator->applyScrollingTreeLayerPositions();
+            
+        scrollingCoordinator->didCompleteRenderingUpdate();
     }
 #endif
 }
