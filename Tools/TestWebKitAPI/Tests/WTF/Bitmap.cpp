@@ -70,6 +70,16 @@ static constexpr bool expectedBits2[size] = {
     false, true,  false, true,   true,  true,  true,  true,
 };
 
+static constexpr bool expectedSmallBits1[smallSize] = {
+    false, true, true,  false,  true,  false, false, true,
+    true,
+};
+
+static constexpr bool expectedSmallBits2[smallSize] = {
+    true,  true, false, false,  false, false, true,  true,
+    false,
+};
+
 constexpr size_t countBits(const bool boolArray[], size_t size)
 {
     size_t result = 0;
@@ -90,7 +100,9 @@ constexpr size_t expectedNumberOfSetBits2 = countBits(expectedBits2, size);
     Bitmap<size, WordType> bitmap3; /* Same as bitmap2. */ \
     Bitmap<size, WordType> bitmapFilled; \
     Bitmap<smallSize, WordType> bitmapSmallZeroed; \
-    Bitmap<smallSize, WordType> bitmapSmallFilled;
+    Bitmap<smallSize, WordType> bitmapSmallFilled; \
+    Bitmap<smallSize, WordType> bitmapSmall1; /* Will hold values specified in expectedSmallBits1. */ \
+    Bitmap<smallSize, WordType> bitmapSmall2; /* Will hold values specified in expectedSmallBits2. */ \
 
 #define DECLARE_AND_INIT_BITMAPS_FOR_TEST() \
     DECLARE_BITMAPS_FOR_TEST() \
@@ -100,8 +112,11 @@ constexpr size_t expectedNumberOfSetBits2 = countBits(expectedBits2, size);
         bitmap3.set(i, expectedBits2[i]); \
         bitmapFilled.set(i); \
     } \
-    for (size_t i = 0; i < smallSize; ++i) \
-        bitmapSmallFilled.set(i);
+    for (size_t i = 0; i < smallSize; ++i) { \
+        bitmapSmall1.set(i, expectedSmallBits1[i]); \
+        bitmapSmall2.set(i, expectedSmallBits2[i]); \
+        bitmapSmallFilled.set(i); \
+    }
 
 template<typename WordType>
 void testBitmapSize()
@@ -960,6 +975,47 @@ void testBitmapSetAndClear()
     ASSERT_TRUE(bitmapSmallFilled.isEmpty());
 }
 
+template<typename Bitmap>
+void testBitmapSetEachNthBitImpl(size_t size, size_t wordSize, const Bitmap& zeroes, const Bitmap& ones)
+{
+    Bitmap temp;
+
+    EXPECT_TRUE(temp == zeroes);
+    temp.setEachNthBit(0, 1);
+    EXPECT_TRUE(temp == ones);
+
+    size_t nValues[] = { 1, 2, wordSize / 2, wordSize - 1, wordSize, size / 2, size - 1, size };
+    size_t nValuesCount = sizeof(nValues) / sizeof(nValues[0]);
+
+    for (size_t start = 0; start < wordSize; ++start) {
+        for (size_t j = 0; j < nValuesCount; ++j) {
+            size_t n = nValues[j];
+            temp.clearAll();
+            temp.setEachNthBit(start, n);
+
+            for (size_t i = 0; i < start; ++i)
+                EXPECT_FALSE(temp.get(i));
+
+            size_t count = 0;
+            for (size_t i = start; i < size; ++i) {
+                bool expected = !count;
+                EXPECT_TRUE(temp.get(i) == expected);
+                count++;
+                count = count % n;
+            }
+        }
+    }
+}
+
+template<typename WordType>
+void testBitmapSetEachNthBit()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+    constexpr size_t wordSize = sizeof(WordType) * 8;
+    testBitmapSetEachNthBitImpl(size, wordSize, bitmap0, bitmapFilled);
+    testBitmapSetEachNthBitImpl(smallSize, wordSize, bitmapSmallZeroed, bitmapSmallFilled);
+}
+
 template<typename WordType>
 void testBitmapOperatorEqual()
 {
@@ -988,6 +1044,250 @@ void testBitmapOperatorNotEqual()
     EXPECT_FALSE(bitmap2 != bitmap3);
     EXPECT_TRUE(bitmapFilled != bitmap1);
     EXPECT_TRUE(bitmapSmallZeroed != bitmapSmallFilled);
+}
+
+template<typename Bitmap>
+void testBitmapOperatorAssignmentImpl(const Bitmap& bitmap1, const Bitmap& bitmap2, const Bitmap& zeroes, const Bitmap& ones)
+{
+    Bitmap temp;
+    Bitmap temp2;
+    EXPECT_TRUE(temp.isEmpty());
+    EXPECT_TRUE(temp2.isEmpty());
+
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != bitmap1);
+    temp = bitmap1;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == bitmap1);
+
+    EXPECT_TRUE(temp != bitmap2);
+    temp = bitmap2;
+    EXPECT_TRUE(temp == bitmap2);
+    EXPECT_TRUE(temp != bitmap1);
+
+    temp.clearAll();
+    temp2.clearAll();
+    for (size_t i = 0; i < bitmap1.size(); ++i)
+        temp.set(i, bitmap1.get(i));
+
+    EXPECT_TRUE(temp == bitmap1);
+    EXPECT_TRUE(temp2.isEmpty());
+    EXPECT_TRUE(temp2 != bitmap1);
+    temp2 = temp;
+    EXPECT_TRUE(temp2 == bitmap1);
+}
+
+template<typename WordType>
+void testBitmapOperatorAssignment()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+    testBitmapOperatorAssignmentImpl(bitmap1, bitmap2, bitmap0, bitmapFilled);
+    testBitmapOperatorAssignmentImpl(bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+}
+
+template<typename Bitmap>
+void testBitmapOperatorBitOrAssignmentImpl(size_t size, const Bitmap& bitmap1, const Bitmap& bitmap2, const Bitmap& zeroes, const Bitmap& ones)
+{
+    Bitmap temp;
+    Bitmap temp1;
+
+    // 0 | 0
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+    temp |= zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+
+    // 0 | 1
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+    temp |= ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+
+    // 1 | 0
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+    temp |= zeroes;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+
+    // 1 | 1
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+    temp |= ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+
+    temp = zeroes;
+    EXPECT_TRUE(temp.isEmpty());
+    EXPECT_TRUE(temp != bitmap1);
+    temp |= bitmap1;
+    EXPECT_TRUE(temp == bitmap1);
+
+    temp |= bitmap2;
+    for (size_t i = 0; i < size; ++i)
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) | bitmap2.get(i));
+
+    temp1 = temp;
+    EXPECT_TRUE(temp1 == temp);
+
+    temp |= zeroes;
+    EXPECT_TRUE(temp == temp1);
+    EXPECT_TRUE(temp != zeroes);
+
+    temp |= ones;
+    EXPECT_TRUE(temp != temp1);
+    EXPECT_TRUE(temp == ones);
+}
+
+template<typename WordType>
+void testBitmapOperatorBitOrAssignment()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+    testBitmapOperatorBitOrAssignmentImpl(size, bitmap1, bitmap2, bitmap0, bitmapFilled);
+    testBitmapOperatorBitOrAssignmentImpl(smallSize, bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+}
+
+template<typename Bitmap>
+void testBitmapOperatorBitAndAssignmentImpl(size_t size, const Bitmap& bitmap1, const Bitmap& bitmap2, const Bitmap& zeroes, const Bitmap& ones)
+{
+    Bitmap temp;
+    Bitmap temp1;
+
+    // 0 & 0
+    temp = zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+    temp &= zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+
+    // 0 & 1
+    temp = zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+    temp &= ones;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+
+    // 1 & 0
+    temp = ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+    temp &= zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+
+    // 1 & 1
+    temp = ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+    temp &= ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+
+    temp = ones;
+    EXPECT_TRUE(temp == ones);
+    EXPECT_TRUE(temp != bitmap1);
+    temp &= bitmap1;
+    EXPECT_TRUE(temp == bitmap1);
+
+    temp &= bitmap2;
+    for (size_t i = 0; i < size; ++i)
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) & bitmap2.get(i));
+
+    EXPECT_TRUE(!temp.isEmpty());
+    temp1 = temp;
+    EXPECT_TRUE(temp1 == temp);
+
+    temp &= zeroes;
+    EXPECT_TRUE(temp != temp1);
+    EXPECT_TRUE(temp == zeroes);
+
+    temp = temp1;
+    temp &= ones;
+    EXPECT_TRUE(temp == temp1);
+    EXPECT_TRUE(temp != ones);
+}
+
+template<typename WordType>
+void testBitmapOperatorBitAndAssignment()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+    testBitmapOperatorBitAndAssignmentImpl(size, bitmap1, bitmap2, bitmap0, bitmapFilled);
+    testBitmapOperatorBitAndAssignmentImpl(smallSize, bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+}
+
+template<typename Bitmap>
+void testBitmapOperatorBitXorAssignmentImpl(size_t size, const Bitmap& bitmap1, const Bitmap& bitmap2, const Bitmap& zeroes, const Bitmap& ones)
+{
+    Bitmap temp;
+    Bitmap temp1;
+
+    // 0 ^ 0
+    temp = zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+    temp ^= zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+
+    // 0 ^ 1
+    temp = zeroes;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+    temp ^= ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+
+    // 1 ^ 0
+    temp = ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+    temp ^= zeroes;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+
+    // 1 ^ 1
+    temp = ones;
+    EXPECT_TRUE(temp != zeroes);
+    EXPECT_TRUE(temp == ones);
+    temp ^= ones;
+    EXPECT_TRUE(temp == zeroes);
+    EXPECT_TRUE(temp != ones);
+
+    temp.clearAll();
+    EXPECT_TRUE(temp.isEmpty());
+    EXPECT_TRUE(temp != bitmap1);
+    temp ^= bitmap1;
+    EXPECT_TRUE(temp == bitmap1);
+
+    temp ^= bitmap2;
+    for (size_t i = 0; i < size; ++i)
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) ^ bitmap2.get(i));
+
+    temp1 = temp;
+    EXPECT_TRUE(temp1 == temp);
+
+    temp ^= zeroes;
+    EXPECT_TRUE(temp == temp1);
+    EXPECT_TRUE(temp != zeroes);
+
+    temp ^= ones;
+    EXPECT_TRUE(temp != temp1);
+    EXPECT_TRUE(temp != ones);
+    temp1.invert();
+    EXPECT_TRUE(temp == temp1);
+    EXPECT_TRUE(temp != ones);
+}
+
+template<typename WordType>
+void testBitmapOperatorBitXorAssignment()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+    testBitmapOperatorBitXorAssignmentImpl(size, bitmap1, bitmap2, bitmap0, bitmapFilled);
+    testBitmapOperatorBitXorAssignmentImpl(smallSize, bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
 }
 
 template<typename WordType>
@@ -1076,8 +1376,13 @@ TEST(WTF_Bitmap, FindBit_uint32_t) { testBitmapFindBit<uint32_t>(); }
 TEST(WTF_Bitmap, Iteration_uint32_t) { testBitmapIteration<uint32_t>(); }
 TEST(WTF_Bitmap, MergeAndClear_uint32_t) { testBitmapMergeAndClear<uint32_t>(); }
 TEST(WTF_Bitmap, SetAndClear_uint32_t) { testBitmapSetAndClear<uint32_t>(); }
+TEST(WTF_Bitmap, SetEachNthBit_uint32_t) { testBitmapSetEachNthBit<uint32_t>(); }
 TEST(WTF_Bitmap, OperatorEqualAccess_uint32_t) { testBitmapOperatorEqual<uint32_t>(); }
 TEST(WTF_Bitmap, OperatorNotEqualAccess_uint32_t) { testBitmapOperatorNotEqual<uint32_t>(); }
+TEST(WTF_Bitmap, OperatorAssignment_uint32_t) { testBitmapOperatorAssignment<uint32_t>(); }
+TEST(WTF_Bitmap, OperatorBitOrAssignment_uint32_t) { testBitmapOperatorBitOrAssignment<uint32_t>(); }
+TEST(WTF_Bitmap, OperatorBitAndAssignment_uint32_t) { testBitmapOperatorBitAndAssignment<uint32_t>(); }
+TEST(WTF_Bitmap, OperatorBitXorAssignment_uint32_t) { testBitmapOperatorBitXorAssignment<uint32_t>(); }
 TEST(WTF_Bitmap, Hash_uint32_t) { testBitmapHash<uint32_t>(); }
 
 #if CPU(REGISTER64)
@@ -1106,8 +1411,13 @@ TEST(WTF_Bitmap, FindBit_uint64_t) { testBitmapFindBit<uint64_t>(); }
 TEST(WTF_Bitmap, Iteration_uint64_t) { testBitmapIteration<uint64_t>(); }
 TEST(WTF_Bitmap, MergeAndClear_uint64_t) { testBitmapMergeAndClear<uint64_t>(); }
 TEST(WTF_Bitmap, SetAndClear_uint64_t) { testBitmapSetAndClear<uint64_t>(); }
+TEST(WTF_Bitmap, SetEachNthBit_uint64_t) { testBitmapSetEachNthBit<uint64_t>(); }
 TEST(WTF_Bitmap, OperatorEqualAccess_uint64_t) { testBitmapOperatorEqual<uint64_t>(); }
 TEST(WTF_Bitmap, OperatorNotEqualAccess_uint64_t) { testBitmapOperatorNotEqual<uint64_t>(); }
+TEST(WTF_Bitmap, OperatorAssignment_uint64_t) { testBitmapOperatorAssignment<uint64_t>(); }
+TEST(WTF_Bitmap, OperatorBitOrAssignment_uint64_t) { testBitmapOperatorBitOrAssignment<uint64_t>(); }
+TEST(WTF_Bitmap, OperatorBitAndAssignment_uint64_t) { testBitmapOperatorBitAndAssignment<uint64_t>(); }
+TEST(WTF_Bitmap, OperatorBitXorAssignment_uint64_t) { testBitmapOperatorBitXorAssignment<uint64_t>(); }
 TEST(WTF_Bitmap, Hash_uint64_t) { testBitmapHash<uint64_t>(); }
 
 #endif // CPU(REGISTER64)

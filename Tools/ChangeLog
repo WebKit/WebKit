@@ -1,3 +1,21 @@
+2020-05-20  Mark Lam  <mark.lam@apple.com>
+
+        Add more Bitmap methods.
+        https://bugs.webkit.org/show_bug.cgi?id=212190
+        <rdar://problem/63481333>
+
+        Reviewed by Robin Morisset.
+
+        Added test coverage for the new WTF::Bitmap methods.
+
+        * TestWebKitAPI/Tests/WTF/Bitmap.cpp:
+        (TestWebKitAPI::testBitmapSetEachNthBit):
+        (TestWebKitAPI::testBitmapOperatorAssignment):
+        (TestWebKitAPI::testBitmapOperatorBitOrAssignment):
+        (TestWebKitAPI::testBitmapOperatorBitAndAssignment):
+        (TestWebKitAPI::testBitmapOperatorBitXorAssignment):
+        (TestWebKitAPI::TEST):
+
 2020-05-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Add minimal WKView API to enable TestWebKitAPI
