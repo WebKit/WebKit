@@ -1962,3 +1962,5 @@ webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_dire
 webkit.org/b/212165 http/tests/resourceLoadStatistics/telemetry-generation-basic-functionality-database.html [ Pass Failure ]
 
 webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failure ]
+
+webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
