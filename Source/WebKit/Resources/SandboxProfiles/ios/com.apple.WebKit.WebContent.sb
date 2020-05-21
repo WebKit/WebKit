@@ -1276,6 +1276,7 @@
                 io_connect_async_method
                 io_connect_map_memory_into_task
                 io_connect_method
+                (when (defined? 'io_connect_set_notification_port) io_connect_set_notification_port)
                 io_connect_set_notification_port_64
                 io_iterator_next
                 io_registry_entry_from_path
@@ -1315,6 +1316,8 @@
                 thread_resume
                 thread_set_exception_ports
                 thread_suspend
+                (when (defined? 'vm_copy) vm_copy)
+                (when (defined? 'vm_remap_external) vm_remap_external)
                 )
             )
         )

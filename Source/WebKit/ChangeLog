@@ -1,3 +1,15 @@
+2020-05-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix message filter sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=212100
+        <rdar://problem/63407155>
+
+        Reviewed by Brent Fulgham.
+
+        A message needs to be added to the message filter in the WebContent sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-05-20  Sam Weinig  <weinig@apple.com>
 
         Replace Color::getHSL() with sRGBToHSL to ensure it at least gives somewhat sensible results for ExtendedColors and reduce code duplication
