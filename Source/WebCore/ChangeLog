@@ -1,3 +1,20 @@
+2020-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix rare crash in TileGrid::platformCALayerShowRepaintCounter()
+        https://bugs.webkit.org/show_bug.cgi?id=212182
+        <rdar://problem/55618414>
+
+        Reviewed by Darin Adler.
+
+        Crash data suggest that owner() can be null in platformCALayerShowRepaintCounter(),
+        so null-check in these functions.
+
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::platformCALayerDeviceScaleFactor const):
+        (WebCore::TileGrid::platformCALayerShowDebugBorders const):
+        (WebCore::TileGrid::platformCALayerShowRepaintCounter const):
+        (WebCore::TileGrid::isUsingDisplayListDrawing const):
+
 2020-05-21  Youenn Fablet  <youenn@apple.com>
 
         Incorrect location.origin in blob workers

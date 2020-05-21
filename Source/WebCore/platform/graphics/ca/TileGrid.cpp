@@ -748,22 +748,30 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
 
 float TileGrid::platformCALayerDeviceScaleFactor() const
 {
-    return m_controller.rootLayer().owner()->platformCALayerDeviceScaleFactor();
+    if (auto* layerOwner = m_controller.rootLayer().owner())
+        return layerOwner->platformCALayerDeviceScaleFactor();
+    return 1.0f;
 }
 
 bool TileGrid::platformCALayerShowDebugBorders() const
 {
-    return m_controller.rootLayer().owner()->platformCALayerShowDebugBorders();
+    if (auto* layerOwner = m_controller.rootLayer().owner())
+        return layerOwner->platformCALayerShowDebugBorders();
+    return false;
 }
 
 bool TileGrid::platformCALayerShowRepaintCounter(PlatformCALayer*) const
 {
-    return m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(nullptr);
+    if (auto* layerOwner = m_controller.rootLayer().owner())
+        return layerOwner->platformCALayerShowRepaintCounter(nullptr);
+    return false;
 }
 
 bool TileGrid::isUsingDisplayListDrawing(PlatformCALayer*) const
 {
-    return m_controller.rootLayer().owner()->isUsingDisplayListDrawing(nullptr);
+    if (auto* layerOwner = m_controller.rootLayer().owner())
+        return layerOwner->isUsingDisplayListDrawing(nullptr);
+    return false;
 }
 
 bool TileGrid::platformCALayerContentsOpaque() const
