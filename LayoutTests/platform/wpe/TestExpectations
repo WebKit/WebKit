@@ -126,8 +126,6 @@ webkit.org/b/169811 fast/mediastream/captureStream/ [ Failure ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Timeout ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
-webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
-
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
@@ -479,8 +477,6 @@ webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFa
 
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 
-webkit.org/b/201263 imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
-
 webkit.org/b/201267 webrtc/video-h264.html [ Failure ]
 
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
@@ -603,8 +599,6 @@ webkit.org/b/206886 imported/w3c/web-platform-tests/css/css-fonts/font-variant-l
 
 webkit.org/b/207255 webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html  [ Failure ]
 
-webkit.org/b/207257 webanimations/seeking-by-changing-delay-accelerated.html [ ImageOnlyFailure ]
-
 webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
 
 webkit.org/b/207624 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Failure ]
@@ -679,8 +673,6 @@ webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-variant-l
 
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure ]
 webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
-webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
-webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
 
 webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
@@ -835,6 +827,8 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
@@ -1493,7 +1487,6 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 
 # webgl/1.0.3:
 #  Failing:
-Bug(WPE) webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
@@ -1533,7 +1526,6 @@ fast/canvas/toDataURL-supportedTypes.html [ Failure ]
 fast/canvas/webgl/antialiasing-enabled.html [ Failure ]
 fast/canvas/webgl/context-creation-attributes.html [ Failure ]
 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
-fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
 fast/canvas/webgl/multisample-resolve-consistency.html [ Failure ]
@@ -2083,7 +2075,6 @@ webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.work
 webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
-webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
 webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
 
 # No support for screen capture
@@ -2095,8 +2086,6 @@ webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout Pass
 webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
 
 webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
-
-webkit.org/b/193511 http/tests/images/mp4-partial-load.html [ Failure ]
 
 webkit.org/b/193518 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 
@@ -2130,8 +2119,6 @@ webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
-
-webkit.org/b/182364 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Failure ]
 
 webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
@@ -2240,12 +2227,8 @@ webkit.org/b/208188 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 
-webkit.org/b/210337 fast/mediastream/mediastreamtrack-audio-clone.html [ Failure ]
-
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
 webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
-
-webkit.org/b/210843 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 
 webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
 webkit.org/b/212080 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]
