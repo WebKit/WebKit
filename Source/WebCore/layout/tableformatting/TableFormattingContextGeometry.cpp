@@ -46,6 +46,43 @@ LayoutUnit TableFormattingContext::Geometry::cellHeigh(const ContainerBox& cellB
     return contentHeightForFormattingContextRoot(cellBox);
 }
 
+Edges TableFormattingContext::Geometry::computedCellBorder(const TableGrid::Cell& cell) const
+{
+    auto& cellBox = cell.box();
+    auto border = computedBorder(cellBox);
+    auto collapsedBorder = m_grid.collapsedBorder();
+    if (!collapsedBorder)
+        return border;
+
+    // We might want to cache these collapsed borders on the grid.
+    auto cellPosition = cell.position();
+    if (!cellPosition.column)
+        border.horizontal.left = collapsedBorder->horizontal.left / 2;
+    else {
+        auto adjacentBorderRight = computedBorder(m_grid.slot({ cellPosition.column - 1, cellPosition.row })->cell().box()).horizontal.right;
+        border.horizontal.left = std::max(border.horizontal.left, adjacentBorderRight) / 2;
+    }
+    if (cellPosition.column == m_grid.columns().size() - 1)
+        border.horizontal.right = collapsedBorder->horizontal.right / 2;
+    else {
+        auto adjacentBorderLeft = computedBorder(m_grid.slot({ cellPosition.column + 1, cellPosition.row })->cell().box()).horizontal.left;
+        border.horizontal.right = std::max(border.horizontal.right, adjacentBorderLeft) / 2;
+    }
+    if (!cellPosition.row)
+        border.vertical.top = collapsedBorder->vertical.top / 2;
+    else {
+        auto adjacentBorderBottom = computedBorder(m_grid.slot({ cellPosition.column, cellPosition.row - 1 })->cell().box()).vertical.bottom;
+        border.vertical.top = std::max(border.vertical.top, adjacentBorderBottom) / 2;
+    }
+    if (cellPosition.row == m_grid.rows().size() - 1)
+        border.vertical.bottom = collapsedBorder->vertical.bottom / 2;
+    else {
+        auto adjacentBorderTop = computedBorder(m_grid.slot({ cellPosition.column, cellPosition.row + 1 })->cell().box()).vertical.top;
+        border.vertical.bottom = std::max(border.vertical.bottom, adjacentBorderTop) / 2;
+    }
+    return border;
+}
+
 Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const ContainerBox& columnBox) const
 {
     // Check both style and <col>'s width attribute.
@@ -60,33 +97,20 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::i
     auto& cellBox = cell.box();
     auto& style = cellBox.style();
 
-    auto computedHorizontalBorder = [&] {
-        auto leftBorderWidth = LayoutUnit { style.borderLeftWidth() };
-        auto rightBorderWidth = LayoutUnit { style.borderRightWidth() };
-        if (auto collapsedBorder = m_grid.collapsedBorder()) {
-            auto cellPosition = cell.position();
-            if (!cellPosition.column)
-                leftBorderWidth = collapsedBorder->horizontal.left / 2;
-            if (cellPosition.column == m_grid.columns().size() - 1)
-                rightBorderWidth = collapsedBorder->horizontal.right / 2;
-        }
-        return leftBorderWidth + rightBorderWidth;
-    };
-
     auto computedIntrinsicWidthConstraints = [&] {
         // Even fixed width cells expand to their minimum content width
         // <td style="width: 10px">test_content</td> will size to max(minimum content width, computed width).
         auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
         if (cellBox.hasChild())
             intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, layoutState())->computedIntrinsicWidthConstraints();
-        if (auto width = fixedValue(cellBox.style().logicalWidth()))
+        if (auto width = fixedValue(style.logicalWidth()))
             return FormattingContext::IntrinsicWidthConstraints { std::max(intrinsicWidthConstraints.minimum, *width), *width };
         return intrinsicWidthConstraints;
     };
     // FIXME Check for box-sizing: border-box;
     auto intrinsicWidthConstraints = constrainByMinMaxWidth(cellBox, computedIntrinsicWidthConstraints());
     // Expand with border
-    intrinsicWidthConstraints.expand(computedHorizontalBorder());
+    intrinsicWidthConstraints.expand(computedCellBorder(cell).horizontal.width());
     // padding
     intrinsicWidthConstraints.expand(fixedValue(style.paddingLeft()).valueOr(0) + fixedValue(style.paddingRight()).valueOr(0));
     // and margin

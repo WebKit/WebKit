@@ -199,23 +199,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     auto& cellBox = cell.box();
     auto& cellDisplayBox = formattingState().displayBox(cellBox);
 
-    auto computedCellBorder = [&] {
-        auto border = geometry().computedBorder(cellBox);
-        auto collapsedBorder = grid.collapsedBorder();
-        if (!collapsedBorder)
-            return border;
-        auto cellPosition = cell.position();
-        if (!cellPosition.column)
-            border.horizontal.left = collapsedBorder->horizontal.left / 2;
-        if (cellPosition.column == grid.columns().size() - 1)
-            border.horizontal.right = collapsedBorder->horizontal.right / 2;
-        if (!cellPosition.row)
-            border.vertical.top = collapsedBorder->vertical.top / 2;
-        if (cellPosition.row == grid.rows().size() - 1)
-            border.vertical.bottom = collapsedBorder->vertical.bottom / 2;
-        return border;
-    }();
-    cellDisplayBox.setBorder(computedCellBorder);
+    cellDisplayBox.setBorder(geometry().computedCellBorder(cell));
     cellDisplayBox.setPadding(geometry().computedPadding(cellBox, availableHorizontalSpace));
     // Internal table elements do not have margins.
     cellDisplayBox.setHorizontalMargin({ });

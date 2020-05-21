@@ -1,3 +1,21 @@
+2020-05-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Collapse in-between cell borders
+        https://bugs.webkit.org/show_bug.cgi?id=212183
+
+        Reviewed by Antti Koivisto.
+
+        This patch expands border collapsing to in-between cell borders.
+
+        Test: fast/layoutformattingcontext/table-simple-border-collapse3.html
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::computedCellBorder const):
+        (WebCore::Layout::TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell):
+
 2020-05-21  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][GTK][WPE] Expose and honor the media content types requiring hardware support setting

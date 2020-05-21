@@ -66,6 +66,7 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         LayoutUnit cellHeigh(const ContainerBox&) const;
+        Edges computedCellBorder(const TableGrid::Cell&) const;
         Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
         FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
         InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
