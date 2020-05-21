@@ -40,10 +40,10 @@ layer at (0,0) size 800x378
                     text run at (20,18) width 124 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA} \x{5DC}\x{5B8}\x{5DA}\x{5B0} \x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
                     text run at (144,18) width 57 RTL: "\x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA} "
                 RenderBlock {DIV} at (0,43) size 202x62 [border: (1px solid #0000FF)]
-                  RenderText {#text} at (1,1) size 204x59
+                  RenderText {#text} at (1,1) size 169x59
                     text run at (1,1) width 169: "Lore\x{300}m ipsum dolor sit"
-                    text run at (1,21) width 204: "ame\x{300}t, consectetuer adipiscing"
-                    text run at (1,41) width 23: "e\x{300}lit."
+                    text run at (1,21) width 126: "ame\x{300}t, consectetuer"
+                    text run at (1,41) width 101: "adipiscing e\x{300}lit."
                 RenderBlock {DIV} at (0,110) size 202x62 [border: (1px solid #008000)]
                   RenderText {#text} at (1,1) size 196x59
                     text run at (1,1) width 162: "Lorem ipsum dolor sit"

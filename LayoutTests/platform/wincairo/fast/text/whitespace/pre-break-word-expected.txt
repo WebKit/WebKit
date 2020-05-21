@@ -1,13 +1,8 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 154x124 [border: (2px solid #FF0000)]
-        RenderText {#text} at (2,2) size 150x119
-          text run at (2,2) width 148: "Even though this div is w"
-          text run at (2,22) width 145: "hite-space pre, the text i"
-          text run at (2,42) width 148: "nside should still wrap to"
-          text run at (2,62) width 149: " multiple lines because of"
-          text run at (2,82) width 150: " the word-wrap:break-w"
-          text run at (2,102) width 114: "ord CSS property."
+layer at (0,0) size 864x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
+      RenderBlock {DIV} at (0,0) size 154x24 [border: (2px solid #FF0000)]
+        RenderText {#text} at (2,2) size 854x19
+          text run at (2,2) width 854: "Even though this div is white-space pre, the text inside should still wrap to multiple lines because of the word-wrap:break-word CSS property."

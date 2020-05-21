@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x256
-  RenderBlock {HTML} at (0,0) size 800x256
-    RenderBody {BODY} at (8,16) size 784x232
+layer at (0,0) size 800x236
+  RenderBlock {HTML} at (0,0) size 800x236
+    RenderBody {BODY} at (8,16) size 784x212
       RenderBlock {P} at (0,0) size 784x40 [bgcolor=#00FFFF]
         RenderText {#text} at (392,0) size 771x39
           text run at (392,0) width 379: "The first line of this sentence should be indented halfway across"
@@ -24,9 +24,8 @@ layer at (0,0) size 800x256
             text run at (0,60) width 116: "aligned on the left"
         RenderText {#text} at (116,60) size 94x19
           text run at (116,60) width 94: " of the window."
-      RenderBlock {DIV} at (0,152) size 196x80 [bgcolor=#00FFFF]
-        RenderText {#text} at (392,0) size 403x79
-          text run at (392,0) width 11: "X"
-          text run at (0,20) width 158: "The X on the previous line"
-          text run at (0,40) width 179: "should be centered across the"
-          text run at (0,60) width 52: "window."
+      RenderBlock {DIV} at (0,152) size 196x60 [bgcolor=#00FFFF]
+        RenderText {#text} at (98,0) size 193x59
+          text run at (98,0) width 94: "X The X on the"
+          text run at (0,20) width 193: "previous line should be centered"
+          text run at (0,40) width 117: "across the window."

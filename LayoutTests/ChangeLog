@@ -1,3 +1,21 @@
+2020-05-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css1/text_properties/text_indent-expected.txt:
+        * platform/wincairo/css2.1/20110323/margin-applies-to-006-expected.txt:
+        * platform/wincairo/css2.1/t1601-c547-indent-01-d-expected.txt:
+        * platform/wincairo/editing/selection/mixed-editability-10-expected.txt:
+        * platform/wincairo/fast/css/font-weight-1-expected.txt:
+        * platform/wincairo/fast/text/atsui-spacing-features-expected.txt:
+        * platform/wincairo/fast/text/crash-complex-text-surrogate-expected.txt:
+        * platform/wincairo/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/wincairo/fast/text/international/hindi-whitespace-expected.txt:
+        * platform/wincairo/fast/text/midword-break-before-surrogate-pair-2-expected.txt:
+        * platform/wincairo/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/wincairo/fast/text/word-break-expected.txt:
+
 2020-05-20  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Unreviewed test gardening.

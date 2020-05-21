@@ -72,10 +72,10 @@ layer at (0,0) size 785x1329
         RenderText {#text} at (202,40) size 139x19
           text run at (202,40) width 139: " which may be present."
       RenderBlock {BLOCKQUOTE} at (40,683) size 689x60 [bgcolor=#00FFFF]
-        RenderText {#text} at (384,0) size 614x59
-          text run at (384,0) width 210: "In the first half of the test page, this"
-          text run at (0,20) width 614: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
-          text run at (0,40) width 482: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
+        RenderText {#text} at (344,0) size 686x59
+          text run at (344,0) width 321: "In the first half of the test page, this BLOCKQUOTE"
+          text run at (0,20) width 686: "element should have a text indent equal to 50% of the BODY element's width, since BLOCKQUOTE is a child of"
+          text run at (0,40) width 299: "BODY; in the second half, it is a child of TABLE."
       RenderTable {TABLE} at (0,759) size 769x554 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x552
           RenderTableRow {TR} at (0,0) size 767x28
@@ -130,7 +130,7 @@ layer at (0,0) size 785x1329
                 RenderText {#text} at (202,40) size 139x19
                   text run at (202,40) width 139: " which may be present."
               RenderBlock {BLOCKQUOTE} at (44,444) size 667x60 [bgcolor=#00FFFF]
-                RenderText {#text} at (373,0) size 614x59
-                  text run at (373,0) width 210: "In the first half of the test page, this"
-                  text run at (0,20) width 614: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
-                  text run at (0,40) width 482: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
+                RenderText {#text} at (333,0) size 654x59
+                  text run at (333,0) width 321: "In the first half of the test page, this BLOCKQUOTE"
+                  text run at (0,20) width 638: "element should have a text indent equal to 50% of the BODY element's width, since BLOCKQUOTE is a"
+                  text run at (0,40) width 347: "child of BODY; in the second half, it is a child of TABLE."

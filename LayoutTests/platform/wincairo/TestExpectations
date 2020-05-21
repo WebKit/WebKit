@@ -191,7 +191,6 @@ plugins/windowless_plugin_paint_test.html [ Skip ]
 plugins/window-open.html [ Skip ]
 
 # NOTIFICATIONS is disabled
-fast/history/page-cache-notification-non-suspendable.html [ Skip ]
 fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 # POINTER_LOCK is disabled
@@ -301,16 +300,6 @@ media/airplay-target-availability.html [ Skip ]
 media/airplay-autoplay.html [ Skip ]
 media/controls/airplay-controls.html [ Skip ]
 media/controls/airplay-picker.html [ Skip ]
-
-
-
-# USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is disabled
-fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Skip ]
-fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Skip ]
-fast/animation/request-animation-frame-throttle-subframe-zero-size.html [ Skip ]
-fast/animation/request-animation-frame-throttle-subframe.html [ Skip ]
-fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ]
-fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Skip ]
 
 # PLATFORM(MAC), internals.rangeForDictionaryLookupAtLocation()
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
@@ -524,7 +513,6 @@ streams/reference-implementation/writable-stream-abort.html [ Failure ]
 streams/reference-implementation/writable-stream.html [ Failure ]
 streams/shadowing-Promise.html [ Failure ]
 
-fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure ]
 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 
 # eventSender.scheduleAsynchronousClick is not a function.
@@ -562,7 +550,6 @@ css3/shapes/shape-outside/shape-box/shape-outside-box-008.html [ ImageOnlyFailur
 css3/shapes/shape-outside/shape-image/shape-image-012.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-017.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
-css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-010.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-011.html [ ImageOnlyFailure ]
 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-012.html [ ImageOnlyFailure ]
@@ -637,7 +624,6 @@ css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Failure ]
 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
 [ Debug ] css3/shapes/shape-outside/values/shape-outside-circle-001.html [ Pass Failure ]
 [ Release ] css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
@@ -645,7 +631,6 @@ css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
 [ Release ] css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
 [ Debug ] css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Skip ]
-css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
@@ -681,8 +666,6 @@ fast/dom/boolean-attribute-reflection.html [ Pass Failure ]
 fast/dom/reflect-unsigned-long.html [ Pass Failure ]
 fast/dom/javascript-url-crash-function.html [ Pass Failure ]
 fast/dom/URL-attribute-reflection.html [ Pass Failure ]
-fast/dom/beforeload/remove-video-in-beforeload-listener.html [ Skip ]
-fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html [ Pass Failure ]
 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
 fast/dom/Range/surround-contents-font-face-crash.svg [ Pass Failure ]
 fast/dom/Window/messageevent-source-postmessage-reified.html [ Pass Failure ]
@@ -813,8 +796,6 @@ fast/picture/viewport-resize.html [ Timeout ]
 # entire directory fails
 dom/svg/level3/xpath [ Skip ]
 
-fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html [ Pass Timeout ]
-fast/dom/beforeload/video-before-load.html [ Pass Timeout ]
 fast/dom/focus-shift-crash.html [ Pass Timeout ]
 fast/dom/Range/detach-range-during-deletecontents.html [ Pass Timeout ]
 imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Pass Timeout ]
@@ -1083,15 +1064,11 @@ crypto/subtle/wrap-key-malformed-parameters.html [ Skip ]
 http/tests/appcache [ Skip ]
 http/tests/blink/sendbeacon [ Skip ]
 
-# needs more investigation
-http/tests/cache/cancel-multiple-post-xhrs.html [ Failure ]
-
 # fails because of conversion to epoch behavior specific to Mac
 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 
 # needs more investigation
 http/tests/cache/iframe-304-crash.html [ Failure ]
-http/tests/cache/network-error-during-revalidation.html [ Failure ]
 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 http/tests/cache/partitioned-cache.html [ Failure ]
 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
@@ -1298,23 +1275,14 @@ animations/font-variations/font-style.html [ Skip ]
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
 
-webkit.org/b/176998 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
-
 webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
 
 animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
 animations/resume-after-page-cache.html [ Pass Failure ]
 
-fast/animation/request-animation-frame-within-callback.html [ Pass Failure ]
-
 webkit.org/b/178341 animations/play-state-in-shorthand.html [ Failure ]
 
-webkit.org/b/191584 animations/animation-direction-normal.html [ Failure ]
-webkit.org/b/191584 animations/animation-direction-reverse.html [ Failure ]
-webkit.org/b/191584 animations/dynamic-stylesheet-loading.html [ Failure ]
-webkit.org/b/191584 animations/play-state-paused.html [ Failure ]
-webkit.org/b/191584 animations/transform-non-accelerated.html [ Failure ]
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
 ################################################################################
@@ -1426,7 +1394,6 @@ webkit.org/b/179296 fast/css/object-position/object-position-object.html [ Image
 # TODO CSS3_TEXT is disabled on Windows
 fast/css3-text/ [ Skip ]
 
-imported/blink/fast/css/tab-size-complex-path.html [ ImageOnlyFailure ]
 webkit.org/b/150949 imported/blink/fast/css/transformed-overflow-hidden-clips-fixed.html [ ImageOnlyFailure ]
 
 # color-filters are off by default
@@ -1718,7 +1685,6 @@ storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-animations/3d [ Skip ]
 compositing [ Skip ]
 fast/attachment [ Skip ]
 fast/backgrounds [ Skip ]
@@ -1743,6 +1709,7 @@ fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html 
 fast/inline [ Skip ]
 fast/invalid [ Skip ]
 fast/layers [ Skip ]
+fast/layoutformattingcontext [ Skip ]
 fast/lists [ Skip ]
 fast/loader [ Skip ]
 fast/masking/clip-path-selection.html [ Skip ]
@@ -1763,6 +1730,7 @@ fast/shapes [ Skip ]
 fast/shrink-wrap/rect-shrink-wrap.html [ Skip ]
 fast/sub-pixel [ Skip ]
 fast/table [ Skip ]
+fast/text/international/system-language/navigator-language [ Skip ]
 fast/tokenizer [ Skip ]
 fast/transforms [ Skip ]
 fast/workers/worker-exception-during-navigation.html [ Pass Failure ]
@@ -1826,7 +1794,6 @@ workers/bomb.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 [ Debug ] storage/indexeddb/database-odd-names.html [ Failure Pass ]
 [ Debug ] storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout Pass ]
-[ Release ] fast/eventsource/eventsource-attribute-listeners.html [ Failure ]
 css1/font_properties/font_family.html [ Failure Pass ]
 css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
 css3/filters/composited-during-animation-layertree.html [ Failure ]
@@ -1908,7 +1875,6 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Failure ]
 fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
-fast/events/remove-child-onscroll.html [ Timeout ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/selectstart-by-drag.html [ Failure Pass ]
 fast/events/shadow-event-path-2.html [ Failure ]
@@ -1923,8 +1889,6 @@ fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 fast/harness/render-tree-as-text-options.html [ Failure ]
 fast/text/backslash-to-yen-sign-euc.html [ Failure ]
-fast/text/backslash-to-yen-sign.html [ Failure ]
-fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 fast/text/bidi-override-isolate.html [ ImageOnlyFailure ]
 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
@@ -1932,7 +1896,6 @@ fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/complex-grapheme-cluster-with-initial-advance.html [ ImageOnlyFailure ]
 fast/text/complex-small-caps-non-bmp-capitalize.html [ ImageOnlyFailure ]
-fast/text/decorations-vertical-underline.html [ ImageOnlyFailure ]
 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 fast/text/emoji-overlap.html [ ImageOnlyFailure ]
 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
@@ -1957,7 +1920,6 @@ fast/text/international/001.html [ Failure ]
 fast/text/international/bdi-dir-default-to-auto.html [ ImageOnlyFailure ]
 fast/text/international/bdi-neutral-wrapped.html [ ImageOnlyFailure ]
 fast/text/international/cjk-segmentation.html [ Failure ]
-fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
 fast/text/international/inline-plaintext-is-isolated.html [ ImageOnlyFailure ]
 fast/text/international/plane2.html [ Failure ]
 fast/text/international/system-language/declarative-language.html [ Failure ]
@@ -2003,7 +1965,6 @@ fast/text/system-font-fallback-emoji.html [ Failure ]
 fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
 fast/text/system-font-weight-italic.html [ Failure ]
 fast/text/system-font-weight.html [ Failure ]
-fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 fast/text/text-transform-turkish-and-azeri.html [ ImageOnlyFailure ]
 fast/text/trailing-word-detection.html [ Failure ]
 fast/text/trak-optimizeLegibility.html [ Failure ]

@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1036
+layer at (0,0) size 785x972
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1036
-  RenderBlock {HTML} at (0,0) size 785x1036
-    RenderBody {BODY} at (8,8) size 769x1020
+layer at (0,0) size 785x972
+  RenderBlock {HTML} at (0,0) size 785x972
+    RenderBody {BODY} at (8,8) size 769x956
       RenderBlock (anonymous) at (0,0) size 769x20
         RenderText {#text} at (0,0) size 658x19
           text run at (0,0) width 658: "This example tests that word-break properly shrinks a cell to one character per line when it is set to break-all."
@@ -50,31 +50,27 @@ layer at (0,0) size 785x1036
                 text run at (6,6) width 168: "This cell should grow"
       RenderBlock (anonymous) at (0,392) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {PRE} at (0,425) size 110x90 [border: (5px solid #000000)]
-        RenderText {#text} at (5,5) size 96x80
-          text run at (5,5) width 96: "Thislongword"
-          text run at (5,21) width 96: "shouldnotget"
-          text run at (5,37) width 96: "brokenbutsho"
-          text run at (5,53) width 96: "uldstickouto"
-          text run at (5,69) width 64: "fthepre."
-          text run at (69,69) width 0: " "
-      RenderBlock (anonymous) at (0,528) size 769x60
+      RenderBlock {PRE} at (0,425) size 110x26 [border: (5px solid #000000)]
+        RenderText {#text} at (5,5) size 448x16
+          text run at (5,5) width 448: "Thislongwordshouldnotgetbrokenbutshouldstickoutofthepre."
+          text run at (453,5) width 0: " "
+      RenderBlock (anonymous) at (0,464) size 769x60
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 756x39
           text run at (0,20) width 596: "This test makes sure floating and positioned elements do the right thing with word-break: break-all. "
           text run at (596,20) width 160: "The minimum width should"
           text run at (0,40) width 239: "be less than the containing block width. "
           text run at (239,40) width 459: "The breaking should be \"dumb\" and just occur when the end of the line is hit."
-      RenderBlock {DIV} at (0,588) size 304x52 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,524) size 304x52 [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 300x48
           RenderText {#text} at (0,0) size 296x48
             text run at (0,0) width 296: "Eventhoughthishasareallylongword itsh"
             text run at (0,16) width 296: "ouldnotstick out oftheenclosing300pxb"
             text run at (0,32) width 40: "lock."
         RenderBR {BR} at (302,2) size 0x16
-      RenderBlock (anonymous) at (0,640) size 769x20
+      RenderBlock (anonymous) at (0,576) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock (anonymous) at (0,764) size 769x80
+      RenderBlock (anonymous) at (0,700) size 769x80
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 768x59
           text run at (0,20) width 615: "This test makes sure floating and positioned elements do the right thing with word-break: break-word. "
@@ -82,26 +78,26 @@ layer at (0,0) size 785x1036
           text run at (0,40) width 282: "should be less than the containing block width. "
           text run at (282,40) width 486: "The breaking should be \"smart\" and be like word-wrap: break-word, with words"
           text run at (0,60) width 428: "preferring to wrap first before allowing break opportunities within them."
-      RenderBlock {DIV} at (0,844) size 304x52 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,780) size 304x52 [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 300x48
           RenderText {#text} at (0,0) size 256x48
             text run at (0,0) width 256: "Eventhoughthishasareallylongword"
             text run at (0,16) width 160: "itshouldnotstick out"
             text run at (0,32) width 200: "oftheenclosing300pxblock."
         RenderBR {BR} at (302,2) size 0x16
-      RenderBlock (anonymous) at (0,896) size 769x20
+      RenderBlock (anonymous) at (0,832) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-layer at (8,668) size 304x104
-  RenderBlock (relative positioned) {DIV} at (0,660) size 304x104 [border: (2px solid #000000)]
-layer at (10,670) size 300x48
+layer at (8,604) size 304x104
+  RenderBlock (relative positioned) {DIV} at (0,596) size 304x104 [border: (2px solid #000000)]
+layer at (10,606) size 300x48
   RenderBlock (positioned) {DIV} at (2,2) size 300x48
     RenderText {#text} at (0,0) size 296x48
       text run at (0,0) width 296: "Eventhoughthishasareallylongword itsh"
       text run at (0,16) width 296: "ouldnotstick out oftheenclosing300pxb"
       text run at (0,32) width 40: "lock."
-layer at (8,924) size 304x104
-  RenderBlock (relative positioned) {DIV} at (0,916) size 304x104 [border: (2px solid #000000)]
-layer at (10,926) size 300x48
+layer at (8,860) size 304x104
+  RenderBlock (relative positioned) {DIV} at (0,852) size 304x104 [border: (2px solid #000000)]
+layer at (10,862) size 300x48
   RenderBlock (positioned) {DIV} at (2,2) size 300x48
     RenderText {#text} at (0,0) size 256x48
       text run at (0,0) width 256: "Eventhoughthishasareallylongword"
