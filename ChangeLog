@@ -1,3 +1,15 @@
+2020-05-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Add minimal WKView API to enable TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=211868
+
+        Reviewed by Alex Christensen.
+
+        Enable TestWebKitAPI
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        Disable FullScreen API and ContextMenus.
+
 2020-05-20  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Implement connected and disconnected events of GAMEPAD API with libmanette

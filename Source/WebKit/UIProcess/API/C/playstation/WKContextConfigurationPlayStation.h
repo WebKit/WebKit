@@ -23,39 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundle.h"
+#pragma once
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include "library-bundle.h"
+#include <WebKit/WKBase.h>
+#include <WebKit/WKContextConfigurationRef.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
-{
-    auto bundle = LibraryBundle::create(m_path.utf8().data());
-    m_platformBundle = bundle;
-    if (!m_platformBundle) {
-        printf("PlayStation::Bundle::create failed\n");
-        return false;
-    }
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(bundle->resolve("WKBundleInitialize"));
-    if (!initializeFunction) {
-        printf("PlayStation::Bundle::resolve failed\n");
-        return false;
-    }
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+WK_EXPORT void WKContextConfigurationSetWebProcessPath(WKContextConfigurationRef configuration, WKStringRef webProcessPath);
+WK_EXPORT WKStringRef WKContextConfigurationCopyWebProcessPath(WKContextConfigurationRef configuration);
+
+WK_EXPORT void WKContextConfigurationSetNetworkProcessPath(WKContextConfigurationRef configuration, WKStringRef networkProcessPath);
+WK_EXPORT WKStringRef WKContextConfigurationCopyNetworkProcessPath(WKContextConfigurationRef configuration);
+
+WK_EXPORT void WKContextConfigurationSetUserId(WKContextConfigurationRef configuration, int32_t userId);
+WK_EXPORT int32_t WKContextConfigurationGetUserId(WKContextConfigurationRef configuration);
+
+#ifdef __cplusplus
 }
-
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
-{
-
-}
-
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
-{
-}
-
-} // namespace WebKit
+#endif

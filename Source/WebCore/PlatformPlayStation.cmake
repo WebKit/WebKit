@@ -96,5 +96,6 @@ PLAYSTATION_COPY_SHARED_LIBRARIES(WebCore_CopySharedLibs
         ${JPEG_LIBRARIES}
         ${OPENSSL_LIBRARIES}
         ${PNG_LIBRARIES}
+        ${WebKitRequirements_LIBRARY}
         ${WebP_LIBRARIES}
 )

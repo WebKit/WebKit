@@ -24,38 +24,50 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
+#include "WebProcessMain.h"
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include "library-bundle.h"
+#include <dlfcn.h>
+#include <process-initialization/nk-webprocess.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-namespace WebKit {
-
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
+static void loadLibraryOrExit(const char* name)
 {
-    auto bundle = LibraryBundle::create(m_path.utf8().data());
-    m_platformBundle = bundle;
-    if (!m_platformBundle) {
-        printf("PlayStation::Bundle::create failed\n");
-        return false;
+    if (!dlopen(name, RTLD_NOW)) {
+        fprintf(stderr, "Failed to load %s.\n", name);
+        exit(EXIT_FAILURE);
     }
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(bundle->resolve("WKBundleInitialize"));
-    if (!initializeFunction) {
-        printf("PlayStation::Bundle::resolve failed\n");
-        return false;
+}
+
+int main(int argc, char** argv)
+{
+    if (argc < 2) {
+        fprintf(stderr, "Unexpected argument count %d\n", argc);
+        exit(EXIT_FAILURE);
     }
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+
+    loadLibraryOrExit("libpng16");
+    loadLibraryOrExit("libicu");
+    loadLibraryOrExit("libfreetype");
+    loadLibraryOrExit("libfontconfig");
+    loadLibraryOrExit("libharfbuzz");
+    loadLibraryOrExit("libcairo");
+    loadLibraryOrExit("libSceNKWebKitRequirements");
+    loadLibraryOrExit("libJavaScriptCore");
+    loadLibraryOrExit("libWebKit");
+
+    char* coreProcessIdentifier = argv[1];
+
+    char connectionIdentifier[16];
+    snprintf(connectionIdentifier, sizeof(connectionIdentifier), "%d", PlayStation::getConnectionIdentifier());
+
+    char program[] = "dummy";
+    char* internalArgv[] = {
+        program,
+        coreProcessIdentifier,
+        connectionIdentifier,
+        0
+    };
+    return WebKit::WebProcessMain(sizeof(internalArgv) / sizeof(char*), internalArgv);
 }
-
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
-{
-
-}
-
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
-{
-}
-
-} // namespace WebKit

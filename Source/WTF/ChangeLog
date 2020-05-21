@@ -1,3 +1,15 @@
+2020-05-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Add minimal WKView API to enable TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=211868
+
+        Reviewed by Alex Christensen.
+
+        Enable TestWebKitAPI
+
+        * wtf/PlatformPlayStation.cmake:
+        Link libc as a system library.
+
 2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the iOS 13.4 build after r261978

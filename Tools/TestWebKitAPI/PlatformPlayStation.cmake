@@ -48,6 +48,12 @@ if (ENABLE_WEBKIT)
         playstation/PlatformUtilitiesPlayStation.cpp
         playstation/PlatformWebViewPlayStation.cpp
     )
+
+    # Exclude tests which don't finish.
+    list(REMOVE_ITEM TestWebKit_SOURCES
+        Tests/WebKit/ForceRepaint.cpp
+        Tests/WebKit/Geolocation.cpp
+    )
 endif ()
 
 
@@ -55,3 +61,7 @@ endif ()
 if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
     set_target_properties(TestWTF TestWebCore TestWebKit PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 endif ()
+
+add_definitions(
+    -DTEST_WEBKIT_RESOURCES_DIR=\"${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit\"
+)

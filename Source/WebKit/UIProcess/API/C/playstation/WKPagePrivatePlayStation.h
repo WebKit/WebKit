@@ -23,39 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundle.h"
+#pragma once
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include "library-bundle.h"
+#include <WebKit/WKBase.h>
+#include <WebKit/WKEventPlayStation.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
-{
-    auto bundle = LibraryBundle::create(m_path.utf8().data());
-    m_platformBundle = bundle;
-    if (!m_platformBundle) {
-        printf("PlayStation::Bundle::create failed\n");
-        return false;
-    }
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(bundle->resolve("WKBundleInitialize"));
-    if (!initializeFunction) {
-        printf("PlayStation::Bundle::resolve failed\n");
-        return false;
-    }
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+WK_EXPORT void WKPageHandleKeyboardEvent(WKPageRef page, WKKeyboardEvent);
+WK_EXPORT void WKPageHandleMouseEvent(WKPageRef page, WKMouseEvent);
+WK_EXPORT void WKPageHandleWheelEvent(WKPageRef page, WKWheelEvent);
+
+#ifdef __cplusplus
 }
-
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
-{
-
-}
-
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
-{
-}
-
-} // namespace WebKit
+#endif

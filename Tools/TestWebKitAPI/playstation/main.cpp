@@ -28,22 +28,33 @@
 #include "process-initialization/nk-testwebkitapi.h"
 #include <dlfcn.h>
 
+static void loadLibraryOrExit(const char* name)
+{
+    if (!dlopen(name, RTLD_NOW)) {
+        fprintf(stderr, "Failed to load %s.\n", name);
+        exit(EXIT_FAILURE);
+    }
+}
+
 int main(int argc, char** argv)
 {
-    dlopen("libicu", RTLD_NOW);
+    loadLibraryOrExit("libicu");
 #if defined(BUILDING_TestWebCore) || defined(BUILDING_TestWebKit)
-    dlopen("libpng16", RTLD_NOW);
-    dlopen("libfontconfig", RTLD_NOW);
-    dlopen("libfreetype", RTLD_NOW);
-    dlopen("libharfbuzz", RTLD_NOW);
-    dlopen("libcairo", RTLD_NOW);
-    dlopen("libSceNKWebKitRequirements", RTLD_NOW);
-    dlopen("libJavaScriptCore", RTLD_NOW);
+    loadLibraryOrExit("libpng16");
+    loadLibraryOrExit("libfontconfig");
+    loadLibraryOrExit("libfreetype");
+    loadLibraryOrExit("libharfbuzz");
+    loadLibraryOrExit("libcairo");
+    loadLibraryOrExit("libSceNKWebKitRequirements");
+    loadLibraryOrExit("libJavaScriptCore");
 #endif
 #if defined(BUILDING_TestWebKit)
-    (dlopen("libcrypto", RTLD_NOW) && dlopen("libssl", RTLD_NOW)) || dlopen("LibreSSL", RTLD_NOW);
-    dlopen("libcurl", RTLD_NOW);
-    dlopen("libWebKit", RTLD_NOW);
+    if (!((dlopen("libcrypto", RTLD_NOW) && dlopen("libssl", RTLD_NOW)) || dlopen("LibreSSL", RTLD_NOW))) {
+        fprintf(stderr, "Failed to load SSL library.\n");
+        exit(EXIT_FAILURE);
+    }
+    loadLibraryOrExit("libcurl");
+    loadLibraryOrExit("libWebKit");
 #endif
     return TestWebKitAPI::TestsController::singleton().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

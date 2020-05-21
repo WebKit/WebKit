@@ -1,3 +1,143 @@
+2020-05-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Add minimal WKView API to enable TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=211868
+
+        Reviewed by Alex Christensen.
+
+        Enable TestWebKitAPI
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::open):
+        Add SocketMonitor to monitor received messages.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        Add PlayStation specific members: WebProcess and NetworkProcess paths, and user ID.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        Add PlayStation specific members: Process path and user ID.
+
+        * NetworkProcess/EntryPoint/playstation/NetworkProcessMain.cpp: Copied from Tools\TestWebKitAPI\playstation\main.cpp.
+        (loadLibraryOrExit):
+        (main):
+        * PlatformPlayStation.cmake:
+        * Shared/API/c/playstation/WKEventPlayStation.cpp: Added.
+        (WKKeyboardEventMake):
+        (WKMouseEventMake):
+        (WKWheelEventMake):
+        * Shared/API/c/playstation/WKEventPlayStation.h: Added.
+        * UIProcess/API/C/playstation/WKAPICastPlayStation.h:
+        (WebKit::toAPI<>):
+        (WebKit::toImpl<>):
+        * UIProcess/API/C/playstation/WKContextConfigurationPlayStation.cpp: Copied from Tools\TestWebKitAPI\playstation\PlatformUtilitiesPlayStation.cpp.
+        (WKContextConfigurationSetWebProcessPath):
+        (WKContextConfigurationCopyWebProcessPath):
+        (WKContextConfigurationSetNetworkProcessPath):
+        (WKContextConfigurationCopyNetworkProcessPath):
+        (WKContextConfigurationSetUserId):
+        (WKContextConfigurationGetUserId):
+        * UIProcess/API/C/playstation/WKContextConfigurationPlayStation.h: Copied from Source\WebKit\UIProcess\API\C\playstation\WKView.h.
+        * UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp: Added.
+        (WKPageHandleKeyboardEvent):
+        (WKPageHandleMouseEvent):
+        (WKPageHandleWheelEvent):
+        * UIProcess/API/C/playstation/WKPagePrivatePlayStation.h: Copied from Source\WebKit\UIProcess\API\C\playstation\WKView.h.
+        * UIProcess/API/C/playstation/WKView.cpp: Copied from Source\WebKit\WebProcess\InjectedBundle\playstation\InjectedBundlePlayStation.cpp.
+        (WKViewCreate):
+        (WKViewGetPage):
+        * UIProcess/API/C/playstation/WKView.h:
+        * UIProcess/Launcher/playstation/ProcessLauncherPlayStation.cpp:
+        (WebKit::defaultProcessPath):
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        * UIProcess/playstation/PageClientImpl.cpp: Added.
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::requestScroll):
+        (WebKit::PageClientImpl::viewScrollPosition):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::processDidExit):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::preferencesDidChange):
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        (WebKit::PageClientImpl::didChangeContentSize):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves):
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::screenToRootView):
+        (WebKit::PageClientImpl::rootViewToScreen):
+        (WebKit::PageClientImpl::accessibilityScreenToRootView):
+        (WebKit::PageClientImpl::rootViewToAccessibilityScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::fullScreenManagerProxyClient):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomContentProvider):
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::navigationGestureWillEnd):
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        (WebKit::PageClientImpl::willRecordNavigationSnapshot):
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+        (WebKit::PageClientImpl::didChangeBackgroundColor):
+        (WebKit::PageClientImpl::isPlayingAudioWillChange):
+        (WebKit::PageClientImpl::isPlayingAudioDidChange):
+        (WebKit::PageClientImpl::refView):
+        (WebKit::PageClientImpl::derefView):
+        (WebKit::PageClientImpl::didRestoreScrollPosition):
+        (WebKit::PageClientImpl::userInterfaceLayoutDirection):
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/playstation/PageClientImpl.h: Added.
+        * UIProcess/playstation/WebProcessPoolPlayStation.cpp:
+        (WebKit::WebProcessPool::platformInitialize):
+        * UIProcess/playstation/PlayStationWebView.cpp: Copied from Source\WebKit\UIProcess\playstation\WebProcessPoolPlayStation.cpp.
+        (WebKit::PlayStationWebView::create):
+        (WebKit::PlayStationWebView::PlayStationWebView):
+        (WebKit::PlayStationWebView::~PlayStationWebView):
+        (WebKit::PlayStationWebView::isActive const):
+        (WebKit::PlayStationWebView::isFocused const):
+        (WebKit::PlayStationWebView::isVisible const):
+        * UIProcess/playstation/PlayStationWebView.h: Copied from Source\WebKit\WebProcess\InjectedBundle\playstation\InjectedBundlePlayStation.cpp.
+        (WebKit::PlayStationWebView::page):
+        * WebProcess/EntryPoint/playstation/WebProcessMain.cpp: Copied from Tools\TestWebKitAPI\playstation\main.cpp.
+        (loadLibraryOrExit):
+        (main):
+        * WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp:
+        (WebKit::InjectedBundle::initialize):
+        (WebKit::InjectedBundle::setBundleParameter):
+        * WebProcess/WebPage/AcceleratedSurface.cpp:
+        (WebKit::AcceleratedSurface::create):
+
 2020-05-21  Chris Dumez  <cdumez@apple.com>
 
         Address post review comments from Mitz after r262004.

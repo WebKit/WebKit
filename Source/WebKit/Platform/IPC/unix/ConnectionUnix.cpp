@@ -120,6 +120,13 @@ void Connection::platformInvalidate()
     m_writeSocketMonitor.stop();
 #endif
 
+#if PLATFORM(PLAYSTATION)
+    if (m_socketMonitor) {
+        m_socketMonitor->detach();
+        m_socketMonitor = nullptr;
+    }
+#endif
+
     m_socketDescriptor = -1;
     m_isConnected = false;
 }
@@ -359,6 +366,27 @@ bool Connection::open()
         ASSERT_NOT_REACHED();
         return G_SOURCE_REMOVE;
     });
+#endif
+
+#if PLATFORM(PLAYSTATION)
+    m_socketMonitor = Thread::create("SocketMonitor", [protectedThis] {
+        {
+            int fd;
+            while ((fd = protectedThis->m_socketDescriptor) != -1) {
+                int maxFd = fd;
+                fd_set fdSet;
+                FD_ZERO(&fdSet);
+                FD_SET(fd, &fdSet);
+
+                if (-1 != select(maxFd + 1, &fdSet, 0, 0, 0)) {
+                    if (FD_ISSET(fd, &fdSet))
+                        protectedThis->readyReadHandler();
+                }
+            }
+
+        }
+    });
+    return true;
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal handler.

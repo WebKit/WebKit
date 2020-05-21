@@ -24,38 +24,46 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
+#include "PlayStationWebView.h"
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include "library-bundle.h"
+#include "APIPageConfiguration.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
+RefPtr<PlayStationWebView> PlayStationWebView::create(const API::PageConfiguration& configuration)
 {
-    auto bundle = LibraryBundle::create(m_path.utf8().data());
-    m_platformBundle = bundle;
-    if (!m_platformBundle) {
-        printf("PlayStation::Bundle::create failed\n");
-        return false;
-    }
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(bundle->resolve("WKBundleInitialize"));
-    if (!initializeFunction) {
-        printf("PlayStation::Bundle::resolve failed\n");
-        return false;
-    }
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+    return adoptRef(*new PlayStationWebView(configuration));
 }
 
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
+PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
+    : m_pageClient(makeUnique<PageClientImpl>(*this))
 {
+    auto configuration = conf.copy();
+    auto* pool = configuration->processPool();
+    m_page = pool->createWebPage(*m_pageClient, WTFMove(configuration));
 
+    m_page->initializeWebPage();
 }
 
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
+PlayStationWebView::~PlayStationWebView()
 {
+}
+
+bool PlayStationWebView::isActive() const
+{
+    return m_active;
+}
+
+bool PlayStationWebView::isFocused() const
+{
+    return m_focused;
+}
+
+bool PlayStationWebView::isVisible() const
+{
+    return m_visible;
 }
 
 } // namespace WebKit

@@ -58,7 +58,7 @@ std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage,
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
         return AcceleratedSurfaceX11::create(webPage, client);
 #endif
-#if USE(LIBWPE)
+#if USE(WPE_RENDERER)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::WPE)
         return AcceleratedSurfaceLibWPE::create(webPage, client);
 #endif

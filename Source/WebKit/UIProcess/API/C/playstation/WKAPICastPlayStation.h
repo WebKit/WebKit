@@ -30,4 +30,24 @@
 #error "Please #include \"WKAPICast.h\" instead of this file directly."
 #endif
 
+namespace WebKit {
+
+class PlayStationWebView;
+
+WK_ADD_API_MAPPING(WKViewRef, PlayStationWebView)
+
+template<>
+inline WKViewRef toAPI<>(PlayStationWebView* view)
+{
+    return reinterpret_cast<WKViewRef>(static_cast<void*>(view));
+}
+
+template<>
+inline PlayStationWebView* toImpl<>(WKViewRef view)
+{
+    return static_cast<PlayStationWebView*>(static_cast<void*>(const_cast<typename std::remove_const<typename std::remove_pointer<WKViewRef>::type>::type*>(view)));
+}
+
+}
+
 #endif /* WKAPICastPlayStation_h */

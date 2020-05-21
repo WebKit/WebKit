@@ -85,6 +85,11 @@ public:
         String processCmdPrefix;
 #endif
 #endif
+
+#if PLATFORM(PLAYSTATION)
+        String processPath;
+        int32_t userId { -1 };
+#endif
     };
 
     static Ref<ProcessLauncher> create(Client* client, LaunchOptions&& launchOptions)

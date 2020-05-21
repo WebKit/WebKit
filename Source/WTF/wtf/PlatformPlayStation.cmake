@@ -18,7 +18,6 @@ list(APPEND WTF_SOURCES
 )
 
 list(APPEND WTF_LIBRARIES
-    ${C_STD_LIBRARY}
     ${KERNEL_LIBRARY}
     Threads::Threads
 )

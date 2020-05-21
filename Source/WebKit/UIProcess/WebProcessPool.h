@@ -535,6 +535,12 @@ public:
     void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
 #endif
 
+#if PLATFORM(PLAYSTATION)
+    const String& webProcessPath() const { return m_resolvedPaths.webProcessPath; }
+    const String& networkProcessPath() const { return m_resolvedPaths.networkProcessPath; }
+    int32_t userId() const { return m_userId; }
+#endif
+
 private:
     void platformInitialize();
 
@@ -762,6 +768,11 @@ private:
         String containerTemporaryDirectory;
 #endif
 
+#if PLATFORM(PLAYSTATION)
+        String webProcessPath;
+        String networkProcessPath;
+#endif
+
         Vector<String> additionalWebProcessSandboxExtensionPaths;
     };
     Paths m_resolvedPaths;
@@ -798,6 +809,10 @@ private:
 #endif
     };
     Optional<AudibleMediaActivity> m_audibleMediaActivity;
+
+#if PLATFORM(PLAYSTATION)
+    int32_t m_userId { -1 };
+#endif
 
 #if PLATFORM(IOS)
     // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).

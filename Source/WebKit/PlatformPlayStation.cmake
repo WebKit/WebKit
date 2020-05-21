@@ -1,9 +1,3 @@
-set(WebKit_OUTPUT_NAME SceWebKit)
-set(WebProcess_OUTPUT_NAME WebKitWebProcess)
-set(NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
-set(GPUProcess_OUTPUT_NAME WebKitGPUProcess)
-set(PluginProcess_OUTPUT_NAME WebKitPluginProcess)
-
 include(Headers.cmake)
 
 add_definitions(-DBUILDING_WEBKIT)
@@ -11,11 +5,11 @@ add_definitions(-DBUILDING_WEBKIT)
 set(WebKit_USE_PREFIX_HEADER ON)
 
 list(APPEND WebProcess_SOURCES
-    WebProcess/EntryPoint/unix/WebProcessMain.cpp
+    WebProcess/EntryPoint/playstation/WebProcessMain.cpp
 )
 
 list(APPEND NetworkProcess_SOURCES
-    NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
+    NetworkProcess/EntryPoint/playstation/NetworkProcessMain.cpp
 )
 
 list(APPEND GPUProcess_SOURCES
@@ -57,6 +51,8 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
+    Shared/API/c/playstation/WKEventPlayStation.cpp
+
     Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
     Shared/CoordinatedGraphics/SimpleViewportController.cpp
 
@@ -90,6 +86,10 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
     UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
 
+    UIProcess/API/C/playstation/WKContextConfigurationPlayStation.cpp
+    UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp
+    UIProcess/API/C/playstation/WKView.cpp
+
     UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
@@ -104,6 +104,8 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/libwpe/WebPasteboardProxyLibWPE.cpp
 
+    UIProcess/playstation/PageClientImpl.cpp
+    UIProcess/playstation/PlayStationWebView.cpp
     UIProcess/playstation/WebPageProxyPlayStation.cpp
     UIProcess/playstation/WebProcessPoolPlayStation.cpp
 
@@ -138,6 +140,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
+    "${WEBKIT_DIR}/UIProcess/playstation"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
@@ -150,10 +153,13 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/curl/WKCertificateInfoCurl.h
 
     Shared/API/c/playstation/WKBasePlayStation.h
+    Shared/API/c/playstation/WKEventPlayStation.h
 
     UIProcess/API/C/curl/WKProtectionSpaceCurl.h
     UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.h
 
+    UIProcess/API/C/playstation/WKContextConfigurationPlayStation.h
+    UIProcess/API/C/playstation/WKPagePrivatePlayStation.h
     UIProcess/API/C/playstation/WKView.h
 )
 
@@ -163,4 +169,5 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
 list(APPEND WebKit_PRIVATE_LIBRARIES
     $<TARGET_OBJECTS:PAL>
     $<TARGET_OBJECTS:WebCore>
+    WebKitRequirements::ProcessLauncher
 )

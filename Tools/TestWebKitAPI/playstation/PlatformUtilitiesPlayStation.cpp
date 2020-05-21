@@ -34,14 +34,14 @@ namespace Util {
 
 WKStringRef createInjectedBundlePath()
 {
-    return WKStringCreateWithUTF8CString("injectedbundle");
+    return WKStringCreateWithUTF8CString("/app0/libTestWebKitAPIInjectedBundle.sprx");
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    String filename = makeString(resource, '.', extension);
-    auto url = URL::fileURLWithFileSystemPath(filename);
-    return WKURLCreateWithUTF8CString(url.string().utf8().data());
+    char url[512]; // Sufficient buffer size for the prefix and the actual path.
+    snprintf(url, sizeof(url), "file:///host/%s/%s.%s", TEST_WEBKIT_RESOURCES_DIR, resource, extension);
+    return WKURLCreateWithUTF8CString(url);
 }
 
 WKURLRef URLForNonExistentResource()

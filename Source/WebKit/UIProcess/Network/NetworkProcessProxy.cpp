@@ -109,6 +109,11 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
         processPool().setShouldMakeNextNetworkProcessLaunchFailForTesting(false);
         launchOptions.shouldMakeProcessLaunchFailForTesting = true;
     }
+
+#if PLATFORM(PLAYSTATION)
+    launchOptions.processPath = m_processPool.networkProcessPath();
+    launchOptions.userId = m_processPool.userId();
+#endif
 }
 
 void NetworkProcessProxy::connectionWillOpen(IPC::Connection& connection)

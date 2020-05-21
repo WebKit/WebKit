@@ -24,38 +24,18 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
+#include "WKView.h"
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include "library-bundle.h"
+#include "APIPageConfiguration.h"
+#include "PlayStationWebView.h"
+#include "WKAPICast.h"
 
-namespace WebKit {
-
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
+WKViewRef WKViewCreate(WKPageConfigurationRef configuration)
 {
-    auto bundle = LibraryBundle::create(m_path.utf8().data());
-    m_platformBundle = bundle;
-    if (!m_platformBundle) {
-        printf("PlayStation::Bundle::create failed\n");
-        return false;
-    }
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(bundle->resolve("WKBundleInitialize"));
-    if (!initializeFunction) {
-        printf("PlayStation::Bundle::resolve failed\n");
-        return false;
-    }
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+    return WebKit::toAPI(WebKit::PlayStationWebView::create(*WebKit::toImpl(configuration)).leakRef());
 }
 
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
+WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-
+    return WebKit::toAPI(WebKit::toImpl(viewRef)->page());
 }
-
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
-{
-}
-
-} // namespace WebKit

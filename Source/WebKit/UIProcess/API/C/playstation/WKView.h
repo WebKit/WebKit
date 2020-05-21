@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKView_h
-#define WKView_h
+#pragma once
 
 #include <WebKit/WKBase.h>
 
@@ -32,8 +31,9 @@
 extern "C" {
 #endif
 
+WK_EXPORT WKViewRef WKViewCreate(WKPageConfigurationRef configuration);
+WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
+
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* WKView_h */

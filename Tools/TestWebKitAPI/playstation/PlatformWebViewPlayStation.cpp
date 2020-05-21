@@ -26,55 +26,80 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include <KeyboardEvents.h>
+#include <WebKit/WKContextConfigurationPlayStation.h>
+#include <WebKit/WKPageConfigurationRef.h>
+#include <WebKit/WKPagePrivatePlayStation.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WebKit2_C.h>
+
 namespace TestWebKitAPI {
-
-PlatformWebView::PlatformWebView(WKContextRef, WKPageGroupRef)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
+    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(configuration.get(), contextRef);
+    WKPageConfigurationSetPageGroup(configuration.get(), pageGroupRef);
+
+    initialize(configuration.get());
 }
 
-PlatformWebView::PlatformWebView(WKPageConfigurationRef)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration)
 {
+    initialize(configuration);
 }
 
-PlatformWebView::PlatformWebView(WKPageRef)
+PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 {
+    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(configuration.get(), WKPageGetContext(relatedPage));
+    WKPageConfigurationSetPageGroup(configuration.get(), WKPageGetPageGroup(relatedPage));
+    WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
+
+    initialize(configuration.get());
 }
 
 PlatformWebView::~PlatformWebView()
 {
+    WKPageClose(page());
+    WKRelease(m_view);
 }
 
-void PlatformWebView::initialize(WKPageConfigurationRef)
+void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 {
+    m_view = WKViewCreate(configuration);
+    resizeTo(800, 600);
+}
+
+void PlatformWebView::resizeTo(unsigned width, unsigned height)
+{
+    // Not implemented.
 }
 
 WKPageRef PlatformWebView::page() const
 {
-    return nullptr;
-}
-
-void PlatformWebView::resizeTo(unsigned, unsigned)
-{
-}
-
-void PlatformWebView::focus()
-{
+    return WKViewGetPage(m_view);
 }
 
 void PlatformWebView::simulateSpacebarKeyPress()
 {
+    WKPageHandleKeyboardEvent(page(), WKKeyboardEventMake(kWKEventKeyDown, kWKInputTypeNormal, " ", 1, keyIdentifierForKeyCode(0x20), 0x20, -1, 0, 0));
+    WKPageHandleKeyboardEvent(page(), WKKeyboardEventMake(kWKEventKeyUp, kWKInputTypeNormal, " ", 1, keyIdentifierForKeyCode(0x20), 0x20, -1, 0, 0));
 }
 
-void PlatformWebView::simulateAltKeyPress()
+void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers modifiers)
 {
+    WKPageHandleMouseEvent(page(), WKMouseEventMake(kWKEventMouseMove, kWKEventMouseButtonNoButton, WKPointMake(x, y), 0, modifiers));
 }
 
-void PlatformWebView::simulateMouseMove(unsigned, unsigned, WKEventModifiers)
+void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
 {
+    simulateButtonClick(kWKEventMouseButtonRightButton, x, y, 0);
 }
 
-void PlatformWebView::simulateRightClick(unsigned, unsigned)
+void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x, unsigned y, WKEventModifiers modifiers)
 {
+    WKPageHandleMouseEvent(page(), WKMouseEventMake(kWKEventMouseDown, button, WKPointMake(x, y), 0, modifiers));
+    WKPageHandleMouseEvent(page(), WKMouseEventMake(kWKEventMouseUp, button, WKPointMake(x, y), 0, modifiers));
 }
 
 } // namespace TestWebKitAPI

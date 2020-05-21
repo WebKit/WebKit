@@ -23,39 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundle.h"
+#pragma once
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include "library-bundle.h"
+#include "APIObject.h"
+#include "PageClientImpl.h"
+#include "WKView.h"
+#include "WebPageProxy.h"
 
 namespace WebKit {
 
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
-{
-    auto bundle = LibraryBundle::create(m_path.utf8().data());
-    m_platformBundle = bundle;
-    if (!m_platformBundle) {
-        printf("PlayStation::Bundle::create failed\n");
-        return false;
-    }
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(bundle->resolve("WKBundleInitialize"));
-    if (!initializeFunction) {
-        printf("PlayStation::Bundle::resolve failed\n");
-        return false;
-    }
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
-}
+class PlayStationWebView : public API::ObjectImpl<API::Object::Type::View> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static RefPtr<PlayStationWebView> create(const API::PageConfiguration&);
+    virtual ~PlayStationWebView();
 
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
-{
+    WebPageProxy* page() { return m_page.get(); }
 
-}
+    bool isActive() const;
+    bool isFocused() const;
+    bool isVisible() const;
 
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
-{
-}
+private:
+    PlayStationWebView(const API::PageConfiguration&);
+
+    std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
+    RefPtr<WebPageProxy> m_page;
+
+    bool m_active { false };
+    bool m_focused { false };
+    bool m_visible { false };
+#if ENABLE(FULLSCREEN_API)
+    bool m_isFullScreen { false };
+#endif
+};
 
 } // namespace WebKit
