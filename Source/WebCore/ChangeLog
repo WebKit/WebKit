@@ -1,3 +1,28 @@
+2020-05-20  Oriol Brufau  <obrufau@igalia.com>
+
+        Computed min-width/height for auto depends on box
+        https://bugs.webkit.org/show_bug.cgi?id=209651
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resolved value of min-width and min-height for auto min sizing of flex
+        and grid items may be 'auto'. We based this on the computed style of the
+        shadow including parent. Instead we should rely on whether the element
+        will actually be a rendered flex/grid item.
+
+        The difference matters e.g. when the parent has 'display: contents' and
+        thus is not a flex nor grid container, but the element can still be a
+        flex or grid item, depending on the grand-parent.
+
+        This patch is based on https://crrev.com/540901 from Chromium.
+
+        Tests: imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-auto-size.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isFlexOrGridItem):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+
 2020-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove implicit URL->String conversion operators

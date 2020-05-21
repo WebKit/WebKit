@@ -1,6 +1,6 @@
 
 PASS Computed min-width/min-height of specified auto for flex item. 
-FAIL Computed min-width/min-height of specified auto inside display:none which would otherwise have been a flex item. assert_equals: expected "0px" but got "auto"
-FAIL Computed min-width/min-height of specified auto for flex item inside display:contents. assert_equals: expected "auto" but got "0px"
-FAIL Computed min-width/min-height of specified auto with display:none which would otherwise have been a flex item. assert_equals: expected "0px" but got "auto"
+PASS Computed min-width/min-height of specified auto inside display:none which would otherwise have been a flex item. 
+PASS Computed min-width/min-height of specified auto for flex item inside display:contents. 
+PASS Computed min-width/min-height of specified auto with display:none which would otherwise have been a flex item. 
 
