@@ -1,3 +1,24 @@
+2020-05-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] [css-flex] Width of table as grid/flex item is infinite when the sum of columns' width exceed 100%
+        https://bugs.webkit.org/show_bug.cgi?id=191365
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Automatic table layout algorithm generates infinite width tables
+        (tableMaxWidth to be more exact) when the sum of the columns percentages
+        exceed the 100% value and there is at least one non-percentage based
+        column with positive width as in those cases it's impossible to fulfill
+        the table constrains. That should not be done in the case of the table
+        being a flex or a grid item because they both define new formatting
+        contexts.
+
+        Based on Blink's crrev.com/1095220 by <mstensho@chromium.org>
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::shouldScaleColumnsForParent): return false when the table is
+        either a grid or a flex item.
+
 2020-05-21  Zalan Bujtas  <zalan@apple.com>
 
         [ macOS debug ] REGRESSION: fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html is a flaky crash

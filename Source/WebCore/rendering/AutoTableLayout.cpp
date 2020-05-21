@@ -23,6 +23,8 @@
 #include "AutoTableLayout.h"
 
 #include "RenderChildIterator.h"
+#include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -188,6 +190,13 @@ static bool shouldScaleColumnsForParent(const RenderTable& table)
         // scale. Fixed doesn't care if we do or not because it doesn't depend
         // on the cell contents' preferred widths.
         if (is<RenderTableCell>(containingBlock))
+            return false;
+        // The max logical width of a table may be "infinity" (or tableMaxWidth, to be more exact) if the sum if the
+        // columns' percentages is 100% or more, AND there is at least one column that has a non-percentage-based positive
+        // logical width. In such situations no table logical width will be large enough to satisfy the constraint
+        // set by the contents. So the idea is to use ~infinity to make sure we use all available size in the containing
+        // block. However, this just doesn't work if this is a flex or grid item, so disallow scaling in that case.
+        if (is<RenderFlexibleBox>(containingBlock) || is<RenderGrid>(containingBlock))
             return false;
         containingBlock = containingBlock->containingBlock();
     }
