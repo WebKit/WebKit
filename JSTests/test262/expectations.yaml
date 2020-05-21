@@ -1,7 +1,4 @@
 ---
-test/annexB/built-ins/Array/from/iterator-method-emulates-undefined.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
   default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
@@ -11,24 +8,9 @@ test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-no-line-terminator-html-close-comment-body.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/annexB/built-ins/String/prototype/match/custom-matcher-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/annexB/built-ins/String/prototype/replace/custom-replacer-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «null») to be true'
 test/annexB/built-ins/String/prototype/replaceAll/custom-replacer-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«», «null») to be true'
-test/annexB/built-ins/String/prototype/search/custom-searcher-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«-1», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-1», «null») to be true'
-test/annexB/built-ins/String/prototype/split/custom-splitter-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «null») to be true'
-test/annexB/built-ins/TypedArrayConstructors/from/iterator-method-emulates-undefined.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:
@@ -1522,12 +1504,6 @@ test/built-ins/RegExp/prototype/unicode/cross-realm.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/String/prototype/replace/cstm-replace-is-null.js:
-  default: 'TypeError: null is not a function'
-  strict mode: 'TypeError: null is not a function'
-test/built-ins/String/prototype/replaceAll/searchValue-replacer-is-null.js:
-  default: 'TypeError: null is not a function'
-  strict mode: 'TypeError: null is not a function'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'

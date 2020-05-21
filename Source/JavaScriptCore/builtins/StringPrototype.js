@@ -32,9 +32,9 @@ function match(regexp)
     if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.match requires that |this| not be null or undefined");
 
-    if (regexp != null) {
+    if (!@isUndefinedOrNull(regexp)) {
         var matcher = regexp.@@match;
-        if (matcher != @undefined)
+        if (!@isUndefinedOrNull(matcher))
             return matcher.@call(regexp, this);
     }
 
@@ -245,9 +245,9 @@ function replace(search, replace)
     if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.replace requires that |this| not be null or undefined");
 
-    if (search != null) {
+    if (!@isUndefinedOrNull(search)) {
         var replacer = search.@@replace;
-        if (replacer !== @undefined) {
+        if (!@isUndefinedOrNull(replacer)) {
             if (!@hasObservableSideEffectsForStringReplace(search, replacer))
                 return @toString(this).@replaceUsingRegExp(search, replace);
             return replacer.@call(search, this, replace);
@@ -266,12 +266,12 @@ function replaceAll(search, replace)
     if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.replaceAll requires |this| not to be null nor undefined");
 
-    if (search != null) {
+    if (!@isUndefinedOrNull(search)) {
         if (@isRegExp(search) && !@stringIncludesInternal.@call(@toString(search.flags), "g"))
             @throwTypeError("String.prototype.replaceAll argument must not be a non-global regular expression");
 
         var replacer = search.@@replace;
-        if (replacer !== @undefined) {
+        if (!@isUndefinedOrNull(replacer)) {
             if (!@hasObservableSideEffectsForStringReplace(search, replacer))
                 return @toString(this).@replaceUsingRegExp(search, replace);
             return replacer.@call(search, this, replace);
@@ -290,9 +290,9 @@ function search(regexp)
     if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.search requires that |this| not be null or undefined");
 
-    if (regexp != null) {
+    if (!@isUndefinedOrNull(regexp)) {
         var searcher = regexp.@@search;
-        if (searcher != @undefined)
+        if (!@isUndefinedOrNull(searcher))
             return searcher.@call(regexp, this);
     }
 
@@ -308,9 +308,9 @@ function split(separator, limit)
     if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.split requires that |this| not be null or undefined");
     
-    if (separator != null) {
+    if (!@isUndefinedOrNull(separator)) {
         var splitter = separator.@@split;
-        if (splitter != @undefined)
+        if (!@isUndefinedOrNull(splitter))
             return splitter.@call(separator, this, limit);
     }
     

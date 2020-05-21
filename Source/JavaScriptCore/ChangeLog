@@ -1,3 +1,37 @@
+2020-05-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use @isUndefinedOrNull instead of abstract equality with null
+        https://bugs.webkit.org/show_bug.cgi?id=210954
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch:
+
+        a) Replaces 2 `!== @undefined` comparisons in String.prototype.{replace,replaceAll}
+        with @isUndefinedOrNull() as per spec [1], aligning JSC with V8 and SpiderMonkey.
+
+        b) Replaces 3 `!= @undefined` and 7 `!= null` comparisons with @isUndefinedOrNull()
+        as only the latter is correct with [[IsHTMLDDA]] aka MasqueradesAsUndefined objects [2].
+
+        c) Removes @isDictionary() since it is unused, easy to inline and its name is quite
+        misleading: one might expect it to perform Structure::isDictionary().
+
+        [1]: https://tc39.es/ecma262/#sec-getmethod (step 3)
+        [2]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+
+        * builtins/ArrayConstructor.js:
+        * builtins/GlobalOperations.js:
+        (globalPrivate.isDictionary): Deleted.
+        * builtins/RegExpPrototype.js:
+        (Symbol.split): Unobservable as there is `=== null` check in @regExpExec.
+        * builtins/StringPrototype.js:
+        (match):
+        (replace):
+        (replaceAll):
+        (search):
+        (split):
+        * builtins/TypedArrayConstructor.js:
+
 2020-05-21  Saam Barati  <sbarati@apple.com>
 
         Add an option that exposes functions on the global object to turn on and off the sampling profiler and the super sampler

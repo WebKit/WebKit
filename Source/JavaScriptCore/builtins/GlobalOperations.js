@@ -50,14 +50,6 @@ function toLength(target)
 }
 
 @globalPrivate
-function isDictionary(object)
-{
-    "use strict";
-
-    return object == null || typeof object === "object";
-}
-
-@globalPrivate
 @getter
 @overriddenName="get [Symbol.species]"
 function speciesGetter()

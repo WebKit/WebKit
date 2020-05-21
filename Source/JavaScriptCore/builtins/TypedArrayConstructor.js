@@ -62,7 +62,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     var arrayLike = @toObject(items, "TypedArray.from requires an array-like object - not null or undefined");
 
     var iteratorMethod = items.@@iterator;
-    if (iteratorMethod != null) {
+    if (!@isUndefinedOrNull(iteratorMethod)) {
         if (typeof iteratorMethod !== "function")
             @throwTypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
 

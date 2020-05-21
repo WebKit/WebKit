@@ -529,7 +529,7 @@ function split(string, limit)
         // a. Let z be ? RegExpExec(splitter, S).
         var z = @regExpExec(splitter, str);
         // b. If z is not null, return A.
-        if (z != null)
+        if (z !== null)
             return result;
         // c. Perform ! CreateDataProperty(A, "0", S).
         @putByValDirect(result, 0, str);
