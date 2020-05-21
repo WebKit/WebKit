@@ -240,6 +240,9 @@ void ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout()
     ASSERT(ScrollingThread::isCurrentThread());
     ASSERT(m_treeMutex.isLocked());
 
+    if (m_delayedRenderingUpdateDetectionTimer)
+        m_delayedRenderingUpdateDetectionTimer->stop();
+
     auto startTime = MonotonicTime::now();
     auto timeoutTime = startTime + maxAllowableRenderingUpdateDurationForSynchronization();
 
@@ -270,6 +273,26 @@ void ThreadedScrollingTree::didCompleteRenderingUpdate()
     m_state = SynchronizationState::Idle;
 }
 
+void ThreadedScrollingTree::scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+    ASSERT(m_treeMutex.isLocked());
+
+    if (!m_delayedRenderingUpdateDetectionTimer)
+        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer<ThreadedScrollingTree>>(RunLoop::current(), this, &ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired);
+
+    m_delayedRenderingUpdateDetectionTimer->startOneShot(delay);
+}
+
+void ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    LockHolder treeLocker(m_treeMutex);
+    applyLayerPositionsInternal();
+    m_state = SynchronizationState::Desynchronized;
+}
+
 void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 {
     TraceScope tracingScope(ScrollingThreadDisplayDidRefreshStart, ScrollingThreadDisplayDidRefreshEnd);
@@ -283,6 +306,8 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
     switch (m_state) {
     case SynchronizationState::Idle: {
         m_state = SynchronizationState::WaitingForRenderingUpdate;
+        constexpr auto maxStartRenderingUpdateDelay = 1_ms;
+        scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
         break;
     }
     case SynchronizationState::WaitingForRenderingUpdate:

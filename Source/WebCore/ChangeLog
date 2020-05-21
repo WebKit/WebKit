@@ -1,3 +1,29 @@
+2020-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS] Scrolling synchronization part 2: Have the scrolling thread detect when the main thread is slow to respond to start a rendering update
+        https://bugs.webkit.org/show_bug.cgi?id=212175
+
+        Reviewed by Tim Horton.
+
+        The scrolling thread now detects when a main thread rendering update is taking too long, going into
+        desynchronized mode when that happens.
+
+        However, there's another state that needs to be handled, which is the main thread being busy and
+        taking too long to start the rendering update. The scrolling thread gets a "displayDidRefresh" ping
+        and expects that the main thread will get the same ping, and use it to start the rendering update,
+        but a busy main thread won't respond to this ping promptly.
+
+        Detect this with a short-duration (1ms) timer that fires on the scrolling thread; if the timer fires
+        we go into desynchronized mode until the next update. The timer is canceled if the scrolling thread
+        receives the willStartRenderingUpdate(). 
+
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+        (WebCore::ThreadedScrollingTree::scheduleDelayedRenderingUpdateDetectionTimer):
+        (WebCore::ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired):
+        (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+        * page/scrolling/ThreadedScrollingTree.h:
+
 2020-05-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] [css-flex] Width of table as grid/flex item is infinite when the sum of columns' width exceed 100%

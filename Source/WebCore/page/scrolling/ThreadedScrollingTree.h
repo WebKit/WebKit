@@ -31,6 +31,7 @@
 #include "ScrollingTree.h"
 #include <wtf/Condition.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -85,7 +86,10 @@ private:
 
     void displayDidRefreshOnScrollingThread();
     void waitForRenderingUpdateCompletionOrTimeout();
-    
+
+    void scheduleDelayedRenderingUpdateDetectionTimer(Seconds);
+    void delayedRenderingUpdateDetectionTimerFired();
+
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
@@ -99,6 +103,9 @@ private:
 
     SynchronizationState m_state { SynchronizationState::Idle };
     Condition m_stateCondition;
+
+    // Dynamically allocated because it has to use the ScrollingThread's runloop.
+    std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer;
 };
 
 } // namespace WebCore
