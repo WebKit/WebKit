@@ -1,3 +1,16 @@
+2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS 13.4 build after r261978
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Only declare `_UIHoverEventRespondable` if HAVE(UI_HOVER_EVENT_RESPONDABLE) is defined.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+
+        If `_UIHoverEventRespondable` is not present, fall back to declaring internal methods on
+        `UIHoverGestureRecognizer`.
+
 2020-05-21  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
 
         [ConnectionUnix] Set MSG_NOSIGNAL to avoid SIGPIPE

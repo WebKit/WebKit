@@ -1,3 +1,11 @@
+2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS 13.4 build after r261978
+
+        Add a `HAVE()` macro to guard usages of _UIHoverEventRespondable.
+
+        * wtf/PlatformHave.h:
+
 2020-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Scrolling synchronization part 1: Have the scrolling thread wait half a frame for the main thread to complete the rendering update

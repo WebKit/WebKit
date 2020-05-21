@@ -422,12 +422,16 @@ typedef enum {
 #endif
 @end
 
+#if HAVE(UI_HOVER_EVENT_RESPONDABLE)
+
 @protocol _UIHoverEventRespondable <NSObject>
 - (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 - (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 - (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 - (void)_hoverCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 @end
+
+#endif // HAVE(UI_HOVER_EVENT_RESPONDABLE)
 
 @interface UITapGestureRecognizer ()
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;

@@ -50,7 +50,15 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return modifiers;
 }
 
+#if HAVE(UI_HOVER_EVENT_RESPONDABLE)
 @interface UIHoverGestureRecognizer () <_UIHoverEventRespondable>
+#else
+@interface UIHoverGestureRecognizer ()
+- (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+- (void)_hoverCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
+#endif
 @end
 
 @implementation WKMouseGestureRecognizer {
