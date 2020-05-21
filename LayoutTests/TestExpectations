@@ -3315,7 +3315,6 @@ webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match.html [ Skip ]
 webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Pass Failure ]
 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Pass Failure ]
 webgl/2.0.0/conformance2/buffers/buffer-data-and-buffer-sub-data-sub-source.html [ Pass Failure ]
-webgl/2.0.0/conformance2/buffers/get-buffer-sub-data.html [ Pass Failure ]
 
 # webkit.org/b/208211 Additional inconsitencies between Intel bots and AMD machine
 webgl/2.0.0/conformance/buffers/buffer-uninitialized.html [ Pass Failure ]
