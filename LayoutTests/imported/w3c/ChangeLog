@@ -1,3 +1,16 @@
+2020-05-21  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Don't create renderers for whitespace nodes
+        https://bugs.webkit.org/show_bug.cgi?id=212220
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import WPT test.
+
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001.html: Added.
+
 2020-05-20  Oriol Brufau  <obrufau@igalia.com>
 
         Computed min-width/height for auto depends on box

@@ -1,3 +1,22 @@
+2020-05-21  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Don't create renderers for whitespace nodes
+        https://bugs.webkit.org/show_bug.cgi?id=212220
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Even with 'white-space: pre' we shouldn't create RenderTexts
+        for whitespace-only nodes in grid layout, according to
+        https://drafts.csswg.org/css-grid/#grid-items
+
+        This patch is based on https://codereview.chromium.org/16888008
+
+        Tests: fast/text/simple-line-layout-with-zero-sized-font.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001.html
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::textRendererIsNeeded):
+
 2020-05-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fix rare crash in TileGrid::platformCALayerShowRepaintCounter()

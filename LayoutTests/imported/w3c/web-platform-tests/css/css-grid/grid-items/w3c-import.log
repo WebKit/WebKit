@@ -259,3 +259,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/ref-filled-green-100px-square-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001.html
