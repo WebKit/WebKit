@@ -1,3 +1,15 @@
+2020-05-21  Sihui Liu  <sihui_liu@apple.com>
+
+        SQLite database fails to close in SQLiteIDBBackingStore::databaseNameFromFile
+        https://bugs.webkit.org/show_bug.cgi?id=212090
+
+        Reviewed by Darin Adler.
+
+        We should finish SQLite statement before closing database.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameFromFile):
+
 2020-05-21  Doug Kelly  <dougk@apple.com>
 
         Dispatch pending events only for current page

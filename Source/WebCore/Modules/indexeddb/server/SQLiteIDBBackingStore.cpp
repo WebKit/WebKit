@@ -921,13 +921,10 @@ String SQLiteIDBBackingStore::databaseNameFromFile(const String& databasePath)
     }
     if (!database.tableExists("IDBDatabaseInfo"_s)) {
         LOG_ERROR("Could not find IDBDatabaseInfo table and get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
-        database.close();
         return { };
     }
     SQLiteStatement sql(database, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';");
-    auto databaseName = sql.getColumnText(0);
-    database.close();
-    return databaseName;
+    return sql.getColumnText(0);
 }
 
 String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
