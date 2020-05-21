@@ -2277,6 +2277,8 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
     if (container == this) {
         if (container->style().isFlippedBlocksWritingMode())
             flipForWritingMode(adjustedRect);
+        if (context.descendantNeedsEnclosingIntRect)
+            adjustedRect = enclosingIntRect(adjustedRect);
         return adjustedRect;
     }
 
@@ -2313,6 +2315,7 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
         LayoutSize flooredLocationOffset = toIntSize(flooredIntPoint(locationOffset));
         adjustedRect.expand(locationOffset - flooredLocationOffset);
         locationOffset = flooredLocationOffset;
+        context.descendantNeedsEnclosingIntRect = true;
     }
 
     if (is<RenderMultiColumnFlow>(this)) {

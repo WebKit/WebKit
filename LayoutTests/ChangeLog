@@ -1,3 +1,14 @@
+2020-05-20  Zalan Bujtas  <zalan@apple.com>
+
+        Repaint issues when the login field collapses on music.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=212101
+        <rdar://problem/62874369>
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/iframe-on-subpixel-position-expected.txt: Added.
+        * fast/repaint/iframe-on-subpixel-position.html: Added.
+
 2020-05-20  Kenneth Russell  <kbr@chromium.org>
 
         OES_texture_half_float_linear unavailable on WebGL 1.0 on iOS with ANGLE

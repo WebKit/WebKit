@@ -624,8 +624,9 @@ public:
             , options(options)
             {
             }
-        bool hasPositionFixedDescendant;
-        bool dirtyRectIsFlipped;
+        bool hasPositionFixedDescendant { false };
+        bool dirtyRectIsFlipped { false };
+        bool descendantNeedsEnclosingIntRect { false };
         OptionSet<VisibleRectContextOption> options;
     };
     virtual Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
