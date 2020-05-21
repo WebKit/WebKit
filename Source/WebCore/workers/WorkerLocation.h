@@ -33,13 +33,9 @@ namespace WebCore {
 
     class WorkerLocation : public RefCounted<WorkerLocation> {
     public:
-        static Ref<WorkerLocation> create(const URL& url)
-        {
-            return adoptRef(*new WorkerLocation(url));
-        }
+        static Ref<WorkerLocation> create(URL&& url, String&& origin) { return adoptRef(*new WorkerLocation(WTFMove(url), WTFMove(origin))); }
 
         const URL& url() const { return m_url; }
-
         String href() const;
 
         // URI decomposition attributes
@@ -53,9 +49,14 @@ namespace WebCore {
         String origin() const;
 
     private:
-        explicit WorkerLocation(const URL& url) : m_url(url) { }
+        WorkerLocation(URL&& url, String&& origin)
+            : m_url(WTFMove(url))
+            , m_origin(WTFMove(origin))
+        {
+        }
 
         URL m_url;
+        String m_origin;
     };
 
 } // namespace WebCore

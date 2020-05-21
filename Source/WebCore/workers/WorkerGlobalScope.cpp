@@ -239,7 +239,7 @@ void WorkerGlobalScope::resume()
 WorkerLocation& WorkerGlobalScope::location() const
 {
     if (!m_location)
-        m_location = WorkerLocation::create(m_url);
+        m_location = WorkerLocation::create(URL { m_url }, origin());
     return *m_location;
 }
 

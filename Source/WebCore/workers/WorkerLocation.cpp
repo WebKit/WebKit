@@ -75,7 +75,7 @@ String WorkerLocation::hash() const
 
 String WorkerLocation::origin() const
 {
-    return SecurityOriginData::fromURL(m_url).toString();
+    return m_origin;
 }
 
 } // namespace WebCore

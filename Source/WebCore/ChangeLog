@@ -1,3 +1,25 @@
+2020-05-21  Youenn Fablet  <youenn@apple.com>
+
+        Incorrect location.origin in blob workers
+        https://bugs.webkit.org/show_bug.cgi?id=211876
+        <rdar://problem/63284717>
+
+        Reviewed by Sihui Liu.
+
+        Instead of computing the origin from the location URL in worker, get it directly from the WorkerGlobalScope origin.
+        This ensures we unwrap properly blob URLs.
+
+        Test: http/tests/security/contentSecurityPolicy/worker-blob-location.html
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::location const):
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::origin const):
+        * workers/WorkerLocation.h:
+        (WebCore::WorkerLocation::create):
+        (WebCore::WorkerLocation::url const):
+        (WebCore::WorkerLocation::WorkerLocation):
+
 2020-05-21  John Wilander  <wilander@apple.com>
 
         Storage Access API: Allow configurable storage access scope
