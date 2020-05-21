@@ -1,3 +1,13 @@
+2020-05-21  Zalan Bujtas  <zalan@apple.com>
+
+        [ macOS debug ] REGRESSION: fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=212139
+        <rdar://problem/63447683>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/TestExpectations:
+
 2020-05-21  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Enabling a few subdirectories under fast/,

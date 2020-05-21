@@ -174,7 +174,7 @@ public:
         WeakPtr<const ContainerBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
-        InlineLayoutUnit m_baselineOffset;
+        InlineLayoutUnit m_baselineOffset { 0 };
     };
 
     class Slot {

@@ -149,7 +149,7 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
     }
 
     auto& columns = grid.columns();
-    Vector<InlineLayoutUnit> rowBaselines(rows.size());
+    Vector<InlineLayoutUnit> rowBaselines(rows.size(), 0);
     // Now that cells are laid out, let's compute the row baselines.
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
