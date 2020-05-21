@@ -61,7 +61,7 @@ enum ReadyState {
     
     [MayThrowException] void endOfStream(optional EndOfStreamError error);
 
-    static boolean isTypeSupported (DOMString type);
+    [CallWith=ScriptExecutionContext] static boolean isTypeSupported (DOMString type);
 
     [MayThrowException] void setLiveSeekableRange(double start, double end);
     [MayThrowException] void clearLiveSeekableRange();

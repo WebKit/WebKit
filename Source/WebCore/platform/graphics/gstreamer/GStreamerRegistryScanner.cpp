@@ -298,6 +298,39 @@ bool GStreamerRegistryScanner::isCodecSupported(String codec, bool shouldCheckFo
     return supported;
 }
 
+MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const
+{
+    using SupportsType = MediaPlayerEnums::SupportsType;
+
+    const auto& containerType = contentType.containerType();
+    if (!isContainerTypeSupported(containerType))
+        return SupportsType::IsNotSupported;
+
+    const auto& codecs = contentType.codecs();
+
+    // Spec says we should not return "probably" if the codecs string is empty.
+    if (codecs.isEmpty())
+        return SupportsType::MayBeSupported;
+
+    for (const auto& codec : codecs) {
+        bool requiresHardwareSupport = contentTypesRequiringHardwareSupport
+            .findMatching([containerType, codec](auto& hardwareContentType) -> bool {
+            auto hardwareContainer = hardwareContentType.containerType();
+            if (!hardwareContainer.isEmpty()
+                && fnmatch(hardwareContainer.utf8().data(), containerType.utf8().data(), 0))
+                return false;
+            auto hardwareCodecs = hardwareContentType.codecs();
+            return hardwareCodecs.isEmpty()
+                || hardwareCodecs.findMatching([codec](auto& hardwareCodec) -> bool {
+                    return !fnmatch(hardwareCodec.utf8().data(), codec.utf8().data(), 0);
+            }) != notFound;
+        }) != notFound;
+        if (!isCodecSupported(codec, requiresHardwareSupport))
+            return SupportsType::IsNotSupported;
+    }
+    return SupportsType::IsSupported;
+}
+
 bool GStreamerRegistryScanner::areAllCodecsSupported(const Vector<String>& codecs, bool shouldCheckForHardwareUse) const
 {
     for (String codec : codecs) {

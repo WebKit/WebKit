@@ -78,6 +78,7 @@ struct _WebKitSettingsPrivate {
     CString pictographFontFamily;
     CString defaultCharset;
     CString userAgent;
+    CString mediaContentTypesRequiringHardwareSupport;
     bool allowModalDialogs { false };
     bool zoomTextOnly { false };
     double screenDpi { 96 };
@@ -170,6 +171,7 @@ enum {
 #endif
     PROP_ENABLE_JAVASCRIPT_MARKUP,
     PROP_ENABLE_MEDIA,
+    PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT,
 };
 
 static void webKitSettingsDispose(GObject* object)
@@ -400,6 +402,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_MEDIA:
         webkit_settings_set_enable_media(settings, g_value_get_boolean(value));
         break;
+    case PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT:
+        webkit_settings_set_media_content_types_requiring_hardware_support(settings, g_value_get_string(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -590,6 +595,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_MEDIA:
         g_value_set_boolean(value, webkit_settings_get_enable_media(settings));
+        break;
+    case PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT:
+        g_value_set_string(value, webkit_settings_get_media_content_types_requiring_hardware_support(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1538,6 +1546,21 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             TRUE,
             readWriteConstructParamFlags));
 
+    /**
+     * WebKitSettings:media-content-types-requiring-hardware-support:
+     *
+     * List of media content types requiring hardware support, split by semicolons (:).
+     * For example: 'video/webm; codecs="vp*":video/mp4; codecs="avc*":video/*; codecs="av1*"'.
+     *
+     * Since: 2.30
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT,
+        g_param_spec_string("media-content-types-requiring-hardware-support",
+            _("Media content types requiring hardware support"),
+            _("List of media content types requiring hardware support."),
+            nullptr, // A null string forces the default value.
+            readWriteConstructParamFlags));
 }
 
 WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
@@ -3807,4 +3830,47 @@ void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings* setti
 {
     WebKitSettingsPrivate* priv = settings->priv;
     priv->preferences->setMediaCaptureRequiresSecureConnection(required);
+}
+
+/**
+ * webkit_settings_get_media_content_types_requiring_hardware_support:
+ * @settings: a #WebKitSettings
+ *
+ * Gets the #WebKitSettings:media-content-types-requiring-hardware-support property.
+ *
+ * Returns: Media content types requiring hardware support, or %NULL.
+ *
+ * Since: 2.30
+ */
+const gchar* webkit_settings_get_media_content_types_requiring_hardware_support(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
+
+    const auto& mediaContentTypesRequiringHardwareSupport = settings->priv->mediaContentTypesRequiringHardwareSupport;
+    if (!mediaContentTypesRequiringHardwareSupport.length())
+        return nullptr;
+    return mediaContentTypesRequiringHardwareSupport.data();
+}
+
+/**
+ * webkit_settings_set_media_content_types_requiring_hardware_support:
+ * @settings: a #WebKitSettings
+ * @content_types: (allow-none) list of media content types requiring hardware support split by semicolons (:) or %NULL to use the default value.
+ *
+ * Set the #WebKitSettings:media-content-types-requiring-hardware-support property.
+ *
+ * Since: 2.30
+ */
+void webkit_settings_set_media_content_types_requiring_hardware_support(WebKitSettings* settings, const gchar* mediaContentTypesRequiringHardwareSupport)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (!g_strcmp0(priv->mediaContentTypesRequiringHardwareSupport.data(), mediaContentTypesRequiringHardwareSupport))
+        return;
+
+    String mediaContentTypesRequiringHardwareSupportString = String::fromUTF8(mediaContentTypesRequiringHardwareSupport);
+    priv->preferences->setMediaContentTypesRequiringHardwareSupport(mediaContentTypesRequiringHardwareSupportString);
+    priv->mediaContentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupportString.utf8();
+    g_object_notify(G_OBJECT(settings), "media-content-types-requiring-hardware-support");
 }

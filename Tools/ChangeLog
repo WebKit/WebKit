@@ -1,3 +1,15 @@
+2020-05-21  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][GTK][WPE] Expose and honor the media content types requiring hardware support setting
+        https://bugs.webkit.org/show_bug.cgi?id=211950
+
+        Reviewed by Adrian Perez de Castro.
+
+        Exercise the new mediaContentTypesRequiringHardwareSupport setting.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2020-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Scrolling synchronization part 1: Have the scrolling thread wait half a frame for the main thread to complete the rendering update

@@ -23,6 +23,7 @@
 
 #include "MediaConfiguration.h"
 
+#include "MediaPlayerEnums.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -51,6 +52,7 @@ public:
     RegistryLookupResult isDecodingSupported(MediaConfiguration&) const;
 
     bool isCodecSupported(String codec, bool usingHardware = false) const;
+    MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
     bool areAllCodecsSupported(const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
 protected:

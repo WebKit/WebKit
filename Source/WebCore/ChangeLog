@@ -1,3 +1,38 @@
+2020-05-21  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][GTK][WPE] Expose and honor the media content types requiring hardware support setting
+        https://bugs.webkit.org/show_bug.cgi?id=211950
+
+        Reviewed by Adrian Perez de Castro.
+
+        Provide the needed information about media content types requiring hardware support
+        when asking the MediaPlayer about what types are supported. This was already being done
+        from HTMLMediaElement for player selection, but not in MediaSource nor in
+        MediaSource::addSourceBuffer() when the webpage used the MSE API to check type support.
+        In order to ask for the mediaContentTypesRequiringHardwareSupport setting we need a
+        reference to the current Document in all the places where we need to check type support.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer): Provide hardware content types extra info.
+        (WebCore::MediaSource::isTypeSupported): Get hardware content types extra info from
+        ScriptExecutionContext and provide it to a new refactored private version of
+        isTypeSupported() which can also be reused from addSourceBuffer().
+        * Modules/mediasource/MediaSource.h: Changed isTypeSupported() prototype to take
+        ScriptExecutionContext and added a new overloaded version of the method.
+        * Modules/mediasource/MediaSource.idl: isTypeSupported() now provides a reference to
+        ScriptExecutionContext. It's the only way to access the required document settings from a
+        static method.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::isContentTypeSupported const): Factor ContentType
+        discrimination logic common to MediaPlayerPrivateGStreamer and
+        MediaPlayerPrivateGStreamerMSE.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.h: Added new method.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType): Provide hardware content types extra
+        info when asking for type support.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsType): Ditto.
+
 2020-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Scrolling synchronization part 1: Have the scrolling thread wait half a frame for the main thread to complete the rendering update

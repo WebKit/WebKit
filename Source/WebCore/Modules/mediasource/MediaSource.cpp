@@ -42,6 +42,7 @@
 #include "Logging.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourceRegistry.h"
+#include "Settings.h"
 #include "SourceBuffer.h"
 #include "SourceBufferList.h"
 #include "SourceBufferPrivate.h"
@@ -677,7 +678,11 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 2. If type contains a MIME type that is not supported ..., then throw a
     // NotSupportedError exception and abort these steps.
-    if (!isTypeSupported(type))
+    Vector<ContentType> mediaContentTypesRequiringHardwareSupport;
+    if (m_mediaElement)
+        mediaContentTypesRequiringHardwareSupport.appendVector(m_mediaElement->document().settings().mediaContentTypesRequiringHardwareSupport());
+
+    if (!isTypeSupported(type, WTFMove(mediaContentTypesRequiringHardwareSupport)))
         return Exception { NotSupportedError };
 
     // 4. If the readyState attribute is not in the "open" state then throw an
@@ -869,7 +874,18 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     return { };
 }
 
-bool MediaSource::isTypeSupported(const String& type)
+bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
+{
+    Vector<ContentType> mediaContentTypesRequiringHardwareSupport;
+    if (context.isDocument()) {
+        auto& document = downcast<Document>(context);
+        mediaContentTypesRequiringHardwareSupport.appendVector(document.settings().mediaContentTypesRequiringHardwareSupport());
+    }
+
+    return isTypeSupported(type, WTFMove(mediaContentTypesRequiringHardwareSupport));
+}
+
+bool MediaSource::isTypeSupported(const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport)
 {
     // Section 2.2 isTypeSupported() method steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-isTypeSupported-boolean-DOMString-type
@@ -891,6 +907,8 @@ bool MediaSource::isTypeSupported(const String& type)
     MediaEngineSupportParameters parameters;
     parameters.type = contentType;
     parameters.isMediaSource = true;
+    parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
+
     MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters);
 
     if (codecs.isEmpty())

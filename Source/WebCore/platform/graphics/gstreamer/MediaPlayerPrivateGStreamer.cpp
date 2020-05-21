@@ -2701,13 +2701,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
         return result;
 
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
-    auto containerType = parameters.type.containerType();
     auto& gstRegistryScanner = GStreamerRegistryScanner::singleton();
-    if (gstRegistryScanner.isContainerTypeSupported(containerType)) {
-        // Spec says we should not return "probably" if the codecs string is empty.
-        Vector<String> codecs = parameters.type.codecs();
-        result = codecs.isEmpty() ? MediaPlayer::SupportsType::MayBeSupported : (gstRegistryScanner.areAllCodecsSupported(codecs) ? MediaPlayer::SupportsType::IsSupported : MediaPlayer::SupportsType::IsNotSupported);
-    }
+    result = gstRegistryScanner.isContentTypeSupported(parameters.type, parameters.contentTypesRequiringHardwareSupport);
 
     auto finalResult = extendedSupportsType(parameters, result);
     GST_DEBUG("Supported: %s", convertEnumerationToString(finalResult).utf8().data());

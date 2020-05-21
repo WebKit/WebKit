@@ -104,7 +104,7 @@ public:
     SourceBufferList* activeSourceBuffers() { return m_activeSourceBuffers.get(); }
     ExceptionOr<Ref<SourceBuffer>> addSourceBuffer(const String& type);
     ExceptionOr<void> removeSourceBuffer(SourceBuffer&);
-    static bool isTypeSupported(const String& type);
+    static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
@@ -131,6 +131,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
+    static bool isTypeSupported(const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
     void seekToTime(const MediaTime&) final;

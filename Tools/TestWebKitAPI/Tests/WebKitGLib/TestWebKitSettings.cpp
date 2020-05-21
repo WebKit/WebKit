@@ -341,6 +341,13 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_media(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_media(settings));
 
+    // Default media content types requiring hardware support is nullptr.
+    g_assert_cmpstr(nullptr, ==, webkit_settings_get_media_content_types_requiring_hardware_support(settings));
+    webkit_settings_set_media_content_types_requiring_hardware_support(settings, "video/*; codecs=\"*\"");
+    g_assert_cmpstr("video/*; codecs=\"*\"", ==, webkit_settings_get_media_content_types_requiring_hardware_support(settings));
+    webkit_settings_set_media_content_types_requiring_hardware_support(settings, nullptr);
+    g_assert_cmpstr(nullptr, ==, webkit_settings_get_media_content_types_requiring_hardware_support(settings));
+
 #if PLATFORM(GTK)
     // Ondemand is the default hardware acceleration policy.
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
