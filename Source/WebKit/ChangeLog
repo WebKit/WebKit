@@ -1,3 +1,16 @@
+2020-05-21  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
+
+        [ConnectionUnix] Set MSG_NOSIGNAL to avoid SIGPIPE
+        https://bugs.webkit.org/show_bug.cgi?id=211719
+
+        Reviewed by Don Olmstead.
+
+        Set MSG_NOSIGNAL to sendmsg()/resvmsg() in order to avoid
+        SIGPIPE when the other process disappears.
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket):
+        (IPC::Connection::sendOutputMessage):
+
 2020-05-21  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][GTK][WPE] Expose and honor the media content types requiring hardware support setting

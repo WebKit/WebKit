@@ -260,7 +260,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
     message.msg_iovlen = 1;
 
     while (true) {
-        ssize_t bytesRead = recvmsg(socketDescriptor, &message, 0);
+        ssize_t bytesRead = recvmsg(socketDescriptor, &message, MSG_NOSIGNAL);
 
         if (bytesRead < 0) {
             if (errno == EINTR)
@@ -483,7 +483,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 
     message.msg_iovlen = iovLength;
 
-    while (sendmsg(m_socketDescriptor, &message, 0) == -1) {
+    while (sendmsg(m_socketDescriptor, &message, MSG_NOSIGNAL) == -1) {
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
