@@ -1,3 +1,38 @@
+2020-05-21  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Allow configurable storage access scope
+        https://bugs.webkit.org/show_bug.cgi?id=212114
+        <rdar://problem/63423063>
+
+        Reviewed by Alex Christensen.
+
+        The scope of storage access as per-frame or per-page was discussed in the
+        standards process here: https://github.com/privacycg/storage-access/issues/3
+
+        The decision was to have per-page storage access by default. Recent feedback
+        from Google and conversation with Mozilla suggest that we might want to
+        support the caller choosing the scope.
+
+        This patch adds support for different scope configurations while keeping the
+        existing default as per-frame. A later patch will switch the default and add
+        test cases for per-page scope.
+
+        A new struct is added WebCore::RequestStorageAccessResult which carries full
+        information about the storage access request result.
+
+        A new enum is added WebCore::StorageAccessScope to encode per-frame and
+        per-page access.
+
+        No new tests. No changed functionality. Tests already exist.
+
+        * dom/DocumentStorageAccess.cpp:
+        (WebCore::DocumentStorageAccess::requestStorageAccess):
+        * dom/DocumentStorageAccess.h:
+        (WebCore::RequestStorageAccessResult::encode const):
+        (WebCore::RequestStorageAccessResult::decode):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::requestStorageAccess):
+
 2020-05-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Add minimal WKView API to enable TestWebKitAPI

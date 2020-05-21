@@ -60,9 +60,9 @@ class BlobPart;
 class BlobRegistryImpl;
 class ResourceError;
 class ResourceRequest;
-enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
+enum class StorageAccessScope : bool;
 enum class ShouldAskITP : bool;
+struct RequestStorageAccessResult;
 struct SameSiteInfo;
 
 enum class HTTPCookieAcceptPolicy : uint8_t;
@@ -263,7 +263,7 @@ private:
     void logUserInteraction(const RegistrableDomain&);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
     void hasStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
+    void requestStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     void requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain);
 #endif
 

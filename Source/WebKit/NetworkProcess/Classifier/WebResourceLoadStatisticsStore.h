@@ -33,6 +33,7 @@
 #include "StorageAccessStatus.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteDataType.h"
+#include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
@@ -55,8 +56,6 @@ class ResourceRequest;
 struct ResourceLoadStatistics;
 enum class ShouldSample : bool;
 enum class IncludeHttpOnlyCookies : bool;
-enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
 }
 
@@ -101,6 +100,8 @@ public:
     using OpenerDomain = WebCore::RegistrableDomain;
     using StorageAccessWasGranted = WebCore::StorageAccessWasGranted;
     using StorageAccessPromptWasShown = WebCore::StorageAccessPromptWasShown;
+    using StorageAccessScope = WebCore::StorageAccessScope;
+    using RequestStorageAccessResult = WebCore::RequestStorageAccessResult;
 
     static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
     {
@@ -210,7 +211,7 @@ struct ThirdPartyData {
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
     void setShouldSubmitTelemetry(bool);
 
-    void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
 
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
     void logUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
@@ -219,11 +220,11 @@ struct ThirdPartyData {
     void removeDataForDomain(const RegistrableDomain, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    StorageAccessWasGranted grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier);
+    StorageAccessWasGranted grantStorageAccessInStorageSession(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier);
-    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope,  CompletionHandler<void(RequestStorageAccessResult)>&&);
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void mergeStatisticForTesting(const RegistrableDomain&, const TopFrameDomain& topFrameDomain1, const TopFrameDomain& topFrameDomain2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
     void isRelationshipOnlyInDatabaseOnce(const RegistrableDomain& subDomain, const RegistrableDomain& topDomain, CompletionHandler<void(bool)>&&);
@@ -269,7 +270,7 @@ struct ThirdPartyData {
     void setPrevalentResourceForDebugMode(const RegistrableDomain&, CompletionHandler<void()>&&);
 
     void logTestingEvent(const String&);
-    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessWasGranted)>&&);
+    void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
     void callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);
     void callHasStorageAccessForFrameHandler(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
@@ -308,9 +309,9 @@ private:
     void performDailyTasks();
 
     void hasStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
-    void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
     void requestStorageAccessUnderOpenerEphemeral(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
-    void grantStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, CompletionHandler<void(StorageAccessWasGranted, StorageAccessPromptWasShown)>&&);
+    void grantStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
 
     void logUserInteractionEphemeral(const TopFrameDomain&, CompletionHandler<void()>&&);
     void clearUserInteractionEphemeral(const RegistrableDomain&, CompletionHandler<void()>&&);

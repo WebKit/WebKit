@@ -27,6 +27,7 @@
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
+#include "RegistrableDomain.h"
 #include "Supplementable.h"
 #include <wtf/WeakPtr.h>
 
@@ -44,6 +45,22 @@ enum class StorageAccessWasGranted : bool {
 enum class StorageAccessPromptWasShown : bool {
     No,
     Yes
+};
+
+enum class StorageAccessScope : bool {
+    PerFrame,
+    PerPage
+};
+
+struct RequestStorageAccessResult {
+    StorageAccessWasGranted wasGranted;
+    StorageAccessPromptWasShown promptWasShown;
+    StorageAccessScope scope;
+    RegistrableDomain topFrameDomain;
+    RegistrableDomain subFrameDomain;
+    
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<RequestStorageAccessResult> decode(Decoder&);
 };
 
 const unsigned maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 2;
@@ -73,7 +90,46 @@ private:
     Document& m_document;
 
     uint8_t m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 0;
+
+    StorageAccessScope m_storageAccessScope = StorageAccessScope::PerFrame;
 };
+
+template<class Encoder>
+void RequestStorageAccessResult::encode(Encoder& encoder) const
+{
+    encoder << wasGranted << promptWasShown << scope << topFrameDomain << subFrameDomain;
+}
+
+template<class Decoder>
+Optional<RequestStorageAccessResult> RequestStorageAccessResult::decode(Decoder& decoder)
+{
+    Optional<StorageAccessWasGranted> wasGranted;
+    decoder >> wasGranted;
+    if (!wasGranted)
+        return WTF::nullopt;
+
+    Optional<StorageAccessPromptWasShown> promptWasShown;
+    decoder >> promptWasShown;
+    if (!promptWasShown)
+        return WTF::nullopt;
+
+    Optional<StorageAccessScope> scope;
+    decoder >> scope;
+    if (!scope)
+        return WTF::nullopt;
+
+    Optional<RegistrableDomain> topFrameDomain;
+    decoder >> topFrameDomain;
+    if (!topFrameDomain)
+        return WTF::nullopt;
+
+    Optional<RegistrableDomain> subFrameDomain;
+    decoder >> subFrameDomain;
+    if (!subFrameDomain)
+        return WTF::nullopt;
+
+    return { { WTFMove(*wasGranted), WTFMove(*promptWasShown), WTFMove(*scope), WTFMove(*topFrameDomain), WTFMove(*subFrameDomain) } };
+}
 
 } // namespace WebCore
 

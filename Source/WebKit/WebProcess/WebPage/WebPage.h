@@ -198,8 +198,6 @@ enum class DOMPasteAccessResponse : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
-enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class WritingDirection : uint8_t;
@@ -218,6 +216,7 @@ struct Highlight;
 struct KeypressCommand;
 struct MediaUsageInfo;
 struct PromisedAttachmentInfo;
+struct RequestStorageAccessResult;
 struct RunJavaScriptParameters;
 struct TextCheckingResult;
 struct ViewportArguments;
@@ -1206,7 +1205,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, CompletionHandler<void(WebCore::StorageAccessWasGranted, WebCore::StorageAccessPromptWasShown)>&&);
+    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
     void addDomainWithPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain);
     void wasLoadedWithDataTransferFromPrevalentResource();

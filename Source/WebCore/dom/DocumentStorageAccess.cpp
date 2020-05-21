@@ -174,12 +174,12 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
     auto subFrameDomain = RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host());
     auto topFrameDomain = RegistrableDomain::uncheckedCreateFromHost(topSecurityOrigin.host());
     
-    page->chrome().client().requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *frame, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (StorageAccessWasGranted wasGranted, StorageAccessPromptWasShown promptWasShown) mutable {
+    page->chrome().client().requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *frame, m_storageAccessScope, [this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise)] (RequestStorageAccessResult result) mutable {
         if (!weakThis)
             return;
 
         // Consume the user gesture only if the user explicitly denied access.
-        bool shouldPreserveUserGesture = wasGranted == StorageAccessWasGranted::Yes || promptWasShown == StorageAccessPromptWasShown::No;
+        bool shouldPreserveUserGesture = result.wasGranted == StorageAccessWasGranted::Yes || result.promptWasShown == StorageAccessPromptWasShown::No;
 
         if (shouldPreserveUserGesture) {
             m_document.eventLoop().queueMicrotask([this, weakThis] {
@@ -188,10 +188,10 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
             });
         }
 
-        if (wasGranted == StorageAccessWasGranted::Yes)
+        if (result.wasGranted == StorageAccessWasGranted::Yes)
             promise->resolve();
         else {
-            if (promptWasShown == StorageAccessPromptWasShown::Yes)
+            if (result.promptWasShown == StorageAccessPromptWasShown::Yes)
                 setWasExplicitlyDeniedFrameSpecificStorageAccess();
             promise->reject();
         }
