@@ -1,3 +1,55 @@
+2020-05-21  Mark Lam  <mark.lam@apple.com>
+
+        Rename some variables in Bitmap API test for consistency and better readability.
+        https://bugs.webkit.org/show_bug.cgi?id=212235
+
+        Reviewed by Saam Barati.
+
+        This patch renames the following:
+            bitmap0 => bitmapZeroes
+            bitmapFilled => bitmapOnes
+            bitmap3 => bitmap2Clone
+            bitmapSmallZeroed => smallBitmapZeroes
+            bitmapSmallFilled => smallBitmapOnes
+            bitmapSmall1 => smallBitmap1
+            bitmapSmall2 => smallBitmap2
+
+        Apart from these renamings, there are no other code changes.
+
+        * TestWebKitAPI/Tests/WTF/Bitmap.cpp:
+        (TestWebKitAPI::testBitmapSize):
+        (TestWebKitAPI::testBitmapConstructedEmpty):
+        (TestWebKitAPI::testBitmapSetGet):
+        (TestWebKitAPI::testBitmapTestAndSet):
+        (TestWebKitAPI::testBitmapTestAndClear):
+        (TestWebKitAPI::testBitmapConcurrentTestAndSet):
+        (TestWebKitAPI::testBitmapConcurrentTestAndClear):
+        (TestWebKitAPI::testBitmapClear):
+        (TestWebKitAPI::testBitmapClearAll):
+        (TestWebKitAPI::testBitmapInvert):
+        (TestWebKitAPI::testBitmapFindRunOfZeros):
+        (TestWebKitAPI::testBitmapCount):
+        (TestWebKitAPI::testBitmapIsEmpty):
+        (TestWebKitAPI::testBitmapIsFull):
+        (TestWebKitAPI::testBitmapMerge):
+        (TestWebKitAPI::testBitmapFilter):
+        (TestWebKitAPI::testBitmapExclude):
+        (TestWebKitAPI::testBitmapConcurrentFilter):
+        (TestWebKitAPI::testBitmapSubsumes):
+        (TestWebKitAPI::testBitmapForEachSetBit):
+        (TestWebKitAPI::testBitmapFindBit):
+        (TestWebKitAPI::testBitmapIteration):
+        (TestWebKitAPI::testBitmapMergeAndClear):
+        (TestWebKitAPI::testBitmapSetAndClear):
+        (TestWebKitAPI::testBitmapSetEachNthBit):
+        (TestWebKitAPI::testBitmapOperatorEqual):
+        (TestWebKitAPI::testBitmapOperatorNotEqual):
+        (TestWebKitAPI::testBitmapOperatorAssignment):
+        (TestWebKitAPI::testBitmapOperatorBitOrAssignment):
+        (TestWebKitAPI::testBitmapOperatorBitAndAssignment):
+        (TestWebKitAPI::testBitmapOperatorBitXorAssignment):
+        (TestWebKitAPI::testBitmapHash):
+
 2020-05-20  Mark Lam  <mark.lam@apple.com>
 
         Add more Bitmap methods.

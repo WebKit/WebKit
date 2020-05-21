@@ -94,28 +94,28 @@ constexpr size_t expectedNumberOfSetBits1 = countBits(expectedBits1, size);
 constexpr size_t expectedNumberOfSetBits2 = countBits(expectedBits2, size);
 
 #define DECLARE_BITMAPS_FOR_TEST() \
-    Bitmap<size, WordType> bitmap0; /* All bits will remain cleared. */ \
+    Bitmap<size, WordType> bitmapZeroes; \
     Bitmap<size, WordType> bitmap1; /* Will hold values specified in expectedBits1. */ \
     Bitmap<size, WordType> bitmap2; /* Will hold values specified in expectedBits2. */ \
-    Bitmap<size, WordType> bitmap3; /* Same as bitmap2. */ \
-    Bitmap<size, WordType> bitmapFilled; \
-    Bitmap<smallSize, WordType> bitmapSmallZeroed; \
-    Bitmap<smallSize, WordType> bitmapSmallFilled; \
-    Bitmap<smallSize, WordType> bitmapSmall1; /* Will hold values specified in expectedSmallBits1. */ \
-    Bitmap<smallSize, WordType> bitmapSmall2; /* Will hold values specified in expectedSmallBits2. */ \
+    Bitmap<size, WordType> bitmap2Clone; /* Same as bitmap2. */ \
+    Bitmap<size, WordType> bitmapOnes; \
+    Bitmap<smallSize, WordType> smallBitmapZeroes; \
+    Bitmap<smallSize, WordType> smallBitmapOnes; \
+    Bitmap<smallSize, WordType> smallBitmap1; /* Will hold values specified in expectedSmallBits1. */ \
+    Bitmap<smallSize, WordType> smallBitmap2; /* Will hold values specified in expectedSmallBits2. */ \
 
 #define DECLARE_AND_INIT_BITMAPS_FOR_TEST() \
     DECLARE_BITMAPS_FOR_TEST() \
     for (size_t i = 0; i < size; ++i) { \
         bitmap1.set(i, expectedBits1[i]); \
         bitmap2.set(i, expectedBits2[i]); \
-        bitmap3.set(i, expectedBits2[i]); \
-        bitmapFilled.set(i); \
+        bitmap2Clone.set(i, expectedBits2[i]); \
+        bitmapOnes.set(i); \
     } \
     for (size_t i = 0; i < smallSize; ++i) { \
-        bitmapSmall1.set(i, expectedSmallBits1[i]); \
-        bitmapSmall2.set(i, expectedSmallBits2[i]); \
-        bitmapSmallFilled.set(i); \
+        smallBitmap1.set(i, expectedSmallBits1[i]); \
+        smallBitmap2.set(i, expectedSmallBits2[i]); \
+        smallBitmapOnes.set(i); \
     }
 
 template<typename WordType>
@@ -128,13 +128,13 @@ void testBitmapSize()
         EXPECT_NE(bitmap.size(), notExpectedSize);
     };
 
-    verifySize(bitmap0, size, smallSize);
+    verifySize(bitmapZeroes, size, smallSize);
     verifySize(bitmap1, size, smallSize);
     verifySize(bitmap2, size, smallSize);
-    verifySize(bitmap3, size, smallSize);
-    verifySize(bitmapFilled, size, smallSize);
-    verifySize(bitmapSmallZeroed, smallSize, size);
-    verifySize(bitmapSmallFilled, smallSize, size);
+    verifySize(bitmap2Clone, size, smallSize);
+    verifySize(bitmapOnes, size, smallSize);
+    verifySize(smallBitmapZeroes, smallSize, size);
+    verifySize(smallBitmapOnes, smallSize, size);
 }
 
 template<typename WordType>
@@ -150,13 +150,13 @@ void testBitmapConstructedEmpty()
             EXPECT_FALSE(bitmap.get(i));
     };
 
-    verifyIsEmpty(bitmap0);
+    verifyIsEmpty(bitmapZeroes);
     verifyIsEmpty(bitmap1);
     verifyIsEmpty(bitmap2);
-    verifyIsEmpty(bitmap3);
-    verifyIsEmpty(bitmapFilled);
-    verifyIsEmpty(bitmapSmallZeroed);
-    verifyIsEmpty(bitmapSmallFilled);
+    verifyIsEmpty(bitmap2Clone);
+    verifyIsEmpty(bitmapOnes);
+    verifyIsEmpty(smallBitmapZeroes);
+    verifyIsEmpty(smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -176,20 +176,20 @@ void testBitmapSetGet()
 
     for (size_t i = 0; i < size; ++i) {
         EXPECT_EQ(bitmap2.get(i), expectedBits2[i]);
-        EXPECT_EQ(bitmap3.get(i), expectedBits2[i]);
+        EXPECT_EQ(bitmap2Clone.get(i), expectedBits2[i]);
     }
     for (size_t i = 0; i < size; ++i)
-        EXPECT_EQ(bitmap2.get(i), bitmap3.get(i));
+        EXPECT_EQ(bitmap2.get(i), bitmap2Clone.get(i));
 
     for (size_t i = 0; i < size; ++i)
-        EXPECT_TRUE(bitmapFilled.get(i));
+        EXPECT_TRUE(bitmapOnes.get(i));
 
     for (size_t i = 0; i < smallSize; ++i)
-        EXPECT_TRUE(bitmapSmallFilled.get(i));
+        EXPECT_TRUE(smallBitmapOnes.get(i));
 
     // Verify that there is no out of bounds write from the above set operations.
-    verifyIsEmpty(bitmap0);
-    verifyIsEmpty(bitmapSmallZeroed);
+    verifyIsEmpty(bitmapZeroes);
+    verifyIsEmpty(smallBitmapZeroes);
 }
 
 template<typename WordType>
@@ -204,11 +204,11 @@ void testBitmapTestAndSet()
         ASSERT_EQ(bitmap1.testAndSet(i), expectedBits1[i]);
     ASSERT_TRUE(bitmap1.isFull());
 
-    ASSERT_FALSE(bitmapSmallZeroed.isFull());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    ASSERT_FALSE(smallBitmapZeroes.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
     for (size_t i = 0; i < smallSize; ++i)
-        ASSERT_FALSE(bitmapSmallZeroed.testAndSet(i));
-    ASSERT_TRUE(bitmapSmallZeroed.isFull());
+        ASSERT_FALSE(smallBitmapZeroes.testAndSet(i));
+    ASSERT_TRUE(smallBitmapZeroes.isFull());
 }
 
 template<typename WordType>
@@ -223,11 +223,11 @@ void testBitmapTestAndClear()
         ASSERT_EQ(bitmap1.testAndClear(i), expectedBits1[i]);
     ASSERT_TRUE(bitmap1.isEmpty());
 
-    ASSERT_FALSE(bitmapSmallFilled.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_FALSE(smallBitmapOnes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     for (size_t i = 0; i < smallSize; ++i)
-        ASSERT_TRUE(bitmapSmallFilled.testAndClear(i));
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
+        ASSERT_TRUE(smallBitmapOnes.testAndClear(i));
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
 }
 
 template<typename WordType>
@@ -244,11 +244,11 @@ void testBitmapConcurrentTestAndSet()
         ASSERT_EQ(bitmap1.testAndSet(i), expectedBits1[i]);
     ASSERT_TRUE(bitmap1.isFull());
 
-    ASSERT_FALSE(bitmapSmallZeroed.isFull());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    ASSERT_FALSE(smallBitmapZeroes.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
     for (size_t i = 0; i < smallSize; ++i)
-        ASSERT_FALSE(bitmapSmallZeroed.testAndSet(i));
-    ASSERT_TRUE(bitmapSmallZeroed.isFull());
+        ASSERT_FALSE(smallBitmapZeroes.testAndSet(i));
+    ASSERT_TRUE(smallBitmapZeroes.isFull());
 }
 
 template<typename WordType>
@@ -265,11 +265,11 @@ void testBitmapConcurrentTestAndClear()
         ASSERT_EQ(bitmap1.testAndClear(i), expectedBits1[i]);
     ASSERT_TRUE(bitmap1.isEmpty());
 
-    ASSERT_FALSE(bitmapSmallFilled.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_FALSE(smallBitmapOnes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     for (size_t i = 0; i < smallSize; ++i)
-        ASSERT_TRUE(bitmapSmallFilled.testAndClear(i));
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
+        ASSERT_TRUE(smallBitmapOnes.testAndClear(i));
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
 }
 
 template<typename WordType>
@@ -277,12 +277,12 @@ void testBitmapClear()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    ASSERT_TRUE(bitmapFilled.isFull());
+    ASSERT_TRUE(bitmapOnes.isFull());
     for (size_t i = 0; i < size; ++i) {
         if (!expectedBits1[i])
-            bitmapFilled.clear(i);
+            bitmapOnes.clear(i);
     }
-    ASSERT_EQ(bitmapFilled, bitmap1);
+    ASSERT_EQ(bitmapOnes, bitmap1);
 }
 
 template<typename WordType>
@@ -306,23 +306,23 @@ void testBitmapClearAll()
     EXPECT_FALSE(bitmap1.isEmpty());
     bitmap1.clearAll();
     verifyIsEmpty(bitmap1);
-    verifyIsFull(bitmapFilled);
-    verifyIsFull(bitmapSmallFilled);
+    verifyIsFull(bitmapOnes);
+    verifyIsFull(smallBitmapOnes);
 
     EXPECT_FALSE(bitmap2.isEmpty());
     bitmap2.clearAll();
     verifyIsEmpty(bitmap1);
     verifyIsEmpty(bitmap2);
-    verifyIsFull(bitmapFilled);
-    verifyIsFull(bitmapSmallFilled);
+    verifyIsFull(bitmapOnes);
+    verifyIsFull(smallBitmapOnes);
 
-    EXPECT_FALSE(bitmap3.isEmpty());
-    bitmap3.clearAll();
+    EXPECT_FALSE(bitmap2Clone.isEmpty());
+    bitmap2Clone.clearAll();
     verifyIsEmpty(bitmap1);
     verifyIsEmpty(bitmap2);
-    verifyIsEmpty(bitmap3);
-    verifyIsFull(bitmapFilled);
-    verifyIsFull(bitmapSmallFilled);
+    verifyIsEmpty(bitmap2Clone);
+    verifyIsFull(bitmapOnes);
+    verifyIsFull(smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -341,8 +341,8 @@ void testBitmapInvert()
         ASSERT_FALSE(bitmap.isEmpty());
     };
 
-    verifyInvert(bitmapFilled);
-    verifyInvert(bitmapSmallFilled);
+    verifyInvert(bitmapOnes);
+    verifyInvert(smallBitmapOnes);
 
     for (size_t i = 0; i < size; ++i)
         ASSERT_EQ(bitmap1.get(i), expectedBits1[i]);
@@ -381,17 +381,17 @@ void testBitmapFindRunOfZeros()
     };
 
     for (size_t runLength = 0; runLength < 15; ++runLength) {
-        ASSERT_EQ(bitmap0.findRunOfZeros(runLength), 0ll);
+        ASSERT_EQ(bitmapZeroes.findRunOfZeros(runLength), 0ll);
         ASSERT_EQ(bitmap1.findRunOfZeros(runLength), bitmap1RunsOfZeros[runLength]);
         ASSERT_EQ(bitmap2.findRunOfZeros(runLength), bitmap2RunsOfZeros[runLength]);
-        ASSERT_EQ(bitmapFilled.findRunOfZeros(runLength), -1ll);
+        ASSERT_EQ(bitmapOnes.findRunOfZeros(runLength), -1ll);
 
         if (runLength <= smallSize)
-            ASSERT_EQ(bitmapSmallZeroed.findRunOfZeros(runLength), 0ll);
+            ASSERT_EQ(smallBitmapZeroes.findRunOfZeros(runLength), 0ll);
         else
-            ASSERT_EQ(bitmapSmallZeroed.findRunOfZeros(runLength), -1ll);
+            ASSERT_EQ(smallBitmapZeroes.findRunOfZeros(runLength), -1ll);
 
-        ASSERT_EQ(bitmapSmallFilled.findRunOfZeros(runLength), -1ll);
+        ASSERT_EQ(smallBitmapOnes.findRunOfZeros(runLength), -1ll);
 
         ASSERT_EQ(smallTemp.findRunOfZeros(runLength), smallTempRunsOfZeros[runLength]);
     }
@@ -402,13 +402,13 @@ void testBitmapCount()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    EXPECT_EQ(bitmap0.count(), zeroSize);
+    EXPECT_EQ(bitmapZeroes.count(), zeroSize);
     EXPECT_EQ(bitmap1.count(), expectedNumberOfSetBits1);
     EXPECT_EQ(bitmap2.count(), expectedNumberOfSetBits2);
-    EXPECT_EQ(bitmap3.count(), expectedNumberOfSetBits2);
-    EXPECT_EQ(bitmapFilled.count(), size);
-    EXPECT_EQ(bitmapSmallZeroed.count(), zeroSize);
-    EXPECT_EQ(bitmapSmallFilled.count(), smallSize);
+    EXPECT_EQ(bitmap2Clone.count(), expectedNumberOfSetBits2);
+    EXPECT_EQ(bitmapOnes.count(), size);
+    EXPECT_EQ(smallBitmapZeroes.count(), zeroSize);
+    EXPECT_EQ(smallBitmapOnes.count(), smallSize);
 }
 
 template<typename WordType>
@@ -416,13 +416,13 @@ void testBitmapIsEmpty()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    EXPECT_TRUE(bitmap0.isEmpty());
+    EXPECT_TRUE(bitmapZeroes.isEmpty());
     EXPECT_FALSE(bitmap1.isEmpty());
     EXPECT_FALSE(bitmap2.isEmpty());
-    EXPECT_FALSE(bitmap3.isEmpty());
-    EXPECT_FALSE(bitmapFilled.isEmpty());
-    EXPECT_TRUE(bitmapSmallZeroed.isEmpty());
-    EXPECT_FALSE(bitmapSmallFilled.isEmpty());
+    EXPECT_FALSE(bitmap2Clone.isEmpty());
+    EXPECT_FALSE(bitmapOnes.isEmpty());
+    EXPECT_TRUE(smallBitmapZeroes.isEmpty());
+    EXPECT_FALSE(smallBitmapOnes.isEmpty());
 
     auto verifyIsEmpty = [=] (const auto& bitmap) {
         EXPECT_TRUE(bitmap.isEmpty());
@@ -431,8 +431,8 @@ void testBitmapIsEmpty()
             EXPECT_FALSE(bitmap.get(i));
     };
 
-    verifyIsEmpty(bitmap0);
-    verifyIsEmpty(bitmapSmallZeroed);
+    verifyIsEmpty(bitmapZeroes);
+    verifyIsEmpty(smallBitmapZeroes);
 }
 
 template<typename WordType>
@@ -440,13 +440,13 @@ void testBitmapIsFull()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    EXPECT_FALSE(bitmap0.isFull());
+    EXPECT_FALSE(bitmapZeroes.isFull());
     EXPECT_FALSE(bitmap1.isFull());
     EXPECT_FALSE(bitmap2.isFull());
-    EXPECT_FALSE(bitmap3.isFull());
-    EXPECT_TRUE(bitmapFilled.isFull());
-    EXPECT_FALSE(bitmapSmallZeroed.isFull());
-    EXPECT_TRUE(bitmapSmallFilled.isFull());
+    EXPECT_FALSE(bitmap2Clone.isFull());
+    EXPECT_TRUE(bitmapOnes.isFull());
+    EXPECT_FALSE(smallBitmapZeroes.isFull());
+    EXPECT_TRUE(smallBitmapOnes.isFull());
 
     auto verifyIsFull = [=] (auto& bitmap) {
         EXPECT_TRUE(bitmap.isFull());
@@ -454,8 +454,8 @@ void testBitmapIsFull()
             EXPECT_TRUE(bitmap.get(i));
     };
 
-    verifyIsFull(bitmapFilled);
-    verifyIsFull(bitmapSmallFilled);
+    verifyIsFull(bitmapOnes);
+    verifyIsFull(smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -463,46 +463,46 @@ void testBitmapMerge()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap2.merge(bitmap0);
-    ASSERT_EQ(bitmap2, bitmap3);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2.merge(bitmapZeroes);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
     
     ASSERT_NE(bitmap1, bitmap2);
-    ASSERT_NE(bitmap1, bitmap3);
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap3.merge(bitmap1);
-    ASSERT_NE(bitmap2, bitmap3);
+    ASSERT_NE(bitmap1, bitmap2Clone);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2Clone.merge(bitmap1);
+    ASSERT_NE(bitmap2, bitmap2Clone);
     for (size_t i = 0; i < size; ++i) {
         bool expectedBit = expectedBits2[i] | expectedBits1[i];
-        ASSERT_EQ(bitmap3.get(i), expectedBit);
+        ASSERT_EQ(bitmap2Clone.get(i), expectedBit);
     }
 
-    ASSERT_TRUE(bitmapFilled.isFull());
-    ASSERT_TRUE(bitmap0.isEmpty());
-    bitmapFilled.merge(bitmap0);
-    ASSERT_TRUE(bitmapFilled.isFull());
-    ASSERT_TRUE(bitmap0.isEmpty());
+    ASSERT_TRUE(bitmapOnes.isFull());
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    bitmapOnes.merge(bitmapZeroes);
+    ASSERT_TRUE(bitmapOnes.isFull());
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
 
-    bitmap0.merge(bitmap1);
-    ASSERT_EQ(bitmap0, bitmap1);
+    bitmapZeroes.merge(bitmap1);
+    ASSERT_EQ(bitmapZeroes, bitmap1);
 
-    bitmap1.merge(bitmapFilled);
-    ASSERT_EQ(bitmap1, bitmapFilled);
+    bitmap1.merge(bitmapOnes);
+    ASSERT_EQ(bitmap1, bitmapOnes);
 
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    bitmapSmallZeroed.merge(bitmapSmallFilled);
-    ASSERT_FALSE(bitmapSmallZeroed.isEmpty());
-    ASSERT_TRUE(bitmapSmallZeroed.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    smallBitmapZeroes.merge(smallBitmapOnes);
+    ASSERT_FALSE(smallBitmapZeroes.isEmpty());
+    ASSERT_TRUE(smallBitmapZeroes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     
-    bitmapSmallZeroed.clearAll();
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    bitmapSmallFilled.merge(bitmapSmallZeroed);
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    smallBitmapZeroes.clearAll();
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    smallBitmapOnes.merge(smallBitmapZeroes);
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
 }
 
 template<typename WordType>
@@ -510,44 +510,44 @@ void testBitmapFilter()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    ASSERT_TRUE(bitmapFilled.isFull());
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap2.filter(bitmapFilled);
-    ASSERT_EQ(bitmap2, bitmap3);
+    ASSERT_TRUE(bitmapOnes.isFull());
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2.filter(bitmapOnes);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
     
     ASSERT_NE(bitmap1, bitmap2);
-    ASSERT_NE(bitmap1, bitmap3);
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap3.filter(bitmap1);
-    ASSERT_NE(bitmap2, bitmap3);
+    ASSERT_NE(bitmap1, bitmap2Clone);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2Clone.filter(bitmap1);
+    ASSERT_NE(bitmap2, bitmap2Clone);
     for (size_t i = 0; i < size; ++i) {
         bool expectedBit = expectedBits2[i] & expectedBits1[i];
-        ASSERT_EQ(bitmap3.get(i), expectedBit);
+        ASSERT_EQ(bitmap2Clone.get(i), expectedBit);
     }
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    bitmap2.filter(bitmap0);
-    ASSERT_EQ(bitmap2, bitmap0);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    bitmap2.filter(bitmapZeroes);
+    ASSERT_EQ(bitmap2, bitmapZeroes);
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    bitmap0.filter(bitmap1);
-    ASSERT_TRUE(bitmap0.isEmpty());
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    bitmapZeroes.filter(bitmap1);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
 
-    ASSERT_TRUE(bitmapFilled.isFull());
-    bitmapFilled.filter(bitmap1);
-    ASSERT_EQ(bitmapFilled, bitmap1);
+    ASSERT_TRUE(bitmapOnes.isFull());
+    bitmapOnes.filter(bitmap1);
+    ASSERT_EQ(bitmapOnes, bitmap1);
 
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    bitmapSmallZeroed.filter(bitmapSmallFilled);
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_FALSE(bitmapSmallZeroed.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    smallBitmapZeroes.filter(smallBitmapOnes);
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_FALSE(smallBitmapZeroes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     
-    bitmapSmallFilled.filter(bitmapSmallZeroed);
-    ASSERT_FALSE(bitmapSmallFilled.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    smallBitmapOnes.filter(smallBitmapZeroes);
+    ASSERT_FALSE(smallBitmapOnes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
 }
 
 template<typename WordType>
@@ -555,45 +555,45 @@ void testBitmapExclude()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap2.exclude(bitmap0);
-    ASSERT_EQ(bitmap2, bitmap3);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2.exclude(bitmapZeroes);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
     
     ASSERT_NE(bitmap1, bitmap2);
-    ASSERT_NE(bitmap1, bitmap3);
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap3.exclude(bitmap1);
-    ASSERT_NE(bitmap2, bitmap3);
+    ASSERT_NE(bitmap1, bitmap2Clone);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2Clone.exclude(bitmap1);
+    ASSERT_NE(bitmap2, bitmap2Clone);
     for (size_t i = 0; i < size; ++i) {
         bool expectedBit = expectedBits2[i] & !expectedBits1[i];
-        ASSERT_EQ(bitmap3.get(i), expectedBit);
+        ASSERT_EQ(bitmap2Clone.get(i), expectedBit);
     }
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    ASSERT_TRUE(bitmapFilled.isFull());
-    bitmap2.exclude(bitmapFilled);
-    ASSERT_EQ(bitmap2, bitmap0);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    ASSERT_TRUE(bitmapOnes.isFull());
+    bitmap2.exclude(bitmapOnes);
+    ASSERT_EQ(bitmap2, bitmapZeroes);
 
-    ASSERT_TRUE(bitmapFilled.isFull());
-    bitmapFilled.exclude(bitmap1);
+    ASSERT_TRUE(bitmapOnes.isFull());
+    bitmapOnes.exclude(bitmap1);
     bitmap1.invert();
-    ASSERT_EQ(bitmapFilled, bitmap1);
+    ASSERT_EQ(bitmapOnes, bitmap1);
 
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    bitmapSmallZeroed.exclude(bitmapSmallFilled);
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_FALSE(bitmapSmallZeroed.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    smallBitmapZeroes.exclude(smallBitmapOnes);
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_FALSE(smallBitmapZeroes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     
-    bitmapSmallFilled.exclude(bitmapSmallZeroed);
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    smallBitmapOnes.exclude(smallBitmapZeroes);
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
 
-    bitmapSmallFilled.exclude(bitmapSmallFilled);
-    ASSERT_FALSE(bitmapSmallFilled.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
+    smallBitmapOnes.exclude(smallBitmapOnes);
+    ASSERT_FALSE(smallBitmapOnes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
 }
 
 template<typename WordType>
@@ -603,44 +603,44 @@ void testBitmapConcurrentFilter()
 
     // FIXME: the following does not test the concurrent part. It only ensures that
     // the Filter part of the operation is working.
-    ASSERT_TRUE(bitmapFilled.isFull());
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap2.concurrentFilter(bitmapFilled);
-    ASSERT_EQ(bitmap2, bitmap3);
+    ASSERT_TRUE(bitmapOnes.isFull());
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2.concurrentFilter(bitmapOnes);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
     
     ASSERT_NE(bitmap1, bitmap2);
-    ASSERT_NE(bitmap1, bitmap3);
-    ASSERT_EQ(bitmap2, bitmap3);
-    bitmap3.concurrentFilter(bitmap1);
-    ASSERT_NE(bitmap2, bitmap3);
+    ASSERT_NE(bitmap1, bitmap2Clone);
+    ASSERT_EQ(bitmap2, bitmap2Clone);
+    bitmap2Clone.concurrentFilter(bitmap1);
+    ASSERT_NE(bitmap2, bitmap2Clone);
     for (size_t i = 0; i < size; ++i) {
         bool expectedBit = expectedBits2[i] & expectedBits1[i];
-        ASSERT_EQ(bitmap3.get(i), expectedBit);
+        ASSERT_EQ(bitmap2Clone.get(i), expectedBit);
     }
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    bitmap2.concurrentFilter(bitmap0);
-    ASSERT_EQ(bitmap2, bitmap0);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    bitmap2.concurrentFilter(bitmapZeroes);
+    ASSERT_EQ(bitmap2, bitmapZeroes);
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    bitmap0.concurrentFilter(bitmap1);
-    ASSERT_TRUE(bitmap0.isEmpty());
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    bitmapZeroes.concurrentFilter(bitmap1);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
 
-    ASSERT_TRUE(bitmapFilled.isFull());
-    bitmapFilled.concurrentFilter(bitmap1);
-    ASSERT_EQ(bitmapFilled, bitmap1);
+    ASSERT_TRUE(bitmapOnes.isFull());
+    bitmapOnes.concurrentFilter(bitmap1);
+    ASSERT_EQ(bitmapOnes, bitmap1);
 
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    bitmapSmallZeroed.concurrentFilter(bitmapSmallFilled);
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    ASSERT_FALSE(bitmapSmallZeroed.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    smallBitmapZeroes.concurrentFilter(smallBitmapOnes);
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    ASSERT_FALSE(smallBitmapZeroes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     
-    bitmapSmallFilled.concurrentFilter(bitmapSmallZeroed);
-    ASSERT_FALSE(bitmapSmallFilled.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    smallBitmapOnes.concurrentFilter(smallBitmapZeroes);
+    ASSERT_FALSE(smallBitmapOnes.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
 }
 
 template<typename WordType>
@@ -648,45 +648,45 @@ void testBitmapSubsumes()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    ASSERT_TRUE(bitmap0.isEmpty());
-    ASSERT_TRUE(bitmapFilled.isFull());
-    ASSERT_EQ(bitmap2, bitmap3);
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    ASSERT_TRUE(bitmapOnes.isFull());
+    ASSERT_EQ(bitmap2, bitmap2Clone);
 
-    ASSERT_TRUE(bitmap0.subsumes(bitmap0));
-    ASSERT_FALSE(bitmap0.subsumes(bitmap1));
-    ASSERT_FALSE(bitmap0.subsumes(bitmap2));
-    ASSERT_FALSE(bitmap0.subsumes(bitmap3));
-    ASSERT_FALSE(bitmap0.subsumes(bitmapFilled));
+    ASSERT_TRUE(bitmapZeroes.subsumes(bitmapZeroes));
+    ASSERT_FALSE(bitmapZeroes.subsumes(bitmap1));
+    ASSERT_FALSE(bitmapZeroes.subsumes(bitmap2));
+    ASSERT_FALSE(bitmapZeroes.subsumes(bitmap2Clone));
+    ASSERT_FALSE(bitmapZeroes.subsumes(bitmapOnes));
 
-    ASSERT_TRUE(bitmap1.subsumes(bitmap0));
+    ASSERT_TRUE(bitmap1.subsumes(bitmapZeroes));
     ASSERT_TRUE(bitmap1.subsumes(bitmap1));
     ASSERT_FALSE(bitmap1.subsumes(bitmap2));
-    ASSERT_FALSE(bitmap1.subsumes(bitmap3));
-    ASSERT_FALSE(bitmap1.subsumes(bitmapFilled));
+    ASSERT_FALSE(bitmap1.subsumes(bitmap2Clone));
+    ASSERT_FALSE(bitmap1.subsumes(bitmapOnes));
 
-    ASSERT_TRUE(bitmap2.subsumes(bitmap0));
+    ASSERT_TRUE(bitmap2.subsumes(bitmapZeroes));
     ASSERT_FALSE(bitmap2.subsumes(bitmap1));
     ASSERT_TRUE(bitmap2.subsumes(bitmap2));
-    ASSERT_TRUE(bitmap2.subsumes(bitmap3));
-    ASSERT_FALSE(bitmap2.subsumes(bitmapFilled));
+    ASSERT_TRUE(bitmap2.subsumes(bitmap2Clone));
+    ASSERT_FALSE(bitmap2.subsumes(bitmapOnes));
 
-    ASSERT_TRUE(bitmap3.subsumes(bitmap0));
-    ASSERT_FALSE(bitmap3.subsumes(bitmap1));
-    ASSERT_TRUE(bitmap3.subsumes(bitmap2));
-    ASSERT_TRUE(bitmap3.subsumes(bitmap3));
-    ASSERT_FALSE(bitmap3.subsumes(bitmapFilled));
+    ASSERT_TRUE(bitmap2Clone.subsumes(bitmapZeroes));
+    ASSERT_FALSE(bitmap2Clone.subsumes(bitmap1));
+    ASSERT_TRUE(bitmap2Clone.subsumes(bitmap2));
+    ASSERT_TRUE(bitmap2Clone.subsumes(bitmap2Clone));
+    ASSERT_FALSE(bitmap2Clone.subsumes(bitmapOnes));
 
-    ASSERT_TRUE(bitmapFilled.subsumes(bitmap0));
-    ASSERT_TRUE(bitmapFilled.subsumes(bitmap1));
-    ASSERT_TRUE(bitmapFilled.subsumes(bitmap2));
-    ASSERT_TRUE(bitmapFilled.subsumes(bitmap3));
-    ASSERT_TRUE(bitmapFilled.subsumes(bitmapFilled));
+    ASSERT_TRUE(bitmapOnes.subsumes(bitmapZeroes));
+    ASSERT_TRUE(bitmapOnes.subsumes(bitmap1));
+    ASSERT_TRUE(bitmapOnes.subsumes(bitmap2));
+    ASSERT_TRUE(bitmapOnes.subsumes(bitmap2Clone));
+    ASSERT_TRUE(bitmapOnes.subsumes(bitmapOnes));
 
-    ASSERT_TRUE(bitmapSmallFilled.subsumes(bitmapSmallFilled));
-    ASSERT_TRUE(bitmapSmallFilled.subsumes(bitmapSmallZeroed));
+    ASSERT_TRUE(smallBitmapOnes.subsumes(smallBitmapOnes));
+    ASSERT_TRUE(smallBitmapOnes.subsumes(smallBitmapZeroes));
 
-    ASSERT_FALSE(bitmapSmallZeroed.subsumes(bitmapSmallFilled));
-    ASSERT_TRUE(bitmapSmallZeroed.subsumes(bitmapSmallZeroed));
+    ASSERT_FALSE(smallBitmapZeroes.subsumes(smallBitmapOnes));
+    ASSERT_TRUE(smallBitmapZeroes.subsumes(smallBitmapZeroes));
 }
 
 template<typename WordType>
@@ -695,8 +695,8 @@ void testBitmapForEachSetBit()
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
     size_t count = 0;
-    ASSERT_TRUE(bitmap0.isEmpty());
-    bitmap0.forEachSetBit([&] (size_t i) {
+    ASSERT_TRUE(bitmapZeroes.isEmpty());
+    bitmapZeroes.forEachSetBit([&] (size_t i) {
         constexpr bool notReached = false;
         ASSERT_TRUE(notReached);
         count++;
@@ -712,16 +712,16 @@ void testBitmapForEachSetBit()
     ASSERT_EQ(count, expectedNumberOfSetBits1);
 
     count = 0;
-    ASSERT_TRUE(bitmapFilled.isFull());
-    bitmapFilled.forEachSetBit([&] (size_t i) {
-        ASSERT_TRUE(bitmapFilled.get(i));
+    ASSERT_TRUE(bitmapOnes.isFull());
+    bitmapOnes.forEachSetBit([&] (size_t i) {
+        ASSERT_TRUE(bitmapOnes.get(i));
         count++;
     });
     ASSERT_EQ(count, size);
 
     count = 0;
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    bitmapSmallZeroed.forEachSetBit([&] (size_t i) {
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    smallBitmapZeroes.forEachSetBit([&] (size_t i) {
         constexpr bool notReached = false;
         ASSERT_TRUE(notReached);
         count++;
@@ -729,9 +729,9 @@ void testBitmapForEachSetBit()
     ASSERT_EQ(count, zeroSize);
 
     count = 0;
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
-    bitmapSmallFilled.forEachSetBit([&] (size_t i) {
-        ASSERT_TRUE(bitmapSmallFilled.get(i));
+    ASSERT_TRUE(smallBitmapOnes.isFull());
+    smallBitmapOnes.forEachSetBit([&] (size_t i) {
+        ASSERT_TRUE(smallBitmapOnes.get(i));
         count++;
     });
     ASSERT_EQ(count, smallSize);
@@ -756,33 +756,33 @@ void testBitmapFindBit()
         ASSERT_EQ(bitmap2.findBit(i, true), findExpectedBit(expectedBits2, i, true));
         ASSERT_EQ(bitmap2.findBit(i, false), findExpectedBit(expectedBits2, i, false));
 
-        ASSERT_EQ(bitmap2.findBit(i, true), bitmap3.findBit(i, true));
-        ASSERT_EQ(bitmap2.findBit(i, false), bitmap3.findBit(i, false));
+        ASSERT_EQ(bitmap2.findBit(i, true), bitmap2Clone.findBit(i, true));
+        ASSERT_EQ(bitmap2.findBit(i, false), bitmap2Clone.findBit(i, false));
     }
 
-    ASSERT_EQ(bitmap0.findBit(0, false), zeroSize);
-    ASSERT_EQ(bitmap0.findBit(10, false), static_cast<size_t>(10));
-    ASSERT_EQ(bitmap0.findBit(size - 1, false), size-1);
-    ASSERT_EQ(bitmap0.findBit(size, false), size);
-    ASSERT_EQ(bitmap0.findBit(size + 1, false), size);
+    ASSERT_EQ(bitmapZeroes.findBit(0, false), zeroSize);
+    ASSERT_EQ(bitmapZeroes.findBit(10, false), static_cast<size_t>(10));
+    ASSERT_EQ(bitmapZeroes.findBit(size - 1, false), size-1);
+    ASSERT_EQ(bitmapZeroes.findBit(size, false), size);
+    ASSERT_EQ(bitmapZeroes.findBit(size + 1, false), size);
 
-    ASSERT_EQ(bitmap0.findBit(0, true), size);
-    ASSERT_EQ(bitmap0.findBit(10, true), size);
-    ASSERT_EQ(bitmap0.findBit(size - 1, true), size);
-    ASSERT_EQ(bitmap0.findBit(size, true), size);
-    ASSERT_EQ(bitmap0.findBit(size + 1, true), size);
+    ASSERT_EQ(bitmapZeroes.findBit(0, true), size);
+    ASSERT_EQ(bitmapZeroes.findBit(10, true), size);
+    ASSERT_EQ(bitmapZeroes.findBit(size - 1, true), size);
+    ASSERT_EQ(bitmapZeroes.findBit(size, true), size);
+    ASSERT_EQ(bitmapZeroes.findBit(size + 1, true), size);
 
-    ASSERT_EQ(bitmapFilled.findBit(0, false), size);
-    ASSERT_EQ(bitmapFilled.findBit(10, false), size);
-    ASSERT_EQ(bitmapFilled.findBit(size - 1, false), size);
-    ASSERT_EQ(bitmapFilled.findBit(size, false), size);
-    ASSERT_EQ(bitmapFilled.findBit(size + 1, false), size);
+    ASSERT_EQ(bitmapOnes.findBit(0, false), size);
+    ASSERT_EQ(bitmapOnes.findBit(10, false), size);
+    ASSERT_EQ(bitmapOnes.findBit(size - 1, false), size);
+    ASSERT_EQ(bitmapOnes.findBit(size, false), size);
+    ASSERT_EQ(bitmapOnes.findBit(size + 1, false), size);
 
-    ASSERT_EQ(bitmapFilled.findBit(0, true), zeroSize);
-    ASSERT_EQ(bitmapFilled.findBit(10, true), static_cast<size_t>(10));
-    ASSERT_EQ(bitmapFilled.findBit(size - 1, true), size-1);
-    ASSERT_EQ(bitmapFilled.findBit(size, true), size);
-    ASSERT_EQ(bitmapFilled.findBit(size + 1, true), size);
+    ASSERT_EQ(bitmapOnes.findBit(0, true), zeroSize);
+    ASSERT_EQ(bitmapOnes.findBit(10, true), static_cast<size_t>(10));
+    ASSERT_EQ(bitmapOnes.findBit(size - 1, true), size-1);
+    ASSERT_EQ(bitmapOnes.findBit(size, true), size);
+    ASSERT_EQ(bitmapOnes.findBit(size + 1, true), size);
 }
 
 template<typename WordType>
@@ -799,13 +799,13 @@ void testBitmapIteration()
         return count;
     };
 
-    EXPECT_EQ(computeSetBitsCount(bitmap0), zeroSize);
+    EXPECT_EQ(computeSetBitsCount(bitmapZeroes), zeroSize);
     EXPECT_EQ(computeSetBitsCount(bitmap1), expectedNumberOfSetBits1);
     EXPECT_EQ(computeSetBitsCount(bitmap2), expectedNumberOfSetBits2);
-    EXPECT_EQ(computeSetBitsCount(bitmap3), expectedNumberOfSetBits2);
-    EXPECT_EQ(computeSetBitsCount(bitmapFilled), size);
-    EXPECT_EQ(computeSetBitsCount(bitmapSmallZeroed), zeroSize);
-    EXPECT_EQ(computeSetBitsCount(bitmapSmallFilled), smallSize);
+    EXPECT_EQ(computeSetBitsCount(bitmap2Clone), expectedNumberOfSetBits2);
+    EXPECT_EQ(computeSetBitsCount(bitmapOnes), size);
+    EXPECT_EQ(computeSetBitsCount(smallBitmapZeroes), zeroSize);
+    EXPECT_EQ(computeSetBitsCount(smallBitmapOnes), smallSize);
 
     auto verifySetBits = [=] (auto& bitmap, auto& expectedBits) {
         for (auto bitIndex : bitmap) {
@@ -816,7 +816,7 @@ void testBitmapIteration()
 
     verifySetBits(bitmap1, expectedBits1);
     verifySetBits(bitmap2, expectedBits2);
-    verifySetBits(bitmap3, expectedBits2);
+    verifySetBits(bitmap2Clone, expectedBits2);
 
     auto verifyBitsAllSet = [=] (auto& bitmap) {
         size_t lastBitIndex = 0;
@@ -828,8 +828,8 @@ void testBitmapIteration()
         }
     };
 
-    verifyBitsAllSet(bitmapFilled);
-    verifyBitsAllSet(bitmapSmallFilled);
+    verifyBitsAllSet(bitmapOnes);
+    verifyBitsAllSet(smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -846,67 +846,67 @@ void testBitmapMergeAndClear()
     ASSERT_EQ(savedBitmap1, bitmap1);
     
     ASSERT_NE(bitmap1, bitmap2);
-    ASSERT_NE(bitmap1, bitmap3);
-    ASSERT_EQ(bitmap3, bitmap2);
-    bitmap1.mergeAndClear(bitmap3);
+    ASSERT_NE(bitmap1, bitmap2Clone);
+    ASSERT_EQ(bitmap2Clone, bitmap2);
+    bitmap1.mergeAndClear(bitmap2Clone);
     ASSERT_NE(bitmap1, bitmap2);
     ASSERT_NE(bitmap1, savedBitmap1);
-    ASSERT_TRUE(bitmap3.isEmpty());
+    ASSERT_TRUE(bitmap2Clone.isEmpty());
     for (size_t i = 0; i < size; ++i) {
         bool expectedBit = expectedBits1[i] | expectedBits2[i];
         ASSERT_EQ(bitmap1.get(i), expectedBit);
     }
 
-    bitmap3.merge(bitmap2); // restore bitmap3
-    ASSERT_EQ(bitmap3, bitmap2);
+    bitmap2Clone.merge(bitmap2); // restore bitmap2Clone
+    ASSERT_EQ(bitmap2Clone, bitmap2);
 
     ASSERT_TRUE(temp.isEmpty());
-    temp.mergeAndClear(bitmap3);
+    temp.mergeAndClear(bitmap2Clone);
     ASSERT_FALSE(temp.isEmpty());
     ASSERT_EQ(temp, bitmap2);
-    ASSERT_TRUE(bitmap3.isEmpty());
+    ASSERT_TRUE(bitmap2Clone.isEmpty());
 
-    Bitmap<size, WordType> savedBitmapFilled;
-    savedBitmapFilled.merge(bitmapFilled);
+    Bitmap<size, WordType> savedBitmapOnes;
+    savedBitmapOnes.merge(bitmapOnes);
 
     temp.clearAll();
     ASSERT_TRUE(temp.isEmpty());
     ASSERT_FALSE(temp.isFull());
-    ASSERT_FALSE(bitmapFilled.isEmpty());
-    ASSERT_TRUE(bitmapFilled.isFull());
-    temp.mergeAndClear(bitmapFilled);
+    ASSERT_FALSE(bitmapOnes.isEmpty());
+    ASSERT_TRUE(bitmapOnes.isFull());
+    temp.mergeAndClear(bitmapOnes);
     ASSERT_FALSE(temp.isEmpty());
     ASSERT_TRUE(temp.isFull());
-    ASSERT_TRUE(bitmapFilled.isEmpty());
-    ASSERT_FALSE(bitmapFilled.isFull());
+    ASSERT_TRUE(bitmapOnes.isEmpty());
+    ASSERT_FALSE(bitmapOnes.isFull());
 
-    bitmap3.merge(bitmap2); // restore bitmap3
-    ASSERT_EQ(bitmap3, bitmap2);
-    bitmapFilled.merge(savedBitmapFilled); // restore bitmapFilled
-    ASSERT_TRUE(bitmapFilled.isFull());
+    bitmap2Clone.merge(bitmap2); // restore bitmap2Clone
+    ASSERT_EQ(bitmap2Clone, bitmap2);
+    bitmapOnes.merge(savedBitmapOnes); // restore bitmapOnes
+    ASSERT_TRUE(bitmapOnes.isFull());
 
     ASSERT_TRUE(temp.isFull());
-    temp.mergeAndClear(bitmap3);
+    temp.mergeAndClear(bitmap2Clone);
     ASSERT_TRUE(temp.isFull());
-    ASSERT_EQ(temp, bitmapFilled);
-    ASSERT_TRUE(bitmap3.isEmpty());
+    ASSERT_EQ(temp, bitmapOnes);
+    ASSERT_TRUE(bitmap2Clone.isEmpty());
 
     Bitmap<smallSize, WordType> smallTemp;
 
-    smallTemp.merge(bitmapSmallFilled);
+    smallTemp.merge(smallBitmapOnes);
     ASSERT_TRUE(smallTemp.isFull());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    smallTemp.mergeAndClear(bitmapSmallZeroed);
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    smallTemp.mergeAndClear(smallBitmapZeroes);
     ASSERT_TRUE(smallTemp.isFull());
     ASSERT_FALSE(smallTemp.isEmpty());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
 
     smallTemp.clearAll();
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     ASSERT_TRUE(smallTemp.isEmpty());
-    smallTemp.mergeAndClear(bitmapSmallFilled);
+    smallTemp.mergeAndClear(smallBitmapOnes);
     ASSERT_TRUE(smallTemp.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
 }
 
 template<typename WordType>
@@ -923,56 +923,56 @@ void testBitmapSetAndClear()
     ASSERT_EQ(savedBitmap1, bitmap1);
     
     ASSERT_NE(bitmap1, bitmap2);
-    ASSERT_NE(bitmap1, bitmap3);
-    ASSERT_EQ(bitmap3, bitmap2);
-    bitmap1.setAndClear(bitmap3);
+    ASSERT_NE(bitmap1, bitmap2Clone);
+    ASSERT_EQ(bitmap2Clone, bitmap2);
+    bitmap1.setAndClear(bitmap2Clone);
     ASSERT_EQ(bitmap1, bitmap2);
     ASSERT_NE(bitmap1, savedBitmap1);
-    ASSERT_TRUE(bitmap3.isEmpty());
+    ASSERT_TRUE(bitmap2Clone.isEmpty());
 
-    bitmap3.merge(bitmap2); // restore bitmap3
-    ASSERT_EQ(bitmap3, bitmap2);
+    bitmap2Clone.merge(bitmap2); // restore bitmap2Clone
+    ASSERT_EQ(bitmap2Clone, bitmap2);
 
     ASSERT_TRUE(temp.isEmpty());
-    temp.setAndClear(bitmap3);
+    temp.setAndClear(bitmap2Clone);
     ASSERT_FALSE(temp.isEmpty());
     ASSERT_EQ(temp, bitmap2);
-    ASSERT_TRUE(bitmap3.isEmpty());
+    ASSERT_TRUE(bitmap2Clone.isEmpty());
 
     temp.clearAll();
     ASSERT_TRUE(temp.isEmpty());
     ASSERT_FALSE(temp.isFull());
-    ASSERT_FALSE(bitmapFilled.isEmpty());
-    ASSERT_TRUE(bitmapFilled.isFull());
-    temp.setAndClear(bitmapFilled);
+    ASSERT_FALSE(bitmapOnes.isEmpty());
+    ASSERT_TRUE(bitmapOnes.isFull());
+    temp.setAndClear(bitmapOnes);
     ASSERT_FALSE(temp.isEmpty());
     ASSERT_TRUE(temp.isFull());
-    ASSERT_TRUE(bitmapFilled.isEmpty());
-    ASSERT_FALSE(bitmapFilled.isFull());
+    ASSERT_TRUE(bitmapOnes.isEmpty());
+    ASSERT_FALSE(bitmapOnes.isFull());
 
-    bitmap3.merge(bitmap2); // restore bitmap3
-    ASSERT_EQ(bitmap3, bitmap2);
+    bitmap2Clone.merge(bitmap2); // restore bitmap2Clone
+    ASSERT_EQ(bitmap2Clone, bitmap2);
 
     ASSERT_TRUE(temp.isFull());
-    temp.setAndClear(bitmap3);
+    temp.setAndClear(bitmap2Clone);
     ASSERT_FALSE(temp.isFull());
     ASSERT_EQ(temp, bitmap2);
-    ASSERT_TRUE(bitmap3.isEmpty());
+    ASSERT_TRUE(bitmap2Clone.isEmpty());
 
     Bitmap<smallSize, WordType> smallTemp;
 
-    smallTemp.merge(bitmapSmallFilled);
+    smallTemp.merge(smallBitmapOnes);
     ASSERT_TRUE(smallTemp.isFull());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
-    smallTemp.setAndClear(bitmapSmallZeroed);
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
+    smallTemp.setAndClear(smallBitmapZeroes);
     ASSERT_TRUE(smallTemp.isEmpty());
-    ASSERT_TRUE(bitmapSmallZeroed.isEmpty());
+    ASSERT_TRUE(smallBitmapZeroes.isEmpty());
     
-    ASSERT_TRUE(bitmapSmallFilled.isFull());
+    ASSERT_TRUE(smallBitmapOnes.isFull());
     ASSERT_TRUE(smallTemp.isEmpty());
-    smallTemp.setAndClear(bitmapSmallFilled);
+    smallTemp.setAndClear(smallBitmapOnes);
     ASSERT_TRUE(smallTemp.isFull());
-    ASSERT_TRUE(bitmapSmallFilled.isEmpty());
+    ASSERT_TRUE(smallBitmapOnes.isEmpty());
 }
 
 template<typename Bitmap>
@@ -1012,8 +1012,8 @@ void testBitmapSetEachNthBit()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
     constexpr size_t wordSize = sizeof(WordType) * 8;
-    testBitmapSetEachNthBitImpl(size, wordSize, bitmap0, bitmapFilled);
-    testBitmapSetEachNthBitImpl(smallSize, wordSize, bitmapSmallZeroed, bitmapSmallFilled);
+    testBitmapSetEachNthBitImpl(size, wordSize, bitmapZeroes, bitmapOnes);
+    testBitmapSetEachNthBitImpl(smallSize, wordSize, smallBitmapZeroes, smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -1021,14 +1021,14 @@ void testBitmapOperatorEqual()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    EXPECT_TRUE(bitmap0 == bitmap0);
-    EXPECT_FALSE(bitmap0 == bitmap1);
+    EXPECT_TRUE(bitmapZeroes == bitmapZeroes);
+    EXPECT_FALSE(bitmapZeroes == bitmap1);
     EXPECT_TRUE(bitmap1 == bitmap1);
     EXPECT_FALSE(bitmap1 == bitmap2);
-    EXPECT_FALSE(bitmap1 == bitmap3);
-    EXPECT_TRUE(bitmap2 == bitmap3);
-    EXPECT_FALSE(bitmapFilled == bitmap1);
-    EXPECT_FALSE(bitmapSmallZeroed == bitmapSmallFilled);
+    EXPECT_FALSE(bitmap1 == bitmap2Clone);
+    EXPECT_TRUE(bitmap2 == bitmap2Clone);
+    EXPECT_FALSE(bitmapOnes == bitmap1);
+    EXPECT_FALSE(smallBitmapZeroes == smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -1036,14 +1036,14 @@ void testBitmapOperatorNotEqual()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
 
-    EXPECT_FALSE(bitmap0 != bitmap0);
-    EXPECT_TRUE(bitmap0 != bitmap1);
+    EXPECT_FALSE(bitmapZeroes != bitmapZeroes);
+    EXPECT_TRUE(bitmapZeroes != bitmap1);
     EXPECT_FALSE(bitmap1 != bitmap1);
     EXPECT_TRUE(bitmap1 != bitmap2);
-    EXPECT_TRUE(bitmap1 != bitmap3);
-    EXPECT_FALSE(bitmap2 != bitmap3);
-    EXPECT_TRUE(bitmapFilled != bitmap1);
-    EXPECT_TRUE(bitmapSmallZeroed != bitmapSmallFilled);
+    EXPECT_TRUE(bitmap1 != bitmap2Clone);
+    EXPECT_FALSE(bitmap2 != bitmap2Clone);
+    EXPECT_TRUE(bitmapOnes != bitmap1);
+    EXPECT_TRUE(smallBitmapZeroes != smallBitmapOnes);
 }
 
 template<typename Bitmap>
@@ -1081,8 +1081,8 @@ template<typename WordType>
 void testBitmapOperatorAssignment()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
-    testBitmapOperatorAssignmentImpl(bitmap1, bitmap2, bitmap0, bitmapFilled);
-    testBitmapOperatorAssignmentImpl(bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+    testBitmapOperatorAssignmentImpl(bitmap1, bitmap2, bitmapZeroes, bitmapOnes);
+    testBitmapOperatorAssignmentImpl(smallBitmap1, smallBitmap2, smallBitmapZeroes, smallBitmapOnes);
 }
 
 template<typename Bitmap>
@@ -1145,8 +1145,8 @@ template<typename WordType>
 void testBitmapOperatorBitOrAssignment()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
-    testBitmapOperatorBitOrAssignmentImpl(size, bitmap1, bitmap2, bitmap0, bitmapFilled);
-    testBitmapOperatorBitOrAssignmentImpl(smallSize, bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+    testBitmapOperatorBitOrAssignmentImpl(size, bitmap1, bitmap2, bitmapZeroes, bitmapOnes);
+    testBitmapOperatorBitOrAssignmentImpl(smallSize, smallBitmap1, smallBitmap2, smallBitmapZeroes, smallBitmapOnes);
 }
 
 template<typename Bitmap>
@@ -1215,8 +1215,8 @@ template<typename WordType>
 void testBitmapOperatorBitAndAssignment()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
-    testBitmapOperatorBitAndAssignmentImpl(size, bitmap1, bitmap2, bitmap0, bitmapFilled);
-    testBitmapOperatorBitAndAssignmentImpl(smallSize, bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+    testBitmapOperatorBitAndAssignmentImpl(size, bitmap1, bitmap2, bitmapZeroes, bitmapOnes);
+    testBitmapOperatorBitAndAssignmentImpl(smallSize, smallBitmap1, smallBitmap2, smallBitmapZeroes, smallBitmapOnes);
 }
 
 template<typename Bitmap>
@@ -1286,8 +1286,8 @@ template<typename WordType>
 void testBitmapOperatorBitXorAssignment()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
-    testBitmapOperatorBitXorAssignmentImpl(size, bitmap1, bitmap2, bitmap0, bitmapFilled);
-    testBitmapOperatorBitXorAssignmentImpl(smallSize, bitmapSmall1, bitmapSmall2, bitmapSmallZeroed, bitmapSmallFilled);
+    testBitmapOperatorBitXorAssignmentImpl(size, bitmap1, bitmap2, bitmapZeroes, bitmapOnes);
+    testBitmapOperatorBitXorAssignmentImpl(smallSize, smallBitmap1, smallBitmap2, smallBitmapZeroes, smallBitmapOnes);
 }
 
 template<typename WordType>
@@ -1298,7 +1298,7 @@ void testBitmapHash()
     constexpr unsigned wordSize = sizeof(WordType) * 8;
     constexpr size_t words = (size + wordSize - 1) / wordSize;
 
-    auto expectedBitmap0Hash = [=] () -> unsigned {
+    auto expectedBitmapZeroesHash = [=] () -> unsigned {
         unsigned result = 0;
         WordType zeroWord = 0;
         for (size_t i = 0; i < words; ++i)
@@ -1306,7 +1306,7 @@ void testBitmapHash()
         return result;
     };
 
-    auto expectedBitmapFilledHash = [=] () -> unsigned {
+    auto expectedBitmapOnesHash = [=] () -> unsigned {
         unsigned result = 0;
         WordType filledWord = static_cast<WordType>(-1);
         for (size_t i = 0; i < words; ++i)
@@ -1314,8 +1314,8 @@ void testBitmapHash()
         return result;
     };
 
-    ASSERT_EQ(bitmap0.hash(), expectedBitmap0Hash());
-    ASSERT_EQ(bitmapFilled.hash(), expectedBitmapFilledHash());
+    ASSERT_EQ(bitmapZeroes.hash(), expectedBitmapZeroesHash());
+    ASSERT_EQ(bitmapOnes.hash(), expectedBitmapOnesHash());
 
     auto expectedHash = [=] (auto expectedBits, size_t size) {
         unsigned result = 0;
