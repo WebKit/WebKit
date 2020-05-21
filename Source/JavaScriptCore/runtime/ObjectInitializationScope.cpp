@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ObjectInitializationScope.h"
 
+#include "HeapInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSObject.h"
 #include "Scribble.h"
 

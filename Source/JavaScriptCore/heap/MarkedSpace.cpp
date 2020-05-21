@@ -22,6 +22,7 @@
 #include "MarkedSpace.h"
 
 #include "BlockDirectoryInlines.h"
+#include "HeapInlines.h"
 #include "IncrementalSweeper.h"
 #include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
