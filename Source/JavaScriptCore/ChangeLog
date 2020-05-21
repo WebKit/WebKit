@@ -1,3 +1,24 @@
+2020-05-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array.prototype.concat is incorrect with objects whose "length" exceeds 2 ** 32 - 1
+        https://bugs.webkit.org/show_bug.cgi?id=212167
+
+        Reviewed by Saam Barati.
+
+        This patch increases "length" limit of Array.prototype.concat result to @MAX_SAFE_INTEGER
+        and changes thrown error to TypeError, aligning JSC with the spec [1], V8, and SpiderMonkey.
+
+        Also, adds missing @MAX_SAFE_INTEGER overflow check in Array.from [2] (we implement similar
+        checks in other methods). SunSpider and microbenchmarks/concat-append-one.js are both neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-array.prototype.concat (steps 5.c.iii, 5.d.ii)
+        [2]: https://tc39.es/ecma262/#sec-array.from (step 5.e.i)
+
+        * builtins/ArrayConstructor.js:
+        (from):
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.concatSlowPath):
+
 2020-05-20  Michael Saboff  <msaboff@apple.com>
 
         [Wasm] Limit the size of Wasm function we optimize in OMG mode

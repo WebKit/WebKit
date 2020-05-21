@@ -1,3 +1,14 @@
+2020-05-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array.prototype.concat is incorrect with objects whose "length" exceeds 2 ** 32 - 1
+        https://bugs.webkit.org/show_bug.cgi?id=212167
+
+        Reviewed by Saam Barati.
+
+        * stress/array-prototype-concat-of-long-spliced-arrays.js:
+        * stress/array-prototype-concat-of-long-spliced-arrays2.js:
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-05-19  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fixups for r261689 "stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js failing on ppc64le and s390x"

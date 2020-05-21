@@ -30,7 +30,7 @@ function test() {
         exception = e;
     }
 
-    shouldEqual(exception, "RangeError: Length exceeded the maximum array length");
+    shouldEqual(exception, "RangeError: Invalid array length");
 }
 
 test();

@@ -558,9 +558,9 @@ function concatSlowPath()
         var spreadable = @isObject(currentElement) && currentElement.@@isConcatSpreadable;
         if ((spreadable === @undefined && @isArray(currentElement)) || spreadable) {
             var length = @toLength(currentElement.length);
-            if (length + resultIndex > @MAX_ARRAY_INDEX)
-                @throwRangeError("Length exceeded the maximum array length");
-            if (resultIsArray && @isJSArray(currentElement)) {
+            if (length + resultIndex > @MAX_SAFE_INTEGER)
+                @throwTypeError("Length exceeded the maximum array length");
+            if (resultIsArray && @isJSArray(currentElement) && length + resultIndex <= @MAX_ARRAY_INDEX) {
                 @appendMemcpy(result, currentElement, resultIndex);
                 resultIndex += length;
             } else {
@@ -571,8 +571,8 @@ function concatSlowPath()
                 }
             }
         } else {
-            if (resultIndex >= @MAX_ARRAY_INDEX)
-                @throwRangeError("Length exceeded the maximum array length");
+            if (resultIndex >= @MAX_SAFE_INTEGER)
+                @throwTypeError("Length exceeded the maximum array length");
             @putByValDirect(result, resultIndex++, currentElement);
         }
         currentElement = arguments[argIndex];

@@ -654,12 +654,6 @@ test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-
 test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/built-ins/Array/prototype/concat/arg-length-exceeding-integer-limit.js:
-  default: 'Test262Error: Expected a TypeError but got a RangeError'
-  strict mode: 'Test262Error: Expected a TypeError but got a RangeError'
-test/built-ins/Array/prototype/concat/arg-length-near-integer-limit.js:
-  default: 'Test262Error: Expected a Test262Error but got a RangeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a RangeError'
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
   default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
   strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
