@@ -36,6 +36,7 @@ namespace WebCore {
 
 class DOMTokenList;
 class HTMLLinkElement;
+class Page;
 struct MediaQueryParserContext;
 
 template<typename T> class EventSender;
@@ -70,7 +71,7 @@ public:
     WEBCORE_EXPORT String as() const;
 
     void dispatchPendingEvent(LinkEventSender*);
-    static void dispatchPendingLoadEvents();
+    static void dispatchPendingLoadEvents(Page*);
 
     WEBCORE_EXPORT DOMTokenList& relList();
 

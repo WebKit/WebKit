@@ -559,19 +559,19 @@ void ImageLoader::dispatchPendingErrorEvent()
     updatedHasPendingEvent();
 }
 
-void ImageLoader::dispatchPendingBeforeLoadEvents()
+void ImageLoader::dispatchPendingBeforeLoadEvents(Page* page)
 {
-    beforeLoadEventSender().dispatchPendingEvents();
+    beforeLoadEventSender().dispatchPendingEvents(page);
 }
 
-void ImageLoader::dispatchPendingLoadEvents()
+void ImageLoader::dispatchPendingLoadEvents(Page* page)
 {
-    loadEventSender().dispatchPendingEvents();
+    loadEventSender().dispatchPendingEvents(page);
 }
 
-void ImageLoader::dispatchPendingErrorEvents()
+void ImageLoader::dispatchPendingErrorEvents(Page* page)
 {
-    errorEventSender().dispatchPendingEvents();
+    errorEventSender().dispatchPendingEvents(page);
 }
 
 void ImageLoader::elementDidMoveToNewDocument(Document& oldDocument)

@@ -524,9 +524,9 @@ bool HTMLLinkElement::sheetLoaded()
     return false;
 }
 
-void HTMLLinkElement::dispatchPendingLoadEvents()
+void HTMLLinkElement::dispatchPendingLoadEvents(Page* page)
 {
-    linkLoadEventSender().dispatchPendingEvents();
+    linkLoadEventSender().dispatchPendingEvents(page);
 }
 
 void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)

@@ -1,3 +1,36 @@
+2020-05-21  Doug Kelly  <dougk@apple.com>
+
+        Dispatch pending events only for current page
+        https://bugs.webkit.org/show_bug.cgi?id=211975
+        <rdar://problem/58942759>
+
+        Reviewed by Chris Dumez.
+
+        Document::implicitClose() should not dispatch events globally. The EventSender class operates as a singleton pattern
+        for each event queue, so to add some means to restrict which documents are handling events, we can send the current
+        page pointer and only dispatch the event if the event is for the same page. Other events are simply re-enqueued
+        to be triggered at a later time.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * dom/EventSender.h:
+        (WebCore::EventSender::timerFired):
+        (WebCore::EventSender<T>::dispatchPendingEvents):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::dispatchPendingLoadEvents):
+        * html/HTMLLinkElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::dispatchPendingLoadEvents):
+        * html/HTMLStyleElement.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvents):
+        (WebCore::ImageLoader::dispatchPendingLoadEvents):
+        (WebCore::ImageLoader::dispatchPendingErrorEvents):
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::document):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::append):
+
 2020-05-21  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS] Scrolling synchronization part 2: Have the scrolling thread detect when the main thread is slow to respond to start a rendering update

@@ -3046,11 +3046,13 @@ void Document::implicitClose()
         // FIXME: We shouldn't be dispatching pending events globally on all Documents here.
         // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
         // below SVG font parsing, for example. <https://webkit.org/b/136269>
-        ImageLoader::dispatchPendingBeforeLoadEvents();
-        ImageLoader::dispatchPendingLoadEvents();
-        ImageLoader::dispatchPendingErrorEvents();
-        HTMLLinkElement::dispatchPendingLoadEvents();
-        HTMLStyleElement::dispatchPendingLoadEvents();
+        if (auto* currentPage = page()) {
+            ImageLoader::dispatchPendingBeforeLoadEvents(currentPage);
+            ImageLoader::dispatchPendingLoadEvents(currentPage);
+            ImageLoader::dispatchPendingErrorEvents(currentPage);
+            HTMLLinkElement::dispatchPendingLoadEvents(currentPage);
+            HTMLStyleElement::dispatchPendingLoadEvents(currentPage);
+        }
 
         if (svgExtensions())
             accessSVGExtensions().dispatchLoadEventToOutermostSVGElements();

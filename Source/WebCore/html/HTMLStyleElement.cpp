@@ -120,9 +120,9 @@ void HTMLStyleElement::childrenChanged(const ChildChange& change)
     m_styleSheetOwner.childrenChanged(*this);
 }
 
-void HTMLStyleElement::dispatchPendingLoadEvents()
+void HTMLStyleElement::dispatchPendingLoadEvents(Page* page)
 {
-    styleLoadEventSender().dispatchPendingEvents();
+    styleLoadEventSender().dispatchPendingEvents(page);
 }
 
 void HTMLStyleElement::dispatchPendingEvent(StyleEventSender* eventSender)

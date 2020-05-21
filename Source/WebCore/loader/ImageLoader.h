@@ -34,6 +34,7 @@ class DeferredPromise;
 class Document;
 class Element;
 class ImageLoader;
+class Page;
 class RenderImageResource;
 
 template<typename T> class EventSender;
@@ -72,13 +73,15 @@ public:
 
     void dispatchPendingEvent(ImageEventSender*);
 
-    static void dispatchPendingBeforeLoadEvents();
-    static void dispatchPendingLoadEvents();
-    static void dispatchPendingErrorEvents();
+    static void dispatchPendingBeforeLoadEvents(Page*);
+    static void dispatchPendingLoadEvents(Page*);
+    static void dispatchPendingErrorEvents(Page*);
 
     void loadDeferredImage();
 
     bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred; }
+
+    Document& document() { return m_element.document(); }
 
 protected:
     explicit ImageLoader(Element&);

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class HTMLStyleElement;
+class Page;
 class StyleSheet;
 
 template<typename T> class EventSender;
@@ -47,7 +48,7 @@ public:
     WEBCORE_EXPORT void setDisabled(bool);
 
     void dispatchPendingEvent(StyleEventSender*);
-    static void dispatchPendingLoadEvents();
+    static void dispatchPendingLoadEvents(Page*);
 
     void finishParsingChildren() final;
 
