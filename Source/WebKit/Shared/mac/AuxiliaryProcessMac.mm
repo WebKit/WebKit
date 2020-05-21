@@ -261,13 +261,13 @@ static String sandboxDataVaultParentDirectory()
     // our sandbox rules or webkit cache directories (rdar://problem/54613619).
     size_t length = confstr(_CS_DARWIN_USER_TEMP_DIR, temp, sizeof(temp));
     if (!length) {
-        WTFLogAlways("%s: Could not retrieve user cache directory path: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), strerror(errno));
         exit(EX_NOPERM);
     }
     RELEASE_ASSERT(length <= sizeof(temp));
     char resolvedPath[PATH_MAX];
     if (!realpath(temp, resolvedPath)) {
-        WTFLogAlways("%s: Could not canonicalize user cache directory path: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), strerror(errno));
         exit(EX_NOPERM);
     }
     return resolvedPath;
