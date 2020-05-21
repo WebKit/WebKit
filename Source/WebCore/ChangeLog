@@ -1,3 +1,22 @@
+2020-05-21  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: m_wrapper on fast/events/scoped/editing-commands.html
+        https://bugs.webkit.org/show_bug.cgi?id=209862
+        <rdar://problem/61164607>
+
+        Reviewed by Darin Adler.
+
+        Make sure ScopedEventQueue keeps its event targets alive using a GCReachableRef<Node>
+        so that it keeps alive both the target and its JS wrapper.
+
+        No new tests, covered by existing test.
+
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::enqueueEvent):
+        (WebCore::ScopedEventQueue::dispatchEvent const):
+        (WebCore::ScopedEventQueue::dispatchAllEvents):
+        * dom/ScopedEventQueue.h:
+
 2020-05-21  Sihui Liu  <sihui_liu@apple.com>
 
         SQLite database fails to close in SQLiteIDBBackingStore::databaseNameFromFile

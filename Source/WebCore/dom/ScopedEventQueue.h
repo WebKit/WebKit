@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "GCReachableRef.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
@@ -50,12 +51,17 @@ private:
     ScopedEventQueue() = default;
     ~ScopedEventQueue() = delete;
 
-    void dispatchEvent(Event&) const;
+    struct ScopedEvent {
+        Ref<Event> event;
+        GCReachableRef<Node> target;
+    };
+
+    void dispatchEvent(const ScopedEvent&) const;
     void dispatchAllEvents();
     void incrementScopingLevel();
     void decrementScopingLevel();
 
-    Vector<Ref<Event>> m_queuedEvents;
+    Vector<ScopedEvent> m_queuedEvents;
     unsigned m_scopingLevel { 0 };
 
     friend class WTF::NeverDestroyed<WebCore::ScopedEventQueue>;
