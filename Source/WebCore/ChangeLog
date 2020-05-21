@@ -1,3 +1,62 @@
+2020-05-21  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Remove trivial uses of Color::rgb()
+        https://bugs.webkit.org/show_bug.cgi?id=212231
+
+        Reviewed by Darin Adler
+
+        Replaces a few unnecessary uses of Color::rgb():
+        - Uses of an idiom where code round-tripped a Color via Color(myColor.rgb()). This is
+          not compatible with extended colors and seems to be unnecessary.
+        - Uses of colorWithOverrideAlpha(). This function requires a SimpleColor, so required
+          using color.rgb(). We can't transition to Color::colorWithAlpha due to a slightly 
+          different rounding of the alpha, so a new function Color::colorWithAlphaUsingAlternativeRounding
+          was added to which implements the alternative rounding. A later change can reconcile
+          the two versions.
+        - Creation of D2D1::ColorF. D2D1::ColorF has a constructor that takes a four floats that
+          is used instead.
+        - Comparing two colors using rgb() for each to avoid comparing the semantic bit. equalIgnoringSemanticColor
+          exists for just this use.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::colorPropertyValueForNode):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::addHTMLColorToStyle):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2DBase::setFillStyle):
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::updateCueFromCueData):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::colorWithAlphaMultipliedByUsingAlternativeRounding const):
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const):
+        (WebCore::colorWithOverrideAlpha): Deleted.
+        * platform/graphics/Color.h:
+        (WebCore::colorWithOverrideAlpha): Deleted.
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::prepareCairoContextSource):
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::platformApplySoftware):
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::operator D2D1_COLOR_F const):
+        (WebCore::Color::operator D2D1_VECTOR_4F const):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::colorWithGlobalAlpha const):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::drawCellFocusRingWithFrameAtTime):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintFileUploadIconDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformFocusRingColor const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity const):
+
 2020-05-21  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Don't create renderers for whitespace nodes

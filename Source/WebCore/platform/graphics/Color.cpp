@@ -71,11 +71,6 @@ RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a)
     return makeRGBA(colorFloatToRGBAByte(r), colorFloatToRGBAByte(g), colorFloatToRGBAByte(b), colorFloatToRGBAByte(a));
 }
 
-RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha)
-{
-    return { (color.value() & 0x00FFFFFF) | colorFloatToRGBAByte(overrideAlpha) << 24 };
-}
-
 RGBA32 makeRGBAFromHSLA(float hue, float saturation, float lightness, float alpha)
 {
     const float scaleFactor = 255.0;
@@ -460,14 +455,32 @@ Color Color::colorWithAlphaMultipliedBy(float amount) const
     return colorWithAlpha(newAlpha);
 }
 
+Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(float amount) const
+{
+    float newAlpha = amount * (isExtended() ? m_colorData.extendedColor->alpha() : static_cast<float>(alpha()) / 255);
+    return colorWithAlphaUsingAlternativeRounding(newAlpha);
+}
+
 Color Color::colorWithAlpha(float alpha) const
 {
     if (isExtended())
         return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
 
-    int newAlpha = alpha * 255; // Why doesn't this use colorFloatToRGBAByte() like colorWithOverrideAlpha()?
+    // FIXME: This is where this function differs from colorWithAlphaUsingAlternativeRounding.
+    int newAlpha = alpha * 255;
 
     Color result = { red(), green(), blue(), newAlpha };
+    if (isSemantic())
+        result.setIsSemantic();
+    return result;
+}
+
+Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
+{
+    if (isExtended())
+        return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
+
+    Color result = SimpleColor { (rgb().value() & 0x00FFFFFF) | colorFloatToRGBAByte(alpha) << 24 };
     if (isSemantic())
         result.setIsSemantic();
     return result;

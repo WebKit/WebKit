@@ -379,10 +379,8 @@ void GraphicsContextPlatformPrivate::rotate(float angle)
 
 D2D1_COLOR_F GraphicsContext::colorWithGlobalAlpha(const Color& color) const
 {
-    float colorAlpha = color.alphaAsFloat();
-    float globalAlpha = m_data->currentGlobalAlpha();
-
-    return D2D1::ColorF(color.rgb(), globalAlpha * colorAlpha);
+    auto [r, g, b, a] = color.toSRGBAComponentsLossy();
+    return D2D1::ColorF(r, g, b, a * m_data->currentGlobalAlpha());
 }
 
 ID2D1Brush* GraphicsContext::solidStrokeBrush() const

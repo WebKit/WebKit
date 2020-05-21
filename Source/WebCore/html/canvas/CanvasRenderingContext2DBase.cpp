@@ -374,13 +374,9 @@ void CanvasRenderingContext2DBase::setStrokeStyle(CanvasStyle style)
     if (state().strokeStyle.isValid() && state().strokeStyle.isEquivalentColor(style))
         return;
 
-    if (style.isCurrentColor()) {
-        if (style.hasOverrideAlpha()) {
-            // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvasBase()).rgb(), style.overrideAlpha()));
-        } else
-            style = CanvasStyle(currentColor(canvasBase()));
-    } else
+    if (style.isCurrentColor())
+        style = CanvasStyle(currentColor(canvasBase()).colorWithAlphaUsingAlternativeRounding(style.overrideAlpha()));
+    else
         checkOrigin(style.canvasPattern().get());
 
     realizeSaves();
@@ -401,13 +397,9 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
     if (state().fillStyle.isValid() && state().fillStyle.isEquivalentColor(style))
         return;
 
-    if (style.isCurrentColor()) {
-        if (style.hasOverrideAlpha()) {
-            // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvasBase()).rgb(), style.overrideAlpha()));
-        } else
-            style = CanvasStyle(currentColor(canvasBase()));
-    } else
+    if (style.isCurrentColor())
+        style = CanvasStyle(currentColor(canvasBase()).colorWithAlphaUsingAlternativeRounding(style.overrideAlpha()));
+    else
         checkOrigin(style.canvasPattern().get());
 
     realizeSaves();
@@ -1310,8 +1302,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
         if (!color.isValid())
             return;
     }
-    // FIXME: Should not use RGBA32 here.
-    setShadow(FloatSize(width, height), blur, colorWithOverrideAlpha(color.rgb(), alpha));
+    setShadow(FloatSize(width, height), blur, color.colorWithAlphaUsingAlternativeRounding(alpha));
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float grayLevel, float alpha)

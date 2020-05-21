@@ -97,11 +97,11 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, Inba
     if (inbandCue.size() > 0)
         cue.setSize(std::round(inbandCue.size()));
     if (inbandCue.backgroundColor().isValid())
-        cue.setBackgroundColor(inbandCue.backgroundColor().rgb());
+        cue.setBackgroundColor(inbandCue.backgroundColor());
     if (inbandCue.foregroundColor().isValid())
-        cue.setForegroundColor(inbandCue.foregroundColor().rgb());
+        cue.setForegroundColor(inbandCue.foregroundColor());
     if (inbandCue.highlightColor().isValid())
-        cue.setHighlightColor(inbandCue.highlightColor().rgb());
+        cue.setHighlightColor(inbandCue.highlightColor());
 
     if (inbandCue.align() == GenericCueData::Alignment::Start)
         cue.setAlign("start"_s);

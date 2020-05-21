@@ -145,7 +145,7 @@ CanvasStyle CanvasStyle::createFromStringWithOverrideAlpha(const String& colorSt
     if (!color.isValid())
         return { };
 
-    return Color { colorWithOverrideAlpha(color.rgb(), alpha) };
+    return color.colorWithAlphaUsingAlternativeRounding(alpha);
 }
 
 bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const

@@ -52,8 +52,8 @@ public:
 
     bool isValid() const { return !WTF::holds_alternative<Invalid>(m_style); }
     bool isCurrentColor() const { return WTF::holds_alternative<CurrentColor>(m_style); }
-    bool hasOverrideAlpha() const { return isCurrentColor() && WTF::get<CurrentColor>(m_style).overrideAlpha; }
-    float overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha.value(); }
+    Optional<float> overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha; }
+    
 
     String color() const;
     RefPtr<CanvasGradient> canvasGradient() const;

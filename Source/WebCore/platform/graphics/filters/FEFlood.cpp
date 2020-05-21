@@ -63,9 +63,7 @@ void FEFlood::platformApplySoftware()
     if (!resultImage)
         return;
 
-    // FIXME: This should use colorWithAlphaMultipliedBy() but that has different rounding of the alpha component that breaks some tests.
-    float colorAlpha = floodColor().alpha() / 255.0;
-    auto color = colorWithOverrideAlpha(floodColor().rgb(), colorAlpha * floodOpacity());
+    auto color = floodColor().colorWithAlphaMultipliedByUsingAlternativeRounding(floodOpacity());
     resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
 }
 

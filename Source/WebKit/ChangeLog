@@ -1,3 +1,15 @@
+2020-05-21  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Remove trivial uses of Color::rgb()
+        https://bugs.webkit.org/show_bug.cgi?id=212231
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (scrollViewBackgroundColor):
+        Replace colorWithOverrideAlpha() with Color::colorWithAlphaUsingAlternativeRounding() to avoid
+        unnecessary use of Color::rgb()
+
 2020-05-21  Alex Christensen  <achristensen@webkit.org>
 
         Use an OptionSet instead of uint8_t for MessageFlags

@@ -469,7 +469,7 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
         return oldAquaFocusRingColor();
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
     // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
-    return colorWithOverrideAlpha(colorFromNSColor([NSColor keyboardFocusIndicatorColor]).rgb(), 1);
+    return colorFromNSColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
 }
 
 Color RenderThemeMac::platformTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const

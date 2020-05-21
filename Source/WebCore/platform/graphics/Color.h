@@ -92,9 +92,6 @@ constexpr RGBA32 makeRGBA(int r, int g, int b, int a);
 RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling = true);
 RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
 
-WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
-RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha);
-
 WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
 WEBCORE_EXPORT RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
 RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
@@ -224,9 +221,14 @@ public:
     Color blendWithWhite() const;
 
     Color colorWithAlphaMultipliedBy(float) const;
-
-    // Returns a color that has the same RGB values, but with the given A.
     Color colorWithAlpha(float) const;
+
+    // FIXME: Remove the need for AlternativeRounding variants by settling on a rounding behavior.
+    Color colorWithAlphaMultipliedByUsingAlternativeRounding(Optional<float>) const;
+    Color colorWithAlphaMultipliedByUsingAlternativeRounding(float) const;
+    Color colorWithAlphaUsingAlternativeRounding(Optional<float>) const;
+    WEBCORE_EXPORT Color colorWithAlphaUsingAlternativeRounding(float) const;
+
     Color opaqueColor() const { return colorWithAlpha(1.0f); }
 
     // True if the color originated from a CSS semantic color name.
@@ -393,9 +395,14 @@ inline uint16_t fastDivideBy255(uint16_t value)
     return approximation + (remainder >> 8);
 }
 
-inline RGBA32 colorWithOverrideAlpha(RGBA32 color, Optional<float> overrideAlpha)
+inline Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(Optional<float> alpha) const
 {
-    return overrideAlpha ? colorWithOverrideAlpha(color, overrideAlpha.value()) : color;
+    return alpha ? colorWithAlphaMultipliedByUsingAlternativeRounding(alpha.value()) : *this;
+}
+
+inline Color Color::colorWithAlphaUsingAlternativeRounding(Optional<float> alpha) const
+{
+    return alpha ? colorWithAlphaUsingAlternativeRounding(alpha.value()) : *this;
 }
 
 inline RGBA32 Color::rgb() const
