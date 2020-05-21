@@ -1,3 +1,19 @@
+2020-05-21  Chris Dumez  <cdumez@apple.com>
+
+        compositing/show-composited-iframe-on-back-button.html is a flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=212221
+        <rdar://problem/63493074>
+
+        Reviewed by Alex Christensen.
+
+        I am unable to reproduce the flakiness locally so this is a speculative fix.
+        Stop using testRunner.queueLoad() / testRunner.queueBackNavigation() and instead
+        just navigate to page-cache-helper.html in JS, by setting window.location.
+        Also, call testRunner.waitUntilDone() and call testRunner.notifyDone() when the
+        page comes out of the back/forward cache.
+
+        * compositing/show-composited-iframe-on-back-button.html:
+
 2020-05-21  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         LayoutTest compositing/video/video-poster.html is a flaky failure

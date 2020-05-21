@@ -5,19 +5,22 @@
 <title>Show composited iframe contents when navigating back to page</title>
 <link rel="stylesheet" href="resources/show-composited-iframe-on-back-button.css">
 <script>
-function handleOnPageShow(pageTransitionEvent)
-{
-    console.assert(window.testRunner);
-    if (pageTransitionEvent.persisted)
-        return;
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
-    // First time the page has been loaded.
-    testRunner.queueLoad("about:blank");
-    testRunner.queueBackNavigation(1);
+onpageshow = (pageTransitionEvent) => {
+    if (pageTransitionEvent.persisted) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
 }
 
-if (window.testRunner)
-    window.onpageshow = handleOnPageShow;
+onload = () => {
+    setTimeout(() => {
+        window.location = "../fast/history/resources/page-cache-helper.html";
+    }, 0);
+}
+
 </script>
 </head>
 <body>
