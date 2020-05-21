@@ -13,9 +13,9 @@
                 }
 
                 video = document.getElementsByTagName('video')[0];
-                waitForEvent("canplaythrough", canplaythrough);
-                waitForEvent('playing', playing);
+                waitForEventOnce("canplaythrough", canplaythrough);
                 video.src = findMediaFile("video", "content/test");
+                video.loop = true;
 
                 internals.settings.setAllowsInlineMediaPlayback(false);
                 // Disable the Fullscreen API (element fullscreen) support
@@ -31,6 +31,7 @@
                 testExpected("video.webkitDisplayingFullscreen", false);
 
                 try {
+                    waitForEventOnce('playing', playing);
                     runWithKeyDown("video.play()");
                 } catch (exception) {
                     failTest(exception.description);
