@@ -1448,7 +1448,11 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 
 inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecognizer *recognizer)
 {
+#if HAVE(UI_GESTURE_RECOGNIZER_MODIFIER_FLAGS)
+    return recognizer.modifierFlags;
+#else
     return [recognizer respondsToSelector:@selector(_modifierFlags)] ? [recognizer _modifierFlags] : 0;
+#endif
 }
 
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
@@ -1531,7 +1535,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return NO;
 
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
-        return !touch._isPointerTouch;
+        return touch.type != UITouchTypeIndirectPointer;
 #endif
 
     if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer || gestureRecognizer == _touchActionUpSwipeGestureRecognizer || gestureRecognizer == _touchActionDownSwipeGestureRecognizer) {

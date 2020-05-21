@@ -50,8 +50,11 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return modifiers;
 }
 
+@interface UIHoverGestureRecognizer () <_UIHoverEventRespondable>
+@end
+
 @implementation WKMouseGestureRecognizer {
-    RetainPtr<UIHoverEvent> _currentHoverEvent;
+    RetainPtr<UIEvent> _currentHoverEvent;
     RetainPtr<UITouch> _currentTouch;
 
     BOOL _touching;
@@ -59,17 +62,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     std::unique_ptr<WebKit::NativeWebMouseEvent> _lastEvent;
     Optional<CGPoint> _lastLocation;
     Optional<UIEventButtonMask> _pressedButtonMask;
-}
-
-- (instancetype)initWithTarget:(id)target action:(SEL)action
-{
-    self = [super initWithTarget:target action:action];
-    if (!self)
-        return nil;
-
-    [self _setAcceptsFailureRequiments:NO];
-
-    return self;
 }
 
 - (void)setEnabled:(BOOL)enabled
@@ -83,23 +75,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         _lastEvent = nil;
         _lastLocation = WTF::nullopt;
         _pressedButtonMask = WTF::nullopt;
-    }
-}
-
-- (void)setView:(UIView *)view
-{
-    if (view == self.view)
-        return;
-
-    [super setView:view];
-
-    if (view.window) {
-        UIHoverEvent *hoverEvent = [UIApp _hoverEventForWindow:view.window];
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 140000 || PLATFORM(MACCATALYST)
-        [hoverEvent setNeedsHitTestReset];
-#else
-        [hoverEvent setNeedsHitTestResetForWindow:view.window];
-#endif
     }
 }
 
@@ -117,13 +92,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 {
     return _currentTouch.get();
 }
-
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (BOOL)_wantsHoverEvents
-{
-    return YES;
-}
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)reset
 {
@@ -211,7 +179,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove];
 
     if (_currentHoverEvent == nil && touches.count == 1 && [event isKindOfClass:NSClassFromString(@"UIHoverEvent")]) {
-        _currentHoverEvent = (UIHoverEvent *)event;
+        _currentHoverEvent = event;
         _currentTouch = touches.anyObject;
         _lastLocation = [self locationInView:self.view];
         self.state = UIGestureRecognizerStateBegan;
@@ -261,16 +229,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_currentTouch)
         return CGPointMake(-1, -1);
     return [_currentTouch locationInView:view];
-}
-
-- (BOOL)canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
-{
-    return NO;
-}
-
-- (BOOL)canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer
-{
-    return NO;
 }
 
 @end
