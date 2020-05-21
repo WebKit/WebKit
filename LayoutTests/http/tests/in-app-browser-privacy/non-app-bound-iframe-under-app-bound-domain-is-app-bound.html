@@ -25,20 +25,26 @@
 
     function loadFrame() {
         let iframeElement = document.createElement("iframe");
-        iframeElement.src = "http://localhost:8000/in-app-browser-privacy/resources/non-app-bound-iframe.html";
+        iframeElement.src = "http://localhost:8000/in-app-browser-privacy/resources/non-app-bound-iframe.html?dummyParam" + Math.random();
         document.body.appendChild(iframeElement);
     }
     
     function runTest() {
-        if (!testRunner.hasAppBoundSession()) {
-            testFailed("Origin did not start with app-bound session.");
+        if (document.location.hash == "") {
+            // Load this test again with a random dummy value to avoid caching.
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/non-app-bound-iframe-under-app-bound-domain-is-app-bound.html?dummyParam=" + Math.random() + "#step1";
         } else {
-            testPassed("Origin has app-bound session.");
-            
-            // Clear the app-bound session to make sure the iframe load creates
-            // a new one.
-            testRunner.clearAppBoundSession();
-            loadFrame();
+            if (!testRunner.hasAppBoundSession()) {
+                testFailed("Origin did not start with app-bound session.");
+                finishJSTest();
+            } else {
+                testPassed("Origin has app-bound session.");
+
+                // Clear the app-bound session to make sure the iframe load creates
+                // a new one.
+                testRunner.clearAppBoundSession();
+                loadFrame();
+            }
         }
     }
 

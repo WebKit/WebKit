@@ -1,3 +1,20 @@
+2020-05-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Some http/tests/in-app-browser-privacy/ tests are timing out or failing
+        https://bugs.webkit.org/show_bug.cgi?id=212176
+        <rdar://problem/63452877>
+
+        Reviewed by Maciej Stachowiak.
+
+        These tests rely on a new network session load for each test resource.
+        When run in iterations, caching occurs, and the resource does not get
+        a new network session. This patch adds a random decoration value and
+        reloads each resource to ensure it is not cached.
+
+        * http/tests/in-app-browser-privacy/app-bound-domain-gets-app-bound-session.html:
+        * http/tests/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html:
+        * http/tests/in-app-browser-privacy/non-app-bound-iframe-under-app-bound-domain-is-app-bound.html:
+
 2020-05-21  Kenneth Russell  <kbr@chromium.org>
 
         REGRESSION (r253926): webgl/2.0.0/conformance2/buffers/get-buffer-sub-data.html is a flaky failure

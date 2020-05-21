@@ -11,12 +11,17 @@
     jsTestIsAsync = true;
 
     function runTest() {
-        if (testRunner.hasAppBoundSession()) {
-            testFailed("Origin started with app-bound session.");
-            finishJSTest();
+        if (document.location.hash == "") {
+            // Load this test again with a random dummy value to avoid caching.
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html?dummyParam=" + Math.random() + "#step1";
         } else {
-            testPassed("Origin has non-app-bound session.");
-            finishJSTest();
+            if (testRunner.hasAppBoundSession()) {
+                testFailed("Origin started with app-bound session.");
+                finishJSTest();
+            } else {
+                testPassed("Origin has non-app-bound session.");
+                finishJSTest();
+            }
         }
     }
 

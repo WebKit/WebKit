@@ -9,14 +9,19 @@
 <script>
     description("Tests that an app-bound domain has an app-bound session.");
     jsTestIsAsync = true;
-
+    
     function runTest() {
-        if (!testRunner.hasAppBoundSession()) {
-            testFailed("Origin did not start with app-bound session.");
-            finishJSTest();
+        if (document.location.hash == "") {
+            // Load this test again with a random dummy value to avoid caching.
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/app-bound-domain-gets-app-bound-session.html?dummyParam=" + Math.random() + "#step1";
         } else {
-            testPassed("Origin has app-bound session.");
-            finishJSTest();
+            if (!testRunner.hasAppBoundSession()) {
+                testFailed("Origin does not have app-bound session.");
+                finishJSTest();
+            } else {
+                testPassed("Origin has app-bound session.");
+                finishJSTest();
+            }
         }
     }
 
