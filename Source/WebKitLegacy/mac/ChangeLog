@@ -1,3 +1,17 @@
+2020-05-21  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Null Ptr Deref @ WebCore::ResourceResponse::platformLazyInit
+        https://bugs.webkit.org/show_bug.cgi?id=212224
+
+        Reviewed by Geoffrey Garen.
+
+        Its possible that client can cancel the load implicitly or explicitly after its informed that load is committed, but code continues to assume that
+        loading is still in progress. This was cause of crash.
+        Added nullptr check before dereferencing the documentLoader, after client calls the commit load.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation receivedData:withDataSource:]):
+
 2020-05-20  Darin Adler  <darin@apple.com>
 
         Dictation context should be an object identifier, not a type-punned pointer

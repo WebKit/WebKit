@@ -171,6 +171,7 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
+    auto protectedSelf = retainPtr(self);
     WebFrame *webFrame = [dataSource webFrame];
     if (!webFrame)
         return;
@@ -180,7 +181,7 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
     Frame* coreFrame = core(webFrame);
-    if (coreFrame->document()->isMediaDocument())
+    if (coreFrame->document()->isMediaDocument() && coreFrame->loader().documentLoader())
         coreFrame->loader().documentLoader()->cancelMainResourceLoad(coreFrame->loader().client().pluginWillHandleLoadError(coreFrame->loader().documentLoader()->response()));
 
     if (_private->pluginView) {
