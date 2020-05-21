@@ -30,11 +30,14 @@
 #if HAVE(NETWORK_FRAMEWORK)
 
 #import <Network/Network.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
+
+class Connection;
 
 class HTTPServer {
 public:
@@ -44,23 +47,34 @@ public:
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
 
     HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr);
-    HTTPServer(Function<void(nw_connection_t)>&&, Protocol = Protocol::Http);
+    HTTPServer(Function<void(Connection)>&&, Protocol = Protocol::Http);
     ~HTTPServer();
     uint16_t port() const;
-    NSURLRequest *request() const;
+    NSURLRequest *request(const String& path = "/"_str) const;
     size_t totalRequests() const;
 
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&);
-    static void respondToRequests(nw_connection_t, RefPtr<RequestData>);
+    static void respondToRequests(Connection, RefPtr<RequestData>);
 
     RefPtr<RequestData> m_requestData;
     RetainPtr<nw_listener_t> m_listener;
     Protocol m_protocol { Protocol::Http };
 };
 
-RetainPtr<dispatch_data_t> dataFromString(String&&);
-Vector<char> nullTerminatedRequest(dispatch_data_t);
+class Connection {
+public:
+    void send(String&&, CompletionHandler<void()>&& = nullptr) const;
+    void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
+    void terminate() const;
+
+private:
+    friend class HTTPServer;
+    Connection(nw_connection_t connection)
+        : m_connection(connection) { }
+
+    RetainPtr<nw_connection_t> m_connection;
+};
 
 struct HTTPServer::HTTPResponse {
     enum class TerminateConnection { No, Yes };

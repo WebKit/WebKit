@@ -54,17 +54,15 @@ TEST(WebKit, HTTPReferer)
     auto checkReferer = [] (NSURL *baseURL, const char* expectedReferer) {
         using namespace TestWebKitAPI;
         bool done = false;
-        HTTPServer server([done = &done, expectedReferer] (nw_connection_t connection) {
-            nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = retainPtr(connection), done, expectedReferer](dispatch_data_t content, nw_content_context_t, bool, nw_error_t) {
-                EXPECT_TRUE(content);
-                auto request = nullTerminatedRequest(content);
+        HTTPServer server([&] (Connection connection) {
+            connection.receiveHTTPRequest([connection, expectedReferer, &done] (Vector<char>&& request) {
                 if (expectedReferer) {
                     auto expectedHeaderField = makeString("Referer: ", expectedReferer, "\r\n");
-                    EXPECT_TRUE(strstr(request.data(), expectedHeaderField.utf8().data()));
+                    EXPECT_TRUE(strnstr(request.data(), expectedHeaderField.utf8().data(), request.size()));
                 } else
-                    EXPECT_FALSE(strstr(request.data(), "Referer:"));
-                *done = true;
-            }).get());
+                    EXPECT_FALSE(strnstr(request.data(), "Referer:", request.size()));
+                done = true;
+            });
         });
         auto webView = adoptNS([WKWebView new]);
         [webView loadHTMLString:[NSString stringWithFormat:@"<body onload='document.getElementById(\"formID\").submit()'><form id='formID' method='post' action='http://127.0.0.1:%d/'></form></body>", server.port()] baseURL:baseURL];

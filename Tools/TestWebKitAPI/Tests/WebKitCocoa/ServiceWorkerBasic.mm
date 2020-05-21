@@ -2070,7 +2070,7 @@ TEST(ServiceWorkers, ContentRuleList)
         TCPServer::read(socket);
         respond(contentRuleListWorkerScript, "application/javascript");
         auto lastRequest = TCPServer::read(socket);
-        EXPECT_TRUE(strstr((const char*)lastRequest.data(), "allowedsubresource"));
+        EXPECT_TRUE(strnstr((const char*)lastRequest.data(), "allowedsubresource", lastRequest.size()));
         respond("successful fetch", "application/octet-stream");
     });
 

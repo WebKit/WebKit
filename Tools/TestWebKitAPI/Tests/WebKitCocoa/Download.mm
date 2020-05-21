@@ -1172,41 +1172,30 @@ String longString(LChar c)
 TEST(_WKDownload, Resume)
 {
     using namespace TestWebKitAPI;
-    HTTPServer server([connectionCount = 0](nw_connection_t connection) mutable {
+    HTTPServer server([connectionCount = 0](Connection connection) mutable {
         switch (++connectionCount) {
         case 1:
-            nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = retainPtr(connection)](dispatch_data_t content, nw_content_context_t context, bool, nw_error_t error) {
-                EXPECT_TRUE(content);
-                EXPECT_FALSE(error);
-                auto data = dataFromString(makeString(
+            connection.receiveHTTPRequest([connection](Vector<char>&&) {
+                connection.send(makeString(
                     "HTTP/1.1 200 OK\r\n"
                     "ETag: test\r\n"
                     "Content-Length: 10000\r\n"
                     "Content-Disposition: attachment; filename=\"example.txt\"\r\n"
-                    "\r\n", longString<5000>('a')));
-                nw_connection_send(connection.get(), data.get(), context, false, ^(nw_error_t error) {
-                    ASSERT(!error);
-                });
-            }).get());
+                    "\r\n", longString<5000>('a')
+                ));
+            });
             break;
         case 2:
-            nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = retainPtr(connection)](dispatch_data_t content, nw_content_context_t context, bool, nw_error_t error) {
-                EXPECT_TRUE(content);
-                EXPECT_FALSE(error);
-
-                auto request = nullTerminatedRequest(content);
-                EXPECT_TRUE(strstr(request.data(), "Range: bytes=5000-\r\n"));
-
-                auto data = dataFromString(makeString(
+            connection.receiveHTTPRequest([connection](Vector<char>&& request) {
+                EXPECT_TRUE(strnstr(request.data(), "Range: bytes=5000-\r\n", request.size()));
+                connection.send(makeString(
                     "HTTP/1.1 206 Partial Content\r\n"
                     "ETag: test\r\n"
                     "Content-Length: 5000\r\n"
                     "Content-Range: bytes 5000-9999/10000\r\n"
-                    "\r\n", longString<5000>('b')));
-                nw_connection_send(connection.get(), data.get(), context, true, ^(nw_error_t error) {
-                    ASSERT(!error);
-                });
-            }).get());
+                    "\r\n", longString<5000>('b')
+                ));
+            });
             break;
         default:
             ASSERT_NOT_REACHED();

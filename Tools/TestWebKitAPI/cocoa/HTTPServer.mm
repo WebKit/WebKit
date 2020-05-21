@@ -95,12 +95,12 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
     nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData](nw_connection_t connection) {
         nw_connection_set_queue(connection, dispatch_get_main_queue());
         nw_connection_start(connection);
-        respondToRequests(connection, requestData);
+        respondToRequests(Connection(connection), requestData);
     }).get());
     startListening(m_listener.get());
 }
 
-HTTPServer::HTTPServer(Function<void(nw_connection_t)>&& connectionHandler, Protocol protocol)
+HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
     : m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr).get())))
     , m_protocol(protocol)
 {
@@ -108,7 +108,7 @@ HTTPServer::HTTPServer(Function<void(nw_connection_t)>&& connectionHandler, Prot
     nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([connectionHandler = WTFMove(connectionHandler)] (nw_connection_t connection) {
         nw_connection_set_queue(connection, dispatch_get_main_queue());
         nw_connection_start(connection);
-        connectionHandler(connection);
+        connectionHandler(Connection(connection));
     }).get());
     startListening(m_listener.get());
 }
@@ -136,7 +136,7 @@ static String statusText(unsigned statusCode)
     return { };
 }
 
-RetainPtr<dispatch_data_t> dataFromString(String&& s)
+static RetainPtr<dispatch_data_t> dataFromString(String&& s)
 {
     auto impl = s.releaseImpl();
     ASSERT(impl->is8Bit());
@@ -145,33 +145,28 @@ RetainPtr<dispatch_data_t> dataFromString(String&& s)
     }));
 }
 
-Vector<char> nullTerminatedRequest(dispatch_data_t content)
+static Vector<char> vectorFromData(dispatch_data_t content)
 {
     __block Vector<char> request;
     dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
         request.append(static_cast<const char*>(buffer), size);
         return true;
     });
-    request.append('\0');
     return request;
 }
 
-void HTTPServer::respondToRequests(nw_connection_t connection, RefPtr<RequestData> requestData)
+void HTTPServer::respondToRequests(Connection connection, RefPtr<RequestData> requestData)
 {
-    nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = retainPtr(connection), requestData](dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) {
-        if (error || !content)
+    connection.receiveHTTPRequest([connection, requestData] (Vector<char>&& request) {
+        if (!request.size())
             return;
-
         requestData->requestCount++;
-        auto request = nullTerminatedRequest(content);
 
         const char* getPathPrefix = "GET ";
         const char* postPathPrefix = "POST ";
         const char* pathSuffix = " HTTP/1.1\r\n";
-        const char* pathEnd = strstr(request.data(), pathSuffix);
+        const char* pathEnd = strnstr(request.data(), pathSuffix, request.size());
         ASSERT_WITH_MESSAGE(pathEnd, "HTTPServer assumes request is HTTP 1.1");
-        const char* doubleNewline = strstr(request.data(), "\r\n\r\n");
-        ASSERT_WITH_MESSAGE(doubleNewline, "HTTPServer assumes entire HTTP request is received at once");
         size_t pathPrefixLength = 0;
         if (!memcmp(request.data(), getPathPrefix, strlen(getPathPrefix)))
             pathPrefixLength = strlen(getPathPrefix);
@@ -182,49 +177,20 @@ void HTTPServer::respondToRequests(nw_connection_t connection, RefPtr<RequestDat
         String path(request.data() + pathPrefixLength, pathLength);
         ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().data());
 
-        CompletionHandler<void()> sendResponse = [connection, context = retainPtr(context), path = WTFMove(path), requestData] {
-            auto response = requestData->requestMap.get(path);
-            if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes) {
-                nw_connection_cancel(connection.get());
-                return;
-            }
-            StringBuilder responseBuilder;
-            responseBuilder.append("HTTP/1.1 ");
-            responseBuilder.appendNumber(response.statusCode);
-            responseBuilder.append(' ');
-            responseBuilder.append(statusText(response.statusCode));
-            responseBuilder.append("\r\nContent-Length: ");
-            responseBuilder.appendNumber(response.body.length());
-            responseBuilder.append("\r\n");
-            for (auto& pair : response.headerFields) {
-                responseBuilder.append(pair.key);
-                responseBuilder.append(": ");
-                responseBuilder.append(pair.value);
-                responseBuilder.append("\r\n");
-            }
-            responseBuilder.append("\r\n");
-            responseBuilder.append(response.body);
-            nw_connection_send(connection.get(), dataFromString(responseBuilder.toString()).get(), context.get(), true, ^(nw_error_t error) {
-                ASSERT(!error);
-                respondToRequests(connection.get(), requestData);
-            });
-        };
-
-        if (auto* contentLengthBegin = strstr(request.data(), "Content-Length")) {
-            size_t contentLength = atoi(contentLengthBegin + strlen("Content-Length: "));
-            size_t headerLength = doubleNewline - request.data() + strlen("\r\n\r\n");
-            constexpr size_t nullTerminationLength = 1;
-            if (request.size() - nullTerminationLength - headerLength < contentLength) {
-                nw_connection_receive(connection.get(), 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([sendResponse = WTFMove(sendResponse)] (dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) mutable {
-                    if (error || !content)
-                        return;
-                    sendResponse();
-                }).get());
-                return;
-            }
-        }
-        sendResponse();
-    }).get());
+        auto response = requestData->requestMap.get(path);
+        if (response.terminateConnection == HTTPResponse::TerminateConnection::Yes)
+            return connection.terminate();
+        StringBuilder responseBuilder;
+        responseBuilder.append("HTTP/1.1 ", response.statusCode, ' ', statusText(response.statusCode), "\r\n");
+        responseBuilder.append("Content-Length: ", response.body.length(), "\r\n");
+        for (auto& pair : response.headerFields)
+            responseBuilder.append(pair.key, ": ", pair.value, "\r\n");
+        responseBuilder.append("\r\n");
+        responseBuilder.append(response.body);
+        connection.send(responseBuilder.toString(), [connection, requestData] {
+            respondToRequests(connection, requestData);
+        });
+    });
 }
 
 uint16_t HTTPServer::port() const
@@ -232,19 +198,52 @@ uint16_t HTTPServer::port() const
     return nw_listener_get_port(m_listener.get());
 }
 
-NSURLRequest *HTTPServer::request() const
+NSURLRequest *HTTPServer::request(const String& path) const
 {
     NSString *format;
     switch (m_protocol) {
     case Protocol::Http:
-        format = @"http://127.0.0.1:%d/";
+        format = @"http://127.0.0.1:%d%s";
         break;
     case Protocol::Https:
     case Protocol::HttpsWithLegacyTLS:
-        format = @"https://127.0.0.1:%d/";
+        format = @"https://127.0.0.1:%d%s";
         break;
     }
-    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port()]]];
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:format, port(), path.utf8().data()]]];
+}
+
+void Connection::receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&& completionHandler, Vector<char>&& buffer) const
+{
+    nw_connection_receive(m_connection.get(), 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([connection = *this, completionHandler = WTFMove(completionHandler), buffer = WTFMove(buffer)](dispatch_data_t content, nw_content_context_t, bool, nw_error_t error) mutable {
+        if (error || !content)
+            return completionHandler({ });
+        buffer.appendVector(vectorFromData(content));
+        if (auto* doubleNewline = strnstr(buffer.data(), "\r\n\r\n", buffer.size())) {
+            if (auto* contentLengthBegin = strnstr(buffer.data(), "Content-Length", buffer.size())) {
+                size_t contentLength = atoi(contentLengthBegin + strlen("Content-Length: "));
+                size_t headerLength = doubleNewline - buffer.data() + strlen("\r\n\r\n");
+                if (buffer.size() - headerLength < contentLength)
+                    return connection.receiveHTTPRequest(WTFMove(completionHandler), WTFMove(buffer));
+            }
+            completionHandler(WTFMove(buffer));
+        } else
+            connection.receiveHTTPRequest(WTFMove(completionHandler), WTFMove(buffer));
+    }).get());
+}
+
+void Connection::send(String&& message, CompletionHandler<void()>&& completionHandler) const
+{
+    nw_connection_send(m_connection.get(), dataFromString(WTFMove(message)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTFMove(completionHandler)](nw_error_t error) mutable {
+        ASSERT(!error);
+        if (completionHandler)
+            completionHandler();
+    }).get());
+}
+
+void Connection::terminate() const
+{
+    nw_connection_cancel(m_connection.get());
 }
 
 } // namespace TestWebKitAPI

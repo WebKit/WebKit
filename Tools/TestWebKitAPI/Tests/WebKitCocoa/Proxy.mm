@@ -27,13 +27,18 @@
 
 #if HAVE(SSL)
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
+#import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
@@ -91,7 +96,7 @@ TEST(WebKit, HTTPProxyAuthentication)
 {
     TCPServer server([] (int socket) {
         auto requestShouldContain = [] (const auto& request, const char* str) {
-            EXPECT_TRUE(strstr(reinterpret_cast<const char*>(request.data()), str));
+            EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(request.data()), str, request.size()));
         };
 
         auto connectRequest = TCPServer::read(socket);

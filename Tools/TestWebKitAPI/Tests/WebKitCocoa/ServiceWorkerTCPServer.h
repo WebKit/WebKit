@@ -45,7 +45,7 @@ public:
                 for (auto& info : vector) {
                     auto request = TCPServer::read(socket);
                     if (!expectedUserAgent.isNull()) {
-                        EXPECT_TRUE(strstr((const char*)request.data(), makeString("User-Agent: ", expectedUserAgent).utf8().data()));
+                        EXPECT_TRUE(strnstr((const char*)request.data(), makeString("User-Agent: ", expectedUserAgent).utf8().data(), request.size()));
                         m_userAgentsChecked++;
                     }
                     NSString *format = @"HTTP/1.1 200 OK\r\n"

@@ -1,3 +1,36 @@
+2020-05-21  Alex Christensen  <achristensen@webkit.org>
+
+        [macOS] TestWebKitAPI.WebKit.HTTPReferer is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=212180
+
+        Reviewed by Darin Adler.
+
+        Sometimes an HTTP request takes more than one call to nw_connection_receive to receive entirely.
+        Add a new abstraction Connection that wraps an nw_connection_t and knows how to read an entire request.
+        Use strnstr instead of null terminating and using strstr.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerTCPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::Connection::receiveHTTPRequest):
+        (TestWebKitAPI::Connection::Connection):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::HTTPServer):
+        (TestWebKitAPI::dataFromString):
+        (TestWebKitAPI::vectorFromData):
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        (TestWebKitAPI::HTTPServer::request const):
+        (TestWebKitAPI::Connection::receiveHTTPRequest const):
+        (TestWebKitAPI::Connection::send const):
+        (TestWebKitAPI::Connection::terminate const):
+        (TestWebKitAPI::nullTerminatedRequest): Deleted.
+
 2020-05-21  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][GTK][WPE] Expose and honor the media content types requiring hardware support setting
