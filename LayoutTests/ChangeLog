@@ -1,3 +1,16 @@
+2020-05-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update WAV baseline for webaudio test
+        https://bugs.webkit.org/show_bug.cgi?id=212212
+
+        Unreviewed gardening.
+
+        Baseline was updated on r261878 and since then the test started
+        failing. The test wasn't failing before though. In conclusion, it
+        seems the update from r261878 wasn't needed for this test.
+
+        * platform/wpe/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav:
+
 2020-05-21  Zalan Bujtas  <zalan@apple.com>
 
         [ macOS debug ] REGRESSION: fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html is a flaky crash
