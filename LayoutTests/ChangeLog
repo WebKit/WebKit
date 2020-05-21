@@ -1,3 +1,12 @@
+2020-05-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, remove tests passing after r261986
+        https://bugs.webkit.org/show_bug.cgi?id=212194
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2020-05-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

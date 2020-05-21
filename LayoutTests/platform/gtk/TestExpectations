@@ -1082,7 +1082,6 @@ webkit.org/b/211979 editing/async-clipboard/clipboard-write-text.html [ Timeout 
 webkit.org/b/211979 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
 webkit.org/b/211979 editing/async-clipboard/clipboard-read-text.html [ Failure ]
 webkit.org/b/211979 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
-webkit.org/b/211979 editing/async-clipboard/sanitize-when-writing-image.html [ Failure ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -1261,8 +1260,6 @@ webkit.org/b/207254 compositing/backing/page-scale-overlap-in-iframe.html [ Fail
 
 webkit.org/b/207255 webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html  [ Failure ]
 
-webkit.org/b/207257 webanimations/seeking-by-changing-delay-accelerated.html [ ImageOnlyFailure ] 
-
 webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
 
 webkit.org/b/207624 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Failure ]
@@ -1332,7 +1329,6 @@ webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigati
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Failure ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 
-webkit.org/b/210848 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 webkit.org/b/210848 compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
 
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Failure ]
@@ -4097,16 +4093,11 @@ webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure
 webkit.org/b/177937 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 webkit.org/b/177937 fast/text/unknown-char-notdef.html [ ImageOnlyFailure ]
 
-webkit.org/b/177939 editing/pasteboard/data-transfer-get-data-non-normalized-types.html [ Failure ]
-
 webkit.org/b/178441 editing/deleting/delete-ligature-001.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-002.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-003.html [ Failure ]
 
 webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ImageOnlyFailure ]
-
-webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
-webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
@@ -4340,8 +4331,6 @@ webkit.org/b/193491 fast/flexbox/missing-repaint-when-flext-item-never-had-layou
 
 webkit.org/b/193493 fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
 
-webkit.org/b/193511 http/tests/images/mp4-partial-load.html [ Failure ]
-
 webkit.org/b/193627 editing/spelling/spelling-dots-position.html [ ImageOnlyFailure ]
 
 webkit.org/b/193628 fast/css/content-counter-010.htm [ ImageOnlyFailure ]
@@ -4398,8 +4387,6 @@ webkit.org/b/196196 inspector/audit/run-resources.html [ Failure ]
 webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
 
 webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
-
-webkit.org/b/196541 editing/pasteboard/paste-content-with-overflow-auto-parent-across-origin.html [ Failure ]
 
 webkit.org/b/197248 fast/events/autoscroll-when-input-is-offscreen.html [ Failure Crash ]
 webkit.org/b/197248 fast/events/autoscroll-with-software-keyboard.html [ Failure Crash ]
@@ -4751,6 +4738,9 @@ imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.h
 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ DumpJSConsoleLogInStdErr ]
+
+imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
