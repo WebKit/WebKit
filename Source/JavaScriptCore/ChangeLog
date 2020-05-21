@@ -1,3 +1,34 @@
+2020-05-21  Saam Barati  <sbarati@apple.com>
+
+        Add an option that exposes functions on the global object to turn on and off the sampling profiler and the super sampler
+        https://bugs.webkit.org/show_bug.cgi?id=212178
+
+        Reviewed by Yusuke Suzuki.
+
+        When profiling things like Speedometer inside the browser, it's important to
+        to only enable the super sampler and the sampling profiler around the code
+        that you want profiled. Otherwise, you will be profiling things that aren't
+        relevant to the benchmark score. This patch adds a new option, exposeProfilersOnGlobalObject,
+        which when true, will expose JS functions on the global object that allow
+        enabling/disabling the super sampler and the sampling profiler. This way,
+        we can change the Speedometer source code locally such that these profilers
+        are only sampling code accounted for in the benchmark score.
+
+        * bytecode/SuperSampler.cpp:
+        (JSC::initializeSuperSampler):
+        (JSC::enableSuperSampler):
+        (JSC::disableSuperSampler):
+        * bytecode/SuperSampler.h:
+        * jsc.cpp:
+        (jscmain):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::enableSamplingProfiler):
+        (JSC::disableSamplingProfiler):
+        (JSC::enableSuperSampler):
+        (JSC::disableSuperSampler):
+        (JSC::JSGlobalObject::init):
+        * runtime/OptionsList.h:
+
 2020-05-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix 32bit JSBigInt with INT32_MAX < x <= UINT32_MAX

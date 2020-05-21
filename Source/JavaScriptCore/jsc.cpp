@@ -3222,6 +3222,9 @@ int jscmain(int argc, char** argv)
     JSC::initializeThreading();
     initializeTimeoutIfNeeded();
 
+    if (Options::useSuperSampler())
+        enableSuperSampler();
+
     bool gigacageDisableRequested = false;
 #if GIGACAGE_ENABLED && !COMPILER(MSVC)
     if (char* gigacageEnabled = getenv("GIGACAGE_ENABLED")) {

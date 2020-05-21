@@ -61,5 +61,7 @@ private:
 
 JS_EXPORT_PRIVATE void resetSuperSamplerState();
 JS_EXPORT_PRIVATE void printSuperSamplerState();
+JS_EXPORT_PRIVATE void enableSuperSampler();
+JS_EXPORT_PRIVATE void disableSuperSampler();
 
 } // namespace JSC

@@ -34,6 +34,7 @@
 namespace JSC {
 
 volatile uint32_t g_superSamplerCount;
+volatile bool g_superSamplerEnabled;
 
 static Lock lock;
 static double in;
@@ -47,11 +48,11 @@ void initializeSuperSampler()
     Thread::create(
         "JSC Super Sampler",
         [] () {
-            const int sleepQuantum = 10;
-            const int printingPeriod = 1000;
+            const int sleepQuantum = 3;
+            const int printingPeriod = 3000;
             for (;;) {
                 for (int ms = 0; ms < printingPeriod; ms += sleepQuantum) {
-                    {
+                    if (g_superSamplerEnabled) {
                         LockHolder locker(lock);
                         if (g_superSamplerCount)
                             in++;
@@ -84,6 +85,18 @@ void printSuperSamplerState()
     if (percentage != percentage)
         percentage = 0.0;
     dataLog("Percent time behind super sampler flag: ", percentage, "\n");
+}
+
+void enableSuperSampler()
+{
+    LockHolder locker(lock);
+    g_superSamplerEnabled = true;
+}
+
+void disableSuperSampler()
+{
+    LockHolder locker(lock);
+    g_superSamplerEnabled = false;
 }
 
 } // namespace JSC

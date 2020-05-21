@@ -171,6 +171,7 @@
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "RegExpStringIteratorPrototype.h"
+#include "SamplingProfiler.h"
 #include "ScopedArguments.h"
 #include "SetConstructor.h"
 #include "SetIteratorPrototype.h"
@@ -320,6 +321,43 @@ static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, Cal
     return JSValue::encode(jsUndefined());
 }
 #endif // ASSERT_ENABLED
+
+#if ENABLE(SAMPLING_PROFILER)
+static EncodedJSValue JSC_HOST_CALL enableSamplingProfiler(JSGlobalObject* globalObject, CallFrame*)
+{
+    SamplingProfiler* profiler = globalObject->vm().samplingProfiler();
+    if (!profiler)
+        profiler = &globalObject->vm().ensureSamplingProfiler(Stopwatch::create());
+    profiler->start();
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL disableSamplingProfiler(JSGlobalObject* globalObject, CallFrame*)
+{
+    SamplingProfiler* profiler = globalObject->vm().samplingProfiler();
+    if (!profiler)
+        profiler = &globalObject->vm().ensureSamplingProfiler(Stopwatch::create());
+
+    {
+        auto locker = holdLock(profiler->getLock());
+        profiler->pause(locker);
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+#endif
+
+static EncodedJSValue JSC_HOST_CALL enableSuperSampler(JSGlobalObject*, CallFrame*)
+{
+    enableSuperSampler();
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL disableSuperSampler(JSGlobalObject*, CallFrame*)
+{
+    disableSuperSampler();
+    return JSValue::encode(jsUndefined());
+}
 
 } // namespace JSC
 
@@ -1189,6 +1227,15 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, String(), webAssemblyInstantiateStreamingInternal));
         });
 #endif
+
+    if (Options::exposeProfilersOnGlobalObject()) {
+#if ENABLE(SAMPLING_PROFILER)
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSamplingProfiler"), JSFunction::create(vm, this, 1, String(), enableSamplingProfiler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSamplingProfiler"), JSFunction::create(vm, this, 1, String(), disableSamplingProfiler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+#endif
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSuperSampler"), JSFunction::create(vm, this, 1, String(), enableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSuperSampler"), JSFunction::create(vm, this, 1, String(), disableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    }
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
