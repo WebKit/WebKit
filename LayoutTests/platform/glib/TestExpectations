@@ -147,6 +147,9 @@ webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-small-frame-paints.html [ Pass Failure ]
 webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 
+webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
+webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.worker.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

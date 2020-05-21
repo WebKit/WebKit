@@ -1,3 +1,13 @@
+2020-05-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update expectations after r262016
+        https://bugs.webkit.org/show_bug.cgi?id=212234
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-05-21  Dean Jackson  <dino@apple.com>
 
         Unreviewed. Mark some webgl video tests as skipped

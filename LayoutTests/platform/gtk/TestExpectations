@@ -1011,9 +1011,6 @@ webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 # LEGACY_ENCRYPTED_MEDIA is deprecated
 fast/events/webkit-media-key-events-constructor.html [ Skip ]
 
-# eventSender.callAfterScrollingCompletes doesn't work.
-webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Failure Timeout ]
-
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
 webkit.org/b/168366 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html
@@ -1362,8 +1359,14 @@ webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageO
 
 webkit.org/b/212015 inspector/formatting/formatting-css.html [ Failure ]
 
+webkit.org/b/212216 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set.html [ Failure ]
+
 webkit.org/b/212017 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral-database.html [ Failure ]
 webkit.org/b/212017 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html [ Failure ]
+
+webkit.org/b/212223 compositing/tiling/perspective-on-scroller-tile-coverage.html [ Failure ]
+
+webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1488,6 +1491,8 @@ webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Ski
 webkit.org/b/199224 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 
 webkit.org/b/212018 fast/events/context-activated-by-key-event.html [ Crash ]
+
+webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1879,8 +1884,6 @@ webkit.org/b/158915 fast/forms/select/menulist-type-ahead-find.html [ Failure Pa
 
 webkit.org/b/158916 fast/forms/input-appearance-preventDefault.html [ Failure Pass ]
 
-webkit.org/b/158917 fast/scrolling/overflow-scroll-past-max.html [ Failure Pass Timeout ]
-
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure Pass ]
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure Pass ]
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure Pass ]
@@ -2232,7 +2235,6 @@ webkit.org/b/197507 fast/css-generated-content/pseudo-element-events.html [ Time
 webkit.org/b/197507 fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html [ Timeout Pass ]
 webkit.org/b/197507 fast/css/transition-color-unspecified.html [ Timeout Pass ]
 webkit.org/b/197507 fast/images/animated-gif-iframe-webkit-transform.html [ Timeout Pass ]
-webkit.org/b/197507 fast/scrolling/momentum-scroll-with-borders.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/compositing/repaint/end-of-opacity-transition.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/css3/calc/transition-asan-crash.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/svg/hittest/rect-miterlimit.html [ Timeout Pass ]
@@ -3280,12 +3282,13 @@ webkit.org/b/208000 [ Debug ] inspector/unit-tests/server-timing-entry.html [ Ti
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/throttler.html [ Failure Timeout ]
 webkit.org/b/208000 [ Debug ] inspector/unit-tests/url-utilities.html [ Timeout ]
 
-# These entries are commented to avoid a lint error of duplicated bug entry.
-# webkit.org/b/208630 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Timeout ]
-# webkit.org/b/208630 fast/scrolling/overflow-scroll-past-max.html [ Timeout ]
-# webkit.org/b/208630 fast/scrolling/scroll-container-horizontally.html [ Timeout ]
-webkit.org/b/208630 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
-webkit.org/b/208630 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Timeout ]
+# Timing out due to missing functionality.
+webkit.org/b/212202 webkit.org/b/168189 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ] # Failure Timeout.
+webkit.org/b/212202 webkit.org/b/197507 fast/scrolling/momentum-scroll-with-borders.html [ Skip ] # Timeout Pass.
+webkit.org/b/212202 webkit.org/b/158917 fast/scrolling/overflow-scroll-past-max.html [ Skip ] # Failure Pass Timeout.
+webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
+webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
+webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Skip ]
 
 webkit.org/b/210796 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour-database.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advanced-functionality-database.html [ Failure Pass ]
