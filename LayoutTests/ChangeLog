@@ -1,3 +1,12 @@
+2020-05-21  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        LayoutTest compositing/video/video-poster.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=168953
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-05-21  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION (r261277): [ Mac iOS ] webrtc/datachannel/gather-candidates-networkprocess-crash.html is a flaky timeout

@@ -1047,7 +1047,7 @@ webkit.org/b/210436 http/tests/performance/paint-timing/performance-paint-timing
 # Touch events are not enabled on Mac
 webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
-webkit.org/b/149819 [ Debug ] compositing/video/video-poster.html [ Pass Crash ]
+webkit.org/b/149819 [ Debug ] compositing/video/video-poster.html [ Pass Crash Failure ]
 
 webkit.org/b/168953 [ Release ] compositing/video/video-poster.html [ Pass Failure ]
 
