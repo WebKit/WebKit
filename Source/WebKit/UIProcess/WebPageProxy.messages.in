@@ -387,9 +387,9 @@ messages -> WebPageProxy {
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)
-    ShowDictationAlternativeUI(WebCore::FloatRect boundingBoxOfDictatedText, uint64_t dictationContext)
-    RemoveDictationAlternatives(uint64_t dictationContext)
-    DictationAlternatives(uint64_t dictationContext) -> (Vector<String> alternatives) Synchronous
+    ShowDictationAlternativeUI(WebCore::FloatRect boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
+    RemoveDictationAlternatives(WebCore::DictationContext dictationContext)
+    DictationAlternatives(WebCore::DictationContext dictationContext) -> (Vector<String> alternatives) Synchronous
 #endif
 
 #if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)

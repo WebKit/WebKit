@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DictationAlternative.h"
+#pragma once
+
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-DictationAlternative::DictationAlternative(unsigned start, unsigned length, uint64_t context)
-    : rangeStart(start)
-    , rangeLength(length)
-    , dictationContext(context)
-{
-}
-    
-DictationAlternative::DictationAlternative()
-    : rangeStart(0)
-    , rangeLength(0)
-    , dictationContext(0)
-{
-}
+enum class DictationContextType { };
+using DictationContext = ObjectIdentifier<DictationContextType>;
 
-}
+} // namespace WebCore

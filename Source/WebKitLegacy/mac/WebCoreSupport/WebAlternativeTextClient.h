@@ -39,9 +39,9 @@ public:
     String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) override;
     void recordAutocorrectionResponse(WebCore::AutocorrectionResponse, const String& replacedString, const String& replacementString) override;
 #endif
-    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) override;
-    void removeDictationAlternatives(uint64_t dictationContext) override;
-    Vector<String> dictationAlternatives(uint64_t dictationContext) override;
+    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) override;
+    void removeDictationAlternatives(WebCore::DictationContext) override;
+    Vector<String> dictationAlternatives(WebCore::DictationContext) override;
 
 private:
     WebView *m_webView;

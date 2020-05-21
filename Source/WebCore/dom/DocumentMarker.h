@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "DictationContext.h"
 #include "SimpleRange.h"
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
@@ -85,7 +86,7 @@ public:
     static constexpr OptionSet<MarkerType> allMarkers();
 
     struct DictationData {
-        uint64_t context;
+        DictationContext context;
         String originalText;
     };
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)

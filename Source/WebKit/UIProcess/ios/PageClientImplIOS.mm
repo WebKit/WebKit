@@ -942,7 +942,7 @@ void PageClientImpl::handleAutocorrectionContext(const WebAutocorrectionContext&
     [m_contentView _handleAutocorrectionContext:context];
 }
 
-void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect&, uint64_t)
+void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect&, WebCore::DictationContext)
 {
     notImplemented();
 }

@@ -45,7 +45,7 @@ namespace WebKit {
 
 enum class UndoOrRedo : bool;
 
-class PageClientImpl : public PageClientImplCocoa
+class PageClientImpl final : public PageClientImplCocoa
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
 #endif
@@ -267,7 +267,7 @@ private:
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
     WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
 
-    void showDictationAlternativeUI(const WebCore::FloatRect&, uint64_t dictationContext) override;
+    void showDictationAlternativeUI(const WebCore::FloatRect&, WebCore::DictationContext) final;
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;

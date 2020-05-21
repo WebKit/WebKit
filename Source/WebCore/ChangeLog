@@ -1,3 +1,60 @@
+2020-05-20  Darin Adler  <darin@apple.com>
+
+        Dictation context should be an object identifier, not a type-punned pointer
+        https://bugs.webkit.org/show_bug.cgi?id=212174
+
+        Reviewed by Anders Carlsson.
+
+        * Headers.cmake: Added DictationContext.h.
+        * Sources.txt: Removed DictationAlternative.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Added DictationContext.h, removed DictationAlternative.cpp.
+
+        * dom/DocumentMarker.h: Use DictationContext instead of uint64_t.
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired): Ditto.
+        * editing/AlternativeTextController.h: Ditto.
+
+        * editing/DictationAlternative.h: Use DictationContext instead of uint64_t, but also
+        use CharacterRange rather than two "unsigned" values. Also convert into a simple
+        struct without constructors; don't really need those.
+
+        * editing/DictationAlternative.cpp: Removed.
+
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationCommand::collectDictationAlternativesInRange): Updated for
+        changes to DictationAlternative.
+
+        * editing/DictationContext.h: Added.
+
+        * editing/Editor.h: Forward declare DictationAlternative rather than including
+        its header.
+
+        * editing/cocoa/AlternativeTextContextController.h: Use a pair of maps to bind NSTextAlternatives
+        objects to object identifiers. Remove unnecessary explicit constructor and destructor. Also removed
+        unnecessary use of WTF_MAKE_FAST_ALLOCATED, since this is only used as a data member of another
+        class. Removed unused invalidContext constant.
+        * editing/cocoa/AlternativeTextContextController.mm: Removed the unneeded includes.
+        This file treats NSTextAlternatives as an opaque Objective-C type and so doesn't need
+        any details of that class.
+        (WebCore::AlternativeTextContextController::addAlternatives): Changed to return a
+        DictationContext and use two maps, using HashMap::ensure to avoid double hashing.
+        (WebCore::AlternativeTextContextController::alternativesForContext): Added a null check.
+        (WebCore::AlternativeTextContextController::removeAlternativesForContext): Ditto. Also
+        updated to remove from both maps.
+        (WebCore::AlternativeTextContextController::clear): Clear both maps.
+
+        * editing/cocoa/AlternativeTextUIController.h: Since this header is used only from Objective-C,
+        removed use of OBJC_CLASS. Put showAlternatives inside a macOS-specific block. Use DictationContext
+        instead of uint64_t.
+        * editing/cocoa/AlternativeTextUIController.mm:
+        (WebCore::AlternativeTextUIController::addAlternatives): Use DictationContext instead of uint64_t.
+        (WebCore::AlternativeTextUIController::alternativesForContext): Ditto.
+        (WebCore::AlternativeTextUIController::showAlternatives): Ditto.
+        (WebCore::AlternativeTextUIController::handleAcceptedAlternative): Ditto.
+        (WebCore::AlternativeTextUIController::removeAlternatives): Ditto.
+
+        * page/AlternativeTextClient.h: Use DictationContext instead of uint64_t.
+
 2020-05-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Preferred width computation should take border collapsing into account

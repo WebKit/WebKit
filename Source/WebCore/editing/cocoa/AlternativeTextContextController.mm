@@ -26,45 +26,38 @@
 #import "config.h"
 #import "AlternativeTextContextController.h"
 
-#import <wtf/RetainPtr.h>
-
-#if USE(APPKit)
-#import <AppKit/NSTextAlternatives.h>
-#elif PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/UIKitSPI.h>
-#endif
-
 namespace WebCore {
 
-AlternativeTextContextController::AlternativeTextContextController() = default;
-
-AlternativeTextContextController::~AlternativeTextContextController() = default;
-
-uint64_t AlternativeTextContextController::addAlternatives(NSTextAlternatives *alternatives)
+DictationContext AlternativeTextContextController::addAlternatives(NSTextAlternatives *alternatives)
 {
-    // FIXME: Turning a pointer into an integer is a flawed algorithm to generate a unique ID. Can lead to aliasing to a new object that happens to occupy the same memory as an old one.
-    uint64_t context = reinterpret_cast<uint64_t>(alternatives);
-    if (!context)
-        return invalidContext;
-    if (alternativesForContext(context))
+    if (!alternatives)
+        return { };
+    return m_contexts.ensure(alternatives, [&] {
+        auto context = DictationContext::generate();
+        m_alternatives.add(context, alternatives);
         return context;
-    auto result = m_alternativesObjectMap.add(context, alternatives);
-    return result.isNewEntry ? context : invalidContext;
+    }).iterator->value;
 }
 
-NSTextAlternatives *AlternativeTextContextController::alternativesForContext(uint64_t context)
+NSTextAlternatives *AlternativeTextContextController::alternativesForContext(DictationContext context) const
 {
-    return m_alternativesObjectMap.get(context).get();
+    if (!context)
+        return nil;
+    return m_alternatives.get(context).get();
 }
 
-void AlternativeTextContextController::removeAlternativesForContext(uint64_t context)
+void AlternativeTextContextController::removeAlternativesForContext(DictationContext context)
 {
-    m_alternativesObjectMap.remove(context);
+    if (!context)
+        return;
+    if (auto alternatives = m_alternatives.take(context))
+        m_contexts.remove(alternatives);
 }
 
 void AlternativeTextContextController::clear()
 {
-    m_alternativesObjectMap.clear();
+    m_alternatives.clear();
+    m_contexts.clear();
 }
 
 } // namespace WebCore

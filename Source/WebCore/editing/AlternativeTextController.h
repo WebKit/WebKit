@@ -105,14 +105,13 @@ public:
 private:
 #if USE(AUTOCORRECTION_PANEL)
     using AutocorrectionReplacement = String;
-    using AlternativeDictationContext = uint64_t;
 
     struct AlternativeTextInfo {
         RefPtr<Range> rangeWithAlternative;
         bool isActive;
         AlternativeTextType type;
         String originalText;
-        Variant<AutocorrectionReplacement, AlternativeDictationContext> details;
+        Variant<AutocorrectionReplacement, DictationContext> details;
     };
 
     String dismissSoon(ReasonForDismissingAlternativeText);
@@ -134,7 +133,7 @@ private:
     bool m_isDismissedByEditing;
     AlternativeTextType m_type;
     String m_originalText;
-    Variant<AutocorrectionReplacement, AlternativeDictationContext> m_details;
+    Variant<AutocorrectionReplacement, DictationContext> m_details;
 
     String m_originalStringForLastDeletedAutocorrection;
     Position m_positionForLastDeletedAutocorrection;

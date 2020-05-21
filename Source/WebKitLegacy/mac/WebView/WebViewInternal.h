@@ -134,9 +134,9 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 #endif
 
 - (void)_getWebCoreDictationAlternatives:(Vector<WebCore::DictationAlternative>&)alternatives fromTextAlternatives:(const Vector<WebCore::TextAlternativeWithRange>&)alternativesWithRange;
-- (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(uint64_t)dictationContext;
-- (void)_removeDictationAlternatives:(uint64_t)dictationContext;
-- (Vector<String>)_dictationAlternatives:(uint64_t)dictationContext;
+- (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(WebCore::DictationContext)dictationContext;
+- (void)_removeDictationAlternatives:(WebCore::DictationContext)dictationContext;
+- (Vector<String>)_dictationAlternatives:(WebCore::DictationContext)dictationContext;
 
 #if ENABLE(SERVICE_CONTROLS)
 - (WebSelectionServiceController&)_selectionServiceController;

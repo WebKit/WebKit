@@ -249,9 +249,8 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
 
     Vector<DictationAlternative> dictationAlternatives;
     for (const auto& alternativeWithRange : dictationAlternativesWithRange) {
-        uint64_t dictationContext = pageClient().addDictationAlternatives(alternativeWithRange.alternatives.get());
-        if (dictationContext)
-            dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
+        if (auto context = pageClient().addDictationAlternatives(alternativeWithRange.alternatives.get()))
+            dictationAlternatives.append({ alternativeWithRange.range, context });
     }
 
     if (dictationAlternatives.isEmpty()) {

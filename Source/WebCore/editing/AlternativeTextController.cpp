@@ -286,13 +286,13 @@ void AlternativeTextController::timerFired()
 #if USE(DICTATION_ALTERNATIVES)
         if (!m_rangeWithAlternative)
             return;
-        uint64_t dictationContext = WTF::get<AlternativeDictationContext>(m_details);
+        auto dictationContext = WTF::get<DictationContext>(m_details);
         if (!dictationContext)
             return;
         auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
         m_isActive = true;
         if (!boundingBox.isEmpty()) {
-            if (AlternativeTextClient* client = alternativeTextClient())
+            if (auto client = alternativeTextClient())
                 client->showDictationAlternativeUI(boundingBox, dictationContext);
         }
 #endif

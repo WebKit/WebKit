@@ -25,17 +25,14 @@
 
 #pragma once
 
-#include <stdint.h>
+#include "CharacterRange.h"
+#include "DictationContext.h"
 
 namespace WebCore {
-struct DictationAlternative {
-    WEBCORE_EXPORT DictationAlternative(unsigned start, unsigned length, uint64_t context);
-    WEBCORE_EXPORT DictationAlternative();
-    unsigned rangeStart;
-    unsigned rangeLength;
 
-    // This need to be 64 bit becauese it actually holds a pointer in WebKit.
-    uint64_t dictationContext;
+struct DictationAlternative {
+    CharacterRange range;
+    DictationContext context;
 };
 
 } // namespace WebCore

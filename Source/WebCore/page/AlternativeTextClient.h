@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DictationContext.h"
 #include "FloatRect.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -60,9 +61,9 @@ public:
     virtual void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, const String& replacementString) = 0;
 #endif
 #if USE(DICTATION_ALTERNATIVES)
-    virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
-    virtual void removeDictationAlternatives(uint64_t dictationContext) = 0;
-    virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
+    virtual void showDictationAlternativeUI(const FloatRect& boundingBoxOfDictatedText, DictationContext) = 0;
+    virtual void removeDictationAlternatives(DictationContext) = 0;
+    virtual Vector<String> dictationAlternatives(DictationContext) = 0;
 #endif
 };
     

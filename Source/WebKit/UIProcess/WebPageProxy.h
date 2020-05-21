@@ -75,6 +75,7 @@
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/Color.h>
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/DictationContext.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/ExceptionDetails.h>
@@ -2128,9 +2129,9 @@ private:
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)
-    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
-    void removeDictationAlternatives(uint64_t dictationContext);
-    void dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&&);
+    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext);
+    void removeDictationAlternatives(WebCore::DictationContext);
+    void dictationAlternatives(WebCore::DictationContext, CompletionHandler<void(Vector<String>&&)>&&);
 #endif
 
 #if PLATFORM(MAC)

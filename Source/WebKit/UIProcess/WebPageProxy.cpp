@@ -8534,17 +8534,17 @@ void WebPageProxy::toggleAutomaticTextReplacement()
 
 #if USE(DICTATION_ALTERNATIVES)
 
-void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
 {
     pageClient().showDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext);
 }
 
-void WebPageProxy::removeDictationAlternatives(uint64_t dictationContext)
+void WebPageProxy::removeDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     pageClient().removeDictationAlternatives(dictationContext);
 }
 
-void WebPageProxy::dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void WebPageProxy::dictationAlternatives(WebCore::DictationContext dictationContext, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     completionHandler(pageClient().dictationAlternatives(dictationContext));
 }

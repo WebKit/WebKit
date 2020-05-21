@@ -96,17 +96,17 @@ void PageClientImplCocoa::pageClosed()
     m_alternativeTextUIController->clear();
 }
 
-uint64_t PageClientImplCocoa::addDictationAlternatives(NSTextAlternatives *alternatives)
+WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(NSTextAlternatives *alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);
 }
 
-void PageClientImplCocoa::removeDictationAlternatives(uint64_t dictationContext)
+void PageClientImplCocoa::removeDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     m_alternativeTextUIController->removeAlternatives(dictationContext);
 }
 
-Vector<String> PageClientImplCocoa::dictationAlternatives(uint64_t dictationContext)
+Vector<String> PageClientImplCocoa::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }

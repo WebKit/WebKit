@@ -206,6 +206,7 @@ def types_that_cannot_be_forward_declared():
         'MediaTime',
         'String',
         'WebCore::ColorSpace',
+        'WebCore::DictationContext',
         'WebCore::DocumentIdentifier',
         'WebCore::DocumentOrWorkerIdentifier',
         'WebCore::FetchIdentifier',

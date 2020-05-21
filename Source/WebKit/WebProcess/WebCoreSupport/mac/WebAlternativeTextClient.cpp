@@ -69,17 +69,17 @@ void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionRespon
 }
 #endif
 
-void WebAlternativeTextClient::removeDictationAlternatives(uint64_t dictationContext)
+void WebAlternativeTextClient::removeDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     m_page->send(Messages::WebPageProxy::RemoveDictationAlternatives(dictationContext));
 }
 
-void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
 {
     m_page->send(Messages::WebPageProxy::ShowDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext));
 }
 
-Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictationContext)
+Vector<String> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
     Vector<String> result;
     m_page->sendSync(Messages::WebPageProxy::DictationAlternatives(dictationContext), Messages::WebPageProxy::DictationAlternatives::Reply(result));

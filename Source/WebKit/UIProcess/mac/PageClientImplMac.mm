@@ -680,7 +680,7 @@ bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
     return m_impl->executeSavedCommandBySelector(NSSelectorFromString(selectorString));
 }
 
-void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
 {
     if (!isViewVisible() || !isViewInWindow())
         return;

@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-uint64_t AlternativeTextUIController::addAlternatives(NSTextAlternatives *alternatives)
+DictationContext AlternativeTextUIController::addAlternatives(NSTextAlternatives *alternatives)
 {
     return m_contextController.addAlternatives(alternatives);
 }
 
-Vector<String> AlternativeTextUIController::alternativesForContext(uint64_t context)
+Vector<String> AlternativeTextUIController::alternativesForContext(DictationContext context)
 {
     return makeVector<String>(m_contextController.alternativesForContext(context).alternativeStrings);
 }
@@ -56,9 +56,10 @@ void AlternativeTextUIController::clear()
     return m_contextController.clear();
 }
 
-void AlternativeTextUIController::showAlternatives(NSView *view, const FloatRect& boundingBoxOfPrimaryString, uint64_t context, AcceptanceHandler acceptanceHandler)
-{
 #if USE(APPKIT)
+
+void AlternativeTextUIController::showAlternatives(NSView *view, const FloatRect& boundingBoxOfPrimaryString, DictationContext context, AcceptanceHandler acceptanceHandler)
+{
     dismissAlternatives();
     if (!view)
         return;
@@ -75,17 +76,9 @@ void AlternativeTextUIController::showAlternatives(NSView *view, const FloatRect
             acceptanceHandler(acceptedString);
         }
     }];
-#else
-    UNUSED_PARAM(view);
-    UNUSED_PARAM(boundingBoxOfPrimaryString);
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(acceptanceHandler);
-#endif
 }
 
-#if USE(APPKIT)
-
-void AlternativeTextUIController::handleAcceptedAlternative(NSString *acceptedAlternative, uint64_t context, NSTextAlternatives *alternatives)
+void AlternativeTextUIController::handleAcceptedAlternative(NSString *acceptedAlternative, DictationContext context, NSTextAlternatives *alternatives)
 {
     [alternatives noteSelectedAlternativeString:acceptedAlternative];
     m_contextController.removeAlternativesForContext(context);
@@ -100,7 +93,7 @@ void AlternativeTextUIController::dismissAlternatives()
 
 #endif
 
-void AlternativeTextUIController::removeAlternatives(uint64_t context)
+void AlternativeTextUIController::removeAlternatives(DictationContext context)
 {
     m_contextController.removeAlternativesForContext(context);
 }

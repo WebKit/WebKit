@@ -1,3 +1,49 @@
+2020-05-20  Darin Adler  <darin@apple.com>
+
+        Dictation context should be an object identifier, not a type-punned pointer
+        https://bugs.webkit.org/show_bug.cgi?id=212174
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkit/messages.py: Added DictationContext to the list of types that are
+        not C++ classes.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DictationAlternative>::encode): Updated for change to
+        DictationAlternative structure.
+        (IPC::ArgumentCoder<DictationAlternative>::decode): Ditto.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h: Use DictationContext instead of uint64_t.
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::addDictationAlternatives): Ditto.
+        (WebKit::PageClientImplCocoa::removeDictationAlternatives): Ditto.
+        (WebKit::PageClientImplCocoa::dictationAlternatives): Ditto.
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::insertDictatedTextAsync): Ditto.
+        * UIProcess/PageClient.h: Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showDictationAlternativeUI): Ditto.
+        (WebKit::WebPageProxy::removeDictationAlternatives): Ditto.
+        (WebKit::WebPageProxy::dictationAlternatives): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/ios/PageClientImplIOS.h: Ditto.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showDictationAlternativeUI): Ditto.
+        * UIProcess/mac/PageClientImplMac.h: Ditto.
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::showDictationAlternativeUI): Ditto.
+
+        * UIProcess/mac/WebPageProxyMac.mm: Removed unneeded include of
+        DictationAlternative.h.
+
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h: Use DictationContext
+        instead of uint64_t. Also marked class final and made everything private.
+        * WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp:
+        (WebKit::WebAlternativeTextClient::removeDictationAlternatives): Ditto.
+        (WebKit::WebAlternativeTextClient::showDictationAlternativeUI): Ditto.
+        (WebKit::WebAlternativeTextClient::dictationAlternatives): Ditto.
+
 2020-05-20  Tim Horton  <timothy_horton@apple.com>
 
         WKMouseGestureRecognizer should be implemented without using UIKit internals

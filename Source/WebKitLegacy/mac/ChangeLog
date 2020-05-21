@@ -1,3 +1,27 @@
+2020-05-20  Darin Adler  <darin@apple.com>
+
+        Dictation context should be an object identifier, not a type-punned pointer
+        https://bugs.webkit.org/show_bug.cgi?id=212174
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebAlternativeTextClient.h: Use DictationContext instead of uint64_t.
+        * WebCoreSupport/WebAlternativeTextClient.mm:
+        (WebAlternativeTextClient::removeDictationAlternatives): Ditto.
+        (WebAlternativeTextClient::showDictationAlternativeUI): Ditto.
+        (WebAlternativeTextClient::dictationAlternatives): Ditto.
+
+        * WebView/WebHTMLView.mm: Added include of DictationAlternative.h, now needed because
+        it's forward declared in Editor.h.
+        * WebView/WebView.mm: Ditto.
+        (-[WebView _getWebCoreDictationAlternatives:fromTextAlternatives:]): Updated for change
+        to DictationAlternative.
+        (-[WebView _showDictationAlternativeUI:forDictationContext:]): Use DictationContext
+        instead of uint64_t.
+        (-[WebView _removeDictationAlternatives:]): Ditto.
+        (-[WebView _dictationAlternatives:]): Ditto.
+        * WebView/WebViewInternal.h: Updated for the above.
+
 2020-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove implicit URL->String conversion operators

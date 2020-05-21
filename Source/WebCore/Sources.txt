@@ -1040,7 +1040,6 @@ editing/CreateLinkCommand.cpp
 editing/CustomUndoStep.cpp
 editing/DeleteFromTextNodeCommand.cpp
 editing/DeleteSelectionCommand.cpp
-editing/DictationAlternative.cpp
 editing/DictationCommand.cpp
 editing/EditAction.cpp
 editing/EditCommand.cpp

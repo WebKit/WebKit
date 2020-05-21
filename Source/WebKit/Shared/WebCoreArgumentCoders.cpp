@@ -1962,31 +1962,24 @@ bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWeb
 }
 #endif // USE(LIBWPE)
 
-void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& dictationAlternative)
+void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& alternative)
 {
-    encoder << dictationAlternative.rangeStart;
-    encoder << dictationAlternative.rangeLength;
-    encoder << dictationAlternative.dictationContext;
+    encoder << alternative.range << alternative.context;
 }
 
 Optional<DictationAlternative> ArgumentCoder<DictationAlternative>::decode(Decoder& decoder)
 {
-    Optional<unsigned> rangeStart;
-    decoder >> rangeStart;
-    if (!rangeStart)
+    Optional<CharacterRange> range;
+    decoder >> range;
+    if (!range)
         return WTF::nullopt;
-    
-    Optional<unsigned> rangeLength;
-    decoder >> rangeLength;
-    if (!rangeLength)
+
+    Optional<DictationContext> context;
+    decoder >> context;
+    if (!context)
         return WTF::nullopt;
-    
-    Optional<uint64_t> dictationContext;
-    decoder >> dictationContext;
-    if (!dictationContext)
-        return WTF::nullopt;
-    
-    return {{ WTFMove(*rangeStart), WTFMove(*rangeLength), WTFMove(*dictationContext) }};
+
+    return {{ *range, *context }};
 }
 
 void ArgumentCoder<FileChooserSettings>::encode(Encoder& encoder, const FileChooserSettings& settings)

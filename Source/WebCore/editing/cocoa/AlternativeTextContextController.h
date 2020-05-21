@@ -23,31 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Forward.h>
+#import "DictationContext.h"
 #import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
 
 @class NSTextAlternatives;
 
 namespace WebCore {
 
 class AlternativeTextContextController {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT AlternativeTextContextController();
-    WEBCORE_EXPORT ~AlternativeTextContextController();
-
-    uint64_t addAlternatives(NSTextAlternatives *);
-
+    DictationContext addAlternatives(NSTextAlternatives *);
+    void removeAlternativesForContext(DictationContext);
     void clear();
 
-    NSTextAlternatives *alternativesForContext(uint64_t context);
-
-    void removeAlternativesForContext(uint64_t context);
-
-    static constexpr uint64_t invalidContext = 0;
+    NSTextAlternatives *alternativesForContext(DictationContext) const;
 
 private:
-    HashMap<uint64_t, RetainPtr<NSTextAlternatives>> m_alternativesObjectMap;
+    HashMap<DictationContext, RetainPtr<NSTextAlternatives>> m_alternatives;
+    HashMap<RetainPtr<NSTextAlternatives>, DictationContext> m_contexts;
 };
 
 } // namespace WebCore

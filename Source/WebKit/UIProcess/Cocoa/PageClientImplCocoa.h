@@ -62,9 +62,9 @@ public:
     NSSet *serializableFileWrapperClasses() const final;
 #endif
 
-    uint64_t addDictationAlternatives(NSTextAlternatives *) final;
-    void removeDictationAlternatives(uint64_t dictationContext) final;
-    Vector<String> dictationAlternatives(uint64_t dictationContext) final;
+    WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) final;
+    void removeDictationAlternatives(WebCore::DictationContext) final;
+    Vector<String> dictationAlternatives(WebCore::DictationContext) final;
 
 protected:
     WeakObjCPtr<WKWebView> m_webView;

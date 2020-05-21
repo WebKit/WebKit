@@ -65,9 +65,9 @@ public:
     {
         auto& markerController = textNode.document().markers();
         for (auto& alternative : m_alternatives) {
-            DocumentMarker::DictationData data { alternative.dictationContext, textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength) };
-            markerController.addMarker(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, WTFMove(data));
-            markerController.addMarker(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::SpellCheckingExemption);
+            DocumentMarker::DictationData data { alternative.context, textToBeInserted.substring(alternative.range.location, alternative.range.length) };
+            markerController.addMarker(textNode, alternative.range.location + offsetOfInsertion, alternative.range.length, DocumentMarker::DictationAlternatives, WTFMove(data));
+            markerController.addMarker(textNode, alternative.range.location + offsetOfInsertion, alternative.range.length, DocumentMarker::SpellCheckingExemption);
         }
     }
 
@@ -132,8 +132,8 @@ void DictationCommand::insertParagraphSeparator()
 void DictationCommand::collectDictationAlternativesInRange(size_t rangeStart, size_t rangeLength, Vector<DictationAlternative>& alternatives)
 {
     for (auto& alternative : m_alternatives) {
-        if (alternative.rangeStart >= rangeStart && (alternative.rangeStart + alternative.rangeLength) <= rangeStart + rangeLength)
-            alternatives.append(DictationAlternative(alternative.rangeStart - rangeStart, alternative.rangeLength, alternative.dictationContext));
+        if (alternative.range.location >= rangeStart && (alternative.range.location + alternative.range.length) <= rangeStart + rangeLength)
+            alternatives.append({ { alternative.range.location - rangeStart, alternative.range.length }, alternative.context });
     }
 
 }

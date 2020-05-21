@@ -140,6 +140,7 @@
 #import <WebCore/CookieJar.h>
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
+#import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -9422,11 +9423,11 @@ bool LayerFlushController::flushLayers()
 {
     for (auto& alternativeWithRange : alternativesWithRange) {
         if (auto dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives.get()))
-            alternatives.append(WebCore::DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
+            alternatives.append({ alternativeWithRange.range, dictationContext });
     }
 }
 
-- (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(uint64_t)dictationContext
+- (void)_showDictationAlternativeUI:(const WebCore::FloatRect&)boundingBoxOfDictatedText forDictationContext:(WebCore::DictationContext)dictationContext
 {
 #if USE(AUTOCORRECTION_PANEL)
     _private->m_alternativeTextUIController->showAlternatives(self, [self _convertRectFromRootView:boundingBoxOfDictatedText], dictationContext, ^(NSString* acceptedAlternative) {
@@ -9435,12 +9436,12 @@ bool LayerFlushController::flushLayers()
 #endif
 }
 
-- (void)_removeDictationAlternatives:(uint64_t)dictationContext
+- (void)_removeDictationAlternatives:(WebCore::DictationContext)dictationContext
 {
     _private->m_alternativeTextUIController->removeAlternatives(dictationContext);
 }
 
-- (Vector<String>)_dictationAlternatives:(uint64_t)dictationContext
+- (Vector<String>)_dictationAlternatives:(WebCore::DictationContext)dictationContext
 {
     return _private->m_alternativeTextUIController->alternativesForContext(dictationContext);
 }

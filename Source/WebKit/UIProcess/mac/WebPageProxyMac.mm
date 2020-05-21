@@ -50,7 +50,6 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
-#import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>

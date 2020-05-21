@@ -24,10 +24,8 @@
  */
 
 #import "AlternativeTextContextController.h"
-#import <wtf/RetainPtr.h>
 
-OBJC_CLASS NSTextAlternatives;
-OBJC_CLASS NSView;
+@class NSView;
 
 namespace WebCore {
 
@@ -36,27 +34,27 @@ class FloatRect;
 class AlternativeTextUIController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AlternativeTextUIController() = default;
-
-    WEBCORE_EXPORT uint64_t addAlternatives(NSTextAlternatives *); // Returns a context ID.
-
+    WEBCORE_EXPORT DictationContext addAlternatives(NSTextAlternatives *);
+    WEBCORE_EXPORT void removeAlternatives(DictationContext);
     WEBCORE_EXPORT void clear();
 
+    WEBCORE_EXPORT Vector<String> alternativesForContext(DictationContext);
+
+#if USE(APPKIT)
     using AcceptanceHandler = void (^)(NSString *);
-    WEBCORE_EXPORT void showAlternatives(NSView *, const FloatRect& boundingBoxOfPrimaryString, uint64_t context, AcceptanceHandler);
-
-    void WEBCORE_EXPORT removeAlternatives(uint64_t context);
-
-    WEBCORE_EXPORT Vector<String> alternativesForContext(uint64_t context);
+    WEBCORE_EXPORT void showAlternatives(NSView *, const FloatRect& boundingBoxOfPrimaryString, DictationContext, AcceptanceHandler);
+#endif
 
 private:
 #if USE(APPKIT)
-    void handleAcceptedAlternative(NSString *, uint64_t context, NSTextAlternatives *);
+    void handleAcceptedAlternative(NSString *, DictationContext, NSTextAlternatives *);
     void dismissAlternatives();
+#endif
 
+    AlternativeTextContextController m_contextController;
+#if USE(APPKIT)
     RetainPtr<NSView> m_view;
 #endif
-    AlternativeTextContextController m_contextController;
 };
 
 } // namespace WebCore

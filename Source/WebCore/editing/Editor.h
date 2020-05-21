@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CompositionUnderline.h"
-#include "DictationAlternative.h"
 #include "DocumentMarker.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"
@@ -86,6 +85,7 @@ class TextEvent;
 class TextPlaceholderElement;
 
 struct CompositionHighlight;
+struct DictationAlternative;
 struct FontAttributes;
 struct PasteboardPlainText;
 struct PasteboardURL;
