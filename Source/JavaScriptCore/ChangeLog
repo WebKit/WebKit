@@ -1,3 +1,24 @@
+2020-05-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix 32bit JSBigInt with INT32_MAX < x <= UINT32_MAX
+        https://bugs.webkit.org/show_bug.cgi?id=212193
+
+        Reviewed by Mark Lam.
+
+        In 32bit architecture, we are creating one-length JSBigInt for INT32_MIN <= x <= INT32_MAX, and two-length JSBigInt otherwise.
+        This is wrong since one-length JSBigInt should cover from -UINT32_MAX <= x <= UINT32_MAX.
+
+        This patch fixes the bug and cleans up createFrom(VM&, int64_t). And it also adds JSBigInt::createFrom(VM&, uint64_t) in preparation for [1]
+        Currently, this path is not used while it was used previously because BigIntConstructor starts using JSBigInt::createFrom(VM&, double). But this
+        will be used in [1], and simply the existing implementation is wrong.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=190800
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createFromImpl):
+        (JSC::JSBigInt::createFrom):
+        * runtime/JSBigInt.h:
+
 2020-05-21  Paulo Matos  <pmatos@igalia.com>
 
         Further non-unified build fixes

@@ -135,41 +135,49 @@ JSBigInt* JSBigInt::createFrom(VM& vm, uint32_t value)
     return bigInt;
 }
 
-JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
+inline JSBigInt* JSBigInt::createFromImpl(VM& vm, uint64_t value, bool sign)
 {
     if (!value)
         return createZero(vm);
 
     // This path is not just an optimization: because we do not call rightTrim at the end of this function,
     // it would be a bug to create a BigInt with length=2 in this case.
-    if (sizeof(Digit) == 8 || (value <= INT_MAX && value >= INT_MIN)) {
+    if (sizeof(Digit) == 8 || value <= UINT32_MAX) {
         JSBigInt* bigInt = createWithLengthUnchecked(vm, 1);
-        if (value < 0) {
-            bigInt->setDigit(0, static_cast<Digit>(static_cast<uint64_t>(-(value + 1)) + 1));
-            bigInt->setSign(true);
-        } else
-            bigInt->setDigit(0, static_cast<Digit>(value));
-        
+        bigInt->setDigit(0, static_cast<Digit>(value));
+        bigInt->setSign(sign);
         return bigInt;
     }
-    
+
+    ASSERT(sizeof(Digit) == 4);
     JSBigInt* bigInt = createWithLengthUnchecked(vm, 2);
-    uint64_t tempValue;
-    bool sign = false;
-    if (value < 0) {
-        tempValue = static_cast<uint64_t>(-(value + 1)) + 1;
-        sign = true;
-    } else
-        tempValue = value;
-    
-    Digit lowBits  = static_cast<Digit>(tempValue & 0xffffffff);
-    Digit highBits = static_cast<Digit>((tempValue >> 32) & 0xffffffff);
-    
+    Digit lowBits  = static_cast<Digit>(value & 0xffffffff);
+    Digit highBits = static_cast<Digit>((value >> 32) & 0xffffffff);
+
+    ASSERT(highBits);
+
     bigInt->setDigit(0, lowBits);
     bigInt->setDigit(1, highBits);
     bigInt->setSign(sign);
-    
+
     return bigInt;
+}
+
+JSBigInt* JSBigInt::createFrom(VM& vm, uint64_t value)
+{
+    return createFromImpl(vm, value, false);
+}
+
+JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
+{
+    uint64_t unsignedValue;
+    bool sign = false;
+    if (value < 0) {
+        unsignedValue = static_cast<uint64_t>(-(value + 1)) + 1;
+        sign = true;
+    } else
+        unsignedValue = value;
+    return createFromImpl(vm, unsignedValue, sign);
 }
 
 JSBigInt* JSBigInt::createFrom(VM& vm, bool value)

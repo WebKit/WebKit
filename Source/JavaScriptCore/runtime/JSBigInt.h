@@ -72,6 +72,7 @@ public:
     JS_EXPORT_PRIVATE static JSBigInt* createFrom(VM&, int32_t value);
     static JSBigInt* createFrom(VM&, uint32_t value);
     static JSBigInt* createFrom(VM&, int64_t value);
+    static JSBigInt* createFrom(VM&, uint64_t value);
     static JSBigInt* createFrom(VM&, bool value);
     static JSBigInt* createFrom(VM&, double value);
 
@@ -426,6 +427,8 @@ public:
 
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
+
+    static JSBigInt* createFromImpl(VM&, uint64_t value, bool sign);
 
     static constexpr unsigned bitsPerByte = 8;
     static constexpr unsigned digitBits = sizeof(Digit) * bitsPerByte;
