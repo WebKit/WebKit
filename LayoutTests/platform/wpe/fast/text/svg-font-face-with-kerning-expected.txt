@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 230x90
+        RenderText {#text} at (0,1) size 206x34
+          text run at (0,1) width 206: "This is a test of kerning when"
+          text run at (0,19) width 157: "using SVG web fonts. "
+        RenderBR {BR} at (157,33) size 0x0
+        RenderBR {BR} at (0,37) size 0x16
+        RenderText {#text} at (0,55) size 197x34
+          text run at (0,55) width 197: "Wow, The V/A Team's Task"
+          text run at (0,73) width 122: "Was on Youtube."

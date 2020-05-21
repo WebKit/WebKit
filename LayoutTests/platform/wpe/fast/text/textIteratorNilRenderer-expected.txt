@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {CENTER} at (0,0) size 784x65
+        RenderBlock {FORM} at (0,0) size 784x31
+          RenderTable {TABLE} at (11,0) size 762x31
+            RenderTableSection {TBODY} at (0,0) size 762x31
+              RenderTableRow {TR} at (0,0) size 762x31
+                RenderTableCell {TD} at (0,6) size 150x19 [r=0 c=0 rs=2 cs=1]
+                  RenderText {#text} at (0,0) size 4x18
+                    text run at (0,1) width 4: " "
+                RenderTableCell {TD} at (150,1) size 336x29 [r=0 c=1 rs=1 cs=1]
+                  RenderTextControl {INPUT} at (2,2) size 332x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderText {#text} at (0,0) size 0x0
+                RenderTableCell {TD} at (486,0) size 116x31 [r=0 c=2 rs=1 cs=1]
+                  RenderButton {INPUT} at (2,2) size 112x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                    RenderBlock (anonymous) at (8,4) size 96x18
+                      RenderText at (0,0) size 96x17
+                        text run at (0,0) width 96: "Search Froogle"
+                  RenderText {#text} at (0,0) size 0x0
+                RenderTableCell {TD} at (602,6) size 160x19 [r=0 c=3 rs=2 cs=1]
+                  RenderInline {LABEL} at (0,0) size 115x11
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderBlock {INPUT} at (12,3) size 12x12
+                    RenderText {#text} at (26,5) size 99x13
+                      text run at (26,6) width 99: " Remember this location"
+                  RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,47) size 784x18
+          RenderBR {BR} at (392,0) size 0x17
+layer at (174,15) size 326x18
+  RenderBlock {DIV} at (3,3) size 326x18
+caret: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

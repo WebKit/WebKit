@@ -1,3 +1,15 @@
+2020-05-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Enabling a few subdirectories under fast/,
+        providing the necessary baselines as well as test expectations.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/attachment: 8 baselines added.
+        * platform/wpe/fast/fast-mobile-scrolling: 2 baselines added.
+        * platform/wpe/fast/scrolling: 2 baselines added.
+        * platform/wpe/fast/spatial-navigation: 1 baseline added.
+        * platform/wpe/fast/text: 211 baselines added.
+
 2020-05-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Collapse in-between cell borders

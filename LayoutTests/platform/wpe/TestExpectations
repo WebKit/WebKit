@@ -402,6 +402,12 @@ webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 # No support for resource load statistics yet
 webkit.org/b/177943 http/tests/resourceLoadStatistics/ [ Skip ]
 
+# This requires a specific font on Mac
+fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
+
+# This test hardcodes the result of a platform-dependent font lookup algorithm.
+fast/text/fallback-language-han.html [ Skip ]
+fast/text/fallback-language-han-2.html [ Skip ]
 
 # Failures related with ENABLE_CSS_COMPOSITING=ON
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Failure ]
@@ -722,20 +728,14 @@ http/tests/plugins [ Skip ]
 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
 imported/blink/plugins/empty-per-context-data.html [ Skip ]
 
-Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
-Bug(WPE) fast/fast-mobile-scrolling [ Skip ]
 Bug(WPE) fast/files [ Skip ]
 Bug(WPE) fast/forms [ Skip ]
 Bug(WPE) fast/media [ Skip ]
 Bug(WPE) fast/repaint [ Skip ]
-Bug(WPE) fast/scrolling [ Skip ]
-Bug(WPE) fast/spatial-navigation [ Skip ]
 Bug(WPE) fast/speechsynthesis [ Skip ]
-Bug(WPE) fast/text [ Skip ]
 Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
-Bug(WPE) fast/text-autosizing [ Skip ]
 
 http/tests/download [ Skip ]
 http/tests/inspector [ Skip ]
@@ -1420,6 +1420,14 @@ webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
 webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
 
 webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
+
+webkit.org/b/212202 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Timeout ]
+webkit.org/b/212202 fast/scrolling/iframe-scrollable-after-back.html [ Timeout ]
+webkit.org/b/212202 fast/scrolling/momentum-scroll-with-borders.html [ Timeout ]
+webkit.org/b/212202 fast/scrolling/overflow-scroll-past-max.html [ Timeout ]
+webkit.org/b/212202 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
+webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Timeout ]
+webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -2317,6 +2325,113 @@ webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadm
 webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
+
+webkit.org/b/212198 fast/attachment/attachment-border-should-stay-inside-attachment.html [ ImageOnlyFailure ]
+webkit.org/b/212199 fast/attachment/attachment-respects-css-size.html [ ImageOnlyFailure ]
+
+webkit.org/b/212200 fast/spatial-navigation/snav-input.html [ Failure ]
+webkit.org/b/212200 fast/spatial-navigation/snav-textarea.html [ Failure ]
+webkit.org/b/212200 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
+
+webkit.org/b/212023 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
+
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xhtml [ ImageOnlyFailure ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure ]
+webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure ]
+
+webkit.org/b/158472 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
+
+webkit.org/b/152618 fast/text/international/system-language/declarative-language.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en-GB.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en-US.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-en.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-419.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-ES.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es-MX.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-es.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-fr-CA.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-fr.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-hi.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-ja.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-HK.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html [ Failure ]
+webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-TW.html [ Failure ]
+
+webkit.org/b/212204 fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
+webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
+webkit.org/b/212205 fast/text/zero-width-characters.html [ Failure ]
+webkit.org/b/212205 fast/text/zero-width-characters-complex-script.html [ Failure ]
+
+webkit.org/b/172271 fast/text/system-font-fallback-emoji.html [ Failure ]
+webkit.org/b/172271 fast/text/emoji-overlap.html [ ImageOnlyFailure ]
+
+webkit.org/b/168191 fast/text/system-font-weight-italic.html [ Failure ]
+webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
+
+webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
+
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-autosize.html [ Failure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize.html [ Failure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ ImageOnlyFailure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
+
+webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
+webkit.org/b/177936 fast/text/regional-indicator-symobls.html [ Failure ]
+webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure ]
+
+webkit.org/b/177937 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
+webkit.org/b/177937 fast/text/unknown-char-notdef.html [ ImageOnlyFailure ]
+
+webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
+
+webkit.org/b/160248 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
+webkit.org/b/160248 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
+webkit.org/b/160248 fast/text/trailing-word-detection.html [ Failure ]
+
+webkit.org/b/172270 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
+
+webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
+
+webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
+
+webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/160246 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
+
+webkit.org/b/176648 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/176648 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
+
+webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
+webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
+
+webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
+
+webkit.org/b/193632 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
+
+webkit.org/b/160243 fast/text/complex-small-caps-non-bmp-capitalize.html [ ImageOnlyFailure ]
+
+webkit.org/b/193631 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
+
+webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
+
+webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
+
+webkit.org/b/212207 fast/text/offsetForPosition-complex-fallback.html [ Failure ]
+webkit.org/b/212208 fast/text/reset-drag-on-mouse-down.html [ Failure ]
+
+webkit.org/b/212209 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/212210 fast/text/space-width.html [ ImageOnlyFailure ]
+webkit.org/b/212211 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
