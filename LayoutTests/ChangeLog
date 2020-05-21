@@ -1,3 +1,10 @@
+2020-05-21  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. Mark some webgl video tests as skipped
+        now that they timeout rather than failing instantly.
+
+        * platform/ios/TestExpectations:
+
 2020-05-21  Youenn Fablet  <youenn@apple.com>
 
         Incorrect location.origin in blob workers

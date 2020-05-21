@@ -3480,6 +3480,10 @@ webkit.org/b/207858 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [
 webkit.org/b/207858 webgl/1.0.3/conformance/misc/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
 
+# rdar://63506750 ([ Azul ] REGRESSION(r261975)
+webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
+webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
+
 # <rdar://problem/59635486> REGRESSION: http/wpt/webauthn/public-key-credential-get-success-local.https.html is crashing
 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
 
