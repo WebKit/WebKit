@@ -1,3 +1,16 @@
+2020-05-21  Kenneth Russell  <kbr@chromium.org>
+
+        EXT_color_buffer_half_float not exposed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=212181
+
+        Reviewed by Dean Jackson.
+
+        Remove OES_texture_half_float requirement for advertising
+        EXT_color_buffer_half_float in ANGLE. This is implicit in ES 3.0.
+
+        * src/libANGLE/renderer/gl/formatutilsgl.cpp:
+        (rx::nativegl::BuildInternalFormatInfoMap):
+
 2020-05-20  Kenneth Russell  <kbr@chromium.org>
 
         OES_texture_half_float_linear unavailable on WebGL 1.0 on iOS with ANGLE
