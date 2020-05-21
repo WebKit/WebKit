@@ -1,3 +1,21 @@
+2020-05-20  Chris Fleizach  <cfleizach@apple.com>
+
+        REGRESSION (iOS 13.4.1): SpeechSynthesisUtterance.onend event won't fire on cancel().
+        https://bugs.webkit.org/show_bug.cgi?id=211776
+        <rdar://problem/63130249>
+
+        Reviewed by Per Arne Vollan.
+
+        With the move to having speech synthesis happen in the client, the cancel case hits a snag.
+        We cancel the speech job and clear out the current utterance. By the time the cancel callback comes back,
+        the current utterance is gone and nothing happens.
+
+        The fix is to process the speechError event immediately and not wait on the speech synthesizer -- which seems sane,
+        since we're just cancelling a speech job.
+
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::cancel):
+
 2020-05-20  Darin Adler  <darin@apple.com>
 
         Dictation context should be an object identifier, not a type-punned pointer

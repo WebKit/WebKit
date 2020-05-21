@@ -151,6 +151,9 @@ void SpeechSynthesis::cancel()
     m_utteranceQueue.clear();
     if (m_speechSynthesisClient) {
         m_speechSynthesisClient->cancel();
+        // If we wait for cancel to callback speakingErrorOccurred, then m_currentSpeechUtterance will be null
+        // and the event won't be processed. Instead we process the error immediately.
+        speakingErrorOccurred();
         m_currentSpeechUtterance = nullptr;
     } else if (m_platformSpeechSynthesizer) {
         m_platformSpeechSynthesizer->cancel();
