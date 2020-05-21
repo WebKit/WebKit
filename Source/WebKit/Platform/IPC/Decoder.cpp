@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Decoder.h"
 
+#include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "MessageFlags.h"
 #include <stdio.h>
@@ -92,21 +93,21 @@ Decoder::~Decoder()
 
 bool Decoder::isSyncMessage() const
 {
-    return m_messageFlags & SyncMessage;
+    return m_messageFlags.contains(MessageFlags::SyncMessage);
 }
 
 ShouldDispatchWhenWaitingForSyncReply Decoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 {
-    if (m_messageFlags & DispatchMessageWhenWaitingForSyncReply)
+    if (m_messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForSyncReply))
         return ShouldDispatchWhenWaitingForSyncReply::Yes;
-    if (m_messageFlags & DispatchMessageWhenWaitingForUnboundedSyncReply)
+    if (m_messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply))
         return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
     return ShouldDispatchWhenWaitingForSyncReply::No;
 }
 
 bool Decoder::shouldUseFullySynchronousModeForTesting() const
 {
-    return m_messageFlags & UseFullySynchronousModeForTesting;
+    return m_messageFlags.contains(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
 #if PLATFORM(MAC)

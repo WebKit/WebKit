@@ -29,7 +29,7 @@
 #include "DataReference.h"
 #include "MessageFlags.h"
 #include <algorithm>
-#include <stdio.h>
+#include <wtf/OptionSet.h>
 
 #if OS(DARWIN)
 #include <sys/mman.h>
@@ -81,14 +81,14 @@ Encoder::~Encoder()
 
 bool Encoder::isSyncMessage() const
 {
-    return *buffer() & SyncMessage;
+    return messageFlags().contains(MessageFlags::SyncMessage);
 }
 
 ShouldDispatchWhenWaitingForSyncReply Encoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 {
-    if (*buffer() & DispatchMessageWhenWaitingForSyncReply)
+    if (messageFlags().contains(MessageFlags::DispatchMessageWhenWaitingForSyncReply))
         return ShouldDispatchWhenWaitingForSyncReply::Yes;
-    if (*buffer() & DispatchMessageWhenWaitingForUnboundedSyncReply)
+    if (messageFlags().contains(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply))
         return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
     return ShouldDispatchWhenWaitingForSyncReply::No;
 }
@@ -96,31 +96,32 @@ ShouldDispatchWhenWaitingForSyncReply Encoder::shouldDispatchMessageWhenWaitingF
 void Encoder::setIsSyncMessage(bool isSyncMessage)
 {
     if (isSyncMessage)
-        *buffer() |= SyncMessage;
+        messageFlags().add(MessageFlags::SyncMessage);
     else
-        *buffer() &= ~SyncMessage;
+        messageFlags().remove(MessageFlags::SyncMessage);
 }
 
 void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply shouldDispatchWhenWaitingForSyncReply)
 {
     switch (shouldDispatchWhenWaitingForSyncReply) {
     case ShouldDispatchWhenWaitingForSyncReply::No:
-        *buffer() &= ~(DispatchMessageWhenWaitingForSyncReply | DispatchMessageWhenWaitingForUnboundedSyncReply);
+        messageFlags().remove(MessageFlags::DispatchMessageWhenWaitingForSyncReply);
+        messageFlags().remove(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply);
         break;
     case ShouldDispatchWhenWaitingForSyncReply::Yes:
-        *buffer() |= DispatchMessageWhenWaitingForSyncReply;
-        *buffer() &= ~DispatchMessageWhenWaitingForUnboundedSyncReply;
+        messageFlags().add(MessageFlags::DispatchMessageWhenWaitingForSyncReply);
+        messageFlags().remove(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply);
         break;
     case ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC:
-        *buffer() |= DispatchMessageWhenWaitingForUnboundedSyncReply;
-        *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
+        messageFlags().remove(MessageFlags::DispatchMessageWhenWaitingForSyncReply);
+        messageFlags().add(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply);
         break;
     }
 }
 
 void Encoder::setFullySynchronousModeForTesting()
 {
-    *buffer() |= UseFullySynchronousModeForTesting;
+    messageFlags().add(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
 void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
@@ -170,6 +171,18 @@ void Encoder::encodeHeader()
     *this << defaultMessageFlags;
     *this << m_messageName;
     *this << m_destinationID;
+}
+
+OptionSet<MessageFlags>& Encoder::messageFlags()
+{
+    // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
+    static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+}
+
+const OptionSet<MessageFlags>& Encoder::messageFlags() const
+{
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
 }
 
 uint8_t* Encoder::grow(size_t alignment, size_t size)

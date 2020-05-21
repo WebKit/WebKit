@@ -35,8 +35,9 @@
 namespace IPC {
 
 class DataReference;
-enum class ShouldDispatchWhenWaitingForSyncReply;
+enum class MessageFlags : uint8_t;
 enum class MessageName : uint16_t;
+enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 
 class Encoder final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -116,6 +117,8 @@ private:
     }
 
     void encodeHeader();
+    const OptionSet<MessageFlags>& messageFlags() const;
+    OptionSet<MessageFlags>& messageFlags();
 
     MessageName m_messageName;
     uint64_t m_destinationID;

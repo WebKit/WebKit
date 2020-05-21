@@ -30,6 +30,7 @@
 #include "MessageNames.h"
 #include "StringReference.h"
 #include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 #if HAVE(QOS_CLASSES)
@@ -40,7 +41,8 @@ namespace IPC {
 
 class DataReference;
 class ImportanceAssertion;
-enum class ShouldDispatchWhenWaitingForSyncReply;
+enum class MessageFlags : uint8_t;
+enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -191,7 +193,7 @@ private:
 
     Vector<Attachment> m_attachments;
 
-    uint8_t m_messageFlags;
+    OptionSet<MessageFlags> m_messageFlags;
     MessageName m_messageName;
 
     uint64_t m_destinationID;

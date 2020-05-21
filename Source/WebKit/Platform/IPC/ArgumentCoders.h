@@ -55,12 +55,12 @@ template<typename T> struct SimpleArgumentCoder {
 template<typename T> struct ArgumentCoder<OptionSet<T>> {
     static void encode(Encoder& encoder, const OptionSet<T>& optionSet)
     {
-        encoder << (static_cast<uint64_t>(optionSet.toRaw()));
+        encoder << optionSet.toRaw();
     }
 
     static WARN_UNUSED_RETURN bool decode(Decoder& decoder, OptionSet<T>& optionSet)
     {
-        uint64_t value;
+        typename OptionSet<T>::StorageType value;
         if (!decoder.decode(value))
             return false;
 
@@ -70,7 +70,7 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
 
     static Optional<OptionSet<T>> decode(Decoder& decoder)
     {
-        Optional<uint64_t> value;
+        Optional<typename OptionSet<T>::StorageType> value;
         decoder >> value;
         if (!value)
             return WTF::nullopt;

@@ -1,3 +1,33 @@
+2020-05-21  Alex Christensen  <achristensen@webkit.org>
+
+        Use an OptionSet instead of uint8_t for MessageFlags
+        https://bugs.webkit.org/show_bug.cgi?id=212230
+        <rdar://problem/63496543>
+
+        Reviewed by Darin Adler.
+
+        I also reduce the encoding size of OptionSet.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<OptionSet<T>>::encode):
+        (IPC::ArgumentCoder<OptionSet<T>>::decode):
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::isSyncMessage const):
+        (IPC::Decoder::shouldDispatchMessageWhenWaitingForSyncReply const):
+        (IPC::Decoder::shouldUseFullySynchronousModeForTesting const):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::isSyncMessage const):
+        (IPC::Encoder::shouldDispatchMessageWhenWaitingForSyncReply const):
+        (IPC::Encoder::setIsSyncMessage):
+        (IPC::Encoder::setShouldDispatchMessageWhenWaitingForSyncReply):
+        (IPC::Encoder::setFullySynchronousModeForTesting):
+        (IPC::Encoder::messageFlags):
+        (IPC::Encoder::messageFlags const):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/MessageFlags.h:
+        (): Deleted.
+
 2020-05-21  John Wilander  <wilander@apple.com>
 
         Storage Access API: Allow configurable storage access scope
