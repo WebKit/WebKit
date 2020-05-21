@@ -1964,3 +1964,5 @@ webkit.org/b/212165 http/tests/resourceLoadStatistics/telemetry-generation-basic
 webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failure ]
 
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
+
+webkit.org/b/212218 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Pass Timeout ]

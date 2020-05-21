@@ -3518,3 +3518,5 @@ webkit.org/b/211856 media/video-poster-set-after-playback.html [ Pass Failure ]
 
 webkit.org/b/211261 compositing/iframes/border-radius-composited-frame.html [ Pass ImageOnlyFailure ]
 webkit.org/b/211261 compositing/iframes/border-uneven-radius-composited-frame.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/212218 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Pass Timeout ]
