@@ -1,3 +1,18 @@
+2020-05-20  Kenneth Russell  <kbr@chromium.org>
+
+        OES_texture_float / OES_texture_half_float unavailable in WebGL 1.0 on iOS Simulator with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=210524
+
+        Reviewed by Dean Jackson.
+
+        Remove expected failure for
+        webgl/2.0.0/conformance/extensions/oes-texture-float-expected.txt
+        on ios-simulator. Enable
+        fast/canvas/webgl/oes-texture-half-float-uint16.html on iOS.
+
+        * platform/ios-simulator/webgl/2.0.0/conformance/extensions/oes-texture-float-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+
 2020-05-20  Chris Dumez  <cdumez@apple.com>
 
         (r261946) [ iOS ] fast/frames/didBecomeCurrentDocumentInFrame-crash.html is failing

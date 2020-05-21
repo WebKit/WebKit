@@ -275,16 +275,16 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     InsertFormatMapping(&map, GL_DEPTH_STENCIL,         VersionOnly(1, 5),                                  VersionOrExts(1, 5, "GL_ARB_depth_texture"), VersionOnly(1, 5),                                  VersionOnly(2, 0),                           VersionOrExts(3, 0, "GL_OES_depth_texture"), VersionOnly(2, 0),                                                       VersionOnly(2, 0)                                                      );
 
     // Luminance alpha formats
-    //                       | Format                  | OpenGL texture support                      | Filter           | Render          | OpenGL ES texture support            | Filter                                      | OpenGL ES texture attachment support | OpenGL ES renderbuffer support |
-    InsertFormatMapping(&map, GL_ALPHA8_EXT,             AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                     AlwaysSupported(),                            NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_LUMINANCE8_EXT,         AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                     AlwaysSupported(),                            NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_LUMINANCE8_ALPHA8_EXT,  AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                     AlwaysSupported(),                            NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_ALPHA16F_EXT,           VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_half_float"), ExtsOnly("GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_LUMINANCE16F_EXT,       VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_half_float"), ExtsOnly("GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_LUMINANCE_ALPHA16F_EXT, VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_half_float"), ExtsOnly("GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_ALPHA32F_EXT,           VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_float"),      ExtsOnly("GL_OES_texture_float_linear"),      NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_LUMINANCE32F_EXT,       VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_float"),      ExtsOnly("GL_OES_texture_float_linear"),      NeverSupported(),                      NeverSupported()                );
-    InsertFormatMapping(&map, GL_LUMINANCE_ALPHA32F_EXT, VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_texture_float"),      ExtsOnly("GL_OES_texture_float_linear"),      NeverSupported(),                      NeverSupported()                );
+    //                      | Format                   | OpenGL texture support                     | Filter           | Render          | OpenGL ES texture support                       | Filter                                      | OpenGL ES texture attachment support | OpenGL ES renderbuffer support  |
+    InsertFormatMapping(&map, GL_ALPHA8_EXT,             AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                                AlwaysSupported(),                            NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE8_EXT,         AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                                AlwaysSupported(),                            NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE8_ALPHA8_EXT,  AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                                AlwaysSupported(),                            NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_ALPHA16F_EXT,           VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_half_float"), ExtsOnly("GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE16F_EXT,       VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_half_float"), ExtsOnly("GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE_ALPHA16F_EXT, VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_half_float"), ExtsOnly("GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_ALPHA32F_EXT,           VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_float"),      ExtsOnly("GL_OES_texture_float_linear"),      NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE32F_EXT,       VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_float"),      ExtsOnly("GL_OES_texture_float_linear"),      NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE_ALPHA32F_EXT, VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_float"),      ExtsOnly("GL_OES_texture_float_linear"),      NeverSupported(),                      NeverSupported()                );
 
     // EXT_texture_compression_rgtc formats
     //                       | Format                                  | OpenGL texture support                                | Filter           | Render          | OpenGL ES texture support                  | Filter           | OpenGL ES texture attachment support | OpenGL ES renderbuffer support |
@@ -434,6 +434,33 @@ const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, StandardGL st
     return *defaultInternalFormat;
 }
 
+static bool IsLUMAFormat(GLenum format)
+{
+    return (format == GL_LUMINANCE || format == GL_ALPHA || format == GL_LUMINANCE_ALPHA);
+}
+
+static GLenum EmulateLUMAFormat(const GLenum format)
+{
+    // This is needed separately from EmulateLUMA because some format/type combinations that come in
+    // to GetNativeFormat don't have entries in the internal format map.
+
+    ASSERT(IsLUMAFormat(format));
+
+    if (format == GL_LUMINANCE || format == GL_ALPHA)
+        return GL_RED;
+
+    return GL_RG;
+}
+
+static const gl::InternalFormat &EmulateLUMA(const gl::InternalFormat &internalFormat)
+{
+    ASSERT(IsLUMAFormat(internalFormat.format));
+
+    // Work around deprecated luminance/alpha formats in the OpenGL core profile, and OpenGL ES 3.0
+    // and greater, by backing them with R or RG textures.
+    return gl::GetInternalFormatInfo(EmulateLUMAFormat(internalFormat.format), internalFormat.type);
+}
+
 static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
                                       const angle::FeaturesGL &features,
                                       const gl::InternalFormat &internalFormat)
@@ -479,26 +506,34 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
 
         if ((functions->profile & GL_CONTEXT_CORE_PROFILE_BIT) != 0)
         {
-            // Work around deprecated luminance alpha formats in the OpenGL core profile by backing
-            // them with R or RG textures.
-            if (internalFormat.format == GL_LUMINANCE || internalFormat.format == GL_ALPHA)
+            if (IsLUMAFormat(internalFormat.format))
             {
-                result = gl::GetInternalFormatInfo(GL_RED, internalFormat.type).sizedInternalFormat;
-            }
-
-            if (internalFormat.format == GL_LUMINANCE_ALPHA)
-            {
-                result = gl::GetInternalFormatInfo(GL_RG, internalFormat.type).sizedInternalFormat;
+                result = EmulateLUMA(internalFormat).sizedInternalFormat;
             }
         }
     }
     else if (functions->isAtLeastGLES(gl::Version(3, 0)))
     {
-        if (internalFormat.componentType == GL_FLOAT && !internalFormat.isLUMA())
+        if (internalFormat.componentType == GL_FLOAT)
         {
-            // Use sized internal formats for floating point textures.  Extensions such as
-            // EXT_color_buffer_float require the sized formats to be renderable.
-            result = internalFormat.sizedInternalFormat;
+            if (!internalFormat.isLUMA())
+            {
+                // Use sized internal formats for floating point textures.  Extensions such as
+                // EXT_color_buffer_float require the sized formats to be renderable.
+                result = internalFormat.sizedInternalFormat;
+            }
+            else if ((internalFormat.type == GL_FLOAT &&
+                      !functions->hasGLESExtension("GL_OES_texture_float")) ||
+                     (internalFormat.type == GL_HALF_FLOAT_OES &&
+                      !functions->hasGLESExtension("GL_OES_texture_half_float")))
+            {
+                // The legacy luminance/alpha formats from OES_texture_float are emulated with R/RG
+                // textures.
+                if (IsLUMAFormat(internalFormat.format))
+                {
+                    result = EmulateLUMA(internalFormat).sizedInternalFormat;
+                }
+            }
         }
         else if (internalFormat.format == GL_RED_EXT || internalFormat.format == GL_RG_EXT)
         {
@@ -519,7 +554,8 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
 
 static GLenum GetNativeFormat(const FunctionsGL *functions,
                               const angle::FeaturesGL &features,
-                              GLenum format)
+                              GLenum format,
+                              GLenum type)
 {
     GLenum result = format;
 
@@ -541,14 +577,9 @@ static GLenum GetNativeFormat(const FunctionsGL *functions,
         {
             // Work around deprecated luminance alpha formats in the OpenGL core profile by backing
             // them with R or RG textures.
-            if (format == GL_LUMINANCE || format == GL_ALPHA)
+            if (IsLUMAFormat(format))
             {
-                result = GL_RED;
-            }
-
-            if (format == GL_LUMINANCE_ALPHA)
-            {
-                result = GL_RG;
+                result = EmulateLUMAFormat(format);
             }
         }
     }
@@ -564,6 +595,18 @@ static GLenum GetNativeFormat(const FunctionsGL *functions,
             if (format == GL_SRGB_ALPHA)
             {
                 result = GL_RGBA;
+            }
+        }
+
+        if ((type == GL_FLOAT && !functions->hasGLESExtension("GL_OES_texture_float")) ||
+            (type == GL_HALF_FLOAT_OES &&
+             !functions->hasGLESExtension("GL_OES_texture_half_float")))
+        {
+            // On ES 3.0 systems that don't have GL_OES_texture_float or OES_texture_half_float, the
+            // LUMINANCE/ALPHA formats from those extensions must be emulated with R/RG textures.
+            if (IsLUMAFormat(format))
+            {
+                result = EmulateLUMAFormat(format);
             }
         }
     }
@@ -629,18 +672,12 @@ static GLenum GetNativeType(const FunctionsGL *functions,
     {
         if (type == GL_HALF_FLOAT_OES)
         {
-            switch (format)
+            if (!IsLUMAFormat(format) || !functions->hasGLESExtension("GL_OES_texture_half_float"))
             {
-                case GL_LUMINANCE_ALPHA:
-                case GL_LUMINANCE:
-                case GL_ALPHA:
-                    // In ES3, these formats come from EXT_texture_storage, which uses
-                    // HALF_FLOAT_OES. Other formats (like RGBA) use HALF_FLOAT (non-OES) in ES3.
-                    break;
-
-                default:
-                    result = GL_HALF_FLOAT;
-                    break;
+                // In ES3, the luminance formats come from OES_texture_half_float, which uses
+                // HALF_FLOAT_OES. Other formats (like RGBA) use HALF_FLOAT (non-OES) in ES3.
+                // If they're emulated (see above), use HALF_FLOAT.
+                result = GL_HALF_FLOAT;
             }
         }
     }
@@ -701,7 +738,7 @@ TexImageFormat GetTexImageFormat(const FunctionsGL *functions,
     TexImageFormat result;
     result.internalFormat = GetNativeInternalFormat(
         functions, features, gl::GetInternalFormatInfo(internalFormat, type));
-    result.format = GetNativeFormat(functions, features, format);
+    result.format = GetNativeFormat(functions, features, format, type);
     result.type   = GetNativeType(functions, features, format, type);
     return result;
 }
@@ -712,7 +749,7 @@ TexSubImageFormat GetTexSubImageFormat(const FunctionsGL *functions,
                                        GLenum type)
 {
     TexSubImageFormat result;
-    result.format = GetNativeFormat(functions, features, format);
+    result.format = GetNativeFormat(functions, features, format, type);
     result.type   = GetNativeType(functions, features, format, type);
     return result;
 }

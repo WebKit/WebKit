@@ -1,3 +1,34 @@
+2020-05-20  Kenneth Russell  <kbr@chromium.org>
+
+        OES_texture_float / OES_texture_half_float unavailable in WebGL 1.0 on iOS Simulator with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=210524
+
+        Reviewed by Dean Jackson.
+
+        Emulate LUMINANCE, ALPHA and LUMINANCE_ALPHA floating-point
+        textures on top of RED / RG textures when the underlying
+        OES_texture_float/half_float OpenGL ES extensions are unavailable.
+
+        This makes the conformance/extensions/oes-texture{-half}-float*
+        tests run and pass in the iOS Simulator.
+
+        This change is being reviewed upstream in the ANGLE repository and
+        is only being uploaded here for testing purposes. It will be
+        rolled in with the next ANGLE update.
+
+        * src/libANGLE/renderer/gl/TextureGL.cpp:
+        (rx::TextureGL::setSwizzle):
+        * src/libANGLE/renderer/gl/formatutilsgl.cpp:
+        (rx::nativegl::BuildInternalFormatInfoMap):
+        (rx::nativegl::IsLUMAFormat):
+        (rx::nativegl::EmulateLUMAFormat):
+        (rx::nativegl::EmulateLUMA):
+        (rx::nativegl::GetNativeInternalFormat):
+        (rx::nativegl::GetNativeFormat):
+        (rx::nativegl::GetNativeType):
+        (rx::nativegl::GetTexImageFormat):
+        (rx::nativegl::GetTexSubImageFormat):
+
 2020-05-18  James Darpinian  <jdarpinian@chromium.org>
 
         Enable regenerateStructNames workaround on iOS
