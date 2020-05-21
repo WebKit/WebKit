@@ -67,16 +67,17 @@ private:
     public:
         LayoutUnit cellHeigh(const ContainerBox&) const;
         Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
-        FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const ContainerBox& cellBox);
+        FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
         InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
 
     private:
         friend class TableFormattingContext;
-        Geometry(const TableFormattingContext&);
+        Geometry(const TableFormattingContext&, const TableGrid&);
 
         const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+        const TableGrid& m_grid;
     };
-    TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
+    TableFormattingContext::Geometry geometry() const { return Geometry(*this, formattingState().tableGrid()); }
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
@@ -92,8 +93,9 @@ private:
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
 
-inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext)
+inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext, const TableGrid& grid)
     : FormattingContext::Geometry(tableFormattingContext)
+    , m_grid(grid)
 {
 }
 

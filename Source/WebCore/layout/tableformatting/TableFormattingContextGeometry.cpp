@@ -55,16 +55,22 @@ Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const
     return columnBox.columnWidth();
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell(const ContainerBox& cellBox)
+FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell(const TableGrid::Cell& cell)
 {
-    auto fixedMarginBorderAndPadding = [&] {
-        auto& style = cellBox.style();
-        return fixedValue(style.marginStart()).valueOr(0)
-            + LayoutUnit { style.borderLeftWidth() }
-            + fixedValue(style.paddingLeft()).valueOr(0)
-            + fixedValue(style.paddingRight()).valueOr(0)
-            + LayoutUnit { style.borderRightWidth() }
-            + fixedValue(style.marginEnd()).valueOr(0);
+    auto& cellBox = cell.box();
+    auto& style = cellBox.style();
+
+    auto computedHorizontalBorder = [&] {
+        auto leftBorderWidth = LayoutUnit { style.borderLeftWidth() };
+        auto rightBorderWidth = LayoutUnit { style.borderRightWidth() };
+        if (auto collapsedBorder = m_grid.collapsedBorder()) {
+            auto cellPosition = cell.position();
+            if (!cellPosition.column)
+                leftBorderWidth = collapsedBorder->horizontal.left / 2;
+            if (cellPosition.column == m_grid.columns().size() - 1)
+                rightBorderWidth = collapsedBorder->horizontal.right / 2;
+        }
+        return leftBorderWidth + rightBorderWidth;
     };
 
     auto computedIntrinsicWidthConstraints = [&] {
@@ -79,7 +85,12 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::i
     };
     // FIXME Check for box-sizing: border-box;
     auto intrinsicWidthConstraints = constrainByMinMaxWidth(cellBox, computedIntrinsicWidthConstraints());
-    intrinsicWidthConstraints.expand(fixedMarginBorderAndPadding());
+    // Expand with border
+    intrinsicWidthConstraints.expand(computedHorizontalBorder());
+    // padding
+    intrinsicWidthConstraints.expand(fixedValue(style.paddingLeft()).valueOr(0) + fixedValue(style.paddingRight()).valueOr(0));
+    // and margin
+    intrinsicWidthConstraints.expand(fixedValue(style.marginStart()).valueOr(0) + fixedValue(style.marginEnd()).valueOr(0));
     return intrinsicWidthConstraints;
 }
 

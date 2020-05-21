@@ -321,7 +321,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
 
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
         if (!intrinsicWidth) {
-            intrinsicWidth = geometry().intrinsicWidthConstraintsForCell(cellBox);
+            intrinsicWidth = geometry().intrinsicWidthConstraintsForCell(*cell);
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
         // Spanner cells put their intrinsic widths on the initial slots.
