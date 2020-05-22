@@ -1,3 +1,16 @@
+2020-05-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update test expectations after r262047
+        https://bugs.webkit.org/show_bug.cgi?id=212255
+
+        Unreviewed gardening.
+
+        Gardened WPE failures that were already gardened in GTK test expectations 
+        by moving them to GLib test expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-05-22  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Cannot style ::selection for a flex container
