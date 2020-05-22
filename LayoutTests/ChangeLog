@@ -1,3 +1,17 @@
+2020-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r254859) DOM storage event gets fired at the frame that caused the storage modification
+        https://bugs.webkit.org/show_bug.cgi?id=211503
+        <rdar://problem/62983284>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add layout test coverage.
+
+        * storage/domstorage/events/resources/storage-event-not-in-originator-frame.html: Added.
+        * storage/domstorage/events/storage-event-not-in-originator-expected.txt: Added.
+        * storage/domstorage/events/storage-event-not-in-originator.html: Added.
+
 2020-05-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [css-grid] Update WPT imported tests and deduplicate common tests

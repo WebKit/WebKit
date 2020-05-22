@@ -1,3 +1,25 @@
+2020-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r254859) DOM storage event gets fired at the frame that caused the storage modification
+        https://bugs.webkit.org/show_bug.cgi?id=211503
+        <rdar://problem/62983284>
+
+        Reviewed by Maciej Stachowiak.
+
+        r254859 refactored StorageAreaMap's dispatchSessionStorageEvent() &
+        dispatchLocalStorageEvent() to share more code by moving that code to
+        a new framesForEventDispatching() static function. However,
+        framesForEventDispatching() was always using the session storage no
+        matter the call site. It should be using the local storage when called
+        from dispatchLocalStorageEvent().
+
+        Test: storage/domstorage/events/storage-event-not-in-originator.html
+
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::framesForEventDispatching):
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+
 2020-05-22  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r261978): Cannot click on links with trackpad on iPad
