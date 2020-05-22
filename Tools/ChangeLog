@@ -1,3 +1,17 @@
+2020-05-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add bubblewrap ... wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=212077
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The bind-mounts are now handled through webkit-bwrap.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.execute_command):
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap: Added.
+
 2020-05-22  Javier Fernandez  <jfernandez@igalia.com>
 
         [Flatpak SDK] CCACHE_ env vars are not forwarded to the sandbox environment

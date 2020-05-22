@@ -487,11 +487,11 @@ class WebkitFlatpak:
         self.sccache_token = ""
         self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
-    def execute_command(self, args, stdout=None, stderr=None):
+    def execute_command(self, args, stdout=None, stderr=None, env=None):
         _log.debug('Running in sandbox: %s\n' % ' '.join(args))
         result = 0
         try:
-            result = subprocess.check_call(args, stdout=stdout, stderr=stderr)
+            result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
         except subprocess.CalledProcessError as err:
             if self.verbose:
                 cmd = ' '.join(err.cmd)
@@ -638,6 +638,9 @@ class WebkitFlatpak:
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
         }
 
+        if not args:
+            args.append("bash")
+
         if args:
             if os.path.exists(args[0]):
                 command = os.path.normpath(os.path.abspath(args[0]))
@@ -651,22 +654,12 @@ class WebkitFlatpak:
         else:
             building = False
 
-        # FIXME: Using the `run` flatpak command would be better, but it doesn't
-        # have a --bind-mount option.
-        flatpak_command = ["flatpak", "build",
+        flatpak_command = ["flatpak", "run",
                            "--die-with-parent",
+                           "--allow=devel",
                            "--talk-name=org.a11y.Bus",
                            "--talk-name=org.gtk.vfs",
-                           "--talk-name=org.gtk.vfs.*",
-                           "--bind-mount=/run/shm=/dev/shm",
-                           # Access to /run/host is required by the crash log reporter.
-                           "--bind-mount=/run/host/%s=%s" % (tempfile.gettempdir(), tempfile.gettempdir()),
-                           # flatpak build doesn't expose a --socket option for
-                           # white-listing the systemd journal socket. So
-                           # white-list it in /run, hoping this is the right
-                           # path.
-                           "--bind-mount=/run/systemd/journal=/run/systemd/journal",
-                           "--bind-mount=%s=%s" % (self.sandbox_source_root, self.source_root)]
+                           "--talk-name=org.gtk.vfs.*"]
 
         if args and args[0].endswith("build-webkit") and not self.is_branch_build():
             # Ensure self.build_path exists.
@@ -675,12 +668,6 @@ class WebkitFlatpak:
             except OSError as e:
                 if e.errno != errno.EEXIST:
                     raise e
-
-        # We mount WebKitBuild/PORTNAME/BuildType to /app/webkit/WebKitBuild/BuildType
-        # so we can build WPE and GTK in a same source tree.
-        # The bind-mount is always needed, excepted during the initial setup (SDK install/updates).
-        if os.path.isdir(self.build_path):
-            flatpak_command.append("--bind-mount=%s=%s" % (sandbox_build_path, self.build_path))
 
         if not building:
             flatpak_command.extend([
@@ -695,30 +682,8 @@ class WebkitFlatpak:
                 "--socket=x11",
                 "--system-talk-name=org.a11y.Bus",
                 "--system-talk-name=org.freedesktop.GeoClue2",
-                "--talk-name=org.a11y.Bus",
                 "--talk-name=org.freedesktop.Flatpak"
             ])
-
-            xdg_runtime_dir = os.environ.get('XDG_RUNTIME_DIR', None)
-            if not xdg_runtime_dir:
-                _log.debug('XDG_RUNTIME_DIR not set. Trying default location.')
-                try:
-                    with open(os.devnull, 'w') as devnull:
-                        uid = subprocess.check_output(("id", "-u"), stderr=devnull).decode().strip()
-                        xdg_runtime_dir = '/run/user/{uid}'.format(uid=uid)
-                except subprocess.CalledProcessError:
-                    _log.debug("Could not determine XDG_RUNIME_DIR. This may cause bubblewrap to fail.")
-
-            if xdg_runtime_dir:
-                uid_doc_path = os.path.join(xdg_runtime_dir, 'doc')
-                if os.path.exists(uid_doc_path):
-                    flatpak_command.append("--bind-mount={uid_doc_path}={uid_doc_path}".format(uid_doc_path=uid_doc_path))
-                else:
-                    _log.debug("Can't find user document path at '{uid_doc_path}'. Not mounting it.".format(uid_doc_path=uid_doc_path))
-
-            coredumps_dir = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
-            if coredumps_dir and os.path.isdir(coredumps_dir):
-                flatpak_command.append("--bind-mount={coredumps_dir}={coredumps_dir}".format(coredumps_dir=coredumps_dir))
 
             sandbox_environment.update({
                 "TZ": "PST8PDT",
@@ -797,7 +762,6 @@ class WebkitFlatpak:
             _log.debug('Enabling the icecream compiler')
             if share_network_option not in flatpak_command:
                 flatpak_command.append(share_network_option)
-            flatpak_command.append("--bind-mount=/var/run/icecc=/var/run/icecc")
 
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
@@ -808,6 +772,7 @@ class WebkitFlatpak:
                 return 1
             sandbox_environment.update({
                 "CCACHE_PREFIX": "icecc",
+                "ICECC_TEST_SOCKET": "/run/icecc/iceccd.socket",
                 "ICECC_VERSION": toolchain_path,
                 "NUMBER_OF_PROCESSORS": n_cores,
             })
@@ -819,10 +784,16 @@ class WebkitFlatpak:
         if not kwargs.get('building_gst'):
             gst_env = self.setup_gstbuild(building)
 
-        flatpak_command += extra_flatpak_args + [self.flatpak_build_path] + gst_env + args
+        flatpak_command += extra_flatpak_args + gst_env + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
+
+        flatpak_env = os.environ
+        flatpak_env.update({
+            "FLATPAK_BWRAP": os.path.join(scriptdir, "webkit-bwrap"),
+            "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path)
+        })
 
         try:
-            return self.execute_command(flatpak_command, stdout=stdout)
+            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
         except KeyboardInterrupt:
             return 0
 
