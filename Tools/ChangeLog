@@ -1,3 +1,41 @@
+2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        DataTransfer.files contains multiple files when pasting a single image with multiple representations
+        https://bugs.webkit.org/show_bug.cgi?id=212245
+        <rdar://problem/60240436>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard _clearContentsWithoutUpdatingChangeCount]):
+        (-[LocalPasteboard _addTypesWithoutUpdatingChangeCount:owner:]):
+        (-[LocalPasteboard writeObjects:]):
+        (-[LocalPasteboard pasteboardItems]):
+
+        Adjust DumpRenderTree's LocalPasteboard so that it lazily populates the pasteboard when constructing
+        NSPasteboardItems. To do this, we need to make a few adjustments:
+
+        1.      When reifying NSPasteboardItems from LocalPasteboard, ask the owner (WebHTMLView) to provide pasteboard
+                data for each pasteboard type that was promised by WebKit, but was not eagerly written to the pasteboard.
+
+        2.      Cache pasteboard items that were created, so that we don't repeatedly ask WebHTMLView to provide
+                pasteboard data. WebHTMLView doesn't currently support this, and suffers from a bug where TIFF data may
+                only be provided once. This was fixed for WebKit2, but not for WebKit1.
+
+        3.      Maintain a separate hash list of original pasteboard types (which may not be UTIs) that were handed to
+                LocalPasteboard by WebKit. We use these original types in step (1).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+
+        Add a new API test to verify that one file is exposed via the DataTranfer when the pasteboard contains a single
+        image with two image representations, but two files are exposed when the pasteboard contains two images, each
+        with a single representation.
+
+        (writeImageDataToPasteboard):
+
+        Overload this helper method with two additional variants: one that takes a dictionary of pasteboard types to
+        data, and another that takes an array of dictionaries, each representing a single item's types and data.
+
 2020-05-21  Robin Morisset  <rmorisset@apple.com>
 
         Various compile-time boolean flags could/should be marked constexpr

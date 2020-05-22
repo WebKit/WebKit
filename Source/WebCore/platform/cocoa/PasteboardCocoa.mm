@@ -224,24 +224,27 @@ void Pasteboard::read(PasteboardFileReader& reader)
         return;
     }
 
-    auto cocoaTypes = readTypesWithSecurityCheck();
-    HashSet<const char*> existingMIMEs;
-    for (auto& cocoaType : cocoaTypes) {
-        auto imageType = cocoaTypeToImageType(cocoaType);
-        const char* mimeType = imageTypeToMIMEType(imageType);
-        if (!mimeType)
-            continue;
-        if (existingMIMEs.contains(mimeType))
-            continue;
-        auto buffer = readBufferForTypeWithSecurityCheck(cocoaType);
+    auto allInfo = allPasteboardItemInfo();
+    if (!allInfo)
+        return;
+
+    for (size_t itemIndex = 0; itemIndex < allInfo->size(); ++itemIndex) {
+        auto& info = allInfo->at(itemIndex);
+        for (auto cocoaType : info.platformTypesByFidelity) {
+            auto imageType = cocoaTypeToImageType(cocoaType);
+            auto* mimeType = imageTypeToMIMEType(imageType);
+            if (!mimeType)
+                continue;
+            auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
-        if (buffer && imageType == ImageType::TIFF)
-            buffer = convertTIFFToPNG(buffer.releaseNonNull());
+            if (buffer && imageType == ImageType::TIFF)
+                buffer = convertTIFFToPNG(buffer.releaseNonNull());
 #endif
-        if (!buffer)
-            continue;
-        existingMIMEs.add(mimeType);
-        reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
+            if (buffer) {
+                reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
+                break;
+            }
+        }
     }
 }
 

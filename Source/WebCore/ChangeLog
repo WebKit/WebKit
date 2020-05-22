@@ -1,3 +1,26 @@
+2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        DataTransfer.files contains multiple files when pasting a single image with multiple representations
+        https://bugs.webkit.org/show_bug.cgi?id=212245
+        <rdar://problem/60240436>
+
+        Reviewed by Tim Horton.
+
+        When pasting or dropping a single image that is backed by multiple representations in NSPasteboard (or
+        UIPasteboard), we currently report more than one `File` to the page via `DataTransfer.files`. This is because
+        `Pasteboard::read(PasteboardFileReader&)`, which is responsible for converting the contents of the pasteboard
+        into a list of files, currently iterates over every pasteboard type and adds each of them as a file. This is
+        wrong when an item has multiple type representations.
+
+        To differentiate the case where a single item has multiple representations from the case where it has multiple
+        pasteboard items, we use `allPasteboardItemInfo()` instead to grab a per-item list of types from the pasteboard
+        on Cocoa platforms, and only create at most 1 file per item using the highest fidelity type that contains data.
+
+        Test: PasteImage.PasteImageWithMultipleRepresentations
+
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::read):
+
 2020-05-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fix rare scrolling thread crash firing the m_delayedRenderingUpdateDetectionTimer timer
