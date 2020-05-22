@@ -1,3 +1,25 @@
+2020-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Revoking an object URL immediately after triggering navigation causes navigation to fail
+        https://bugs.webkit.org/show_bug.cgi?id=212279
+        <rdar://problem/63553090>
+
+        Reviewed by Geoffrey Garen.
+
+        When doing a policy check for a Blob URL, we clone the blob and create a new temporary Blob URL
+        that stays alive for the duration of the policy check. We made sure to update the ResourceRequest
+        URL with the new Blob URL, however, we were failing to update the DocumentLoader's request.
+        As a result, if the client responded with Policy USE, the DocumentLoader would still attempt to
+        navigate to the old Blob URL.
+
+        Test: fast/loader/revoke-blob-url-after-navigation.html
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary const):
+        (WebCore::FrameLoader::PolicyChecker::checkNavigationPolicy):
+        (WebCore::FrameLoader::PolicyChecker::checkNewWindowPolicy):
+        * loader/PolicyChecker.h:
+
 2020-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure we clean up CFTimerRefs when destroying scrolling tree nodes

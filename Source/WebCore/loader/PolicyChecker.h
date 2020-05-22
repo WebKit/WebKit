@@ -89,7 +89,7 @@ public:
 
 private:
     void handleUnimplementablePolicy(const ResourceError&);
-    WTF::CompletionHandlerCallingScope extendBlobURLLifetimeIfNecessary(ResourceRequest&) const;
+    WTF::CompletionHandlerCallingScope extendBlobURLLifetimeIfNecessary(ResourceRequest&, DocumentLoader*) const;
 
     Frame& m_frame;
 

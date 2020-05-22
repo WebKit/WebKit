@@ -1,0 +1,11 @@
+Tests that navigation to a Blob URL does not fail if the URL is revoked right after triggering the navigation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Was able to navigate the frame
+PASS frame.contentDocument.body.innerText is "TEST"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
