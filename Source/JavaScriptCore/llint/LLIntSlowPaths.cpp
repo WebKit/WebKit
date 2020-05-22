@@ -2086,9 +2086,11 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
         valueRegister = iteratorResultObject.get(globalObject, vm.propertyNames->value);
 }
 
-inline SlowPathReturnType dispatchToNextInstruction(CodeBlock* codeBlock, InstructionStream::Ref pc)
+inline SlowPathReturnType dispatchToNextInstruction(ThrowScope& scope, CodeBlock* codeBlock, InstructionStream::Ref pc)
 {
-    RELEASE_ASSERT(!codeBlock->vm().exceptionForInspection());
+    if (scope.exception())
+        return encodeResult(returnToThrow(scope.vm()), nullptr);
+
     if (Options::forceOSRExitToLLInt() || codeBlock->jitType() == JITType::InterpreterThunk) {
         const Instruction* nextPC = pc.next().ptr();
         auto nextBytecode = LLInt::getCodePtr<JSEntryPtrTag>(*pc.next().ptr());
@@ -2110,6 +2112,7 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(Ca
     CodeBlock* codeBlock = callFrame->codeBlock();
     VM& vm = codeBlock->vm();
     SlowPathFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.findCheckpointOSRSideState(callFrame);
     BytecodeIndex bytecodeIndex = sideState->bytecodeIndex;
@@ -2150,7 +2153,7 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(Ca
         break;
     }
 
-    return dispatchToNextInstruction(codeBlock, pc);
+    return dispatchToNextInstruction(scope, codeBlock, pc);
 }
 
 extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame, EncodedJSValue /* needed for cCall2 in CLoop */)
@@ -2194,10 +2197,8 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
-    if (UNLIKELY(scope.exception()))
-        return encodeResult(returnToThrow(vm), nullptr);
 
-    return dispatchToNextInstruction(codeBlock, pc);
+    return dispatchToNextInstruction(scope, codeBlock, pc);
 }
 
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)

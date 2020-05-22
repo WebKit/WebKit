@@ -1,3 +1,15 @@
+2020-05-22  Keith Miller  <keith_miller@apple.com>
+
+        Checkpoint inlined call return handler needs an exception check when dispatching
+        https://bugs.webkit.org/show_bug.cgi?id=212104
+
+        Reviewed by Yusuke Suzuki.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::dispatchToNextInstruction):
+        (JSC::LLInt::slow_path_checkpoint_osr_exit_from_inlined_call):
+        (JSC::LLInt::slow_path_checkpoint_osr_exit):
+
 2020-05-22  Paulo Matos  <pmatos@igalia.com>
 
         Fix non-unified builds for i386 build

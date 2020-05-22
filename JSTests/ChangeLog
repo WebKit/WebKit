@@ -1,3 +1,16 @@
+2020-05-22  Keith Miller  <keith_miller@apple.com>
+
+        Checkpoint inlined call return handler needs an exception check when dispatching
+        https://bugs.webkit.org/show_bug.cgi?id=212104
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/for-of-done-getter-osr-exits-inlined-to-value-getter-with-exception.js: Added.
+        (let.d.get done):
+        (let.d.get value):
+        (foo):
+        (catch):
+
 2020-05-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use @isUndefinedOrNull instead of abstract equality with null
