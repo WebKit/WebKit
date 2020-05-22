@@ -1,3 +1,23 @@
+2020-05-22  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] jhbuild is broken with GCC 10.0
+        https://bugs.webkit.org/show_bug.cgi?id=212256
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        GCC 10.0 enables -fno-common as default, so many 'multiple definitions' failures occur
+        in building dependencies via jhbuild. This patch addresses them by back-porting patches
+        from corresponding source repositories.
+
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/libsrtp-Fix-building-with-gcc-10.patch: Added.
+        * gstreamer/patches/orc-satisfy-fno-common-under-gcc10.patch: Added.
+        * gtk/jhbuild.modules:
+        * gtk/patches/at-spi2-atk-tests-Replace-common-variable-with-usual-external.patch: Added.
+        * gtk/patches/at-spi2-atk-tests-fix-child_pid-reference.patch: Added.
+        * gtk/patches/mesa-gallium-build-fix-to-make-gcc-10-happy.patch: Added.
+        * gtk/patches/xserver-Fix-building-with-fno-common.patch: Added.
+
 2020-05-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add bubblewrap ... wrapper

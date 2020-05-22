@@ -292,6 +292,8 @@
     <branch module="pub/GNOME/sources/at-spi2-atk/2.33/at-spi2-atk-2.33.2.tar.xz" version="2.33.2"
             repo="ftp.gnome.org"
             hash="sha256:64d4351b245d717ec6f4f81fd40fe67481ff8e62d3893d465f01e71d9a3db3d3">
+      <patch file="at-spi2-atk-tests-Replace-common-variable-with-usual-external.patch" strip="1"/>
+      <patch file="at-spi2-atk-tests-fix-child_pid-reference.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -319,6 +321,7 @@
       <patch file="xserver-remove-bogus-dependencies.patch" strip="1"/>
       <patch file="xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch" strip="1"/>
       <patch file="xserver-gl-version.patch" strip="1"/> <!-- This patch does not include the meson build fix -->
+      <patch file="xserver-Fix-building-with-fno-common.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -376,6 +379,7 @@
             module="/archive/mesa-${version}.tar.xz"
             repo="mesa.freedesktop.org"
             hash="sha256:099d9667327a76a61741a533f95067d76ea71a656e66b91507b3c0caf1d49e30">
+      <patch file="mesa-gallium-build-fix-to-make-gcc-10-happy.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="llvm"/>

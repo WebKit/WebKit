@@ -28,7 +28,9 @@
   <meson id="orc" mesonargs="-Dgtk_doc=disabled">
     <branch module="orc/orc-${version}.tar.xz" version="0.4.30"
             repo="gstreamer"
-            hash="sha256:ba41b92146a5691cd102eb79c026757d39e9d3b81a65810d2946a1786a1c4972"/>
+            hash="sha256:ba41b92146a5691cd102eb79c026757d39e9d3b81a65810d2946a1786a1c4972">
+      <patch file="orc-satisfy-fno-common-under-gcc10.patch" strip="1"/>
+    </branch>
   </meson>
 
   <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
@@ -45,7 +47,9 @@
 
   <autotools id="libsrtp">
     <branch repo="github-tarball" module="cisco/libsrtp/archive/v${version}.tar.gz" version="2.2.0"
-            checkoutdir="libsrtp-${version}"/>
+            checkoutdir="libsrtp-${version}">
+      <patch file="libsrtp-Fix-building-with-gcc-10.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <meson id="gstreamer" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dtests=disabled">
