@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x56
+  RenderBlock {HTML} at (0,0) size 800x56
+    RenderBody {BODY} at (8,8) size 784x40
+      RenderBlock {DIV} at (0,0) size 784x40
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 684x19
+            text run at (0,0) width 684: "Test for https://bugs.webkit.org/show_bug.cgi?id=209822 -- should have green background when selected."
+        RenderBlock {DIV} at (0,20) size 784x20
+          RenderText {#text} at (0,0) size 482x19
+            text run at (0,0) width 78: "Sibling div. "
+            text run at (77,0) width 405: "Should have default selection background color when selected."
+selection start: position 5 of child 0 {#text} of child 1 {DIV} of body
+selection end:   position 84 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body
