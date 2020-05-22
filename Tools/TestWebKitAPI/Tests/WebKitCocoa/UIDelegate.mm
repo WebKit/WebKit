@@ -809,23 +809,28 @@ static void synthesizeTab(NSWindow *window, NSView *view, bool withShiftDown)
     [view keyUp:tabEvent(window, NSEventTypeKeyUp, withShiftDown ? NSEventModifierFlagShift : 0)];
 }
 
-static _WKFocusDirection takenDirection;
-
 @interface FocusDelegate : NSObject <WKUIDelegatePrivate>
+@property (nonatomic) _WKFocusDirection takenDirection;
+@property (nonatomic) BOOL useShiftTab;
 @end
 
-@implementation FocusDelegate
+@implementation FocusDelegate {
+@package
+    bool _done;
+    bool _didSendKeyEvent;
+}
 
 - (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction
 {
-    takenDirection = direction;
-    done = true;
+    _takenDirection = direction;
+    _done = true;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     completionHandler();
-    synthesizeTab([webView window], webView, true);
+    _didSendKeyEvent = true;
+    synthesizeTab([webView window], webView, _useShiftTab);
 }
 
 @end
@@ -834,12 +839,43 @@ TEST(WebKit, Focus)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto delegate = adoptNS([[FocusDelegate alloc] init]);
+    [delegate setUseShiftTab:YES];
     [webView setUIDelegate:delegate.get()];
     NSString *html = @"<script>function loaded() { document.getElementById('in').focus(); alert('ready'); }</script>"
     "<body onload='loaded()'><input type='text' id='in'></body>";
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&done);
-    ASSERT_EQ(takenDirection, _WKFocusDirectionBackward);
+    TestWebKitAPI::Util::run(&delegate->_done);
+    ASSERT_EQ([delegate takenDirection], _WKFocusDirectionBackward);
+}
+
+TEST(WebKit, ShiftTabTakesFocusFromEditableWebView)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    auto delegate = adoptNS([[FocusDelegate alloc] init]);
+    [delegate setUseShiftTab:YES];
+    [webView setUIDelegate:delegate.get()];
+    NSString *html = @"<script>function loaded() { document.body.focus(); alert('ready'); }</script>"
+    "<body onload='loaded()'></body>";
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&delegate->_done);
+    ASSERT_EQ([delegate takenDirection], _WKFocusDirectionBackward);
+}
+
+TEST(WebKit, TabDoesNotTakeFocusFromEditableWebView)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    auto delegate = adoptNS([[FocusDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    NSString *html = @"<script>function loaded() { document.body.focus(); alert('ready'); }</script>"
+    "<body onload='loaded()'></body>";
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&delegate->_didSendKeyEvent);
+    EXPECT_WK_STREQ("\t", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+    ASSERT_FALSE(delegate->_done);
 }
 
 #define MOUSE_EVENT_CAUSES_DOWNLOAD 0

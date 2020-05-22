@@ -448,6 +448,21 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
     return false;
 }
 
+bool FocusController::relinquishFocusToChrome(FocusDirection direction)
+{
+    RefPtr<Document> document = focusedOrMainFrame().document();
+    if (!document)
+        return false;
+
+    if (!m_page.chrome().canTakeFocus(direction) || m_page.isControlledByAutomation())
+        return false;
+
+    document->setFocusedElement(nullptr);
+    setFocusedFrame(nullptr);
+    m_page.chrome().takeFocus(direction);
+    return true;
+}
+
 bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, KeyboardEvent* event, bool initialFocus)
 {
     Frame& frame = focusedOrMainFrame();
@@ -466,11 +481,9 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     if (!element) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
-        if (!initialFocus && m_page.chrome().canTakeFocus(direction) && !m_page.isControlledByAutomation()) {
-            document->setFocusedElement(nullptr);
-            setFocusedFrame(nullptr);
-            m_page.chrome().takeFocus(direction);
-            return true;
+        if (!initialFocus) {
+            if (relinquishFocusToChrome(direction))
+                return true;
         }
 
         // Chrome doesn't want focus, so we should wrap focus.

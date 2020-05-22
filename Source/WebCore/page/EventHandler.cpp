@@ -4094,14 +4094,23 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
     Page* page = m_frame.page();
     if (!page)
         return;
-    if (!page->tabKeyCyclesThroughElements())
-        return;
 
     FocusDirection focusDirection = event.shiftKey() ? FocusDirectionBackward : FocusDirectionForward;
 
     // Tabs can be used in design mode editing.
     if (m_frame.document()->inDesignMode())
         return;
+
+    // Allow shift-tab to relinquish focus even if we don't allow tab to cycle between elements inside the view.
+    // We can only do this for shift-tab, not tab itself because tabKeyCyclesThroughElements is used to make
+    // tab character insertion work in editable web views.
+    if (!page->tabKeyCyclesThroughElements()) {
+        if (focusDirection == FocusDirectionBackward) {
+            if (page->focusController().relinquishFocusToChrome(focusDirection))
+                event.setDefaultHandled();
+        }
+        return;
+    }
 
     if (page->focusController().advanceFocus(focusDirection, &event))
         event.setDefaultHandled();

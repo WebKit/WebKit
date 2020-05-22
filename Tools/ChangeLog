@@ -1,3 +1,16 @@
+2020-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Pressing tab in the Mail subject field moves focus to the body, but pressing shift tab doesn't move it back
+        https://bugs.webkit.org/show_bug.cgi?id=212243
+        <rdar://problem/59127764>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[FocusDelegate _webView:takeFocus:]):
+        (-[FocusDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DataTransfer.files contains multiple files when pasting a single image with multiple representations
