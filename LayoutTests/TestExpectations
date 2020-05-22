@@ -4286,7 +4286,6 @@ webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-002.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-003.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-004.html [ ImageOnlyFailure ]
-webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-self-baseline-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-002.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-alignment-baseline-with-grid-003.html [ ImageOnlyFailure ]
@@ -4298,3 +4297,4 @@ webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-005.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-001.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-002.html [ ImageOnlyFailure ]
+webkit.org/b/212267 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-self-baseline-001.html [ Skip ]
