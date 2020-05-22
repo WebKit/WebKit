@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "WebViewCategory.h"
+#include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
@@ -159,6 +160,9 @@ public:
     bool limitsNavigationsToAppBoundDomains() const { return m_limitsNavigationsToAppBoundDomains; }
     void setLimitsNavigationsToAppBoundDomains(bool limits) { m_limitsNavigationsToAppBoundDomains = limits; }
 
+    void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
+    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
+    
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -202,6 +206,7 @@ private:
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
     bool m_limitsNavigationsToAppBoundDomains { false };
+    WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };
 
 } // namespace API

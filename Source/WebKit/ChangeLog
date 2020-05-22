@@ -1,3 +1,44 @@
+2020-05-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to unblock third party cookies from WKWebViews with ResourceLoadStatistics turned on
+        https://bugs.webkit.org/show_bug.cgi?id=212058
+        <rdar://problem/60595539>
+
+        Reviewed by John Wilander.
+
+        This value makes NetworkDataTaskCocoa::blockCookies() not do anything for certain WKWebViews.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::blockCookies):
+        (WebKit::NetworkDataTaskCocoa::unblockCookies):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::setAllowAllThirdPartyCookies):
+        (API::PageConfiguration::allowAllThirdPartyCookies const):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _allowAllThirdPartyCookies]):
+        (-[WKWebViewConfiguration _setAllowAllThirdPartyCookies:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersShared):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+
 2020-05-22  Chris Dumez  <cdumez@apple.com>
 
         Regression(r254859) DOM storage event gets fired at the frame that caused the storage modification

@@ -1303,6 +1303,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/ResourceRequestBase.h
     platform/network/ResourceResponseBase.h
     platform/network/SameSiteInfo.h
+    platform/network/ShouldRelaxThirdPartyCookieBlocking.h
     platform/network/SocketStreamError.h
     platform/network/SocketStreamHandle.h
     platform/network/SocketStreamHandleClient.h

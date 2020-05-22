@@ -59,3 +59,17 @@
 }
 
 @end
+
+@implementation WKWebView (TestUIDelegateExtras)
+
+- (NSString *)_test_waitForAlert
+{
+    EXPECT_FALSE(self.UIDelegate);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    self.UIDelegate = uiDelegate.get();
+    NSString *alert = [uiDelegate waitForAlert];
+    self.UIDelegate = nil;
+    return alert;
+}
+
+@end

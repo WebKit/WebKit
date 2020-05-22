@@ -1,3 +1,32 @@
+2020-05-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to unblock third party cookies from WKWebViews with ResourceLoadStatistics turned on
+        https://bugs.webkit.org/show_bug.cgi?id=212058
+        <rdar://problem/60595539>
+
+        Reviewed by John Wilander.
+
+        I also add _test_waitForAlert to make tests less verbose.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        (TestWebKitAPI::Connection::Connection):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::HTTPServer):
+        (TestWebKitAPI::dataFromString):
+        (TestWebKitAPI::nullTerminatedRequest):
+        (TestWebKitAPI::HTTPServer::request const):
+        (TestWebKitAPI::Connection::receive const):
+        (TestWebKitAPI::Connection::send const):
+        * TestWebKitAPI/cocoa/TestUIDelegate.h:
+        * TestWebKitAPI/cocoa/TestUIDelegate.mm:
+        (-[WKWebView _test_waitForAlert]):
+
 2020-05-22  Chris Dumez  <cdumez@apple.com>
 
         [WKTR] Make TestController::resetStateToConsistentValues() more robust against failures to navigate to about:blank

@@ -340,7 +340,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 
 static String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const ResourceRequest& request)
 {
-    return session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No, ShouldAskITP::Yes).first;
+    return session.cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
 }
 
 static String cookieRequestHeaderFieldValue(const CookieJar* cookieJar, const ResourceRequest& request)

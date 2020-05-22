@@ -4745,6 +4745,7 @@
 		DECA806B1F9FED6A00E3B661 /* UnifiedSource298.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7FCD1F9FE99500E3B661 /* UnifiedSource298.cpp */; };
 		DECA806C1F9FED6A00E3B661 /* UnifiedSource299.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7FDA1F9FE9A200E3B661 /* UnifiedSource299.cpp */; };
 		DECA806D1F9FED6A00E3B661 /* UnifiedSource300.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7FBB1F9FE98300E3B661 /* UnifiedSource300.cpp */; };
+		DF19E2AC24772BC1007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h in Headers */ = {isa = PBXBuildFile; fileRef = DF19E2AA247729A6007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */; };
 		DF9AFD7313FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */; };
 		E0FEF372B17C53EAC1C1FBEE /* EventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E0FEF371B17C53EAC1C1FBEE /* EventSource.h */; };
@@ -15085,6 +15086,7 @@
 		DECA7FF31F9FE9B800E3B661 /* UnifiedSource289.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource289.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource289.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DECA7FF41F9FE9B900E3B661 /* UnifiedSource255.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource255.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource255.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DECA7FF51F9FE9BA00E3B661 /* UnifiedSource256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource256.cpp; path = "DerivedSources/WebCore/unified-sources/UnifiedSource256.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF19E2AA247729A6007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShouldRelaxThirdPartyCookieBlocking.h; sourceTree = "<group>"; };
 		DF7E9A294C7AACE0AD89B3DD /* MathMLOperatorDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLOperatorDictionary.h; sourceTree = "<group>"; };
 		DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundationObjC.h; sourceTree = "<group>"; };
 		DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateAVFoundationObjC.mm; sourceTree = "<group>"; };
@@ -20781,6 +20783,7 @@
 				514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */,
 				CE7A6C27208537E200FA2B46 /* SameSiteInfo.cpp */,
 				CE7A6C26208537E200FA2B46 /* SameSiteInfo.h */,
+				DF19E2AA247729A6007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h */,
 				510D4A2E103165EE0049EA54 /* SocketStreamError.h */,
 				510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */,
 				510D4A31103165EE0049EA54 /* SocketStreamHandle.h */,
@@ -32926,6 +32929,7 @@
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				834DFAD01F7DAE5D00C2725B /* SharedStringHash.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
+				DF19E2AC24772BC1007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h in Headers */,
 				8362E8C120CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */,

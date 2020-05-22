@@ -1254,6 +1254,23 @@ static _WKWebViewCategory toWKWebViewCategory(WebKit::WebViewCategory category)
     _pageConfiguration->setIgnoresAppBoundDomains(ignoresAppBoundDomains);
 }
 
+- (BOOL)_shouldRelaxThirdPartyCookieBlocking
+{
+    return _pageConfiguration->shouldRelaxThirdPartyCookieBlocking() == WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes;
+}
+
+- (void)_setShouldRelaxThirdPartyCookieBlocking:(BOOL)relax
+{
+    bool allowed = WebCore::applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+#if PLATFORM(MAC)
+    allowed = allowed || WebCore::MacApplication::isSafari();
+#endif
+    if (!allowed)
+        [NSException raise:NSObjectNotAvailableException format:@"_shouldRelaxThirdPartyCookieBlocking may only be used by Mac Safari."];
+
+    _pageConfiguration->setShouldRelaxThirdPartyCookieBlocking(relax ? WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes : WebCore::ShouldRelaxThirdPartyCookieBlocking::No);
+}
+
 - (NSString *)_processDisplayName
 {
     return _pageConfiguration->processDisplayName();

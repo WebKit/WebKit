@@ -32,3 +32,7 @@
 - (NSString *)waitForAlert;
 
 @end
+
+@interface WKWebView (TestUIDelegateExtras)
+- (NSString *)_test_waitForAlert;
+@end

@@ -31,6 +31,7 @@
 
 namespace WebCore {
 class NetworkStorageSession;
+enum class ShouldRelaxThirdPartyCookieBlocking : bool;
 }
 
 namespace WebKit {
@@ -42,7 +43,7 @@ public:
     bool isSupported();
 
     String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies);
-    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString);
+    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
 
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);

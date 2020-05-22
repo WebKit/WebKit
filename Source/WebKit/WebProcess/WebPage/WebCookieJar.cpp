@@ -69,11 +69,18 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
     if (firstPartyDomain == resourceDomain)
         return false;
 
-    if (frame && frame->frameLoaderClient()->hasFrameSpecificStorageAccess())
-        return false;
-
-    if (frame && frame->page() && frame->page()->hasPageLevelStorageAccess(firstPartyDomain, resourceDomain))
-        return false;
+    if (frame) {
+        if (frame->frameLoaderClient()->hasFrameSpecificStorageAccess())
+            return false;
+        if (auto* page = frame->page()) {
+            if (page->hasPageLevelStorageAccess(firstPartyDomain, resourceDomain))
+                return false;
+            if (auto* corePage = page->corePage()) {
+                if (corePage->shouldRelaxThirdPartyCookieBlocking() == WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes)
+                    return false;
+            }
+        }
+    }
 
     // The WebContent process does not have enough information to deal with other policies than ThirdPartyCookieBlockingMode::All so we have to go to the NetworkProcess for all
     // other policies and the request may end up getting blocked on NetworkProcess side.
@@ -103,6 +110,19 @@ bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForC
     return frame.isMainFrame() || RegistrableDomain { firstPartyForCookies } == resourceDomain;
 }
 
+static WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking(const WebFrame* frame)
+{
+    if (!frame)
+        return WebCore::ShouldRelaxThirdPartyCookieBlocking::No;
+    auto* page = frame->page();
+    if (!page)
+        return WebCore::ShouldRelaxThirdPartyCookieBlocking::No;
+    auto* corePage = page->corePage();
+    if (!corePage)
+        return WebCore::ShouldRelaxThirdPartyCookieBlocking::No;
+    return corePage->shouldRelaxThirdPartyCookieBlocking();
+}
+
 String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 {
     auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
@@ -125,7 +145,7 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 
     String cookieString;
     bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookiesForDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookieString, secureCookiesAccessed), 0))
         return { };
 
     return cookieString;
@@ -148,9 +168,9 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     auto pageID = webFrame->page()->identifier();
 
     if (isEligibleForCache(*webFrame, document.firstPartyForCookies(), url))
-        m_cache.setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, cookieString);
+        m_cache.setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, cookieString, shouldRelaxThirdPartyCookieBlocking(webFrame));
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, shouldAskITPInNetworkProcess, cookieString, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
 }
 
 void WebCookieJar::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
@@ -196,15 +216,15 @@ bool WebCookieJar::cookiesEnabled(const Document& document) const
 std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const
 {
     ShouldAskITP shouldAskITPInNetworkProcess = ShouldAskITP::No;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
     auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (shouldBlockCookies(webFrame, firstParty, url, shouldAskITPInNetworkProcess))
         return { };
 #endif
 
     String cookieString;
     bool secureCookiesAccessed = false;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookieString, secureCookiesAccessed), 0))
         return { };
     return { cookieString, secureCookiesAccessed ? WebCore::SecureCookiesAccessed::Yes : WebCore::SecureCookiesAccessed::No };
 }
@@ -220,7 +240,7 @@ bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& u
 
     Optional<FrameIdentifier> frameID = webFrame ? makeOptional(webFrame->frameID()) : WTF::nullopt;
     Optional<PageIdentifier> pageID = webFrame && webFrame->page() ? makeOptional(webFrame->page()->identifier()) : WTF::nullopt;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
         return false;
     return true;
 }

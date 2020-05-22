@@ -131,6 +131,7 @@ public:
     bool loadsSubresources { true };
     bool loadsFromNetwork { true };
     bool userScriptsShouldWaitUntilNotification { true };
+    ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
 };
 
 }

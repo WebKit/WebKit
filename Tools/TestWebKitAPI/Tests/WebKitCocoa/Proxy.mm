@@ -182,3 +182,97 @@ TEST(WebKit, SecureProxyConnection)
 } // namespace TestWebKitAPI
 
 #endif // HAVE(SSL)
+
+#if HAVE(NETWORK_FRAMEWORK)
+
+namespace TestWebKitAPI {
+
+TEST(WebKit, RelaxThirdPartyCookieBlocking)
+{
+    auto runTest = [] (bool shouldRelaxThirdPartyCookieBlocking) {
+        HTTPServer server([connectionCount = 0, shouldRelaxThirdPartyCookieBlocking] (Connection connection) mutable {
+            ++connectionCount;
+            connection.receiveHTTPRequest([connection, connectionCount, shouldRelaxThirdPartyCookieBlocking] (Vector<char>&& request) {
+                String reply;
+                const char* body =
+                "<script>"
+                    "fetch("
+                        "'http://webkit.org/path3',"
+                        "{credentials:'include'}"
+                    ").then(()=>{"
+                        "alert('fetched')"
+                    "}).catch((e)=>{"
+                        "alert(e)"
+                    "})"
+                "</script>";
+                switch (connectionCount) {
+                case 1: {
+                    EXPECT_TRUE(strstr(request.data(), "GET http://webkit.org/path1 HTTP/1.1\r\n"));
+                    reply = makeString(
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Length: ", strlen(body), "\r\n"
+                        "Set-Cookie: a=b\r\n"
+                        "Connection: close\r\n"
+                        "\r\n", body
+                    );
+                    break;
+                }
+                case 3: {
+                    EXPECT_TRUE(strstr(request.data(), "GET http://example.com/path2 HTTP/1.1\r\n"));
+                    reply = makeString(
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: text/html\r\n"
+                        "Content-Length: ", strlen(body), "\r\n"
+                        "Connection: close\r\n"
+                        "\r\n", body
+                    );
+                    break;
+                }
+                case 2:
+                case 4:
+                    if (connectionCount == 2 || shouldRelaxThirdPartyCookieBlocking)
+                        EXPECT_TRUE(strstr(request.data(), "Cookie: a=b\r\n"));
+                    else
+                        EXPECT_FALSE(strstr(request.data(), "Cookie: a=b\r\n"));
+                    EXPECT_TRUE(strstr(request.data(), "GET http://webkit.org/path3 HTTP/1.1\r\n"));
+                    reply =
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Length: 0\r\n"
+                        "Access-Control-Allow-Origin: http://example.com\r\n"
+                        "Access-Control-Allow-Credentials: true\r\n"
+                        "Connection: close\r\n"
+                        "\r\n";
+                    break;
+                default:
+                    ASSERT_NOT_REACHED();
+                }
+                connection.send(WTFMove(reply));
+            });
+        });
+
+        auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setProxyConfiguration:@{
+            (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+            (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+        }];
+        [storeConfiguration setAllowsServerPreconnect:NO];
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+        [dataStore _setResourceLoadStatisticsEnabled:YES];
+        auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        [viewConfiguration _setShouldRelaxThirdPartyCookieBlocking:shouldRelaxThirdPartyCookieBlocking];
+        [viewConfiguration setWebsiteDataStore:dataStore.get()];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org/path1"]]];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "fetched");
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/path2"]]];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "fetched");
+    };
+    runTest(true);
+    runTest(false);
+}
+
+} // namespace TestWebKitAPI
+
+#endif // HAVE(NETWORK_FRAMEWORK)

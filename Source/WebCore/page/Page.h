@@ -36,6 +36,7 @@
 #include "RegistrableDomain.h"
 #include "RenderingUpdateScheduler.h"
 #include "ScrollTypes.h"
+#include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include "Supplementable.h"
 #include "Timer.h"
 #include "UserInterfaceLayoutDirection.h"
@@ -721,6 +722,7 @@ public:
 
     bool loadsSubresources() const { return m_loadsSubresources; }
     bool loadsFromNetwork() const { return m_loadsFromNetwork; }
+    ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
     bool canUpdateThrottlingReason(ThrottlingReason reason) const { return !m_throttlingReasonsOverridenForTesting.contains(reason); }
@@ -1047,6 +1049,7 @@ private:
     bool m_shouldFireEvents { true };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
+    ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 };

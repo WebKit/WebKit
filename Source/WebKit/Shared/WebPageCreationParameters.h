@@ -43,6 +43,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
 #include <wtf/HashMap.h>
@@ -221,6 +222,7 @@ struct WebPageCreationParameters {
     bool shouldRenderCanvasInGPUProcess { false };
     bool needsInAppBrowserPrivacyQuirks { false };
     bool limitsNavigationsToAppBoundDomains { false };
+    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 
 #if PLATFORM(GTK)
     String themeName;

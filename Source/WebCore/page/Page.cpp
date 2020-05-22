@@ -298,6 +298,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_corsDisablingPatterns(WTFMove(pageConfiguration.corsDisablingPatterns))
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
     , m_loadsFromNetwork(pageConfiguration.loadsFromNetwork)
+    , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
 {
     updateTimerThrottlingState();
 

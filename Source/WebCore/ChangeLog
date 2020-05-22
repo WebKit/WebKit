@@ -1,3 +1,56 @@
+2020-05-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to unblock third party cookies from WKWebViews with ResourceLoadStatistics turned on
+        https://bugs.webkit.org/show_bug.cgi?id=212058
+        <rdar://problem/60595539>
+
+        Reviewed by John Wilander.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CookieJar.cpp:
+        (WebCore::shouldRelaxThirdPartyCookieBlocking):
+        (WebCore::CookieJar::cookies const):
+        (WebCore::CookieJar::setCookies):
+        (WebCore::CookieJar::cookieRequestHeaderFieldValue const):
+        (WebCore::CookieJar::getRawCookies const):
+        * page/Page.cpp:
+        (WebCore::m_shouldRelaxThirdPartyCookieBlocking):
+        * page/Page.h:
+        (WebCore::Page::shouldRelaxThirdPartyCookieBlocking const):
+        * page/PageConfiguration.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::maxAgeCacheCap):
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ShouldRelaxThirdPartyCookieBlocking.h: Added.
+        * platform/network/cf/NetworkStorageSessionCFNetWin.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::cookiesForURL const):
+        (WebCore::NetworkStorageSession::cookiesForSession const):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::createCurlRequest):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::cookiesForSession):
+        (WebCore::NetworkStorageSession::cookiesForDOM const):
+        (WebCore::NetworkStorageSession::cookieRequestHeaderFieldValue const):
+
 2020-05-22  Oriol Brufau  <obrufau@igalia.com>
 
         Don't put out-of-flow boxes in anonymous flex/grid items
