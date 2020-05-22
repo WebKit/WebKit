@@ -443,12 +443,6 @@ template<> struct ArgumentCoder<WebCore::WindowFeatures> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::WindowFeatures&);
 };
 
-template<> struct ArgumentCoder<WebCore::Color> {
-    static void encode(Encoder&, const WebCore::Color&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Color&);
-    static Optional<WebCore::Color> decode(Decoder&);
-};
-
 #if ENABLE(DRAG_SUPPORT)
 template<> struct ArgumentCoder<WebCore::DragData> {
     static void encode(Encoder&, const WebCore::DragData&);

@@ -286,6 +286,9 @@ public:
     static bool isBlackColor(const Color&);
     static bool isWhiteColor(const Color&);
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Color> decode(Decoder&);
+
 private:
     void setRGB(int r, int g, int b) { setRGB(makeRGB(r, g, b)); }
     void setRGB(RGBA32);
@@ -437,6 +440,74 @@ inline bool Color::isWhiteColor(const Color& color)
     }
     
     return color.rgb() == Color::white;
+}
+
+template<class Encoder>
+void Color::encode(Encoder& encoder) const
+{
+    if (isExtended()) {
+        encoder << true;
+        encoder << asExtended().red();
+        encoder << asExtended().green();
+        encoder << asExtended().blue();
+        encoder << asExtended().alpha();
+        encoder << asExtended().colorSpace();
+        return;
+    }
+
+    encoder << false;
+
+    if (!isValid()) {
+        encoder << false;
+        return;
+    }
+
+    // FIXME: This should encode whether the color is semantic.
+
+    uint32_t value = rgb().value();
+
+    encoder << true;
+    encoder << value;
+}
+
+template<class Decoder>
+Optional<Color> Color::decode(Decoder& decoder)
+{
+    bool isExtended;
+    if (!decoder.decode(isExtended))
+        return WTF::nullopt;
+
+    if (isExtended) {
+        float red;
+        float green;
+        float blue;
+        float alpha;
+        ColorSpace colorSpace;
+        if (!decoder.decode(red))
+            return WTF::nullopt;
+        if (!decoder.decode(green))
+            return WTF::nullopt;
+        if (!decoder.decode(blue))
+            return WTF::nullopt;
+        if (!decoder.decode(alpha))
+            return WTF::nullopt;
+        if (!decoder.decode(colorSpace))
+            return WTF::nullopt;
+        return Color(red, green, blue, alpha, colorSpace);
+    }
+
+    bool isValid;
+    if (!decoder.decode(isValid))
+        return WTF::nullopt;
+
+    if (!isValid)
+        return Color();
+
+    uint32_t value;
+    if (!decoder.decode(value))
+        return WTF::nullopt;
+
+    return Color { SimpleColor { value } };
 }
 
 constexpr RGBA32 makeRGB(int r, int g, int b)
