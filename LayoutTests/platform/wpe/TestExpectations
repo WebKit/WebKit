@@ -983,6 +983,9 @@ imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 
+# Passing since r261992.
+fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////

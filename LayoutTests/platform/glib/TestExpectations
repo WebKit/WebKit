@@ -160,6 +160,48 @@ webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-
 
 webkit.org/b/212054 imported/w3c/web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse.html [ Pass ]
 
+fast/text/emoji-gender-2-3.html [ Pass ]
+fast/text/emoji-gender-2-4.html [ Pass ]
+fast/text/emoji-gender-2-5.html [ Pass ]
+fast/text/emoji-gender-2-6.html [ Pass ]
+fast/text/emoji-gender-2-7.html [ Pass ]
+fast/text/emoji-gender-2-8.html [ Pass ]
+fast/text/emoji-gender-2-9.html [ Pass ]
+fast/text/emoji-gender-3.html [ Pass ]
+fast/text/emoji-gender-4.html [ Pass ]
+fast/text/emoji-gender-5.html [ Pass ]
+fast/text/emoji-gender-6.html [ Pass ]
+fast/text/emoji-gender-8.html [ Pass ]
+fast/text/emoji-gender-9.html [ Pass ]
+fast/text/emoji-gender-fe0f-3.html [ Pass ]
+fast/text/emoji-gender-fe0f-4.html [ Pass ]
+fast/text/emoji-gender-fe0f-5.html [ Pass ]
+fast/text/emoji-gender-fe0f-6.html [ Pass ]
+fast/text/emoji-gender-fe0f-7.html [ Pass ]
+fast/text/emoji-gender-fe0f-8.html [ Pass ]
+fast/text/emoji-gender-fe0f-9.html [ Pass ]
+fast/text/emoji-gender.html [ Pass ]
+
+# Some Apple ports don't support RTL scrollbars.
+fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
+fast/scrolling/rtl-scrollbars-iframe-offset.html [ Pass ]
+fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-select-right.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-simple.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-elementFromPoint.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-padding.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-position-absolute.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow-simple.html [ Pass ]
+fast/scrolling/rtl-scrollbars-overflow.html [ Pass ]
+fast/scrolling/rtl-scrollbars-positioned-intersect-scrollbars.html [ Pass ]
+fast/scrolling/rtl-scrollbars-positioning.html [ Pass ]
+fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
+fast/scrolling/rtl-scrollbars.html [ Pass ]
+
+webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////
