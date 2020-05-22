@@ -134,17 +134,14 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition(const Floa
     return ScrollingTreeFrameScrollingNode::adjustedScrollPosition(scrollPosition, clamp);
 }
 
-void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged()
+void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollingLayerPositionAction action)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons());
 
     if (isRootNode())
         updateMainFramePinAndRubberbandState();
 
-    if (hasSynchronousScrollingReasons())
-        scrollingTree().scrollingTreeNodeDidScroll(*this, ScrollingLayerPositionAction::Set);
-    else
-        ScrollingTreeFrameScrollingNode::currentScrollPositionChanged();
+    ScrollingTreeFrameScrollingNode::currentScrollPositionChanged(hasSynchronousScrollingReasons() ? ScrollingLayerPositionAction::Set : action);
 
     if (scrollingTree().scrollingPerformanceLoggingEnabled()) {
         unsigned unfilledArea = exposedUnfilledArea();

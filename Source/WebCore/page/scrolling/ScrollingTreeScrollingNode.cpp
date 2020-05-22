@@ -252,10 +252,10 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
     scrollingTree().setIsHandlingProgrammaticScroll(false);
 }
 
-void ScrollingTreeScrollingNode::currentScrollPositionChanged()
+void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollingLayerPositionAction action)
 {
-    scrollingTree().scrollingTreeNodeDidScroll(*this);
     m_scrolledSinceLastCommit = true;
+    scrollingTree().scrollingTreeNodeDidScroll(*this, action);
 }
 
 bool ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect>)

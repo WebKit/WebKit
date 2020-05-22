@@ -65,8 +65,8 @@ protected:
 private:
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
 
-    void currentScrollPositionChanged() override;
-    void repositionScrollingLayers() override;
+    void currentScrollPositionChanged(ScrollingLayerPositionAction) final;
+    void repositionScrollingLayers() final;
 
     ScrollingTreeScrollingNodeDelegateMac m_delegate;
 

@@ -1,3 +1,24 @@
+2020-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling thread scrolls on sync-scrolling scrollers don't get to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=212225
+
+        Reviewed by Tim Horton.
+
+        Some scrolls on nodes with synchronousScrollingReasons failed to set the m_scrolledSinceLastCommit bit,
+        because ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged() bypassed a call to the superclass.
+
+        Fix by passing ScrollingLayerPositionAction so that it can just call super.
+
+        This will be tested by existing tests after some upcoming scroll snap changes.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::currentScrollPositionChanged):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged):
+
 2020-05-21  Peng Liu  <peng.liu6@apple.com>
 
         Fix issues of the Picture-in-Picture API under stress tests
