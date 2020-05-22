@@ -1,3 +1,17 @@
+2020-05-22  Kenneth Russell  <kbr@chromium.org>
+
+        [ANGLE - iOS] fast/canvas/webgl/webgl-depth-texture.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212271
+
+        Reviewed by Dean Jackson.
+
+        Use ES 3.0 sized internal formats for unsized depth/stencil
+        textures when the OES_depth_texture extension is unavailable - as
+        is the case in iOS's ES 3.0 driver.
+
+        * src/libANGLE/renderer/gl/formatutilsgl.cpp:
+        (rx::nativegl::GetNativeInternalFormat):
+
 2020-05-21  Dean Jackson  <dino@apple.com>
 
         PVRTC compressed textures are failing with ANGLE backend

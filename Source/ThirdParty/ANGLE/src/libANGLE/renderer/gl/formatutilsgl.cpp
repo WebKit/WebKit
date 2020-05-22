@@ -547,6 +547,53 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
             // it's in unsized SRGB texture formats.
             result = internalFormat.sizedInternalFormat;
         }
+        else if ((internalFormat.internalFormat == GL_DEPTH_COMPONENT ||
+                  internalFormat.internalFormat == GL_DEPTH_STENCIL) &&
+                 !functions->hasGLESExtension("GL_OES_depth_texture"))
+        {
+            // Use ES 3.0 sized internal formats for depth/stencil textures when the driver doesn't
+            // advertise GL_OES_depth_texture, since it's likely the driver will reject unsized
+            // internal formats.
+            switch (internalFormat.internalFormat)
+            {
+                case GL_DEPTH_COMPONENT:
+                    if (internalFormat.type == GL_UNSIGNED_SHORT)
+                    {
+                        // Could consider promoting this to a higher bit depth
+                        result = GL_DEPTH_COMPONENT16;
+                    }
+                    else if (internalFormat.type == GL_UNSIGNED_INT)
+                    {
+                        if (functions->hasGLESExtension("GL_OES_depth32"))
+                        {
+                            result = GL_DEPTH_COMPONENT32_OES;
+                        }
+                        else
+                        {
+                            // Best-effort attempt to provide as many bits as possible.
+                            result = GL_DEPTH_COMPONENT24;
+                        }
+                    }
+                    else if (internalFormat.type == GL_FLOAT)
+                    {
+                        result = GL_DEPTH_COMPONENT32F;
+                    }
+                    break;
+                case GL_DEPTH_STENCIL:
+                    if (internalFormat.type == GL_UNSIGNED_INT_24_8)
+                    {
+                        result = GL_DEPTH24_STENCIL8;
+                    }
+                    else if (internalFormat.type == GL_FLOAT_32_UNSIGNED_INT_24_8_REV)
+                    {
+                        result = GL_DEPTH32F_STENCIL8;
+                    }
+                    break;
+                default:
+                    UNREACHABLE();
+                    break;
+            }
+        }
     }
 
     return result;
