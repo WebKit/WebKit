@@ -1,3 +1,15 @@
+2020-05-22  Kenneth Russell  <kbr@chromium.org>
+
+        Remove failure expectation for webgl/1.0.3/conformance/extensions/webgl-depth-texture.html on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=212284
+
+        Reviewed by Dean Jackson.
+
+        Remove failure expectations for this test on iOS since it's now
+        passing completely, as on other platforms.
+
+        * platform/ios/webgl/1.0.3/conformance/extensions/webgl-depth-texture-expected.txt: Removed.
+
 2020-05-22  Chris Dumez  <cdumez@apple.com>
 
         Revoking an object URL immediately after triggering navigation causes navigation to fail
