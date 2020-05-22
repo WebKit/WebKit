@@ -1217,6 +1217,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(JSGlobalObject* globalObject, 
             result->putDirectIndex(globalObject, k, v, 0, PutDirectIndexShouldThrow);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
+        setLength(globalObject, vm, result, actualDeleteCount);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
     if (itemCount < actualDeleteCount) {

@@ -636,9 +636,6 @@ test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-
 test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
-  default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
-  strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
 test/built-ins/ArrayBuffer/prototype/byteLength/detached-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'

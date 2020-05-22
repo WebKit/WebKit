@@ -1,3 +1,21 @@
+2020-05-22  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array.prototype.splice doesn't set "length" of returned object
+        https://bugs.webkit.org/show_bug.cgi?id=212285
+
+        Reviewed by Darin Adler.
+
+        This change implements step 12 of Array.prototype.splice [1], which is observable
+        if result object is not JSArray, aligning JSC with V8 and SpiderMonkey.
+
+        Only slow path of splice() is affected by this patch; zero-argument case already
+        performs setLength(). Microbenchmarks are neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-array.prototype.splice
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+
 2020-05-22  Saam Barati  <sbarati@apple.com>
 
         in_by_val inside structure property for-in loop should use an opcode like has_structure_property but for "in"
