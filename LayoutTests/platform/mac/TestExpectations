@@ -1678,7 +1678,7 @@ webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 [ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]
 
 # <rdar://problem/40172428>
-[ Catalina+ ] fast/text/font-collection.html [ ImageOnlyFailure ]
+webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailure ]
 [ Catalina+ ] fast/text/woff2.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/45056204>

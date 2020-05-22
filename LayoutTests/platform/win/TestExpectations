@@ -4502,3 +4502,5 @@ fast/repaint/iframe-on-subpixel-position.html [ Skip ]
 # Windows can't seem to handle the fonts used in these tests.
 webkit.org/b/211860 fast/text/multiple-codeunit-vertical-upright.html [ Pass ImageOnlyFailure ]
 webkit.org/b/211860 fast/text/multiple-codeunit-vertical-upright-2.html [ Pass ImageOnlyFailure ]
+webkit.org/b/212172 fast/text/font-collection.html [ ImageOnlyFailure ]
+webkit.org/b/212172 fast/text/font-collection-2.html [ ImageOnlyFailure ]
