@@ -122,6 +122,33 @@ void TestAsyncMessageWithMultipleArguments::send(std::unique_ptr<IPC::Encoder>&&
 
 #endif
 
+#if ENABLE(TEST_FEATURE)
+
+void TestAsyncMessageWithConnection::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&)>&& completionHandler)
+{
+    Optional<bool> flag;
+    decoder >> flag;
+    if (!flag) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*flag));
+}
+
+void TestAsyncMessageWithConnection::cancelReply(CompletionHandler<void(bool&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<bool>::create());
+}
+
+void TestAsyncMessageWithConnection::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag)
+{
+    *encoder << flag;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+#endif
+
 void TestSyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, uint8_t reply)
 {
     *encoder << reply;
@@ -162,6 +189,12 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
 #if ENABLE(TEST_FEATURE)
     if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithMultipleArguments::name()) {
         IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &WebPage::testAsyncMessageWithMultipleArguments);
+        return;
+    }
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithConnection::name()) {
+        IPC::handleMessageAsyncWantsConnection<Messages::WebPage::TestAsyncMessageWithConnection>(connection, decoder, this, &WebPage::testAsyncMessageWithConnection);
         return;
     }
 #endif

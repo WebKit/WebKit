@@ -26,6 +26,7 @@ messages -> WebPage : WebPageBase {
     TestAsyncMessage(enum:bool WebKit::TestTwoStateEnum twoStateEnum) -> (uint64_t result) Async
     TestAsyncMessageWithNoArguments() -> () Async
     TestAsyncMessageWithMultipleArguments() -> (bool flag, uint64_t value) Async
+    TestAsyncMessageWithConnection(int value) -> (bool flag) Async WantsConnection
 #endif
     TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
     TestSynchronousMessage(bool value) -> (Optional<WebKit::TestClassName> optionalReply) Synchronous

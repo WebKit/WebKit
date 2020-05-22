@@ -474,7 +474,10 @@ def async_message_statement(receiver, message):
         dispatch_function_args.insert(0, 'connection')
 
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
-        dispatch_function_args.insert(0, 'connection')
+        if message.has_attribute(ASYNC_ATTRIBUTE):
+            dispatch_function += 'WantsConnection'
+        else:
+            dispatch_function_args.insert(0, 'connection')
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))

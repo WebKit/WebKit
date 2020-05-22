@@ -1,3 +1,42 @@
+2020-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [IPC] Add support for specifying `Async WantsConnection` in message files
+        https://bugs.webkit.org/show_bug.cgi?id=212276
+
+        Reviewed by Alex Christensen.
+
+        Augments the IPC message receiver generation script to allow for "Async WantsConnection" in `.message.in` files.
+        Currently, specifying this in a message causes the `connection` argument to be passed twice when handling the
+        IPC message. This is because normal async IPC messages without replies normally don't have the `IPC::Connection`
+        argument, and use the overloaded `handleMessage(Connection& connection, ...)` version of `handleMessage` when
+        `WantsConnection` is specified.
+
+        However, in the `Async` reply case, we already pass in the `IPC::Connection`. Instead of overloading the method
+        signature, we introduce a different method instead, named `handleMessageAsyncWantsConnection`, which forwards
+        the given `IPC::Connection` along to the member function.
+
+        Test: TestAsyncMessageWithConnection
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsyncWantsConnection):
+
+        Add another variant of the message receiver template, for the case where the message receiver wants a connection.
+        This is similar to handleMessageSynchronousWantsConnection, above.
+
+        * Scripts/test-superclassMessageReceiver.cpp:
+        (Messages::WebPage::TestAsyncMessageWithConnection::callReply):
+        (Messages::WebPage::TestAsyncMessageWithConnection::cancelReply):
+        (Messages::WebPage::TestAsyncMessageWithConnection::send):
+        (WebKit::WebPage::didReceiveMessage):
+        * Scripts/test-superclassMessages.h:
+        (Messages::WebPage::TestAsyncMessageWithConnection::name):
+        (Messages::WebPage::TestAsyncMessageWithConnection::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessageWithConnection::TestAsyncMessageWithConnection):
+        (Messages::WebPage::TestAsyncMessageWithConnection::arguments const):
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+        * Scripts/webkit/test-superclass.messages.in:
+
 2020-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Excessive hang time in iOS Safari under waitForDidUpdateActivityState

@@ -147,6 +147,36 @@ private:
 };
 #endif
 
+#if ENABLE(TEST_FEATURE)
+class TestAsyncMessageWithConnection {
+public:
+    typedef std::tuple<const int&> Arguments;
+
+    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessageWithConnection; }
+    static const bool isSync = false;
+
+    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&)>&&);
+    static void cancelReply(CompletionHandler<void(bool&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_TestAsyncMessageWithConnectionReply; }
+    using AsyncReply = TestAsyncMessageWithConnectionAsyncReply;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, bool flag);
+    using Reply = std::tuple<bool&>;
+    using ReplyArguments = std::tuple<bool>;
+    explicit TestAsyncMessageWithConnection(const int& value)
+        : m_arguments(value)
+    {
+    }
+
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
 class TestSyncMessage {
 public:
     typedef std::tuple<uint32_t> Arguments;

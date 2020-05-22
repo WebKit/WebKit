@@ -275,6 +275,16 @@ _expected_superclass_results = {
             'conditions': ('ENABLE(TEST_FEATURE)'),
         },
         {
+            'name': 'TestAsyncMessageWithConnection',
+            'parameters': (
+                ('int', 'value'),
+            ),
+            'reply_parameters': (
+                ('bool', 'flag'),
+            ),
+            'conditions': ('ENABLE(TEST_FEATURE)'),
+        },
+        {
             'name': 'TestSyncMessage',
             'parameters': (
                 ('uint32_t', 'param'),
