@@ -80,6 +80,8 @@ static PKPaymentSetupFeatureType platformFeatureType(ApplePaySetupFeatureType fe
     }
 }
 
+#if HAVE(PASSKIT_INSTALLMENT_ITEMS)
+
 static ApplePayInstallmentItemType applePayItemType(PKInstallmentItemType itemType)
 {
     switch (itemType) {
@@ -167,6 +169,8 @@ static Optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayInstall
         [item programTerms],
     };
 }
+
+#endif // HAVE(PASSKIT_INSTALLMENT_ITEMS)
 
 static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(const ApplePayInstallmentConfiguration& coreConfiguration, NSDictionary *applicationMetadata)
 {
