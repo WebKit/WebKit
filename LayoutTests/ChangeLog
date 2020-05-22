@@ -1,3 +1,20 @@
+2020-05-22  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Cannot style ::selection for a flex container
+        https://bugs.webkit.org/show_bug.cgi?id=209822
+
+        Reviewed by Antti Koivisto.
+
+        Add tests verifying ::selection pseudoelement styling is properly applied on direct text-children of a `display: flex;` div and on
+        direct text-children of a `display: block` div with siblings.
+
+        * editing/selection/selection-display-block-sibling.html: Added.
+        * editing/selection/selection-display-flex.html: Added.
+        * platform/gtk/editing/selection/selection-display-block-sibling-expected.png: Added.
+        * platform/gtk/editing/selection/selection-display-block-sibling-expected.txt: Added.
+        * platform/gtk/editing/selection/selection-display-flex-expected.png: Added.
+        * platform/gtk/editing/selection/selection-display-flex-expected.txt: Added.
+
 2020-05-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update test expectations after r261992

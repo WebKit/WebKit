@@ -730,6 +730,8 @@ protected:
     void addPDFURLRect(PaintInfo&, const LayoutPoint&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
 
+    RenderElement* firstNonAnonymousAncestor() const;
+
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
     virtual void willBeDestroyed();

@@ -1,3 +1,35 @@
+2020-05-22  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Cannot style ::selection for a flex container
+        https://bugs.webkit.org/show_bug.cgi?id=209822
+
+        Reviewed by Antti Koivisto.
+
+        When needing to query for pseudostyles, RenderText used to unconditionally check the parent's pseudostyles.  The parent of
+        RenderText objects is often an anonymous box, depending on the presence of siblings, `display` type, etc.  This is problematic
+        as pseudostyles are associated with an element of the DOM, meaning RenderText elements would often fail to find any pseudostyle
+        thanks to their anonymous parent.
+
+        This patch changes RenderText to traverse its tree of ancestry upwards until it finds a non-anonymous ancestor and gets those pseudostyles,
+        rather than unconditionally trying to get pseudostyles from its direct parent.
+
+        Blink does something similar when retrieving pseudostyles:
+
+        https://github.com/chromium/chromium/blob/793cb59c18334f8b506863192bf630776da0f4d2/third_party/blink/renderer/core/paint/selection_painting_utils.cc#L54
+
+        Tests: editing/selection/selection-display-block-sibling.html
+               editing/selection/selection-display-flex.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::firstNonAnonymousAncestor const):
+        * rendering/RenderObject.h:
+        * rendering/RenderText.h:
+        (WebCore::RenderText::getCachedPseudoStyle const): getCachedPseudoStyle from first non-anonymous ancestor, rather than only checking the direct parent.
+        (WebCore::RenderText::selectionBackgroundColor const): Retrieve selectionBackgroundColor from first non-anonymous ancestor rather than only checking the direct parent.
+        (WebCore::RenderText::selectionForegroundColor const): Retrieve selectionForegroundColor from first non-anonymous ancestor rather than only checking the direct parent.
+        (WebCore::RenderText::selectionEmphasisMarkColor const): Retrieve selectionEmphasisMarkColor from first non-anonymous ancestor rather than only checking the direct parent.
+        (WebCore::RenderText::selectionPseudoStyle const): Retrieve selectionPseudoStyle from first non-anonymous ancestor rather than only checking the direct parent.
+
 2020-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DataTransfer.files contains multiple files when pasting a single image with multiple representations

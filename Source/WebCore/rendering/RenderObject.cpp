@@ -165,6 +165,14 @@ bool RenderObject::isDescendantOf(const RenderObject* ancestor) const
     return false;
 }
 
+RenderElement* RenderObject::firstNonAnonymousAncestor() const
+{
+    auto* ancestor = parent();
+    while (ancestor && ancestor->isAnonymous())
+        ancestor = ancestor->parent();
+    return ancestor;
+}
+
 bool RenderObject::isLegend() const
 {
     return node() && node()->hasTagName(legendTag);

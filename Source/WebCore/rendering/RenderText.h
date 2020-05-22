@@ -283,27 +283,38 @@ inline const RenderStyle& RenderText::firstLineStyle() const
 
 inline const RenderStyle* RenderText::getCachedPseudoStyle(PseudoId pseudoId, const RenderStyle* parentStyle) const
 {
-    return parent()->getCachedPseudoStyle(pseudoId, parentStyle);
+    // Pseudostyle is associated with an element, so ascend the tree until we find a non-anonymous ancestor.
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->getCachedPseudoStyle(pseudoId, parentStyle);
+    return nullptr;
 }
 
 inline Color RenderText::selectionBackgroundColor() const
 {
-    return parent()->selectionBackgroundColor();
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->selectionBackgroundColor();
+    return Color();
 }
 
 inline Color RenderText::selectionForegroundColor() const
 {
-    return parent()->selectionForegroundColor();
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->selectionForegroundColor();
+    return Color();
 }
 
 inline Color RenderText::selectionEmphasisMarkColor() const
 {
-    return parent()->selectionEmphasisMarkColor();
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->selectionEmphasisMarkColor();
+    return Color();
 }
 
 inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
 {
-    return parent()->selectionPseudoStyle();
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->selectionPseudoStyle();
+    return nullptr;
 }
 
 inline RenderText* Text::renderer() const
