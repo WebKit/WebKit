@@ -478,7 +478,7 @@ void RegisterContextCompatibilityTests()
         EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE,
     }};
 
-    LoadEntryPointsWithUtilLoader();
+    LoadEntryPointsWithUtilLoader(angle::GLESDriverType::AngleEGL);
 
     if (eglGetPlatformDisplayEXT == nullptr)
     {

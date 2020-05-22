@@ -82,13 +82,30 @@ def gn_target_to_blueprint_target(target, target_info):
     if 'output_name' in target_info:
         return target_info['output_name']
 
-    # Prefix all targets with angle_
-    # Remove the prefix //: from gn target names
-    cleaned_path = re.sub(r'^//.*:', '', target)
-    prefix = "angle_"
-    if not cleaned_path.startswith(prefix):
-        cleaned_path = prefix + cleaned_path
-    return cleaned_path
+    # Split the gn target name (in the form of //gn_file_path:target_name) into gn_file_path and
+    # target_name
+    target_regex = re.compile(r"^//([a-zA-Z0-9\-_/]*):([a-zA-Z0-9\-_\.]+)$")
+    match = re.match(target_regex, target)
+    assert match != None
+
+    gn_file_path = match.group(1)
+    target_name = match.group(2)
+    assert len(target_name) > 0
+
+    # Clean up the gn file path to be a valid blueprint target name.
+    gn_file_path = gn_file_path.replace("/", "_").replace(".", "_").replace("-", "_")
+
+    # Generate a blueprint target name by merging the gn path and target so each target is unique.
+    # Prepend the 'angle' prefix to all targets in the root path (empty gn_file_path). Skip this step if the target name already starts with 'angle' to avoid target names such as 'angle_angle_common'.
+    root_prefix = "angle"
+    if len(gn_file_path) == 0 and not target_name.startswith(root_prefix):
+        gn_file_path = root_prefix
+
+    # Avoid names such as _angle_common if the gn_file_path is empty.
+    if len(gn_file_path) > 0:
+        gn_file_path += "_"
+
+    return gn_file_path + target_name
 
 
 def remap_gn_path(path):
@@ -365,6 +382,8 @@ def action_target_to_blueprint(target, build_info):
                                                              target_info['args'])
     bp['cmd'] = ' '.join(cmd)
 
+    bp['sdk_version'] = sdk_version
+
     return (blueprint_type, bp)
 
 
@@ -445,6 +464,7 @@ def main():
                 '--extra-packages com.android.angle.common',
             ],
             'srcs': [':ANGLE_srcs'],
+            'plugins': ['java_api_finder',],
             'privileged':
                 True,
             'owner':
@@ -488,7 +508,7 @@ def main():
     for (blueprint_type, blueprint_data) in blueprint_targets:
         write_blueprint(output, blueprint_type, blueprint_data)
 
-    print '\n'.join(output)
+    print('\n'.join(output))
 
 
 if __name__ == '__main__':

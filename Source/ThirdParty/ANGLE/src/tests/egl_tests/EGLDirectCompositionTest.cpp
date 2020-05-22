@@ -51,7 +51,7 @@ class EGLDirectCompositionTest : public ANGLETest
 
         mOSWindow->initialize("EGLDirectCompositionTest", WINDOWWIDTH, WINDOWHEIGHT);
         auto nativeWindow = mOSWindow->getNativeWindow();
-        mOSWindow->setVisible(true);
+        setWindowVisible(mOSWindow, true);
 
         // Create DispatcherQueue for window to process compositor callbacks
         CreateDispatcherQueue(mDispatcherController);

@@ -27,6 +27,9 @@ std::function<void()> SetupContextReplay = reinterpret_cast<void (*)()>(
 std::function<void(int)> ReplayContextFrame = reinterpret_cast<void (*)(int)>(
     ANGLE_MACRO_CONCAT(ReplayContext,
                        ANGLE_MACRO_CONCAT(ANGLE_CAPTURE_REPLAY_SAMPLE_CONTEXT_ID, Frame)));
+std::function<void()> ResetContextReplay = reinterpret_cast<void (*)()>(
+    ANGLE_MACRO_CONCAT(ResetContext,
+                       ANGLE_MACRO_CONCAT(ANGLE_CAPTURE_REPLAY_SAMPLE_CONTEXT_ID, Replay)));
 
 class CaptureReplaySample : public SampleApplication
 {
@@ -59,12 +62,19 @@ class CaptureReplaySample : public SampleApplication
         // Compute the current frame, looping from kReplayFrameStart to kReplayFrameEnd.
         uint32_t frame =
             kReplayFrameStart + (mCurrentFrame % (kReplayFrameEnd - kReplayFrameStart));
+
+        if (mPreviousFrame > frame)
+        {
+            ResetContextReplay();
+        }
         ReplayContextFrame(frame);
+        mPreviousFrame = frame;
         mCurrentFrame++;
     }
 
   private:
-    uint32_t mCurrentFrame = 0;
+    uint32_t mCurrentFrame  = 0;
+    uint32_t mPreviousFrame = 0;
 };
 
 int main(int argc, char **argv)

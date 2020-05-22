@@ -1,8 +1,8 @@
 diff --git a/include/platform/FeaturesGL.h b/include/platform/FeaturesGL.h
-index 5b36f271f..85947e40f 100644
+index 4c7595bb4..5756029fb 100644
 --- a/include/platform/FeaturesGL.h
 +++ b/include/platform/FeaturesGL.h
-@@ -412,6 +412,12 @@ struct FeaturesGL : FeatureSetBase
+@@ -418,6 +418,12 @@ struct FeaturesGL : FeatureSetBase
          "Rewrite row major matrices in shaders as column major as a driver bug workaround",
          &members, "http://anglebug.com/2273"};
  
@@ -28,7 +28,7 @@ index 131674008..d065c3a9f 100644
  #include <stdlib.h>
  #include <array>
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index 0ca967c17..0a6dcc248 100644
+index e745806a4..46b05b082 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,11 @@
@@ -43,6 +43,19 @@ index 0ca967c17..0a6dcc248 100644
  #include "common/utilities.h"
  #include <GLSLANG/ShaderVars.h>
  #include "GLES3/gl3.h"
+diff --git a/src/common/version.h b/src/common/version.h
+index 1aa31fd46..56d6be09c 100644
+--- a/src/common/version.h
++++ b/src/common/version.h
+@@ -7,7 +7,7 @@
+ #ifndef COMMON_VERSION_H_
+ #define COMMON_VERSION_H_
+ 
+-#include "commit.h"
++#include "id/commit.h"
+ 
+ #define ANGLE_MAJOR_VERSION 2
+ #define ANGLE_MINOR_VERSION 1
 diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 index 4711774cd..cf25e4823 100644
 --- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
@@ -56,7 +69,7 @@ index 4711774cd..cf25e4823 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 8c9fd3298..3962a214b 100644
+index 2fcd81ec1..56ea8e1d4 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,7 @@
@@ -68,7 +81,7 @@ index 8c9fd3298..3962a214b 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.h b/src/compiler/translator/glslang_tab_autogen.h
-index e0e8d6447..ebf8d90f5 100644
+index 6a1136162..037833680 100644
 --- a/src/compiler/translator/glslang_tab_autogen.h
 +++ b/src/compiler/translator/glslang_tab_autogen.h
 @@ -1,5 +1,7 @@
@@ -79,8 +92,36 @@ index e0e8d6447..ebf8d90f5 100644
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+diff --git a/src/libANGLE/Caps.cpp b/src/libANGLE/Caps.cpp
+index ba3d4d9b7..7f7f49266 100644
+--- a/src/libANGLE/Caps.cpp
++++ b/src/libANGLE/Caps.cpp
+@@ -625,7 +625,11 @@ static bool DetermineDepthTextureANGLESupport(const TextureCapsMap &textureCaps)
+ {
+     constexpr GLenum requiredFormats[] = {
+         GL_DEPTH_COMPONENT16,
++#if !ANGLE_PLATFORM_IOS
++        // FIXME: Temporarily Removing the need for GL_DEPTH_COMPONENT32_OES
++        // because it is not supported on iOS.
+         GL_DEPTH_COMPONENT32_OES,
++#endif
+         GL_DEPTH24_STENCIL8_OES,
+     };
+ 
+@@ -637,7 +641,11 @@ static bool DetermineDepthTextureOESSupport(const TextureCapsMap &textureCaps)
+ {
+     constexpr GLenum requiredFormats[] = {
+         GL_DEPTH_COMPONENT16,
++#if !ANGLE_PLATFORM_IOS
++        // FIXME: Temporarily Removing the need for GL_DEPTH_COMPONENT32_OES
++        // because it is not supported on iOS.
+         GL_DEPTH_COMPONENT32_OES,
++#endif
+     };
+ 
+     return GetFormatSupport(textureCaps, requiredFormats, true, true, true, true, false);
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 452a695c0..10ab5fc17 100644
+index dbbf869e6..1ace53334 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -94,7 +135,7 @@ index 452a695c0..10ab5fc17 100644
  
  #include <string.h>
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index 5ac1fa648..3f9bc0166 100644
+index e2a10cbfd..25306cfa2 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
 +++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
 @@ -580,6 +580,9 @@ void StateManagerGL::setPixelPackBuffer(const gl::Buffer *pixelBuffer)
@@ -121,7 +162,7 @@ index 226269909..ae90776da 100644
  }
  
 diff --git a/src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm b/src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm
-index 1c1fd2252..54d8320ea 100644
+index d6a86f525..0fa57be43 100644
 --- a/src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm
 +++ b/src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm
 @@ -153,7 +153,7 @@ WindowSurfaceCGL::WindowSurfaceCGL(const egl::SurfaceState &state,
@@ -163,7 +204,7 @@ index 29e83871c..85804411d 100644
  }
  
 diff --git a/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm b/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm
-index cb482d05b..6cef7d3dd 100644
+index 59c5c2f00..38d253ebd 100644
 --- a/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm
 +++ b/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm
 @@ -119,7 +119,7 @@ WindowSurfaceEAGL::WindowSurfaceEAGL(const egl::SurfaceState &state,
@@ -183,22 +224,24 @@ index cb482d05b..6cef7d3dd 100644
          mSwapLayer = nil;
      }
  
+diff --git a/src/libANGLE/renderer/gl/formatutilsgl.cpp b/src/libANGLE/renderer/gl/formatutilsgl.cpp
+index 3269cc5bc..8ee04b94a 100644
+--- a/src/libANGLE/renderer/gl/formatutilsgl.cpp
++++ b/src/libANGLE/renderer/gl/formatutilsgl.cpp
+@@ -256,7 +256,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
+     InsertFormatMapping(&map, GL_R16F,              VersionOrExts(3, 0, "GL_ARB_texture_rg ARB_texture_float"),    AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float GL_EXT_texture_rg"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_texture_storage GL_OES_texture_half_float GL_EXT_texture_rg GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"), ExtsOnly("GL_EXT_texture_rg GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"));
+     InsertFormatMapping(&map, GL_RG16F,             VersionOrExts(3, 0, "GL_ARB_texture_rg ARB_texture_float"),    AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float GL_EXT_texture_rg"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_texture_storage GL_OES_texture_half_float GL_EXT_texture_rg GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"), ExtsOnly("GL_EXT_texture_rg GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"));
+     InsertFormatMapping(&map, GL_RGB16F,            VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_texture_storage GL_OES_texture_half_float GL_EXT_color_buffer_half_float"),                                                ExtsOnly("GL_OES_texture_half_float GL_EXT_color_buffer_half_float")                                               );
+-    InsertFormatMapping(&map, GL_RGBA16F,           VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"),                                          ExtsOnly("GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float")                  );
++    InsertFormatMapping(&map, GL_RGBA16F,           VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"),                                                                    ExtsOnly("GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float")                                            );
+     InsertFormatMapping(&map, GL_R32F,              VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float"), AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_float GL_EXT_texture_rg"),      ExtsOnly("GL_OES_texture_float_linear"),                 ExtsOnly("GL_EXT_color_buffer_float"),                                                                                                      ExtsOnly("GL_EXT_color_buffer_float")                                                                              );
+     InsertFormatMapping(&map, GL_RG32F,             VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float"), AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_float GL_EXT_texture_rg"),      ExtsOnly("GL_OES_texture_float_linear"),                 ExtsOnly("GL_EXT_color_buffer_float"),                                                                                                      ExtsOnly("GL_EXT_color_buffer_float")                                                                              );
+     InsertFormatMapping(&map, GL_RGB32F,            VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_float"),                        ExtsOnly("GL_OES_texture_float_linear"),                 NeverSupported(),                                                                                                                           NeverSupported()                                                                                                   );
 diff --git a/src/libANGLE/renderer/gl/renderergl_utils.cpp b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-index 4ec99bcea..6a250db85 100644
+index c7a8a5498..e9df550b9 100644
 --- a/src/libANGLE/renderer/gl/renderergl_utils.cpp
 +++ b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-@@ -1615,7 +1615,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
-     bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
-     ANGLE_FEATURE_CONDITION(features, limitMaxTextureSizeTo4096,
-                             IsAndroid() || limitMaxTextureSize);
--    ANGLE_FEATURE_CONDITION(features, limitMaxMSAASamplesTo4, IsAndroid());
-+    // On Apple switchable graphics, GL_MAX_SAMPLES may differ between the GPUs.
-+    // 4 is a lowest common denominator that is always supported.
-+    ANGLE_FEATURE_CONDITION(features, limitMaxMSAASamplesTo4, IsAndroid() || (IsApple() && (isIntel || isAMD || isNvidia)));
-     ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024, limitMaxTextureSize);
- 
-     ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, IsApple());
-@@ -1673,6 +1675,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
+@@ -1711,6 +1711,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
                              // TODO(anglebug.com/2273): diagnose crashes with this workaround.
                              false);
  

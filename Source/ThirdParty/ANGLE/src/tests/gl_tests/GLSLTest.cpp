@@ -5991,6 +5991,71 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Verify that a valid program still draws correctly after a shader link error
+TEST_P(GLSLTest, DrawAfterShaderLinkError)
+{
+    constexpr char kVS[]    = R"(attribute vec4 position;
+        varying vec4 vColor;
+        void main()
+        {
+            vColor = vec4(0.0, 1.0, 0.0, 1.0);
+            gl_Position = position;
+        })";
+    constexpr char kFS[]    = R"(precision mediump float;
+        varying vec4 vColor;
+        void main()
+        {
+            gl_FragColor = vColor;
+        })";
+    constexpr char kBadFS[] = R"(WILL NOT COMPILE;)";
+
+    GLuint fsBad = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // Create bad fragment shader
+    {
+        const char *sourceArray[1] = {kBadFS};
+        glShaderSource(fsBad, 1, sourceArray, nullptr);
+        glCompileShader(fsBad);
+
+        GLint compileResult;
+        glGetShaderiv(fsBad, GL_COMPILE_STATUS, &compileResult);
+        ASSERT_FALSE(compileResult);
+    }
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    GLuint fs = GetProgramShader(program.get(), GL_FRAGMENT_SHADER);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glUseProgram(program.get());
+    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    std::array<Vector3, 6> quadVertices = GetQuadVertices();
+    for (Vector3 &vertex : quadVertices)
+    {
+        vertex.z() = 0.5f;
+    }
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, quadVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glDetachShader(program.get(), fs);
+    glAttachShader(program.get(), fsBad);
+    glLinkProgram(program.get());
+    GLint linkStatus = GL_TRUE;
+    glGetProgramiv(program.get(), GL_LINK_STATUS, &linkStatus);
+    ASSERT_FALSE(linkStatus);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Validate error messages when the link mismatch occurs on the type of a non-struct varying.
 TEST_P(GLSLTest, ErrorMessageOfVaryingMismatch)
 {

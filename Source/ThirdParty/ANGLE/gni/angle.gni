@@ -73,8 +73,8 @@ declare_args() {
         (angle_64bit_current_cpu && android64_ndk_api_level >= 26)
   }
 
-  # TODO(tobine): Remove this after roll. http://anglebug.com/4162
-  angle_shared_libvulkan = true
+  # Vulkan loader is statically linked on Mac. http://anglebug.com/4477
+  angle_shared_libvulkan = !is_mac
 
   # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
   angle_is_winuwp = is_win && current_os == "winuwp"

@@ -148,9 +148,7 @@ struct BlendStateKey final
     BlendStateKey();
     BlendStateKey(const BlendStateKey &other);
 
-    gl::BlendStateArray blendStateArray;
-
-    uint8_t rtvMasks[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+    gl::BlendStateExt blendStateExt;
 
     // Use two 16-bit ints to round the struct nicely.
     uint16_t rtvMax;

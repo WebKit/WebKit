@@ -830,7 +830,9 @@ void DisplayGLX::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->surfacelessContext = true;
 
-    outExtensions->syncControlCHROMIUM = mGLX.hasExtension("GLX_OML_sync_control");
+    const bool hasSyncControlOML        = mGLX.hasExtension("GLX_OML_sync_control");
+    outExtensions->syncControlCHROMIUM  = hasSyncControlOML;
+    outExtensions->syncControlRateANGLE = hasSyncControlOML;
 
     DisplayGL::generateExtensions(outExtensions);
 }

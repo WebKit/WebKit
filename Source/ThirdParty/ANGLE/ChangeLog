@@ -1,5 +1,19 @@
 2020-05-21  Kenneth Russell  <kbr@chromium.org>
 
+        Roll ANGLE to 2020-05-21
+        https://bugs.webkit.org/show_bug.cgi?id=212228
+
+        Reviewed by Dean Jackson.
+
+        Roll ANGLE to 96a80283cc0fe604d03c0bc0b3f9eb100edd22f9 in the
+        upstream repository using jdarpinian's excellent update-angle.sh
+        script.
+
+        Manually undo the fix from Bug 210992, which was fixed differently
+        upstream.
+
+2020-05-21  Kenneth Russell  <kbr@chromium.org>
+
         EXT_color_buffer_half_float not exposed on iOS
         https://bugs.webkit.org/show_bug.cgi?id=212181
 

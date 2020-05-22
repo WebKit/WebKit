@@ -164,7 +164,7 @@ extern void yyerror(YYLTYPE* yylloc, TParseContext* context, void *scanner, cons
 %token <lex> BVEC2 BVEC3 BVEC4 IVEC2 IVEC3 IVEC4 VEC2 VEC3 VEC4 UVEC2 UVEC3 UVEC4
 %token <lex> MATRIX2 MATRIX3 MATRIX4 IN_QUAL OUT_QUAL INOUT_QUAL UNIFORM BUFFER VARYING
 %token <lex> MATRIX2x3 MATRIX3x2 MATRIX2x4 MATRIX4x2 MATRIX3x4 MATRIX4x3
-%token <lex> CENTROID FLAT SMOOTH
+%token <lex> CENTROID FLAT SMOOTH NOPERSPECTIVE
 %token <lex> READONLY WRITEONLY COHERENT RESTRICT VOLATILE SHARED
 %token <lex> STRUCT VOID_TYPE WHILE
 %token <lex> SAMPLER2D SAMPLERCUBE SAMPLER_EXTERNAL_OES SAMPLER2DRECT SAMPLER2DARRAY
@@ -776,6 +776,13 @@ interpolation_qualifier
     }
     | FLAT {
         $$ = EvqFlat;
+    }
+    | NOPERSPECTIVE {
+        if (!context->checkCanUseExtension(@1, TExtension::NV_shader_noperspective_interpolation))
+        {
+            context->error(@1, "unsupported interpolation qualifier", "noperspective");
+        }
+        $$ = EvqNoPerspective;
     }
     ;
 

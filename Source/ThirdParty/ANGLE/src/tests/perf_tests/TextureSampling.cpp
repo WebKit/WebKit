@@ -72,7 +72,7 @@ class TextureSamplingBenchmark : public ANGLERenderTest,
     void destroyBenchmark() override;
     void drawBenchmark() override;
 
-  private:
+  protected:
     void initShaders();
     void initVertexBuffer();
     void initTextures();
@@ -258,6 +258,52 @@ void TextureSamplingBenchmark::drawBenchmark()
     ASSERT_GL_NO_ERROR();
 }
 
+// Identical to TextureSamplingBenchmark, but enables and then disables
+// EXT_texture_format_sRGB_override during initialization. This should force the internal texture
+// representation to use VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT, which is expected to carry a
+// performance penalty. This penalty can be quantified by comparing the results of this test with
+// the results from TextureSamplingBenchmark
+class TextureSamplingMutableFormatBenchmark : public TextureSamplingBenchmark
+{
+  public:
+    void initializeBenchmark() override;
+
+  protected:
+    void initTextures();
+};
+
+void TextureSamplingMutableFormatBenchmark::initializeBenchmark()
+{
+    if (!IsGLExtensionEnabled("GL_EXT_texture_sRGB_override"))
+    {
+        FAIL() << "GL_EXT_texture_sRGB_override not supported!" << std::endl;
+    }
+    TextureSamplingBenchmark::initializeBenchmark();
+    initTextures();
+}
+
+void TextureSamplingMutableFormatBenchmark::initTextures()
+{
+    TextureSamplingBenchmark::initTextures();
+
+    for (unsigned int i = 0; i < mTextures.size(); ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, mTextures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_SRGB);
+    }
+
+    // Force a state update
+    drawBenchmark();
+
+    for (unsigned int i = 0; i < mTextures.size(); ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, mTextures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
+    }
+}
+
 TextureSamplingParams D3D11Params()
 {
     TextureSamplingParams params;
@@ -293,8 +339,15 @@ TEST_P(TextureSamplingBenchmark, Run)
     run();
 }
 
+TEST_P(TextureSamplingMutableFormatBenchmark, Run)
+{
+    run();
+}
+
 ANGLE_INSTANTIATE_TEST(TextureSamplingBenchmark,
                        D3D11Params(),
                        D3D9Params(),
                        OpenGLOrGLESParams(),
                        VulkanParams());
+
+ANGLE_INSTANTIATE_TEST(TextureSamplingMutableFormatBenchmark, VulkanParams());

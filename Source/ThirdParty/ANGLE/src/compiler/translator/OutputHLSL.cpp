@@ -86,6 +86,33 @@ bool IsInStd140UniformBlock(TIntermTyped *node)
     return false;
 }
 
+const TInterfaceBlock *GetInterfaceBlockOfUniformBlockNearestIndexOperator(TIntermTyped *node)
+{
+    const TIntermBinary *binaryNode = node->getAsBinaryNode();
+    if (binaryNode)
+    {
+        if (binaryNode->getOp() == EOpIndexDirectInterfaceBlock)
+        {
+            return binaryNode->getLeft()->getType().getInterfaceBlock();
+        }
+    }
+
+    const TIntermSymbol *symbolNode = node->getAsSymbolNode();
+    if (symbolNode)
+    {
+        const TVariable &variable = symbolNode->variable();
+        const TType &variableType = variable.getType();
+
+        if (variableType.getQualifier() == EvqUniform &&
+            variable.symbolType() == SymbolType::UserDefined)
+        {
+            return variableType.getInterfaceBlock();
+        }
+    }
+
+    return nullptr;
+}
+
 const char *GetHLSLAtomicFunctionStringAndLeftParenthesis(TOperator op)
 {
     switch (op)
@@ -622,6 +649,12 @@ void OutputHLSL::header(TInfoSinkBase &out,
     {
         mappedStructs = generateStructMapping(std140Structs);
     }
+
+    // Suppress some common warnings:
+    // 3556 : Integer divides might be much slower, try using uints if possible.
+    // 3571 : The pow(f, e) intrinsic function won't work for negative f, use abs(f) or
+    //        conditionally handle negative values if you expect them.
+    out << "#pragma warning( disable: 3556 3571 )\n";
 
     out << mStructureHLSL->structsHeader();
 
@@ -1610,6 +1643,21 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
             else
             {
                 outputTriplet(out, visit, "", "[", "]");
+                if (visit == PostVisit)
+                {
+                    const TInterfaceBlock *interfaceBlock =
+                        GetInterfaceBlockOfUniformBlockNearestIndexOperator(node->getLeft());
+                    if (interfaceBlock &&
+                        mResourcesHLSL->shouldTranslateUniformBlockToStructuredBuffer(
+                            *interfaceBlock))
+                    {
+                        const TField *field = interfaceBlock->fields()[0];
+                        if (field->type()->isMatrix())
+                        {
+                            out << "._matrix_" << Decorate(field->name());
+                        }
+                    }
+                }
             }
         }
         break;
@@ -1626,6 +1674,21 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
             else
             {
                 outputTriplet(out, visit, "", "[", "]");
+                if (visit == PostVisit)
+                {
+                    const TInterfaceBlock *interfaceBlock =
+                        GetInterfaceBlockOfUniformBlockNearestIndexOperator(node->getLeft());
+                    if (interfaceBlock &&
+                        mResourcesHLSL->shouldTranslateUniformBlockToStructuredBuffer(
+                            *interfaceBlock))
+                    {
+                        const TField *field = interfaceBlock->fields()[0];
+                        if (field->type()->isMatrix())
+                        {
+                            out << "._matrix_" << Decorate(field->name());
+                        }
+                    }
+                }
             }
             break;
         }
@@ -1683,7 +1746,8 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
                     node->getLeft()->getType().getInterfaceBlock();
                 const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
                 const TField *field               = interfaceBlock->fields()[index->getIConst(0)];
-                if (structInStd140UniformBlock)
+                if (structInStd140UniformBlock ||
+                    mResourcesHLSL->shouldTranslateUniformBlockToStructuredBuffer(*interfaceBlock))
                 {
                     out << "_";
                 }
@@ -3593,5 +3657,4 @@ const char *OutputHLSL::generateOutputCall() const
         return "generateOutput()";
     }
 }
-
 }  // namespace sh

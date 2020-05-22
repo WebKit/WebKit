@@ -63,6 +63,15 @@ const char *kIgnoredErrors[] = {
     "share_context to eglCreateContext. Results are undefined.",
 };
 #endif  // defined(ANGLE_PLATFORM_ANDROID)
+
+const char *kIgnoredWarnings[] = {
+    // We always request GL_ARB_gpu_shader5 and GL_EXT_gpu_shader5 when compiling shaders but some
+    // drivers warn when it is not present. This ends up spamming the console on every shader
+    // compile.
+    "extension `GL_ARB_gpu_shader5' unsupported in",
+    "extension `GL_EXT_gpu_shader5' unsupported in",
+};
+
 }  // namespace
 
 static void INTERNAL_GL_APIENTRY LogGLDebugMessage(GLenum source,
@@ -105,6 +114,14 @@ static void INTERNAL_GL_APIENTRY LogGLDebugMessage(GLenum source,
     {
         // Don't print performance warnings. They tend to be very spammy in the dEQP test suite and
         // there is very little we can do about them.
+
+        for (const char *&warn : kIgnoredWarnings)
+        {
+            if (strstr(message, warn) != nullptr)
+            {
+                return;
+            }
+        }
 
         // TODO(ynovikov): filter into WARN and INFO if INFO is ever implemented
         WARN() << std::endl

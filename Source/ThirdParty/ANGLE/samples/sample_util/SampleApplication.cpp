@@ -155,7 +155,8 @@ int SampleApplication::run()
     configParams.depthBits   = 24;
     configParams.stencilBits = 8;
 
-    if (!mEGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mPlatformParams, configParams))
+    if (!mEGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), angle::GLESDriverType::AngleEGL,
+                                  mPlatformParams, configParams))
     {
         return -1;
     }

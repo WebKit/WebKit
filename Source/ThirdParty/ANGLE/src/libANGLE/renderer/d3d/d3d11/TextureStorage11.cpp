@@ -903,6 +903,24 @@ GLsizei TextureStorage11::getRenderToTextureSamples() const
     return 0;
 }
 
+angle::Result TextureStorage11::findMultisampledRenderTarget(const gl::Context *context,
+                                                             const gl::ImageIndex &index,
+                                                             GLsizei samples,
+                                                             RenderTargetD3D **outRT) const
+{
+    const int level = index.getLevelIndex();
+    if (!mMSTexInfo || level != mMSTexInfo->indexSS.getLevelIndex() ||
+        samples != mMSTexInfo->samples || !mMSTexInfo->msTex)
+    {
+        *outRT = nullptr;
+        return angle::Result::Continue;
+    }
+    RenderTargetD3D *rt;
+    ANGLE_TRY(mMSTexInfo->msTex->findRenderTarget(context, mMSTexInfo->indexMS, samples, &rt));
+    *outRT = rt;
+    return angle::Result::Continue;
+}
+
 angle::Result TextureStorage11::getMultisampledRenderTarget(const gl::Context *context,
                                                             const gl::ImageIndex &index,
                                                             GLsizei samples,
@@ -1254,6 +1272,40 @@ angle::Result TextureStorage11_2D::ensureTextureExists(const gl::Context *contex
         }
     }
 
+    return angle::Result::Continue;
+}
+
+angle::Result TextureStorage11_2D::findRenderTarget(const gl::Context *context,
+                                                    const gl::ImageIndex &index,
+                                                    GLsizei samples,
+                                                    RenderTargetD3D **outRT) const
+{
+    ASSERT(!index.hasLayer());
+
+    const int level = index.getLevelIndex();
+    ASSERT(level >= 0 && level < getLevelCount());
+
+    bool needMS = samples > 0;
+    if (needMS)
+    {
+        return findMultisampledRenderTarget(context, index, samples, outRT);
+    }
+
+    ASSERT(outRT);
+    if (mRenderTarget[level])
+    {
+        *outRT = mRenderTarget[level].get();
+        return angle::Result::Continue;
+    }
+
+    if (mUseLevelZeroTexture)
+    {
+        ASSERT(level == 0);
+        *outRT = mLevelZeroRenderTarget.get();
+        return angle::Result::Continue;
+    }
+
+    *outRT = nullptr;
     return angle::Result::Continue;
 }
 
@@ -1647,6 +1699,16 @@ angle::Result TextureStorage11_External::getMippedResource(const gl::Context *co
     return angle::Result::Continue;
 }
 
+angle::Result TextureStorage11_External::findRenderTarget(const gl::Context *context,
+                                                          const gl::ImageIndex &index,
+                                                          GLsizei samples,
+                                                          RenderTargetD3D **outRT) const
+{
+    // Render targets are not supported for external textures
+    ANGLE_HR_UNREACHABLE(GetImplAs<Context11>(context));
+    return angle::Result::Stop;
+}
+
 angle::Result TextureStorage11_External::getRenderTarget(const gl::Context *context,
                                                          const gl::ImageIndex &index,
                                                          GLsizei samples,
@@ -1821,6 +1883,17 @@ angle::Result TextureStorage11_EGLImage::getMippedResource(const gl::Context *co
 {
     // This shouldn't be called unless the zero max LOD workaround is active.
     // EGL images are unavailable in this configuration.
+    ANGLE_HR_UNREACHABLE(GetImplAs<Context11>(context));
+    return angle::Result::Stop;
+}
+
+angle::Result TextureStorage11_EGLImage::findRenderTarget(const gl::Context *context,
+                                                          const gl::ImageIndex &index,
+                                                          GLsizei samples,
+                                                          RenderTargetD3D **outRT) const
+{
+    // Since the render target of an EGL image will be updated when orphaning, trying to find a
+    // cache of it can be rarely useful.
     ANGLE_HR_UNREACHABLE(GetImplAs<Context11>(context));
     return angle::Result::Stop;
 }
@@ -2307,6 +2380,39 @@ angle::Result TextureStorage11_Cube::ensureTextureExists(const gl::Context *cont
         outputTexture->setDebugName("TexStorageCube.Texture");
     }
 
+    return angle::Result::Continue;
+}
+
+angle::Result TextureStorage11_Cube::findRenderTarget(const gl::Context *context,
+                                                      const gl::ImageIndex &index,
+                                                      GLsizei samples,
+                                                      RenderTargetD3D **outRT) const
+{
+    const int faceIndex = index.cubeMapFaceIndex();
+    const int level     = index.getLevelIndex();
+
+    ASSERT(level >= 0 && level < getLevelCount());
+    ASSERT(faceIndex >= 0 && faceIndex < static_cast<GLint>(gl::kCubeFaceCount));
+
+    bool needMS = samples > 0;
+    if (needMS)
+    {
+        return findMultisampledRenderTarget(context, index, samples, outRT);
+    }
+
+    if (!mRenderTarget[faceIndex][level])
+    {
+        if (mUseLevelZeroTexture)
+        {
+            ASSERT(index.getLevelIndex() == 0);
+            ASSERT(outRT);
+            *outRT = mLevelZeroRenderTarget[faceIndex].get();
+            return angle::Result::Continue;
+        }
+    }
+
+    ASSERT(outRT);
+    *outRT = mRenderTarget[faceIndex][level].get();
     return angle::Result::Continue;
 }
 
@@ -2860,6 +2966,36 @@ angle::Result TextureStorage11_3D::createUAVForImage(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+angle::Result TextureStorage11_3D::findRenderTarget(const gl::Context *context,
+                                                    const gl::ImageIndex &index,
+                                                    GLsizei samples,
+                                                    RenderTargetD3D **outRT) const
+{
+    const int mipLevel = index.getLevelIndex();
+    ASSERT(mipLevel >= 0 && mipLevel < getLevelCount());
+
+    if (!index.hasLayer())
+    {
+        ASSERT(outRT);
+        *outRT = mLevelRenderTargets[mipLevel].get();
+        return angle::Result::Continue;
+    }
+
+    const int layer = index.getLayerIndex();
+
+    LevelLayerKey key(mipLevel, layer);
+    if (mLevelLayerRenderTargets.find(key) == mLevelLayerRenderTargets.end())
+    {
+        ASSERT(outRT);
+        *outRT = nullptr;
+        return angle::Result::Continue;
+    }
+
+    ASSERT(outRT);
+    *outRT = mLevelLayerRenderTargets.at(key).get();
+    return angle::Result::Continue;
+}
+
 angle::Result TextureStorage11_3D::getRenderTarget(const gl::Context *context,
                                                    const gl::ImageIndex &index,
                                                    GLsizei samples,
@@ -3211,6 +3347,32 @@ angle::Result TextureStorage11_2DArray::createUAVForImage(const gl::Context *con
     return angle::Result::Continue;
 }
 
+angle::Result TextureStorage11_2DArray::findRenderTarget(const gl::Context *context,
+                                                         const gl::ImageIndex &index,
+                                                         GLsizei samples,
+                                                         RenderTargetD3D **outRT) const
+{
+    ASSERT(index.hasLayer());
+
+    const int mipLevel  = index.getLevelIndex();
+    const int layer     = index.getLayerIndex();
+    const int numLayers = index.getLayerCount();
+
+    ASSERT(mipLevel >= 0 && mipLevel < getLevelCount());
+
+    LevelLayerRangeKey key(mipLevel, layer, numLayers);
+    if (mRenderTargets.find(key) == mRenderTargets.end())
+    {
+        ASSERT(outRT);
+        *outRT = nullptr;
+        return angle::Result::Continue;
+    }
+
+    ASSERT(outRT);
+    *outRT = mRenderTargets.at(key).get();
+    return angle::Result::Continue;
+}
+
 angle::Result TextureStorage11_2DArray::createRenderTargetSRV(const gl::Context *context,
                                                               const TextureHelper11 &texture,
                                                               const gl::ImageIndex &index,
@@ -3494,6 +3656,21 @@ angle::Result TextureStorage11_2DMultisample::ensureTextureExists(const gl::Cont
     return angle::Result::Continue;
 }
 
+angle::Result TextureStorage11_2DMultisample::findRenderTarget(const gl::Context *context,
+                                                               const gl::ImageIndex &index,
+                                                               GLsizei samples,
+                                                               RenderTargetD3D **outRT) const
+{
+    ASSERT(!index.hasLayer());
+
+    const int level = index.getLevelIndex();
+    ASSERT(level == 0);
+
+    ASSERT(outRT);
+    *outRT = mRenderTarget.get();
+    return angle::Result::Continue;
+}
+
 angle::Result TextureStorage11_2DMultisample::getRenderTarget(const gl::Context *context,
                                                               const gl::ImageIndex &index,
                                                               GLsizei samples,
@@ -3683,6 +3860,33 @@ angle::Result TextureStorage11_2DMultisampleArray::ensureTextureExists(const gl:
         mTexture.setDebugName("TexStorage2DMSArray.Texture");
     }
 
+    return angle::Result::Continue;
+}
+
+angle::Result TextureStorage11_2DMultisampleArray::findRenderTarget(const gl::Context *context,
+                                                                    const gl::ImageIndex &index,
+                                                                    GLsizei samples,
+                                                                    RenderTargetD3D **outRT) const
+{
+    ASSERT(index.hasLayer());
+
+    const int mipLevel = index.getLevelIndex();
+    ASSERT(mipLevel == 0);
+    const int layer     = index.getLayerIndex();
+    const int numLayers = index.getLayerCount();
+
+    ASSERT(mipLevel >= 0 && mipLevel < getLevelCount());
+
+    TextureStorage11_2DArray::LevelLayerRangeKey key(mipLevel, layer, numLayers);
+    if (mRenderTargets.find(key) == mRenderTargets.end())
+    {
+        ASSERT(outRT);
+        *outRT = nullptr;
+        return angle::Result::Continue;
+    }
+
+    ASSERT(outRT);
+    *outRT = mRenderTargets.at(key).get();
     return angle::Result::Continue;
 }
 

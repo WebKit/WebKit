@@ -257,6 +257,10 @@ class StateCache final : angle::NonCopyable
         return mCachedActiveShaderStorageBufferIndices;
     }
 
+    // Places that can trigger updateCanDraw:
+    // 1. onProgramExecutableChange.
+    bool getCanDraw() const { return mCachedCanDraw; }
+
     // State change notifications.
     void onVertexArrayBindingChange(Context *context);
     void onProgramExecutableChange(Context *context);
@@ -290,6 +294,7 @@ class StateCache final : angle::NonCopyable
     void updateTransformFeedbackActiveUnpaused(Context *context);
     void updateVertexAttribTypesValidation(Context *context);
     void updateActiveShaderStorageBufferIndices(Context *context);
+    void updateCanDraw(Context *context);
 
     void setValidDrawModes(bool pointsOK, bool linesOK, bool trisOK, bool lineAdjOK, bool triAdjOK);
 
@@ -324,6 +329,8 @@ class StateCache final : angle::NonCopyable
                          VertexAttribTypeCase,
                          angle::EnumSize<VertexAttribType>() + 1>
         mCachedIntegerVertexAttribTypesValidation;
+
+    bool mCachedCanDraw;
 };
 
 using VertexArrayMap       = ResourceMap<VertexArray, VertexArrayID>;
@@ -344,7 +351,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
             const egl::ClientExtensions &clientExtensions);
 
     // Use for debugging.
-    int id() const { return mState.mID; }
+    ContextID id() const { return mState.getContextID(); }
 
     egl::Error onDestroy(const egl::Display *display);
     ~Context() override;
@@ -599,6 +606,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     void onPostSwap() const;
 
+    Program *getActiveLinkedProgram() const;
+
   private:
     void initialize();
 
@@ -648,6 +657,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                           UniformLocation location,
                           GLsizei count,
                           const GLint *v);
+
+    void convertPpoToComputeOrDraw(bool isCompute);
 
     State mState;
     bool mShared;

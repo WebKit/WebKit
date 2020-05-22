@@ -22,28 +22,6 @@
 
 namespace rx
 {
-
-namespace
-{
-
-const gl::InternalFormat &GetReadAttachmentInfo(const gl::Context *context,
-                                                RenderTargetMtl *renderTarget)
-{
-    GLenum implFormat;
-
-    if (renderTarget && renderTarget->getFormat())
-    {
-        implFormat = renderTarget->getFormat()->actualAngleFormat().fboImplementationInternalFormat;
-    }
-    else
-    {
-        implFormat = GL_NONE;
-    }
-
-    return gl::GetSizedInternalFormatInfo(implFormat);
-}
-}
-
 // FramebufferMtl implementation
 FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state, bool flipY)
     : FramebufferImpl(state), mFlipY(flipY)
@@ -157,14 +135,15 @@ angle::Result FramebufferMtl::clearBufferfi(const gl::Context *context,
     return angle::Result::Stop;
 }
 
-GLenum FramebufferMtl::getImplementationColorReadFormat(const gl::Context *context) const
+const gl::InternalFormat &FramebufferMtl::getImplementationColorReadFormat(
+    const gl::Context *context) const
 {
-    return GetReadAttachmentInfo(context, getColorReadRenderTarget()).format;
-}
-
-GLenum FramebufferMtl::getImplementationColorReadType(const gl::Context *context) const
-{
-    return GetReadAttachmentInfo(context, getColorReadRenderTarget()).type;
+    ContextMtl *contextMtl   = mtl::GetImpl(context);
+    GLenum sizedFormat       = mState.getReadAttachment()->getFormat().info->sizedInternalFormat;
+    angle::FormatID formatID = angle::Format::InternalFormatToID(sizedFormat);
+    const mtl::Format &mtlFormat = contextMtl->getDisplay()->getPixelFormat(formatID);
+    GLenum implFormat            = mtlFormat.actualAngleFormat().fboImplementationInternalFormat;
+    return gl::GetSizedInternalFormatInfo(implFormat);
 }
 
 angle::Result FramebufferMtl::readPixels(const gl::Context *context,
@@ -246,6 +225,7 @@ bool FramebufferMtl::checkStatus(const gl::Context *context) const
 }
 
 angle::Result FramebufferMtl::syncState(const gl::Context *context,
+                                        GLenum binding,
                                         const gl::Framebuffer::DirtyBits &dirtyBits)
 {
     ContextMtl *contextMtl = mtl::GetImpl(context);

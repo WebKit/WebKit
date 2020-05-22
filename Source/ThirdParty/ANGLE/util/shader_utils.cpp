@@ -164,6 +164,25 @@ GLuint CheckLinkStatusAndReturnProgram(GLuint program, bool outputErrorMessages)
     return program;
 }
 
+GLuint GetProgramShader(GLuint program, GLint requestedType)
+{
+    static constexpr GLsizei kMaxShaderCount = 16;
+    GLuint attachedShaders[kMaxShaderCount]  = {0u};
+    GLsizei count                            = 0;
+    glGetAttachedShaders(program, kMaxShaderCount, &count, attachedShaders);
+    for (int i = 0; i < count; ++i)
+    {
+        GLint type = 0;
+        glGetShaderiv(attachedShaders[i], GL_SHADER_TYPE, &type);
+        if (type == requestedType)
+        {
+            return attachedShaders[i];
+        }
+    }
+
+    return 0;
+}
+
 GLuint CompileProgramWithTransformFeedback(
     const char *vsSource,
     const char *fsSource,
@@ -571,6 +590,18 @@ out vec4 my_FragColor;
 void main()
 {
     my_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+}
+
+// A shader that fills with 100% opaque green.
+const char *Green()
+{
+    return R"(#version 310 es
+precision highp float;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
 })";
 }
 

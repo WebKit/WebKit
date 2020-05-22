@@ -15,19 +15,21 @@
 #include <mutex>
 
 #include "vk_ext_provoking_vertex.h"
-#include "volk.h"
 
 #include "common/PackedEnums.h"
 #include "common/PoolAlloc.h"
 #include "common/angleutils.h"
+#include "common/vulkan/vulkan_icd.h"
 #include "libANGLE/BlobCache.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/renderer/vulkan/QueryVk.h"
 #include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
+#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h"
+#include "libANGLE/renderer/vulkan/vk_mem_alloc_wrapper.h"
 
 namespace egl
 {
@@ -73,7 +75,7 @@ class RendererVk : angle::NonCopyable
                              const char *wsiLayer);
     // Reload volk vk* function ptrs if needed for an already initialized RendererVk
     void reloadVolkIfNeeded() const;
-    void onDestroy(vk::Context *context);
+    void onDestroy();
 
     void notifyDeviceLost();
     bool isDeviceLost() const;
@@ -100,6 +102,8 @@ class RendererVk : angle::NonCopyable
     }
     VkDevice getDevice() const { return mDevice; }
 
+    const VmaAllocator &getAllocator() const { return mAllocator; }
+
     angle::Result selectPresentQueueForSurface(DisplayVk *displayVk,
                                                VkSurfaceKHR surface,
                                                uint32_t *presentQueueOut);
@@ -117,7 +121,6 @@ class RendererVk : angle::NonCopyable
 
     const vk::MemoryProperties &getMemoryProperties() const { return mMemoryProperties; }
 
-    // TODO(jmadill): We could pass angle::FormatID here.
     const vk::Format &getFormat(GLenum internalFormat) const
     {
         return mFormatTable[internalFormat];
@@ -152,7 +155,7 @@ class RendererVk : angle::NonCopyable
         return mMinImportedHostPointerAlignment;
     }
 
-    bool isMockICDEnabled() const { return mEnabledICD == vk::ICD::Mock; }
+    bool isMockICDEnabled() const { return mEnabledICD == angle::vk::ICD::Mock; }
 
     // Query the format properties for select bits (linearTilingFeatures, optimalTilingFeatures and
     // bufferFeatures).  Looks through mandatory features first, and falls back to querying the
@@ -243,6 +246,9 @@ class RendererVk : angle::NonCopyable
 
     bool enableDebugUtils() const { return mEnableDebugUtils; }
 
+    SamplerCache &getSamplerCache() { return mSamplerCache; }
+    vk::ActiveHandleCounter &getActiveHandleCounts() { return mActiveHandleCounts; }
+
   private:
     angle::Result initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex);
     void ensureCapsInitialized() const;
@@ -262,7 +268,7 @@ class RendererVk : angle::NonCopyable
     template <VkFormatFeatureFlags VkFormatProperties::*features>
     bool hasFormatFeatureBits(VkFormat format, const VkFormatFeatureFlags featureBits);
 
-    angle::Result cleanupGarbage(vk::Context *context, bool block);
+    angle::Result cleanupGarbage(bool block);
 
     egl::Display *mDisplay;
 
@@ -276,12 +282,14 @@ class RendererVk : angle::NonCopyable
     VkInstance mInstance;
     bool mEnableValidationLayers;
     bool mEnableDebugUtils;
-    vk::ICD mEnabledICD;
+    angle::vk::ICD mEnabledICD;
     VkDebugUtilsMessengerEXT mDebugUtilsMessenger;
     VkDebugReportCallbackEXT mDebugReportCallback;
     VkPhysicalDevice mPhysicalDevice;
     VkPhysicalDeviceProperties mPhysicalDeviceProperties;
     VkPhysicalDeviceFeatures mPhysicalDeviceFeatures;
+    VkExternalFenceProperties mExternalFenceProperties;
+    VkExternalSemaphoreProperties mExternalSemaphoreProperties;
     VkPhysicalDeviceLineRasterizationFeaturesEXT mLineRasterizationFeatures;
     VkPhysicalDeviceProvokingVertexFeaturesEXT mProvokingVertexFeatures;
     VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT mVertexAttributeDivisorFeatures;
@@ -356,6 +364,10 @@ class RendererVk : angle::NonCopyable
 
     // track whether we initialized (or released) glslang
     bool mGlslangInitialized;
+
+    VmaAllocator mAllocator;
+    SamplerCache mSamplerCache;
+    vk::ActiveHandleCounter mActiveHandleCounts;
 };
 
 }  // namespace rx

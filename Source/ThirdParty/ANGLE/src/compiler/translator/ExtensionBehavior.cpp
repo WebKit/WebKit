@@ -25,6 +25,7 @@
     OP(EXT_shader_texture_lod)                      \
     OP(EXT_YUV_target)                              \
     OP(EXT_shader_non_constant_global_initializers) \
+    OP(NV_shader_noperspective_interpolation)       \
     OP(NV_EGL_stream_consumer_external)             \
     OP(NV_shader_framebuffer_fetch)                 \
     OP(OES_EGL_image_external)                      \
@@ -36,7 +37,8 @@
     OP(OVR_multiview2)                              \
     OP(ANGLE_multi_draw)                            \
     OP(ANGLE_base_vertex_base_instance)             \
-    OP(WEBGL_video_texture)
+    OP(WEBGL_video_texture)                         \
+    OP(APPLE_clip_distance)
 
 namespace sh
 {

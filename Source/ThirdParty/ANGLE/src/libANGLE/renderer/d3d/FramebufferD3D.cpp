@@ -34,8 +34,6 @@ ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
     ClearParameters clearParams;
     memset(&clearParams, 0, sizeof(ClearParameters));
 
-    const auto &blendStateArray = state.getBlendStateArray();
-
     clearParams.colorF           = state.getColorClearValue();
     clearParams.colorType        = GL_FLOAT;
     clearParams.clearDepth       = false;
@@ -49,15 +47,15 @@ ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
     const gl::Framebuffer *framebufferObject = state.getDrawFramebuffer();
     const bool clearColor =
         (mask & GL_COLOR_BUFFER_BIT) && framebufferObject->hasEnabledDrawBuffer();
-    ASSERT(blendStateArray.size() == gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
-    for (size_t i = 0; i < blendStateArray.size(); i++)
+    if (clearColor)
     {
-        clearParams.clearColor[i]     = clearColor;
-        clearParams.colorMaskRed[i]   = blendStateArray[i].colorMaskRed;
-        clearParams.colorMaskGreen[i] = blendStateArray[i].colorMaskGreen;
-        clearParams.colorMaskBlue[i]  = blendStateArray[i].colorMaskBlue;
-        clearParams.colorMaskAlpha[i] = blendStateArray[i].colorMaskAlpha;
+        clearParams.clearColor.set();
     }
+    else
+    {
+        clearParams.clearColor.reset();
+    }
+    clearParams.colorMask = state.getBlendStateExt().mColorMask;
 
     if (mask & GL_DEPTH_BUFFER_BIT)
     {
@@ -184,54 +182,6 @@ angle::Result FramebufferD3D::clearBufferfi(const gl::Context *context,
     return clearImpl(context, clearParams);
 }
 
-GLenum FramebufferD3D::getImplementationColorReadFormat(const gl::Context *context) const
-{
-    const gl::FramebufferAttachment *readAttachment = mState.getReadAttachment();
-
-    if (readAttachment == nullptr)
-    {
-        return GL_NONE;
-    }
-
-    RenderTargetD3D *attachmentRenderTarget = nullptr;
-    angle::Result error                     = readAttachment->getRenderTarget(
-        context, readAttachment->getRenderToTextureSamples(), &attachmentRenderTarget);
-    if (error != angle::Result::Continue)
-    {
-        return GL_NONE;
-    }
-
-    GLenum implementationFormat = getRenderTargetImplementationFormat(attachmentRenderTarget);
-    const gl::InternalFormat &implementationFormatInfo =
-        gl::GetSizedInternalFormatInfo(implementationFormat);
-
-    return implementationFormatInfo.getReadPixelsFormat(context->getExtensions());
-}
-
-GLenum FramebufferD3D::getImplementationColorReadType(const gl::Context *context) const
-{
-    const gl::FramebufferAttachment *readAttachment = mState.getReadAttachment();
-
-    if (readAttachment == nullptr)
-    {
-        return GL_NONE;
-    }
-
-    RenderTargetD3D *attachmentRenderTarget = nullptr;
-    angle::Result error                     = readAttachment->getRenderTarget(
-        context, readAttachment->getRenderToTextureSamples(), &attachmentRenderTarget);
-    if (error != angle::Result::Continue)
-    {
-        return GL_NONE;
-    }
-
-    GLenum implementationFormat = getRenderTargetImplementationFormat(attachmentRenderTarget);
-    const gl::InternalFormat &implementationFormatInfo =
-        gl::GetSizedInternalFormatInfo(implementationFormat);
-
-    return implementationFormatInfo.getReadPixelsType(context->getClientVersion());
-}
-
 angle::Result FramebufferD3D::readPixels(const gl::Context *context,
                                          const gl::Rectangle &area,
                                          GLenum format,
@@ -239,7 +189,7 @@ angle::Result FramebufferD3D::readPixels(const gl::Context *context,
                                          void *pixels)
 {
     // Clip read area to framebuffer.
-    const gl::Extents fbSize = getState().getReadAttachment()->getSize();
+    const gl::Extents fbSize = getState().getReadPixelsAttachment(format)->getSize();
     const gl::Rectangle fbRect(0, 0, fbSize.width, fbSize.height);
     gl::Rectangle clippedArea;
     if (!ClipRectangle(area, fbRect, &clippedArea))
@@ -316,6 +266,7 @@ bool FramebufferD3D::checkStatus(const gl::Context *context) const
 }
 
 angle::Result FramebufferD3D::syncState(const gl::Context *context,
+                                        GLenum binding,
                                         const gl::Framebuffer::DirtyBits &dirtyBits)
 {
     if (!mColorAttachmentsForRender.valid())

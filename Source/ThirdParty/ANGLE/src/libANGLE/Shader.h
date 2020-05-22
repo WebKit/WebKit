@@ -85,6 +85,8 @@ class ShaderState final : angle::NonCopyable
         return mActiveOutputVariables;
     }
 
+    bool isEarlyFragmentTeststOptimization() const { return mEarlyFragmentTestsOptimization; }
+
     bool compilePending() const { return mCompileStatus == CompileStatus::COMPILE_REQUESTED; }
 
   private:
@@ -107,6 +109,8 @@ class ShaderState final : angle::NonCopyable
     std::vector<sh::ShaderVariable> mAllAttributes;
     std::vector<sh::ShaderVariable> mActiveAttributes;
     std::vector<sh::ShaderVariable> mActiveOutputVariables;
+
+    bool mEarlyFragmentTestsOptimization;
 
     // ANGLE_multiview.
     int mNumViews;
@@ -143,6 +147,7 @@ class Shader final : angle::NonCopyable, public LabeledObject
     void setSource(GLsizei count, const char *const *string, const GLint *length);
     int getInfoLogLength();
     void getInfoLog(GLsizei bufSize, GLsizei *length, char *infoLog);
+    std::string getInfoLogString() const { return mInfoLog; }
     int getSourceLength() const;
     const std::string &getSourceString() const { return mState.getSource(); }
     void getSource(GLsizei bufSize, GLsizei *length, char *buffer) const;
@@ -161,6 +166,10 @@ class Shader final : angle::NonCopyable, public LabeledObject
     unsigned int getRefCount() const;
     bool isFlaggedForDeletion() const;
     void flagForDeletion();
+    bool hasEarlyFragmentTestsOptimization() const
+    {
+        return mState.mEarlyFragmentTestsOptimization;
+    }
 
     int getShaderVersion();
 

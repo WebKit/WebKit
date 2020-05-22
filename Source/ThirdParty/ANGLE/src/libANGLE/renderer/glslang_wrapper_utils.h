@@ -98,6 +98,12 @@ std::string GetMappedSamplerNameOld(const std::string &originalName);
 std::string GlslangGetMappedSamplerName(const std::string &originalName);
 std::string GetXfbBufferName(const uint32_t bufferIndex);
 
+void GlslangAssignLocations(GlslangSourceOptions &options,
+                            const gl::ProgramExecutable &programExecutable,
+                            const gl::ShaderType shaderType,
+                            GlslangProgramInterfaceInfo *programInterfaceInfo,
+                            gl::ShaderMap<ShaderInterfaceVariableInfoMap> *variableInfoMapOut);
+
 // Transform the source to include actual binding points for various shader resources (textures,
 // buffers, xfb, etc).  For some variables, these values are instead output to the variableInfoMap
 // to be set during a SPIR-V transformation.  This is a transitory step towards moving all variables
@@ -109,13 +115,15 @@ void GlslangGetShaderSource(GlslangSourceOptions &options,
                             gl::ShaderMap<std::string> *shaderSourcesOut,
                             ShaderMapInterfaceVariableInfoMap *variableInfoMapOut);
 
-angle::Result TransformSpirvCode(const GlslangErrorCallback &callback,
-                                 const gl::ShaderType shaderType,
-                                 const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                 const std::vector<uint32_t> &initialSpirvBlob,
-                                 SpirvBlob *spirvBlobOut);
+angle::Result GlslangTransformSpirvCode(const GlslangErrorCallback &callback,
+                                        const gl::ShaderType shaderType,
+                                        bool removeEarlyFragmentTestsOptimization,
+                                        const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                        const SpirvBlob &initialSpirvBlob,
+                                        SpirvBlob *spirvBlobOut);
 
 angle::Result GlslangGetShaderSpirvCode(const GlslangErrorCallback &callback,
+                                        const gl::ShaderBitSet &linkedShaderStages,
                                         const gl::Caps &glCaps,
                                         const gl::ShaderMap<std::string> &shaderSources,
                                         const ShaderMapInterfaceVariableInfoMap &variableInfoMap,

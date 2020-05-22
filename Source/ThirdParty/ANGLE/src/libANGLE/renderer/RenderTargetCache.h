@@ -133,7 +133,7 @@ angle::Result RenderTargetCache<RenderTargetT>::updateColorRenderTarget(
 {
     // If the color render target we're updating is also the read buffer, make sure we update the
     // read render target also so it's not stale.
-    if (state.getReadIndex() == colorIndex)
+    if (state.getReadBufferState() != GL_NONE && state.getReadIndex() == colorIndex)
     {
         ANGLE_TRY(updateReadColorRenderTarget(context, state));
     }

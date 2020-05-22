@@ -3508,21 +3508,23 @@ class BuiltInId
     static constexpr const TSymbolUniqueId gl_BaseInstance          = TSymbolUniqueId(2303);
     static constexpr const TSymbolUniqueId angle_BaseVertex         = TSymbolUniqueId(2304);
     static constexpr const TSymbolUniqueId angle_BaseInstance       = TSymbolUniqueId(2305);
-    static constexpr const TSymbolUniqueId gl_NumWorkGroups         = TSymbolUniqueId(2306);
-    static constexpr const TSymbolUniqueId gl_WorkGroupSize         = TSymbolUniqueId(2307);
-    static constexpr const TSymbolUniqueId gl_WorkGroupID           = TSymbolUniqueId(2308);
-    static constexpr const TSymbolUniqueId gl_LocalInvocationID     = TSymbolUniqueId(2309);
-    static constexpr const TSymbolUniqueId gl_GlobalInvocationID    = TSymbolUniqueId(2310);
-    static constexpr const TSymbolUniqueId gl_LocalInvocationIndex  = TSymbolUniqueId(2311);
-    static constexpr const TSymbolUniqueId gl_PrimitiveIDIn         = TSymbolUniqueId(2312);
-    static constexpr const TSymbolUniqueId gl_InvocationID          = TSymbolUniqueId(2313);
-    static constexpr const TSymbolUniqueId gl_PrimitiveIDGS         = TSymbolUniqueId(2314);
-    static constexpr const TSymbolUniqueId gl_LayerGS               = TSymbolUniqueId(2315);
-    static constexpr const TSymbolUniqueId gl_PerVertex             = TSymbolUniqueId(2316);
-    static constexpr const TSymbolUniqueId gl_in                    = TSymbolUniqueId(2317);
-    static constexpr const TSymbolUniqueId gl_PerVertexOutBlock     = TSymbolUniqueId(2318);
-    static constexpr const TSymbolUniqueId gl_PositionGS            = TSymbolUniqueId(2319);
-    static constexpr const TSymbolUniqueId gl_ViewID_OVR            = TSymbolUniqueId(2320);
+    static constexpr const TSymbolUniqueId gl_ClipDistance          = TSymbolUniqueId(2306);
+    static constexpr const TSymbolUniqueId gl_MaxClipDistances      = TSymbolUniqueId(2307);
+    static constexpr const TSymbolUniqueId gl_NumWorkGroups         = TSymbolUniqueId(2308);
+    static constexpr const TSymbolUniqueId gl_WorkGroupSize         = TSymbolUniqueId(2309);
+    static constexpr const TSymbolUniqueId gl_WorkGroupID           = TSymbolUniqueId(2310);
+    static constexpr const TSymbolUniqueId gl_LocalInvocationID     = TSymbolUniqueId(2311);
+    static constexpr const TSymbolUniqueId gl_GlobalInvocationID    = TSymbolUniqueId(2312);
+    static constexpr const TSymbolUniqueId gl_LocalInvocationIndex  = TSymbolUniqueId(2313);
+    static constexpr const TSymbolUniqueId gl_PrimitiveIDIn         = TSymbolUniqueId(2314);
+    static constexpr const TSymbolUniqueId gl_InvocationID          = TSymbolUniqueId(2315);
+    static constexpr const TSymbolUniqueId gl_PrimitiveIDGS         = TSymbolUniqueId(2316);
+    static constexpr const TSymbolUniqueId gl_LayerGS               = TSymbolUniqueId(2317);
+    static constexpr const TSymbolUniqueId gl_PerVertex             = TSymbolUniqueId(2318);
+    static constexpr const TSymbolUniqueId gl_in                    = TSymbolUniqueId(2319);
+    static constexpr const TSymbolUniqueId gl_PerVertexOutBlock     = TSymbolUniqueId(2320);
+    static constexpr const TSymbolUniqueId gl_PositionGS            = TSymbolUniqueId(2321);
+    static constexpr const TSymbolUniqueId gl_ViewID_OVR            = TSymbolUniqueId(2322);
 
 };  // class BuiltInId
 

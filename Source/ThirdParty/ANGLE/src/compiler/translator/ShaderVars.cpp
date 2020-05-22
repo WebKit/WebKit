@@ -163,7 +163,15 @@ void ShaderVariable::indexIntoArray(unsigned int arrayIndex)
 unsigned int ShaderVariable::getNestedArraySize(unsigned int arrayNestingIndex) const
 {
     ASSERT(arraySizes.size() > arrayNestingIndex);
-    return arraySizes[arraySizes.size() - 1u - arrayNestingIndex];
+    unsigned int arraySize = arraySizes[arraySizes.size() - 1u - arrayNestingIndex];
+
+    if (arraySize == 0)
+    {
+        // Unsized array, so give it at least 1 entry
+        arraySize = 1;
+    }
+
+    return arraySize;
 }
 
 unsigned int ShaderVariable::getBasicTypeElementCount() const

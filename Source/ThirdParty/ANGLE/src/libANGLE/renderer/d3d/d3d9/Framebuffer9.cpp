@@ -385,11 +385,14 @@ angle::Result Framebuffer9::blitImpl(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-GLenum Framebuffer9::getRenderTargetImplementationFormat(RenderTargetD3D *renderTarget) const
+const gl::InternalFormat &Framebuffer9::getImplementationColorReadFormat(
+    const gl::Context *context) const
 {
-    RenderTarget9 *renderTarget9         = GetAs<RenderTarget9>(renderTarget);
-    const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(renderTarget9->getD3DFormat());
-    return d3dFormatInfo.info().glInternalFormat;
+    GLenum sizedFormat = mState.getReadAttachment()->getFormat().info->sizedInternalFormat;
+    const d3d9::TextureFormat &textureFormat = d3d9::GetTextureFormatInfo(sizedFormat);
+    const d3d9::D3DFormat &d3dFormatInfo     = d3d9::GetD3DFormatInfo(textureFormat.renderFormat);
+    const angle::Format &angleFormat         = angle::Format::Get(d3dFormatInfo.formatID);
+    return gl::GetSizedInternalFormatInfo(angleFormat.fboImplementationInternalFormat);
 }
 
 angle::Result Framebuffer9::getSamplePosition(const gl::Context *context,
@@ -401,9 +404,10 @@ angle::Result Framebuffer9::getSamplePosition(const gl::Context *context,
 }
 
 angle::Result Framebuffer9::syncState(const gl::Context *context,
+                                      GLenum binding,
                                       const gl::Framebuffer::DirtyBits &dirtyBits)
 {
-    ANGLE_TRY(FramebufferD3D::syncState(context, dirtyBits));
+    ANGLE_TRY(FramebufferD3D::syncState(context, binding, dirtyBits));
     ANGLE_TRY(mRenderTargetCache.update(context, mState, dirtyBits));
     return angle::Result::Continue;
 }

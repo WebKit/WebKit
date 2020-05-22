@@ -20,7 +20,7 @@ namespace rx
 class MockFramebufferImpl : public rx::FramebufferImpl
 {
   public:
-    MockFramebufferImpl() : rx::FramebufferImpl(gl::FramebufferState()) {}
+    MockFramebufferImpl() : rx::FramebufferImpl(gl::FramebufferState(1)) {}
     virtual ~MockFramebufferImpl() { destructor(); }
 
     MOCK_METHOD3(discard, angle::Result(const gl::Context *, size_t, const GLenum *));
@@ -34,8 +34,6 @@ class MockFramebufferImpl : public rx::FramebufferImpl
     MOCK_METHOD4(clearBufferiv, angle::Result(const gl::Context *, GLenum, GLint, const GLint *));
     MOCK_METHOD5(clearBufferfi, angle::Result(const gl::Context *, GLenum, GLint, GLfloat, GLint));
 
-    MOCK_CONST_METHOD1(getImplementationColorReadFormat, GLenum(const gl::Context *));
-    MOCK_CONST_METHOD1(getImplementationColorReadType, GLenum(const gl::Context *));
     MOCK_METHOD5(readPixels,
                  angle::Result(const gl::Context *, const gl::Rectangle &, GLenum, GLenum, void *));
 
@@ -50,7 +48,8 @@ class MockFramebufferImpl : public rx::FramebufferImpl
 
     MOCK_CONST_METHOD1(checkStatus, bool(const gl::Context *));
 
-    MOCK_METHOD2(syncState, angle::Result(const gl::Context *, const gl::Framebuffer::DirtyBits &));
+    MOCK_METHOD3(syncState,
+                 angle::Result(const gl::Context *, GLenum, const gl::Framebuffer::DirtyBits &));
 
     MOCK_METHOD0(destructor, void());
 };

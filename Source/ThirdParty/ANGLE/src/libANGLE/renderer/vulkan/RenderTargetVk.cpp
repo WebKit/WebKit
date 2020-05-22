@@ -17,9 +17,11 @@
 
 namespace rx
 {
+
 RenderTargetVk::RenderTargetVk()
-    : mImage(nullptr), mImageViews(nullptr), mLevelIndex(0), mLayerIndex(0)
-{}
+{
+    reset();
+}
 
 RenderTargetVk::~RenderTargetVk() {}
 
@@ -27,12 +29,10 @@ RenderTargetVk::RenderTargetVk(RenderTargetVk &&other)
     : mImage(other.mImage),
       mImageViews(other.mImageViews),
       mLevelIndex(other.mLevelIndex),
-      mLayerIndex(other.mLayerIndex)
+      mLayerIndex(other.mLayerIndex),
+      mContentDefined(other.mContentDefined)
 {
-    other.mImage      = nullptr;
-    other.mImageViews = nullptr;
-    other.mLevelIndex = 0;
-    other.mLayerIndex = 0;
+    other.reset();
 }
 
 void RenderTargetVk::init(vk::ImageHelper *image,
@@ -44,14 +44,18 @@ void RenderTargetVk::init(vk::ImageHelper *image,
     mImageViews = imageViews;
     mLevelIndex = levelIndex;
     mLayerIndex = layerIndex;
+    // We are being conservative here since our targeted optimization is to skip surfaceVK's depth
+    // buffer load after swap call.
+    mContentDefined = true;
 }
 
 void RenderTargetVk::reset()
 {
-    mImage      = nullptr;
-    mImageViews = nullptr;
-    mLevelIndex = 0;
-    mLayerIndex = 0;
+    mImage          = nullptr;
+    mImageViews     = nullptr;
+    mLevelIndex     = 0;
+    mLayerIndex     = 0;
+    mContentDefined = false;
 }
 
 vk::AttachmentSerial RenderTargetVk::getAssignSerial(ContextVk *contextVk)
@@ -74,6 +78,7 @@ angle::Result RenderTargetVk::onColorDraw(ContextVk *contextVk)
 
     contextVk->onRenderPassImageWrite(VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::ColorAttachment,
                                       mImage);
+    mContentDefined = true;
     retainImageViews(contextVk);
 
     return angle::Result::Continue;
@@ -87,6 +92,7 @@ angle::Result RenderTargetVk::onDepthStencilDraw(ContextVk *contextVk)
     VkImageAspectFlags aspectFlags = vk::GetDepthStencilAspectFlags(format);
 
     contextVk->onRenderPassImageWrite(aspectFlags, vk::ImageLayout::DepthStencilAttachment, mImage);
+    mContentDefined = true;
     retainImageViews(contextVk);
 
     return angle::Result::Continue;
@@ -138,20 +144,47 @@ vk::ImageHelper *RenderTargetVk::getImageForWrite(ContextVk *contextVk) const
     return mImage;
 }
 
-angle::Result RenderTargetVk::flushStagedUpdates(ContextVk *contextVk)
+angle::Result RenderTargetVk::flushStagedUpdates(ContextVk *contextVk,
+                                                 vk::ClearValuesArray *deferredClears,
+                                                 uint32_t deferredClearIndex) const
 {
+    // Note that the layer index for 3D textures is always zero according to Vulkan.
+    uint32_t layerIndex = mLayerIndex;
+    if (mImage->getType() == VK_IMAGE_TYPE_3D)
+    {
+        layerIndex = 0;
+    }
+
     ASSERT(mImage->valid());
-    if (!mImage->hasStagedUpdates())
+    if (!mImage->isUpdateStaged(mLevelIndex, layerIndex))
         return angle::Result::Continue;
 
     vk::CommandBuffer *commandBuffer;
     ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
-    return mImage->flushStagedUpdates(contextVk, mLevelIndex, mLevelIndex + 1, mLayerIndex,
-                                      mLayerIndex + 1, commandBuffer);
+    return mImage->flushSingleSubresourceStagedUpdates(
+        contextVk, mLevelIndex, layerIndex, commandBuffer, deferredClears, deferredClearIndex);
 }
 
 void RenderTargetVk::retainImageViews(ContextVk *contextVk) const
 {
     mImageViews->retain(&contextVk->getResourceUseList());
+}
+
+gl::ImageIndex RenderTargetVk::getImageIndex() const
+{
+    // Determine the GL type from the Vk Image properties.
+    if (mImage->getType() == VK_IMAGE_TYPE_3D)
+    {
+        return gl::ImageIndex::Make3D(mLevelIndex, mLayerIndex);
+    }
+
+    // We don't need to distinguish 2D array and cube.
+    if (mImage->getLayerCount() > 1)
+    {
+        return gl::ImageIndex::Make2DArray(mLevelIndex, mLayerIndex);
+    }
+
+    ASSERT(mLayerIndex == 0);
+    return gl::ImageIndex::Make2D(mLevelIndex);
 }
 }  // namespace rx

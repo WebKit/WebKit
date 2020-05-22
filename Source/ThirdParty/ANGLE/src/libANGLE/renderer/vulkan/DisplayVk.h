@@ -95,6 +95,8 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     void populateFeatureList(angle::FeatureList *features) override;
 
+    bool isRobustResourceInitEnabled() const override;
+
   protected:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 
@@ -108,6 +110,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
     mutable angle::ScratchBuffer mScratchBuffer;
 
     std::string mStoredErrorString;
+    bool mHasSurfaceWithRobustInit;
 };
 
 }  // namespace rx

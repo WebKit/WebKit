@@ -1090,8 +1090,12 @@ bool TOutputGLSLBase::visitDeclaration(Visit visit, TIntermDeclaration *node)
     {
         const TIntermSequence &sequence = *(node->getSequence());
         TIntermTyped *variable          = sequence.front()->getAsTyped();
-        writeLayoutQualifier(variable);
-        TIntermSymbol *symbolNode = variable->getAsSymbolNode();
+        TIntermSymbol *symbolNode       = variable->getAsSymbolNode();
+        if (!symbolNode || symbolNode->getName() != "gl_ClipDistance")
+        {
+            // gl_ClipDistance re-declaration doesn't need layout.
+            writeLayoutQualifier(variable);
+        }
         writeVariableType(variable->getType(), symbolNode ? &symbolNode->variable() : nullptr,
                           false);
         if (variable->getAsSymbolNode() == nullptr ||

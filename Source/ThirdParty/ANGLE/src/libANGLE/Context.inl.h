@@ -59,10 +59,18 @@ ANGLE_INLINE void MarkShaderStorageBufferUsage(const Context *context)
 }
 
 // Return true if the draw is a no-op, else return false.
+//  If there is no active program for the vertex or fragment shader stages, the results of vertex
+//  and fragment shader execution will respectively be undefined. However, this is not
+//  an error. ANGLE will treat this as a no-op.
 //  A no-op draw occurs if the count of vertices is less than the minimum required to
 //  have a valid primitive for this mode (0 for points, 0-1 for lines, 0-2 for tris).
 ANGLE_INLINE bool Context::noopDraw(PrimitiveMode mode, GLsizei count)
 {
+    if (!mStateCache.getCanDraw())
+    {
+        return true;
+    }
+
     return count < kMinimumPrimitiveCounts[mode];
 }
 

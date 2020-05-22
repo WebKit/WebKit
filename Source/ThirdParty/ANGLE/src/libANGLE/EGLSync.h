@@ -61,7 +61,7 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
     EGLLabelKHR mLabel;
 
     EGLenum mType;
-    static constexpr EGLint mCondition = EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR;
+    EGLint mCondition;
     EGLint mNativeFenceFD;
 };
 

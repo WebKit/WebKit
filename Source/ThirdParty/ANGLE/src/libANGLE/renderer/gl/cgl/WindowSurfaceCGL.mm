@@ -212,6 +212,7 @@ egl::Error WindowSurfaceCGL::initialize(const egl::Display *display)
                                                withContext:mContext
                                              withFunctions:mFunctions];
     [mLayer addSublayer:mSwapLayer];
+    [mSwapLayer setContentsScale:[mLayer contentsScale]];
 
     mFunctions->genRenderbuffers(1, &mDSRenderbuffer);
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mDSRenderbuffer);
@@ -301,12 +302,12 @@ void WindowSurfaceCGL::setSwapInterval(EGLint interval)
 
 EGLint WindowSurfaceCGL::getWidth() const
 {
-    return (EGLint)CGRectGetWidth([mLayer frame]);
+    return static_cast<EGLint>(CGRectGetWidth([mLayer frame]) * [mLayer contentsScale]);
 }
 
 EGLint WindowSurfaceCGL::getHeight() const
 {
-    return (EGLint)CGRectGetHeight([mLayer frame]);
+    return static_cast<EGLint>(CGRectGetHeight([mLayer frame]) * [mLayer contentsScale]);
 }
 
 EGLint WindowSurfaceCGL::isPostSubBufferSupported() const

@@ -74,7 +74,7 @@ EXPORTS
     eglQueryStringiANGLE                        @80
     eglGetNativeClientBufferANDROID             @81
     eglDupNativeFenceFDANDROID                  @82
-    eglGetMscRateCHROMIUM                       @83
+    eglGetMscRateANGLE                          @83
 
     ; 1.5 entry points
     eglCreateSync                               @38

@@ -403,6 +403,26 @@ bool JoinVariableStorageQualifier(TQualifier *joinedQualifier, TQualifier storag
             }
             break;
         }
+        case EvqNoPerspective:
+        {
+            switch (storageQualifier)
+            {
+                case EvqCentroid:
+                    *joinedQualifier = EvqNoPerspective;
+                    break;
+                case EvqVertexOut:
+                case EvqGeometryOut:
+                    *joinedQualifier = EvqNoPerspectiveOut;
+                    break;
+                case EvqFragmentIn:
+                case EvqGeometryIn:
+                    *joinedQualifier = EvqNoPerspectiveIn;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        }
         case EvqCentroid:
         {
             switch (storageQualifier)

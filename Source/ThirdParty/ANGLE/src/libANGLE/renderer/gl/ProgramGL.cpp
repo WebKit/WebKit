@@ -228,7 +228,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
         for (const auto &tfVarying : mState.getTransformFeedbackVaryingNames())
         {
             gl::ShaderType tfShaderType =
-                mState.getProgramExecutable().hasLinkedShaderStage(gl::ShaderType::Geometry)
+                mState.getExecutable().hasLinkedShaderStage(gl::ShaderType::Geometry)
                     ? gl::ShaderType::Geometry
                     : gl::ShaderType::Vertex;
             std::string tfVaryingMappedName =

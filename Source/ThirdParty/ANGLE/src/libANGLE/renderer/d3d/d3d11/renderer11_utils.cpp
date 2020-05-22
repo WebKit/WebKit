@@ -1569,6 +1569,7 @@ void GenerateCaps(ID3D11Device *device,
     // Explicitly disable GL_OES_compressed_ETC1_RGB8_texture because it's emulated and never
     // becomes core. WebGL doesn't want to expose it unless there is native support.
     extensions->compressedETC1RGB8TextureOES = false;
+    extensions->compressedETC1RGB8SubTexture = false;
 
     extensions->elementIndexUintOES = true;
     extensions->getProgramBinaryOES = true;
@@ -1633,16 +1634,18 @@ void GenerateCaps(ID3D11Device *device,
     extensions->copyTexture                         = true;
     extensions->copyCompressedTexture               = true;
     extensions->textureStorageMultisample2DArrayOES = true;
-    extensions->multiviewMultisample     = ((extensions->multiview || extensions->multiview2) &&
+    extensions->multiviewMultisample      = ((extensions->multiview || extensions->multiview2) &&
                                         extensions->textureStorageMultisample2DArrayOES);
-    extensions->copyTexture3d            = true;
-    extensions->textureBorderClampOES    = true;
-    extensions->textureMultisample       = true;
-    extensions->provokingVertex          = true;
-    extensions->blendFuncExtended        = true;
-    extensions->maxDualSourceDrawBuffers = 1;
-    extensions->texture3DOES             = true;
-    extensions->baseVertexBaseInstance   = true;
+    extensions->copyTexture3d             = true;
+    extensions->textureBorderClampOES     = true;
+    extensions->textureMultisample        = true;
+    extensions->provokingVertex           = true;
+    extensions->blendFuncExtended         = true;
+    extensions->maxDualSourceDrawBuffers  = 1;
+    extensions->texture3DOES              = true;
+    extensions->baseVertexBaseInstance    = true;
+    extensions->drawElementsBaseVertexOES = true;
+    extensions->drawElementsBaseVertexEXT = true;
     if (!strstr(description, "Adreno"))
     {
         extensions->multisampledRenderToTexture = true;
@@ -1652,6 +1655,11 @@ void GenerateCaps(ID3D11Device *device,
     // D3D11 cannot support reading depth texture as a luminance texture.
     // It treats it as a red-channel-only texture.
     extensions->depthTextureOES = false;
+
+    // readPixels on depth & stencil not working with D3D11 backend.
+    extensions->readDepthNV         = false;
+    extensions->readStencilNV       = false;
+    extensions->depthBufferFloat2NV = false;
 
     // D3D11 Feature Level 10_0+ uses SV_IsFrontFace in HLSL to emulate gl_FrontFacing.
     // D3D11 Feature Level 9_3 doesn't support SV_IsFrontFace, and has no equivalent, so can't
@@ -2215,6 +2223,7 @@ void SetPositionLayerTexCoord3DVertex(PositionLayerTexCoord3DVertex *vertex,
 BlendStateKey::BlendStateKey()
 {
     memset(this, 0, sizeof(BlendStateKey));
+    blendStateExt = gl::BlendStateExt();
 }
 
 BlendStateKey::BlendStateKey(const BlendStateKey &other)
@@ -2457,9 +2466,10 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     ANGLE_FEATURE_CONDITION(features, selectViewInGeometryShader,
                             !deviceCaps.supportsVpRtIndexWriteFromVertexShader);
 
-    // Intel and AMD drivers have trouble clearing textures without causing corruption. NVidia,
-    // on the other hand, can handle.
-    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, isNvidia);
+    // NVidia drivers have no trouble clearing textures without showing corruption.
+    // Intel and AMD drivers that have trouble have been blocklisted by Chromium. In the case of
+    // Intel, they've been blocklisted to the DX9 runtime.
+    ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, true);
 
     // Don't translate uniform block to StructuredBuffer on Windows 7 and earlier. This is targeted
     // to work around a bug that fails to allocate ShaderResourceView for StructuredBuffer.

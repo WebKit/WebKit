@@ -655,6 +655,14 @@ Error Display::initialize()
     ASSERT(mImplementation != nullptr);
     mImplementation->setBlobCache(&mBlobCache);
 
+    // Enable shader caching if debug layers are turned on. This allows us to test that shaders are
+    // properly saved & restored on all platforms. The cache won't allocate space until it's used
+    // and will be ignored entirely if the application / system sets it's own cache functions.
+    if (rx::ShouldUseDebugLayers(mAttributeMap))
+    {
+        mBlobCache.resize(1024 * 1024);
+    }
+
     gl::InitializeDebugAnnotations(&mAnnotator);
 
     gl::InitializeDebugMutexIfNeeded();

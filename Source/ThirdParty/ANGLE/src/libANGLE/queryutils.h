@@ -256,6 +256,11 @@ bool GetQueryParameterInfo(const State &glState,
                            GLenum pname,
                            GLenum *type,
                            unsigned int *numParams);
+
+void QueryProgramPipelineiv(const Context *context,
+                            ProgramPipeline *programPipeline,
+                            GLenum pname,
+                            GLint *params);
 }  // namespace gl
 
 namespace egl
@@ -269,7 +274,10 @@ void QueryConfigAttrib(const Config *config, EGLint attribute, EGLint *value);
 
 void QueryContextAttrib(const gl::Context *context, EGLint attribute, EGLint *value);
 
-void QuerySurfaceAttrib(const Surface *surface, EGLint attribute, EGLint *value);
+egl::Error QuerySurfaceAttrib(const Display *display,
+                              const Surface *surface,
+                              EGLint attribute,
+                              EGLint *value);
 void SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value);
 Error GetSyncAttrib(Display *display, Sync *sync, EGLint attribute, EGLint *value);
 

@@ -113,7 +113,6 @@
 1340 WIN : dEQP-EGL.functional.resize.pixel_density.* = SKIP
 
 // Windows OpenGL failures
-2546 WIN : dEQP-EGL.functional.resize.surface_size.shrink = SKIP
 2546 WIN : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
 2546 WIN : dEQP-EGL.functional.thread_cleanup.* = SKIP
 
@@ -129,9 +128,6 @@
 2715 WIN VULKAN : dEQP-EGL.functional.query_surface.simple.pbuffer.rgb888_no_depth_no_stencil = FAIL
 2715 WIN VULKAN : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_no_stencil = FAIL
 2715 WIN VULKAN : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_no_depth_no_stencil = FAIL
-2635 WIN VULKAN : dEQP-EGL.functional.resize.surface_size.grow = FAIL
-2635 WIN VULKAN : dEQP-EGL.functional.resize.surface_size.stretch_height = FAIL
-2635 WIN VULKAN : dEQP-EGL.functional.resize.surface_size.stretch_width = FAIL
 2716 WIN VULKAN : dEQP-EGL.functional.preserve_swap.no_preserve.* = FAIL
 
 // Linux failures
@@ -250,3 +246,10 @@
 2546 NEXUS5X : dEQP-EGL.functional.query_context.get_current_display.* = SKIP
 2546 NEXUS5X : dEQP-EGL.functional.query_context.get_current_surface.r* = FAIL
 2546 NEXUS5X : dEQP-EGL.functional.query_context.query_context.* = SKIP
+
+// SwANGLE bots
+4495 WIN SWIFTSHADER : dEQP-EGL.functional.sharing.gles2.multithread.random_egl_server_sync.shaders.compile.9 = SKIP
+
+// EGL images with the GL back-ends are not supported
+4606 OPENGL : dEQP-EGL.functional.image.api.create_image_gles2_* = FAIL
+4606 GLES : dEQP-EGL.functional.image.api.create_image_gles2_* = FAIL

@@ -36,6 +36,9 @@ bool WindowSurfaceVkFuchsia::isValidNativeWindow(EGLNativeWindowType window)
 
 angle::Result WindowSurfaceVkFuchsia::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
 {
+#if !defined(ANGLE_SHARED_LIBVULKAN)
+    InitImagePipeSurfaceFUCHSIAFunctions(context->getRenderer()->getInstance());
+#endif  // !defined(ANGLE_SHARED_LIBVULKAN)
     fuchsia_egl_window *egl_window = reinterpret_cast<fuchsia_egl_window *>(mNativeWindowType);
 
     VkImagePipeSurfaceCreateInfoFUCHSIA createInfo = {};

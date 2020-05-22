@@ -397,7 +397,7 @@ angle::Result TextureMtl::ensureTextureCreated(const gl::Context *context)
     ANGLE_TRY(checkForEmulatedChannels(context, mFormat, mNativeTexture));
 
     // Transfer data from images to actual texture object
-    mtl::BlitCommandEncoder *encoder                = nullptr;
+    mtl::BlitCommandEncoder *encoder = nullptr;
     for (int layer = 0; layer < layers; ++layer)
     {
         for (GLuint mip = 0; mip < mips; ++mip)
@@ -489,6 +489,7 @@ angle::Result TextureMtl::setImage(const gl::Context *context,
                                    GLenum format,
                                    GLenum type,
                                    const gl::PixelUnpackState &unpack,
+                                   gl::Buffer *unpackBuffer,
                                    const uint8_t *pixels)
 {
     const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(internalFormat, type);

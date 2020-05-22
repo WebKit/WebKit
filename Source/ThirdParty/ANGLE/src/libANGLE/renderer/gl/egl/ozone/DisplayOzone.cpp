@@ -932,6 +932,7 @@ egl::ConfigSet DisplayOzone::generateConfigs()
     egl::ConfigSet configs;
 
     egl::Config config;
+    config.bufferSize         = 32;
     config.redSize            = 8;
     config.greenSize          = 8;
     config.blueSize           = 8;

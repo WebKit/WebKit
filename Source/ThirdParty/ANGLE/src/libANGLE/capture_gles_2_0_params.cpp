@@ -525,7 +525,10 @@ void CaptureGetTexParameteriv_params(const State &glState,
                                      GLint *params,
                                      ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    if (params)
+    {
+        paramCapture->readBufferSizeBytes = sizeof(GLint);
+    }
 }
 
 void CaptureGetUniformLocation_name(const State &glState,

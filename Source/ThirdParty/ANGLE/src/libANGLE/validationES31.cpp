@@ -11,6 +11,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Framebuffer.h"
+#include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES2_autogen.h"
@@ -369,9 +370,10 @@ bool ValidateGetBooleani_v(const Context *context,
                            GLuint index,
                            const GLboolean *data)
 {
-    if (context->getClientVersion() < ES_3_1)
+    if (context->getClientVersion() < ES_3_1 && !context->getExtensions().drawBuffersIndexedAny())
     {
-        context->validationError(GL_INVALID_OPERATION, kES31Required);
+        context->validationError(GL_INVALID_OPERATION,
+                                 kES31OrDrawBuffersIndexedExtensionNotAvailable);
         return false;
     }
 
@@ -390,9 +392,10 @@ bool ValidateGetBooleani_vRobustANGLE(const Context *context,
                                       const GLsizei *length,
                                       const GLboolean *data)
 {
-    if (context->getClientVersion() < ES_3_1)
+    if (context->getClientVersion() < ES_3_1 && !context->getExtensions().drawBuffersIndexedAny())
     {
-        context->validationError(GL_INVALID_OPERATION, kES31Required);
+        context->validationError(GL_INVALID_OPERATION,
+                                 kES31OrDrawBuffersIndexedExtensionNotAvailable);
         return false;
     }
 
@@ -1359,10 +1362,10 @@ bool ValidateDispatchCompute(const Context *context,
         return false;
     }
 
-    const State &state = context->getState();
-    Program *program   = state.getLinkedProgram(context);
+    const State &state                  = context->getState();
+    const ProgramExecutable *executable = state.getProgramExecutable();
 
-    if (program == nullptr || !program->getExecutable().hasLinkedShaderStage(ShaderType::Compute))
+    if (executable == nullptr || !executable->hasLinkedShaderStage(ShaderType::Compute))
     {
         context->validationError(GL_INVALID_OPERATION, kNoActiveProgramWithComputeShader);
         return false;
@@ -1396,10 +1399,10 @@ bool ValidateDispatchComputeIndirect(const Context *context, GLintptr indirect)
         return false;
     }
 
-    const State &state = context->getState();
-    Program *program   = state.getLinkedProgram(context);
+    const State &state                  = context->getState();
+    const ProgramExecutable *executable = state.getProgramExecutable();
 
-    if (program == nullptr || !program->getExecutable().hasLinkedShaderStage(ShaderType::Compute))
+    if (executable == nullptr || !executable->hasLinkedShaderStage(ShaderType::Compute))
     {
         context->validationError(GL_INVALID_OPERATION, kNoActiveProgramWithComputeShader);
         return false;
@@ -1683,14 +1686,14 @@ static bool ValidateGenOrDeleteES31(const Context *context, GLint n)
 }
 
 bool ValidateGenProgramPipelines(const Context *context,
-                                 GLint n,
+                                 GLsizei n,
                                  const ProgramPipelineID *pipelines)
 {
     return ValidateGenOrDeleteES31(context, n);
 }
 
 bool ValidateDeleteProgramPipelines(const Context *context,
-                                    GLint n,
+                                    GLsizei n,
                                     const ProgramPipelineID *pipelines)
 {
     return ValidateGenOrDeleteES31(context, n);
@@ -1727,18 +1730,108 @@ bool ValidateIsProgramPipeline(const Context *context, ProgramPipelineID pipelin
 bool ValidateUseProgramStages(const Context *context,
                               ProgramPipelineID pipeline,
                               GLbitfield stages,
-                              ShaderProgramID program)
+                              ShaderProgramID programId)
 {
-    UNIMPLEMENTED();
-    return false;
+    if (context->getClientVersion() < ES_3_1)
+    {
+        context->validationError(GL_INVALID_OPERATION, kES31Required);
+        return false;
+    }
+
+    // GL_INVALID_VALUE is generated if shaders contains set bits that are not recognized, and is
+    // not the reserved value GL_ALL_SHADER_BITS.
+    const GLbitfield knownShaderBits =
+        GL_VERTEX_SHADER_BIT | GL_FRAGMENT_SHADER_BIT | GL_COMPUTE_SHADER_BIT;
+    if ((stages & ~knownShaderBits) && (stages != GL_ALL_SHADER_BITS))
+    {
+        context->validationError(GL_INVALID_VALUE, kUnrecognizedShaderStageBit);
+        return false;
+    }
+
+    // GL_INVALID_OPERATION is generated if pipeline is not a name previously returned from a call
+    // to glGenProgramPipelines or if such a name has been deleted by a call to
+    // glDeleteProgramPipelines.
+    if (!context->isProgramPipelineGenerated({pipeline}))
+    {
+        context->validationError(GL_INVALID_OPERATION, kObjectNotGenerated);
+        return false;
+    }
+
+    // If program is zero, or refers to a program object with no valid shader executable for a given
+    // stage, it is as if the pipeline object has no programmable stage configured for the indicated
+    // shader stages.
+    if (programId.value == 0)
+    {
+        return true;
+    }
+
+    Program *program = context->getProgramNoResolveLink(programId);
+    if (!program)
+    {
+        context->validationError(GL_INVALID_VALUE, kProgramDoesNotExist);
+        return false;
+    }
+
+    // GL_INVALID_OPERATION is generated if program refers to a program object that was not linked
+    // with its GL_PROGRAM_SEPARABLE status set.
+    // resolveLink() may not have been called if glCreateShaderProgramv() was not used and
+    // glDetachShader() was not called.
+    program->resolveLink(context);
+    if (!program->isSeparable())
+    {
+        context->validationError(GL_INVALID_OPERATION, kProgramNotSeparable);
+        return false;
+    }
+
+    // GL_INVALID_OPERATION is generated if program refers to a program object that has not been
+    // successfully linked.
+    if (!program->isLinked())
+    {
+        context->validationError(GL_INVALID_OPERATION, kProgramNotLinked);
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateActiveShaderProgram(const Context *context,
                                  ProgramPipelineID pipeline,
-                                 ShaderProgramID program)
+                                 ShaderProgramID programId)
 {
-    UNIMPLEMENTED();
-    return false;
+    // An INVALID_OPERATION error is generated if pipeline is not a name returned from a previous
+    // call to GenProgramPipelines or if such a name has since been deleted by
+    // DeleteProgramPipelines.
+    if (!context->isProgramPipelineGenerated({pipeline}))
+    {
+        context->validationError(GL_INVALID_OPERATION, kObjectNotGenerated);
+        return false;
+    }
+
+    // An INVALID_VALUE error is generated if program is not zero and is not the name of either a
+    // program or shader object.
+    if ((programId.value != 0) && !context->isProgram(programId) && !context->isShader(programId))
+    {
+        context->validationError(GL_INVALID_VALUE, kProgramDoesNotExist);
+        return false;
+    }
+
+    // An INVALID_OPERATION error is generated if program is the name of a shader object.
+    if (context->isShader(programId))
+    {
+        context->validationError(GL_INVALID_OPERATION, kExpectedProgramName);
+        return false;
+    }
+
+    // An INVALID_OPERATION error is generated if program is not zero and has not been linked, or
+    // was last linked unsuccessfully. The active program is not modified.
+    Program *program = context->getProgramNoResolveLink(programId);
+    if ((programId.value != 0) && !program->isLinked())
+    {
+        context->validationError(GL_INVALID_OPERATION, kProgramNotLinked);
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateCreateShaderProgramv(const Context *context,
@@ -1746,8 +1839,28 @@ bool ValidateCreateShaderProgramv(const Context *context,
                                   GLsizei count,
                                   const GLchar *const *strings)
 {
-    UNIMPLEMENTED();
-    return false;
+    if (context->getClientVersion() < ES_3_1)
+    {
+        context->validationError(GL_INVALID_OPERATION, kES31Required);
+        return false;
+    }
+
+    // GL_INVALID_ENUM is generated if type is not an accepted shader type.
+    if ((type != ShaderType::Vertex) && (type != ShaderType::Fragment) &&
+        (type != ShaderType::Compute))
+    {
+        context->validationError(GL_INVALID_ENUM, kInvalidShaderType);
+        return false;
+    }
+
+    // GL_INVALID_VALUE is generated if count is negative.
+    if (count < 0)
+    {
+        context->validationError(GL_INVALID_VALUE, kNegativeCount);
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateGetProgramPipelineiv(const Context *context,
@@ -1755,14 +1868,50 @@ bool ValidateGetProgramPipelineiv(const Context *context,
                                   GLenum pname,
                                   const GLint *params)
 {
-    UNIMPLEMENTED();
-    return false;
+    // An INVALID_OPERATION error is generated if pipeline is not a name returned from a previous
+    // call to GenProgramPipelines or if such a name has since been deleted by
+    // DeleteProgramPipelines.
+    if ((pipeline.value == 0) || (!context->isProgramPipelineGenerated(pipeline)))
+    {
+        context->validationError(GL_INVALID_OPERATION, kProgramPipelineDoesNotExist);
+        return false;
+    }
+
+    // An INVALID_ENUM error is generated if pname is not ACTIVE_PROGRAM,
+    // INFO_LOG_LENGTH, VALIDATE_STATUS, or one of the type arguments in
+    // table 7.1.
+    switch (pname)
+    {
+        case GL_ACTIVE_PROGRAM:
+        case GL_INFO_LOG_LENGTH:
+        case GL_VALIDATE_STATUS:
+        case GL_VERTEX_SHADER:
+        case GL_FRAGMENT_SHADER:
+        case GL_COMPUTE_SHADER:
+            break;
+
+        default:
+            context->validationError(GL_INVALID_ENUM, kInvalidPname);
+            return false;
+    }
+
+    return true;
 }
 
 bool ValidateValidateProgramPipeline(const Context *context, ProgramPipelineID pipeline)
 {
-    UNIMPLEMENTED();
-    return false;
+    if (pipeline.value == 0)
+    {
+        return false;
+    }
+
+    if (!context->isProgramPipelineGenerated(pipeline))
+    {
+        context->validationError(GL_INVALID_OPERATION, kProgramPipelineDoesNotExist);
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateGetProgramPipelineInfoLog(const Context *context,
@@ -1771,8 +1920,19 @@ bool ValidateGetProgramPipelineInfoLog(const Context *context,
                                        const GLsizei *length,
                                        const GLchar *infoLog)
 {
-    UNIMPLEMENTED();
-    return false;
+    if (bufSize < 0)
+    {
+        context->validationError(GL_INVALID_VALUE, kNegativeBufferSize);
+        return false;
+    }
+
+    if (!context->isProgramPipelineGenerated(pipeline))
+    {
+        context->validationError(GL_INVALID_VALUE, kProgramPipelineDoesNotExist);
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateMemoryBarrier(const Context *context, GLbitfield barriers)

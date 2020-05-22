@@ -226,11 +226,11 @@ angle::Result TextureD3D::setImageImpl(const gl::Context *context,
                                        const gl::ImageIndex &index,
                                        GLenum type,
                                        const gl::PixelUnpackState &unpack,
+                                       gl::Buffer *unpackBuffer,
                                        const uint8_t *pixels,
                                        ptrdiff_t layerOffset)
 {
-    ImageD3D *image          = getImage(index);
-    gl::Buffer *unpackBuffer = context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack);
+    ImageD3D *image = getImage(index);
     ASSERT(image);
 
     // No-op
@@ -363,6 +363,7 @@ bool TextureD3D::isFastUnpackable(const gl::Buffer *unpackBuffer, GLenum sizedIn
 
 angle::Result TextureD3D::fastUnpackPixels(const gl::Context *context,
                                            const gl::PixelUnpackState &unpack,
+                                           gl::Buffer *unpackBuffer,
                                            const uint8_t *pixels,
                                            const gl::Box &destArea,
                                            GLenum sizedInternalFormat,
@@ -386,9 +387,9 @@ angle::Result TextureD3D::fastUnpackPixels(const gl::Context *context,
 
     uintptr_t offset = reinterpret_cast<uintptr_t>(pixels);
 
-    ANGLE_TRY(mRenderer->fastCopyBufferToTexture(context, unpack, static_cast<unsigned int>(offset),
-                                                 destRenderTarget, sizedInternalFormat, type,
-                                                 destArea));
+    ANGLE_TRY(mRenderer->fastCopyBufferToTexture(
+        context, unpack, unpackBuffer, static_cast<unsigned int>(offset), destRenderTarget,
+        sizedInternalFormat, type, destArea));
 
     return angle::Result::Continue;
 }
@@ -652,6 +653,27 @@ angle::Result TextureD3D::setBaseLevel(const gl::Context *context, GLuint baseLe
          newStorageDepth != oldStorageDepth || newStorageFormat != oldStorageFormat))
     {
         markAllImagesDirty();
+
+        // Iterate over all images, and backup the content if it's been used as a render target. The
+        // D3D11 backend can automatically restore images on storage destroy, but it only works for
+        // images that have been associated with the texture storage before, which is insufficient
+        // here.
+        if (mTexStorage->isRenderTarget())
+        {
+            gl::ImageIndexIterator iterator = imageIterator();
+            while (iterator.hasNext())
+            {
+                const gl::ImageIndex index    = iterator.next();
+                const GLsizei samples         = getRenderToTextureSamples();
+                RenderTargetD3D *renderTarget = nullptr;
+                ANGLE_TRY(mTexStorage->findRenderTarget(context, index, samples, &renderTarget));
+                if (renderTarget)
+                {
+                    ANGLE_TRY(getImage(index)->copyFromTexStorage(context, index, mTexStorage));
+                }
+            }
+        }
+
         ANGLE_TRY(releaseTexStorage(context));
     }
 
@@ -889,6 +911,7 @@ angle::Result TextureD3D_2D::setImage(const gl::Context *context,
                                       GLenum format,
                                       GLenum type,
                                       const gl::PixelUnpackState &unpack,
+                                      gl::Buffer *unpackBuffer,
                                       const uint8_t *pixels)
 {
     ASSERT((index.getTarget() == gl::TextureTarget::_2D ||
@@ -903,7 +926,6 @@ angle::Result TextureD3D_2D::setImage(const gl::Context *context,
                             size, false));
 
     // Attempt a fast gpu copy of the pixel data to the surface
-    gl::Buffer *unpackBuffer = context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack);
     if (mTexStorage)
     {
         ANGLE_TRY(mTexStorage->releaseMultisampledTexStorageForLevel(index.getLevelIndex()));
@@ -918,7 +940,7 @@ angle::Result TextureD3D_2D::setImage(const gl::Context *context,
         gl::Box destArea(0, 0, 0, getWidth(index.getLevelIndex()), getHeight(index.getLevelIndex()),
                          1);
 
-        ANGLE_TRY(fastUnpackPixels(context, unpack, pixels, destArea,
+        ANGLE_TRY(fastUnpackPixels(context, unpack, unpackBuffer, pixels, destArea,
                                    internalFormatInfo.sizedInternalFormat, type, destRenderTarget));
 
         // Ensure we don't overwrite our newly initialized data
@@ -929,7 +951,7 @@ angle::Result TextureD3D_2D::setImage(const gl::Context *context,
 
     if (!fastUnpacked)
     {
-        ANGLE_TRY(setImageImpl(context, index, type, unpack, pixels, 0));
+        ANGLE_TRY(setImageImpl(context, index, type, unpack, unpackBuffer, pixels, 0));
     }
 
     return angle::Result::Continue;
@@ -957,7 +979,8 @@ angle::Result TextureD3D_2D::setSubImage(const gl::Context *context,
         ANGLE_TRY(getRenderTarget(context, index, getRenderToTextureSamples(), &renderTarget));
         ASSERT(!mImageArray[index.getLevelIndex()]->isDirty());
 
-        return fastUnpackPixels(context, unpack, pixels, area, mipFormat, type, renderTarget);
+        return fastUnpackPixels(context, unpack, unpackBuffer, pixels, area, mipFormat, type,
+                                renderTarget);
     }
     else
     {
@@ -1692,6 +1715,7 @@ angle::Result TextureD3D_Cube::setImage(const gl::Context *context,
                                         GLenum format,
                                         GLenum type,
                                         const gl::PixelUnpackState &unpack,
+                                        gl::Buffer *unpackBuffer,
                                         const uint8_t *pixels)
 {
     ASSERT(size.depth == 1);
@@ -1700,7 +1724,7 @@ angle::Result TextureD3D_Cube::setImage(const gl::Context *context,
     ANGLE_TRY(redefineImage(context, index.cubeMapFaceIndex(), index.getLevelIndex(),
                             internalFormatInfo.sizedInternalFormat, size, false));
 
-    return setImageImpl(context, index, type, unpack, pixels, 0);
+    return setImageImpl(context, index, type, unpack, unpackBuffer, pixels, 0);
 }
 
 angle::Result TextureD3D_Cube::setSubImage(const gl::Context *context,
@@ -2425,6 +2449,7 @@ angle::Result TextureD3D_3D::setImage(const gl::Context *context,
                                       GLenum format,
                                       GLenum type,
                                       const gl::PixelUnpackState &unpack,
+                                      gl::Buffer *unpackBuffer,
                                       const uint8_t *pixels)
 {
     ASSERT(index.getTarget() == gl::TextureTarget::_3D);
@@ -2436,7 +2461,6 @@ angle::Result TextureD3D_3D::setImage(const gl::Context *context,
     bool fastUnpacked = false;
 
     // Attempt a fast gpu copy of the pixel data to the surface if the app bound an unpack buffer
-    gl::Buffer *unpackBuffer = context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack);
     if (isFastUnpackable(unpackBuffer, internalFormatInfo.sizedInternalFormat) && !size.empty() &&
         isLevelComplete(index.getLevelIndex()))
     {
@@ -2447,7 +2471,7 @@ angle::Result TextureD3D_3D::setImage(const gl::Context *context,
         gl::Box destArea(0, 0, 0, getWidth(index.getLevelIndex()), getHeight(index.getLevelIndex()),
                          getDepth(index.getLevelIndex()));
 
-        ANGLE_TRY(fastUnpackPixels(context, unpack, pixels, destArea,
+        ANGLE_TRY(fastUnpackPixels(context, unpack, unpackBuffer, pixels, destArea,
                                    internalFormatInfo.sizedInternalFormat, type, destRenderTarget));
 
         // Ensure we don't overwrite our newly initialized data
@@ -2458,7 +2482,7 @@ angle::Result TextureD3D_3D::setImage(const gl::Context *context,
 
     if (!fastUnpacked)
     {
-        ANGLE_TRY(setImageImpl(context, index, type, unpack, pixels, 0));
+        ANGLE_TRY(setImageImpl(context, index, type, unpack, unpackBuffer, pixels, 0));
     }
 
     return angle::Result::Continue;
@@ -2483,7 +2507,8 @@ angle::Result TextureD3D_3D::setSubImage(const gl::Context *context,
         ANGLE_TRY(getRenderTarget(context, index, getRenderToTextureSamples(), &destRenderTarget));
         ASSERT(!mImageArray[index.getLevelIndex()]->isDirty());
 
-        return fastUnpackPixels(context, unpack, pixels, area, mipFormat, type, destRenderTarget);
+        return fastUnpackPixels(context, unpack, unpackBuffer, pixels, area, mipFormat, type,
+                                destRenderTarget);
     }
     else
     {
@@ -3090,6 +3115,7 @@ angle::Result TextureD3D_2DArray::setImage(const gl::Context *context,
                                            GLenum format,
                                            GLenum type,
                                            const gl::PixelUnpackState &unpack,
+                                           gl::Buffer *unpackBuffer,
                                            const uint8_t *pixels)
 {
     ASSERT(index.getTarget() == gl::TextureTarget::_2DArray);
@@ -3110,7 +3136,8 @@ angle::Result TextureD3D_2DArray::setImage(const gl::Context *context,
     {
         const ptrdiff_t layerOffset = (inputDepthPitch * i);
         gl::ImageIndex layerIndex   = gl::ImageIndex::Make2DArray(index.getLevelIndex(), i);
-        ANGLE_TRY(setImageImpl(context, layerIndex, type, unpack, pixels, layerOffset));
+        ANGLE_TRY(
+            setImageImpl(context, layerIndex, type, unpack, unpackBuffer, pixels, layerOffset));
     }
 
     return angle::Result::Continue;
@@ -3806,6 +3833,7 @@ angle::Result TextureD3DImmutableBase::setImage(const gl::Context *context,
                                                 GLenum format,
                                                 GLenum type,
                                                 const gl::PixelUnpackState &unpack,
+                                                gl::Buffer *unpackBuffer,
                                                 const uint8_t *pixels)
 {
     ANGLE_HR_UNREACHABLE(GetImplAs<ContextD3D>(context));

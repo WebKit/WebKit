@@ -68,6 +68,7 @@ class ResourcesHLSL : angle::NonCopyable
 
     unsigned int getReadonlyImage2DRegisterIndex() const { return mReadonlyImage2DRegisterIndex; }
     unsigned int getImage2DRegisterIndex() const { return mImage2DRegisterIndex; }
+    bool shouldTranslateUniformBlockToStructuredBuffer(const TInterfaceBlock &interfaceBlock);
 
   private:
     TString uniformBlockString(const TInterfaceBlock &interfaceBlock,
@@ -75,7 +76,9 @@ class ResourcesHLSL : angle::NonCopyable
                                unsigned int registerIndex,
                                unsigned int arrayIndex);
     TString uniformBlockWithOneLargeArrayMemberString(const TInterfaceBlock &interfaceBlock,
-                                                      unsigned int registerIndex);
+                                                      const TVariable *instanceVariable,
+                                                      unsigned int registerIndex,
+                                                      unsigned int arrayIndex);
 
     TString shaderStorageBlockString(const TInterfaceBlock &interfaceBlock,
                                      const TVariable *instanceVariable,
@@ -125,7 +128,6 @@ class ResourcesHLSL : angle::NonCopyable
                                      const HLSLRWTextureGroup textureGroup,
                                      const TVector<const TVariable *> &group,
                                      unsigned int *groupTextureRegisterIndex);
-    bool shouldTranslateUniformBlockToStructuredBuffer(const TInterfaceBlock &interfaceBlock);
 
     unsigned int mUniformRegister;
     unsigned int mUniformBlockRegister;

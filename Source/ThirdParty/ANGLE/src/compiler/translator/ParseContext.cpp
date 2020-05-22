@@ -530,6 +530,7 @@ bool TParseContext::checkCanBeLValue(const TSourceLoc &line, const char *op, TIn
         case EvqVertexIn:
         case EvqGeometryIn:
         case EvqFlatIn:
+        case EvqNoPerspectiveIn:
         case EvqSmoothIn:
         case EvqCentroidIn:
             message = "can't modify an input";
@@ -1217,6 +1218,36 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
         else
         {
             error(line, "redeclaration of gl_LastFragData with size != gl_MaxDrawBuffers",
+                  identifier);
+            return false;
+        }
+    }
+    else if (type->isArray() && identifier == "gl_ClipDistance")
+    {
+        // gl_ClipDistance can be redeclared with smaller size than gl_MaxClipDistances
+        const TVariable *maxClipDistances = static_cast<const TVariable *>(
+            symbolTable.findBuiltIn(ImmutableString("gl_MaxClipDistances"), mShaderVersion));
+        if (!maxClipDistances)
+        {
+            // Unsupported extension
+            needsReservedCheck = true;
+        }
+        else if (type->isArrayOfArrays())
+        {
+            error(line, "redeclaration of gl_ClipDistance as an array of arrays", identifier);
+            return false;
+        }
+        else if (static_cast<int>(type->getOutermostArraySize()) <=
+                 maxClipDistances->getConstPointer()->getIConst())
+        {
+            if (const TSymbol *builtInSymbol = symbolTable.findBuiltIn(identifier, mShaderVersion))
+            {
+                needsReservedCheck = !checkCanUseExtension(line, builtInSymbol->extension());
+            }
+        }
+        else
+        {
+            error(line, "redeclaration of gl_ClipDistance with size > gl_MaxClipDistances",
                   identifier);
             return false;
         }

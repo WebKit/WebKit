@@ -963,14 +963,14 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
     if (memcmp(&identifier, &binaryDeviceIdentifier, sizeof(DeviceIdentifier)) != 0)
     {
         infoLog << "Invalid program binary, device configuration has changed.";
-        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+        return nullptr;
     }
 
     int compileFlags = stream->readInt<int>();
     if (compileFlags != ANGLE_COMPILE_OPTIMIZATION_LEVEL)
     {
         infoLog << "Mismatched compilation flags.";
-        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+        return nullptr;
     }
 
     for (int &index : mAttribLocationToD3DSemantic)
@@ -1033,7 +1033,7 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
     if (stream->error())
     {
         infoLog << "Invalid program binary.";
-        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+        return nullptr;
     }
 
     ASSERT(mD3DShaderStorageBlocks.empty());
@@ -1051,7 +1051,7 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
     if (stream->error())
     {
         infoLog << "Invalid program binary.";
-        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+        return nullptr;
     }
 
     ASSERT(mImage2DUniforms.empty());
@@ -1073,7 +1073,7 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
     if (stream->error())
     {
         infoLog << "Invalid program binary.";
-        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+        return nullptr;
     }
 
     const auto &linkedUniforms = mState.getUniforms();
@@ -1100,7 +1100,7 @@ std::unique_ptr<rx::LinkEvent> ProgramD3D::load(const gl::Context *context,
     if (stream->error())
     {
         infoLog << "Invalid program binary.";
-        return std::make_unique<LinkEventDone>(angle::Result::Incomplete);
+        return nullptr;
     }
 
     ASSERT(mD3DUniformBlocks.empty());
@@ -1307,7 +1307,7 @@ angle::Result ProgramD3D::loadBinaryShaderExecutables(d3d::Context *contextD3D,
             stream->readInt<unsigned int>(), gl::TextureType::_2D));
     }
 
-    initializeUniformStorage(mState.getProgramExecutable().getLinkedShaderStages());
+    initializeUniformStorage(mState.getExecutable().getLinkedShaderStages());
 
     dirtyAllUniforms();
 
@@ -2353,7 +2353,7 @@ const std::vector<D3DUBOCacheUseSB> &ProgramD3D::getShaderUniformBufferCacheUseS
 
 void ProgramD3D::dirtyAllUniforms()
 {
-    mShaderUniformsDirty = mState.getProgramExecutable().getLinkedShaderStages();
+    mShaderUniformsDirty = mState.getExecutable().getLinkedShaderStages();
 }
 
 void ProgramD3D::markUniformsClean()
@@ -3049,7 +3049,7 @@ void ProgramD3D::updateCachedInputLayout(Serial associatedSerial, const gl::Stat
 
     const auto &vertexAttributes = state.getVertexArray()->getVertexAttributes();
     const gl::AttributesMask &attributesMask =
-        mState.getProgramExecutable().getActiveAttribLocationsMask();
+        mState.getExecutable().getActiveAttribLocationsMask();
 
     for (size_t locationIndex : attributesMask)
     {

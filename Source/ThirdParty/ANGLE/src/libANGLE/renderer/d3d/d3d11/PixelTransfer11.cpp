@@ -150,12 +150,15 @@ void PixelTransfer11::setBufferToTextureCopyParams(const gl::Box &destArea,
 
 angle::Result PixelTransfer11::copyBufferToTexture(const gl::Context *context,
                                                    const gl::PixelUnpackState &unpack,
+                                                   gl::Buffer *unpackBuffer,
                                                    unsigned int offset,
                                                    RenderTargetD3D *destRenderTarget,
                                                    GLenum destinationFormat,
                                                    GLenum sourcePixelsType,
                                                    const gl::Box &destArea)
 {
+    ASSERT(unpackBuffer);
+
     ANGLE_TRY(loadResources(context));
 
     gl::Extents destSize = destRenderTarget->getExtents();
@@ -163,9 +166,6 @@ angle::Result PixelTransfer11::copyBufferToTexture(const gl::Context *context,
     ASSERT(destArea.x >= 0 && destArea.x + destArea.width <= destSize.width && destArea.y >= 0 &&
            destArea.y + destArea.height <= destSize.height && destArea.z >= 0 &&
            destArea.z + destArea.depth <= destSize.depth);
-
-    const gl::Buffer &sourceBuffer =
-        *context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack);
 
     ASSERT(mRenderer->supportsFastCopyBufferToTexture(destinationFormat));
 
@@ -182,7 +182,7 @@ angle::Result PixelTransfer11::copyBufferToTexture(const gl::Context *context,
         sourceglFormatInfo.sizedInternalFormat, mRenderer->getRenderer11DeviceCaps());
     DXGI_FORMAT srvFormat = sourceFormatInfo.srvFormat;
     ASSERT(srvFormat != DXGI_FORMAT_UNKNOWN);
-    Buffer11 *bufferStorage11                  = GetAs<Buffer11>(sourceBuffer.getImplementation());
+    Buffer11 *bufferStorage11                  = GetAs<Buffer11>(unpackBuffer->getImplementation());
     const d3d11::ShaderResourceView *bufferSRV = nullptr;
     ANGLE_TRY(bufferStorage11->getSRV(context, srvFormat, &bufferSRV));
     ASSERT(bufferSRV != nullptr);

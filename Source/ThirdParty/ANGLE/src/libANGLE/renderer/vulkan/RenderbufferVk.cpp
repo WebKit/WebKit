@@ -17,8 +17,16 @@
 
 namespace rx
 {
+namespace
+{
+angle::SubjectIndex kRenderbufferImageSubjectIndex = 0;
+}  // namespace
+
 RenderbufferVk::RenderbufferVk(const gl::RenderbufferState &state)
-    : RenderbufferImpl(state), mOwnsImage(false), mImage(nullptr)
+    : RenderbufferImpl(state),
+      mOwnsImage(false),
+      mImage(nullptr),
+      mImageObserverBinding(this, kRenderbufferImageSubjectIndex)
 {}
 
 RenderbufferVk::~RenderbufferVk() {}
@@ -61,6 +69,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
         {
             mImage     = new vk::ImageHelper();
             mOwnsImage = true;
+            mImageObserverBinding.bind(mImage);
         }
 
         const angle::Format &textureFormat = vkFormat.actualImageFormat();
@@ -77,9 +86,6 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
 
         VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         ANGLE_TRY(mImage->initMemory(contextVk, renderer->getMemoryProperties(), flags));
-
-        // Clear the renderbuffer if it has emulated channels.
-        mImage->stageClearIfEmulatedFormat(gl::ImageIndex::Make2D(0), vkFormat);
 
         mRenderTarget.init(mImage, &mImageViews, 0, 0);
     }
@@ -115,6 +121,7 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     ImageVk *imageVk = vk::GetImpl(image);
     mImage           = imageVk->getImage();
     mOwnsImage       = false;
+    mImageObserverBinding.bind(mImage);
 
     const vk::Format &vkFormat = renderer->getFormat(image->getFormat().info->sizedInternalFormat);
     const angle::Format &textureFormat = vkFormat.actualImageFormat();
@@ -151,7 +158,6 @@ angle::Result RenderbufferVk::getAttachmentRenderTarget(const gl::Context *conte
                                                         FramebufferAttachmentRenderTarget **rtOut)
 {
     ASSERT(mImage && mImage->valid());
-    ANGLE_TRY(mRenderTarget.flushStagedUpdates(vk::GetImpl(context)));
     *rtOut = &mRenderTarget;
     return angle::Result::Continue;
 }
@@ -160,7 +166,7 @@ angle::Result RenderbufferVk::initializeContents(const gl::Context *context,
                                                  const gl::ImageIndex &imageIndex)
 {
     // Note: stageSubresourceRobustClear only uses the intended format to count channels.
-    mImage->stageSubresourceRobustClear(imageIndex, mImage->getFormat());
+    mImage->stageRobustResourceClear(imageIndex);
     return mImage->flushAllStagedUpdates(vk::GetImpl(context));
 }
 
@@ -176,6 +182,7 @@ void RenderbufferVk::releaseAndDeleteImage(ContextVk *contextVk)
 {
     releaseImage(contextVk);
     SafeDelete(mImage);
+    mImageObserverBinding.bind(nullptr);
 }
 
 void RenderbufferVk::releaseImage(ContextVk *contextVk)
@@ -190,6 +197,7 @@ void RenderbufferVk::releaseImage(ContextVk *contextVk)
     else
     {
         mImage = nullptr;
+        mImageObserverBinding.bind(nullptr);
     }
 
     mImageViews.release(renderer);
@@ -228,5 +236,14 @@ angle::Result RenderbufferVk::getRenderbufferImage(const gl::Context *context,
     ANGLE_TRY(mImage->flushAllStagedUpdates(contextVk));
     return mImage->readPixelsForGetImage(contextVk, packState, packBuffer, 0, 0, format, type,
                                          pixels);
+}
+
+void RenderbufferVk::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
+{
+    ASSERT(index == kRenderbufferImageSubjectIndex &&
+           message == angle::SubjectMessage::SubjectChanged);
+
+    // Forward the notification to the parent class that the staging buffer changed.
+    onStateChange(angle::SubjectMessage::SubjectChanged);
 }
 }  // namespace rx

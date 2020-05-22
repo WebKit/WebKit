@@ -544,6 +544,9 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // NOTE(hqle): support MSAA.
     mNativeCaps.maxSamples = 1;
+
+    // GL_APPLE_clip_distance
+    mNativeCaps.maxClipDistances = 8;
 }
 
 void DisplayMtl::initializeExtensions() const
@@ -607,6 +610,9 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.standardDerivativesOES = true;
 
     mNativeExtensions.elementIndexUintOES = true;
+
+    // GL_APPLE_clip_distance
+    mNativeExtensions.clipDistanceAPPLE = true;
 }
 
 void DisplayMtl::initializeTextureCaps() const
@@ -618,6 +624,11 @@ void DisplayMtl::initializeTextureCaps() const
 
     // Re-verify texture extensions.
     mNativeExtensions.setTextureExtensionSupport(mNativeTextureCaps);
+
+    // Disable all depth buffer and stencil buffer readback extensions until we need them
+    mNativeExtensions.readDepthNV         = false;
+    mNativeExtensions.readStencilNV       = false;
+    mNativeExtensions.depthBufferFloat2NV = false;
 }
 
 void DisplayMtl::initializeFeatures()

@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_VULKAN_OVERLAYVK_H_
 
 #include "common/angleutils.h"
+#include "libANGLE/Overlay.h"
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -30,6 +31,8 @@ class OverlayVk : public OverlayImpl
     angle::Result onPresent(ContextVk *contextVk,
                             vk::ImageHelper *imageToPresent,
                             const vk::ImageView *imageToPresentView);
+
+    uint32_t getEnabledWidgetCount() const { return mState.getEnabledWidgetCount(); }
 
   private:
     angle::Result createFont(ContextVk *contextVk);

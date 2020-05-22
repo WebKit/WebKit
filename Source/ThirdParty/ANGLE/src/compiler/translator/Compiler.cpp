@@ -26,6 +26,7 @@
 #include "compiler/translator/tree_ops/ClampPointSize.h"
 #include "compiler/translator/tree_ops/DeclareAndInitBuiltinsForInstancedMultiview.h"
 #include "compiler/translator/tree_ops/DeferGlobalInitializers.h"
+#include "compiler/translator/tree_ops/EarlyFragmentTestsOptimization.h"
 #include "compiler/translator/tree_ops/EmulateGLFragColorBroadcast.h"
 #include "compiler/translator/tree_ops/EmulateMultiDrawShaderBuiltins.h"
 #include "compiler/translator/tree_ops/EmulatePrecision.h"
@@ -930,6 +931,16 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
+    mEarlyFragmentTestsOptimized = false;
+    if (compileOptions & SH_EARLY_FRAGMENT_TESTS_OPTIMIZATION)
+    {
+        if (mShaderVersion <= 300 && mShaderType == GL_FRAGMENT_SHADER &&
+            !isEarlyFragmentTestsSpecified())
+        {
+            mEarlyFragmentTestsOptimized = CheckEarlyFragmentTestsFeasible(this, root);
+        }
+    }
+
     return true;
 }
 
@@ -1075,6 +1086,7 @@ void TCompiler::setResourceString()
         << ":WEBGL_debug_shader_precision:" << mResources.WEBGL_debug_shader_precision
         << ":ANGLE_multi_draw:" << mResources.ANGLE_multi_draw
         << ":ANGLE_base_vertex_base_instance:" << mResources.ANGLE_base_vertex_base_instance
+        << ":APPLE_clip_distance:" << mResources.APPLE_clip_distance
         << ":MinProgramTextureGatherOffset:" << mResources.MinProgramTextureGatherOffset
         << ":MaxProgramTextureGatherOffset:" << mResources.MaxProgramTextureGatherOffset
         << ":MaxImageUnits:" << mResources.MaxImageUnits
@@ -1112,7 +1124,8 @@ void TCompiler::setResourceString()
         << ":MaxGeometryAtomicCounters:" << mResources.MaxGeometryAtomicCounters
         << ":MaxGeometryShaderStorageBlocks:" << mResources.MaxGeometryShaderStorageBlocks
         << ":MaxGeometryShaderInvocations:" << mResources.MaxGeometryShaderInvocations
-        << ":MaxGeometryImageUniforms:" << mResources.MaxGeometryImageUniforms;
+        << ":MaxGeometryImageUniforms:" << mResources.MaxGeometryImageUniforms
+        << ":MaxClipDistances" << mResources.MaxClipDistances;
     // clang-format on
 
     mBuiltInResourcesString = strstream.str();
@@ -1492,7 +1505,7 @@ bool TCompiler::isVaryingDefined(const char *varyingName)
 
 void EmitEarlyFragmentTestsGLSL(const TCompiler &compiler, TInfoSinkBase &sink)
 {
-    if (compiler.isEarlyFragmentTestsSpecified())
+    if (compiler.isEarlyFragmentTestsSpecified() || compiler.isEarlyFragmentTestsOptimized())
     {
         sink << "layout (early_fragment_tests) in;\n";
     }

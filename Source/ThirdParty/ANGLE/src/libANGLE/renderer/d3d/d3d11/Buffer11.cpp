@@ -426,7 +426,16 @@ angle::Result Buffer11::setSubData(const gl::Context *context,
                 size <= static_cast<UINT>(mRenderer->getNativeCaps().maxUniformBlockSize) &&
                 !mRenderer->getFeatures().useSystemMemoryForConstantBuffers.enabled)
             {
-                ANGLE_TRY(getBufferStorage(context, BUFFER_USAGE_UNIFORM, &writeBuffer));
+                BufferStorage *latestStorage = nullptr;
+                ANGLE_TRY(getLatestBufferStorage(context, &latestStorage));
+                if (latestStorage && (latestStorage->getUsage() == BUFFER_USAGE_STRUCTURED))
+                {
+                    ANGLE_TRY(getBufferStorage(context, BUFFER_USAGE_STRUCTURED, &writeBuffer));
+                }
+                else
+                {
+                    ANGLE_TRY(getBufferStorage(context, BUFFER_USAGE_UNIFORM, &writeBuffer));
+                }
             }
             else
             {

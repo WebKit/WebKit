@@ -328,6 +328,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                    const void *indices,
                                    GLsizei instanceCount);
 
+    void updateExtendedState(const gl::State &glState);
+
     void updateViewport(FramebufferMtl *framebufferMtl,
                         const gl::Rectangle &viewport,
                         float nearPlane,
@@ -379,11 +381,14 @@ class ContextMtl : public ContextImpl, public mtl::Context
         float viewportYScale;
         float negViewportYScale;
 
+        // 32 bits for 32 clip distances
+        uint32_t enabledClipDistances;
+
         // NOTE(hqle): Transform feedsback is not supported yet.
         uint32_t xfbActiveUnpaused;
         uint32_t xfbVerticesPerDraw;
         // NOTE: Explicit padding. Fill in with useful data when needed in the future.
-        int32_t padding[3];
+        int32_t padding[2];
 
         int32_t xfbBufferOffsets[4];
         uint32_t acbBufferOffsets[4];

@@ -276,10 +276,8 @@ angle::Result BlitGL::copyImageToLUMAWorkaroundTexture(const gl::Context *contex
     mStateManager->bindTexture(textureType, texture);
 
     // Allocate the texture memory
-    GLenum format = gl::GetUnsizedFormat(internalFormat);
-
-    GLenum readType = GL_NONE;
-    ANGLE_TRY(source->getImplementationColorReadType(context, &readType));
+    GLenum format   = gl::GetUnsizedFormat(internalFormat);
+    GLenum readType = source->getImplementationColorReadType(context);
 
     gl::PixelUnpackState unpack;
     mStateManager->setPixelUnpackState(unpack);
@@ -313,11 +311,8 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
     const FramebufferGL *sourceFramebufferGL = GetImplAs<FramebufferGL>(source);
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, sourceFramebufferGL->getFramebufferID());
 
-    GLenum readFormat = GL_NONE;
-    ANGLE_TRY(source->getImplementationColorReadFormat(context, &readFormat));
-
-    GLenum readType = GL_NONE;
-    ANGLE_TRY(source->getImplementationColorReadType(context, &readType));
+    GLenum readFormat = source->getImplementationColorReadFormat(context);
+    GLenum readType   = source->getImplementationColorReadType(context);
 
     nativegl::CopyTexImageImageFormat copyTexImageFormat =
         nativegl::GetCopyTexImageImageFormat(mFunctions, mFeatures, readFormat, readType);
@@ -403,7 +398,8 @@ angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
                                                 const gl::Framebuffer *dest,
                                                 const gl::Rectangle &sourceAreaIn,
                                                 const gl::Rectangle &destAreaIn,
-                                                GLenum filter)
+                                                GLenum filter,
+                                                bool writeAlpha)
 {
     ANGLE_TRY(initializeResources(context));
 
@@ -444,15 +440,17 @@ angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
     {
         textureId = mScratchTextures[0];
 
-        GLenum format                 = readAttachment->getFormat().info->internalFormat;
+        const gl::InternalFormat &sourceInternalFormat       = *readAttachment->getFormat().info;
+        nativegl::CopyTexImageImageFormat copyTexImageFormat = nativegl::GetCopyTexImageImageFormat(
+            mFunctions, mFeatures, sourceInternalFormat.internalFormat, sourceInternalFormat.type);
         const FramebufferGL *sourceGL = GetImplAs<FramebufferGL>(source);
         mStateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, sourceGL->getFramebufferID());
         mStateManager->bindTexture(gl::TextureType::_2D, textureId);
 
         ANGLE_GL_TRY_ALWAYS_CHECK(
-            context,
-            mFunctions->copyTexImage2D(GL_TEXTURE_2D, 0, format, inBoundsSource.x, inBoundsSource.y,
-                                       inBoundsSource.width, inBoundsSource.height, 0));
+            context, mFunctions->copyTexImage2D(GL_TEXTURE_2D, 0, copyTexImageFormat.internalFormat,
+                                                inBoundsSource.x, inBoundsSource.y,
+                                                inBoundsSource.width, inBoundsSource.height, 0));
 
         // Translate sourceArea to be relative to the copied image.
         sourceArea.x -= inBoundsSource.x;
@@ -490,6 +488,9 @@ angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
     ScopedGLState scopedState;
     ANGLE_TRY(scopedState.enter(context, destArea, ScopedGLState::KEEP_SCISSOR));
     scopedState.willUseTextureUnit(context, 0);
+
+    // Set the write color mask to potentially not write alpha
+    mStateManager->setColorMask(true, true, true, writeAlpha);
 
     // Set uniforms
     mStateManager->activeTexture(0);

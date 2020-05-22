@@ -63,13 +63,13 @@ class FramebufferImpl : angle::NonCopyable
                                         GLfloat depth,
                                         GLint stencil)                       = 0;
 
-    virtual GLenum getImplementationColorReadFormat(const gl::Context *context) const = 0;
-    virtual GLenum getImplementationColorReadType(const gl::Context *context) const   = 0;
+    virtual const gl::InternalFormat &getImplementationColorReadFormat(
+        const gl::Context *context) const;
     virtual angle::Result readPixels(const gl::Context *context,
                                      const gl::Rectangle &area,
                                      GLenum format,
                                      GLenum type,
-                                     void *pixels)                                    = 0;
+                                     void *pixels) = 0;
 
     virtual angle::Result blit(const gl::Context *context,
                                const gl::Rectangle &sourceArea,
@@ -80,6 +80,7 @@ class FramebufferImpl : angle::NonCopyable
     virtual bool checkStatus(const gl::Context *context) const = 0;
 
     virtual angle::Result syncState(const gl::Context *context,
+                                    GLenum binding,
                                     const gl::Framebuffer::DirtyBits &dirtyBits) = 0;
 
     virtual angle::Result getSamplePosition(const gl::Context *context,
@@ -103,6 +104,13 @@ inline bool FramebufferImpl::shouldSyncStateBeforeCheckStatus() const
     return false;
 }
 
+// Default implementation returns the format specified in the attachment.
+inline const gl::InternalFormat &FramebufferImpl::getImplementationColorReadFormat(
+    const gl::Context *context) const
+{
+    const gl::FramebufferAttachment *readAttachment = mState.getReadAttachment();
+    return *readAttachment->getFormat().info;
+}
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_FRAMEBUFFERIMPL_H_

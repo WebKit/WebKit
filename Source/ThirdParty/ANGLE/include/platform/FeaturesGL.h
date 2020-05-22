@@ -364,6 +364,12 @@ struct FeaturesGL : FeatureSetBase
         "GL_PRIMITIVE_RESTART and glPrimitiveRestartIndex.",
         &members, "http://anglebug.com/3997"};
 
+    Feature setPrimitiveRestartFixedIndexForDrawArrays = {
+        "set_primitive_restart_fixed_index_for_draw_arrays", FeatureCategory::OpenGLWorkarounds,
+        "Some drivers discard vertex data in DrawArrays calls when the fixed primitive restart "
+        "index is within the number of primitives being drawn.",
+        &members, "http://anglebug.com/3997"};
+
     // Dynamic indexing of swizzled l-values doesn't work correctly on various platforms.
     Feature removeDynamicIndexingOfSwizzledVector = {
         "remove_dynamic_indexing_of_swizzled_vector", FeatureCategory::OpenGLWorkarounds,
@@ -425,6 +431,12 @@ struct FeaturesGL : FeatureSetBase
     Feature avoidDXT1sRGBTextureFormat = {
         "avoid_dxt1_srgb_texture_format", FeatureCategory::OpenGLWorkarounds,
         "Replaces DXT1 sRGB with DXT1 sRGB Alpha as a driver bug workaround.", &members};
+
+    // Bugs exist in OpenGL AMD drivers on Windows that produce incorrect pipeline state for
+    // colorMaski calls.
+    Feature disableDrawBuffersIndexed = {"disable_draw_buffers_indexed",
+                                         FeatureCategory::OpenGLWorkarounds,
+                                         "Disable OES_draw_buffers_indexed extension.", &members};
 
     // GL_EXT_semaphore_fd doesn't work properly with Mesa 19.3.4 and earlier versions.
     Feature disableSemaphoreFd = {"disable_semaphore_fd", FeatureCategory::OpenGLWorkarounds,

@@ -92,7 +92,7 @@ class FramebufferAttachment final
     GLenum getComponentType() const;
     GLenum getColorEncoding() const;
 
-    bool isBoundAsSamplerOrImage() const;
+    bool isBoundAsSamplerOrImage(ContextID contextID) const;
 
     bool isTextureWithId(TextureID textureId) const
     {
@@ -195,7 +195,7 @@ class FramebufferAttachment final
 };
 
 // A base class for objects that FBO Attachments may point to.
-class FramebufferAttachmentObject : public angle::Subject
+class FramebufferAttachmentObject : public angle::Subject, public angle::ObserverInterface
 {
   public:
     FramebufferAttachmentObject();

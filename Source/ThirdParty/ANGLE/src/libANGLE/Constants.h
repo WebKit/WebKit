@@ -73,6 +73,9 @@ enum
 
     // Implementation upper limits, real maximums depend on the hardware.
     IMPLEMENTATION_MAX_SHADER_STORAGE_BUFFER_BINDINGS = 64,
+
+    // Implementation upper limits of max number of clip distances
+    IMPLEMENTATION_MAX_CLIP_DISTANCES = 32,
 };
 
 namespace limits

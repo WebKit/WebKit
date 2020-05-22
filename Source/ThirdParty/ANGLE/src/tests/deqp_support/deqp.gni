@@ -9,6 +9,7 @@ deqp_include_dirs = [
   "$deqp_path/executor",
   "$deqp_path/execserver",
   "$deqp_path/framework/platform/null",
+  "$deqp_path/framework/xexml",
   "$deqp_path/modules/gles2",
   "$deqp_path/modules/gles2/functional",
   "$deqp_path/modules/gles2/accuracy",
@@ -891,6 +892,8 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcMisc.hpp",
   "$deqp_path/external/openglcts/modules/common/glcMultipleContextsTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcMultipleContextsTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcNearestEdgeTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcNearestEdgeTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcNoDefaultContextPackage.cpp",
   "$deqp_path/external/openglcts/modules/common/glcNoDefaultContextPackage.hpp",
   "$deqp_path/external/openglcts/modules/common/glcNoErrorTests.cpp",
@@ -1506,6 +1509,13 @@ deqp_framework_decpp_sources = [
   "$deqp_path/framework/delibs/decpp/deUniquePtr.hpp",
 ]
 
+deqp_framework_xexml_sources = [
+  "$deqp_path/framework/xexml/xeDefs.cpp",
+  "$deqp_path/framework/xexml/xeDefs.hpp",
+  "$deqp_path/framework/xexml/xeXMLParser.cpp",
+  "$deqp_path/framework/xexml/xeXMLParser.hpp",
+]
+
 deqp_framework_opengl_sources = [
   "$deqp_path/framework/opengl/gluCallLogUtil.inl",
   "$deqp_path/framework/opengl/gluCallLogWrapper.cpp",
@@ -1783,6 +1793,8 @@ deqp_framework_common_sources = [
   "$deqp_path/framework/common/tcuVector.hpp",
   "$deqp_path/framework/common/tcuVectorType.hpp",
   "$deqp_path/framework/common/tcuVectorUtil.hpp",
+  "$deqp_path/framework/common/tcuWaiverUtil.cpp",
+  "$deqp_path/framework/common/tcuWaiverUtil.hpp",
   "$deqp_path/framework/randomshaders/rsgBinaryOps.cpp",
   "$deqp_path/framework/randomshaders/rsgBinaryOps.hpp",
   "$deqp_path/framework/randomshaders/rsgBuiltinFunctions.cpp",
@@ -1968,8 +1980,6 @@ deqp_libtester_sources = [
   "$deqp_path/executor/xeCommLink.hpp",
   "$deqp_path/executor/xeContainerFormatParser.cpp",
   "$deqp_path/executor/xeContainerFormatParser.hpp",
-  "$deqp_path/executor/xeDefs.cpp",
-  "$deqp_path/executor/xeDefs.hpp",
   "$deqp_path/executor/xeLocalTcpIpLink.cpp",
   "$deqp_path/executor/xeLocalTcpIpLink.hpp",
   "$deqp_path/executor/xeTcpIpLink.cpp",
@@ -1986,8 +1996,6 @@ deqp_libtester_sources = [
   "$deqp_path/executor/xeTestLogWriter.hpp",
   "$deqp_path/executor/xeTestResultParser.cpp",
   "$deqp_path/executor/xeTestResultParser.hpp",
-  "$deqp_path/executor/xeXMLParser.cpp",
-  "$deqp_path/executor/xeXMLParser.hpp",
   "$deqp_path/executor/xeXMLWriter.cpp",
   "$deqp_path/executor/xeXMLWriter.hpp",
   "$deqp_path/framework/platform/null/tcuNullContextFactory.cpp",

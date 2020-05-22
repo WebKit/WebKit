@@ -132,6 +132,8 @@ class BitSetT final
     Iterator begin() const { return Iterator(*this); }
     Iterator end() const { return Iterator(BitSetT()); }
 
+    constexpr static BitSetT Zero() { return BitSetT(); }
+
   private:
     // Produces a mask of ones up to the "x"th bit.
     constexpr static BitsT Mask(std::size_t x)

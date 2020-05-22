@@ -12,6 +12,10 @@
 
 #include "libANGLE/renderer/ProgramPipelineImpl.h"
 
+#include "libANGLE/renderer/vulkan/ContextVk.h"
+#include "libANGLE/renderer/vulkan/ProgramExecutableVk.h"
+#include "libANGLE/renderer/vulkan/ProgramVk.h"
+
 namespace rx
 {
 
@@ -20,6 +24,37 @@ class ProgramPipelineVk : public ProgramPipelineImpl
   public:
     ProgramPipelineVk(const gl::ProgramPipelineState &state);
     ~ProgramPipelineVk() override;
+
+    void destroy(const gl::Context *context) override;
+    void reset(ContextVk *contextVk);
+
+    const ProgramExecutableVk &getExecutable() const { return mExecutable; }
+    ProgramExecutableVk &getExecutable() { return mExecutable; }
+
+    ProgramVk *getShaderProgram(const gl::State &glState, gl::ShaderType shaderType) const
+    {
+        gl::ProgramPipeline *pipeline = glState.getProgramPipeline();
+        const gl::Program *program    = pipeline->getShaderProgram(shaderType);
+        if (program)
+        {
+            return vk::GetImpl(program);
+        }
+        return nullptr;
+    }
+
+    void fillProgramStateMap(const ContextVk *contextVk,
+                             gl::ShaderMap<const gl::ProgramState *> *programStatesOut);
+
+    angle::Result link(const gl::Context *context) override;
+
+    angle::Result transformShaderSpirV(const gl::Context *glContext);
+
+    angle::Result updateUniforms(ContextVk *contextVk);
+
+    bool dirtyUniforms(const gl::State &glState);
+
+  private:
+    ProgramExecutableVk mExecutable;
 };
 
 }  // namespace rx

@@ -304,6 +304,9 @@ void QueryTexParameterBase(const Context *context,
         case GL_TEXTURE_SRGB_DECODE_EXT:
             *params = CastFromGLintStateValue<ParamType>(pname, texture->getSRGBDecode());
             break;
+        case GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT:
+            *params = CastFromGLintStateValue<ParamType>(pname, texture->getSRGBOverride());
+            break;
         case GL_DEPTH_STENCIL_TEXTURE_MODE:
             *params =
                 CastFromGLintStateValue<ParamType>(pname, texture->getDepthStencilTextureMode());
@@ -431,6 +434,9 @@ void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const
             break;
         case GL_TEXTURE_SRGB_DECODE_EXT:
             texture->setSRGBDecode(context, ConvertToGLenum(pname, params[0]));
+            break;
+        case GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT:
+            texture->setSRGBOverride(context, ConvertToGLenum(pname, params[0]));
             break;
         case GL_TEXTURE_CROP_RECT_OES:
             texture->setCrop(gl::Rectangle(ConvertTexParam<isGLfixed, GLint>(pname, params[0]),
@@ -676,7 +682,7 @@ GLint GetInputResourceProperty(const Program *program, GLuint index, GLenum prop
             return clampCast<GLint>(program->getInputResourceName(index).size() + 1u);
 
         case GL_LOCATION:
-            return variable.location;
+            return variable.isBuiltIn() ? GL_INVALID_INDEX : variable.location;
 
         // The query is targeted at the set of active input variables used by the first shader stage
         // of program. If program contains multiple shader stages then input variables from any
@@ -1270,7 +1276,14 @@ void QueryProgramiv(Context *context, const Program *program, GLenum pname, GLin
             *params = program->getBinaryRetrievableHint();
             break;
         case GL_PROGRAM_SEPARABLE:
-            *params = program->isSeparable();
+            // From es31cSeparateShaderObjsTests.cpp:
+            // ProgramParameteri PROGRAM_SEPARABLE
+            // NOTE: The query for PROGRAM_SEPARABLE must query latched
+            //       state. In other words, the state of the binary after
+            //       it was linked. So in the tests below, the queries
+            //       should return the default state GL_FALSE since the
+            //       program has no linked binary.
+            *params = program->isSeparable() && program->isLinked();
             break;
         case GL_COMPUTE_WORK_GROUP_SIZE:
         {
@@ -2966,6 +2979,7 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_PACK_ALIGNMENT:
         case GL_UNPACK_ALIGNMENT:
         case GL_GENERATE_MIPMAP_HINT:
+        case GL_TEXTURE_FILTERING_HINT_CHROMIUM:
         case GL_RED_BITS:
         case GL_GREEN_BITS:
         case GL_BLUE_BITS:
@@ -3143,6 +3157,20 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_TEXTURE_BINDING_EXTERNAL_OES:
             if (!extensions.eglStreamConsumerExternalNV && !extensions.eglImageExternalOES)
             {
+                return false;
+            }
+            *type      = GL_INT;
+            *numParams = 1;
+            return true;
+        case GL_MAX_CLIP_DISTANCES_EXT:  // case GL_MAX_CLIP_PLANES
+            if (clientMajorVersion < 2)
+            {
+                break;
+            }
+            if (!extensions.clipDistanceAPPLE)
+            {
+                // NOTE(hqle): if client version is 1. GL_MAX_CLIP_DISTANCES_EXT is equal
+                // to GL_MAX_CLIP_PLANES which is a valid enum.
                 return false;
             }
             *type      = GL_INT;
@@ -3579,6 +3607,7 @@ bool GetQueryParameterInfo(const State &glState,
         return false;
     }
 
+    // Check for ES3.1+ parameter names
     switch (pname)
     {
         case GL_ATOMIC_COUNTER_BUFFER_BINDING:
@@ -3628,6 +3657,7 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT:
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE:
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
+        case GL_PROGRAM_PIPELINE_BINDING:
             *type      = GL_INT;
             *numParams = 1;
             return true;
@@ -3668,6 +3698,113 @@ bool GetQueryParameterInfo(const State &glState,
 
     return false;
 }
+
+void QueryProgramPipelineiv(const Context *context,
+                            ProgramPipeline *programPipeline,
+                            GLenum pname,
+                            GLint *params)
+{
+    if (!params)
+    {
+        // Can't write the result anywhere, so just return immediately.
+        return;
+    }
+
+    switch (pname)
+    {
+        case GL_ACTIVE_PROGRAM:
+        {
+            // the name of the active program object of the program pipeline object is returned in
+            // params
+            *params = 0;
+            if (programPipeline)
+            {
+                const Program *program = programPipeline->getActiveShaderProgram();
+                if (program)
+                {
+                    *params = program->id().value;
+                }
+            }
+            break;
+        }
+
+        case GL_VERTEX_SHADER:
+        {
+            // the name of the current program object for the vertex shader type of the program
+            // pipeline object is returned in params
+            *params = 0;
+            if (programPipeline)
+            {
+                const Program *program = programPipeline->getShaderProgram(ShaderType::Vertex);
+                if (program)
+                {
+                    *params = program->id().value;
+                }
+            }
+            break;
+        }
+
+        case GL_FRAGMENT_SHADER:
+        {
+            // the name of the current program object for the fragment shader type of the program
+            // pipeline object is returned in params
+            *params = 0;
+            if (programPipeline)
+            {
+                const Program *program = programPipeline->getShaderProgram(ShaderType::Fragment);
+                if (program)
+                {
+                    *params = program->id().value;
+                }
+            }
+            break;
+        }
+
+        case GL_COMPUTE_SHADER:
+        {
+            // the name of the current program object for the compute shader type of the program
+            // pipeline object is returned in params
+            *params = 0;
+            if (programPipeline)
+            {
+                const Program *program = programPipeline->getShaderProgram(ShaderType::Compute);
+                if (program)
+                {
+                    *params = program->id().value;
+                }
+            }
+            break;
+        }
+
+        case GL_INFO_LOG_LENGTH:
+        {
+            // the length of the info log, including the null terminator, is returned in params. If
+            // there is no info log, zero is returned.
+            *params = 0;
+            if (programPipeline)
+            {
+                *params = programPipeline->getExecutable().getInfoLogLength();
+            }
+            break;
+        }
+
+        case GL_VALIDATE_STATUS:
+        {
+            // the validation status of pipeline, as determined by glValidateProgramPipeline, is
+            // returned in params
+            *params = 0;
+            if (programPipeline)
+            {
+                *params = programPipeline->isValid();
+            }
+            break;
+        }
+
+        default:
+            break;
+    }
+}
+
 }  // namespace gl
 
 namespace egl
@@ -3834,7 +3971,10 @@ void QueryContextAttrib(const gl::Context *context, EGLint attribute, EGLint *va
     }
 }
 
-void QuerySurfaceAttrib(const Surface *surface, EGLint attribute, EGLint *value)
+egl::Error QuerySurfaceAttrib(const Display *display,
+                              const Surface *surface,
+                              EGLint attribute,
+                              EGLint *value)
 {
     switch (attribute)
     {
@@ -3851,7 +3991,7 @@ void QuerySurfaceAttrib(const Surface *surface, EGLint attribute, EGLint *value)
             *value = surface->getConfig()->configID;
             break;
         case EGL_HEIGHT:
-            *value = surface->getHeight();
+            ANGLE_TRY(surface->getUserHeight(display, value));
             break;
         case EGL_HORIZONTAL_RESOLUTION:
             *value = surface->getHorizontalResolution();
@@ -3907,7 +4047,7 @@ void QuerySurfaceAttrib(const Surface *surface, EGLint attribute, EGLint *value)
             *value = surface->getVerticalResolution();
             break;
         case EGL_WIDTH:
-            *value = surface->getWidth();
+            ANGLE_TRY(surface->getUserWidth(display, value));
             break;
         case EGL_POST_SUB_BUFFER_SUPPORTED_NV:
             *value = surface->isPostSubBufferSupported();
@@ -3934,6 +4074,7 @@ void QuerySurfaceAttrib(const Surface *surface, EGLint attribute, EGLint *value)
             UNREACHABLE();
             break;
     }
+    return NoError();
 }
 
 void SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value)

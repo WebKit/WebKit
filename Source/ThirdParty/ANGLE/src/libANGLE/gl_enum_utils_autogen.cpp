@@ -1402,6 +1402,8 @@ const char *GLenumToString(GLenumGroup enumGroup, unsigned int value)
                     return "GL_SIGNED_NORMALIZED";
                 case 0x8FBB:
                     return "GL_GPU_DISJOINT_EXT";
+                case 0x8FBD:
+                    return "GL_SR8_EXT";
                 case 0x900A:
                     return "GL_TEXTURE_BINDING_CUBE_MAP_ARRAY";
                 case 0x900C:
@@ -4035,6 +4037,11 @@ const char *GLenumToString(GLenumGroup enumGroup, unsigned int value)
 std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value)
 {
     std::stringstream st;
+
+    if (value == 0)
+    {
+        return "0";
+    }
 
     const angle::BitSet<32> bitSet(value);
     bool first = true;

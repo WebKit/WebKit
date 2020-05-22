@@ -99,6 +99,7 @@ class TCompiler : public TShHandleBase
     TInfoSink &getInfoSink() { return mInfoSink; }
 
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
+    bool isEarlyFragmentTestsOptimized() const { return mEarlyFragmentTestsOptimized; }
 
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
@@ -278,6 +279,7 @@ class TCompiler : public TShHandleBase
 
     // fragment shader early fragment tests
     bool mEarlyFragmentTestsSpecified;
+    bool mEarlyFragmentTestsOptimized;
 
     // compute shader local group size
     bool mComputeShaderLocalSizeDeclared;

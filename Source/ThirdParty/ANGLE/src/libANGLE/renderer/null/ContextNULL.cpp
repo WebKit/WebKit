@@ -92,12 +92,14 @@ ContextNULL::ContextNULL(const gl::State &state,
     mExtensions.textureCompressionASTCLDRKHR = true;
     mExtensions.textureCompressionASTCOES    = true;
     mExtensions.compressedETC1RGB8TextureOES = true;
+    mExtensions.compressedETC1RGB8SubTexture = true;
     mExtensions.lossyETCDecode               = true;
     mExtensions.geometryShader               = true;
 
     mExtensions.eglImageOES                 = true;
     mExtensions.eglImageExternalOES         = true;
     mExtensions.eglImageExternalEssl3OES    = true;
+    mExtensions.eglImageArray               = true;
     mExtensions.eglStreamConsumerExternalNV = true;
 
     const gl::Version maxClientVersion(3, 1);

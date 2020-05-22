@@ -23,17 +23,6 @@
 namespace angle
 {
 
-// The GLES driver type determines what shared object we use to load the GLES entry points.
-// AngleEGL loads from ANGLE's version of libEGL, libGLESv2, and libGLESv1_CM.
-// SystemEGL uses the system copies of libEGL, libGLESv2, and libGLESv1_CM.
-// SystemWGL loads Windows GL with the GLES compatiblity extensions. See util/WGLWindow.h.
-enum class GLESDriverType
-{
-    AngleEGL,
-    SystemEGL,
-    SystemWGL,
-};
-
 struct PlatformParameters
 {
     PlatformParameters();
@@ -196,6 +185,11 @@ PlatformParameters ES3_METAL();
 
 PlatformParameters ES2_WGL();
 PlatformParameters ES3_WGL();
+
+PlatformParameters ES2_EGL();
+PlatformParameters ES3_EGL();
+
+const char *GetNativeEGLLibraryNameWithExtension();
 
 inline PlatformParameters WithNoVirtualContexts(const PlatformParameters &params)
 {

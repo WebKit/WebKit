@@ -11,9 +11,8 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 
-#include "volk.h"
-
 #include "common/PoolAlloc.h"
+#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 namespace rx
@@ -24,12 +23,16 @@ namespace vk
 
 namespace priv
 {
-
+// NOTE: Please keep command-related enums, stucts, functions
+//  and other code dealing with commands in alphabetical order
+//  This simplifies searching and updating commands.
 enum class CommandID : uint16_t
 {
     // Invalid cmd used to mark end of sequence of commands
     Invalid = 0,
+    BeginDebugUtilsLabel,
     BeginQuery,
+    BeginTransformFeedback,
     BindComputePipeline,
     BindDescriptorSets,
     BindGraphicsPipeline,
@@ -50,17 +53,20 @@ enum class CommandID : uint16_t
     Draw,
     DrawIndexed,
     DrawIndexedBaseVertex,
+    DrawIndexedIndirect,
     DrawIndexedInstanced,
     DrawIndexedInstancedBaseVertex,
     DrawIndexedInstancedBaseVertexBaseInstance,
+    DrawIndirect,
     DrawInstanced,
     DrawInstancedBaseInstance,
-    DrawIndirect,
-    DrawIndexedIndirect,
+    EndDebugUtilsLabel,
     EndQuery,
+    EndTransformFeedback,
     ExecutionBarrier,
     FillBuffer,
     ImageBarrier,
+    InsertDebugUtilsLabel,
     MemoryBarrier,
     PipelineBarrier,
     PushConstants,
@@ -79,11 +85,19 @@ enum class CommandID : uint16_t
 // This makes it easy to know the size of params & to copy params
 // TODO: Could optimize the size of some of these structs through bit-packing
 //  and customizing sizing based on limited parameter sets used by ANGLE
-struct BindPipelineParams
+struct BeginQueryParams
 {
-    VkPipeline pipeline;
+    VkQueryPool queryPool;
+    uint32_t query;
+    VkQueryControlFlags flags;
 };
-VERIFY_4_BYTE_ALIGNMENT(BindPipelineParams)
+VERIFY_4_BYTE_ALIGNMENT(BeginQueryParams)
+
+struct BeginTransformFeedbackParams
+{
+    uint32_t bufferCount;
+};
+VERIFY_4_BYTE_ALIGNMENT(BeginTransformFeedbackParams)
 
 struct BindDescriptorSetParams
 {
@@ -103,6 +117,12 @@ struct BindIndexBufferParams
 };
 VERIFY_4_BYTE_ALIGNMENT(BindIndexBufferParams)
 
+struct BindPipelineParams
+{
+    VkPipeline pipeline;
+};
+VERIFY_4_BYTE_ALIGNMENT(BindPipelineParams)
+
 struct BindTransformFeedbackBuffersParams
 {
     // ANGLE always has firstBinding of 0 so not storing that currently
@@ -110,12 +130,7 @@ struct BindTransformFeedbackBuffersParams
 };
 VERIFY_4_BYTE_ALIGNMENT(BindTransformFeedbackBuffersParams)
 
-struct BindVertexBuffersParams
-{
-    // ANGLE always has firstBinding of 0 so not storing that currently
-    uint32_t bindingCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(BindVertexBuffersParams)
+using BindVertexBuffersParams = BindTransformFeedbackBuffersParams;
 
 struct BlitImageParams
 {
@@ -125,6 +140,39 @@ struct BlitImageParams
     VkImageBlit region;
 };
 VERIFY_4_BYTE_ALIGNMENT(BlitImageParams)
+
+struct BufferBarrierParams
+{
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    VkBufferMemoryBarrier bufferMemoryBarrier;
+};
+VERIFY_4_BYTE_ALIGNMENT(BufferBarrierParams)
+
+struct ClearAttachmentsParams
+{
+    uint32_t attachmentCount;
+    VkClearRect rect;
+};
+VERIFY_4_BYTE_ALIGNMENT(ClearAttachmentsParams)
+
+struct ClearColorImageParams
+{
+    VkImage image;
+    VkImageLayout imageLayout;
+    VkClearColorValue color;
+    VkImageSubresourceRange range;
+};
+VERIFY_4_BYTE_ALIGNMENT(ClearColorImageParams)
+
+struct ClearDepthStencilImageParams
+{
+    VkImage image;
+    VkImageLayout imageLayout;
+    VkClearDepthStencilValue depthStencil;
+    VkImageSubresourceRange range;
+};
+VERIFY_4_BYTE_ALIGNMENT(ClearDepthStencilImageParams)
 
 struct CopyBufferParams
 {
@@ -162,39 +210,27 @@ struct CopyImageToBufferParams
 };
 VERIFY_4_BYTE_ALIGNMENT(CopyImageToBufferParams)
 
-struct ClearAttachmentsParams
+// This is a common struct used by both begin & insert DebugUtilsLabelEXT() functions
+struct DebugUtilsLabelParams
 {
-    uint32_t attachmentCount;
-    VkClearRect rect;
+    float color[4];
 };
-VERIFY_4_BYTE_ALIGNMENT(ClearAttachmentsParams)
+VERIFY_4_BYTE_ALIGNMENT(DebugUtilsLabelParams)
 
-struct ClearColorImageParams
+struct DispatchParams
 {
-    VkImage image;
-    VkImageLayout imageLayout;
-    VkClearColorValue color;
-    VkImageSubresourceRange range;
+    uint32_t groupCountX;
+    uint32_t groupCountY;
+    uint32_t groupCountZ;
 };
-VERIFY_4_BYTE_ALIGNMENT(ClearColorImageParams)
+VERIFY_4_BYTE_ALIGNMENT(DispatchParams)
 
-struct ClearDepthStencilImageParams
+struct DispatchIndirectParams
 {
-    VkImage image;
-    VkImageLayout imageLayout;
-    VkClearDepthStencilValue depthStencil;
-    VkImageSubresourceRange range;
+    VkBuffer buffer;
+    VkDeviceSize offset;
 };
-VERIFY_4_BYTE_ALIGNMENT(ClearDepthStencilImageParams)
-
-struct PushConstantsParams
-{
-    VkPipelineLayout layout;
-    VkShaderStageFlags flag;
-    uint32_t offset;
-    uint32_t size;
-};
-VERIFY_4_BYTE_ALIGNMENT(PushConstantsParams)
+VERIFY_4_BYTE_ALIGNMENT(DispatchIndirectParams)
 
 struct DrawParams
 {
@@ -202,23 +238,6 @@ struct DrawParams
     uint32_t firstVertex;
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawParams)
-
-struct DrawInstancedParams
-{
-    uint32_t vertexCount;
-    uint32_t instanceCount;
-    uint32_t firstVertex;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawInstancedParams)
-
-struct DrawInstancedBaseInstanceParams
-{
-    uint32_t vertexCount;
-    uint32_t instanceCount;
-    uint32_t firstVertex;
-    uint32_t firstInstance;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawInstancedBaseInstanceParams)
 
 struct DrawIndexedParams
 {
@@ -232,6 +251,13 @@ struct DrawIndexedBaseVertexParams
     uint32_t vertexOffset;
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndexedBaseVertexParams)
+
+struct DrawIndexedIndirectParams
+{
+    VkBuffer buffer;
+    VkDeviceSize offset;
+};
+VERIFY_4_BYTE_ALIGNMENT(DrawIndexedIndirectParams)
 
 struct DrawIndexedInstancedParams
 {
@@ -258,21 +284,6 @@ struct DrawIndexedInstancedBaseVertexBaseInstanceParams
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndexedInstancedBaseVertexBaseInstanceParams)
 
-struct DrawIndexedIndirectParams
-{
-    VkBuffer buffer;
-    VkDeviceSize offset;
-};
-VERIFY_4_BYTE_ALIGNMENT(DrawIndexedIndirectParams)
-
-struct DispatchParams
-{
-    uint32_t groupCountX;
-    uint32_t groupCountY;
-    uint32_t groupCountZ;
-};
-VERIFY_4_BYTE_ALIGNMENT(DispatchParams)
-
 struct DrawIndirectParams
 {
     VkBuffer buffer;
@@ -280,12 +291,45 @@ struct DrawIndirectParams
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndirectParams)
 
-struct DispatchIndirectParams
+struct DrawInstancedParams
 {
-    VkBuffer buffer;
-    VkDeviceSize offset;
+    uint32_t vertexCount;
+    uint32_t instanceCount;
+    uint32_t firstVertex;
 };
-VERIFY_4_BYTE_ALIGNMENT(DispatchIndirectParams)
+VERIFY_4_BYTE_ALIGNMENT(DrawInstancedParams)
+
+struct DrawInstancedBaseInstanceParams
+{
+    uint32_t vertexCount;
+    uint32_t instanceCount;
+    uint32_t firstVertex;
+    uint32_t firstInstance;
+};
+VERIFY_4_BYTE_ALIGNMENT(DrawInstancedBaseInstanceParams)
+
+// A special struct used with commands that don't have params
+struct EmptyParams
+{};
+
+struct EndQueryParams
+{
+    VkQueryPool queryPool;
+    uint32_t query;
+};
+VERIFY_4_BYTE_ALIGNMENT(EndQueryParams)
+
+struct EndTransformFeedbackParams
+{
+    uint32_t bufferCount;
+};
+VERIFY_4_BYTE_ALIGNMENT(EndTransformFeedbackParams)
+
+struct ExecutionBarrierParams
+{
+    VkPipelineStageFlags stageMask;
+};
+VERIFY_4_BYTE_ALIGNMENT(ExecutionBarrierParams)
 
 struct FillBufferParams
 {
@@ -295,6 +339,14 @@ struct FillBufferParams
     uint32_t data;
 };
 VERIFY_4_BYTE_ALIGNMENT(FillBufferParams)
+
+struct ImageBarrierParams
+{
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    VkImageMemoryBarrier imageMemoryBarrier;
+};
+VERIFY_4_BYTE_ALIGNMENT(ImageBarrierParams)
 
 struct MemoryBarrierParams
 {
@@ -315,34 +367,14 @@ struct PipelineBarrierParams
 };
 VERIFY_4_BYTE_ALIGNMENT(PipelineBarrierParams)
 
-struct ExecutionBarrierParams
+struct PushConstantsParams
 {
-    VkPipelineStageFlags stageMask;
+    VkPipelineLayout layout;
+    VkShaderStageFlags flag;
+    uint32_t offset;
+    uint32_t size;
 };
-VERIFY_4_BYTE_ALIGNMENT(ExecutionBarrierParams)
-
-struct BufferBarrierParams
-{
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkBufferMemoryBarrier bufferMemoryBarrier;
-};
-VERIFY_4_BYTE_ALIGNMENT(BufferBarrierParams)
-
-struct ImageBarrierParams
-{
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    VkImageMemoryBarrier imageMemoryBarrier;
-};
-VERIFY_4_BYTE_ALIGNMENT(ImageBarrierParams)
-
-struct SetEventParams
-{
-    VkEvent event;
-    VkPipelineStageFlags stageMask;
-};
-VERIFY_4_BYTE_ALIGNMENT(SetEventParams)
+VERIFY_4_BYTE_ALIGNMENT(PushConstantsParams)
 
 struct ResetEventParams
 {
@@ -350,17 +382,6 @@ struct ResetEventParams
     VkPipelineStageFlags stageMask;
 };
 VERIFY_4_BYTE_ALIGNMENT(ResetEventParams)
-
-struct WaitEventsParams
-{
-    uint32_t eventCount;
-    VkPipelineStageFlags srcStageMask;
-    VkPipelineStageFlags dstStageMask;
-    uint32_t memoryBarrierCount;
-    uint32_t bufferMemoryBarrierCount;
-    uint32_t imageMemoryBarrierCount;
-};
-VERIFY_4_BYTE_ALIGNMENT(WaitEventsParams)
 
 struct ResetQueryPoolParams
 {
@@ -378,20 +399,23 @@ struct ResolveImageParams
 };
 VERIFY_4_BYTE_ALIGNMENT(ResolveImageParams)
 
-struct BeginQueryParams
+struct SetEventParams
 {
-    VkQueryPool queryPool;
-    uint32_t query;
-    VkQueryControlFlags flags;
+    VkEvent event;
+    VkPipelineStageFlags stageMask;
 };
-VERIFY_4_BYTE_ALIGNMENT(BeginQueryParams)
+VERIFY_4_BYTE_ALIGNMENT(SetEventParams)
 
-struct EndQueryParams
+struct WaitEventsParams
 {
-    VkQueryPool queryPool;
-    uint32_t query;
+    uint32_t eventCount;
+    VkPipelineStageFlags srcStageMask;
+    VkPipelineStageFlags dstStageMask;
+    uint32_t memoryBarrierCount;
+    uint32_t bufferMemoryBarrierCount;
+    uint32_t imageMemoryBarrierCount;
 };
-VERIFY_4_BYTE_ALIGNMENT(EndQueryParams)
+VERIFY_4_BYTE_ALIGNMENT(WaitEventsParams)
 
 struct WriteTimestampParams
 {
@@ -407,7 +431,6 @@ struct CommandHeader
     CommandID id;
     uint16_t size;
 };
-
 static_assert(sizeof(CommandHeader) == 4, "Check CommandHeader size");
 
 template <typename DestT, typename T>
@@ -435,7 +458,11 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     static constexpr bool ExecutesInline() { return true; }
 
     // Add commands
+    void beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &label);
+
     void beginQuery(VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
+
+    void beginTransformFeedback(uint32_t counterBufferCount, const VkBuffer *pCounterBuffers);
 
     void bindComputePipeline(const Pipeline &pipeline);
 
@@ -522,7 +549,10 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void drawIndexed(uint32_t indexCount);
     void drawIndexedBaseVertex(uint32_t indexCount, uint32_t vertexOffset);
-
+    void drawIndexedIndirect(const Buffer &buffer,
+                             VkDeviceSize offset,
+                             uint32_t drawCount,
+                             uint32_t stride);
     void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount);
     void drawIndexedInstancedBaseVertex(uint32_t indexCount,
                                         uint32_t instanceCount,
@@ -533,22 +563,22 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                                                     int32_t vertexOffset,
                                                     uint32_t firstInstance);
 
+    void drawIndirect(const Buffer &buffer,
+                      VkDeviceSize offset,
+                      uint32_t drawCount,
+                      uint32_t stride);
+
     void drawInstanced(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex);
     void drawInstancedBaseInstance(uint32_t vertexCount,
                                    uint32_t instanceCount,
                                    uint32_t firstVertex,
                                    uint32_t firstInstance);
 
-    void drawIndirect(const Buffer &buffer,
-                      VkDeviceSize offset,
-                      uint32_t drawCount,
-                      uint32_t stride);
-    void drawIndexedIndirect(const Buffer &buffer,
-                             VkDeviceSize offset,
-                             uint32_t drawCount,
-                             uint32_t stride);
+    void endDebugUtilsLabelEXT();
 
     void endQuery(VkQueryPool queryPool, uint32_t query);
+
+    void endTransformFeedback(uint32_t counterBufferCount, const VkBuffer *pCounterBuffers);
 
     void executionBarrier(VkPipelineStageFlags stageMask);
 
@@ -560,6 +590,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void imageBarrier(VkPipelineStageFlags srcStageMask,
                       VkPipelineStageFlags dstStageMask,
                       const VkImageMemoryBarrier &imageMemoryBarrier);
+
+    void insertDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &label);
 
     void memoryBarrier(VkPipelineStageFlags srcStageMask,
                        VkPipelineStageFlags dstStageMask,
@@ -582,6 +614,9 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                        const void *data);
 
     void resetEvent(VkEvent event, VkPipelineStageFlags stageMask);
+
+    // Store up resetQueryPool command and prepend to commands when executing
+    void queueResetQueryPool(VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount);
 
     void resetQueryPool(VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount);
 
@@ -608,11 +643,15 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void writeTimestamp(VkPipelineStageFlagBits pipelineStage,
                         VkQueryPool queryPool,
                         uint32_t query);
+
     // No-op for compatibility
     VkResult end() { return VK_SUCCESS; }
 
     // Parse the cmds in this cmd buffer into given primary cmd buffer for execution
     void executeCommands(VkCommandBuffer cmdBuffer);
+    // If resetQueryPoolCommands are queued, call this to execute them all
+    //  This should only be called on a cmdBuffer without an active renderPass
+    void executeQueuedResetQueryPoolCommands(VkCommandBuffer cmdBuffer);
 
     // Calculate memory usage of this command buffer for diagnostics.
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
@@ -640,6 +679,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     {
         mCommands.clear();
         initialize(mAllocator);
+        mResetQueryQueue.clear();
     }
 
     // This will cause the SecondaryCommandBuffer to become invalid by clearing its allocator
@@ -651,6 +691,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     bool empty() const { return mCommands.size() == 0 || mCommands[0]->id == CommandID::Invalid; }
 
   private:
+    void commonDebugUtilsLabel(CommandID cmd, const VkDebugUtilsLabelEXT &label);
     template <class StructType>
     ANGLE_INLINE StructType *commonInit(CommandID cmdID, size_t allocationSize)
     {
@@ -666,11 +707,11 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         reinterpret_cast<CommandHeader *>(mCurrentWritePointer)->id = CommandID::Invalid;
         return Offset<StructType>(header, sizeof(CommandHeader));
     }
-    ANGLE_INLINE void allocateNewBlock()
+    ANGLE_INLINE void allocateNewBlock(size_t blockSize = kBlockSize)
     {
         ASSERT(mAllocator);
-        mCurrentWritePointer   = mAllocator->fastAllocate(kBlockSize);
-        mCurrentBytesRemaining = kBlockSize;
+        mCurrentWritePointer   = mAllocator->fastAllocate(blockSize);
+        mCurrentBytesRemaining = blockSize;
         mCommands.push_back(reinterpret_cast<CommandHeader *>(mCurrentWritePointer));
     }
 
@@ -685,9 +726,19 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         constexpr size_t fixedAllocationSize = sizeof(StructType) + sizeof(CommandHeader);
         const size_t allocationSize          = fixedAllocationSize + variableSize;
         // Make sure we have enough room to mark follow-on header "Invalid"
-        if (mCurrentBytesRemaining <= (allocationSize + sizeof(CommandHeader)))
+        const size_t requiredSize = allocationSize + sizeof(CommandHeader);
+        if (mCurrentBytesRemaining < requiredSize)
         {
-            allocateNewBlock();
+            // variable size command can potentially exceed default cmd allocation blockSize
+            if (requiredSize <= kBlockSize)
+                allocateNewBlock();
+            else
+            {
+                // Make sure allocation is 4-byte aligned
+                const size_t alignedSize = roundUp<size_t>(requiredSize, 4);
+                ASSERT((alignedSize % 4) == 0);
+                allocateNewBlock(alignedSize);
+            }
         }
         *variableDataPtr = Offset<uint8_t>(mCurrentWritePointer, fixedAllocationSize);
         return commonInit<StructType>(cmdID, allocationSize);
@@ -697,10 +748,13 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     template <class StructType>
     ANGLE_INLINE StructType *initCommand(CommandID cmdID)
     {
-        constexpr size_t allocationSize = sizeof(StructType) + sizeof(CommandHeader);
+        constexpr size_t paramSize =
+            std::is_same<StructType, EmptyParams>::value ? 0 : sizeof(StructType);
+        constexpr size_t allocationSize = paramSize + sizeof(CommandHeader);
         // Make sure we have enough room to mark follow-on header "Invalid"
-        if (mCurrentBytesRemaining <= (allocationSize + sizeof(CommandHeader)))
+        if (mCurrentBytesRemaining < (allocationSize + sizeof(CommandHeader)))
         {
+            ASSERT((allocationSize + sizeof(CommandHeader)) < kBlockSize);
             allocateNewBlock();
         }
         return commonInit<StructType>(cmdID, allocationSize);
@@ -730,12 +784,36 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     uint8_t *mCurrentWritePointer;
     size_t mCurrentBytesRemaining;
+    // resetQueryPool command must be executed outside RP so we queue them up for
+    //  an inside RenderPass command buffer and pre-prend them to the commands
+    std::vector<ResetQueryPoolParams> mResetQueryQueue;
 };
 
 ANGLE_INLINE SecondaryCommandBuffer::SecondaryCommandBuffer()
     : mAllocator(nullptr), mCurrentWritePointer(nullptr), mCurrentBytesRemaining(0)
 {}
 ANGLE_INLINE SecondaryCommandBuffer::~SecondaryCommandBuffer() {}
+
+// begin and insert DebugUtilsLabelEXT funcs share this same function body
+ANGLE_INLINE void SecondaryCommandBuffer::commonDebugUtilsLabel(CommandID cmd,
+                                                                const VkDebugUtilsLabelEXT &label)
+{
+    uint8_t *writePtr;
+    const size_t stringSize        = strlen(label.pLabelName) + 1;
+    const size_t alignedStringSize = roundUp<size_t>(stringSize, 4);
+    DebugUtilsLabelParams *paramStruct =
+        initCommand<DebugUtilsLabelParams>(cmd, alignedStringSize, &writePtr);
+    paramStruct->color[0] = label.color[0];
+    paramStruct->color[1] = label.color[1];
+    paramStruct->color[2] = label.color[2];
+    paramStruct->color[3] = label.color[3];
+    storePointerParameter(writePtr, label.pLabelName, alignedStringSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &label)
+{
+    commonDebugUtilsLabel(CommandID::BeginDebugUtilsLabel, label);
+}
 
 ANGLE_INLINE void SecondaryCommandBuffer::beginQuery(VkQueryPool queryPool,
                                                      uint32_t query,
@@ -745,6 +823,17 @@ ANGLE_INLINE void SecondaryCommandBuffer::beginQuery(VkQueryPool queryPool,
     paramStruct->queryPool        = queryPool;
     paramStruct->query            = query;
     paramStruct->flags            = flags;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::beginTransformFeedback(uint32_t bufferCount,
+                                                                 const VkBuffer *counterBuffers)
+{
+    uint8_t *writePtr;
+    size_t bufferSize                         = bufferCount * sizeof(VkBuffer);
+    BeginTransformFeedbackParams *paramStruct = initCommand<BeginTransformFeedbackParams>(
+        CommandID::BeginTransformFeedback, bufferSize, &writePtr);
+    paramStruct->bufferCount = bufferCount;
+    storePointerParameter(writePtr, counterBuffers, bufferSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindComputePipeline(const Pipeline &pipeline)
@@ -1013,6 +1102,18 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedBaseVertex(uint32_t indexCo
     paramStruct->vertexOffset = vertexOffset;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedIndirect(const Buffer &buffer,
+                                                              VkDeviceSize offset,
+                                                              uint32_t drawCount,
+                                                              uint32_t stride)
+{
+    DrawIndexedIndirectParams *paramStruct =
+        initCommand<DrawIndexedIndirectParams>(CommandID::DrawIndexedIndirect);
+    paramStruct->buffer = buffer.getHandle();
+    paramStruct->offset = offset;
+    ASSERT(drawCount == 1);
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstanced(uint32_t indexCount,
                                                                uint32_t instanceCount)
 {
@@ -1051,6 +1152,20 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertexBaseInst
     paramStruct->firstInstance = firstInstance;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::drawIndirect(const Buffer &buffer,
+                                                       VkDeviceSize offset,
+                                                       uint32_t drawCount,
+                                                       uint32_t stride)
+{
+    DrawIndirectParams *paramStruct = initCommand<DrawIndirectParams>(CommandID::DrawIndirect);
+    paramStruct->buffer             = buffer.getHandle();
+    paramStruct->offset             = offset;
+
+    // OpenGL ES doesn't have a way to specify a drawCount or stride, throw assert if something
+    // changes.
+    ASSERT(drawCount == 1);
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::drawInstanced(uint32_t vertexCount,
                                                         uint32_t instanceCount,
                                                         uint32_t firstVertex)
@@ -1074,30 +1189,9 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawInstancedBaseInstance(uint32_t ver
     paramStruct->firstInstance = firstInstance;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::drawIndirect(const Buffer &buffer,
-                                                       VkDeviceSize offset,
-                                                       uint32_t drawCount,
-                                                       uint32_t stride)
+ANGLE_INLINE void SecondaryCommandBuffer::endDebugUtilsLabelEXT()
 {
-    DrawIndirectParams *paramStruct = initCommand<DrawIndirectParams>(CommandID::DrawIndirect);
-    paramStruct->buffer             = buffer.getHandle();
-    paramStruct->offset             = offset;
-
-    // OpenGL ES doesn't have a way to specify a drawCount or stride, throw assert if something
-    // changes.
-    ASSERT(drawCount == 1);
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedIndirect(const Buffer &buffer,
-                                                              VkDeviceSize offset,
-                                                              uint32_t drawCount,
-                                                              uint32_t stride)
-{
-    DrawIndexedIndirectParams *paramStruct =
-        initCommand<DrawIndexedIndirectParams>(CommandID::DrawIndexedIndirect);
-    paramStruct->buffer = buffer.getHandle();
-    paramStruct->offset = offset;
-    ASSERT(drawCount == 1);
+    initCommand<EmptyParams>(CommandID::EndDebugUtilsLabel);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::endQuery(VkQueryPool queryPool, uint32_t query)
@@ -1105,6 +1199,17 @@ ANGLE_INLINE void SecondaryCommandBuffer::endQuery(VkQueryPool queryPool, uint32
     EndQueryParams *paramStruct = initCommand<EndQueryParams>(CommandID::EndQuery);
     paramStruct->queryPool      = queryPool;
     paramStruct->query          = query;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::endTransformFeedback(uint32_t bufferCount,
+                                                               const VkBuffer *counterBuffers)
+{
+    uint8_t *writePtr;
+    size_t bufferSize                       = bufferCount * sizeof(VkBuffer);
+    EndTransformFeedbackParams *paramStruct = initCommand<EndTransformFeedbackParams>(
+        CommandID::EndTransformFeedback, bufferSize, &writePtr);
+    paramStruct->bufferCount = bufferCount;
+    storePointerParameter(writePtr, counterBuffers, bufferSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::executionBarrier(VkPipelineStageFlags stageMask)
@@ -1136,6 +1241,12 @@ ANGLE_INLINE void SecondaryCommandBuffer::imageBarrier(
     paramStruct->srcStageMask       = srcStageMask;
     paramStruct->dstStageMask       = dstStageMask;
     paramStruct->imageMemoryBarrier = imageMemoryBarrier;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::insertDebugUtilsLabelEXT(
+    const VkDebugUtilsLabelEXT &label)
+{
+    commonDebugUtilsLabel(CommandID::InsertDebugUtilsLabel, label);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask,
@@ -1200,6 +1311,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::resetEvent(VkEvent event, VkPipelineSt
     ResetEventParams *paramStruct = initCommand<ResetEventParams>(CommandID::ResetEvent);
     paramStruct->event            = event;
     paramStruct->stageMask        = stageMask;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::queueResetQueryPool(VkQueryPool queryPool,
+                                                              uint32_t firstQuery,
+                                                              uint32_t queryCount)
+{
+    mResetQueryQueue.push_back({queryPool, firstQuery, queryCount});
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::resetQueryPool(VkQueryPool queryPool,

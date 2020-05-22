@@ -69,7 +69,8 @@ class BlitGL : angle::NonCopyable
                                             const gl::Framebuffer *dest,
                                             const gl::Rectangle &sourceArea,
                                             const gl::Rectangle &destArea,
-                                            GLenum filter);
+                                            GLenum filter,
+                                            bool writeAlpha);
 
     angle::Result copySubTexture(const gl::Context *context,
                                  TextureGL *source,

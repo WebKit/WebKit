@@ -22,8 +22,7 @@ SamplerVk::~SamplerVk() = default;
 
 void SamplerVk::onDestroy(const gl::Context *context)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    mSampler.release(contextVk->getRenderer());
+    mSampler.reset();
 }
 
 angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
@@ -37,42 +36,12 @@ angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
         {
             return angle::Result::Continue;
         }
-        mSampler.release(renderer);
+        mSampler.reset();
     }
 
-    const gl::Extensions &extensions = renderer->getNativeExtensions();
-    float maxAnisotropy              = mState.getMaxAnisotropy();
-    bool anisotropyEnable            = extensions.textureFilterAnisotropic && maxAnisotropy > 1.0f;
+    vk::SamplerDesc desc(mState, false);
+    ANGLE_TRY(renderer->getSamplerCache().getSampler(contextVk, desc, &mSampler));
 
-    VkSamplerCreateInfo samplerInfo     = {};
-    samplerInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    samplerInfo.flags                   = 0;
-    samplerInfo.magFilter               = gl_vk::GetFilter(mState.getMagFilter());
-    samplerInfo.minFilter               = gl_vk::GetFilter(mState.getMinFilter());
-    samplerInfo.mipmapMode              = gl_vk::GetSamplerMipmapMode(mState.getMinFilter());
-    samplerInfo.addressModeU            = gl_vk::GetSamplerAddressMode(mState.getWrapS());
-    samplerInfo.addressModeV            = gl_vk::GetSamplerAddressMode(mState.getWrapT());
-    samplerInfo.addressModeW            = gl_vk::GetSamplerAddressMode(mState.getWrapR());
-    samplerInfo.mipLodBias              = 0.0f;
-    samplerInfo.anisotropyEnable        = anisotropyEnable;
-    samplerInfo.maxAnisotropy           = maxAnisotropy;
-    samplerInfo.compareEnable           = mState.getCompareMode() == GL_COMPARE_REF_TO_TEXTURE;
-    samplerInfo.compareOp               = gl_vk::GetCompareOp(mState.getCompareFunc());
-    samplerInfo.minLod                  = mState.getMinLod();
-    samplerInfo.maxLod                  = mState.getMaxLod();
-    samplerInfo.borderColor             = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK;
-    samplerInfo.unnormalizedCoordinates = VK_FALSE;
-
-    if (!gl::IsMipmapFiltered(mState))
-    {
-        // Per the Vulkan spec, GL_NEAREST and GL_LINEAR do not map directly to Vulkan, so
-        // they must be emulated (See "Mapping of OpenGL to Vulkan filter modes")
-        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        samplerInfo.minLod     = 0.0f;
-        samplerInfo.maxLod     = 0.25f;
-    }
-
-    ANGLE_VK_TRY(contextVk, mSampler.get().init(contextVk->getDevice(), samplerInfo));
     // Regenerate the serial on a sampler change.
     mSerial = contextVk->generateTextureSerial();
     return angle::Result::Continue;

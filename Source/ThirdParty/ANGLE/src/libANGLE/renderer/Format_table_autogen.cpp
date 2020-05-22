@@ -237,6 +237,7 @@ const Format gFormatInfoTable[] = {
     { FormatID::R8_SSCALED, GL_R8_SSCALED_ANGLEX, GL_R8_SSCALED_ANGLEX, GenerateMip<R8S>, NoCopyFunctions, ReadColor<R8S, GLint>, WriteColor<R8S, GLint>, GL_INT, 8, 0, 0, 0, 0, 0, 0, 1, 0, false, false, true, gl::VertexAttribType::Byte },
     { FormatID::R8_UINT, GL_R8UI, GL_R8UI, GenerateMip<R8>, NoCopyFunctions, ReadColor<R8, GLuint>, WriteColor<R8, GLuint>, GL_UNSIGNED_INT, 8, 0, 0, 0, 0, 0, 0, 1, 0, false, false, false, gl::VertexAttribType::UnsignedByte },
     { FormatID::R8_UNORM, GL_R8, GL_R8, GenerateMip<R8>, NoCopyFunctions, ReadColor<R8, GLfloat>, WriteColor<R8, GLfloat>, GL_UNSIGNED_NORMALIZED, 8, 0, 0, 0, 0, 0, 0, 1, 0, false, false, false, gl::VertexAttribType::UnsignedByte },
+    { FormatID::R8_UNORM_SRGB, GL_SR8_EXT, GL_SR8_EXT, GenerateMip<R8>, NoCopyFunctions, ReadColor<R8, GLfloat>, WriteColor<R8, GLfloat>, GL_UNSIGNED_NORMALIZED, 8, 0, 0, 0, 0, 0, 0, 1, 0, false, false, false, gl::VertexAttribType::Byte },
     { FormatID::R8_USCALED, GL_R8_USCALED_ANGLEX, GL_R8_USCALED_ANGLEX, GenerateMip<R8>, NoCopyFunctions, ReadColor<R8, GLuint>, WriteColor<R8, GLuint>, GL_UNSIGNED_INT, 8, 0, 0, 0, 0, 0, 0, 1, 0, false, false, true, gl::VertexAttribType::UnsignedByte },
     { FormatID::R9G9B9E5_SHAREDEXP, GL_RGB9_E5, GL_RGB9_E5, GenerateMip<R9G9B9E5>, NoCopyFunctions, ReadColor<R9G9B9E5, GLfloat>, WriteColor<R9G9B9E5, GLfloat>, GL_FLOAT, 9, 9, 9, 0, 0, 0, 0, 4, std::numeric_limits<GLuint>::max(), false, false, false, gl::VertexAttribType::InvalidEnum },
     { FormatID::S8_UINT, GL_STENCIL_INDEX8, GL_STENCIL_INDEX8, nullptr, NoCopyFunctions, ReadDepthStencil<S8>, WriteDepthStencil<S8>, GL_UNSIGNED_INT, 0, 0, 0, 0, 0, 0, 8, 1, std::numeric_limits<GLuint>::max(), false, false, false, gl::VertexAttribType::InvalidEnum },
@@ -682,6 +683,8 @@ FormatID Format::InternalFormatToID(GLenum internalFormat)
             return FormatID::R8G8B8A8_TYPELESS_SRGB;
         case GL_RGBA8_USCALED_ANGLEX:
             return FormatID::R8G8B8A8_USCALED;
+        case GL_SR8_EXT:
+            return FormatID::R8_UNORM_SRGB;
         case GL_SRGB8:
             return FormatID::R8G8B8_UNORM_SRGB;
         case GL_SRGB8_ALPHA8:

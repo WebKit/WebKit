@@ -16,6 +16,10 @@
 #include "common/angleutils.h"
 #include "util/Timer.h"
 
+// DeleteFile is defined in the Windows headers to either DeleteFileA or DeleteFileW. Make sure
+// there are no conflicts.
+#undef DeleteFile
+
 namespace angle
 {
 // Cross platform equivalent of the Windows Sleep function

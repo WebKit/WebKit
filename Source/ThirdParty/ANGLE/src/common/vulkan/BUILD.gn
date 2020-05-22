@@ -1,0 +1,64 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build_overrides/swiftshader.gni")
+import("../../../gni/angle.gni")
+
+assert(angle_enable_vulkan)
+
+angle_source_set("vulkan") {
+  sources = [
+    "vulkan_icd.cpp",
+    "vulkan_icd.h",
+  ]
+
+  public_deps = [
+    "$angle_root:angle_common",
+    "$angle_root/src/libANGLE/renderer/vulkan:angle_vulkan_entry_points",
+  ]
+
+  defines = [
+    "ANGLE_VK_LAYERS_DIR=\"$angle_data_dir\"",
+    "ANGLE_VK_MOCK_ICD_JSON=\"$angle_data_dir/VkICD_mock_icd.json\"",
+  ]
+
+  deps = []
+  data_deps = []
+
+  if (!is_android && !is_fuchsia && !is_ggp) {
+    if (angle_shared_libvulkan) {
+      data_deps += [ "$angle_root/third_party/vulkan-loader/src:libvulkan" ]
+    } else {
+      deps += [ "$angle_root/third_party/vulkan-loader/src:libvulkan" ]
+    }
+    data_deps += [ "$angle_root/third_party/vulkan-tools/src:VkICD_mock_icd" ]
+  }
+
+  if (angle_enable_swiftshader) {
+    import("$swiftshader_dir/src/Vulkan/vulkan.gni")
+    _sws_icd = "./$swiftshader_icd_file_name"
+    if (is_win) {
+      _sws_icd = ".\\\\$swiftshader_icd_file_name"
+    }
+
+    defines += [ "ANGLE_VK_SWIFTSHADER_ICD_JSON=\"${_sws_icd}\"" ]
+
+    data_deps += [
+      "$swiftshader_dir/src/Vulkan:icd_file",
+      "$swiftshader_dir/src/Vulkan:swiftshader_libvulkan",
+    ]
+  }
+}
+
+group("vulkan_validation_layers") {
+  data_deps = []
+  if (is_fuchsia) {
+    data_deps += [ "//third_party/fuchsia-sdk:vulkan_validation" ]
+  } else {
+    data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_validation_layers" ]
+    if (!is_android) {
+      data_deps += [ "$angle_root/third_party/vulkan-validation-layers/src:vulkan_gen_json_files" ]
+    }
+  }
+}

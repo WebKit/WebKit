@@ -92,6 +92,13 @@ struct SwizzleState final
     GLenum swizzleAlpha;
 };
 
+struct ContextBindingCount
+{
+    ContextID contextID;
+    uint32_t samplerBindingCount;
+    uint32_t imageBindingCount;
+};
+
 // State from Table 6.9 (state per texture object) in the OpenGL ES 3.0.2 spec.
 class TextureState final : private angle::NonCopyable
 {
@@ -135,15 +142,23 @@ class TextureState final : private angle::NonCopyable
     GLenum getUsage() const { return mUsage; }
     GLenum getDepthStencilTextureMode() const { return mDepthStencilTextureMode; }
     bool isStencilMode() const { return mDepthStencilTextureMode == GL_STENCIL_INDEX; }
-    bool isBoundAsSamplerTexture() const { return mSamplerBindingCount > 0; }
-    bool isBoundAsImageTexture() const { return mImageBindingCount > 0; }
+    bool isBoundAsSamplerTexture(ContextID contextID) const
+    {
+        return getBindingCount(contextID).samplerBindingCount > 0;
+    }
+    bool isBoundAsImageTexture(ContextID contextID) const
+    {
+        return getBindingCount(contextID).imageBindingCount > 0;
+    }
+
+    gl::SrgbOverride getSRGBOverride() const { return mSrgbOverride; }
 
     // Returns the desc of the base level. Only valid for cube-complete/mip-complete textures.
     const ImageDesc &getBaseLevelDesc() const;
 
     // GLES1 emulation: For GL_OES_draw_texture
-    void setCrop(const gl::Rectangle &rect);
-    const gl::Rectangle &getCrop() const;
+    void setCrop(const Rectangle &rect);
+    const Rectangle &getCrop() const;
 
     // GLES1 emulation: Auto-mipmap generation is a texparameter
     void setGenerateMipmapHint(GLenum hint);
@@ -181,19 +196,37 @@ class TextureState final : private angle::NonCopyable
     void clearImageDesc(TextureTarget target, size_t level);
     void clearImageDescs();
 
+    ContextBindingCount &getBindingCount(ContextID contextID)
+    {
+        for (ContextBindingCount &bindingCount : mBindingCounts)
+        {
+            if (bindingCount.contextID == contextID)
+                return bindingCount;
+        }
+        mBindingCounts.push_back({contextID, 0, 0});
+        return mBindingCounts.back();
+    }
+
+    const ContextBindingCount &getBindingCount(ContextID contextID) const
+    {
+        return const_cast<TextureState *>(this)->getBindingCount(contextID);
+    }
+
     const TextureType mType;
 
     SwizzleState mSwizzleState;
 
     SamplerState mSamplerState;
 
+    SrgbOverride mSrgbOverride;
+
     GLuint mBaseLevel;
     GLuint mMaxLevel;
 
     GLenum mDepthStencilTextureMode;
 
-    uint32_t mSamplerBindingCount;
-    uint32_t mImageBindingCount;
+    std::vector<ContextBindingCount> mBindingCounts;
+
     bool mImmutableFormat;
     GLuint mImmutableLevels;
 
@@ -204,7 +237,7 @@ class TextureState final : private angle::NonCopyable
 
     // GLES1 emulation: Texture crop rectangle
     // For GL_OES_draw_texture
-    gl::Rectangle mCropRect;
+    Rectangle mCropRect;
 
     // GLES1 emulation: Generate-mipmap hint per texture
     GLenum mGenerateMipmapHint;
@@ -279,6 +312,9 @@ class Texture final : public RefCountObject<TextureID>,
     void setSRGBDecode(const Context *context, GLenum sRGBDecode);
     GLenum getSRGBDecode() const;
 
+    void setSRGBOverride(const Context *context, GLenum sRGBOverride);
+    GLenum getSRGBOverride() const;
+
     const SamplerState &getSamplerState() const;
 
     angle::Result setBaseLevel(const Context *context, GLuint baseLevel);
@@ -302,7 +338,7 @@ class Texture final : public RefCountObject<TextureID>,
 
     const TextureState &getTextureState() const;
 
-    const gl::Extents &getExtents(TextureTarget target, size_t level) const;
+    const Extents &getExtents(TextureTarget target, size_t level) const;
     size_t getWidth(TextureTarget target, size_t level) const;
     size_t getHeight(TextureTarget target, size_t level) const;
     size_t getDepth(TextureTarget target, size_t level) const;
@@ -317,6 +353,7 @@ class Texture final : public RefCountObject<TextureID>,
 
     angle::Result setImage(Context *context,
                            const PixelUnpackState &unpackState,
+                           Buffer *unpackBuffer,
                            TextureTarget target,
                            GLint level,
                            GLenum internalFormat,
@@ -418,29 +455,33 @@ class Texture final : public RefCountObject<TextureID>,
 
     angle::Result generateMipmap(Context *context);
 
-    void onBindAsImageTexture();
+    void onBindAsImageTexture(ContextID contextID);
 
-    ANGLE_INLINE void onUnbindAsImageTexture()
+    ANGLE_INLINE void onUnbindAsImageTexture(ContextID contextID)
     {
-        ASSERT(mState.isBoundAsImageTexture());
-        mState.mImageBindingCount--;
+        ASSERT(mState.isBoundAsImageTexture(contextID));
+        mState.getBindingCount(contextID).imageBindingCount--;
     }
 
-    ANGLE_INLINE void onBindAsSamplerTexture()
+    ANGLE_INLINE void onBindAsSamplerTexture(ContextID contextID)
     {
-        ASSERT(mState.mSamplerBindingCount < std::numeric_limits<uint32_t>::max());
-        mState.mSamplerBindingCount++;
-        if (mState.mSamplerBindingCount == 1)
+        ContextBindingCount &bindingCount = mState.getBindingCount(contextID);
+
+        ASSERT(bindingCount.samplerBindingCount < std::numeric_limits<uint32_t>::max());
+        bindingCount.samplerBindingCount++;
+        if (bindingCount.samplerBindingCount == 1)
         {
             onStateChange(angle::SubjectMessage::BindingChanged);
         }
     }
 
-    ANGLE_INLINE void onUnbindAsSamplerTexture()
+    ANGLE_INLINE void onUnbindAsSamplerTexture(ContextID contextID)
     {
-        ASSERT(mState.isBoundAsSamplerTexture());
-        mState.mSamplerBindingCount--;
-        if (mState.mSamplerBindingCount == 0)
+        ContextBindingCount &bindingCount = mState.getBindingCount(contextID);
+
+        ASSERT(mState.isBoundAsSamplerTexture(contextID));
+        bindingCount.samplerBindingCount--;
+        if (bindingCount.samplerBindingCount == 0)
         {
             onStateChange(angle::SubjectMessage::BindingChanged);
         }
@@ -467,7 +508,7 @@ class Texture final : public RefCountObject<TextureID>,
                               GLint level,
                               GLenum format,
                               GLenum type,
-                              void *pixels) const;
+                              void *pixels);
 
     rx::TextureImpl *getImplementation() const { return mTexture; }
 
@@ -482,8 +523,8 @@ class Texture final : public RefCountObject<TextureID>,
     bool getAttachmentFixedSampleLocations(const ImageIndex &imageIndex) const;
 
     // GLES1 emulation
-    void setCrop(const gl::Rectangle &rect);
-    const gl::Rectangle &getCrop() const;
+    void setCrop(const Rectangle &rect);
+    const Rectangle &getCrop() const;
     void setGenerateMipmapHint(GLenum generate);
     GLenum getGenerateMipmapHint() const;
 
@@ -515,6 +556,7 @@ class Texture final : public RefCountObject<TextureID>,
         DIRTY_BIT_COMPARE_MODE,
         DIRTY_BIT_COMPARE_FUNC,
         DIRTY_BIT_SRGB_DECODE,
+        DIRTY_BIT_SRGB_OVERRIDE,
         DIRTY_BIT_BORDER_COLOR,
 
         // Texture state
@@ -563,10 +605,12 @@ class Texture final : public RefCountObject<TextureID>,
     void invalidateCompletenessCache() const;
     angle::Result releaseTexImageInternal(Context *context);
 
+    bool doesSubImageNeedInit(const Context *context,
+                              const ImageIndex &imageIndex,
+                              const Box &area) const;
     angle::Result ensureSubImageInitialized(const Context *context,
-                                            TextureTarget target,
-                                            size_t level,
-                                            const gl::Box &area);
+                                            const ImageIndex &imageIndex,
+                                            const Box &area);
 
     angle::Result handleMipmapGenerationHint(Context *context, int level);
 

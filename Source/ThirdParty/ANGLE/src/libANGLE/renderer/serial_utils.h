@@ -69,6 +69,7 @@ class Serial final
 
     // Useful for serialization.
     constexpr uint64_t getValue() const { return mValue; }
+    constexpr bool valid() const { return mValue != kInvalid; }
 
   private:
     template <typename T>

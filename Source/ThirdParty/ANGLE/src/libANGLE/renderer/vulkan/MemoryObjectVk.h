@@ -48,6 +48,9 @@ class MemoryObjectVk : public MemoryObjectImpl
     angle::Result importOpaqueFd(ContextVk *contextVk, GLuint64 size, GLint fd);
     angle::Result importZirconVmo(ContextVk *contextVk, GLuint64 size, GLuint handle);
 
+    // Imported memory object was a dedicated allocation.
+    bool mDedicatedMemory = false;
+
     GLuint64 mSize             = 0;
     gl::HandleType mHandleType = gl::HandleType::InvalidEnum;
     int mFd                    = kInvalidFd;

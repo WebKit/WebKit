@@ -53,6 +53,35 @@ ImmutableString HashName(const ImmutableString &name,
             // have as long names and could conflict.
             return name;
         }
+        if (name == "gl_ClipDistance")
+        {
+            // NOTE(hqle): When gl_ClipDistance is re-declared, it will become an UserDefined
+            // symbol. Normally, UserDefined symbols will have "_u" prefix added to their names by
+            // ANGLE. However, gl_ClipDistance is an exception. If we add "_u" to its name, the
+            // backend won't be able to handle it properly. So for gl_ClipDistance, we won't add
+            // "_u" prefix, instead we return it original name.
+            //
+            // The other way is treating gl_ClipDistance as an AngleInternal symbol when a
+            // re-declaration occurs. AngleInternal symbols will have their name intact. However,
+            // the issue is that the current code put a lot of restrictions on AngleInternal
+            // symbols. For examples:
+            //  - CollectVariables.cpp will not consider AngleInternal as varying output variales.
+            //  - SymbolTable.cpp will throw an exception if AngleInternal symbols are declared by
+            //  users. In this case, it would be gl_ClipDistance. This is because
+            //  TSymbolTable::declare() only accepts an UserDefined symbol.
+            //  - And potentially many other places that have some assumptions that haven't been
+            //  discovered yet.
+            //
+            // If re-declared gl_ClipDistance was to be an AngleInternal symbol, a special "if (name
+            // == "gl_ClipDistance")" handling would have to be put into all the above mentioned
+            // cases. TParseContext::declareVariable() function would also have to be modified in
+            // order to assign AngleInternal symbol type to the re-declared gl_ClipDistance
+            // variable.
+            // Compare to only this place has to be handled if re-declared gl_ClipDistance is
+            // treated as an UserDefined symbol.
+            //
+            return name;
+        }
         ImmutableStringBuilder prefixedName(kUnhashedNamePrefix.length() + name.length());
         prefixedName << kUnhashedNamePrefix << name;
         return prefixedName;

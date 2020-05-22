@@ -6,8 +6,6 @@
 #
 # Generates a roll CL within the ANGLE repository of AOSP.
 
-git merge -X theirs aosp/upstream-mirror
-
 deps=(
     "third_party/spirv-tools/src"
     "third_party/glslang/src"
@@ -15,11 +13,12 @@ deps=(
     "third_party/vulkan-headers/src"
     "third_party/jsoncpp"
     "third_party/jsoncpp/source"
+    "third_party/vulkan_memory_allocator"
 )
 
 # Delete dep directories so that gclient can check them out
 for dep in ${deps[@]}; do
-    rm -rf --preserve-root $dep
+    rm -rf $dep
 done
 
 # Sync all of ANGLE's deps so that 'gn gen' works
@@ -68,7 +67,18 @@ git add Android.bp
 # Delete the .git files in each dep so that it can be added to this repo. Some deps like jsoncpp
 # have multiple layers of deps so delete everything before adding them.
 for dep in ${deps[@]}; do
-    rm -rf --preserve-root $dep/.git
+    rm -rf $dep/.git
+done
+
+extra_removal_files=(
+    # The jsoncpp OWNERS and VulkanMemoryAllocator file contains users that have not logged into
+    # the Android gerrit so it fails to upload.
+    "third_party/jsoncpp/OWNERS"
+    "third_party/vulkan_memory_allocator/OWNERS"
+)
+
+for removal_file in ${extra_removal_files[@]}; do
+    rm $removal_file
 done
 
 for dep in ${deps[@]}; do

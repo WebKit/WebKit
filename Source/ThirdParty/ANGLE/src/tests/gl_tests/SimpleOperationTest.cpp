@@ -372,7 +372,7 @@ TEST_P(SimpleOperationTest, DrawLine)
 
     ASSERT_GL_NO_ERROR();
 
-    for (auto x = 0; x < getWindowWidth(); x++)
+    for (int x = 0; x < getWindowWidth(); x++)
     {
         EXPECT_PIXEL_COLOR_EQ(x, x, GLColor::green);
     }

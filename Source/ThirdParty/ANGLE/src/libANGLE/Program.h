@@ -51,6 +51,7 @@ struct Caps;
 class Context;
 struct Extensions;
 class Framebuffer;
+class ProgramExecutable;
 class Shader;
 class ShaderProgramManager;
 class State;
@@ -151,45 +152,6 @@ struct BindingInfo
     bool valid;
 };
 
-// A varying with tranform feedback enabled. If it's an array, either the whole array or one of its
-// elements specified by 'arrayIndex' can set to be enabled.
-struct TransformFeedbackVarying : public sh::ShaderVariable
-{
-    TransformFeedbackVarying(const sh::ShaderVariable &varyingIn, GLuint arrayIndexIn)
-        : sh::ShaderVariable(varyingIn), arrayIndex(arrayIndexIn)
-    {
-        ASSERT(!isArrayOfArrays());
-    }
-
-    TransformFeedbackVarying(const sh::ShaderVariable &field, const sh::ShaderVariable &parent)
-        : arrayIndex(GL_INVALID_INDEX)
-    {
-        sh::ShaderVariable *thisVar = this;
-        *thisVar                    = field;
-        interpolation               = parent.interpolation;
-        isInvariant                 = parent.isInvariant;
-        name                        = parent.name + "." + name;
-        mappedName                  = parent.mappedName + "." + mappedName;
-    }
-
-    std::string nameWithArrayIndex() const
-    {
-        std::stringstream fullNameStr;
-        fullNameStr << name;
-        if (arrayIndex != GL_INVALID_INDEX)
-        {
-            fullNameStr << "[" << arrayIndex << "]";
-        }
-        return fullNameStr.str();
-    }
-    GLsizei size() const
-    {
-        return (isArray() && arrayIndex == GL_INVALID_INDEX ? getOutermostArraySize() : 1);
-    }
-
-    GLuint arrayIndex;
-};
-
 struct ProgramBinding
 {
     ProgramBinding() : location(GL_INVALID_INDEX), aliased(false) {}
@@ -252,61 +214,72 @@ class ProgramState final : angle::NonCopyable
     {
         return mTransformFeedbackVaryingNames;
     }
-    GLint getTransformFeedbackBufferMode() const { return mTransformFeedbackBufferMode; }
+    GLint getTransformFeedbackBufferMode() const
+    {
+        return mExecutable->getTransformFeedbackBufferMode();
+    }
     GLuint getUniformBlockBinding(GLuint uniformBlockIndex) const
     {
-        ASSERT(uniformBlockIndex < mUniformBlocks.size());
-        return mUniformBlocks[uniformBlockIndex].binding;
+        return mExecutable->getUniformBlockBinding(uniformBlockIndex);
     }
     GLuint getShaderStorageBlockBinding(GLuint blockIndex) const
     {
-        ASSERT(blockIndex < mShaderStorageBlocks.size());
-        return mShaderStorageBlocks[blockIndex].binding;
+        return mExecutable->getShaderStorageBlockBinding(blockIndex);
     }
     const UniformBlockBindingMask &getActiveUniformBlockBindingsMask() const
     {
         return mActiveUniformBlockBindings;
     }
-    const std::vector<sh::ShaderVariable> &getProgramInputs() const { return mProgramInputs; }
+    const std::vector<sh::ShaderVariable> &getProgramInputs() const
+    {
+        return mExecutable->getProgramInputs();
+    }
     DrawBufferMask getActiveOutputVariables() const { return mActiveOutputVariables; }
-    const std::vector<sh::ShaderVariable> &getOutputVariables() const { return mOutputVariables; }
-    const std::vector<VariableLocation> &getOutputLocations() const { return mOutputLocations; }
+    const std::vector<sh::ShaderVariable> &getOutputVariables() const
+    {
+        return mExecutable->getOutputVariables();
+    }
+    const std::vector<VariableLocation> &getOutputLocations() const
+    {
+        return mExecutable->getOutputLocations();
+    }
     const std::vector<VariableLocation> &getSecondaryOutputLocations() const
     {
         return mSecondaryOutputLocations;
     }
-    const std::vector<LinkedUniform> &getUniforms() const { return mUniforms; }
+    const std::vector<LinkedUniform> &getUniforms() const { return mExecutable->getUniforms(); }
     const std::vector<VariableLocation> &getUniformLocations() const { return mUniformLocations; }
-    const std::vector<InterfaceBlock> &getUniformBlocks() const { return mUniformBlocks; }
+    const std::vector<InterfaceBlock> &getUniformBlocks() const
+    {
+        return mExecutable->getUniformBlocks();
+    }
     const std::vector<InterfaceBlock> &getShaderStorageBlocks() const
     {
-        return mShaderStorageBlocks;
+        return mExecutable->getShaderStorageBlocks();
     }
     const std::vector<BufferVariable> &getBufferVariables() const { return mBufferVariables; }
     const std::vector<SamplerBinding> &getSamplerBindings() const { return mSamplerBindings; }
     const std::vector<ImageBinding> &getImageBindings() const { return mImageBindings; }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
     const RangeUI &getDefaultUniformRange() const { return mDefaultUniformRange; }
-    const RangeUI &getSamplerUniformRange() const { return mSamplerUniformRange; }
-    const RangeUI &getImageUniformRange() const { return mImageUniformRange; }
+    const RangeUI &getSamplerUniformRange() const { return mExecutable->getSamplerUniformRange(); }
+    const RangeUI &getImageUniformRange() const { return mExecutable->getImageUniformRange(); }
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
 
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
     {
-        return mLinkedTransformFeedbackVaryings;
+        return mExecutable->getLinkedTransformFeedbackVaryings();
     }
     const std::vector<GLsizei> &getTransformFeedbackStrides() const
     {
-        return mTransformFeedbackStrides;
+        return mExecutable->getTransformFeedbackStrides();
     }
     const std::vector<AtomicCounterBuffer> &getAtomicCounterBuffers() const
     {
-        return mAtomicCounterBuffers;
+        return mExecutable->getAtomicCounterBuffers();
     }
 
     // Count the number of uniform and storage buffer declarations, counting arrays as one.
-    size_t getUniqueUniformBlockCount() const;
-    size_t getUniqueStorageBlockCount() const;
     size_t getTransformFeedbackBufferCount() const;
 
     GLuint getUniformIndexFromName(const std::string &name) const;
@@ -335,8 +308,16 @@ class ProgramState final : angle::NonCopyable
         return mUniformLocationBindings;
     }
 
-    const ProgramExecutable &getProgramExecutable() const { return mExecutable; }
-    ProgramExecutable &getProgramExecutable() { return mExecutable; }
+    const ProgramExecutable &getExecutable() const
+    {
+        ASSERT(mExecutable);
+        return *mExecutable;
+    }
+    ProgramExecutable &getExecutable()
+    {
+        ASSERT(mExecutable);
+        return *mExecutable;
+    }
 
     bool hasDefaultUniforms() const { return !getDefaultUniformRange().empty(); }
     bool hasTextures() const { return !getSamplerBindings().empty(); }
@@ -348,6 +329,16 @@ class ProgramState final : angle::NonCopyable
     {
         return !getLinkedTransformFeedbackVaryings().empty();
     }
+    bool hasEarlyFragmentTestsOptimization() const { return mEarlyFramentTestsOptimization; }
+
+    bool isShaderMarkedForDetach(gl::ShaderType shaderType) const
+    {
+        return mAttachedShadersMarkedForDetach[shaderType];
+    }
+
+    // A Program can only either be graphics or compute, but never both, so it
+    // can answer isCompute() based on which shaders it has.
+    bool isCompute() const { return mExecutable->hasLinkedShaderStage(ShaderType::Compute); }
 
   private:
     friend class MemoryProgramCache;
@@ -367,39 +358,17 @@ class ProgramState final : angle::NonCopyable
     sh::WorkGroupSize mComputeShaderLocalSize;
 
     ShaderMap<Shader *> mAttachedShaders;
+    ShaderMap<bool> mAttachedShadersMarkedForDetach;
 
     uint32_t mLocationsUsedForXfbExtension;
     std::vector<std::string> mTransformFeedbackVaryingNames;
-    std::vector<TransformFeedbackVarying> mLinkedTransformFeedbackVaryings;
-    GLenum mTransformFeedbackBufferMode;
 
     // For faster iteration on the blocks currently being bound.
     UniformBlockBindingMask mActiveUniformBlockBindings;
 
-    // Vertex attributes, Fragment input varyings, etc.
-    std::vector<sh::ShaderVariable> mProgramInputs;
-
-    // Uniforms are sorted in order:
-    //  1. Non-opaque uniforms
-    //  2. Sampler uniforms
-    //  3. Image uniforms
-    //  4. Atomic counter uniforms
-    //  5. Uniform block uniforms
-    // This makes opaque uniform validation easier, since we don't need a separate list.
-    // For generating the entries and naming them we follow the spec: GLES 3.1 November 2016 section
-    // 7.3.1.1 Naming Active Resources. There's a separate entry for each struct member and each
-    // inner array of an array of arrays. Names and mapped names of uniforms that are arrays include
-    // [0] in the end. This makes implementation of queries simpler.
-    std::vector<LinkedUniform> mUniforms;
-
     std::vector<VariableLocation> mUniformLocations;
-    std::vector<InterfaceBlock> mUniformBlocks;
     std::vector<BufferVariable> mBufferVariables;
-    std::vector<InterfaceBlock> mShaderStorageBlocks;
-    std::vector<AtomicCounterBuffer> mAtomicCounterBuffers;
     RangeUI mDefaultUniformRange;
-    RangeUI mSamplerUniformRange;
-    RangeUI mImageUniformRange;
     RangeUI mAtomicCounterUniformRange;
 
     // An array of the samplers that are used by the program
@@ -407,11 +376,6 @@ class ProgramState final : angle::NonCopyable
 
     // An array of the images that are used by the program
     std::vector<ImageBinding> mImageBindings;
-
-    // Names and mapped names of output variables that are arrays include [0] in the end, similarly
-    // to uniforms.
-    std::vector<sh::ShaderVariable> mOutputVariables;
-    std::vector<VariableLocation> mOutputLocations;
 
     // EXT_blend_func_extended secondary outputs (ones with index 1) in ESSL 3.00 shaders.
     std::vector<VariableLocation> mSecondaryOutputLocations;
@@ -424,6 +388,7 @@ class ProgramState final : angle::NonCopyable
 
     bool mBinaryRetrieveableHint;
     bool mSeparable;
+    bool mEarlyFramentTestsOptimization;
 
     // ANGLE_multiview.
     int mNumViews;
@@ -445,14 +410,11 @@ class ProgramState final : angle::NonCopyable
     GLint mCachedBaseVertex;
     GLuint mCachedBaseInstance;
 
-    // The size of the data written to each transform feedback buffer per vertex.
-    std::vector<GLsizei> mTransformFeedbackStrides;
-
     // Note that this has nothing to do with binding layout qualifiers that can be set for some
     // uniforms in GLES3.1+. It is used to pre-set the location of uniforms.
     ProgramAliasedBindings mUniformLocationBindings;
 
-    ProgramExecutable mExecutable;
+    std::shared_ptr<ProgramExecutable> mExecutable;
 };
 
 struct ProgramVaryingRef
@@ -486,11 +448,11 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     ANGLE_INLINE rx::ProgramImpl *getImplementation() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mProgram;
     }
 
-    void attachShader(Shader *shader);
+    void attachShader(const Context *context, Shader *shader);
     void detachShader(const Context *context, Shader *shader);
     int getAttachedShadersCount() const;
 
@@ -503,6 +465,10 @@ class Program final : angle::NonCopyable, public LabeledObject
     void bindFragmentOutputLocation(GLuint index, const char *name);
     void bindFragmentOutputIndex(GLuint index, const char *name);
 
+    angle::Result linkMergedVaryings(const Context *context,
+                                     const ProgramExecutable &executable,
+                                     const ProgramMergedVaryings &mergedVaryings);
+
     // KHR_parallel_shader_compile
     // Try to link the program asynchrously. As a result, background threads may be launched to
     // execute the linking tasks concurrently.
@@ -513,7 +479,7 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     bool isLinked() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mLinked;
     }
 
@@ -552,7 +518,7 @@ class Program final : angle::NonCopyable, public LabeledObject
     const std::vector<GLenum> &getOutputVariableTypes() const;
     DrawBufferMask getActiveOutputVariables() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mState.mActiveOutputVariables;
     }
 
@@ -574,15 +540,14 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     const std::vector<VariableLocation> &getUniformLocations() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mState.mUniformLocations;
     }
 
     const LinkedUniform &getUniformByIndex(GLuint index) const
     {
-        ASSERT(mLinkResolved);
-        ASSERT(index < static_cast<size_t>(mState.mUniforms.size()));
-        return mState.mUniforms[index];
+        ASSERT(!mLinkingState);
+        return mState.mExecutable->getUniformByIndex(index);
     }
 
     const BufferVariable &getBufferVariableByIndex(GLuint index) const;
@@ -659,20 +624,20 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     ANGLE_INLINE GLuint getActiveUniformBlockCount() const
     {
-        ASSERT(mLinkResolved);
-        return static_cast<GLuint>(mState.mUniformBlocks.size());
+        ASSERT(!mLinkingState);
+        return static_cast<GLuint>(mState.mExecutable->getActiveUniformBlockCount());
     }
 
     ANGLE_INLINE GLuint getActiveAtomicCounterBufferCount() const
     {
-        ASSERT(mLinkResolved);
-        return static_cast<GLuint>(mState.mAtomicCounterBuffers.size());
+        ASSERT(!mLinkingState);
+        return static_cast<GLuint>(mState.mExecutable->getActiveAtomicCounterBufferCount());
     }
 
     ANGLE_INLINE GLuint getActiveShaderStorageBlockCount() const
     {
-        ASSERT(mLinkResolved);
-        return static_cast<GLuint>(mState.mShaderStorageBlocks.size());
+        ASSERT(!mLinkingState);
+        return static_cast<GLuint>(mState.mExecutable->getActiveShaderStorageBlockCount());
     }
 
     GLint getActiveUniformBlockMaxNameLength() const;
@@ -713,13 +678,13 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     ANGLE_INLINE void addRef()
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         mRefCount++;
     }
 
     ANGLE_INLINE void release(const Context *context)
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         mRefCount--;
 
         if (mRefCount == 0 && mDeleteStatus)
@@ -748,10 +713,13 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     bool isValidated() const;
 
+    Optional<bool> getCachedValidateSamplersResult() { return mCachedValidateSamplersResult; }
+    void setCachedValidateSamplersResult(bool result) { mCachedValidateSamplersResult = result; }
+
     const std::vector<SamplerBinding> &getSamplerBindings() const;
     const std::vector<ImageBinding> &getImageBindings() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mState.mImageBindings;
     }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const;
@@ -762,7 +730,7 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     const ProgramState &getState() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mState;
     }
 
@@ -796,10 +764,12 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     const ProgramBindings &getAttributeBindings() const;
     const ProgramAliasedBindings &getUniformLocationBindings() const;
+    const ProgramAliasedBindings &getFragmentOutputLocations() const;
+    const ProgramAliasedBindings &getFragmentOutputIndexes() const;
 
     int getNumViews() const
     {
-        ASSERT(mLinkResolved);
+        ASSERT(!mLinkingState);
         return mState.getNumViews();
     }
 
@@ -826,7 +796,7 @@ class Program final : angle::NonCopyable, public LabeledObject
     // Try to resolve linking. Inlined to make sure its overhead is as low as possible.
     void resolveLink(const Context *context)
     {
-        if (!mLinkResolved)
+        if (mLinkingState)
         {
             resolveLinkImpl(context);
         }
@@ -839,8 +809,34 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     rx::Serial serial() const { return mSerial; }
 
-    const ProgramExecutable &getExecutable() const { return mState.getProgramExecutable(); }
-    ProgramExecutable &getExecutable() { return mState.getProgramExecutable(); }
+    const ProgramExecutable &getExecutable() const { return mState.getExecutable(); }
+    ProgramExecutable &getExecutable() { return mState.getExecutable(); }
+
+    const char *validateDrawStates(const State &state, const gl::Extensions &extensions) const;
+
+    static void getFilteredVaryings(const std::vector<sh::ShaderVariable> &varyings,
+                                    std::vector<const sh::ShaderVariable *> *filteredVaryingsOut);
+    static bool doShaderVariablesMatch(int outputShaderVersion,
+                                       ShaderType outputShaderType,
+                                       ShaderType inputShaderType,
+                                       const sh::ShaderVariable &input,
+                                       const sh::ShaderVariable &output,
+                                       bool validateGeometryShaderInputs,
+                                       bool isSeparable,
+                                       gl::InfoLog &infoLog);
+    static bool linkValidateShaderInterfaceMatching(
+        const std::vector<sh::ShaderVariable> &outputVaryings,
+        const std::vector<sh::ShaderVariable> &inputVaryings,
+        ShaderType outputShaderType,
+        ShaderType inputShaderType,
+        int outputShaderVersion,
+        int inputShaderVersion,
+        bool isSeparable,
+        InfoLog &infoLog);
+    static bool linkValidateBuiltInVaryings(const std::vector<sh::ShaderVariable> &vertexVaryings,
+                                            const std::vector<sh::ShaderVariable> &fragmentVaryings,
+                                            int vertexShaderVersion,
+                                            InfoLog &infoLog);
 
   private:
     struct LinkingState;
@@ -852,6 +848,8 @@ class Program final : angle::NonCopyable, public LabeledObject
 
     void unlink();
     void deleteSelf(const Context *context);
+
+    angle::Result linkImpl(const Context *context);
 
     bool linkValidateShaders(InfoLog &infoLog);
     bool linkAttributes(const Context *context, InfoLog &infoLog);
@@ -877,19 +875,14 @@ class Program final : angle::NonCopyable, public LabeledObject
                                                   const sh::ShaderVariable &inputVarying,
                                                   int shaderVersion,
                                                   bool validateGeometryShaderInputVarying,
+                                                  bool isSeparable,
                                                   std::string *mismatchedStructFieldName);
 
-    bool linkValidateShaderInterfaceMatching(Shader *generatingShader,
-                                             Shader *consumingShader,
-                                             InfoLog &infoLog) const;
-
-    bool linkValidateBuiltInVaryings(InfoLog &infoLog) const;
     bool linkValidateTransformFeedback(const Version &version,
                                        InfoLog &infoLog,
                                        const ProgramMergedVaryings &linkedVaryings,
                                        ShaderType stage,
                                        const Caps &caps) const;
-    bool linkValidateGlobalNames(InfoLog &infoLog) const;
 
     void gatherTransformFeedbackVaryings(const ProgramMergedVaryings &varyings, ShaderType stage);
 
@@ -963,7 +956,6 @@ class Program final : angle::NonCopyable, public LabeledObject
     ProgramAliasedBindings mFragmentOutputIndexes;
 
     bool mLinked;
-    bool mLinkResolved;
     std::unique_ptr<LinkingState> mLinkingState;
     bool mDeleteStatus;  // Flag to indicate that the program can be deleted when no longer in use
 

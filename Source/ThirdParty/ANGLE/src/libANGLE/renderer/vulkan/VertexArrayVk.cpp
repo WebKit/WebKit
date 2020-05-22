@@ -425,7 +425,7 @@ angle::Result VertexArrayVk::convertVertexBufferCPU(ContextVk *contextVk,
                                0, numVertices, binding.getStride(), srcFormatSize,
                                vertexFormat.vertexLoadFunction, &mCurrentArrayBuffers[attribIndex],
                                &conversion->lastAllocationOffset, 1));
-    srcBuffer->unmapImpl(contextVk);
+    ANGLE_TRY(srcBuffer->unmapImpl(contextVk));
 
     ASSERT(conversion->dirty);
     conversion->dirty = false;
@@ -757,7 +757,7 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
                                            &mCurrentArrayBufferOffsets[attribIndex], divisor));
                 if (bufferVk)
                 {
-                    bufferVk->unmapImpl(contextVk);
+                    ANGLE_TRY(bufferVk->unmapImpl(contextVk));
                 }
             }
             else

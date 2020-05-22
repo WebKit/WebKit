@@ -701,6 +701,8 @@ bool ValidateLoseContextCHROMIUM(const Context *context,
                                  GraphicsResetStatus currentPacked,
                                  GraphicsResetStatus otherPacked);
 
+// GL_EXT_EGL_image_array
+
 // GL_EXT_blend_func_extended
 bool ValidateBindFragDataLocationEXT(const Context *context,
                                      ShaderProgramID programPacked,
@@ -1010,6 +1012,8 @@ bool ValidateImportSemaphoreFdEXT(const Context *context,
 // GL_EXT_texture_filter_anisotropic
 
 // GL_EXT_texture_format_BGRA8888
+
+// GL_EXT_texture_sRGB_R8
 
 // GL_EXT_texture_storage
 bool ValidateTexStorage1DEXT(const Context *context,

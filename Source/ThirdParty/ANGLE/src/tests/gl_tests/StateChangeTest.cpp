@@ -730,29 +730,26 @@ TEST_P(StateChangeRenderTest, RecreateRenderbuffer)
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mRenderbuffer);
 
     // Explictly check FBO status sync in some versions of ANGLE no_error skips FBO checks.
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Draw with red to the FBO.
-    GLColor red(255, 0, 0, 255);
-    setUniformColor(red);
+    setUniformColor(GLColor::red);
     drawQuad(mProgram, "position", 0.5f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, red);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     // Recreate the renderbuffer and clear to green.
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 32, 32);
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    GLColor green(0, 255, 0, 255);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, green);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     // Explictly check FBO status sync in some versions of ANGLE no_error skips FBO checks.
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Verify drawing blue gives blue. This covers the FBO sync with D3D dirty bits.
-    GLColor blue(0, 0, 255, 255);
-    setUniformColor(blue);
+    setUniformColor(GLColor::blue);
     drawQuad(mProgram, "position", 0.5f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, blue);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -3980,6 +3977,9 @@ void main()
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOSX());
+
+    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     constexpr char kFS[] = R"(#version 300 es
 precision mediump float;

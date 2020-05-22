@@ -85,6 +85,8 @@ MSG kDestinationTextureTooSmall = "Destination texture too small.";
 MSG kDimensionsMustBePow2 = "Texture dimensions must be power-of-two.";
 MSG kDispatchIndirectBufferNotBound = "Dispatch indirect buffer must be bound.";
 MSG kDrawBufferMaskMismatch = "Active draw buffers with missing fragment shader outputs.";
+MSG kDrawBuffersIndexedExtensionNotAvailable = "EXT/OES_draw_buffers_indexed is not available.";
+MSG kES31OrDrawBuffersIndexedExtensionNotAvailable = "EXT/OES_draw_buffers_indexed or ES 3.1 are required but not available.";
 MSG kDrawBufferTypeMismatch = "Fragment shader output type does not match the bound framebuffer attachment type.";
 MSG kDrawFramebufferIncomplete = "Draw framebuffer is incomplete";
 MSG kDrawIndirectBufferNotBound = "Draw indirect buffer must be bound.";
@@ -259,6 +261,7 @@ MSG kInvalidPrimitiveMode = "Invalid primitive mode.";
 MSG kInvalidProgramBinaryFormat = "Program binary format is not valid.";
 MSG kInvalidProgramInterface = "Invalid program interface.";
 MSG kInvalidProgramName = "Program object expected.";
+MSG kInvalidProgramPipelineName = "name is not a valid program pipeline.";
 MSG kInvalidProgramResourceIndex = "Invalid program resource index.";
 MSG kInvalidProgramResourceProperty = "Invalid program resource property.";
 MSG kInvalidProjectionMatrix = "Invalid projection matrix. Left/right, top/bottom, near/far intervals cannot be zero, and near/far cannot be less than zero.";
@@ -481,6 +484,11 @@ MSG kWebgl2NameLengthLimitExceeded = "Location lengths must not be greater than 
 MSG kWebglBindAttribLocationReservedPrefix = "Attributes that begin with 'webgl_', or '_webgl_' are not allowed.";
 MSG kWebglNameLengthLimitExceeded = "Location name lengths must not be greater than 256 characters.";
 MSG kZeroBoundToTarget = "Zero is bound to target.";
+MSG kUnrecognizedShaderStageBit = "Unrecognized shader stage bit.";
+MSG kProgramNotSeparable = "Program object was not linked with its PROGRAM_SEPARABLE status set.";
+MSG kProgramPipelineDoesNotExist = "Program pipeline does not exist.";
+MSG kNotAllStagesOfSeparableProgramUsed = "A program object is active for at least one, but not all of the shader stages that were present when the program was linked.";
+
 // clang-format on
 
 #undef MSG

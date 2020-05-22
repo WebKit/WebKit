@@ -131,5 +131,5 @@ Additions to Chapter 6 of the OpenGL 4.5 Specification (Memory Objects)
 
 Revision History
 
-    Revision 1, 2019-02-19 (Michael Spang)
+    Revision 1, 2020-02-19 (Michael Spang)
         - Initial draft based closely on EXT_external_objects_fd.

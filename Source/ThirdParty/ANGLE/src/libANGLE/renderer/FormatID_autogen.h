@@ -230,6 +230,7 @@ enum class FormatID
     R8_SSCALED,
     R8_UINT,
     R8_UNORM,
+    R8_UNORM_SRGB,
     R8_USCALED,
     R9G9B9E5_SHAREDEXP,
     S8_UINT,
@@ -241,7 +242,7 @@ enum class FormatID
     X2R10G10B10_USCALED_VERTEX
 };
 
-constexpr uint32_t kNumANGLEFormats = 222;
+constexpr uint32_t kNumANGLEFormats = 223;
 
 }  // namespace angle
 

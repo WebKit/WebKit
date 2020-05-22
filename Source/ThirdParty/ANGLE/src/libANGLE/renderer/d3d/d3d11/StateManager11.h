@@ -313,7 +313,7 @@ class StateManager11 final : angle::NonCopyable
                                              ID3D11Resource *resource);
 
     angle::Result syncBlendState(const gl::Context *context,
-                                 const gl::BlendStateArray &blendStateArray,
+                                 const gl::BlendStateExt &blendStateExt,
                                  const gl::ColorF &blendColor,
                                  unsigned int sampleMask,
                                  bool sampleAlphaToCoverage,
@@ -323,7 +323,7 @@ class StateManager11 final : angle::NonCopyable
 
     angle::Result syncRasterizerState(const gl::Context *context, gl::PrimitiveMode mode);
 
-    void syncScissorRectangle(const gl::Rectangle &scissor, bool enabled);
+    void syncScissorRectangle(const gl::Context *context);
 
     void syncViewport(const gl::Context *context);
 
@@ -466,7 +466,7 @@ class StateManager11 final : angle::NonCopyable
     bool mCurSampleAlphaToCoverage;
 
     // Blend State
-    gl::BlendStateArray mCurBlendStateArray;
+    gl::BlendStateExt mCurBlendStateExt;
     gl::ColorF mCurBlendColor;
     unsigned int mCurSampleMask;
 
@@ -489,6 +489,10 @@ class StateManager11 final : angle::NonCopyable
     gl::Rectangle mCurViewport;
     float mCurNear;
     float mCurFar;
+
+    // Currently applied offset to viewport and scissor
+    gl::Offset mCurViewportOffset;
+    gl::Offset mCurScissorOffset;
 
     // Things needed in viewport state
     ShaderConstants11 mShaderConstants;

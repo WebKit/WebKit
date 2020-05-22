@@ -71,7 +71,7 @@ ProcEntry g_procTable[] = {
     {"eglGetError", P(EGL_GetError)},
     {"eglGetFrameTimestampSupportedANDROID", P(EGL_GetFrameTimestampSupportedANDROID)},
     {"eglGetFrameTimestampsANDROID", P(EGL_GetFrameTimestampsANDROID)},
-    {"eglGetMscRateCHROMIUM", P(EGL_GetMscRateCHROMIUM)},
+    {"eglGetMscRateANGLE", P(EGL_GetMscRateANGLE)},
     {"eglGetNativeClientBufferANDROID", P(EGL_GetNativeClientBufferANDROID)},
     {"eglGetNextFrameIdANDROID", P(EGL_GetNextFrameIdANDROID)},
     {"eglGetPlatformDisplay", P(EGL_GetPlatformDisplay)},

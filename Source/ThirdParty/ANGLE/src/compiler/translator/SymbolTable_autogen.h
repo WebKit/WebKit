@@ -68,6 +68,8 @@ class TSymbolTableBase
     TSymbol *m_gl_FragDepthEXT                     = nullptr;
     TSymbol *m_gl_LastFragData                     = nullptr;
     TSymbol *m_gl_LastFragDataNV                   = nullptr;
+    TSymbol *m_gl_ClipDistance                     = nullptr;
+    TSymbol *m_gl_MaxClipDistances                 = nullptr;
     TSymbol *m_gl_PerVertex                        = nullptr;
     TSymbol *m_gl_in                               = nullptr;
     TSymbol *m_gl_PositionGS                       = nullptr;

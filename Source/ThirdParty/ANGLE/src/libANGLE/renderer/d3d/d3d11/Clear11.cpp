@@ -287,16 +287,7 @@ angle::Result Clear11::ensureResourcesInitialized(const gl::Context *context)
     mDepthStencilStateKey.stencilBackFunc          = GL_ALWAYS;
 
     // Initialize BlendStateKey with defaults
-    for (gl::BlendState &blendState : mBlendStateKey.blendStateArray)
-    {
-        blendState.blend              = false;
-        blendState.sourceBlendRGB     = GL_ONE;
-        blendState.sourceBlendAlpha   = GL_ONE;
-        blendState.destBlendRGB       = GL_ZERO;
-        blendState.destBlendAlpha     = GL_ZERO;
-        blendState.blendEquationRGB   = GL_FUNC_ADD;
-        blendState.blendEquationAlpha = GL_FUNC_ADD;
-    }
+    mBlendStateKey.blendStateExt = gl::BlendStateExt(mRenderer->getNativeCaps().maxDrawBuffers);
 
     mResourcesInitialized = true;
     return angle::Result::Continue;
@@ -468,11 +459,8 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
     const auto &colorAttachments = fboData.getColorAttachments();
     for (auto colorAttachmentIndex : fboData.getEnabledDrawBuffers())
     {
-        const uint8_t colorMask =
-            gl_d3d11::ConvertColorMask(clearParams.colorMaskRed[colorAttachmentIndex],
-                                       clearParams.colorMaskGreen[colorAttachmentIndex],
-                                       clearParams.colorMaskBlue[colorAttachmentIndex],
-                                       clearParams.colorMaskAlpha[colorAttachmentIndex]);
+        const uint8_t colorMask = gl::BlendStateExt::ColorMaskStorage::GetValueIndexed(
+            colorAttachmentIndex, clearParams.colorMask);
 
         commonColorMask |= colorMask;
 
@@ -501,10 +489,10 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
                    << ").";
         }
 
-        if ((formatInfo.redBits == 0 || !clearParams.colorMaskRed[colorAttachmentIndex]) &&
-            (formatInfo.greenBits == 0 || !clearParams.colorMaskGreen[colorAttachmentIndex]) &&
-            (formatInfo.blueBits == 0 || !clearParams.colorMaskBlue[colorAttachmentIndex]) &&
-            (formatInfo.alphaBits == 0 || !clearParams.colorMaskAlpha[colorAttachmentIndex]))
+        bool r, g, b, a;
+        gl::BlendStateExt::UnpackColorMask(colorMask, &r, &g, &b, &a);
+        if ((formatInfo.redBits == 0 || !r) && (formatInfo.greenBits == 0 || !g) &&
+            (formatInfo.blueBits == 0 || !b) && (formatInfo.alphaBits == 0 || !a))
         {
             // Every channel either does not exist in the render target or is masked out
             continue;
@@ -514,11 +502,9 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
         ASSERT(framebufferRTV.valid());
 
         if ((!(mRenderer->getRenderer11DeviceCaps().supportsClearView) && needScissoredClear) ||
-            clearParams.colorType != GL_FLOAT ||
-            (formatInfo.redBits > 0 && !clearParams.colorMaskRed[colorAttachmentIndex]) ||
-            (formatInfo.greenBits > 0 && !clearParams.colorMaskGreen[colorAttachmentIndex]) ||
-            (formatInfo.blueBits > 0 && !clearParams.colorMaskBlue[colorAttachmentIndex]) ||
-            (formatInfo.alphaBits > 0 && !clearParams.colorMaskAlpha[colorAttachmentIndex]))
+            clearParams.colorType != GL_FLOAT || (formatInfo.redBits > 0 && !r) ||
+            (formatInfo.greenBits > 0 && !g) || (formatInfo.blueBits > 0 && !b) ||
+            (formatInfo.alphaBits > 0 && !a))
         {
             rtvs[numRtvs]     = framebufferRTV.get();
             rtvMasks[numRtvs] = gl_d3d11::GetColorMask(formatInfo) & colorMask;
@@ -650,17 +636,13 @@ angle::Result Clear11::clearFramebuffer(const gl::Context *context,
     ASSERT(numRtvs <= static_cast<uint32_t>(mRenderer->getNativeCaps().maxDrawBuffers));
 
     // Setup BlendStateKey parameters
-    for (size_t i = 0; i < mBlendStateKey.blendStateArray.size(); i++)
+    mBlendStateKey.blendStateExt.setColorMask(false, false, false, false);
+    for (size_t i = 0; i < numRtvs; i++)
     {
-        gl::BlendState &blendState = mBlendStateKey.blendStateArray[i];
-        blendState.colorMaskRed    = clearParams.colorMaskRed[i];
-        blendState.colorMaskGreen  = clearParams.colorMaskGreen[i];
-        blendState.colorMaskBlue   = clearParams.colorMaskBlue[i];
-        blendState.colorMaskAlpha  = clearParams.colorMaskAlpha[i];
+        mBlendStateKey.blendStateExt.setColorMaskIndexed(i, rtvMasks[i]);
     }
 
     mBlendStateKey.rtvMax = static_cast<uint16_t>(numRtvs);
-    memcpy(mBlendStateKey.rtvMasks, &rtvMasks[0], sizeof(mBlendStateKey.rtvMasks));
 
     // Get BlendState
     const d3d11::BlendState *blendState = nullptr;

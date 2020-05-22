@@ -15,6 +15,7 @@
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/egl/ContextEGL.h"
+#include "libANGLE/renderer/gl/egl/DmaBufImageSiblingEGL.h"
 #include "libANGLE/renderer/gl/egl/FunctionsEGLDL.h"
 #include "libANGLE/renderer/gl/egl/ImageEGL.h"
 #include "libANGLE/renderer/gl/egl/PbufferSurfaceEGL.h"
@@ -621,6 +622,7 @@ void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
             mEGL->hasExtension("EGL_EXT_gl_colorspace_scrgb_linear");
         outExtensions->glColorspaceDisplayP3Passthrough =
             mEGL->hasExtension("EGL_EXT_gl_colorspace_display_p3_passthrough");
+        outExtensions->imageGlColorspace = mEGL->hasExtension("EGL_EXT_image_gl_colorspace");
     }
 
     outExtensions->imageNativeBuffer = mEGL->hasExtension("EGL_ANDROID_image_native_buffer");
@@ -642,6 +644,11 @@ void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->surfacelessContext = mEGL->hasExtension("EGL_KHR_surfaceless_context");
 
     outExtensions->framebufferTargetANDROID = mEGL->hasExtension("EGL_ANDROID_framebuffer_target");
+
+    outExtensions->imageDmaBufImportEXT = mEGL->hasExtension("EGL_EXT_image_dma_buf_import");
+
+    outExtensions->imageDmaBufImportModifiersEXT =
+        mEGL->hasExtension("EGL_EXT_image_dma_buf_import_modifiers");
 
     DisplayGL::generateExtensions(outExtensions);
 }
@@ -709,6 +716,38 @@ void DisplayEGL::initializeFrontendFeatures(angle::FrontendFeatures *features) c
 void DisplayEGL::populateFeatureList(angle::FeatureList *features)
 {
     mRenderer->getFeatures().populateFeatureList(features);
+}
+
+egl::Error DisplayEGL::validateImageClientBuffer(const gl::Context *context,
+                                                 EGLenum target,
+                                                 EGLClientBuffer clientBuffer,
+                                                 const egl::AttributeMap &attribs) const
+{
+    switch (target)
+    {
+        case EGL_LINUX_DMA_BUF_EXT:
+            return egl::NoError();
+
+        default:
+            return DisplayGL::validateImageClientBuffer(context, target, clientBuffer, attribs);
+    }
+}
+
+ExternalImageSiblingImpl *DisplayEGL::createExternalImageSibling(const gl::Context *context,
+                                                                 EGLenum target,
+                                                                 EGLClientBuffer buffer,
+                                                                 const egl::AttributeMap &attribs)
+{
+    switch (target)
+    {
+        case EGL_LINUX_DMA_BUF_EXT:
+            ASSERT(context == nullptr);
+            ASSERT(buffer == nullptr);
+            return new DmaBufImageSiblingEGL(attribs);
+
+        default:
+            return DisplayGL::createExternalImageSibling(context, target, buffer, attribs);
+    }
 }
 
 }  // namespace rx

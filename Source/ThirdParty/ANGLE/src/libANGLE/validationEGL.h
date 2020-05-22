@@ -174,10 +174,10 @@ Error ValidateStreamPostD3DTextureANGLE(const Display *display,
                                         void *texture,
                                         const AttributeMap &attribs);
 
-Error ValidateGetMscRateCHROMIUM(const Display *display,
-                                 const Surface *surface,
-                                 const EGLint *numerator,
-                                 const EGLint *denominator);
+Error ValidateGetMscRateANGLE(const Display *display,
+                              const Surface *surface,
+                              const EGLint *numerator,
+                              const EGLint *denominator);
 Error ValidateGetSyncValuesCHROMIUM(const Display *display,
                                     const Surface *surface,
                                     const EGLuint64KHR *ust,

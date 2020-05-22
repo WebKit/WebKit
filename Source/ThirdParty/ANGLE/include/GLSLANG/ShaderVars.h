@@ -28,7 +28,8 @@ enum InterpolationType
 {
     INTERPOLATION_SMOOTH,
     INTERPOLATION_CENTROID,
-    INTERPOLATION_FLAT
+    INTERPOLATION_FLAT,
+    INTERPOLATION_NOPERSPECTIVE
 };
 
 // Validate link & SSO consistency of interpolation qualifiers

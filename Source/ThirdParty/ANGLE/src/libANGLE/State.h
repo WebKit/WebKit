@@ -72,9 +72,9 @@ class ActiveTexturesCache final : angle::NonCopyable
 
     Texture *operator[](size_t textureIndex) const { return mTextures[textureIndex]; }
 
-    void clear();
-    void set(size_t textureIndex, Texture *texture);
-    void reset(size_t textureIndex);
+    void clear(ContextID contextID);
+    void set(ContextID contextID, size_t textureIndex, Texture *texture);
+    void reset(ContextID contextID, size_t textureIndex);
     bool empty() const;
 
   private:
@@ -84,8 +84,7 @@ class ActiveTexturesCache final : angle::NonCopyable
 class State : angle::NonCopyable
 {
   public:
-    State(ContextID contextIn,
-          const State *shareContextState,
+    State(const State *shareContextState,
           TextureManager *shareTextures,
           const OverlayType *overlay,
           const EGLenum clientType,
@@ -98,13 +97,11 @@ class State : angle::NonCopyable
           EGLenum contextPriority);
     ~State();
 
-    int id() const { return mID; }
-
     void initialize(Context *context);
     void reset(const Context *context);
 
     // Getters
-    ContextID getContextID() const { return mContext; }
+    ContextID getContextID() const { return mID; }
     EGLenum getClientType() const { return mClientType; }
     EGLenum getContextPriority() const { return mContextPriority; }
     GLint getClientMajorVersion() const { return mClientVersion.major; }
@@ -175,7 +172,7 @@ class State : angle::NonCopyable
         ASSERT(index < mBlendStateArray.size());
         return mBlendStateArray[index].blend;
     }
-    DrawBufferMask getBlendEnabledDrawBufferMask() const { return mBlendEnabledDrawBuffers; }
+    DrawBufferMask getBlendEnabledDrawBufferMask() const { return mBlendStateExt.mEnabledMask; }
     void setBlend(bool enabled);
     void setBlendIndexed(bool enabled, GLuint index);
     void setBlendFactors(GLenum sourceRGB, GLenum destRGB, GLenum sourceAlpha, GLenum destAlpha);
@@ -258,6 +255,8 @@ class State : angle::NonCopyable
 
     // Hint setters
     void setGenerateMipmapHint(GLenum hint);
+    void setTextureFilteringHint(GLenum hint);
+    GLenum getTextureFilteringHint() const;
     void setFragmentShaderDerivativeHint(GLenum hint);
 
     // GL_CHROMIUM_bind_generates_resource
@@ -352,6 +351,8 @@ class State : angle::NonCopyable
         return mProgram;
     }
 
+    ProgramPipeline *getProgramPipeline() const { return mProgramPipeline.get(); }
+
     // Transform feedback object (not buffer) binding manipulation
     void setTransformFeedbackBinding(const Context *context, TransformFeedback *transformFeedback);
     TransformFeedback *getCurrentTransformFeedback() const { return mTransformFeedback.get(); }
@@ -379,7 +380,11 @@ class State : angle::NonCopyable
     Query *getActiveQuery(QueryType type) const;
 
     // Program Pipeline binding manipulation
-    void setProgramPipelineBinding(const Context *context, ProgramPipeline *pipeline);
+    angle::Result useProgramStages(const Context *context,
+                                   ProgramPipeline *programPipeline,
+                                   GLbitfield stages,
+                                   Program *shaderProgram);
+    angle::Result setProgramPipelineBinding(const Context *context, ProgramPipeline *pipeline);
     void detachProgramPipeline(const Context *context, ProgramPipelineID pipeline);
 
     //// Typed buffer binding point manipulation ////
@@ -543,6 +548,9 @@ class State : angle::NonCopyable
 
     // Sets the dirty bit for the program executable.
     angle::Result onProgramExecutableChange(const Context *context, Program *program);
+    // Sets the dirty bit for the program pipeline executable.
+    angle::Result onProgramPipelineExecutableChange(const Context *context,
+                                                    ProgramPipeline *program);
 
     enum DirtyBitType
     {
@@ -591,14 +599,12 @@ class State : angle::NonCopyable
         DIRTY_BIT_PACK_STATE,
         DIRTY_BIT_PACK_BUFFER_BINDING,
         DIRTY_BIT_DITHER_ENABLED,
-        DIRTY_BIT_GENERATE_MIPMAP_HINT,
-        DIRTY_BIT_SHADER_DERIVATIVE_HINT,
         DIRTY_BIT_RENDERBUFFER_BINDING,
         DIRTY_BIT_VERTEX_ARRAY_BINDING,
         DIRTY_BIT_DRAW_INDIRECT_BUFFER_BINDING,
         DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING,
         // TODO(jmadill): Fine-grained dirty bits for each index.
-        DIRTY_BIT_PROGRAM_BINDING,
+        DIRTY_BIT_PROGRAM_BINDING,  // Must be before DIRTY_BIT_PROGRAM_EXECUTABLE
         DIRTY_BIT_PROGRAM_EXECUTABLE,
         // TODO(jmadill): Fine-grained dirty bits for each texture/sampler.
         DIRTY_BIT_SAMPLER_BINDINGS,
@@ -614,6 +620,7 @@ class State : angle::NonCopyable
         DIRTY_BIT_FRAMEBUFFER_SRGB,     // GL_EXT_sRGB_write_control
         DIRTY_BIT_CURRENT_VALUES,
         DIRTY_BIT_PROVOKING_VERTEX,
+        DIRTY_BIT_EXTENDED,  // clip distances, mipmap generation hint, derivative hint.
         DIRTY_BIT_INVALID,
         DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
     };
@@ -634,6 +641,7 @@ class State : angle::NonCopyable
         DIRTY_OBJECT_IMAGES,    // Top-level dirty bit. Also see mDirtyImages.
         DIRTY_OBJECT_SAMPLERS,  // Top-level dirty bit. Also see mDirtySamplers.
         DIRTY_OBJECT_PROGRAM,
+        DIRTY_OBJECT_PROGRAM_PIPELINE,
         DIRTY_OBJECT_UNKNOWN,
         DIRTY_OBJECT_MAX = DIRTY_OBJECT_UNKNOWN,
     };
@@ -717,7 +725,8 @@ class State : angle::NonCopyable
 
     ANGLE_INLINE bool validateSamplerFormats() const
     {
-        return (mTexturesIncompatibleWithSamplers & mExecutable->getActiveSamplersMask()).none();
+        return (!mExecutable ||
+                (mTexturesIncompatibleWithSamplers & mExecutable->getActiveSamplersMask()).none());
     }
 
     ProvokingVertexConvention getProvokingVertex() const { return mProvokingVertex; }
@@ -726,6 +735,10 @@ class State : angle::NonCopyable
         mDirtyBits.set(State::DIRTY_BIT_PROVOKING_VERTEX);
         mProvokingVertex = val;
     }
+
+    using ClipDistanceEnableBits = angle::BitSet32<IMPLEMENTATION_MAX_CLIP_DISTANCES>;
+    const ClipDistanceEnableBits &getEnabledClipDistances() const { return mClipDistancesEnabled; }
+    void setClipDistanceEnable(int idx, bool enable);
 
     const OverlayType *getOverlay() const { return mOverlay; }
 
@@ -754,12 +767,12 @@ class State : angle::NonCopyable
 
     bool hasConstantAlphaBlendFunc() const
     {
-        return (mBlendFuncConstantAlphaDrawBuffers & mBlendEnabledDrawBuffers).any();
+        return (mBlendFuncConstantAlphaDrawBuffers & mBlendStateExt.mEnabledMask).any();
     }
 
     bool hasSimultaneousConstantColorAndAlphaBlendFunc() const
     {
-        return (mBlendFuncConstantColorDrawBuffers & mBlendEnabledDrawBuffers).any() &&
+        return (mBlendFuncConstantColorDrawBuffers & mBlendStateExt.mEnabledMask).any() &&
                hasConstantAlphaBlendFunc();
     }
 
@@ -767,6 +780,10 @@ class State : angle::NonCopyable
     {
         return mNoSimultaneousConstantColorAndAlphaBlendFunc;
     }
+
+    bool isEarlyFragmentTestsOptimizationAllowed() const { return isSampleCoverageEnabled(); }
+
+    const BlendStateExt &getBlendStateExt() const { return mBlendStateExt; }
 
   private:
     friend class Context;
@@ -777,7 +794,6 @@ class State : angle::NonCopyable
                                   size_t textureIndex,
                                   const Sampler *sampler,
                                   Texture *texture);
-    void setTextureIndexInactive(size_t textureIndex);
     Texture *getTextureForActiveSampler(TextureType type, size_t index);
 
     bool hasConstantColor(GLenum sourceRGB, GLenum destRGB) const;
@@ -795,13 +811,14 @@ class State : angle::NonCopyable
     angle::Result syncImages(const Context *context);
     angle::Result syncSamplers(const Context *context);
     angle::Result syncProgram(const Context *context);
+    angle::Result syncProgramPipeline(const Context *context);
 
     using DirtyObjectHandler = angle::Result (State::*)(const Context *context);
     static constexpr DirtyObjectHandler kDirtyObjectHandlers[DIRTY_OBJECT_MAX] = {
         &State::syncTexturesInit,    &State::syncImagesInit,      &State::syncReadAttachments,
         &State::syncDrawAttachments, &State::syncReadFramebuffer, &State::syncDrawFramebuffer,
         &State::syncVertexArray,     &State::syncTextures,        &State::syncImages,
-        &State::syncSamplers,        &State::syncProgram,
+        &State::syncSamplers,        &State::syncProgram,         &State::syncProgramPipeline,
     };
 
     // Robust init must happen before Framebuffer init for the Vulkan back-end.
@@ -821,16 +838,16 @@ class State : angle::NonCopyable
     static_assert(DIRTY_OBJECT_IMAGES == 8, "check DIRTY_OBJECT_IMAGES index");
     static_assert(DIRTY_OBJECT_SAMPLERS == 9, "check DIRTY_OBJECT_SAMPLERS index");
     static_assert(DIRTY_OBJECT_PROGRAM == 10, "check DIRTY_OBJECT_PROGRAM index");
+    static_assert(DIRTY_OBJECT_PROGRAM_PIPELINE == 11, "check DIRTY_OBJECT_PROGRAM_PIPELINE index");
 
     // Dispatch table for buffer update functions.
     static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter> kBufferSetters;
 
-    int mID;
+    ContextID mID;
 
     EGLenum mClientType;
     EGLenum mContextPriority;
     Version mClientVersion;
-    ContextID mContext;
 
     // Caps to use for validation
     Caps mCaps;
@@ -863,6 +880,7 @@ class State : angle::NonCopyable
     Rectangle mScissor;
 
     BlendStateArray mBlendStateArray;
+    BlendStateExt mBlendStateExt;
     ColorF mBlendColor;
     bool mSampleAlphaToCoverage;
     bool mSampleCoverage;
@@ -879,6 +897,7 @@ class State : angle::NonCopyable
     GLfloat mLineWidth;
 
     GLenum mGenerateMipmapHint;
+    GLenum mTextureFilteringHint;
     GLenum mFragmentShaderDerivativeHint;
 
     const bool mBindGeneratesResource;
@@ -961,7 +980,7 @@ class State : angle::NonCopyable
     // GL_EXT_sRGB_write_control
     bool mFramebufferSRGB;
 
-    // GL_ANGLE_robust_resource_intialization
+    // GL_ANGLE_robust_resource_initialization
     const bool mRobustResourceInit;
 
     // GL_ANGLE_program_cache_control
@@ -972,6 +991,9 @@ class State : angle::NonCopyable
 
     // GL_KHR_parallel_shader_compile
     GLuint mMaxShaderCompilerThreads;
+
+    // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+    ClipDistanceEnableBits mClipDistancesEnabled;
 
     // GLES1 emulation: state specific to GLES1
     GLES1State mGLES1State;
@@ -987,7 +1009,6 @@ class State : angle::NonCopyable
     const OverlayType *mOverlay;
 
     // OES_draw_buffers_indexed
-    DrawBufferMask mBlendEnabledDrawBuffers;
     DrawBufferMask mBlendFuncConstantAlphaDrawBuffers;
     DrawBufferMask mBlendFuncConstantColorDrawBuffers;
     bool mNoSimultaneousConstantColorAndAlphaBlendFunc;

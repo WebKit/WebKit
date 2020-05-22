@@ -205,11 +205,14 @@ void SetFloatUniformMatrixFast(unsigned int arrayElementOffset,
 
     memcpy(targetData, valueData, matrixSize * count);
 }
-
 }  // anonymous namespace
 
 PackPixelsParams::PackPixelsParams()
-    : destFormat(nullptr), outputPitch(0), packBuffer(nullptr), offset(0)
+    : destFormat(nullptr),
+      outputPitch(0),
+      packBuffer(nullptr),
+      offset(0),
+      rotation(SurfaceRotation::Identity)
 {}
 
 PackPixelsParams::PackPixelsParams(const gl::Rectangle &areaIn,
@@ -223,7 +226,8 @@ PackPixelsParams::PackPixelsParams(const gl::Rectangle &areaIn,
       outputPitch(outputPitchIn),
       packBuffer(packBufferIn),
       reverseRowOrder(reverseRowOrderIn),
-      offset(offsetIn)
+      offset(offsetIn),
+      rotation(SurfaceRotation::Identity)
 {}
 
 void PackPixels(const PackPixelsParams &params,
@@ -236,14 +240,73 @@ void PackPixels(const PackPixelsParams &params,
 
     const uint8_t *source = sourceIn;
     int inputPitch        = inputPitchIn;
-
-    if (params.reverseRowOrder)
+    int destWidth         = params.area.width;
+    int destHeight        = params.area.height;
+    int xAxisPitch        = 0;
+    int yAxisPitch        = 0;
+    switch (params.rotation)
     {
-        source += inputPitch * (params.area.height - 1);
-        inputPitch = -inputPitch;
+        case SurfaceRotation::Identity:
+            // The source image is not rotated (i.e. matches the device's orientation), and may or
+            // may not be y-flipped.  The image is row-major.  Each source row (one step along the
+            // y-axis for each step in the dest y-axis) is inputPitch past the previous row.  Along
+            // a row, each source pixel (one step along the x-axis for each step in the dest
+            // x-axis) is sourceFormat.pixelBytes past the previous pixel.
+            xAxisPitch = sourceFormat.pixelBytes;
+            if (params.reverseRowOrder)
+            {
+                // The source image is y-flipped, which means we start at the last row, and each
+                // source row is BEFORE the previous row.
+                source += inputPitchIn * (params.area.height - 1);
+                inputPitch = -inputPitch;
+                yAxisPitch = -inputPitchIn;
+            }
+            else
+            {
+                yAxisPitch = inputPitchIn;
+            }
+            break;
+        case SurfaceRotation::Rotated90Degrees:
+            // The source image is rotated 90 degrees counter-clockwise.  Y-flip is always applied
+            // to rotated images.  The image is column-major.  Each source column (one step along
+            // the source x-axis for each step in the dest y-axis) is inputPitch past the previous
+            // column.  Along a column, each source pixel (one step along the y-axis for each step
+            // in the dest x-axis) is sourceFormat.pixelBytes past the previous pixel.
+            xAxisPitch = inputPitchIn;
+            yAxisPitch = sourceFormat.pixelBytes;
+            destWidth  = params.area.height;
+            destHeight = params.area.width;
+            break;
+        case SurfaceRotation::Rotated180Degrees:
+            // The source image is rotated 180 degrees.  Y-flip is always applied to rotated
+            // images.  The image is row-major, but upside down.  Each source row (one step along
+            // the y-axis for each step in the dest y-axis) is inputPitch after the previous row.
+            // Along a row, each source pixel (one step along the x-axis for each step in the dest
+            // x-axis) is sourceFormat.pixelBytes BEFORE the previous pixel.
+            xAxisPitch = -static_cast<int>(sourceFormat.pixelBytes);
+            yAxisPitch = inputPitchIn;
+            source += sourceFormat.pixelBytes * (params.area.width - 1);
+            break;
+        case SurfaceRotation::Rotated270Degrees:
+            // The source image is rotated 270 degrees counter-clockwise (or 90 degrees clockwise).
+            // Y-flip is always applied to rotated images.  The image is column-major, where each
+            // column (one step in the source x-axis for one step in the dest y-axis) is inputPitch
+            // BEFORE the previous column.  Along a column, each source pixel (one step along the
+            // y-axis for each step in the dest x-axis) is sourceFormat.pixelBytes BEFORE the
+            // previous pixel.  The first pixel is at the end of the source.
+            xAxisPitch = -inputPitchIn;
+            yAxisPitch = -static_cast<int>(sourceFormat.pixelBytes);
+            destWidth  = params.area.height;
+            destHeight = params.area.width;
+            source += inputPitch * (params.area.height - 1) +
+                      sourceFormat.pixelBytes * (params.area.width - 1);
+            break;
+        default:
+            UNREACHABLE();
+            break;
     }
 
-    if (sourceFormat == *params.destFormat)
+    if (params.rotation == SurfaceRotation::Identity && sourceFormat == *params.destFormat)
     {
         // Direct copy possible
         for (int y = 0; y < params.area.height; ++y)
@@ -259,13 +322,13 @@ void PackPixels(const PackPixelsParams &params,
     if (fastCopyFunc)
     {
         // Fast copy is possible through some special function
-        for (int y = 0; y < params.area.height; ++y)
+        for (int y = 0; y < destHeight; ++y)
         {
-            for (int x = 0; x < params.area.width; ++x)
+            for (int x = 0; x < destWidth; ++x)
             {
                 uint8_t *dest =
                     destWithOffset + y * params.outputPitch + x * params.destFormat->pixelBytes;
-                const uint8_t *src = source + y * inputPitch + x * sourceFormat.pixelBytes;
+                const uint8_t *src = source + y * yAxisPitch + x * xAxisPitch;
 
                 fastCopyFunc(src, dest);
             }
@@ -286,13 +349,13 @@ void PackPixels(const PackPixelsParams &params,
     PixelReadFunction pixelReadFunction = sourceFormat.pixelReadFunction;
     ASSERT(pixelReadFunction != nullptr);
 
-    for (int y = 0; y < params.area.height; ++y)
+    for (int y = 0; y < destHeight; ++y)
     {
-        for (int x = 0; x < params.area.width; ++x)
+        for (int x = 0; x < destWidth; ++x)
         {
             uint8_t *dest =
                 destWithOffset + y * params.outputPitch + x * params.destFormat->pixelBytes;
-            const uint8_t *src = source + y * inputPitch + x * sourceFormat.pixelBytes;
+            const uint8_t *src = source + y * yAxisPitch + x * xAxisPitch;
 
             // readFunc and writeFunc will be using the same type of color, CopyTexImage
             // will not allow the copy otherwise.
@@ -768,22 +831,6 @@ angle::Result GetVertexRangeInfo(const gl::Context *context,
 
 gl::Rectangle ClipRectToScissor(const gl::State &glState, const gl::Rectangle &rect, bool invertY)
 {
-    if (glState.isScissorTestEnabled())
-    {
-        gl::Rectangle clippedRect;
-        if (!gl::ClipRectangle(glState.getScissor(), rect, &clippedRect))
-        {
-            return gl::Rectangle();
-        }
-
-        if (invertY)
-        {
-            clippedRect.y = rect.height - clippedRect.y - clippedRect.height;
-        }
-
-        return clippedRect;
-    }
-
     // If the scissor test isn't enabled, assume it has infinite size.  Its intersection with the
     // rect would be the rect itself.
     //
@@ -791,7 +838,23 @@ gl::Rectangle ClipRectToScissor(const gl::State &glState, const gl::Rectangle &r
     // unnecessary pipeline creations if two otherwise identical pipelines are used on framebuffers
     // with different sizes.  If such usage is observed in an application, we should investigate
     // possible optimizations.
-    return rect;
+    if (!glState.isScissorTestEnabled())
+    {
+        return rect;
+    }
+
+    gl::Rectangle clippedRect;
+    if (!gl::ClipRectangle(glState.getScissor(), rect, &clippedRect))
+    {
+        return gl::Rectangle();
+    }
+
+    if (invertY)
+    {
+        clippedRect.y = rect.height - clippedRect.y - clippedRect.height;
+    }
+
+    return clippedRect;
 }
 
 void ApplyFeatureOverrides(angle::FeatureSetBase *features, const egl::DisplayState &state)

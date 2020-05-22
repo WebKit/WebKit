@@ -82,32 +82,6 @@ angle::Result FramebufferNULL::clearBufferfi(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-GLenum FramebufferNULL::getImplementationColorReadFormat(const gl::Context *context) const
-{
-    const gl::FramebufferAttachment *readAttachment = mState.getReadAttachment();
-    if (readAttachment == nullptr)
-    {
-        return GL_NONE;
-    }
-
-    const gl::Format &format = readAttachment->getFormat();
-    ASSERT(format.info != nullptr);
-    return format.info->getReadPixelsFormat(context->getExtensions());
-}
-
-GLenum FramebufferNULL::getImplementationColorReadType(const gl::Context *context) const
-{
-    const gl::FramebufferAttachment *readAttachment = mState.getReadAttachment();
-    if (readAttachment == nullptr)
-    {
-        return GL_NONE;
-    }
-
-    const gl::Format &format = readAttachment->getFormat();
-    ASSERT(format.info != nullptr);
-    return format.info->getReadPixelsType(context->getClientVersion());
-}
-
 angle::Result FramebufferNULL::readPixels(const gl::Context *context,
                                           const gl::Rectangle &origArea,
                                           GLenum format,
@@ -131,7 +105,7 @@ angle::Result FramebufferNULL::readPixels(const gl::Context *context,
     }
 
     // Clip read area to framebuffer.
-    const gl::Extents fbSize = getState().getReadAttachment()->getSize();
+    const gl::Extents fbSize = getState().getReadPixelsAttachment(format)->getSize();
     const gl::Rectangle fbRect(0, 0, fbSize.width, fbSize.height);
     gl::Rectangle area;
     if (!ClipRectangle(origArea, fbRect, &area))
@@ -185,6 +159,7 @@ bool FramebufferNULL::checkStatus(const gl::Context *context) const
 }
 
 angle::Result FramebufferNULL::syncState(const gl::Context *context,
+                                         GLenum binding,
                                          const gl::Framebuffer::DirtyBits &dirtyBits)
 {
     return angle::Result::Continue;

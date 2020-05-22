@@ -226,6 +226,9 @@ struct Extensions
     // Implies that TextureCaps for GL_ETC1_RGB8_OES exist
     bool compressedETC1RGB8TextureOES = false;
 
+    // GL_EXT_compressed_ETC1_RGB8_sub_texture
+    bool compressedETC1RGB8SubTexture = false;
+
     // OES_compressed_ETC2_RGB8_texture
     bool compressedETC2RGB8TextureOES = false;
 
@@ -273,6 +276,9 @@ struct Extensions
     // Implies that TextureCaps for GL_SRGB8_ALPHA8 and GL_SRGB8 exist
     // TODO: Don't advertise this extension in ES3
     bool sRGB = false;
+
+    // GL_EXT_texture_sRGB_R8
+    bool sRGBR8EXT = false;
 
     // GL_ANGLE_depth_texture
     bool depthTextureANGLE = false;
@@ -428,6 +434,9 @@ struct Extensions
     // NV_pack_subimage
     bool packSubimage = false;
 
+    // GL_NV_shader_noperspective_interpolation
+    bool noperspectiveInterpolationNV = false;
+
     // GL_OES_vertex_half_float
     bool vertexHalfFloatOES = false;
 
@@ -483,6 +492,9 @@ struct Extensions
     // GL_EXT_texture_sRGB_decode
     bool textureSRGBDecode = false;
 
+    // GL_EXT_texture_sRGB_override
+    bool textureSRGBOverride = false;
+
     // GL_EXT_sRGB_write_control
     bool sRGBWriteControl = false;
 
@@ -491,6 +503,9 @@ struct Extensions
 
     // GL_CHROMIUM_color_buffer_float_rgba
     bool colorBufferFloatRGBA = false;
+
+    // GL_EXT_EGL_image_array
+    bool eglImageArray = false;
 
     // ES3 Extension support
 
@@ -573,6 +588,9 @@ struct Extensions
     // GL_ANGLE_provoking_vertex
     bool provokingVertex = false;
 
+    // GL_CHROMIUM_texture_filtering_hint
+    bool textureFilteringCHROMIUM = false;
+
     // GL_CHROMIUM_lose_context
     bool loseContextCHROMIUM = false;
 
@@ -602,6 +620,9 @@ struct Extensions
     bool gpuShader5EXT = false;
     // WEBGL_video_texture
     bool webglVideoTexture = false;
+
+    // GL_APPLE_clip_distance
+    bool clipDistanceAPPLE = false;
 };
 
 // Pointer to a boolean memeber of the Extensions struct
@@ -816,6 +837,9 @@ struct Caps
 
     GLuint subPixelBits = 4;
 
+    // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+    GLuint maxClipDistances = 0;
+
     // GLES1 emulation: Caps for ES 1.1. Taken from Table 6.20 / 6.22 in the OpenGL ES 1.1 spec.
     GLuint maxMultitextureUnits                 = 0;
     GLuint maxClipPlanes                        = 0;
@@ -947,6 +971,9 @@ struct DisplayExtensions
     // EGL_CHROMIUM_sync_control
     bool syncControlCHROMIUM = false;
 
+    // EGL_ANGLE_sync_control_rate
+    bool syncControlRateANGLE = false;
+
     // EGL_KHR_swap_buffers_with_damage
     bool swapBuffersWithDamage = false;
 
@@ -1036,6 +1063,15 @@ struct DisplayExtensions
 
     // EGL_ANDROID_framebuffer_target
     bool framebufferTargetANDROID = false;
+
+    // EGL_EXT_image_gl_colorspace
+    bool imageGlColorspace = false;
+
+    // EGL_EXT_image_dma_buf_import
+    bool imageDmaBufImportEXT = false;
+
+    // EGL_EXT_image_dma_buf_import_modifiers
+    bool imageDmaBufImportModifiersEXT = false;
 };
 
 struct DeviceExtensions

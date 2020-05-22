@@ -34,7 +34,7 @@
             <param>const <ptype>EGLAttrib</ptype> *<name>attrib_list</name></param>
         </command>
         <command>
-            <proto><ptype>EGLBoolean</ptype> <name>eglGetMscRateCHROMIUM</name></proto>
+            <proto><ptype>EGLBoolean</ptype> <name>eglGetMscRateANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
             <param><ptype>EGLint</ptype> *<name>numerator</name></param>
@@ -118,7 +118,11 @@
         <extension name="EGL_CHROMIUM_sync_control" supported="egl">
             <require>
                 <command name="eglGetSyncValuesCHROMIUM"/>
-                <command name="eglGetMscRateCHROMIUM"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_sync_control_rate" supported="egl">
+            <require>
+                <command name="eglGetMscRateANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_program_cache_control" supported="egl">

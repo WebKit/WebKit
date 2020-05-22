@@ -118,6 +118,23 @@ VaryingPacking::VaryingPacking(GLuint maxVaryingVectors, PackMode packMode)
 
 VaryingPacking::~VaryingPacking() = default;
 
+void VaryingPacking::reset()
+{
+    clearRegisterMap();
+    mRegisterList.clear();
+    mPackedVaryings.clear();
+
+    for (std::vector<std::string> inactiveVaryingMappedNames : mInactiveVaryingMappedNames)
+    {
+        inactiveVaryingMappedNames.clear();
+    }
+}
+
+void VaryingPacking::clearRegisterMap()
+{
+    std::fill(mRegisterMap.begin(), mRegisterMap.end(), Register());
+}
+
 // Packs varyings into generic varying registers, using the algorithm from
 // See [OpenGL ES Shading Language 1.00 rev. 17] appendix A section 7 page 111
 // Also [OpenGL ES Shading Language 3.00 rev. 4] Section 11 page 119
@@ -438,6 +455,7 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
 {
     VaryingUniqueFullNames uniqueFullNames;
     mPackedVaryings.clear();
+    clearRegisterMap();
 
     for (const ProgramVaryingRef &ref : mergedVaryings)
     {
@@ -486,7 +504,8 @@ bool VaryingPacking::collectAndPackUserVaryings(gl::InfoLog &infoLog,
             }
         }
 
-        // If the varying is not used in the input, we know it is inactive.
+        // If the varying is not used in the input, we know it is inactive, unless it's a separable
+        // program, in which case the input shader may not exist in this program.
         if (!input && !isSeparableProgram)
         {
             mInactiveVaryingMappedNames[ref.backShaderStage].push_back(output->mappedName);

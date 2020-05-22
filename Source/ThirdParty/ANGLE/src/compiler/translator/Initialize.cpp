@@ -57,6 +57,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::NV_shader_framebuffer_fetch] = EBhUndefined;
     }
+    if (resources.NV_shader_noperspective_interpolation)
+    {
+        extBehavior[TExtension::NV_shader_noperspective_interpolation] = EBhUndefined;
+    }
     if (resources.ARM_shader_framebuffer_fetch)
     {
         extBehavior[TExtension::ARM_shader_framebuffer_fetch] = EBhUndefined;
@@ -108,6 +112,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.WEBGL_video_texture)
     {
         extBehavior[TExtension::WEBGL_video_texture] = EBhUndefined;
+    }
+    if (resources.APPLE_clip_distance)
+    {
+        extBehavior[TExtension::APPLE_clip_distance] = EBhUndefined;
     }
 }
 

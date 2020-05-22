@@ -557,7 +557,9 @@ bool ValidateES3TexImageParametersBase(const Context *context,
                 return false;
             }
 
-            if (actualInternalFormat == GL_ETC1_RGB8_OES)
+            // GL_EXT_compressed_ETC1_RGB8_sub_texture allows this format
+            if (actualInternalFormat == GL_ETC1_RGB8_OES &&
+                !context->getExtensions().compressedETC1RGB8SubTexture)
             {
                 context->validationError(GL_INVALID_OPERATION, kInvalidInternalFormat);
                 return false;
@@ -1849,7 +1851,7 @@ bool ValidateProgramBinary(const Context *context,
                            ShaderProgramID program,
                            GLenum binaryFormat,
                            const void *binary,
-                           GLint length)
+                           GLsizei length)
 {
     if (context->getClientMajorVersion() < 3)
     {
@@ -2450,33 +2452,35 @@ bool ValidateCompressedTexSubImage3DRobustANGLE(const Context *context,
                                            height, depth, format, imageSize, data);
 }
 
-bool ValidateGenQueries(const Context *context, GLint n, const QueryID *queries)
+bool ValidateGenQueries(const Context *context, GLsizei n, const QueryID *queries)
 {
     return ValidateGenOrDeleteES3(context, n);
 }
 
-bool ValidateDeleteQueries(const Context *context, GLint n, const QueryID *queries)
+bool ValidateDeleteQueries(const Context *context, GLsizei n, const QueryID *queries)
 {
     return ValidateGenOrDeleteES3(context, n);
 }
 
-bool ValidateGenSamplers(const Context *context, GLint count, const SamplerID *samplers)
+bool ValidateGenSamplers(const Context *context, GLsizei count, const SamplerID *samplers)
 {
     return ValidateGenOrDeleteCountES3(context, count);
 }
 
-bool ValidateDeleteSamplers(const Context *context, GLint count, const SamplerID *samplers)
+bool ValidateDeleteSamplers(const Context *context, GLsizei count, const SamplerID *samplers)
 {
     return ValidateGenOrDeleteCountES3(context, count);
 }
 
-bool ValidateGenTransformFeedbacks(const Context *context, GLint n, const TransformFeedbackID *ids)
+bool ValidateGenTransformFeedbacks(const Context *context,
+                                   GLsizei n,
+                                   const TransformFeedbackID *ids)
 {
     return ValidateGenOrDeleteES3(context, n);
 }
 
 bool ValidateDeleteTransformFeedbacks(const Context *context,
-                                      GLint n,
+                                      GLsizei n,
                                       const TransformFeedbackID *ids)
 {
     if (!ValidateGenOrDeleteES3(context, n))
@@ -2496,12 +2500,12 @@ bool ValidateDeleteTransformFeedbacks(const Context *context,
     return true;
 }
 
-bool ValidateGenVertexArrays(const Context *context, GLint n, const VertexArrayID *arrays)
+bool ValidateGenVertexArrays(const Context *context, GLsizei n, const VertexArrayID *arrays)
 {
     return ValidateGenOrDeleteES3(context, n);
 }
 
-bool ValidateDeleteVertexArrays(const Context *context, GLint n, const VertexArrayID *arrays)
+bool ValidateDeleteVertexArrays(const Context *context, GLsizei n, const VertexArrayID *arrays)
 {
     return ValidateGenOrDeleteES3(context, n);
 }
@@ -2686,6 +2690,11 @@ bool ValidateIndexedStateQuery(const Context *context, GLenum pname, GLuint inde
         case GL_BLEND_EQUATION_RGB:
         case GL_BLEND_EQUATION_ALPHA:
         case GL_COLOR_WRITEMASK:
+            if (!context->getExtensions().drawBuffersIndexedAny())
+            {
+                context->validationError(GL_INVALID_ENUM, kDrawBuffersIndexedExtensionNotAvailable);
+                return false;
+            }
             if (index >= static_cast<GLuint>(caps.maxDrawBuffers))
             {
                 context->validationError(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -2804,7 +2813,14 @@ bool ValidateIndexedStateQuery(const Context *context, GLenum pname, GLuint inde
 
     if (length)
     {
-        *length = 1;
+        if (pname == GL_COLOR_WRITEMASK)
+        {
+            *length = 4;
+        }
+        else
+        {
+            *length = 1;
+        }
     }
 
     return true;

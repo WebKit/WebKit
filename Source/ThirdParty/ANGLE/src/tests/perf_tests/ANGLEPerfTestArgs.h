@@ -18,6 +18,7 @@ extern bool gCalibration;
 extern int gStepsToRunOverride;
 extern bool gEnableTrace;
 extern const char *gTraceFile;
+extern const char *gScreenShotDir;
 
 inline bool OneFrame()
 {

@@ -16,7 +16,7 @@ Status
 
 Version
 
-   Version 3, 2020-01-23
+   Version 2, 2015-05-05
 
    Based on GLX_OML_sync_control Revision 6.0
 
@@ -70,12 +70,6 @@ New Procedures and Functions
                                  int64_t* msc,
                                  int64_t* sbc)
 
-   Bool eglGetMscRateCHROMIUM(EGLDisplay* dpy,
-                              EGLSurface surface,
-                              int32_t* numerator,
-                              int32_t* denominator)
-
-
 New Tokens
 
    None
@@ -112,22 +106,16 @@ Additions to the EGL 1.3 Specification
    is located. If the surface spans multiple monitors, the monitor used
    to determine MSC is the one with the biggest coverage in pixels.
 
-   eglGetMscRateCHROMIUM returns the rate at which the MSC will be incremented
-   for the display associated with <hdc>. The rate is expressed in Hertz
-   as <numerator> / <denominator>. If the MSC rate in Hertz is an
-   integer, then <denominator> will be 1 and <numerator> will be
-   the MSC rate.
-
-   The functions eglGetSyncValuesCHROMIUM, and eglGetMscRateCHROMIUM will
-   return TRUE if the function completed successfully, FALSE otherwise.
+   The function eglGetSyncValuesCHROMIUM will return TRUE if the function
+   completed successfully, FALSE otherwise.
 
    Each time eglSwapBuffer succeeds, the SBC will be increased within a
    finite time period.
 
 Errors
 
-   The functions eglGetSyncValuesCHROMIUM, and eglGetMscRateCHROMIUM will
-   return FALSE if there is no current EGLContext.
+   The function eglGetSyncValuesCHROMIUM will return FALSE if there is no
+   current EGLContext.
 
 
 New State
@@ -143,10 +131,6 @@ New Implementation Dependent State
    None
 
 Revision History
-
-    Version 3, 2020-01-23 (Jonah Ryan-Davis)
-       - Add the function eglGetMscRateCHROMIUM based on glXGetMscRateOML from
-         GLX_OML_sync_control revision 6.0.
 
     Version 2, 2015-05-05 (Chad Versace)
        - Rename to EGL_CHROMIUM_sync_control from EGL_CHROMIUM_get_sync_values.

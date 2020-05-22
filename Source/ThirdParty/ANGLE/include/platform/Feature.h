@@ -139,7 +139,7 @@ inline Feature::Feature(const char *name,
       description(description),
       bug(bug),
       enabled(false),
-      condition(nullptr)
+      condition("")
 {
     if (mapPtr != nullptr)
     {

@@ -41,7 +41,7 @@ namespace rx
 {
 class ContextImpl;
 
-class TextureImpl : public FramebufferAttachmentObjectImpl, public angle::Subject
+class TextureImpl : public FramebufferAttachmentObjectImpl
 {
   public:
     TextureImpl(const gl::TextureState &state);
@@ -56,6 +56,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl, public angle::Subjec
                                    GLenum format,
                                    GLenum type,
                                    const gl::PixelUnpackState &unpack,
+                                   gl::Buffer *unpackBuffer,
                                    const uint8_t *pixels)    = 0;
     virtual angle::Result setSubImage(const gl::Context *context,
                                       const gl::ImageIndex &index,

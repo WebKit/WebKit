@@ -105,6 +105,7 @@ static int ES3_1_keyword(TParseContext *context, int token);
 static int ES2_reserved_ES2_extension_ES3_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
+static int ES3_reserved_ES3_extension(TParseContext *context, TExtension extension, int token);
 static int ES3_reserved_ES3_extension_ES3_1_keyword(TParseContext *context, TExtension extension, int token);
 static int ES3_1_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtension extension, int token);
 static int WEBGL_video_texture_extension(TParseContext *context, int token);
@@ -156,9 +157,10 @@ O           [0-7]
 "case"         { return ES3_keyword(context, CASE); }
 "default"      { return ES2_reserved_ES3_keyword(context, DEFAULT); }
 
-"centroid"     { return ES3_keyword(context, CENTROID); }
-"flat"         { return ES2_reserved_ES3_keyword(context, FLAT); }
-"smooth"       { return ES3_keyword(context, SMOOTH); }
+"centroid"      { return ES3_keyword(context, CENTROID); }
+"flat"          { return ES2_reserved_ES3_keyword(context, FLAT); }
+"smooth"        { return ES3_keyword(context, SMOOTH); }
+"noperspective" { return ES3_reserved_ES3_extension(context, TExtension::NV_shader_noperspective_interpolation, NOPERSPECTIVE); }
 
 "in"           { return IN_QUAL; }
 "out"          { return OUT_QUAL; }
@@ -262,7 +264,6 @@ O           [0-7]
 
     /* Reserved keywords for GLSL ES 3.00 that are not reserved for GLSL ES 1.00 */
 "resource"          |
-"noperspective"     |
 "patch"             |
 "sample"            |
 "subroutine"        |
@@ -647,6 +648,24 @@ int ES3_reserved_ES3_1_extension_ES3_2_keyword(TParseContext *context, TExtensio
     }
 
     // Otherwise can be used as an identifier/type name
+    yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
+    return check_type(yyscanner);
+}
+
+int ES3_reserved_ES3_extension(TParseContext *context, TExtension extension, int token)
+{
+    struct yyguts_t* yyg = (struct yyguts_t*) context->getScanner();
+    yyscan_t yyscanner = (yyscan_t) context->getScanner();
+
+    if(context->getShaderVersion() >= 300)
+    {
+        if (context->isExtensionEnabled(extension)) {
+            return token;
+        } else {
+            return reserved_word(yyscanner);
+        }
+    }
+
     yylval->lex.string = AllocatePoolCharArray(yytext, yyleng);
     return check_type(yyscanner);
 }

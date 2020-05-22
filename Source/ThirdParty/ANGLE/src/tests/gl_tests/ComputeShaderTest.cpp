@@ -296,7 +296,7 @@ void main()
 
     glUseProgram(program);
     glDrawArrays(GL_POINTS, 0, 2);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 }
 
 // Attach a vertex and fragment shader and link, but dispatch compute.

@@ -188,6 +188,7 @@ class CollectVariablesTraverser : public TIntermTraverser
 
     // Vertex Shader and Geometry Shader builtins
     bool mPositionAdded;
+    bool mClipDistanceAdded;
 
     // Fragment Shader builtins
     bool mPointCoordAdded;
@@ -257,6 +258,7 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mBaseVertexAdded(false),
       mBaseInstanceAdded(false),
       mPositionAdded(false),
+      mClipDistanceAdded(false),
       mPointCoordAdded(false),
       mFrontFacingAdded(false),
       mHelperInvocationAdded(false),
@@ -609,6 +611,9 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
                                              mSharedVariables);
                 }
                 break;
+            case EvqClipDistance:
+                recordBuiltInVaryingUsed(symbol->variable(), &mClipDistanceAdded, mOutputVaryings);
+                return;
             default:
                 break;
         }
@@ -724,6 +729,7 @@ ShaderVariable CollectVariablesTraverser::recordVarying(const TIntermSymbol &var
         case EvqVertexOut:
         case EvqSmoothOut:
         case EvqFlatOut:
+        case EvqNoPerspectiveOut:
         case EvqCentroidOut:
         case EvqGeometryOut:
             if (mSymbolTable->isVaryingInvariant(variable.variable()) || type.isInvariant())

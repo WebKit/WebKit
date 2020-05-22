@@ -531,48 +531,32 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE:
                 if (context->getExtensions().textureCompressionDXT3)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE:
                 if (context->getExtensions().textureCompressionDXT5)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_ETC1_RGB8_OES:
                 if (context->getExtensions().compressedETC1RGB8TextureOES)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_ETC1_RGB8_LOSSY_DECODE_ANGLE:
             case GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE:
             case GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE:
@@ -583,12 +567,8 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
             case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
             case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
@@ -598,12 +578,8 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
             case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
             case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
@@ -613,12 +589,8 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_DEPTH_COMPONENT:
             case GL_DEPTH_COMPONENT16:
             case GL_DEPTH_COMPONENT32_OES:
@@ -627,12 +599,8 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_DEPTH_STENCIL_OES:
             case GL_DEPTH24_STENCIL8_OES:
                 if (context->getExtensions().depthTextureAny() ||
@@ -642,12 +610,8 @@ bool ValidateES2CopyTexImageParameters(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             default:
                 context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
                 return false;
@@ -701,7 +665,34 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
         case GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE:
             return queryOnly && context->getExtensions().robustResourceInitialization;
 
-        // GLES1 emulation: GLES1-specific caps
+        case GL_TEXTURE_RECTANGLE_ANGLE:
+            return context->getExtensions().webglCompatibility;
+
+        // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+        case GL_CLIP_DISTANCE0_EXT:
+        case GL_CLIP_DISTANCE1_EXT:
+        case GL_CLIP_DISTANCE2_EXT:
+        case GL_CLIP_DISTANCE3_EXT:
+        case GL_CLIP_DISTANCE4_EXT:
+        case GL_CLIP_DISTANCE5_EXT:
+        case GL_CLIP_DISTANCE6_EXT:
+        case GL_CLIP_DISTANCE7_EXT:
+            if (context->getClientVersion() >= Version(2, 0) &&
+                context->getExtensions().clipDistanceAPPLE)
+            {
+                return true;
+            }
+            break;
+    }
+
+    // GLES1 emulation: GLES1-specific caps after this point
+    if (context->getClientVersion().major != 1)
+    {
+        return false;
+    }
+
+    switch (cap)
+    {
         case GL_ALPHA_TEST:
         case GL_VERTEX_ARRAY:
         case GL_NORMAL_ARRAY:
@@ -740,8 +731,6 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
         case GL_POINT_SPRITE_OES:
             return context->getClientVersion() < Version(2, 0) &&
                    context->getExtensions().pointSpriteOES;
-        case GL_TEXTURE_RECTANGLE_ANGLE:
-            return context->getExtensions().webglCompatibility;
         default:
             return false;
     }
@@ -1192,10 +1181,14 @@ bool ValidateES2TexImageParametersBase(const Context *context,
         if (isSubImage)
         {
             // From the OES_compressed_ETC1_RGB8_texture spec:
+            //
             // INVALID_OPERATION is generated by CompressedTexSubImage2D, TexSubImage2D, or
             // CopyTexSubImage2D if the texture image <level> bound to <target> has internal format
             // ETC1_RGB8_OES.
-            if (actualInternalFormat == GL_ETC1_RGB8_OES)
+            //
+            // This is relaxed if GL_EXT_compressed_ETC1_RGB8_sub_texture is supported.
+            if (actualInternalFormat == GL_ETC1_RGB8_OES &&
+                !context->getExtensions().compressedETC1RGB8SubTexture)
             {
                 context->validationError(GL_INVALID_OPERATION, kInvalidInternalFormat);
                 return false;
@@ -1393,6 +1386,14 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     case GL_UNSIGNED_SHORT:
                     case GL_UNSIGNED_INT:
                         break;
+                    case GL_FLOAT:
+                        if (!context->getExtensions().depthBufferFloat2NV)
+                        {
+                            context->validationError(GL_INVALID_OPERATION,
+                                                     kMismatchedTypeAndFormat);
+                            return false;
+                        }
+                        break;
                     default:
                         context->validationError(GL_INVALID_OPERATION, kMismatchedTypeAndFormat);
                         return false;
@@ -1434,36 +1435,24 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE:
                 if (context->getExtensions().textureCompressionDXT5)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_ETC1_RGB8_OES:
                 if (context->getExtensions().compressedETC1RGB8TextureOES)
                 {
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_ETC1_RGB8_LOSSY_DECODE_ANGLE:
             case GL_COMPRESSED_RGB8_LOSSY_DECODE_ETC2_ANGLE:
             case GL_COMPRESSED_SRGB8_LOSSY_DECODE_ETC2_ANGLE:
@@ -1474,12 +1463,8 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
             case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
             case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
@@ -1489,12 +1474,8 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
             case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
             case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
@@ -1504,12 +1485,8 @@ bool ValidateES2TexImageParametersBase(const Context *context,
                     context->validationError(GL_INVALID_OPERATION, kInvalidFormat);
                     return false;
                 }
-                else
-                {
-                    context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
-                    return false;
-                }
-                break;
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
             case GL_DEPTH_COMPONENT:
             case GL_DEPTH_STENCIL_OES:
                 if (!context->getExtensions().depthTextureANGLE &&
@@ -2506,6 +2483,14 @@ static bool ValidateObjectIdentifierAndName(const Context *context, GLenum ident
             if (context->getFramebuffer({name}) == nullptr)
             {
                 context->validationError(GL_INVALID_VALUE, kInvalidFramebufferName);
+                return false;
+            }
+            return true;
+
+        case GL_PROGRAM_PIPELINE:
+            if (context->getProgramPipeline({name}) == nullptr)
+            {
+                context->validationError(GL_INVALID_VALUE, kInvalidProgramPipelineName);
                 return false;
             }
             return true;
@@ -4274,7 +4259,8 @@ bool ValidateAttachShader(const Context *context, ShaderProgramID program, Shade
         return false;
     }
 
-    if (programObject->getAttachedShader(shaderObject->getType()))
+    if (programObject->getAttachedShader(shaderObject->getType()) &&
+        !programObject->getState().isShaderMarkedForDetach(shaderObject->getType()))
     {
         context->validationError(GL_INVALID_OPERATION, kShaderAttachmentHasShader);
         return false;
@@ -5071,6 +5057,14 @@ bool ValidateHint(const Context *context, GLenum target, GLenum mode)
     switch (target)
     {
         case GL_GENERATE_MIPMAP_HINT:
+            break;
+
+        case GL_TEXTURE_FILTERING_HINT_CHROMIUM:
+            if (!context->getExtensions().textureFilteringCHROMIUM)
+            {
+                context->validationError(GL_INVALID_ENUM, kEnumNotSupported);
+                return false;
+            }
             break;
 
         case GL_FRAGMENT_SHADER_DERIVATIVE_HINT:

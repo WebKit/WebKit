@@ -22,7 +22,7 @@ Status
 
 Version
 
-    Version 5, Sep 6, 2019
+    Version 6, May 12, 2020
 
 Number
 
@@ -75,12 +75,16 @@ Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
     If <target> is EGL_D3D_TEXTURE_ANGLE, <dpy> must be a valid display, <ctx>
     must be EGL_NO_CONTEXT, <buffer> must be a pointer to a valid D3D11 texture
     object (cast into the type EGLClientBuffer), and attributes other than
-    EGL_TEXTURE_INTERNAL_FORMAT_ANGLE are ignored. The width and height of
-    the pbuffer are determined by the width and height of <buffer>."
+    EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, EGL_TEXTURE_OFFSET_X_ANGLE, or
+    EGL_TEXTURE_OFFSET_Y_ANGLE are ignored. The width and height of the pbuffer
+    are determined by the width and height of <buffer>.
 
     If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is specified, it is used to interpret
     <buffer> according to the provided internal format. See table
     egl.restrictions for acceptable texture object types and formats.
+
+    If EGL_TEXTURE_OFFSET_X_ANGLE or EGL_TEXTURE_OFFSET_Y_ANGLE are specified,
+    they are used to offset all rendering into the surface.
 
     If the EGL_ANGLE_device_d3d extension is present, the provided D3D11 texture
     object must have been created by the same D3D11 device queried from the
@@ -121,6 +125,9 @@ Additions to Chapter 3 of the EGL 1.2 Specification (EGL Functions and Errors)
                        D3DFMT_A16B16G16R16F or D3DFMT_A32B32G32R32F.
 
                        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is not supported.
+
+                       EGL_TEXTURE_OFFSET_X_ANGLE and EGL_TEXTURE_OFFSET_Y_ANGLE
+                       are not supported.
 
     ID3D11Texture2D    Usage flags must be D3D11_USAGE_DEFAULT.
 
@@ -191,7 +198,17 @@ Issues
     to GL_RGB. Images with an RGB format will ensure that the alpha channel of
     the texture is reset to 1.0 when it is used.
 
+    5. What operations do the texture offsets affect?
+
+    RESOLVED: The texture offsets specified by EGL_TEXTURE_OFFSET_X_ANGLE and
+    EGL_TEXTURE_OFFSET_Y_ANGLE affect only rendering into the surface.
+    Specifically these affect the internal D3D viewport and scissor rect states.
+    This is needed to apply the update offset returned by calling BeginDraw() on
+    IDCompositionSurface, and is needed for correct rendering in that case.
+
 Revision History
+
+    Version 6, 2020/05/12 - added support for specifying texture offsets.
 
     Version 5, 2019/09/06 - added support for creating EGLImage.
 

@@ -22,6 +22,11 @@
 
 namespace gl
 {
+namespace
+{
+angle::SubjectIndex kRenderbufferImplSubjectIndex = 0;
+}  // namespace
+
 // RenderbufferState implementation.
 RenderbufferState::RenderbufferState()
     : mWidth(0), mHeight(0), mFormat(GL_RGBA4), mSamples(0), mInitState(InitState::MayNeedInit)
@@ -67,8 +72,11 @@ Renderbuffer::Renderbuffer(rx::GLImplFactory *implFactory, RenderbufferID id)
     : RefCountObject(implFactory->generateSerial(), id),
       mState(),
       mImplementation(implFactory->createRenderbuffer(mState)),
-      mLabel()
-{}
+      mLabel(),
+      mImplObserverBinding(this, kRenderbufferImplSubjectIndex)
+{
+    mImplObserverBinding.bind(mImplementation.get());
+}
 
 void Renderbuffer::onDestroy(const Context *context)
 {
@@ -304,5 +312,11 @@ angle::Result Renderbuffer::getRenderbufferImage(const Context *context,
 {
     return mImplementation->getRenderbufferImage(context, packState, packBuffer, format, type,
                                                  pixels);
+}
+
+void Renderbuffer::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
+{
+    ASSERT(message == angle::SubjectMessage::SubjectChanged);
+    onStateChange(angle::SubjectMessage::ContentsChanged);
 }
 }  // namespace gl

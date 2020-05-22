@@ -199,6 +199,10 @@ class TextureStorage11 : public TextureStorage
     // Helper for resolving MS shadowed texture
     angle::Result resolveTextureHelper(const gl::Context *context, const TextureHelper11 &texture);
     angle::Result releaseMultisampledTexStorageForLevel(size_t level) override;
+    angle::Result findMultisampledRenderTarget(const gl::Context *context,
+                                               const gl::ImageIndex &index,
+                                               GLsizei samples,
+                                               RenderTargetD3D **outRT) const;
     angle::Result getMultisampledRenderTarget(const gl::Context *context,
                                               const gl::ImageIndex &index,
                                               GLsizei samples,
@@ -289,6 +293,10 @@ class TextureStorage11_2D : public TextureStorage11
                               const TextureHelper11 **outResource) override;
     angle::Result getMippedResource(const gl::Context *context,
                                     const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -378,6 +386,10 @@ class TextureStorage11_External : public TextureStorage11
                               const TextureHelper11 **outResource) override;
     angle::Result getMippedResource(const gl::Context *context,
                                     const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -472,6 +484,10 @@ class TextureStorage11_EGLImage final : public TextureStorage11ImmutableBase
                                    const d3d11::SharedSRV **outSRV) override;
     angle::Result getMippedResource(const gl::Context *context,
                                     const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -532,6 +548,10 @@ class TextureStorage11_Cube : public TextureStorage11
                               const TextureHelper11 **outResource) override;
     angle::Result getMippedResource(const gl::Context *context,
                                     const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -619,6 +639,10 @@ class TextureStorage11_3D : public TextureStorage11
                               const TextureHelper11 **outResource) override;
 
     // Handles both layer and non-layer RTs
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -684,6 +708,10 @@ class TextureStorage11_2DArray : public TextureStorage11
 
     angle::Result getResource(const gl::Context *context,
                               const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -778,6 +806,10 @@ class TextureStorage11_2DMultisample final : public TextureStorage11ImmutableBas
 
     angle::Result getResource(const gl::Context *context,
                               const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,
@@ -829,6 +861,10 @@ class TextureStorage11_2DMultisampleArray final : public TextureStorage11Immutab
 
     angle::Result getResource(const gl::Context *context,
                               const TextureHelper11 **outResource) override;
+    angle::Result findRenderTarget(const gl::Context *context,
+                                   const gl::ImageIndex &index,
+                                   GLsizei samples,
+                                   RenderTargetD3D **outRT) const override;
     angle::Result getRenderTarget(const gl::Context *context,
                                   const gl::ImageIndex &index,
                                   GLsizei samples,

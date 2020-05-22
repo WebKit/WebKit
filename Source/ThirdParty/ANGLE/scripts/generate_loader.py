@@ -13,6 +13,9 @@ from datetime import date
 import registry_xml
 
 
+internal_prefix = "l_"
+
+
 def write_header(data_source_name,
                  all_cmds,
                  api,
@@ -31,13 +34,19 @@ def write_header(data_source_name,
         return prefix + cmd[len(api):]
 
     with open(header_path, "w") as out:
+        defines = [
+            "#define %s%s %s%s%s" % (ns, pre(cmd), internal_prefix, ns, pre(cmd))
+            for cmd in all_cmds
+        ]
         var_protos = [
-            "%sextern PFN%sPROC %s%s;" % (export, cmd.upper(), ns, pre(cmd)) for cmd in all_cmds
+            "%sextern PFN%sPROC %s%s%s;" % (export, cmd.upper(), internal_prefix, ns, pre(cmd))
+            for cmd in all_cmds
         ]
         loader_header = template_loader_h.format(
             script_name=os.path.basename(sys.argv[0]),
             data_source_name=data_source_name,
             year=date.today().year,
+            defines="\n".join(defines),
             function_pointers="\n".join(var_protos),
             api_upper=api.upper(),
             api_lower=api,
@@ -60,10 +69,15 @@ def write_source(data_source_name, all_cmds, api, path, ns="", prefix=None, expo
         return prefix + cmd[len(api):]
 
     with open(source_path, "w") as out:
-        var_defs = ["%sPFN%sPROC %s%s;" % (export, cmd.upper(), ns, pre(cmd)) for cmd in all_cmds]
+        var_defs = [
+            "%sPFN%sPROC %s%s%s;" % (export, cmd.upper(), internal_prefix, ns, pre(cmd))
+            for cmd in all_cmds
+        ]
 
-        setter = "    %s%s = reinterpret_cast<PFN%sPROC>(loadProc(\"%s\"));"
-        setters = [setter % (ns, pre(cmd), cmd.upper(), pre(cmd)) for cmd in all_cmds]
+        setter = "    %s%s%s = reinterpret_cast<PFN%sPROC>(loadProc(\"%s\"));"
+        setters = [
+            setter % (internal_prefix, ns, pre(cmd), cmd.upper(), pre(cmd)) for cmd in all_cmds
+        ]
 
         loader_source = template_loader_cpp.format(
             script_name=os.path.basename(sys.argv[0]),
@@ -97,9 +111,16 @@ def gen_libegl_loader():
     all_cmds = xml.all_cmd_names.get_all_commands()
 
     path = os.path.join("..", "src", "libEGL")
-    write_header(data_source_name, all_cmds, "egl", libegl_preamble, path, "LIBEGL", "", "EGL_",
-                 "ANGLE_NO_EXPORT ")
-    write_source(data_source_name, all_cmds, "egl", path, "", "EGL_")
+    write_header(
+        data_source_name,
+        all_cmds,
+        "egl",
+        libegl_preamble,
+        path,
+        "LIBEGL",
+        prefix="EGL_",
+        export="ANGLE_NO_EXPORT ")
+    write_source(data_source_name, all_cmds, "egl", path, prefix="EGL_")
 
 
 def gen_gl_loader():
@@ -266,6 +287,7 @@ template_loader_h = """// GENERATED FILE - DO NOT EDIT.
 #define {lib}_{api_upper}_LOADER_AUTOGEN_H_
 
 {preamble}
+{defines}
 {function_pointers}
 
 namespace angle

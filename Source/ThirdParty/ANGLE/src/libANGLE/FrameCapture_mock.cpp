@@ -18,6 +18,8 @@ namespace angle
 CallCapture::~CallCapture() {}
 ParamBuffer::~ParamBuffer() {}
 ParamCapture::~ParamCapture() {}
+ResourceTracker::ResourceTracker() {}
+ResourceTracker::~ResourceTracker() {}
 
 FrameCapture::FrameCapture() {}
 FrameCapture::~FrameCapture() {}

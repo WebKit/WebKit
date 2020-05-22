@@ -323,6 +323,129 @@ ANGLE_VALIDATE_PACKED_ENUM(DrawElementsType, UnsignedInt, GL_UNSIGNED_INT);
 
 std::ostream &operator<<(std::ostream &os, DrawElementsType value);
 
+enum class BlendEquationType
+{
+    Add             = 0,  // GLenum == 0x8006
+    Min             = 1,  // GLenum == 0x8007
+    Max             = 2,  // GLenum == 0x8008
+    Unused          = 3,
+    Subtract        = 4,  // GLenum == 0x800A
+    ReverseSubtract = 5,  // GLenum == 0x800B
+    InvalidEnum     = 6,
+    EnumCount       = 6
+};
+
+template <>
+constexpr BlendEquationType FromGLenum<BlendEquationType>(GLenum from)
+{
+    const GLenum scaled = (from - GL_FUNC_ADD);
+    return (scaled == static_cast<GLenum>(BlendEquationType::Unused) ||
+            scaled >= static_cast<GLenum>(BlendEquationType::EnumCount))
+               ? BlendEquationType::InvalidEnum
+               : static_cast<BlendEquationType>(scaled);
+}
+
+constexpr GLenum ToGLenum(BlendEquationType from)
+{
+    return static_cast<GLenum>(from) + GL_FUNC_ADD;
+}
+
+ANGLE_VALIDATE_PACKED_ENUM(BlendEquationType, Add, GL_FUNC_ADD);
+ANGLE_VALIDATE_PACKED_ENUM(BlendEquationType, Min, GL_MIN);
+ANGLE_VALIDATE_PACKED_ENUM(BlendEquationType, Max, GL_MAX);
+ANGLE_VALIDATE_PACKED_ENUM(BlendEquationType, Subtract, GL_FUNC_SUBTRACT);
+ANGLE_VALIDATE_PACKED_ENUM(BlendEquationType, ReverseSubtract, GL_FUNC_REVERSE_SUBTRACT);
+
+std::ostream &operator<<(std::ostream &os, BlendEquationType value);
+
+enum class BlendFactorType
+{
+    Zero = 0,  // GLenum == 0
+    One  = 1,  // GLenum == 1
+
+    MinSrcDstType    = 2,
+    SrcColor         = 2,   // GLenum == 0x0300
+    OneMinusSrcColor = 3,   // GLenum == 0x0301
+    SrcAlpha         = 4,   // GLenum == 0x0302
+    OneMinusSrcAlpha = 5,   // GLenum == 0x0303
+    DstAlpha         = 6,   // GLenum == 0x0304
+    OneMinusDstAlpha = 7,   // GLenum == 0x0305
+    DstColor         = 8,   // GLenum == 0x0306
+    OneMinusDstColor = 9,   // GLenum == 0x0307
+    SrcAlphaSaturate = 10,  // GLenum == 0x0308
+    MaxSrcDstType    = 10,
+
+    MinConstantType       = 11,
+    ConstantColor         = 11,  // GLenum == 0x8001
+    OneMinusConstantColor = 12,  // GLenum == 0x8002
+    ConstantAlpha         = 13,  // GLenum == 0x8003
+    OneMinusConstantAlpha = 14,  // GLenum == 0x8004
+    MaxConstantType       = 14,
+
+    // GL_EXT_blend_func_extended
+
+    Src1Alpha = 15,  // GLenum == 0x8589
+
+    Src1Color         = 16,  // GLenum == 0x88F9
+    OneMinusSrc1Color = 17,  // GLenum == 0x88FA
+    OneMinusSrc1Alpha = 18,  // GLenum == 0x88FB
+
+    InvalidEnum = 19,
+    EnumCount   = 19
+};
+
+template <>
+constexpr BlendFactorType FromGLenum<BlendFactorType>(GLenum from)
+{
+    if (from <= 1)
+        return static_cast<BlendFactorType>(from);
+    if (from >= GL_SRC_COLOR && from <= GL_SRC_ALPHA_SATURATE)
+        return static_cast<BlendFactorType>(from - GL_SRC_COLOR + 2);
+    if (from >= GL_CONSTANT_COLOR && from <= GL_ONE_MINUS_CONSTANT_ALPHA)
+        return static_cast<BlendFactorType>(from - GL_CONSTANT_COLOR + 11);
+    if (from == GL_SRC1_ALPHA_EXT)
+        return BlendFactorType::Src1Alpha;
+    if (from >= GL_SRC1_COLOR_EXT && from <= GL_ONE_MINUS_SRC1_ALPHA_EXT)
+        return static_cast<BlendFactorType>(from - GL_SRC1_COLOR_EXT + 16);
+    return BlendFactorType::InvalidEnum;
+}
+
+constexpr GLenum ToGLenum(BlendFactorType from)
+{
+    const GLenum value = static_cast<GLenum>(from);
+    if (value <= 1)
+        return value;
+    if (from >= BlendFactorType::MinSrcDstType && from <= BlendFactorType::MaxSrcDstType)
+        return value - 2 + GL_SRC_COLOR;
+    if (from >= BlendFactorType::MinConstantType && from <= BlendFactorType::MaxConstantType)
+        return value - 11 + GL_CONSTANT_COLOR;
+    if (from == BlendFactorType::Src1Alpha)
+        return GL_SRC1_ALPHA_EXT;
+    return value - 16 + GL_SRC1_COLOR_EXT;
+}
+
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, Zero, GL_ZERO);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, One, GL_ONE);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, SrcColor, GL_SRC_COLOR);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusSrcColor, GL_ONE_MINUS_SRC_COLOR);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, SrcAlpha, GL_SRC_ALPHA);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusSrcAlpha, GL_ONE_MINUS_SRC_ALPHA);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, DstAlpha, GL_DST_ALPHA);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusDstAlpha, GL_ONE_MINUS_DST_ALPHA);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, DstColor, GL_DST_COLOR);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusDstColor, GL_ONE_MINUS_DST_COLOR);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, SrcAlphaSaturate, GL_SRC_ALPHA_SATURATE);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, ConstantColor, GL_CONSTANT_COLOR);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusConstantColor, GL_ONE_MINUS_CONSTANT_COLOR);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, ConstantAlpha, GL_CONSTANT_ALPHA);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusConstantAlpha, GL_ONE_MINUS_CONSTANT_ALPHA);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, Src1Alpha, GL_SRC1_ALPHA_EXT);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, Src1Color, GL_SRC1_COLOR_EXT);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusSrc1Color, GL_ONE_MINUS_SRC1_COLOR_EXT);
+ANGLE_VALIDATE_PACKED_ENUM(BlendFactorType, OneMinusSrc1Alpha, GL_ONE_MINUS_SRC1_ALPHA_EXT);
+
+std::ostream &operator<<(std::ostream &os, BlendFactorType value);
+
 enum class VertexAttribType
 {
     Byte               = 0,   // GLenum == 0x1400

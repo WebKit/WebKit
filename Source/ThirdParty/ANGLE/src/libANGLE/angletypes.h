@@ -386,6 +386,250 @@ using UniformBlockBindingMask = angle::BitSet<IMPLEMENTATION_MAX_COMBINED_SHADER
 // Used in Framebuffer / Program
 using DrawBufferMask = angle::BitSet<IMPLEMENTATION_MAX_DRAW_BUFFERS>;
 
+class BlendStateExt final
+{
+    static_assert(IMPLEMENTATION_MAX_DRAW_BUFFERS == 8, "Only up to 8 draw buffers supported.");
+
+  public:
+    template <typename ElementType, size_t ElementCount>
+    struct StorageType final
+    {
+        static_assert(ElementCount <= 256, "ElementCount cannot exceed 256.");
+
+#if defined(ANGLE_IS_64_BIT_CPU)
+        // Always use uint64_t on 64-bit systems
+        static constexpr size_t kBits = 8;
+#else
+        static constexpr size_t kBits = ElementCount > 16 ? 8 : 4;
+#endif
+
+        using Type = typename std::conditional<kBits == 8, uint64_t, uint32_t>::type;
+
+        static constexpr Type kMaxValueMask = (kBits == 8) ? 0xFF : 0xF;
+
+        static constexpr Type GetMask(const size_t drawBuffers)
+        {
+            ASSERT(drawBuffers <= IMPLEMENTATION_MAX_DRAW_BUFFERS);
+            return static_cast<Type>(0xFFFFFFFFFFFFFFFFull >> (64 - drawBuffers * kBits));
+        }
+
+        // A multiplier that is used to replicate 4- or 8-bit value 8 times.
+        static constexpr Type kReplicator = (kBits == 8) ? 0x0101010101010101ull : 0x11111111;
+
+        // Extract packed `Bits`-bit value of index `index`. `values` variable contains up to 8
+        // packed values.
+        static constexpr ElementType GetValueIndexed(const size_t index, const Type values)
+        {
+            ASSERT(index < IMPLEMENTATION_MAX_DRAW_BUFFERS);
+
+            return static_cast<ElementType>((values >> (index * kBits)) & kMaxValueMask);
+        }
+
+        // Replicate `Bits`-bit value 8 times and mask the result.
+        static constexpr Type GetReplicatedValue(const ElementType value, const Type mask)
+        {
+            ASSERT(static_cast<size_t>(value) <= kMaxValueMask);
+            return (static_cast<size_t>(value) * kReplicator) & mask;
+        }
+
+        // Replace `Bits`-bit value of index `index` in `target` with `value`.
+        static constexpr void SetValueIndexed(const size_t index,
+                                              const ElementType value,
+                                              Type *target)
+        {
+            ASSERT(static_cast<size_t>(value) <= kMaxValueMask);
+            ASSERT(index < IMPLEMENTATION_MAX_DRAW_BUFFERS);
+
+            // Bitmask with set bits that contain the value of index `index`.
+            const Type selector = kMaxValueMask << (index * kBits);
+
+            // Shift the new `value` to its position in the packed value.
+            const Type builtValue = static_cast<Type>(value) << (index * kBits);
+
+            // Mark differing bits of `target` and `builtValue`, then flip the bits on those
+            // positions in `target`.
+            // Taken from https://graphics.stanford.edu/~seander/bithacks.html#MaskedMerge
+            *target = *target ^ ((*target ^ builtValue) & selector);
+        }
+
+        // Compare two packed sets of eight 4-bit values and return an 8-bit diff mask.
+        static constexpr DrawBufferMask GetDiffMask(const uint32_t packedValue1,
+                                                    const uint32_t packedValue2)
+        {
+            uint32_t diff = packedValue1 ^ packedValue2;
+
+            // For each 4-bit value that is different between inputs, set the msb to 1 and other
+            // bits to 0.
+            diff = (diff | ((diff & 0x77777777) + 0x77777777)) & 0x88888888;
+
+            // By this point, `diff` looks like a...b...c...d...e...f...g...h... (dots mean zeros).
+            // To get DrawBufferMask, we need to compress this 32-bit value to 8 bits, i.e. abcdefgh
+
+            // Multiplying the lower half of `diff` by 0x249 (0x200 + 0x40 + 0x8 + 0x1) produces:
+            // ................e...f...g...h... +
+            // .............e...f...g...h...... +
+            // ..........e...f...g...h......... +
+            // .......e...f...g...h............
+            // ________________________________ =
+            // .......e..ef.efgefghfgh.gh..h...
+            //                 ^^^^
+            // Similar operation is applied to the upper word.
+            // This calculation could be replaced with a single PEXT instruction from BMI2 set.
+            diff = ((((diff & 0xFFFF0000) * 0x249) >> 24) & 0xF0) | (((diff * 0x249) >> 12) & 0xF);
+
+            return DrawBufferMask(diff);
+        }
+
+        // Compare two packed sets of eight 8-bit values and return an 8-bit diff mask.
+        static constexpr DrawBufferMask GetDiffMask(const uint64_t packedValue1,
+                                                    const uint64_t packedValue2)
+        {
+            uint64_t diff = packedValue1 ^ packedValue2;
+
+            // For each 8-bit value that is different between inputs, set the msb to 1 and other
+            // bits to 0.
+            diff = (diff | ((diff & 0x7F7F7F7F7F7F7F7F) + 0x7F7F7F7F7F7F7F7F)) & 0x8080808080808080;
+
+            // By this point, `diff` looks like (dots mean zeros):
+            // a.......b.......c.......d.......e.......f.......g.......h.......
+            // To get DrawBufferMask, we need to compress this 64-bit value to 8 bits, i.e. abcdefgh
+
+            // Multiplying `diff` by 0x0002040810204081 produces:
+            // a.......b.......c.......d.......e.......f.......g.......h....... +
+            // .b.......c.......d.......e.......f.......g.......h.............. +
+            // ..c.......d.......e.......f.......g.......h..................... +
+            // ...d.......e.......f.......g.......h............................ +
+            // ....e.......f.......g.......h................................... +
+            // .....f.......g.......h.......................................... +
+            // ......g.......h................................................. +
+            // .......h........................................................
+            // ________________________________________________________________ =
+            // abcdefghbcdefgh.cdefgh..defgh...efgh....fgh.....gh......h.......
+            // ^^^^^^^^
+            // This operation could be replaced with a single PEXT instruction from BMI2 set.
+            diff = 0x0002040810204081 * diff >> 56;
+
+            return DrawBufferMask(static_cast<uint32_t>(diff));
+        }
+    };
+
+    using FactorStorage    = StorageType<BlendFactorType, angle::EnumSize<BlendFactorType>()>;
+    using EquationStorage  = StorageType<BlendEquationType, angle::EnumSize<BlendEquationType>()>;
+    using ColorMaskStorage = StorageType<uint8_t, 16>;
+
+    BlendStateExt(const size_t drawBuffers = 1);
+
+    BlendStateExt &operator=(const BlendStateExt &other);
+
+    ///////// Blending Toggle /////////
+
+    void setEnabled(const bool enabled);
+    void setEnabledIndexed(const size_t index, const bool enabled);
+
+    ///////// Color Write Mask /////////
+
+    static constexpr size_t PackColorMask(const bool red,
+                                          const bool green,
+                                          const bool blue,
+                                          const bool alpha)
+    {
+        return (red ? 1 : 0) | (green ? 2 : 0) | (blue ? 4 : 0) | (alpha ? 8 : 0);
+    }
+
+    static constexpr void UnpackColorMask(const size_t value,
+                                          bool *red,
+                                          bool *green,
+                                          bool *blue,
+                                          bool *alpha)
+    {
+        *red   = static_cast<bool>(value & 1);
+        *green = static_cast<bool>(value & 2);
+        *blue  = static_cast<bool>(value & 4);
+        *alpha = static_cast<bool>(value & 8);
+    }
+
+    ColorMaskStorage::Type expandColorMaskValue(const bool red,
+                                                const bool green,
+                                                const bool blue,
+                                                const bool alpha) const;
+    ColorMaskStorage::Type expandColorMaskIndexed(const size_t index) const;
+    void setColorMask(const bool red, const bool green, const bool blue, const bool alpha);
+    void setColorMaskIndexed(const size_t index, const uint8_t value);
+    void setColorMaskIndexed(const size_t index,
+                             const bool red,
+                             const bool green,
+                             const bool blue,
+                             const bool alpha);
+    uint8_t getColorMaskIndexed(const size_t index) const;
+    void getColorMaskIndexed(const size_t index,
+                             bool *red,
+                             bool *green,
+                             bool *blue,
+                             bool *alpha) const;
+    DrawBufferMask compareColorMask(ColorMaskStorage::Type other) const;
+
+    ///////// Blend Equation /////////
+
+    EquationStorage::Type expandEquationValue(const GLenum mode) const;
+    EquationStorage::Type expandEquationColorIndexed(const size_t index) const;
+    EquationStorage::Type expandEquationAlphaIndexed(const size_t index) const;
+    void setEquations(const GLenum modeColor, const GLenum modeAlpha);
+    void setEquationsIndexed(const size_t index, const GLenum modeColor, const GLenum modeAlpha);
+    void setEquationsIndexed(const size_t index,
+                             const size_t otherIndex,
+                             const BlendStateExt &other);
+    GLenum getEquationColorIndexed(size_t index) const;
+    GLenum getEquationAlphaIndexed(size_t index) const;
+    DrawBufferMask compareEquations(const EquationStorage::Type color,
+                                    const EquationStorage::Type alpha) const;
+
+    ///////// Blend Factors /////////
+
+    FactorStorage::Type expandFactorValue(const GLenum func) const;
+    FactorStorage::Type expandSrcColorIndexed(const size_t index) const;
+    FactorStorage::Type expandDstColorIndexed(const size_t index) const;
+    FactorStorage::Type expandSrcAlphaIndexed(const size_t index) const;
+    FactorStorage::Type expandDstAlphaIndexed(const size_t index) const;
+    void setFactors(const GLenum srcColor,
+                    const GLenum dstColor,
+                    const GLenum srcAlpha,
+                    const GLenum dstAlpha);
+    void setFactorsIndexed(const size_t index,
+                           const GLenum srcColor,
+                           const GLenum dstColor,
+                           const GLenum srcAlpha,
+                           const GLenum dstAlpha);
+    void setFactorsIndexed(const size_t index, const size_t otherIndex, const BlendStateExt &other);
+    GLenum getSrcColorIndexed(size_t index) const;
+    GLenum getDstColorIndexed(size_t index) const;
+    GLenum getSrcAlphaIndexed(size_t index) const;
+    GLenum getDstAlphaIndexed(size_t index) const;
+    DrawBufferMask compareFactors(const FactorStorage::Type srcColor,
+                                  const FactorStorage::Type dstColor,
+                                  const FactorStorage::Type srcAlpha,
+                                  const FactorStorage::Type dstAlpha) const;
+
+    ///////// Data Members /////////
+
+    const FactorStorage::Type mMaxFactorMask;
+    FactorStorage::Type mSrcColor;
+    FactorStorage::Type mDstColor;
+    FactorStorage::Type mSrcAlpha;
+    FactorStorage::Type mDstAlpha;
+
+    const EquationStorage::Type mMaxEquationMask;
+    EquationStorage::Type mEquationColor;
+    EquationStorage::Type mEquationAlpha;
+
+    const ColorMaskStorage::Type mMaxColorMask;
+    ColorMaskStorage::Type mColorMask;
+
+    const DrawBufferMask mMaxEnabledMask;
+    DrawBufferMask mEnabledMask;
+
+    const size_t mMaxDrawBuffers;
+};
+
 // Used in StateCache
 using StorageBuffersMask = angle::BitSet<IMPLEMENTATION_MAX_SHADER_STORAGE_BUFFER_BINDINGS>;
 
@@ -472,6 +716,8 @@ using ShaderVector = angle::FixedVector<T, static_cast<size_t>(ShaderType::EnumC
 
 template <typename T>
 using AttachmentArray = std::array<T, IMPLEMENTATION_MAX_FRAMEBUFFER_ATTACHMENTS>;
+
+using AttachmentsMask = angle::BitSet<IMPLEMENTATION_MAX_FRAMEBUFFER_ATTACHMENTS>;
 
 template <typename T>
 using DrawBuffersArray = std::array<T, IMPLEMENTATION_MAX_DRAW_BUFFERS>;

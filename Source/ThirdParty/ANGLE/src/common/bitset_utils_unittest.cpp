@@ -28,6 +28,8 @@ TYPED_TEST_SUITE(BitSetTest, BitSetTypes);
 
 TYPED_TEST(BitSetTest, Basic)
 {
+    EXPECT_EQ(TypeParam::Zero().bits(), 0u);
+
     TypeParam mBits = this->mBits;
     EXPECT_FALSE(mBits.all());
     EXPECT_FALSE(mBits.any());

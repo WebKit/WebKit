@@ -249,6 +249,19 @@ if (is_win && !angle_is_winuwp) {
   }
 }
 
+config("angle_png_utils_config") {
+  include_dirs = [ ".." ]
+}
+
+angle_source_set("angle_png_utils") {
+  deps = [ "$angle_libpng_dir" ]
+  sources = [
+    "png_utils.cpp",
+    "png_utils.h",
+  ]
+  public_configs = [ ":angle_png_utils_config" ]
+}
+
 config("angle_test_util_config") {
   include_dirs = [ ".." ]
 }

@@ -147,8 +147,7 @@ bool BlobCache::getAt(size_t index, const BlobCache::Key **keyOut, BlobCache::Va
 
 void BlobCache::remove(const BlobCache::Key &key)
 {
-    bool result = mBlobCache.eraseByKey(key);
-    ASSERT(result);
+    mBlobCache.eraseByKey(key);
 }
 
 void BlobCache::setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get)

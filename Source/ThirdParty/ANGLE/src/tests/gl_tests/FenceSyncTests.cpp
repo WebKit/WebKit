@@ -195,7 +195,7 @@ TEST_P(FenceSyncTest, Errors)
     EXPECT_EQ(20, length);
     EXPECT_EQ(30, value);
 
-    // glGetSynciv generates GL_INVALID_VALUE if the sync object tis not valid, results should be
+    // glGetSynciv generates GL_INVALID_VALUE if the sync object is not valid, results should be
     // untouched
     glGetSynciv(reinterpret_cast<GLsync>(30), GL_OBJECT_TYPE, 1, &length, &value);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);

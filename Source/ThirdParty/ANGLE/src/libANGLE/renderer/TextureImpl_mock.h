@@ -21,7 +21,7 @@ class MockTextureImpl : public TextureImpl
   public:
     MockTextureImpl() : TextureImpl(mMockState), mMockState(gl::TextureType::_2D) {}
     virtual ~MockTextureImpl() { destructor(); }
-    MOCK_METHOD8(setImage,
+    MOCK_METHOD9(setImage,
                  angle::Result(const gl::Context *,
                                const gl::ImageIndex &,
                                GLenum,
@@ -29,6 +29,7 @@ class MockTextureImpl : public TextureImpl
                                GLenum,
                                GLenum,
                                const gl::PixelUnpackState &,
+                               gl::Buffer *,
                                const uint8_t *));
     MOCK_METHOD8(setSubImage,
                  angle::Result(const gl::Context *,

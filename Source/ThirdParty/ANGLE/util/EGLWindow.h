@@ -69,6 +69,7 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 
     virtual bool initializeGL(OSWindow *osWindow,
                               angle::Library *glWindowingLibrary,
+                              angle::GLESDriverType driverType,
                               const EGLPlatformParameters &platformParams,
                               const ConfigParameters &configParams) = 0;
     virtual bool isGLInitialized() const                            = 0;
@@ -112,6 +113,7 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     // Internally initializes the Display, Surface and Context.
     bool initializeGL(OSWindow *osWindow,
                       angle::Library *glWindowingLibrary,
+                      angle::GLESDriverType driverType,
                       const EGLPlatformParameters &platformParams,
                       const ConfigParameters &configParams) override;
 
@@ -125,6 +127,7 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     // Only initializes the Display.
     bool initializeDisplay(OSWindow *osWindow,
                            angle::Library *glWindowingLibrary,
+                           angle::GLESDriverType driverType,
                            const EGLPlatformParameters &params);
 
     // Only initializes the Surface.

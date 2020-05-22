@@ -168,14 +168,18 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->EXT_geometry_shader                         = 0;
     resources->EXT_gpu_shader5                             = 0;
     resources->EXT_shader_non_constant_global_initializers = 0;
+    resources->NV_shader_noperspective_interpolation       = 0;
     resources->OES_texture_storage_multisample_2d_array    = 0;
     resources->OES_texture_3D                              = 0;
     resources->ANGLE_texture_multisample                   = 0;
     resources->ANGLE_multi_draw                            = 0;
     resources->ANGLE_base_vertex_base_instance             = 0;
     resources->WEBGL_video_texture                         = 0;
+    resources->APPLE_clip_distance                         = 0;
 
     resources->NV_draw_buffers = 0;
+
+    resources->MaxClipDistances = 0;
 
     // Disable highp precision in fragment shader by default.
     resources->FragmentPrecisionHigh = 0;
@@ -496,6 +500,16 @@ int GetVertexShaderNumViews(const ShHandle handle)
     ASSERT(compiler);
 
     return compiler->getNumViews();
+}
+
+bool HasEarlyFragmentTestsOptimization(const ShHandle handle)
+{
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    if (compiler == nullptr)
+    {
+        return false;
+    }
+    return compiler->isEarlyFragmentTestsOptimized();
 }
 
 bool CheckVariablesWithinPackingLimits(int maxVectors, const std::vector<ShaderVariable> &variables)

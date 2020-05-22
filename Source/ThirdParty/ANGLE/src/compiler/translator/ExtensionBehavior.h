@@ -32,6 +32,7 @@ enum class TExtension
     EXT_shader_non_constant_global_initializers,
     NV_EGL_stream_consumer_external,
     NV_shader_framebuffer_fetch,
+    NV_shader_noperspective_interpolation,
     OES_EGL_image_external,
     OES_EGL_image_external_essl3,
     OES_standard_derivatives,
@@ -42,6 +43,7 @@ enum class TExtension
     ANGLE_multi_draw,
     ANGLE_base_vertex_base_instance,
     WEBGL_video_texture,
+    APPLE_clip_distance,
 };
 
 enum TBehavior

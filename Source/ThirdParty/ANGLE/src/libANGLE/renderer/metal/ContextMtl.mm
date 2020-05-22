@@ -664,10 +664,6 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_DITHER_ENABLED:
                 break;
-            case gl::State::DIRTY_BIT_GENERATE_MIPMAP_HINT:
-                break;
-            case gl::State::DIRTY_BIT_SHADER_DERIVATIVE_HINT:
-                break;
             case gl::State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING:
                 break;
             case gl::State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING:
@@ -727,6 +723,9 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
             }
             case gl::State::DIRTY_BIT_PROVOKING_VERTEX:
                 break;
+            case gl::State::DIRTY_BIT_EXTENDED:
+                updateExtendedState(glState);
+                break;
             default:
                 UNREACHABLE();
                 break;
@@ -734,6 +733,13 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
     }
 
     return angle::Result::Continue;
+}
+
+void ContextMtl::updateExtendedState(const gl::State &glState)
+{
+    // Handling clip distance enabled flags, mipmap generation hint & shader derivative
+    // hint.
+    invalidateDriverUniforms();
 }
 
 // Disjoint timer queries
@@ -1592,6 +1598,8 @@ angle::Result ContextMtl::handleDirtyDriverUniforms(const gl::Context *context)
         static_cast<float>(mDrawFramebuffer->getState().getDimensions().height) * 0.5f;
     mDriverUniforms.viewportYScale    = mDrawFramebuffer->flipY() ? -1.0f : 1.0f;
     mDriverUniforms.negViewportYScale = -mDriverUniforms.viewportYScale;
+
+    mDriverUniforms.enabledClipDistances = mState.getEnabledClipDistances().bits();
 
     mDriverUniforms.depthRange[0] = depthRangeNear;
     mDriverUniforms.depthRange[1] = depthRangeFar;

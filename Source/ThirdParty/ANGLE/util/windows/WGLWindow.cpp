@@ -71,9 +71,15 @@ WGLWindow::~WGLWindow() {}
 // Internally initializes GL resources.
 bool WGLWindow::initializeGL(OSWindow *osWindow,
                              angle::Library *glWindowingLibrary,
+                             angle::GLESDriverType driverType,
                              const EGLPlatformParameters &platformParams,
                              const ConfigParameters &configParams)
 {
+    if (driverType != angle::GLESDriverType::SystemWGL)
+    {
+        return false;
+    }
+
     glWindowingLibrary->getAs("wglGetProcAddress", &gCurrentWGLGetProcAddress);
 
     if (!gCurrentWGLGetProcAddress)

@@ -92,7 +92,7 @@ TEST_P(EGLX11VisualHintTest, ValidVisualIDAndClear)
     // can use OSWindow to create a window and just grab its visual.
     OSWindow *osWindow = OSWindow::New();
     osWindow->initialize("EGLX11VisualHintTest", 500, 500);
-    osWindow->setVisible(true);
+    setWindowVisible(osWindow, true);
 
     Window xWindow = osWindow->getNativeWindow();
 
@@ -162,7 +162,7 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
     {
         OSWindow *osWindow = OSWindow::New();
         osWindow->initialize("EGLX11VisualHintTest", 500, 500);
-        osWindow->setVisible(true);
+        setWindowVisible(osWindow, true);
 
         Window xWindow = osWindow->getNativeWindow();
 
@@ -186,7 +186,7 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
 
     OSWindow *osWindow = new X11Window(otherVisualId);
     osWindow->initialize("EGLX11VisualHintTest", 500, 500);
-    osWindow->setVisible(true);
+    setWindowVisible(osWindow, true);
 
     Window xWindow = osWindow->getNativeWindow();
 

@@ -952,6 +952,13 @@ unsigned int ParseArrayIndex(const std::string &name, size_t *nameLengthWithoutA
                 indexIsValidDecimalNumber = false;
                 break;
             }
+
+            // Leading zeroes are invalid
+            if ((i == (open + 1)) && (name[i] == '0') && (name[i + 1] != ']'))
+            {
+                indexIsValidDecimalNumber = false;
+                break;
+            }
         }
         if (indexIsValidDecimalNumber)
         {
@@ -1153,6 +1160,7 @@ bool IsExternalImageTarget(EGLenum target)
     {
         case EGL_NATIVE_BUFFER_ANDROID:
         case EGL_D3D11_TEXTURE_ANGLE:
+        case EGL_LINUX_DMA_BUF_EXT:
             return true;
 
         default:

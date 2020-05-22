@@ -39,6 +39,29 @@ void QueryVk::onDestroy(const gl::Context *context)
     }
 }
 
+angle::Result QueryVk::stashQueryHelper(ContextVk *contextVk)
+{
+    ASSERT(isOcclusionQuery());
+    mStashedQueryHelpers.emplace_back(mQueryHelper);
+    mQueryHelper.deinit();
+    ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(contextVk, &mQueryHelper));
+    return angle::Result::Continue;
+}
+
+angle::Result QueryVk::retrieveStashedQueryResult(ContextVk *contextVk, uint64_t *result)
+{
+    uint64_t total = 0;
+    for (vk::QueryHelper &query : mStashedQueryHelpers)
+    {
+        uint64_t v;
+        ANGLE_TRY(query.getUint64Result(contextVk, &v));
+        total += v;
+    }
+    mStashedQueryHelpers.clear();
+    *result = total;
+    return angle::Result::Continue;
+}
+
 angle::Result QueryVk::begin(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
@@ -58,9 +81,25 @@ angle::Result QueryVk::begin(const gl::Context *context)
         ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(contextVk, &mQueryHelper));
     }
 
-    // Note: TimeElapsed is implemented by using two Timestamp queries and taking the diff.
-    if (getType() == gl::QueryType::TimeElapsed)
+    if (isOcclusionQuery())
     {
+        // For pathological usage case where begin/end is called back to back without flush and get
+        // result, we have to force flush so that the same mQueryHelper will not encoded in the same
+        // renderpass twice without resetting it.
+        if (mQueryHelper.hasPendingWork(contextVk))
+        {
+            ANGLE_TRY(contextVk->flushImpl(nullptr));
+            // As soon as beginQuery is called, previous query's result will not retrievable by API.
+            // We must clear it so that it will not count against current beginQuery call.
+            mStashedQueryHelpers.clear();
+            mQueryHelper.deinit();
+            ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(contextVk, &mQueryHelper));
+        }
+        contextVk->beginOcclusionQuery(this);
+    }
+    else if (getType() == gl::QueryType::TimeElapsed)
+    {
+        // Note: TimeElapsed is implemented by using two Timestamp queries and taking the diff.
         if (!mQueryHelperTimeElapsedBegin.valid())
         {
             ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(
@@ -96,6 +135,10 @@ angle::Result QueryVk::end(const gl::Context *context)
         mCachedResultValid = true;
         // We could consider using VK_QUERY_TYPE_TRANSFORM_FEEDBACK_STREAM_EXT.
     }
+    else if (isOcclusionQuery())
+    {
+        contextVk->endOcclusionQuery(this);
+    }
     else if (getType() == gl::QueryType::TimeElapsed)
     {
         ANGLE_TRY(mQueryHelper.flushAndWriteTimestamp(contextVk));
@@ -110,6 +153,7 @@ angle::Result QueryVk::end(const gl::Context *context)
 
 angle::Result QueryVk::queryCounter(const gl::Context *context)
 {
+    ASSERT(getType() == gl::QueryType::Timestamp);
     ContextVk *contextVk = vk::GetImpl(context);
 
     mCachedResultValid = false;
@@ -118,8 +162,6 @@ angle::Result QueryVk::queryCounter(const gl::Context *context)
     {
         ANGLE_TRY(contextVk->getQueryPool(getType())->allocateQuery(contextVk, &mQueryHelper));
     }
-
-    ASSERT(getType() == gl::QueryType::Timestamp);
 
     return mQueryHelper.flushAndWriteTimestamp(contextVk);
 }
@@ -162,6 +204,9 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
     if (wait)
     {
         ANGLE_TRY(mQueryHelper.getUint64Result(contextVk, &mCachedResult));
+        uint64_t v;
+        ANGLE_TRY(retrieveStashedQueryResult(contextVk, &v));
+        mCachedResult += v;
     }
     else
     {
@@ -172,6 +217,9 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
             // If the results are not ready, do nothing.  mCachedResultValid remains false.
             return angle::Result::Continue;
         }
+        uint64_t v;
+        ANGLE_TRY(retrieveStashedQueryResult(contextVk, &v));
+        mCachedResult += v;
     }
 
     double timestampPeriod = renderer->getPhysicalDeviceProperties().limits.timestampPeriod;

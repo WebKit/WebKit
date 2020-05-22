@@ -36,29 +36,6 @@
 //// Failures blocking an official GLES 3.1 conformance run on SwiftShader
 ////
 
-// Dispatch indirect:
-3570 VULKAN : KHR-GLES31.core.compute_shader.build-separable = SKIP
-3570 VULKAN : KHR-GLES31.core.compute_shader.sso-compute-pipeline = SKIP
-3570 VULKAN : KHR-GLES31.core.compute_shader.sso-case2 = SKIP
-3570 VULKAN : KHR-GLES31.core.compute_shader.sso-case3 = SKIP
-// Program Pipeline Objects:
-3570 VULKAN : KHR-GLES31.core.shader_atomic_counters.advanced-usage-many-draw-calls2 = FAIL
-3570 VULKAN : KHR-GLES31.core.shader_atomic_counters.advanced-usage-many-dispatches = FAIL
-3570 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-usage = FAIL
-3570 VULKAN : KHR-GLES31.core.shader_image_load_store.advanced-sso-simple = FAIL
-// Separate shader objects:
-3570 VULKAN : KHR-GLES31.core.sepshaderobjs* = FAIL
-
-// Shader support:
-4402 : KHR-GLES31.core.shader_bitfield_operation.frexp.* = SKIP
-4402 : KHR-GLES31.core.shader_bitfield_operation.uaddCarry.* = SKIP
-4402 : KHR-GLES31.core.shader_bitfield_operation.usubBorrow.* = SKIP
-4402 : KHR-GLES31.core.shader_bitfield_operation.umulExtended.* = SKIP
-4402 : KHR-GLES31.core.shader_bitfield_operation.imulExtended.* = SKIP
-
-// Program interface query.
-3596 VULKAN : KHR-GLES31.core.program_interface_query.* = FAIL
-
 // Image related failures
 
 4315 VULKAN : KHR-GLES31.core.shader_image_load_store.advanced-memory-order-vsfs = FAIL
@@ -87,9 +64,6 @@
 3605 VULKAN : KHR-GLES31.core.texture_gather.* = FAIL
 
 // Dispatch indirect:
-4188 VULKAN : KHR-GLES31.core.compute_shader.resource-image = FAIL
-4191 VULKAN : KHR-GLES31.core.compute_shader.resources-max = FAIL
-4192 VULKAN : KHR-GLES31.core.compute_shader.pipeline-post-xfb = FAIL
 3726 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.pipeline-compute-chain = FAIL
 4194 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.resource-ubo = FAIL
 4194 VULKAN PIXEL2ORXL : KHR-GLES31.core.compute_shader.built-in-variables = FAIL
@@ -150,3 +124,6 @@
 
 // Crashing on Android with SwiftShader
 4240 SWIFTSHADER ANDROID : KHR-GLES31.core.texture_storage_multisample.FunctionalTests.blitting_multisampled_depth_attachment = SKIP
+
+// New failures with latest dEQP roll (2020-04-28)
+4593 SWIFTSHADER : KHR-GLES31.core.nearest_edge.offset_left = FAIL

@@ -69,8 +69,8 @@ class FramebufferVk : public FramebufferImpl
                                 GLfloat depth,
                                 GLint stencil) override;
 
-    GLenum getImplementationColorReadFormat(const gl::Context *context) const override;
-    GLenum getImplementationColorReadType(const gl::Context *context) const override;
+    const gl::InternalFormat &getImplementationColorReadFormat(
+        const gl::Context *context) const override;
     angle::Result readPixels(const gl::Context *context,
                              const gl::Rectangle &area,
                              GLenum format,
@@ -86,6 +86,7 @@ class FramebufferVk : public FramebufferImpl
     bool checkStatus(const gl::Context *context) const override;
 
     angle::Result syncState(const gl::Context *context,
+                            GLenum binding,
                             const gl::Framebuffer::DirtyBits &dirtyBits) override;
 
     angle::Result getSamplePosition(const gl::Context *context,
@@ -109,7 +110,7 @@ class FramebufferVk : public FramebufferImpl
     RenderTargetVk *getColorDrawRenderTarget(size_t colorIndex) const;
     RenderTargetVk *getColorReadRenderTarget() const;
 
-    angle::Result startNewRenderPass(ContextVk *context,
+    angle::Result startNewRenderPass(ContextVk *contextVk,
                                      const gl::Rectangle &renderArea,
                                      vk::CommandBuffer **commandBufferOut);
 
@@ -118,6 +119,12 @@ class FramebufferVk : public FramebufferImpl
 
     const vk::RenderPassDesc &getRenderPassDesc() const { return mRenderPassDesc; }
     const vk::FramebufferDesc &getFramebufferDesc() const { return mCurrentFramebufferDesc; }
+    // We only support depth/stencil packed format and depthstencil attachment always follow all
+    // color attachments
+    size_t getDepthStencilAttachmentIndexVk() const
+    {
+        return getState().getEnabledDrawBuffers().count();
+    }
 
   private:
     FramebufferVk(RendererVk *renderer,
@@ -150,21 +157,47 @@ class FramebufferVk : public FramebufferImpl
                             bool clearStencil,
                             const VkClearColorValue &clearColorValue,
                             const VkClearDepthStencilValue &clearDepthStencilValue);
+
+    angle::Result clearImmediatelyWithRenderPassOp(
+        ContextVk *contextVk,
+        const gl::Rectangle &clearArea,
+        gl::DrawBufferMask clearColorBuffers,
+        bool clearDepth,
+        bool clearStencil,
+        const VkClearColorValue &clearColorValue,
+        const VkClearDepthStencilValue &clearDepthStencilValue);
+
     angle::Result clearWithDraw(ContextVk *contextVk,
                                 const gl::Rectangle &clearArea,
                                 gl::DrawBufferMask clearColorBuffers,
+                                bool clearDepth,
                                 bool clearStencil,
                                 VkColorComponentFlags colorMaskFlags,
                                 uint8_t stencilMask,
                                 const VkClearColorValue &clearColorValue,
-                                uint8_t clearStencilValue);
+                                const VkClearDepthStencilValue &clearDepthStencilValue);
+    void clearWithRenderPassOp(gl::DrawBufferMask clearColorBuffers,
+                               bool clearDepth,
+                               bool clearStencil,
+                               const VkClearColorValue &clearColorValue,
+                               const VkClearDepthStencilValue &clearDepthStencilValue);
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc();
-    angle::Result updateColorAttachment(const gl::Context *context, size_t colorIndex);
+    angle::Result updateColorAttachment(const gl::Context *context,
+                                        bool deferClears,
+                                        uint32_t colorIndex);
     angle::Result invalidateImpl(ContextVk *contextVk, size_t count, const GLenum *attachments);
     // Release all FramebufferVk objects in the cache and clear cache
     void clearCache(ContextVk *contextVk);
+    angle::Result updateDepthStencilAttachment(const gl::Context *context, bool deferClears);
     void updateDepthStencilAttachmentSerial(ContextVk *contextVk);
+
+    RenderTargetVk *getReadPixelsRenderTarget(GLenum format) const;
+    VkImageAspectFlagBits getReadPixelsAspectFlags(GLenum format) const;
+
+    angle::Result flushDeferredClears(ContextVk *contextVk, const gl::Rectangle &renderArea);
+    VkClearValue getCorrectedColorClearValue(size_t colorIndexGL,
+                                             const VkClearColorValue &clearColor) const;
 
     WindowSurfaceVk *mBackbuffer;
 
@@ -187,6 +220,8 @@ class FramebufferVk : public FramebufferImpl
     vk::FramebufferDesc mCurrentFramebufferDesc;
     std::unordered_map<vk::FramebufferDesc, vk::FramebufferHelper> mFramebufferCache;
     bool mSupportDepthStencilFeedbackLoops;
+
+    vk::ClearValuesArray mDeferredClears;
 };
 }  // namespace rx
 

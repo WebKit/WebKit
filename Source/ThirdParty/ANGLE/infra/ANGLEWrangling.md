@@ -2,13 +2,15 @@
 
 As an ANGLE Sheriff. Your job is to:
 
- 1. Keep the [ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/angle.try/builders) in good
+ 1. Keep the [ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders) in good
     working order.
  1. Monitor the
     [Chromium GPU FYI Waterfall](https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console)
     and respond to ANGLE bugs.
  1. Control and monitor the [ANGLE auto-rollers](#task-3_the-auto_rollers).
  1. Keep the [ANGLE Standalone Testers](README.md) in good working order.
+ 1. Keep the [SwANGLE Try Waterfall](https://luci-milo.appspot.com/p/chromium/g/tryserver.chromium.swangle/builders) in good
+    working order.
 
 If you're not an ANGLE team member, you can contact us on the public ANGLE project
 [Google group](https://groups.google.com/forum/#!forum/angleproject).
@@ -21,7 +23,7 @@ extension for inspecting bot builds. It'll save you a lot of time.
 ## Task 1: Monitor ANGLE CI and Try Testers
 
 Your first job is to keep the
-[ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/angle.try/builders) healthy.  Some
+[ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders) healthy.  Some
 failures are expected on this waterfall. Developers might be testing expectedly buggy code. But
 persistent flakiness and failures should be reported and reverted.
 
@@ -90,8 +92,19 @@ We also use additional auto-rollers to roll third party libraries into ANGLE onc
  * [Vulkan-Headers into ANGLE](https://autoroll.skia.org/r/vulkan-headers-angle-autoroll)
  * [Vulkan-ValidationLayers into ANGLE](https://autoroll.skia.org/r/vulkan-validation-layers-angle-autoroll)
 
-Please ensure these rollers are also healthy and unblocked. You can trigger manual rolls using the dashboards
-to land high-priority changes.
+Please ensure these rollers are also healthy and unblocked. You can trigger manual rolls using the
+dashboards to land high-priority changes.
+
+**NOTE: When Vulkan-Headers roll is broken:**
+
+The Vulkan-Tools, Vulkan-Loader, and Vulkan-ValidationLayers repos all depend on the Vulkan-Headers
+repo. When Vulkan-Headers updates, all of those repos have a roll process managed by LunarG to
+update them for the new Vulkan-Headers. This usually takes 2-3 business days after the
+Vulkan-Headers update. If Vulkan-Headers roll fails, pause the roller with a note that it should be
+re-enabled when the dependent repos have been updated for the latest Vulkan-Headers changes. This
+will require a manual roll if the two repos have to be rolled in unison. To perform a manual roll,
+create a CL that updates the DEPS file with the new SHA1 value from the desired checkout of each
+dependent repo. Once the manual roll lands, re-enable the auto-rollers for the relevant repos.
 
 The autoroller configurations live in the [skia/buildbot repository](https://skia.googlesource.com/buildbot/)
 in the [autoroll/config](https://skia.googlesource.com/buildbot/+/master/autoroll/config) folder.
@@ -99,3 +112,31 @@ in the [autoroll/config](https://skia.googlesource.com/buildbot/+/master/autorol
 ## Task 4: ANGLE Standalone Testing
 
 See more detailed instructions on by following [this link](README.md).
+
+## Task 5: Monitor SwANGLE CI and Try Testers
+
+Most important task here is to keep healthy the 2 SwANGLE bots on ANGLE CQ,
+[linux-swangle-try-tot-angle-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-tot-angle-x64)
+and
+[win-swangle-try-tot-angle-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-tot-angle-x86).
+As well as the 2 SwANGLE bots used for ANGLE rolls on Chromium CQ,
+[linux-swangle-try-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-x64)
+and
+[win-swangle-try-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-x86).
+
+Same instructions as for [Task 1](#task-1_monitor-angle-ci-and-try-testers) apply here.
+Some failures on these bots may be due to SwiftShader changes, however.
+The possible ways to handle these failures are:
+1. If possible, suppress the failing tests in ANGLE, opening a bug to investigate these later.
+1. If it is clear that an ANGLE CL caused a regression,
+   consider whether reverting it or suppressing the failures is a better course of action.
+1. If a SwiftShader CL is suspected, and the breakage is too severe to be suppressed,
+   (a lot of tests fail in multiple suites),
+   it is possible to revert the responsible SwiftShader roll into Chromium
+   and open a SwiftShader [bug](http://go/swiftshaderbugs). SwiftShader rolls into Chromium
+   should fail afterwards, but if the bad roll manages to reland,
+   the [autoroller](https://autoroll.skia.org/r/swiftshader-chromium-autoroll) needs to be stopped.
+
+A lower priority task here is to keep healthy all the SwANGLE
+[CI](https://luci-milo.appspot.com/p/chromium/g/chromium.swangle/builders) and
+[Try](https://luci-milo.appspot.com/p/chromium/g/tryserver.chromium.swangle/builders) bots.

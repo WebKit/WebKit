@@ -42,7 +42,7 @@ the primary command buffer.
 
 The back-end usually records Image and Buffer barriers through additional `ContextVk` APIs:
 
- * `onBufferRead` and `onBufferWrite` accumulate `VkBuffer` barriers.
+ * `onBufferTransferRead/onBufferComputeShaderRead` and `onBufferTransferWrite/onBufferComputeShaderWrite` accumulate `VkBuffer` barriers.
  * `onImageRead` and `onImageWrite` accumulate `VkImage` barriers.
  * `onRenderPassImageWrite` is a special API for write barriers inside a RenderPass instance.
 
@@ -57,8 +57,8 @@ In this example we'll be recording a buffer copy command:
 
 ```
     # Ensure that ANGLE sets proper read and write barriers for the Buffers.
-    ANGLE_TRY(contextVk->onBufferWrite(VK_ACCESS_TRANSFER_WRITE_BIT, destBuffer));
-    ANGLE_TRY(contextVk->onBufferRead(VK_ACCESS_TRANSFER_READ_BIT, srcBuffer));
+    ANGLE_TRY(contextVk->onBufferTransferWrite(destBuffer));
+    ANGLE_TRY(contextVk->onBufferTransferRead(srcBuffer));
 
     # Get a pointer to a secondary command buffer for command recording. May "flush" the RP.
     vk::CommandBuffer *commandBuffer;
@@ -79,5 +79,5 @@ More implementation details can be found in the `doc` directory:
 
 [VkDevice]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkDevice.html
 [VkQueue]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkQueue.html
-[CommandAPIs]: https://chromium.googlesource.com/angle/angle/+/aa09ca69e4173cb14261e39be3b7bdf56bbd3840/src/libANGLE/renderer/vulkan/ContextVk.h#579
+[CommandAPIs]: https://chromium.googlesource.com/angle/angle/+/df31624eaf3df986a0bdf3f58a87b79b0cc8db5c/src/libANGLE/renderer/vulkan/ContextVk.h#620
 

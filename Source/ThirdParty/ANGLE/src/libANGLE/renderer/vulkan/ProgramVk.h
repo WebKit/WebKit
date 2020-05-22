@@ -42,6 +42,8 @@ class ProgramVk : public ProgramImpl
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
+    void fillProgramStateMap(gl::ShaderMap<const gl::ProgramState *> *programStatesOut);
+
     std::unique_ptr<LinkEvent> link(const gl::Context *context,
                                     const gl::ProgramLinkedResources &resources,
                                     gl::InfoLog &infoLog) override;
@@ -100,46 +102,16 @@ class ProgramVk : public ProgramImpl
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
+    angle::Result updateShaderUniforms(ContextVk *contextVk,
+                                       gl::ShaderType shaderType,
+                                       uint32_t *outOffset,
+                                       bool *anyNewBufferAllocated);
     angle::Result updateUniforms(ContextVk *contextVk);
 
     // For testing only.
     void setDefaultUniformBlocksMinSizeForTesting(size_t minSize);
 
-    const vk::PipelineLayout &getPipelineLayout() const
-    {
-        return mExecutable.mPipelineLayout.get();
-    }
-
     bool dirtyUniforms() const { return mDefaultUniformBlocksDirty.any(); }
-
-    angle::Result getGraphicsPipeline(ContextVk *contextVk,
-                                      gl::PrimitiveMode mode,
-                                      const vk::GraphicsPipelineDesc &desc,
-                                      const gl::AttributesMask &activeAttribLocations,
-                                      const vk::GraphicsPipelineDesc **descPtrOut,
-                                      vk::PipelineHelper **pipelineOut)
-    {
-        vk::ShaderProgramHelper *shaderProgram;
-        ANGLE_TRY(initGraphicsProgram(contextVk, mode, &shaderProgram));
-        ASSERT(shaderProgram->isGraphicsProgram());
-        RendererVk *renderer             = contextVk->getRenderer();
-        vk::PipelineCache *pipelineCache = nullptr;
-        ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
-        return shaderProgram->getGraphicsPipeline(
-            contextVk, &contextVk->getRenderPassCache(), *pipelineCache,
-            contextVk->getCurrentQueueSerial(), mExecutable.mPipelineLayout.get(), desc,
-            activeAttribLocations, mState.getProgramExecutable().getAttributesTypeMask(),
-            descPtrOut, pipelineOut);
-    }
-
-    angle::Result getComputePipeline(ContextVk *contextVk, vk::PipelineAndSerial **pipelineOut)
-    {
-        vk::ShaderProgramHelper *shaderProgram;
-        ANGLE_TRY(initComputeProgram(contextVk, &shaderProgram));
-        ASSERT(!shaderProgram->isGraphicsProgram());
-        return shaderProgram->getComputePipeline(contextVk, mExecutable.mPipelineLayout.get(),
-                                                 pipelineOut);
-    }
 
     // Used in testing only.
     vk::DynamicDescriptorPool *getDynamicDescriptorPool(uint32_t poolIndex)
@@ -151,6 +123,27 @@ class ProgramVk : public ProgramImpl
     ProgramExecutableVk &getExecutable() { return mExecutable; }
 
     gl::ShaderMap<DefaultUniformBlock> &getDefaultUniformBlocks() { return mDefaultUniformBlocks; }
+
+    ANGLE_INLINE angle::Result initGraphicsShaderProgram(ContextVk *contextVk,
+                                                         const gl::ShaderType shaderType,
+                                                         ProgramTransformOptionBits optionBits,
+                                                         ProgramInfo &programInfo)
+    {
+        return initProgram(contextVk, shaderType, optionBits, &programInfo);
+    }
+
+    ANGLE_INLINE angle::Result initComputeProgram(ContextVk *contextVk, ProgramInfo &programInfo)
+    {
+        ProgramTransformOptionBits optionBits;
+        return initProgram(contextVk, gl::ShaderType::Compute, optionBits, &programInfo);
+    }
+
+    ShaderInfo &getShaderInfo() { return mShaderInfo; }
+
+    GlslangProgramInterfaceInfo &getGlslangProgramInterfaceInfo()
+    {
+        return mGlslangProgramInterfaceInfo;
+    }
 
   private:
     template <int cols, int rows>
@@ -176,40 +169,22 @@ class ProgramVk : public ProgramImpl
     void linkResources(const gl::ProgramLinkedResources &resources);
 
     ANGLE_INLINE angle::Result initProgram(ContextVk *contextVk,
-                                           bool enableLineRasterEmulation,
-                                           ProgramInfo *programInfo,
-                                           vk::ShaderProgramHelper **shaderProgramOut)
+                                           const gl::ShaderType shaderType,
+                                           ProgramTransformOptionBits optionBits,
+                                           ProgramInfo *programInfo)
     {
         ASSERT(mShaderInfo.valid());
 
         // Create the program pipeline.  This is done lazily and once per combination of
         // specialization constants.
-        if (!programInfo->valid())
+        if (!programInfo->valid(shaderType))
         {
-            ANGLE_TRY(programInfo->initProgram(contextVk, mShaderInfo, enableLineRasterEmulation));
+            ANGLE_TRY(programInfo->initProgram(contextVk, shaderType, mShaderInfo,
+                                               mExecutable.mVariableInfoMap, optionBits));
         }
-        ASSERT(programInfo->valid());
+        ASSERT(programInfo->valid(shaderType));
 
-        *shaderProgramOut = programInfo->getShaderProgram();
         return angle::Result::Continue;
-    }
-
-    ANGLE_INLINE angle::Result initGraphicsProgram(ContextVk *contextVk,
-                                                   gl::PrimitiveMode mode,
-                                                   vk::ShaderProgramHelper **shaderProgramOut)
-    {
-        bool enableLineRasterEmulation = UseLineRaster(contextVk, mode);
-
-        ProgramInfo &programInfo = enableLineRasterEmulation ? mExecutable.mLineRasterProgramInfo
-                                                             : mExecutable.mDefaultProgramInfo;
-
-        return initProgram(contextVk, enableLineRasterEmulation, &programInfo, shaderProgramOut);
-    }
-
-    ANGLE_INLINE angle::Result initComputeProgram(ContextVk *contextVk,
-                                                  vk::ShaderProgramHelper **shaderProgramOut)
-    {
-        return initProgram(contextVk, false, &mExecutable.mDefaultProgramInfo, shaderProgramOut);
     }
 
     gl::ShaderMap<DefaultUniformBlock> mDefaultUniformBlocks;

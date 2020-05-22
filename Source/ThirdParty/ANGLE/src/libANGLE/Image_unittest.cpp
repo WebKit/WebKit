@@ -111,12 +111,13 @@ TEST(ImageTest, RespecificationReleasesReferences)
 
     gl::PixelUnpackState defaultUnpackState;
 
-    EXPECT_CALL(*textureImpl, setImage(_, _, _, _, _, _, _, _))
+    EXPECT_CALL(*textureImpl, setImage(_, _, _, _, _, _, _, _, _))
         .WillOnce(Return(angle::Result::Continue))
         .RetiresOnSaturation();
-    EXPECT_EQ(angle::Result::Continue,
-              texture->setImage(nullptr, defaultUnpackState, gl::TextureTarget::_2D, 0, GL_RGBA8,
-                                gl::Extents(1, 1, 1), GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
+    EXPECT_EQ(
+        angle::Result::Continue,
+        texture->setImage(nullptr, defaultUnpackState, nullptr, gl::TextureTarget::_2D, 0, GL_RGBA8,
+                          gl::Extents(1, 1, 1), GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
 
     EXPECT_CALL(mockEGLFactory, createImage(_, _, _, _))
         .WillOnce(CreateMockImageImpl())
@@ -135,13 +136,14 @@ TEST(ImageTest, RespecificationReleasesReferences)
     EXPECT_CALL(*imageImpl, orphan(_, _))
         .WillOnce(Return(angle::Result::Continue))
         .RetiresOnSaturation();
-    EXPECT_CALL(*textureImpl, setImage(_, _, _, _, _, _, _, _))
+    EXPECT_CALL(*textureImpl, setImage(_, _, _, _, _, _, _, _, _))
         .WillOnce(Return(angle::Result::Continue))
         .RetiresOnSaturation();
 
-    EXPECT_EQ(angle::Result::Continue,
-              texture->setImage(nullptr, defaultUnpackState, gl::TextureTarget::_2D, 0, GL_RGBA8,
-                                gl::Extents(1, 1, 1), GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
+    EXPECT_EQ(
+        angle::Result::Continue,
+        texture->setImage(nullptr, defaultUnpackState, nullptr, gl::TextureTarget::_2D, 0, GL_RGBA8,
+                          gl::Extents(1, 1, 1), GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
 
     EXPECT_EQ(1u, texture->getRefCount());
     EXPECT_EQ(1u, image->getRefCount());

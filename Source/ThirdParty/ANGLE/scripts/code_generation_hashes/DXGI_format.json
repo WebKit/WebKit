@@ -2,7 +2,7 @@
   "src/libANGLE/renderer/angle_format.py":
     "32ba71942c0fd00e6807104f1bb80a3c",
   "src/libANGLE/renderer/angle_format_map.json":
-    "fad58117657b6bde9488a10d35872d45",
+    "c79d833aea7007c7d0d51cdaa9b265a6",
   "src/libANGLE/renderer/d3d/d3d11/dxgi_format_data.json":
     "3428e4761ccd05f960adffd6ccbd86c5",
   "src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp":

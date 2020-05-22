@@ -111,7 +111,7 @@ TEST_P(DrawElementsTest, ClientSideNullptrArrayZeroCount)
 // deleting the applied index buffer.
 TEST_P(DrawElementsTest, DeletingAfterStreamingIndexes)
 {
-    // http://anglebug.com/4092
+    // http://anglebug.com/4575 - Test skipped on D3D11 (alpha channel not correct)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
     // Init program
     constexpr char kVS[] =
@@ -162,47 +162,15 @@ TEST_P(DrawElementsTest, DeletingAfterStreamingIndexes)
         item += 4u;
     }
 
-    std::vector<GLfloat> positionData;
-    // quad verts
-    positionData.push_back(-1.0f);
-    positionData.push_back(1.0f);
-    positionData.push_back(-1.0f);
-    positionData.push_back(-1.0f);
-    positionData.push_back(1.0f);
-    positionData.push_back(-1.0f);
-    positionData.push_back(1.0f);
-    positionData.push_back(1.0f);
+    std::vector<GLfloat> positionData = {// quad verts
+                                         -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+                                         // Repeat position data
+                                         -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
 
-    // Repeat position data
-    positionData.push_back(-1.0f);
-    positionData.push_back(1.0f);
-    positionData.push_back(-1.0f);
-    positionData.push_back(-1.0f);
-    positionData.push_back(1.0f);
-    positionData.push_back(-1.0f);
-    positionData.push_back(1.0f);
-    positionData.push_back(1.0f);
-
-    std::vector<GLfloat> testFlagData;
-    // red
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-
-    // green
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
-    testFlagData.push_back(0.0f);
-    testFlagData.push_back(1.0f);
+    std::vector<GLfloat> testFlagData = {// red
+                                         1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                                         // green
+                                         0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f};
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffers[0]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indexData[0].size(), &indexData[0][0],
@@ -249,24 +217,149 @@ TEST_P(DrawElementsTest, DeletingAfterStreamingIndexes)
 
     glBindVertexArray(mVertexArrays[0]);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    EXPECT_PIXEL_EQ(0, 0, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     glBindVertexArray(mVertexArrays[1]);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     glBindVertexArray(mVertexArrays[0]);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    EXPECT_PIXEL_EQ(0, 0, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     // Trigger the bug here.
     glDeleteBuffers(1, &mIndexBuffers[2]);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    EXPECT_PIXEL_EQ(0, 0, 0, 255, 0, 255);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     ASSERT_GL_NO_ERROR();
 }
+
+// Test drawing to part of the indices in an index buffer, and then all of them.
+TEST_P(DrawElementsTest, PartOfIndexBufferThenAll)
+{
+    // http://anglebug.com/4575 - Test skipped on D3D11 (alpha channel not correct)
+    // http://anglebug.com/4576 - Test skipped on SwiftShader (alpha channel not drawn)
+    ANGLE_SKIP_TEST_IF(IsWindows() && (IsD3D11() || isSwiftshader()));
+    // Init program
+    constexpr char kVS[] =
+        "attribute vec2 position;\n"
+        "attribute vec2 testFlag;\n"
+        "varying vec2 v_data;\n"
+        "void main() {\n"
+        "  gl_Position = vec4(position, 0, 1);\n"
+        "  v_data = testFlag;\n"
+        "}";
+
+    constexpr char kFS[] =
+        "varying highp vec2 v_data;\n"
+        "void main() {\n"
+        "  gl_FragColor = vec4(v_data, 0, 1);\n"
+        "}";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(0u, mProgram);
+    glUseProgram(mProgram);
+
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    ASSERT_NE(-1, positionLocation);
+
+    GLint testFlagLocation = glGetAttribLocation(mProgram, "testFlag");
+    ASSERT_NE(-1, testFlagLocation);
+
+    mIndexBuffers.resize(1);
+    glGenBuffers(1, &mIndexBuffers[0]);
+
+    mVertexArrays.resize(1);
+    glGenVertexArrays(1, &mVertexArrays[0]);
+
+    mVertexBuffers.resize(2);
+    glGenBuffers(2, &mVertexBuffers[0]);
+
+    std::vector<GLubyte> indexData[2];
+    indexData[0].push_back(0);
+    indexData[0].push_back(1);
+    indexData[0].push_back(2);
+    indexData[0].push_back(2);
+    indexData[0].push_back(3);
+    indexData[0].push_back(0);
+    indexData[0].push_back(4);
+    indexData[0].push_back(5);
+    indexData[0].push_back(6);
+    indexData[0].push_back(6);
+    indexData[0].push_back(7);
+    indexData[0].push_back(4);
+
+    // Make a copy:
+    indexData[1] = indexData[0];
+
+    std::vector<GLfloat> positionData = {// quad verts
+                                         -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+                                         // Repeat position data
+                                         -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
+
+    std::vector<GLfloat> testFlagData = {// red
+                                         1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                                         // green
+                                         0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f};
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffers[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLubyte) * indexData[0].size(), &indexData[0][0],
+                 GL_STATIC_DRAW);
+
+    glBindVertexArray(mVertexArrays[0]);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffers[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffers[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * positionData.size(), &positionData[0],
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffers[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * testFlagData.size(), &testFlagData[0],
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(testFlagLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2, nullptr);
+    glEnableVertexAttribArray(testFlagLocation);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Draw with just the second set of 6 items, then first 6, and then the entire index buffer
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(6));
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Reload the buffer again with a copy of the same data
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLubyte) * indexData[1].size(), &indexData[1][0],
+                 GL_STATIC_DRAW);
+
+    // Draw with just the first 6 indices, and then with the entire index buffer
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Reload the buffer again with a copy of the same data
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLubyte) * indexData[0].size(), &indexData[0][0],
+                 GL_STATIC_DRAW);
+
+    // This time, do not check color between draws (which causes a flush):
+    // Draw with just the second set of 6 items, then first 6, and then the entire index buffer
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(6));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that the offset in the index buffer is forced to be a multiple of the element size
 TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
 {

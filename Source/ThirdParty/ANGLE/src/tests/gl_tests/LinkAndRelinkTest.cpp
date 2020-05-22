@@ -37,8 +37,7 @@ class LinkAndRelinkTestES31 : public ANGLETest
 // or vice versa.
 
 // When program link fails and no valid rendering program is installed in the GL
-// state before the link, it should report an error for UseProgram and
-// DrawArrays/DrawElements.
+// state before the link, it should report an error for UseProgram
 TEST_P(LinkAndRelinkTest, RenderingProgramFailsWithoutProgramInstalled)
 {
     glUseProgram(0);
@@ -53,7 +52,7 @@ TEST_P(LinkAndRelinkTest, RenderingProgramFailsWithoutProgramInstalled)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 }
 
 // When program link or relink fails and a valid rendering program is installed
@@ -219,7 +218,6 @@ TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithoutProgramInstalled)
 // When program link or relink fails and a valid compute program is installed in
 // the GL state before the link, using the failed program via UseProgram should
 // report an error, but dispatching compute should succeed.
-// However, starting rendering always fails.
 TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithProgramInstalled)
 {
     // Install a compute program in the GL state via UseProgram, then dispatch
@@ -252,7 +250,7 @@ TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithProgramInstalled)
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 
     // Link failure, and a valid program has been installed in the GL state.
     GLuint programNull = glCreateProgram();
@@ -266,7 +264,7 @@ TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithProgramInstalled)
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 
     // Using the unsuccessfully linked program should report an error.
     glUseProgram(programNull);
@@ -280,7 +278,7 @@ TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithProgramInstalled)
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 
     // We try to relink the installed program, but make it fail.
 
@@ -296,7 +294,7 @@ TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithProgramInstalled)
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 
     // Using the unsuccessfully relinked program should report an error.
     glUseProgram(program);
@@ -310,11 +308,11 @@ TEST_P(LinkAndRelinkTestES31, ComputeProgramFailsWithProgramInstalled)
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 }
 
 // If you compile and link a compute program successfully and use the program,
-// then dispatching compute can succeed, while starting rendering will fail.
+// then dispatching compute and rendering can succeed (with undefined behavior).
 // If you relink the compute program to a rendering program when it is in use,
 // then dispatching compute will fail, but starting rendering can succeed.
 TEST_P(LinkAndRelinkTestES31, RelinkProgramSucceedsFromComputeToRendering)
@@ -347,7 +345,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 
     constexpr char kVS[] = "void main() {}";
     constexpr char kFS[] = "void main() {}";
@@ -441,7 +439,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     glDrawArrays(GL_POINTS, 0, 1);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(LinkAndRelinkTest);

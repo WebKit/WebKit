@@ -108,10 +108,7 @@ class EGLBlobCacheTest : public ANGLETest
 
     void testTearDown() override { gApplicationCache.clear(); }
 
-    bool programBinaryAvailable()
-    {
-        return (getClientMajorVersion() >= 3 || IsGLExtensionEnabled("GL_OES_get_program_binary"));
-    }
+    bool programBinaryAvailable() { return IsGLExtensionEnabled("GL_OES_get_program_binary"); }
 
     bool mHasBlobCache;
 };
@@ -232,4 +229,57 @@ TEST_P(EGLBlobCacheTest, NegativeAPI)
     EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2(EGLBlobCacheTest);
+// Regression test for including the fragment output locatins in the program key.
+// http://anglebug.com/4535
+TEST_P(EGLBlobCacheTest, FragmentOutputLocationKey)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended") ||
+                       getClientMajorVersion() < 3);
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    EXPECT_TRUE(mHasBlobCache);
+    eglSetBlobCacheFuncsANDROID(display, SetBlob, GetBlob);
+    ASSERT_EGL_SUCCESS();
+
+    // Compile a shader so it puts something in the cache
+    if (programBinaryAvailable())
+    {
+        constexpr char kFragmentShaderSrc[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src;
+uniform vec4 src1;
+out vec4 FragData;
+out vec4 SecondaryFragData;
+void main() {
+    FragData = src;
+    SecondaryFragData = src1;
+})";
+
+        constexpr char kVertexShaderSrc[] = R"(#version 300 es
+in vec4 position;
+void main() {
+    gl_Position = position;
+})";
+
+        GLuint program = CompileProgram(kVertexShaderSrc, kFragmentShaderSrc, [](GLuint p) {
+            glBindFragDataLocationEXT(p, 0, "FragData[0]");
+            glBindFragDataLocationIndexedEXT(p, 0, 1, "SecondaryFragData[0]");
+        });
+        ASSERT_NE(0u, program);
+        EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+        gLastCacheOpResult = CacheOpResult::ValueNotSet;
+
+        // Re-link the program with different fragment output bindings
+        program = CompileProgram(kVertexShaderSrc, kFragmentShaderSrc, [](GLuint p) {
+            glBindFragDataLocationEXT(p, 0, "FragData");
+            glBindFragDataLocationIndexedEXT(p, 0, 1, "SecondaryFragData");
+        });
+        ASSERT_NE(0u, program);
+        EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
+        gLastCacheOpResult = CacheOpResult::ValueNotSet;
+    }
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EGLBlobCacheTest);

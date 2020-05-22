@@ -25,6 +25,7 @@ TIntermFunctionDefinition *CreateInternalFunctionDefinitionNode(const TFunction 
 TIntermTyped *CreateZeroNode(const TType &type);
 TIntermConstantUnion *CreateFloatNode(float value);
 TIntermConstantUnion *CreateIndexNode(int index);
+TIntermConstantUnion *CreateUIntNode(unsigned int value);
 TIntermConstantUnion *CreateBoolNode(bool value);
 
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type);

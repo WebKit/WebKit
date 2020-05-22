@@ -954,10 +954,6 @@ TEST_P(MipmapTestES3, MipmapForDeepTextureArray)
 // Then tests if the mipmaps are rendered correctly for all two layers.
 TEST_P(MipmapTestES3, MipmapsForTexture3D)
 {
-    // Currently block on swiftshader Blit3D support, tracked on
-    // https://issuetracker.google.com/issues/150155499
-    ANGLE_SKIP_TEST_IF(isVulkanSwiftshaderRenderer());
-
     int px = getWindowWidth() / 2;
     int py = getWindowHeight() / 2;
 

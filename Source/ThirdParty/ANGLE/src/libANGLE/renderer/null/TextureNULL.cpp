@@ -25,6 +25,7 @@ angle::Result TextureNULL::setImage(const gl::Context *context,
                                     GLenum format,
                                     GLenum type,
                                     const gl::PixelUnpackState &unpack,
+                                    gl::Buffer *unpackBuffer,
                                     const uint8_t *pixels)
 {
     // TODO(geofflang): Read all incoming pixel data (maybe hash it?) to make sure we don't read out

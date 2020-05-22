@@ -85,8 +85,12 @@ generators = {
         'src/libANGLE/renderer/d3d/d3d11/gen_dxgi_format_table.py',
     'DXGI format support':
         'src/libANGLE/renderer/d3d/d3d11/gen_dxgi_support_tables.py',
+    'Emulated HLSL functions':
+        'src/compiler/translator/gen_emulated_builtin_function_tables.py',
     'GL copy conversion table':
         'src/libANGLE/gen_copy_conversion_table.py',
+    'GL CTS (dEQP) build files':
+        'scripts/gen_vk_gl_cts_build.py',
     'GL/EGL/WGL loader':
         'scripts/generate_loader.py',
     'GL/EGL entry points':
@@ -95,34 +99,32 @@ generators = {
         'scripts/gen_gl_enum_utils.py',
     'GL format map':
         'src/libANGLE/gen_format_map.py',
-    'uniform type':
-        'src/common/gen_uniform_type_table.py',
+    'Metal format table':
+        'src/libANGLE/renderer/metal/gen_mtl_format_table.py',
+    'Metal default shaders':
+        'src/libANGLE/renderer/metal/shaders/gen_mtl_internal_shaders.py',
     'OpenGL dispatch table':
         'src/libANGLE/renderer/gl/generate_gl_dispatch_table.py',
+    'overlay fonts':
+        'src/libANGLE/gen_overlay_fonts.py',
+    'overlay widgets':
+        'src/libANGLE/gen_overlay_widgets.py',
     'packed enum':
         'src/common/gen_packed_gl_enums.py',
     'proc table':
         'scripts/gen_proc_table.py',
+    'restricted traces':
+        'src/tests/perf_tests/restricted_traces/gen_restricted_traces.py',
+    'Static builtins':
+        'src/compiler/translator/gen_builtin_symbols.py',
+    'uniform type':
+        'src/common/gen_uniform_type_table.py',
     'Vulkan format':
         'src/libANGLE/renderer/vulkan/gen_vk_format_table.py',
     'Vulkan mandatory format support table':
         'src/libANGLE/renderer/vulkan/gen_vk_mandatory_format_support_table.py',
     'Vulkan internal shader programs':
         'src/libANGLE/renderer/vulkan/gen_vk_internal_shaders.py',
-    'overlay fonts':
-        'src/libANGLE/gen_overlay_fonts.py',
-    'overlay widgets':
-        'src/libANGLE/gen_overlay_widgets.py',
-    'Emulated HLSL functions':
-        'src/compiler/translator/gen_emulated_builtin_function_tables.py',
-    'Static builtins':
-        'src/compiler/translator/gen_builtin_symbols.py',
-    'Metal format table':
-        'src/libANGLE/renderer/metal/gen_mtl_format_table.py',
-    'Metal default shaders':
-        'src/libANGLE/renderer/metal/shaders/gen_mtl_internal_shaders.py',
-    'GL CTS (dEQP) build files':
-        'scripts/gen_vk_gl_cts_build.py',
 }
 
 
@@ -228,9 +230,7 @@ def main():
 
     if any_dirty:
         args = ['git.bat'] if os.name == 'nt' else ['git']
-        # The diff can be so large the arguments to clang-format can break the Windows command
-        # line length limits. Work around this by calling git cl format with --full.
-        args += ['cl', 'format', '--full']
+        args += ['cl', 'format']
         print('Calling git cl format')
         if subprocess.call(args) != 0:
             sys.exit(1)

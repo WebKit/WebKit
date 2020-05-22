@@ -25,6 +25,7 @@ void GlslangGetShaderSource(const gl::ProgramState &programState,
                             ShaderMapInterfaceVariableInfoMap *variableInfoMapOut);
 
 angle::Result GlslangGetShaderSpirvCode(ErrorHandler *context,
+                                        const gl::ShaderBitSet &linkedShaderStages,
                                         const gl::Caps &glCaps,
                                         const gl::ShaderMap<std::string> &shaderSources,
                                         const ShaderMapInterfaceVariableInfoMap &variableInfoMap,

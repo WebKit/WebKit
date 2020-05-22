@@ -323,6 +323,7 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root, ShCompileOptions 
         // on drivers that don't have the extension at all as it would break WebGL 1 for
         // some users.
         sink << "#extension GL_ARB_gpu_shader5 : enable\n";
+        sink << "#extension GL_EXT_gpu_shader5 : enable\n";
     }
 
     TExtensionGLSL extensionGLSL(getOutputType());

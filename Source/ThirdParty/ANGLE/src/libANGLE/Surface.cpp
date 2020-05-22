@@ -24,6 +24,10 @@
 
 namespace egl
 {
+namespace
+{
+angle::SubjectIndex kSurfaceImplSubjectIndex = 0;
+}  // namespace
 
 SurfaceState::SurfaceState(const egl::Config *configIn, const AttributeMap &attributesIn)
     : label(nullptr),
@@ -74,7 +78,8 @@ Surface::Surface(EGLint surfaceType,
       mTexture(nullptr),
       mColorFormat(config->renderTargetFormat),
       mDSFormat(config->depthStencilFormat),
-      mInitState(gl::InitState::Initialized)
+      mInitState(gl::InitState::Initialized),
+      mImplObserverBinding(this, kSurfaceImplSubjectIndex)
 {
     mPostSubBufferRequested =
         (attributes.get(EGL_POST_SUB_BUFFER_SUPPORTED_NV, EGL_FALSE) == EGL_TRUE);
@@ -114,6 +119,9 @@ Surface::Surface(EGLint surfaceType,
     }
 
     mOrientation = static_cast<EGLint>(attributes.get(EGL_SURFACE_ORIENTATION_ANGLE, 0));
+
+    mTextureOffset.x = static_cast<int>(mState.attributes.get(EGL_TEXTURE_OFFSET_X_ANGLE, 0));
+    mTextureOffset.y = static_cast<int>(mState.attributes.get(EGL_TEXTURE_OFFSET_Y_ANGLE, 0));
 }
 
 Surface::~Surface() {}
@@ -204,6 +212,8 @@ Error Surface::initialize(const Display *display)
         mState.supportedCompositorTimings = mImplementation->getSupportedCompositorTimings();
         mState.supportedTimestamps        = mImplementation->getSupportedTimestamps();
     }
+
+    mImplObserverBinding.bind(mImplementation);
 
     return NoError();
 }
@@ -450,6 +460,32 @@ EGLint Surface::getHeight() const
     return mFixedSize ? static_cast<EGLint>(mFixedHeight) : mImplementation->getHeight();
 }
 
+egl::Error Surface::getUserWidth(const egl::Display *display, EGLint *value) const
+{
+    if (mFixedSize)
+    {
+        *value = static_cast<EGLint>(mFixedWidth);
+        return NoError();
+    }
+    else
+    {
+        return mImplementation->getUserWidth(display, value);
+    }
+}
+
+egl::Error Surface::getUserHeight(const egl::Display *display, EGLint *value) const
+{
+    if (mFixedSize)
+    {
+        *value = static_cast<EGLint>(mFixedHeight);
+        return NoError();
+    }
+    else
+    {
+        return mImplementation->getUserHeight(display, value);
+    }
+}
+
 Error Surface::bindTexImage(gl::Context *context, gl::Texture *texture, EGLint buffer)
 {
     ASSERT(!mTexture);
@@ -577,6 +613,12 @@ Error Surface::getFrameTimestamps(EGLuint64KHR frameId,
                                   EGLnsecsANDROID *values) const
 {
     return mImplementation->getFrameTimestamps(frameId, numTimestamps, timestamps, values);
+}
+
+void Surface::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
+{
+    ASSERT(message == angle::SubjectMessage::SubjectChanged && index == kSurfaceImplSubjectIndex);
+    onStateChange(angle::SubjectMessage::ContentsChanged);
 }
 
 WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,

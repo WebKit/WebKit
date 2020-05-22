@@ -1974,6 +1974,104 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Test back to back that the length of unsized array is correct after respecifying the buffer
+// size to be smaller than the first
+TEST_P(ShaderStorageBufferTest31, UnsizedArrayLengthRespecifySize)
+{
+    // http://anglebug.com/4566
+    ANGLE_SKIP_TEST_IF(IsD3D11() || (IsAndroid() && IsOpenGLES()));
+
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout (local_size_x=1) in;
+layout(std430, binding = 0) buffer Storage0 {
+  uint buf1[2];
+  uint buf2[];
+} sb_load;
+layout(std430, binding = 1) buffer Storage1 {
+  int unsizedArrayLength;
+  uint buf1[2];
+  uint buf2[];
+} sb_store;
+
+void main()
+{
+  sb_store.unsizedArrayLength = sb_store.buf2.length();
+  for (int i = 0; i < sb_load.buf1.length(); i++) {
+    sb_store.buf1[i] = sb_load.buf1[i];
+  }
+  for (int i = 0; i < sb_load.buf2.length(); i++) {
+    sb_store.buf2[i] = sb_load.buf2[i];
+  }
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    glUseProgram(program);
+
+    constexpr unsigned int kBytesPerComponent                       = sizeof(unsigned int);
+    constexpr unsigned int kLoadBlockElementCount                   = 5;
+    constexpr unsigned int kStoreBlockElementCount                  = 6;
+    constexpr unsigned int kInputValues[kLoadBlockElementCount]     = {1u, 2u, 3u, 4u, 5u};
+    constexpr unsigned int kExpectedValues[kStoreBlockElementCount] = {3u, 1u, 2u, 3u, 4u, 5u};
+    GLBuffer shaderStorageBuffer[2];
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kLoadBlockElementCount * kBytesPerComponent,
+                 &kInputValues, GL_STATIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kStoreBlockElementCount * kBytesPerComponent, nullptr,
+                 GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer[1]);
+
+    glDispatchCompute(1, 1, 1);
+    glFinish();
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kStoreBlockElementCount * kBytesPerComponent,
+                         GL_MAP_READ_BIT));
+    for (unsigned int i = 0; i < kStoreBlockElementCount; i++)
+    {
+        EXPECT_EQ(kExpectedValues[i], *(ptr + i));
+    }
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    EXPECT_GL_NO_ERROR();
+
+    // Respecify these SSBOs to be smaller
+    constexpr unsigned int kSmallerLoadBlockElementCount                          = 3;
+    constexpr unsigned int kSmallerStoreBlockElementCount                         = 4;
+    constexpr unsigned int kSmallerInputValues[kSmallerLoadBlockElementCount]     = {1u, 2u, 3u};
+    constexpr unsigned int kSmallerExpectedValues[kSmallerStoreBlockElementCount] = {1u, 1u, 2u,
+                                                                                     3u};
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSmallerLoadBlockElementCount * kBytesPerComponent,
+                 &kSmallerInputValues, GL_STATIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSmallerStoreBlockElementCount * kBytesPerComponent,
+                 nullptr, GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer[1]);
+
+    glDispatchCompute(1, 1, 1);
+    glFinish();
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    const GLuint *ptr2 = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
+                         kSmallerStoreBlockElementCount * kBytesPerComponent, GL_MAP_READ_BIT));
+    for (unsigned int i = 0; i < kSmallerStoreBlockElementCount; i++)
+    {
+        EXPECT_EQ(kSmallerExpectedValues[i], *(ptr2 + i));
+    }
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that compond assignment operator for buffer variable is correctly handled.
 TEST_P(ShaderStorageBufferTest31, CompoundAssignmentOperator)
 {
@@ -2256,6 +2354,106 @@ void main()
     glUseProgram(program);
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
+}
+
+// Verify the size of the buffer with unsized struct array is calculated correctly
+TEST_P(ShaderStorageBufferTest31, BigStructUnsizedStructArraySize)
+{
+    // TODO(http://anglebug.com/3596)
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
+
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout (local_size_x=1) in;
+
+struct S
+{
+    mat4 m;     // 4 vec4 = 16 floats
+    vec4 a[10]; // 10 vec4 = 40 floats
+};
+
+layout(binding=0) buffer B
+{
+    vec4 precedingMember;               // 4 floats
+    S precedingMemberUnsizedArray[];    // 56 floats
+} b;
+
+void main()
+{
+    if (false)
+    {
+        b.precedingMember = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint resourceIndex = glGetProgramResourceIndex(program, GL_SHADER_STORAGE_BLOCK, "B");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_NE(resourceIndex, 0xFFFFFFFF);
+
+    GLenum property = GL_BUFFER_DATA_SIZE;
+    GLint queryData = -1;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resourceIndex, 1, &property, 1,
+                           nullptr, &queryData);
+    EXPECT_GL_NO_ERROR();
+
+    // 60 * sizeof(float) = 240
+    // Vulkan rounds up to the required buffer alignment, so >= 240
+    EXPECT_GE(queryData, 240);
+}
+
+// Verify the size of the buffer with unsized float array is calculated correctly
+TEST_P(ShaderStorageBufferTest31, BigStructUnsizedFloatArraySize)
+{
+    // TODO(http://anglebug.com/3596)
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsOpenGL());
+
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout (local_size_x=1) in;
+
+layout(binding=0) buffer B
+{
+    vec4 precedingMember;                   // 4 floats
+    float precedingMemberUnsizedArray[];    // "1" float
+} b;
+
+void main()
+{
+    if (false)
+    {
+        b.precedingMember = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint resourceIndex = glGetProgramResourceIndex(program, GL_SHADER_STORAGE_BLOCK, "B");
+    EXPECT_GL_NO_ERROR();
+    EXPECT_NE(resourceIndex, 0xFFFFFFFF);
+
+    GLenum property = GL_BUFFER_DATA_SIZE;
+    GLint queryData = -1;
+    glGetProgramResourceiv(program, GL_SHADER_STORAGE_BLOCK, resourceIndex, 1, &property, 1,
+                           nullptr, &queryData);
+    EXPECT_GL_NO_ERROR();
+
+    // 5 * sizeof(float) = 20
+    // Vulkan rounds up to the required buffer alignment, so >= 20
+    EXPECT_GE(queryData, 20);
 }
 
 ANGLE_INSTANTIATE_TEST_ES31(ShaderStorageBufferTest31);

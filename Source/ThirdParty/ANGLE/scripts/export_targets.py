@@ -198,6 +198,7 @@ IGNORED_INCLUDES = {
     b'libANGLE/renderer/vulkan/mac/DisplayVkMac.h',
     b'libANGLE/renderer/vulkan/win32/DisplayVkWin32.h',
     b'libANGLE/renderer/vulkan/xcb/DisplayVkXcb.h',
+    b'third_party/volk/volk.h',
     b'kernel/image.h',
 }
 

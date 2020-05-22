@@ -161,8 +161,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.NV_shader_framebuffer_fetch     = 1;
         resources.ARM_shader_framebuffer_fetch    = 1;
         resources.EXT_YUV_target                  = 1;
+        resources.APPLE_clip_distance             = 1;
         resources.MaxDualSourceDrawBuffers        = 1;
         resources.EXT_gpu_shader5                 = 1;
+        resources.MaxClipDistances                = 1;
 
         if (!translator->Init(resources))
         {

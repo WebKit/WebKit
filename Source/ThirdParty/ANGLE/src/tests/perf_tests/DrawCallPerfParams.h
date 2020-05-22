@@ -78,6 +78,13 @@ ParamsT WGL(const ParamsT &in)
     return out;
 }
 
+template <typename ParamsT>
+ParamsT EGL(const ParamsT &in)
+{
+    ParamsT out = in;
+    out.driver  = angle::GLESDriverType::SystemEGL;
+    return out;
+}
 }  // namespace params
 
 #endif  // TESTS_PERF_TESTS_DRAW_CALL_PERF_PARAMS_H_

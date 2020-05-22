@@ -1,0 +1,18 @@
+{
+  "src/tests/perf_tests/restricted_traces/egypt_1500.tar.gz.sha1":
+    "bd3935d0237466e6c80b450900bba67d",
+  "src/tests/perf_tests/restricted_traces/gen_restricted_traces.py":
+    "f61ccd2c8ce98674527909d567083963",
+  "src/tests/perf_tests/restricted_traces/manhattan_10.tar.gz.sha1":
+    "b4d333cd5cf3977c339350be0a819928",
+  "src/tests/perf_tests/restricted_traces/restricted_traces.json":
+    "ed50690d8fd713ad6ed7908af3e70b7e",
+  "src/tests/perf_tests/restricted_traces/restricted_traces_autogen.gni":
+    "2e5d0ed5afca04a7a38eb5bec4259008",
+  "src/tests/perf_tests/restricted_traces/restricted_traces_autogen.h":
+    "2b831956463e2c30d6116c17b89743fa",
+  "src/tests/perf_tests/restricted_traces/temple_run_300.tar.gz.sha1":
+    "934983876ac5f3d9bc9b43698bb94b9d",
+  "src/tests/perf_tests/restricted_traces/trex_200.tar.gz.sha1":
+    "605cf71846da2309a002baa78abf28e1"
+}

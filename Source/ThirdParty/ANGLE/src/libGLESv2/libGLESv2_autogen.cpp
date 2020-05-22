@@ -3707,6 +3707,8 @@ void GL_APIENTRY glLoseContextCHROMIUM(GLenum current, GLenum other)
     return gl::LoseContextCHROMIUM(current, other);
 }
 
+// GL_EXT_EGL_image_array
+
 // GL_EXT_blend_func_extended
 void GL_APIENTRY glBindFragDataLocationEXT(GLuint program, GLuint color, const GLchar *name)
 {
@@ -4184,6 +4186,8 @@ void GL_APIENTRY glImportSemaphoreFdEXT(GLuint semaphore, GLenum handleType, GLi
 // GL_EXT_texture_filter_anisotropic
 
 // GL_EXT_texture_format_BGRA8888
+
+// GL_EXT_texture_sRGB_R8
 
 // GL_EXT_texture_storage
 void GL_APIENTRY glTexStorage1DEXT(GLenum target,

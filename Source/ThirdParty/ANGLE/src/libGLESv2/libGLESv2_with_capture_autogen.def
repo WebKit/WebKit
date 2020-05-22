@@ -602,6 +602,8 @@ EXPORTS
     ; GL_CHROMIUM_lose_context
     glLoseContextCHROMIUM
 
+    ; GL_EXT_EGL_image_array
+
     ; GL_EXT_blend_func_extended
     glBindFragDataLocationEXT
     glBindFragDataLocationIndexedEXT
@@ -719,6 +721,8 @@ EXPORTS
     ; GL_EXT_texture_filter_anisotropic
 
     ; GL_EXT_texture_format_BGRA8888
+
+    ; GL_EXT_texture_sRGB_R8
 
     ; GL_EXT_texture_storage
     glTexStorage1DEXT
@@ -1672,8 +1676,10 @@ EXPORTS
     ; EGL_ANGLE_swap_with_frame_token
     EGL_SwapBuffersWithFrameTokenANGLE
 
+    ; EGL_ANGLE_sync_control_rate
+    EGL_GetMscRateANGLE
+
     ; EGL_CHROMIUM_sync_control
-    EGL_GetMscRateCHROMIUM
     EGL_GetSyncValuesCHROMIUM
 
     ; EGL_EXT_device_query

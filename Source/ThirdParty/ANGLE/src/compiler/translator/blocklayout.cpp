@@ -82,8 +82,7 @@ void TraverseStructArrayVariable(const ShaderVariable &variable,
     // Nested arrays are processed starting from outermost (arrayNestingIndex 0u) and ending at the
     // innermost. We make a special case for unsized arrays.
     const unsigned int currentArraySize = variable.getNestedArraySize(0);
-    unsigned int count                  = std::max(currentArraySize, 1u);
-    for (unsigned int arrayElement = 0u; arrayElement < count; ++arrayElement)
+    for (unsigned int arrayElement = 0u; arrayElement < currentArraySize; ++arrayElement)
     {
         visitor->enterArrayElement(variable, arrayElement);
         ShaderVariable elementVar = variable;

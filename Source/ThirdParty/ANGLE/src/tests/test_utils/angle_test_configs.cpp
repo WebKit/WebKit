@@ -112,7 +112,7 @@ std::ostream &operator<<(std::ostream &stream, const PlatformParameters &pp)
             stream << "WGL";
             break;
         case GLESDriverType::SystemEGL:
-            stream << "GLES";
+            stream << "EGL";
             break;
         default:
             stream << "Error";
@@ -769,4 +769,28 @@ PlatformParameters ES3_WGL()
 {
     return PlatformParameters(3, 0, GLESDriverType::SystemWGL);
 }
+
+PlatformParameters ES2_EGL()
+{
+    return PlatformParameters(2, 0, GLESDriverType::SystemEGL);
+}
+
+PlatformParameters ES3_EGL()
+{
+    return PlatformParameters(3, 0, GLESDriverType::SystemEGL);
+}
+
+const char *GetNativeEGLLibraryNameWithExtension()
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    return "libEGL.so";
+#elif defined(ANGLE_PLATFORM_LINUX)
+    return "libEGL.so.1";
+#elif defined(ANGLE_PLATFORM_WINDOWS)
+    return "libEGL.dll";
+#else
+    return "unknown_libegl";
+#endif
+}
+
 }  // namespace angle

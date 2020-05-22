@@ -23,7 +23,10 @@ namespace rx
 {
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
-    : DisplayImpl(state), vk::Context(new RendererVk()), mScratchBuffer(1000u)
+    : DisplayImpl(state),
+      vk::Context(new RendererVk()),
+      mScratchBuffer(1000u),
+      mHasSurfaceWithRobustInit(false)
 {}
 
 DisplayVk::~DisplayVk()
@@ -44,7 +47,7 @@ void DisplayVk::terminate()
     mRenderer->reloadVolkIfNeeded();
 
     ASSERT(mRenderer);
-    mRenderer->onDestroy(this);
+    mRenderer->onDestroy();
 }
 
 egl::Error DisplayVk::makeCurrent(egl::Surface * /*drawSurface*/,
@@ -105,12 +108,22 @@ SurfaceImpl *DisplayVk::createWindowSurface(const egl::SurfaceState &state,
                                             EGLNativeWindowType window,
                                             const egl::AttributeMap &attribs)
 {
+    if (attribs.get(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE, EGL_FALSE) == EGL_TRUE)
+    {
+        mHasSurfaceWithRobustInit = true;
+    }
+
     return createWindowSurfaceVk(state, window);
 }
 
 SurfaceImpl *DisplayVk::createPbufferSurface(const egl::SurfaceState &state,
                                              const egl::AttributeMap &attribs)
 {
+    if (attribs.get(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE, EGL_FALSE) == EGL_TRUE)
+    {
+        mHasSurfaceWithRobustInit = true;
+    }
+
     ASSERT(mRenderer);
     return new OffscreenSurfaceVk(state);
 }
@@ -198,6 +211,7 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
         getRenderer()->getFeatures().supportsAndroidHardwareBuffer.enabled;
     outExtensions->surfacelessContext = true;
     outExtensions->glColorspace = getRenderer()->getFeatures().supportsSwapchainColorspace.enabled;
+    outExtensions->imageGlColorspace = outExtensions->glColorspace;
 
 #if defined(ANGLE_PLATFORM_ANDROID)
     outExtensions->framebufferTargetANDROID = true;
@@ -206,6 +220,11 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // Disable context priority when non-zero memory init is enabled. This enforces a queue order.
     outExtensions->contextPriority = !getRenderer()->getFeatures().allocateNonZeroMemory.enabled;
     outExtensions->noConfigContext = true;
+
+#if defined(ANGLE_PLATFORM_ANDROID)
+    outExtensions->nativeFenceSyncANDROID =
+        getRenderer()->getFeatures().supportsAndroidNativeFenceSync.enabled;
+#endif  // defined(ANGLE_PLATFORM_ANDROID)
 
 #if defined(ANGLE_PLATFORM_GGP)
     outExtensions->ggpStreamDescriptor = true;
@@ -237,8 +256,8 @@ void DisplayVk::handleError(VkResult result,
     ASSERT(result != VK_SUCCESS);
 
     std::stringstream errorStream;
-    errorStream << "Internal Vulkan error: " << VulkanResultString(result) << ", in " << file
-                << ", " << function << ":" << line << ".";
+    errorStream << "Internal Vulkan error (" << result << "): " << VulkanResultString(result)
+                << ", in " << file << ", " << function << ":" << line << ".";
     mStoredErrorString = errorStream.str();
 
     if (result == VK_ERROR_DEVICE_LOST)
@@ -259,4 +278,9 @@ void DisplayVk::populateFeatureList(angle::FeatureList *features)
     mRenderer->getFeatures().populateFeatureList(features);
 }
 
+bool DisplayVk::isRobustResourceInitEnabled() const
+{
+    // We return true if any surface was created with robust resource init enabled.
+    return mHasSurfaceWithRobustInit;
+}
 }  // namespace rx

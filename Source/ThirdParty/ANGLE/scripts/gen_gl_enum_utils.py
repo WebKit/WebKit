@@ -73,6 +73,11 @@ std::string GLbitfieldToString(GLenumGroup enumGroup, unsigned int value)
 {{
     std::stringstream st;
 
+    if (value == 0)
+    {{
+        return "0";
+    }}
+
     const angle::BitSet<32> bitSet(value);
     bool first = true;
     for (const auto index : bitSet)

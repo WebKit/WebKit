@@ -13,10 +13,11 @@
 
 namespace angle
 {
-bool gCalibration       = false;
-int gStepsToRunOverride = -1;
-bool gEnableTrace       = false;
-const char *gTraceFile  = "ANGLETrace.json";
+bool gCalibration          = false;
+int gStepsToRunOverride    = -1;
+bool gEnableTrace          = false;
+const char *gTraceFile     = "ANGLETrace.json";
+const char *gScreenShotDir = nullptr;
 }  // namespace angle
 
 using namespace angle;
@@ -37,7 +38,7 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
         }
         else if (strcmp("--trace-file", argv[argIndex]) == 0 && argIndex < *argc - 1)
         {
-            gTraceFile = argv[argIndex];
+            gTraceFile = argv[argIndex + 1];
             // Skip an additional argument.
             argIndex++;
         }
@@ -53,6 +54,11 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
             strstr >> stepsToRun;
             gStepsToRunOverride = stepsToRun;
             // Skip an additional argument.
+            argIndex++;
+        }
+        else if (strcmp("--screenshot-dir", argv[argIndex]) == 0 && argIndex < *argc - 1)
+        {
+            gScreenShotDir = argv[argIndex + 1];
             argIndex++;
         }
         else

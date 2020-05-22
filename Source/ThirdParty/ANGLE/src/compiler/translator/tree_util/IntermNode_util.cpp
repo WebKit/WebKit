@@ -131,6 +131,15 @@ TIntermConstantUnion *CreateIndexNode(int index)
     return new TIntermConstantUnion(u, type);
 }
 
+TIntermConstantUnion *CreateUIntNode(unsigned int value)
+{
+    TConstantUnion *u = new TConstantUnion[1];
+    u[0].setUConst(value);
+
+    TType type(EbtUInt, EbpUndefined, EvqConst, 1);
+    return new TIntermConstantUnion(u, type);
+}
+
 TIntermConstantUnion *CreateBoolNode(bool value)
 {
     TConstantUnion *u = new TConstantUnion[1];

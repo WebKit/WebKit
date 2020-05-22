@@ -455,7 +455,10 @@ void CaptureGetSynciv_length(const State &glState,
                              GLint *values,
                              ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    if (length)
+    {
+        paramCapture->readBufferSizeBytes = sizeof(GLsizei);
+    }
 }
 
 void CaptureGetSynciv_values(const State &glState,
@@ -467,7 +470,16 @@ void CaptureGetSynciv_values(const State &glState,
                              GLint *values,
                              ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // Spec: On success, GetSynciv replaces up to bufSize integers in values with the corresponding
+    // property values of the object being queried. The actual number of integers replaced is
+    // returned in *length.If length is NULL, no length is returned.
+    if (bufSize == 0)
+        return;
+
+    if (values)
+    {
+        paramCapture->readBufferSizeBytes = sizeof(GLint) * bufSize;
+    }
 }
 
 void CaptureGetTransformFeedbackVarying_length(const State &glState,
@@ -594,7 +606,8 @@ void CaptureInvalidateFramebuffer_attachments(const State &glState,
                                               const GLenum *attachments,
                                               ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(attachments, sizeof(GLenum) * numAttachments, paramCapture);
+    paramCapture->value.voidConstPointerVal = paramCapture->data[0].data();
 }
 
 void CaptureInvalidateSubFramebuffer_attachments(const State &glState,
@@ -845,7 +858,8 @@ void CaptureVertexAttribIPointer_pointer(const State &glState,
                                          const void *pointer,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureVertexAttribPointer_pointer(glState, isCallValid, index, size, typePacked, false, stride,
+                                       pointer, paramCapture);
 }
 
 }  // namespace gl

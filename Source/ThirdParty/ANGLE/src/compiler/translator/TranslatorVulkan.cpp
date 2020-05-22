@@ -29,6 +29,7 @@
 #include "compiler/translator/tree_util/FindFunction.h"
 #include "compiler/translator/tree_util/FindMain.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
+#include "compiler/translator/tree_util/ReplaceClipDistanceVariable.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 #include "compiler/translator/util.h"
@@ -176,6 +177,7 @@ constexpr const char kViewport[]             = "viewport";
 constexpr const char kHalfRenderAreaHeight[] = "halfRenderAreaHeight";
 constexpr const char kViewportYScale[]       = "viewportYScale";
 constexpr const char kNegViewportYScale[]    = "negViewportYScale";
+constexpr const char kClipDistancesEnabled[] = "clipDistancesEnabled";
 constexpr const char kXfbActiveUnpaused[]    = "xfbActiveUnpaused";
 constexpr const char kXfbVerticesPerDraw[]   = "xfbVerticesPerDraw";
 constexpr const char kXfbBufferOffsets[]     = "xfbBufferOffsets";
@@ -183,10 +185,11 @@ constexpr const char kAcbBufferOffsets[]     = "acbBufferOffsets";
 constexpr const char kDepthRange[]           = "depthRange";
 constexpr const char kPreRotation[]          = "preRotation";
 
-constexpr size_t kNumGraphicsDriverUniforms                                                = 10;
+constexpr size_t kNumGraphicsDriverUniforms                                                = 11;
 constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {
-    {kViewport, kHalfRenderAreaHeight, kViewportYScale, kNegViewportYScale, kXfbActiveUnpaused,
-     kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange, kPreRotation}};
+    {kViewport, kHalfRenderAreaHeight, kViewportYScale, kNegViewportYScale, kClipDistancesEnabled,
+     kXfbActiveUnpaused, kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange,
+     kPreRotation}};
 
 constexpr size_t kNumComputeDriverUniforms                                               = 1;
 constexpr std::array<const char *, kNumComputeDriverUniforms> kComputeDriverUniformNames = {
@@ -415,9 +418,10 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTa
         new TType(EbtFloat),
         new TType(EbtFloat),
         new TType(EbtFloat),
+        new TType(EbtUInt),  // uint clipDistancesEnabled;  // 32 bits for 32 clip distances max
         new TType(EbtUInt),
         new TType(EbtUInt),
-        // NOTE: There's a vec3 gap here that can be used in the future
+        // NOTE: There's a vec2 gap here that can be used in the future
         new TType(EbtInt, 4),
         new TType(EbtUInt, 4),
         emulatedDepthRangeType,
@@ -1005,6 +1009,23 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
 
         // Append a macro for transform feedback substitution prior to modifying depth.
         if (!AppendVertexShaderTransformFeedbackOutputToMain(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+
+        // Search for the gl_ClipDistance usage, if its used, we need to do some replacements.
+        bool useClipDistance = false;
+        for (const ShaderVariable &outputVarying : mOutputVaryings)
+        {
+            if (outputVarying.name == "gl_ClipDistance")
+            {
+                useClipDistance = true;
+                break;
+            }
+        }
+        if (useClipDistance && !ReplaceClipDistanceAssignments(
+                                   this, root, &getSymbolTable(),
+                                   CreateDriverUniformRef(driverUniforms, kClipDistancesEnabled)))
         {
             return false;
         }

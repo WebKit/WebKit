@@ -15,6 +15,7 @@
 #include "util/util_gl.h"
 
 ANGLE_UTIL_EXPORT GLuint CheckLinkStatusAndReturnProgram(GLuint program, bool outputErrorMessages);
+ANGLE_UTIL_EXPORT GLuint GetProgramShader(GLuint program, GLint requestedType);
 ANGLE_UTIL_EXPORT GLuint CompileShader(GLenum type, const char *source);
 ANGLE_UTIL_EXPORT GLuint CompileShaderFromFile(GLenum type, const std::string &sourcePath);
 
@@ -158,6 +159,9 @@ namespace fs
 
 // A shader that fills with 100% opaque red.
 ANGLE_UTIL_EXPORT const char *Red();
+
+// A shader that fills with 100% opaque green.
+ANGLE_UTIL_EXPORT const char *Green();
 
 }  // namespace fs
 }  // namespace essl31_shaders

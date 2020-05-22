@@ -25,8 +25,12 @@ const char *GetCommandString(CommandID id)
     {
         case CommandID::Invalid:
             return "--Invalid--";
+        case CommandID::BeginDebugUtilsLabel:
+            return "BeginDebugUtilsLabel";
         case CommandID::BeginQuery:
             return "BeginQuery";
+        case CommandID::BeginTransformFeedback:
+            return "BeginTransformFeedback";
         case CommandID::BindComputePipeline:
             return "BindComputePipeline";
         case CommandID::BindDescriptorSets:
@@ -35,10 +39,10 @@ const char *GetCommandString(CommandID id)
             return "BindGraphicsPipeline";
         case CommandID::BindIndexBuffer:
             return "BindIndexBuffer";
-        case CommandID::BindVertexBuffers:
-            return "BindVertexBuffers";
         case CommandID::BindTransformFeedbackBuffers:
             return "BindTransformFeedbackBuffers";
+        case CommandID::BindVertexBuffers:
+            return "BindVertexBuffers";
         case CommandID::BlitImage:
             return "BlitImage";
         case CommandID::BufferBarrier:
@@ -67,28 +71,34 @@ const char *GetCommandString(CommandID id)
             return "DrawIndexed";
         case CommandID::DrawIndexedBaseVertex:
             return "DrawIndexedBaseVertex";
+        case CommandID::DrawIndexedIndirect:
+            return "DrawIndexedIndirect";
         case CommandID::DrawIndexedInstanced:
             return "DrawIndexedInstanced";
         case CommandID::DrawIndexedInstancedBaseVertex:
             return "DrawIndexedInstancedBaseVertex";
         case CommandID::DrawIndexedInstancedBaseVertexBaseInstance:
             return "DrawIndexedInstancedBaseVertexBaseInstance";
+        case CommandID::DrawIndirect:
+            return "DrawIndirect";
         case CommandID::DrawInstanced:
             return "DrawInstanced";
         case CommandID::DrawInstancedBaseInstance:
             return "DrawInstancedBaseInstance";
-        case CommandID::DrawIndexedIndirect:
-            return "DrawIndexedIndirect";
-        case CommandID::DrawIndirect:
-            return "DrawIndirect";
+        case CommandID::EndDebugUtilsLabel:
+            return "EndDebugUtilsLabel";
         case CommandID::EndQuery:
             return "EndQuery";
+        case CommandID::EndTransformFeedback:
+            return "EndTransformFeedback";
         case CommandID::ExecutionBarrier:
             return "ExecutionBarrier";
         case CommandID::FillBuffer:
             return "FillBuffer";
         case CommandID::ImageBarrier:
             return "ImageBarrier";
+        case CommandID::InsertDebugUtilsLabel:
+            return "InsertDebugUtilsLabel";
         case CommandID::MemoryBarrier:
             return "MemoryBarrier";
         case CommandID::PipelineBarrier:
@@ -121,6 +131,16 @@ ANGLE_INLINE const CommandHeader *NextCommand(const CommandHeader *command)
                                                    command->size);
 }
 
+// Add any queued resetQueryPool commands to the given cmdBuffer
+void SecondaryCommandBuffer::executeQueuedResetQueryPoolCommands(VkCommandBuffer cmdBuffer)
+{
+    for (const ResetQueryPoolParams &queryParams : mResetQueryQueue)
+    {
+        vkCmdResetQueryPool(cmdBuffer, queryParams.queryPool, queryParams.firstQuery,
+                            queryParams.queryCount);
+    }
+}
+
 // Parse the cmds in this cmd buffer into given primary cmd buffer
 void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
 {
@@ -131,10 +151,38 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
         {
             switch (currentCommand->id)
             {
+                case CommandID::BeginDebugUtilsLabel:
+                {
+                    const DebugUtilsLabelParams *params =
+                        getParamPtr<DebugUtilsLabelParams>(currentCommand);
+                    const char *pLabelName = Offset<char>(params, sizeof(DebugUtilsLabelParams));
+                    const VkDebugUtilsLabelEXT label = {
+                        VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+                        nullptr,
+                        pLabelName,
+                        {params->color[0], params->color[1], params->color[2], params->color[3]}};
+                    ASSERT(vkCmdBeginDebugUtilsLabelEXT);
+                    vkCmdBeginDebugUtilsLabelEXT(cmdBuffer, &label);
+                    break;
+                }
                 case CommandID::BeginQuery:
                 {
                     const BeginQueryParams *params = getParamPtr<BeginQueryParams>(currentCommand);
                     vkCmdBeginQuery(cmdBuffer, params->queryPool, params->query, params->flags);
+                    break;
+                }
+                case CommandID::BeginTransformFeedback:
+                {
+                    const BeginTransformFeedbackParams *params =
+                        getParamPtr<BeginTransformFeedbackParams>(currentCommand);
+                    const VkBuffer *counterBuffers =
+                        Offset<VkBuffer>(params, sizeof(BeginTransformFeedbackParams));
+                    // Workaround for AMD driver bug where it expects the offsets array to be
+                    // non-null
+                    gl::TransformFeedbackBuffersArray<VkDeviceSize> offsets;
+                    offsets.fill(0);
+                    vkCmdBeginTransformFeedbackEXT(cmdBuffer, 0, params->bufferCount,
+                                                   counterBuffers, offsets.data());
                     break;
                 }
                 case CommandID::BindComputePipeline:
@@ -307,6 +355,13 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                     vkCmdDrawIndexed(cmdBuffer, params->indexCount, 1, 0, params->vertexOffset, 0);
                     break;
                 }
+                case CommandID::DrawIndexedIndirect:
+                {
+                    const DrawIndexedIndirectParams *params =
+                        getParamPtr<DrawIndexedIndirectParams>(currentCommand);
+                    vkCmdDrawIndexedIndirect(cmdBuffer, params->buffer, params->offset, 1, 0);
+                    break;
+                }
                 case CommandID::DrawIndexedInstanced:
                 {
                     const DrawIndexedInstancedParams *params =
@@ -332,6 +387,13 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                                      params->firstInstance);
                     break;
                 }
+                case CommandID::DrawIndirect:
+                {
+                    const DrawIndirectParams *params =
+                        getParamPtr<DrawIndirectParams>(currentCommand);
+                    vkCmdDrawIndirect(cmdBuffer, params->buffer, params->offset, 1, 0);
+                    break;
+                }
                 case CommandID::DrawInstanced:
                 {
                     const DrawInstancedParams *params =
@@ -348,24 +410,30 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                               params->firstVertex, params->firstInstance);
                     break;
                 }
-                case CommandID::DrawIndirect:
+                case CommandID::EndDebugUtilsLabel:
                 {
-                    const DrawIndirectParams *params =
-                        getParamPtr<DrawIndirectParams>(currentCommand);
-                    vkCmdDrawIndirect(cmdBuffer, params->buffer, params->offset, 1, 0);
-                    break;
-                }
-                case CommandID::DrawIndexedIndirect:
-                {
-                    const DrawIndexedIndirectParams *params =
-                        getParamPtr<DrawIndexedIndirectParams>(currentCommand);
-                    vkCmdDrawIndexedIndirect(cmdBuffer, params->buffer, params->offset, 1, 0);
+                    ASSERT(vkCmdEndDebugUtilsLabelEXT);
+                    vkCmdEndDebugUtilsLabelEXT(cmdBuffer);
                     break;
                 }
                 case CommandID::EndQuery:
                 {
                     const EndQueryParams *params = getParamPtr<EndQueryParams>(currentCommand);
                     vkCmdEndQuery(cmdBuffer, params->queryPool, params->query);
+                    break;
+                }
+                case CommandID::EndTransformFeedback:
+                {
+                    const EndTransformFeedbackParams *params =
+                        getParamPtr<EndTransformFeedbackParams>(currentCommand);
+                    const VkBuffer *counterBuffers =
+                        Offset<VkBuffer>(params, sizeof(EndTransformFeedbackParams));
+                    // Workaround for AMD driver bug where it expects the offsets array to be
+                    // non-null
+                    gl::TransformFeedbackBuffersArray<VkDeviceSize> offsets;
+                    offsets.fill(0);
+                    vkCmdEndTransformFeedbackEXT(cmdBuffer, 0, params->bufferCount, counterBuffers,
+                                                 offsets.data());
                     break;
                 }
                 case CommandID::ExecutionBarrier:
@@ -389,6 +457,20 @@ void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
                         getParamPtr<ImageBarrierParams>(currentCommand);
                     vkCmdPipelineBarrier(cmdBuffer, params->srcStageMask, params->dstStageMask, 0,
                                          0, nullptr, 0, nullptr, 1, &params->imageMemoryBarrier);
+                    break;
+                }
+                case CommandID::InsertDebugUtilsLabel:
+                {
+                    const DebugUtilsLabelParams *params =
+                        getParamPtr<DebugUtilsLabelParams>(currentCommand);
+                    const char *pLabelName = Offset<char>(params, sizeof(DebugUtilsLabelParams));
+                    const VkDebugUtilsLabelEXT label = {
+                        VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT,
+                        nullptr,
+                        pLabelName,
+                        {params->color[0], params->color[1], params->color[2], params->color[3]}};
+                    ASSERT(vkCmdInsertDebugUtilsLabelEXT);
+                    vkCmdInsertDebugUtilsLabelEXT(cmdBuffer, &label);
                     break;
                 }
                 case CommandID::MemoryBarrier:

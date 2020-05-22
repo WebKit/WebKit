@@ -571,6 +571,11 @@
 		6E31A0A3234EEED400C84784 /* DeviceCGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */; };
 		6E31A0A4234EEED400C84784 /* DeviceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E31A0A2234EEED400C84784 /* DeviceCGL.h */; };
 		6EA0D69323515A5C00B8651F /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */; };
+		6EB01C1D2477279A00E50B35 /* EarlyFragmentTestsOptimization.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EB01C1B2477279900E50B35 /* EarlyFragmentTestsOptimization.h */; };
+		6EB01C1E2477279A00E50B35 /* EarlyFragmentTestsOptimization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EB01C1C2477279900E50B35 /* EarlyFragmentTestsOptimization.cpp */; };
+		6EB01C21247727A900E50B35 /* ReplaceClipDistanceVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EB01C1F247727A900E50B35 /* ReplaceClipDistanceVariable.cpp */; };
+		6EB01C22247727A900E50B35 /* ReplaceClipDistanceVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EB01C20247727A900E50B35 /* ReplaceClipDistanceVariable.h */; };
+		6EB01C24247727C200E50B35 /* ProgramPipelineImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EB01C23247727C200E50B35 /* ProgramPipelineImpl.cpp */; };
 		6ED70A0C22CD630E008688CE /* gl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0922CD630E008688CE /* gl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED70A0D22CD630E008688CE /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0A22CD630E008688CE /* glext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6ED70A0E22CD630E008688CE /* glplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED70A0B22CD630E008688CE /* glplatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1342,6 +1347,11 @@
 		6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceCGL.cpp; sourceTree = "<group>"; };
 		6E31A0A2234EEED400C84784 /* DeviceCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCGL.h; sourceTree = "<group>"; };
 		6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameCapture_mock.cpp; sourceTree = "<group>"; };
+		6EB01C1B2477279900E50B35 /* EarlyFragmentTestsOptimization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlyFragmentTestsOptimization.h; sourceTree = "<group>"; };
+		6EB01C1C2477279900E50B35 /* EarlyFragmentTestsOptimization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EarlyFragmentTestsOptimization.cpp; sourceTree = "<group>"; };
+		6EB01C1F247727A900E50B35 /* ReplaceClipDistanceVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceClipDistanceVariable.cpp; sourceTree = "<group>"; };
+		6EB01C20247727A900E50B35 /* ReplaceClipDistanceVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceClipDistanceVariable.h; sourceTree = "<group>"; };
+		6EB01C23247727C200E50B35 /* ProgramPipelineImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramPipelineImpl.cpp; sourceTree = "<group>"; };
 		6ED70A0922CD630E008688CE /* gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl.h; path = include/GLES/gl.h; sourceTree = "<group>"; };
 		6ED70A0A22CD630E008688CE /* glext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glext.h; path = include/GLES/glext.h; sourceTree = "<group>"; };
 		6ED70A0B22CD630E008688CE /* glplatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplatform.h; path = include/GLES/glplatform.h; sourceTree = "<group>"; };
@@ -2004,6 +2014,8 @@
 				5C55D6F222826CB200B5BA2C /* IntermTraverse.cpp */,
 				5C55D6F122826CB200B5BA2C /* IntermTraverse.h */,
 				5C55D6F722826CB300B5BA2C /* NodeSearch.h */,
+				6EB01C1F247727A900E50B35 /* ReplaceClipDistanceVariable.cpp */,
+				6EB01C20247727A900E50B35 /* ReplaceClipDistanceVariable.h */,
 				A30307002305F636002DA972 /* ReplaceShadowingVariables.cpp */,
 				A30307022305F636002DA972 /* ReplaceShadowingVariables.h */,
 				5C55D6F622826CB300B5BA2C /* ReplaceVariable.cpp */,
@@ -2082,6 +2094,7 @@
 				5CB304C71DE4164800D2C405 /* PathImpl.h */,
 				5CB304C91DE4164800D2C405 /* ProgramImpl.h */,
 				5CB304C81DE4164800D2C405 /* ProgramImpl_mock.h */,
+				6EB01C23247727C200E50B35 /* ProgramPipelineImpl.cpp */,
 				315EBDC31FCE44E200AC7A89 /* ProgramPipelineImpl.h */,
 				5CCD597D2284FB8F0018F2D8 /* QueryImpl.cpp */,
 				5CB304CA1DE4164800D2C405 /* QueryImpl.h */,
@@ -2228,6 +2241,8 @@
 				5C55D60222826B9000B5BA2C /* DeclareAndInitBuiltinsForInstancedMultiview.h */,
 				5C55D60822826B9000B5BA2C /* DeferGlobalInitializers.cpp */,
 				5C55D62D22826B9800B5BA2C /* DeferGlobalInitializers.h */,
+				6EB01C1C2477279900E50B35 /* EarlyFragmentTestsOptimization.cpp */,
+				6EB01C1B2477279900E50B35 /* EarlyFragmentTestsOptimization.h */,
 				5C55D63822826B9A00B5BA2C /* EmulateGLFragColorBroadcast.cpp */,
 				5C55D60E22826B9100B5BA2C /* EmulateGLFragColorBroadcast.h */,
 				A30306F42305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.cpp */,
@@ -2645,6 +2660,7 @@
 				5CB3011F1DE39F1A00D2C405 /* DisplayGL.h in Headers */,
 				5CB304E21DE4164800D2C405 /* DisplayImpl.h in Headers */,
 				315EBDC91FCE44E400AC7A89 /* driver_utils.h in Headers */,
+				6EB01C1D2477279A00E50B35 /* EarlyFragmentTestsOptimization.h in Headers */,
 				5C1BAAAA1DFB6124002906BB /* egl.h in Headers */,
 				5C1BAAAB1DFB6124002906BB /* eglext.h in Headers */,
 				6EE2FD2D22BAE99C001D369E /* eglext_angle.h in Headers */,
@@ -2824,6 +2840,7 @@
 				313BCE572361133A00FC39E5 /* RendererEAGL.h in Headers */,
 				5CB301381DE39F1A00D2C405 /* RendererGL.h in Headers */,
 				5CB301361DE39F1A00D2C405 /* renderergl_utils.h in Headers */,
+				6EB01C22247727A900E50B35 /* ReplaceClipDistanceVariable.h in Headers */,
 				A30307072305F636002DA972 /* ReplaceShadowingVariables.h in Headers */,
 				5C55D70522826CB300B5BA2C /* ReplaceVariable.h in Headers */,
 				5CB304A61DE4157E00D2C405 /* resource.h in Headers */,
@@ -3112,6 +3129,7 @@
 				5CB304E11DE4164800D2C405 /* DisplayImpl.cpp in Sources */,
 				315EBDCC1FCE44E400AC7A89 /* driver_utils.cpp in Sources */,
 				A303079D23062565002DA972 /* driver_utils_mac.mm in Sources */,
+				6EB01C1E2477279A00E50B35 /* EarlyFragmentTestsOptimization.cpp in Sources */,
 				5CCD596A2284F7960018F2D8 /* EGLSync.cpp in Sources */,
 				315EBD971FCE443600AC7A89 /* emulated_builtin_functions_hlsl_autogen.cpp in Sources */,
 				5C55D6B122826BC800B5BA2C /* EmulateGLFragColorBroadcast.cpp in Sources */,
@@ -3224,6 +3242,7 @@
 				315EBDEC1FCE452D00AC7A89 /* ProgramLinkedResources.cpp in Sources */,
 				315EBDE51FCE452D00AC7A89 /* ProgramPipeline.cpp in Sources */,
 				315EBDBA1FCE44BF00AC7A89 /* ProgramPipelineGL.cpp in Sources */,
+				6EB01C24247727C200E50B35 /* ProgramPipelineImpl.cpp in Sources */,
 				5C55D6B722826BC800B5BA2C /* PruneEmptyCases.cpp in Sources */,
 				5C55D6B822826BC800B5BA2C /* PruneNoOps.cpp in Sources */,
 				5CCD81B51DBFEA5C006066B8 /* QualifierTypes.cpp in Sources */,
@@ -3249,6 +3268,7 @@
 				313BCE592361133A00FC39E5 /* RendererEAGL.cpp in Sources */,
 				5CB301371DE39F1A00D2C405 /* RendererGL.cpp in Sources */,
 				5CB301351DE39F1A00D2C405 /* renderergl_utils.cpp in Sources */,
+				6EB01C21247727A900E50B35 /* ReplaceClipDistanceVariable.cpp in Sources */,
 				A30307052305F636002DA972 /* ReplaceShadowingVariables.cpp in Sources */,
 				5C55D70622826CB300B5BA2C /* ReplaceVariable.cpp in Sources */,
 				5C1DBF251B0438D300235552 /* ResourceManager.cpp in Sources */,

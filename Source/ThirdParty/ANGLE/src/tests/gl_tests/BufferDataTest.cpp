@@ -411,6 +411,166 @@ TEST_P(BufferDataTestES3, BufferResizing)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test to verify mapping a buffer after copying to it contains flushed/updated data
+TEST_P(BufferDataTestES3, CopyBufferSubDataMapReadTest)
+{
+    const char simpleVertex[]   = R"(attribute vec2 position;
+attribute vec4 color;
+varying vec4 vColor;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    vColor = color;
+}
+)";
+    const char simpleFragment[] = R"(precision mediump float;
+varying vec4 vColor;
+void main()
+{
+    gl_FragColor = vColor;
+}
+)";
+
+    const uint32_t numComponents = 3;
+    const uint32_t width         = 4;
+    const uint32_t height        = 4;
+    const size_t numElements     = width * height * numComponents;
+    std::vector<uint8_t> srcData(numElements);
+    std::vector<uint8_t> dstData(numElements);
+
+    for (uint8_t i = 0; i < srcData.size(); i++)
+    {
+        srcData[i] = 128;
+    }
+    for (uint8_t i = 0; i < dstData.size(); i++)
+    {
+        dstData[i] = 0;
+    }
+
+    GLBuffer srcBuffer;
+    GLBuffer dstBuffer;
+
+    glBindBuffer(GL_ARRAY_BUFFER, srcBuffer);
+    glBufferData(GL_ARRAY_BUFFER, srcData.size(), srcData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, dstBuffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, dstData.size(), dstData.data(), GL_STATIC_READ);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, simpleVertex, simpleFragment);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetAttribLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    glBindBuffer(GL_ARRAY_BUFFER, srcBuffer);
+    glVertexAttribPointer(colorLoc, 3, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+    glEnableVertexAttribArray(colorLoc);
+
+    drawQuad(program, "position", 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glCopyBufferSubData(GL_ARRAY_BUFFER, GL_PIXEL_UNPACK_BUFFER, 0, 0, numElements);
+
+    // With GL_MAP_READ_BIT, we expect the data to be flushed and updated to match srcData
+    uint8_t *data = reinterpret_cast<uint8_t *>(
+        glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, numElements, GL_MAP_READ_BIT));
+    EXPECT_GL_NO_ERROR();
+    for (size_t i = 0; i < numElements; ++i)
+    {
+        EXPECT_EQ(srcData[i], data[i]);
+    }
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test to verify mapping a buffer after copying to it contains expected data
+// with GL_MAP_UNSYNCHRONIZED_BIT
+TEST_P(BufferDataTestES3, MapBufferUnsynchronizedReadTest)
+{
+    const char simpleVertex[]   = R"(attribute vec2 position;
+attribute vec4 color;
+varying vec4 vColor;
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    vColor = color;
+}
+)";
+    const char simpleFragment[] = R"(precision mediump float;
+varying vec4 vColor;
+void main()
+{
+    gl_FragColor = vColor;
+}
+)";
+
+    const uint32_t numComponents = 3;
+    const uint32_t width         = 4;
+    const uint32_t height        = 4;
+    const size_t numElements     = width * height * numComponents;
+    std::vector<uint8_t> srcData(numElements);
+    std::vector<uint8_t> dstData(numElements);
+
+    for (uint8_t i = 0; i < srcData.size(); i++)
+    {
+        srcData[i] = 128;
+    }
+    for (uint8_t i = 0; i < dstData.size(); i++)
+    {
+        dstData[i] = 0;
+    }
+
+    GLBuffer srcBuffer;
+    GLBuffer dstBuffer;
+
+    glBindBuffer(GL_ARRAY_BUFFER, srcBuffer);
+    glBufferData(GL_ARRAY_BUFFER, srcData.size(), srcData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, dstBuffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, dstData.size(), dstData.data(), GL_STATIC_READ);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, simpleVertex, simpleFragment);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetAttribLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    glBindBuffer(GL_ARRAY_BUFFER, srcBuffer);
+    glVertexAttribPointer(colorLoc, 3, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+    glEnableVertexAttribArray(colorLoc);
+
+    drawQuad(program, "position", 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glCopyBufferSubData(GL_ARRAY_BUFFER, GL_PIXEL_UNPACK_BUFFER, 0, 0, numElements);
+
+    // Synchronize.
+    glFinish();
+
+    // Map with GL_MAP_UNSYNCHRONIZED_BIT and overwrite buffers data with srcData
+    uint8_t *data = reinterpret_cast<uint8_t *>(glMapBufferRange(
+        GL_PIXEL_UNPACK_BUFFER, 0, numElements, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+    EXPECT_GL_NO_ERROR();
+    memcpy(data, srcData.data(), srcData.size());
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    // Map without GL_MAP_UNSYNCHRONIZED_BIT and read data. We expect it to be srcData
+    data = reinterpret_cast<uint8_t *>(
+        glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, numElements, GL_MAP_READ_BIT));
+    EXPECT_GL_NO_ERROR();
+    for (size_t i = 0; i < numElements; ++i)
+    {
+        EXPECT_EQ(srcData[i], data[i]);
+    }
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify the functionality of glMapBufferRange()'s GL_MAP_UNSYNCHRONIZED_BIT
 // NOTE: On Vulkan, if we ever use memory that's not `VK_MEMORY_PROPERTY_HOST_COHERENT_BIT`, then
 // this could incorrectly pass.

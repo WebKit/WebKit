@@ -549,7 +549,7 @@ angle::Result SurfaceMtl::obtainNextDrawable(const gl::Context *context)
         if (defaultFbo)
         {
             FramebufferMtl *framebufferMtl = mtl::GetImpl(defaultFbo);
-            ANGLE_TRY(framebufferMtl->syncState(context, fboDirtyBits));
+            ANGLE_TRY(framebufferMtl->syncState(context, GL_FRAMEBUFFER, fboDirtyBits));
         }
 
         return angle::Result::Continue;

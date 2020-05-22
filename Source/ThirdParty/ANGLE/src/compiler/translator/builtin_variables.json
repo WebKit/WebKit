@@ -753,6 +753,25 @@
                         }
                     }
                 }
+            },
+            "APPLEClipDistance":{
+                "variables":{
+                    "gl_ClipDistance":{
+                        "essl_level":"COMMON_BUILTINS",
+                        "essl_extension":"APPLE_clip_distance",
+                        "initDynamicType":"TType *{type_name} = new TType(EbtFloat, EbpHigh, EvqClipDistance, 1); {type_name}->makeArray(resources.MaxClipDistances);"
+                    },
+                    "gl_MaxClipDistances":{
+                        "essl_level":"COMMON_BUILTINS",
+                        "type":{
+                            "basic":"Int",
+                            "precision":"Medium",
+                            "qualifier":"Const"
+                        },
+                        "essl_extension":"APPLE_clip_distance",
+                        "value":"resources"
+                    }
+                }
             }
         }
     },

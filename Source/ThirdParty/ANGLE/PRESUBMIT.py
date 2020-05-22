@@ -43,8 +43,8 @@ def _CheckChangeHasBugField(input_api, output_api):
     if len(bugs) == 1 and bugs[0] == 'None':
         return []
 
-    projects = ['angleproject', 'chromium', 'dawn', 'fuchsia', 'skia', 'swiftshader', 'b']
-    bug_regex = re.compile(r"([a-z]+):(\d+)")
+    projects = ['angleproject:', 'chromium:', 'dawn:', 'fuchsia:', 'skia:', 'swiftshader:', 'b/']
+    bug_regex = re.compile(r"([a-z]+[:/])(\d+)")
     errors = []
     extra_help = None
 
@@ -198,9 +198,40 @@ def _CheckTabsInSourceFiles(input_api, output_api):
     return []
 
 
+# https://stackoverflow.com/a/196392
+def is_ascii(s):
+    return all(ord(c) < 128 for c in s)
+
+
+def _CheckNonAsciiInSourceFiles(input_api, output_api):
+    """Forbids non-ascii characters in source files. """
+
+    def implementation_and_headers(f):
+        return input_api.FilterSourceFile(
+            f, white_list=(r'.+%s' % _IMPLEMENTATION_AND_HEADER_EXTENSIONS,))
+
+    files_with_non_ascii = []
+    for f in input_api.AffectedSourceFiles(implementation_and_headers):
+        for (num, line) in f.ChangedContents():
+            if not is_ascii(line):
+                files_with_non_ascii.append("%s: %s" % (f, line))
+                break
+
+    if files_with_non_ascii:
+        return [
+            output_api.PresubmitError(
+                'Non-ASCII characters in source files.',
+                items=sorted(files_with_non_ascii),
+                long_text='Non-ASCII characters are forbidden in ANGLE source files.\n'
+                'Please remove non-ASCII characters from these files.')
+        ]
+    return []
+
+
 def CheckChangeOnUpload(input_api, output_api):
     results = []
     results.extend(_CheckTabsInSourceFiles(input_api, output_api))
+    results.extend(_CheckNonAsciiInSourceFiles(input_api, output_api))
     results.extend(_CheckCodeGeneration(input_api, output_api))
     results.extend(_CheckChangeHasBugField(input_api, output_api))
     results.extend(input_api.canned_checks.CheckChangeHasDescription(input_api, output_api))
@@ -213,12 +244,4 @@ def CheckChangeOnUpload(input_api, output_api):
 
 
 def CheckChangeOnCommit(input_api, output_api):
-    results = []
-    results.extend(_CheckCodeGeneration(input_api, output_api))
-    results.extend(
-        input_api.canned_checks.CheckPatchFormatted(
-            input_api, output_api, result_factory=output_api.PresubmitError))
-    results.extend(_CheckChangeHasBugField(input_api, output_api))
-    results.extend(_CheckExportValidity(input_api, output_api))
-    results.extend(input_api.canned_checks.CheckChangeHasDescription(input_api, output_api))
-    return results
+    return CheckChangeOnUpload(input_api, output_api)

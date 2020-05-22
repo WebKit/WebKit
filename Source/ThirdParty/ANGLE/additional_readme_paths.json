@@ -1,4 +1,5 @@
 [
     "src/common/third_party/xxhash",
-    "src/third_party/compiler"
+    "src/third_party/compiler",
+    "third_party/vulkan_memory_allocator"
 ]

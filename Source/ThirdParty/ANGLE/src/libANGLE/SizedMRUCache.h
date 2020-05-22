@@ -75,7 +75,7 @@ class SizedMRUCache final : angle::NonCopyable
         mCurrentSize = 0;
     }
 
-    bool eraseByKey(const Key &key)
+    void eraseByKey(const Key &key)
     {
         // Check for existing key.
         auto existing = mStore.Peek(key);
@@ -83,10 +83,7 @@ class SizedMRUCache final : angle::NonCopyable
         {
             mCurrentSize -= existing->second.size;
             mStore.Erase(existing);
-            return true;
         }
-
-        return false;
     }
 
     size_t entryCount() const { return mStore.size(); }

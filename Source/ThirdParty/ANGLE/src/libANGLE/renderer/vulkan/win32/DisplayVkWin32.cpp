@@ -12,9 +12,9 @@
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 
 #include <windows.h>
-#include "volk.h"
 
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/win32/WindowSurfaceVkWin32.h"
 
 namespace rx
