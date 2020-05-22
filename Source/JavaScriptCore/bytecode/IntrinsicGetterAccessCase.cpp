@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "HeapInlines.h"
+#include "JSCellInlines.h"
 
 namespace JSC {
 

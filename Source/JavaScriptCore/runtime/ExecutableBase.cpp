@@ -29,6 +29,7 @@
 #include "FunctionCodeBlock.h"
 #include "JSCellInlines.h"
 #include "ModuleProgramCodeBlock.h"
+#include "NativeExecutable.h"
 #include "ProgramCodeBlock.h"
 #include <wtf/CommaPrinter.h>
 

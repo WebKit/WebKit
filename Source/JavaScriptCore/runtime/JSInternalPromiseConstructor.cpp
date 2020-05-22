@@ -28,6 +28,8 @@
 
 #include "JSCBuiltins.h"
 #include "JSInternalPromisePrototype.h"
+#include "JSObjectInlines.h"
+#include "StructureInlines.h"
 
 #include "JSInternalPromiseConstructor.lut.h"
 

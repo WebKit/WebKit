@@ -28,11 +28,13 @@
 
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
 #include "JSImmutableButterfly.h"
+#include "JSObjectInlines.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "ObjectPropertyConditionSet.h"
 #include "ObjectToStringAdaptiveStructureWatchpoint.h"
 #include "StructureChain.h"
+#include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
 
 namespace JSC {

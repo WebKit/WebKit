@@ -28,7 +28,9 @@
 
 #include "GetterSetter.h"
 #include "JSCJSValueInlines.h"
+#include "JSObjectInlines.h"
 #include "PropertySlot.h"
+#include "StructureInlines.h"
 #include "TypeError.h"
 
 namespace JSC {

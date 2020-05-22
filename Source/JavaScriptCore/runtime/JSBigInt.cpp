@@ -49,8 +49,10 @@
 
 #include "BigIntObject.h"
 #include "JSCJSValueInlines.h"
+#include "JSObjectInlines.h"
 #include "MathCommon.h"
 #include "ParseInt.h"
+#include "StructureInlines.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 

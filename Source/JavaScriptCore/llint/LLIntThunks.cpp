@@ -26,7 +26,9 @@
 #include "config.h"
 #include "LLIntThunks.h"
 
+#include "JSCJSValueInlines.h"
 #include "JSInterfaceJIT.h"
+#include "LLIntCLoop.h"
 #include "LLIntData.h"
 #include "LinkBuffer.h"
 #include "WasmCallingConvention.h"

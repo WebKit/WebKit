@@ -28,6 +28,7 @@
 
 #include "ArithProfile.h"
 #include "CodeBlock.h"
+#include "LLIntCLoop.h"
 #include "Opcode.h"
 #include "WriteBarrier.h"
 

@@ -25,8 +25,10 @@
 
 #include "JSGlobalObjectFunctions.h"
 #include "JSGlobalObjectInlines.h"
+#include "JSObjectInlines.h"
 #include "StringObject.h"
 #include "StrongInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
     
