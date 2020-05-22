@@ -97,7 +97,7 @@ namespace JSC {
 
 namespace {
 
-bool verboseStop = false;
+static constexpr bool verboseStop = false;
 
 double maxPauseMS(double thisPauseMS)
 {
@@ -2244,7 +2244,7 @@ void Heap::notifyIncrementalSweeper()
 
 void Heap::updateAllocationLimits()
 {
-    static constexpr bool verbose = false;
+    constexpr bool verbose = false;
     
     if (verbose) {
         dataLog("\n");

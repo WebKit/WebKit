@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 
 namespace {
 
-const bool verbose = false;
+static constexpr bool verbose = false;
 
 enum NotifyStyle {
     AlwaysNotifyOne,

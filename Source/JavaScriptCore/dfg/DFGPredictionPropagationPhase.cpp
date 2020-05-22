@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verboseFixPointLoops = false;
+static constexpr bool verboseFixPointLoops = false;
 
 class PredictionPropagationPhase : public Phase {
 public:

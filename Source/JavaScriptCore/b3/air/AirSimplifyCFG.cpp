@@ -35,7 +35,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 bool simplifyCFG(Code& code)
 {
-    const bool verbose = false;
+    constexpr bool verbose = false;
     
     PhaseScope phaseScope(code, "simplifyCFG");
     

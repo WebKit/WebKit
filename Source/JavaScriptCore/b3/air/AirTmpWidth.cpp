@@ -52,7 +52,7 @@ void TmpWidth::recompute(Code& code)
     // Set this to true to cause this analysis to always return pessimistic results.
     const bool beCareful = false;
 
-    const bool verbose = false;
+    constexpr bool verbose = false;
 
     if (verbose) {
         dataLog("Code before TmpWidth:\n");

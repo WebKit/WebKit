@@ -40,7 +40,7 @@ namespace WTF {
 
 namespace {
 
-const bool verbose = false;
+static constexpr bool verbose = false;
 
 struct ThreadData : public ThreadSafeRefCounted<ThreadData> {
     WTF_MAKE_FAST_ALLOCATED;

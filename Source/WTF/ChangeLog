@@ -1,3 +1,12 @@
+2020-05-21  Robin Morisset  <rmorisset@apple.com>
+
+        Various compile-time boolean flags could/should be marked constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=212244
+
+        Reviewed by Mark Lam.
+
+        * wtf/ParkingLot.cpp:
+
 2020-05-20  Mark Lam  <mark.lam@apple.com>
 
         Add more Bitmap methods.

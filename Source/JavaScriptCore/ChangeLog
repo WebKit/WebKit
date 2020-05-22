@@ -1,5 +1,27 @@
 2020-05-21  Robin Morisset  <rmorisset@apple.com>
 
+        Various compile-time boolean flags could/should be marked constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=212244
+
+        Reviewed by Mark Lam.
+
+        This trivial patch saves roughly 16kB from the JavaScriptCore binary in release mode.
+
+        * b3/B3OptimizeAssociativeExpressionTrees.cpp:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirSimplifyCFG.cpp:
+        (JSC::B3::Air::simplifyCFG):
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * heap/GCIncomingRefCountedInlines.h:
+        (JSC::GCIncomingRefCounted<T>::filterIncomingReferences):
+        * heap/Heap.cpp:
+        (JSC::Heap::updateAllocationLimits):
+        * wasm/WasmEntryPlan.cpp:
+
+2020-05-21  Robin Morisset  <rmorisset@apple.com>
+
         Remove AssemblerBufferWithConstantPool.h (as it has been dead for years)
         https://bugs.webkit.org/show_bug.cgi?id=212241
 

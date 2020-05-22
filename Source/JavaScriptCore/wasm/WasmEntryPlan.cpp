@@ -38,7 +38,7 @@
 namespace JSC { namespace Wasm {
 
 namespace WasmEntryPlanInternal {
-static const bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
