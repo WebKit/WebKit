@@ -464,7 +464,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/AbortReason.h
     assembler/AbstractMacroAssembler.h
     assembler/AssemblerBuffer.h
-    assembler/AssemblerBufferWithConstantPool.h
     assembler/AssemblerCommon.h
     assembler/CPU.h
     assembler/CodeLocation.h

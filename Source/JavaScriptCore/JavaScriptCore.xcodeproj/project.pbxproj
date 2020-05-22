@@ -269,7 +269,7 @@
 		0F2D4DEA19832DAC007D4B19 /* TypeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE719832DAC007D4B19 /* TypeLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DEC19832DC4007D4B19 /* TypeProfilerLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DF019832DD6007D4B19 /* TypeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE419832D91007D4B19 /* TypeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-                0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */; };
+		0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */; };
 		0F2DD8141AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80F1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h */; };
 		0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD8101AB3D8BE00BBB8E8 /* DFGForAllKills.h */; };
 		0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 65987F2F16828A7E003C2F8D /* UnusedPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1265,7 +1265,6 @@
 		86CC85A10EE79A4700288682 /* JITInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CC85A00EE79A4700288682 /* JITInlines.h */; };
 		86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CCEFDD0F413F8900FD7F9E /* JITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D2221A167EF9440024C804 /* testapi.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86D22219167EF9440024C804 /* testapi.mm */; };
-		86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B3C110159D7F002865E7 /* LinkBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E3C612167BABD7006D760A /* JSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C606167BAB87006D760A /* JSValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2454,7 +2453,7 @@
 		0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToThisStatus.cpp; sourceTree = "<group>"; };
 		0F2D4DE619832DAC007D4B19 /* ToThisStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToThisStatus.h; sourceTree = "<group>"; };
 		0F2D4DE719832DAC007D4B19 /* TypeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeLocation.h; sourceTree = "<group>"; };
-                0F2DD80C1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsEliminationPhase.cpp; path = dfg/DFGArgumentsEliminationPhase.cpp; sourceTree = "<group>"; };
+		0F2DD80C1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsEliminationPhase.cpp; path = dfg/DFGArgumentsEliminationPhase.cpp; sourceTree = "<group>"; };
 		0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsEliminationPhase.h; path = dfg/DFGArgumentsEliminationPhase.h; sourceTree = "<group>"; };
 		0F2DD80E1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsUtilities.cpp; path = dfg/DFGArgumentsUtilities.cpp; sourceTree = "<group>"; };
 		0F2DD80F1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsUtilities.h; path = dfg/DFGArgumentsUtilities.h; sourceTree = "<group>"; };
@@ -4144,7 +4143,6 @@
 		86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess.cpp; sourceTree = "<group>"; };
 		86CCEFDD0F413F8900FD7F9E /* JITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCode.h; sourceTree = "<group>"; };
 		86D22219167EF9440024C804 /* testapi.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = testapi.mm; path = API/tests/testapi.mm; sourceTree = "<group>"; };
-		86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBufferWithConstantPool.h; sourceTree = "<group>"; };
 		86D3B3C110159D7F002865E7 /* LinkBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkBuffer.h; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86E3C606167BAB87006D760A /* JSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValue.h; sourceTree = "<group>"; };
@@ -8183,7 +8181,6 @@
 				86ADD1430FDDEA980006FFCC /* ARMv7Registers.h */,
 				0FA6F39620CCB7A600A03DCD /* AssemblerBuffer.cpp */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
-				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
 				43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */,
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
 				52335628225EB8E900268BD2 /* CPU.cpp */,
@@ -8253,7 +8250,7 @@
 				53663FD923562F90005EA68C /* BytecodeIndex.h */,
 				7094C4DC1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp */,
 				7094C4DD1AE439530041A2EE /* BytecodeIntrinsicRegistry.h */,
-                                14BA7751211086A0008D0B05 /* BytecodeList.rb */,
+				14BA7751211086A0008D0B05 /* BytecodeList.rb */,
 				C2FCAE0E17A9C24E0034C735 /* BytecodeLivenessAnalysis.cpp */,
 				C2FCAE0F17A9C24E0034C735 /* BytecodeLivenessAnalysis.h */,
 				0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */,
@@ -9002,7 +8999,6 @@
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
 				FE1D6D7123625AB1007A5C26 /* ArrayStorageInlines.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
-				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
 				43C392AB1C3BEB0500241F53 /* AssemblerCommon.h in Headers */,
 				0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */,
 				A784A26111D16622005776AC /* ASTBuilder.h in Headers */,
@@ -9167,7 +9163,7 @@
 				E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */,
 				53663FDA23562F96005EA68C /* BytecodeIndex.h in Headers */,
 				7094C4DF1AE439530041A2EE /* BytecodeIntrinsicRegistry.h in Headers */,
-                                C2FCAE1317A9C24E0034C735 /* BytecodeLivenessAnalysis.h in Headers */,
+				C2FCAE1317A9C24E0034C735 /* BytecodeLivenessAnalysis.h in Headers */,
 				0F666EC0183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h in Headers */,
 				53D35499240D88BD008950DD /* BytecodeOperandsForCheckpoint.h in Headers */,
 				E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */,
