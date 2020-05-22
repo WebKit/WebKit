@@ -86,14 +86,23 @@ static ScrollEventAxis otherScrollEventAxis(ScrollEventAxis axis)
 
 ScrollController::ScrollController(ScrollControllerClient& client)
     : m_client(client)
-#if ENABLE(RUBBER_BANDING)
-    , m_snapRubberbandTimer(RunLoop::current(), this, &ScrollController::snapRubberBandTimerFired)
-#endif
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    , m_statelessSnapTransitionTimer(RunLoop::current(), this, &ScrollController::statelessSnapTransitionTimerFired)
-    , m_scrollSnapTimer(RunLoop::current(), this, &ScrollController::scrollSnapTimerFired)
-#endif
 {
+}
+
+void ScrollController::stopAllTimers()
+{
+#if ENABLE(RUBBER_BANDING)
+    if (m_snapRubberbandTimer)
+        m_snapRubberbandTimer->stop();
+#endif
+
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    if (m_statelessSnapTransitionTimer)
+        m_statelessSnapTransitionTimer->stop();
+
+    if (m_scrollSnapTimer)
+        m_scrollSnapTimer->stop();
+#endif
 }
 
 #if PLATFORM(MAC)
@@ -139,7 +148,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     }
 
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
-    if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberbandTimerIsActive)) {
+    if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberbandTimer)) {
         if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
             m_ignoreMomentumScrolls = false;
             return true;
@@ -385,10 +394,10 @@ void ScrollController::snapRubberBandTimerFired()
             if (m_startStretch == FloatSize()) {
                 stopSnapRubberbandTimer();
 
-                m_stretchScrollForce = FloatSize();
+                m_stretchScrollForce = { };
                 m_startTime = 0;
-                m_startStretch = FloatSize();
-                m_origVelocity = FloatSize();
+                m_startStretch = { };
+                m_origVelocity = { };
                 return;
             }
 
@@ -421,14 +430,14 @@ void ScrollController::snapRubberBandTimerFired()
             m_client.adjustScrollPositionToBoundsIfNecessary();
 
             stopSnapRubberbandTimer();
-            m_stretchScrollForce = FloatSize();
+            m_stretchScrollForce = { };
             m_startTime = 0;
-            m_startStretch = FloatSize();
-            m_origVelocity = FloatSize();
+            m_startStretch = { };
+            m_origVelocity = { };
         }
     } else {
         m_startTime = [NSDate timeIntervalSinceReferenceDate];
-        m_startStretch = FloatSize();
+        m_startStretch = { };
         if (!isRubberBandInProgress())
             stopSnapRubberbandTimer();
     }
@@ -438,7 +447,7 @@ void ScrollController::snapRubberBandTimerFired()
 bool ScrollController::isRubberBandInProgress() const
 {
 #if ENABLE(RUBBER_BANDING) && PLATFORM(MAC)
-    if (!m_inScrollGesture && !m_momentumScrollInProgress && !m_snapRubberbandTimerIsActive)
+    if (!m_inScrollGesture && !m_momentumScrollInProgress && !m_snapRubberbandTimer)
         return false;
 
     return !m_client.stretchAmount().isZero();
@@ -450,7 +459,7 @@ bool ScrollController::isRubberBandInProgress() const
 bool ScrollController::isScrollSnapInProgress() const
 {
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    if (m_inScrollGesture || m_momentumScrollInProgress || m_scrollSnapTimer.isActive())
+    if (m_inScrollGesture || m_momentumScrollInProgress || m_scrollSnapTimer)
         return true;
 #endif
     return false;
@@ -459,17 +468,25 @@ bool ScrollController::isScrollSnapInProgress() const
 #if ENABLE(RUBBER_BANDING)
 void ScrollController::startSnapRubberbandTimer()
 {
-    m_client.startSnapRubberbandTimer();
-    m_snapRubberbandTimer.startRepeating(1_s / 60.);
+    m_client.willStartRubberBandSnapAnimation();
+
+    // Make a new one each time to ensure it fires on the current RunLoop.
+    m_snapRubberbandTimer = m_client.createTimer([this] {
+        snapRubberBandTimerFired();
+    });
+    m_snapRubberbandTimer->startRepeating(1_s / 60.);
 
     m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
 void ScrollController::stopSnapRubberbandTimer()
 {
-    m_client.stopSnapRubberbandTimer();
-    m_snapRubberbandTimer.stop();
-    m_snapRubberbandTimerIsActive = false;
+    m_client.didStopRubberbandSnapAnimation();
+    
+    if (m_snapRubberbandTimer) {
+        m_snapRubberbandTimer->stop();
+        m_snapRubberbandTimer = nullptr;
+    }
     
     m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
@@ -482,15 +499,14 @@ void ScrollController::snapRubberBand()
 
     m_inScrollGesture = false;
 
-    if (m_snapRubberbandTimerIsActive)
+    if (m_snapRubberbandTimer)
         return;
 
     m_startTime = [NSDate timeIntervalSinceReferenceDate];
-    m_startStretch = FloatSize();
-    m_origVelocity = FloatSize();
+    m_startStretch = { };
+    m_origVelocity = { };
 
     startSnapRubberbandTimer();
-    m_snapRubberbandTimerIsActive = true;
 }
 
 bool ScrollController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent) const
@@ -564,17 +580,25 @@ bool ScrollController::shouldOverrideInertialScrolling() const
 void ScrollController::scheduleStatelessScrollSnap()
 {
     stopScrollSnapTimer();
-    m_statelessSnapTransitionTimer.stop();
+    if (m_statelessSnapTransitionTimer) {
+        m_statelessSnapTransitionTimer->stop();
+        m_statelessSnapTransitionTimer = nullptr;
+    }
     if (!m_scrollSnapState)
         return;
 
     static const Seconds statelessScrollSnapDelay = 750_ms;
-    m_statelessSnapTransitionTimer.startOneShot(statelessScrollSnapDelay);
+    m_statelessSnapTransitionTimer = m_client.createTimer([this] {
+        statelessSnapTransitionTimerFired();
+    });
+    m_statelessSnapTransitionTimer->startOneShot(statelessScrollSnapDelay);
     startDeferringWheelEventTestCompletionDueToScrollSnapping();
 }
 
 void ScrollController::statelessSnapTransitionTimerFired()
 {
+    m_statelessSnapTransitionTimer = nullptr;
+
     if (!m_scrollSnapState)
         return;
 
@@ -636,22 +660,27 @@ bool ScrollController::processWheelEventForScrollSnap(const PlatformWheelEvent& 
 
 void ScrollController::startScrollSnapTimer()
 {
-    if (m_scrollSnapTimer.isActive())
+    if (m_scrollSnapTimer)
         return;
 
     startDeferringWheelEventTestCompletionDueToScrollSnapping();
-    m_client.startScrollSnapTimer();
-    m_scrollSnapTimer.startRepeating(1_s / 60.);
+    m_client.willStartScrollSnapAnimation();
+    m_scrollSnapTimer = m_client.createTimer([this] {
+        scrollSnapTimerFired();
+    });
+    m_scrollSnapTimer->startRepeating(1_s / 60.);
 }
 
 void ScrollController::stopScrollSnapTimer()
 {
-    if (!m_scrollSnapTimer.isActive())
+    if (!m_scrollSnapTimer)
         return;
 
     stopDeferringWheelEventTestCompletionDueToScrollSnapping();
-    m_client.stopScrollSnapTimer();
-    m_scrollSnapTimer.stop();
+    m_client.didStopScrollSnapAnimation();
+
+    m_scrollSnapTimer->stop();
+    m_scrollSnapTimer = nullptr;
 }
 
 void ScrollController::scrollSnapTimerFired()

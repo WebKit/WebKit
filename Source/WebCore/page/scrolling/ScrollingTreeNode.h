@@ -61,6 +61,8 @@ public:
     virtual void commitStateBeforeChildren(const ScrollingStateNode&) = 0;
     virtual void commitStateAfterChildren(const ScrollingStateNode&) { }
     virtual void didCompleteCommitForNode() { }
+    
+    virtual void wasRemovedFromTree() { }
 
     ScrollingTreeNode* parent() const { return m_parent; }
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }

@@ -47,6 +47,8 @@ public:
     explicit ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode&);
     virtual ~ScrollingTreeScrollingNodeDelegateMac();
 
+    void nodeWillBeDestroyed();
+
     bool handleWheelEvent(const PlatformWheelEvent&);
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -67,24 +69,25 @@ private:
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis) const;
 
     // ScrollControllerClient.
-    bool allowsHorizontalStretching(const PlatformWheelEvent&) const override;
-    bool allowsVerticalStretching(const PlatformWheelEvent&) const override;
-    IntSize stretchAmount() const override;
-    bool pinnedInDirection(const FloatSize&) const override;
-    bool canScrollHorizontally() const override;
-    bool canScrollVertically() const override;
-    bool shouldRubberBandInDirection(ScrollDirection) const override;
-    void immediateScrollBy(const FloatSize&) override;
-    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
-    void stopSnapRubberbandTimer() override;
-    void adjustScrollPositionToBoundsIfNecessary() override;
+    std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
+    bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
+    bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
+    IntSize stretchAmount() const final;
+    bool pinnedInDirection(const FloatSize&) const final;
+    bool canScrollHorizontally() const final;
+    bool canScrollVertically() const final;
+    bool shouldRubberBandInDirection(ScrollDirection) const final;
+    void immediateScrollBy(const FloatSize&) final;
+    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
+    void didStopRubberbandSnapAnimation() final;
+    void adjustScrollPositionToBoundsIfNecessary() final;
 
 #if ENABLE(CSS_SCROLL_SNAP)
     FloatPoint scrollOffset() const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     float pageScaleFactor() const override;
-    void startScrollSnapTimer() override;
-    void stopScrollSnapTimer() override;
+    void willStartScrollSnapAnimation() final;
+    void didStopScrollSnapAnimation() final;
     LayoutSize scrollExtent() const override;
     FloatSize viewportSize() const override;
 #endif

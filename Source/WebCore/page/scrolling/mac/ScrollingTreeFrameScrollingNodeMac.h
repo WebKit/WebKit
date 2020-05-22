@@ -63,6 +63,8 @@ protected:
     unsigned exposedUnfilledArea() const;
 
 private:
+    void wasRemovedFromTree() final;
+
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
 
     void currentScrollPositionChanged(ScrollingLayerPositionAction) final;

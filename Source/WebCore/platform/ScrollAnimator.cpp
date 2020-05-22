@@ -39,6 +39,10 @@
 #include "ScrollableArea.h"
 #include <algorithm>
 
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+#include "ScrollController.h"
+#endif
+
 namespace WebCore {
 
 #if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY) && !PLATFORM(MAC) && !PLATFORM(WPE)
@@ -239,6 +243,17 @@ FloatSize ScrollAnimator::viewportSize() const
     return m_scrollableArea.visibleSize();
 }
 
+#endif
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+std::unique_ptr<ScrollControllerTimer> ScrollAnimator::createTimer(Function<void()>&& function)
+{
+    return WTF::makeUnique<ScrollControllerTimer>(RunLoop::current(), [function = WTFMove(function), weakScrollableArea = makeWeakPtr(m_scrollableArea)] {
+        if (!weakScrollableArea)
+            return;
+        function();
+    });
+}
 #endif
 
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)

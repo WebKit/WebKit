@@ -52,6 +52,10 @@ class Scrollbar;
 class WheelEventTestMonitor;
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+class ScrollControllerTimer;
+#endif
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
 class ScrollAnimator : private ScrollControllerClient {
 #else
 class ScrollAnimator {
@@ -132,7 +136,11 @@ public:
     void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 #endif
-    
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
+#endif
+
 #if ENABLE(CSS_SCROLL_SNAP)
 #if PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);

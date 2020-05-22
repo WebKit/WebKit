@@ -1,5 +1,81 @@
 2020-05-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix some thread safety issues with ScrollController timers
+        https://bugs.webkit.org/show_bug.cgi?id=212238
+
+        Reviewed by Wenson Hsieh.
+
+        There were some problems with the timers fired by ScrollController, used for rubber-banding
+        and scroll snap.
+
+        First, they could fire on the main thread when we intended them to fire on the scrolling thread.
+        This happened because in r260716 I made the scrolling tree commit on the main thread, so we'd
+        construct the ScrollingTreeScrollingNodeDelegateMac and its ScrollController there and its
+        timers would grab the main thread runloop. Fix by creating the timers on demand.
+
+        Secondly, the timer callbacks called into scrolling tree code, but without taking
+        the scrolling tree lock,
+        and without any guarantee that the node would stay alive for the duration of the callback.
+        Fix by having the ScrollControllerClient create the timers, allowing the client to have
+        a callback wrapper that locks, and to ensure object lifetime (or make a weak ref). Now
+        that scrolling tree nodes could be extended by a pending timer, we need to explicitly
+        clear the timers when nodes are removed from the tree.
+
+        Finally, rename some confusingly named ScrollControllerClient functions.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::treeMutex):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::wasBeRemovedFromTree):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::wasBeRemovedFromTree):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::wasBeRemovedFromTree):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::createTimer):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::didStopRubberbandSnapAnimation):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::willStartScrollSnapAnimation):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::didStopScrollSnapAnimation):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::startScrollSnapTimer): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopScrollSnapTimer): Deleted.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::createTimer):
+        * platform/ScrollAnimator.h:
+        * platform/cocoa/ScrollController.h:
+        (WebCore::ScrollControllerTimer::ScrollControllerTimer):
+        (WebCore::ScrollControllerClient::willStartRubberBandSnapAnimation):
+        (WebCore::ScrollControllerClient::didStopRubberbandSnapAnimation):
+        (WebCore::ScrollControllerClient::willStartScrollSnapAnimation):
+        (WebCore::ScrollControllerClient::didStopScrollSnapAnimation):
+        (WebCore::ScrollControllerClient::startSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollControllerClient::stopSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollControllerClient::startScrollSnapTimer): Deleted.
+        (WebCore::ScrollControllerClient::stopScrollSnapTimer): Deleted.
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::ScrollController):
+        (WebCore::ScrollController::stopAllTimers):
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::snapRubberBandTimerFired):
+        (WebCore::ScrollController::isRubberBandInProgress const):
+        (WebCore::ScrollController::isScrollSnapInProgress const):
+        (WebCore::ScrollController::startSnapRubberbandTimer):
+        (WebCore::ScrollController::stopSnapRubberbandTimer):
+        (WebCore::ScrollController::snapRubberBand):
+        (WebCore::ScrollController::scheduleStatelessScrollSnap):
+        (WebCore::ScrollController::statelessSnapTransitionTimerFired):
+        (WebCore::ScrollController::startScrollSnapTimer):
+        (WebCore::ScrollController::stopScrollSnapTimer):
+        * platform/mac/ScrollAnimatorMac.h:
+
+2020-05-21  Simon Fraser  <simon.fraser@apple.com>
+
         Scrolling thread scrolls on sync-scrolling scrollers don't get to the main thread
         https://bugs.webkit.org/show_bug.cgi?id=212225
 

@@ -49,6 +49,11 @@ ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac()
     releaseReferencesToScrollerImpsOnTheMainThread();
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
+{
+    m_scrollController.stopAllTimers();
+}
+
 #if ENABLE(CSS_SCROLL_SNAP)
 static inline Vector<LayoutUnit> convertToLayoutUnits(const Vector<float>& snapOffsetsAsFloat)
 {
@@ -172,6 +177,14 @@ bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(
     return false;
 }
 
+std::unique_ptr<ScrollControllerTimer> ScrollingTreeScrollingNodeDelegateMac::createTimer(Function<void()>&& function)
+{
+    return WTF::makeUnique<ScrollControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = makeRef(scrollingNode())] {
+        LockHolder locker(protectedNode->scrollingTree().treeMutex());
+        function();
+    });
+}
+
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (horizontalScrollElasticity()) {
@@ -293,7 +306,7 @@ void ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeC
     scrollingNode().scrollBy(offset, ScrollClamping::Unclamped);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::stopSnapRubberbandTimer()
+void ScrollingTreeScrollingNodeDelegateMac::didStopRubberbandSnapAnimation()
 {
     scrollingTree().setMainFrameIsRubberBanding(false);
 
@@ -336,12 +349,12 @@ float ScrollingTreeScrollingNodeDelegateMac::pageScaleFactor() const
     return 1;
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::startScrollSnapTimer()
+void ScrollingTreeScrollingNodeDelegateMac::willStartScrollSnapAnimation()
 {
     scrollingTree().setMainFrameIsScrollSnapping(true);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::stopScrollSnapTimer()
+void ScrollingTreeScrollingNodeDelegateMac::didStopScrollSnapAnimation()
 {
     scrollingTree().setMainFrameIsScrollSnapping(false);
 }
