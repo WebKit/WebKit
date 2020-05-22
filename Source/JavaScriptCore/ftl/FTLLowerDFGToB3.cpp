@@ -1477,6 +1477,9 @@ private:
         case HasStructureProperty:
             compileHasStructureProperty();
             break;
+        case InStructureProperty:
+            compileInStructureProperty();
+            break;
         case GetDirectPname:
             compileGetDirectPname();
             break;
@@ -12241,35 +12244,51 @@ private:
         setJSValue(vmCall(Int64, operationHasGenericProperty, weakPointer(globalObject), base, property));
     }
 
-    void compileHasStructureProperty()
+    template <typename SlowPathCall>
+    void compileHasStructurePropertyImpl(LValue base, SlowPathCall slowPathCall)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
-        LValue base = lowJSValue(m_node->child1());
         LValue property = lowString(m_node->child2());
         LValue enumerator = lowCell(m_node->child3());
 
+        LBasicBlock isCellCase = m_out.newBlock();
         LBasicBlock correctStructure = m_out.newBlock();
-        LBasicBlock wrongStructure = m_out.newBlock();
+        LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isCell(base, provenType(m_node->child1())),
+            usually(isCellCase), rarely(slowPath));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, correctStructure);
 
         m_out.branch(m_out.notEqual(
             m_out.load32(base, m_heaps.JSCell_structureID),
             m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)),
-            rarely(wrongStructure), usually(correctStructure));
+            rarely(slowPath), usually(correctStructure));
 
-        LBasicBlock lastNext = m_out.appendTo(correctStructure, wrongStructure);
+        m_out.appendTo(correctStructure, slowPath);
         ValueFromBlock correctStructureResult = m_out.anchor(m_out.booleanTrue);
         m_out.jump(continuation);
 
-        m_out.appendTo(wrongStructure, continuation);
-        ValueFromBlock wrongStructureResult = m_out.anchor(
+        m_out.appendTo(slowPath, continuation);
+        ValueFromBlock slowPathResult = m_out.anchor(
             m_out.equal(
                 m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, operationHasGenericProperty, weakPointer(globalObject), base, property)));
+                vmCall(Int64, slowPathCall, weakPointer(globalObject), base, property)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, correctStructureResult, wrongStructureResult));
+        setBoolean(m_out.phi(Int32, correctStructureResult, slowPathResult));
+    }
+
+    void compileHasStructureProperty()
+    {
+        compileHasStructurePropertyImpl(lowJSValue(m_node->child1()), operationHasGenericProperty);
+    }
+
+    void compileInStructureProperty()
+    {
+        compileHasStructurePropertyImpl(lowCell(m_node->child1()), operationInStructureProperty);
     }
 
     void compileGetDirectPname()

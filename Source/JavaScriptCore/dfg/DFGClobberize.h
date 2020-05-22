@@ -697,6 +697,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToObject:
     case HasGenericProperty:
     case HasStructureProperty:
+    case InStructureProperty:
     case GetPropertyEnumerator:
     case GetDirectPname:
     case InstanceOfCustom:

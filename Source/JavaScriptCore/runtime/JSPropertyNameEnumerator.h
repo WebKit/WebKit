@@ -87,6 +87,8 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
+    friend class LLIntOffsetsExtractor;
+
     JSPropertyNameEnumerator(VM&, Structure*, uint32_t, uint32_t, WriteBarrier<JSString>*, unsigned);
     void finishCreation(VM&, RefPtr<PropertyNameArrayData>&&);
 

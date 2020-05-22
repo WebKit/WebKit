@@ -2179,6 +2179,12 @@ private:
             fixEdge<KnownCellUse>(node->child3());
             break;
         }
+        case InStructureProperty: {
+            fixEdge<CellUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            fixEdge<KnownCellUse>(node->child3());
+            break;
+        }
         case HasIndexedProperty: {
             node->setArrayMode(
                 node->arrayMode().refine(

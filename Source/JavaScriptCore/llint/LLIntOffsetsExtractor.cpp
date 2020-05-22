@@ -49,6 +49,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSModuleRecord.h"
 #include "JSObject.h"
+#include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "JSTypeInfo.h"
 #include "JumpTable.h"

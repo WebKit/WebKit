@@ -1,3 +1,94 @@
+2020-05-22  Saam Barati  <sbarati@apple.com>
+
+        in_by_val inside structure property for-in loop should use an opcode like has_structure_property but for "in"
+        https://bugs.webkit.org/show_bug.cgi?id=212239
+
+        Reviewed by Tadeu Zagallo.
+
+        There is code inside Speedometer 2 that is like:
+        
+        ```
+        for (let p in o) {
+            if (p in o2)
+                ...
+        }
+        ```
+        
+        Where o and o2 frequently share the same structure. Elm does this when it's
+        diffing two objects. We already optimize o2[p] (get_by_val) in the above loop
+        for structure properties. This patch adds that same optimization for in_by_val.
+        Because we already emit a "structure" loop for for-in, where we iterate structure
+        properties, the fast path for the above, where o and o2 have the same
+        structure is simply a structure check followed by return true.
+        
+        This patch introduces the new opcode: op_in_structure_property. Its fast path is identical
+        to op_has_structure_property. Its slow path, however, behaves like "in", which
+        uses the HasProperty internal method, unlike op_has_structure_property,
+        which uses the GetOwnProperty internal method. This behavior difference is
+        observable using Proxy.
+        
+        This a 5% perf improvement in the Elm subtest in Speedometer 2.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitInByVal):
+        (JSC::rewriteOp):
+        (JSC::StructureForInContext::finalize):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::addInInst):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInStructureProperty):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasStructurePropertyImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasStructureProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInStructureProperty):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_in_structure_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_in_structure_property):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasPropertyGeneric const):
+        * runtime/JSPropertyNameEnumerator.h:
+
 2020-05-22  Keith Miller  <keith_miller@apple.com>
 
         Checkpoint inlined call return handler needs an exception check when dispatching

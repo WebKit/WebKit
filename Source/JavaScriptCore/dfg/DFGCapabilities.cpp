@@ -253,6 +253,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_get_enumerable_length:
     case op_has_generic_property:
     case op_has_structure_property:
+    case op_in_structure_property:
     case op_has_indexed_property:
     case op_get_direct_pname:
     case op_get_property_enumerator:

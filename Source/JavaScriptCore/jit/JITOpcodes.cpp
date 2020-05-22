@@ -1372,6 +1372,24 @@ void JIT::emit_op_has_structure_property(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
+void JIT::emit_op_in_structure_property(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpInStructureProperty>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister enumerator = bytecode.m_enumerator;
+
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(enumerator, regT1);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
+
+    load32(Address(regT0, JSCell::structureIDOffset()), regT0);
+    addSlowCase(branch32(NotEqual, regT0, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+    
+    move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
+    emitPutVirtualRegister(dst);
+}
+
 void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
 {
     const Instruction* currentInstruction = m_codeBlock->instructions().at(byValInfo->bytecodeIndex).ptr();

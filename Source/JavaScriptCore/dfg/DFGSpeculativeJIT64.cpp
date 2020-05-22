@@ -4988,6 +4988,10 @@ void SpeculativeJIT::compile(Node* node)
         compileHasStructureProperty(node);
         break;
     }
+    case InStructureProperty: {
+        compileInStructureProperty(node);
+        break;
+    }
     case HasIndexedProperty: {
         compileHasIndexedProperty(node);
         break;

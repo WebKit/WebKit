@@ -2479,6 +2479,20 @@ RegisterID* BytecodeGenerator::emitInstanceOfCustom(RegisterID* dst, RegisterID*
 
 RegisterID* BytecodeGenerator::emitInByVal(RegisterID* dst, RegisterID* property, RegisterID* base)
 {
+    for (size_t i = m_forInContextStack.size(); i--; ) {
+        ForInContext& context = m_forInContextStack[i].get();
+        if (context.local() != property)
+            continue;
+
+        if (!context.isStructureForInContext())
+            break;
+
+        StructureForInContext& structureContext = context.asStructureForInContext();
+        OpInStructureProperty::emit<OpcodeSize::Wide32>(this, dst, base, property, structureContext.enumerator());
+        structureContext.addInInst(m_lastInstruction.offset(), property->index());
+        return dst;
+    }
+
     OpInByVal::emit(this, dst, base, property);
     return dst;
 }
@@ -5183,6 +5197,41 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGener
     }
 }
 
+template <typename OldOpType, typename TupleType>
+ALWAYS_INLINE void rewriteOp(BytecodeGenerator& generator, TupleType& instTuple)
+{
+    unsigned instIndex = std::get<0>(instTuple);
+    int propertyRegIndex = std::get<1>(instTuple);
+    auto instruction = generator.m_writer.ref(instIndex);
+    auto end = instIndex + instruction->size();
+    ASSERT(instruction->isWide32());
+
+    generator.m_writer.seek(instIndex);
+
+    auto bytecode = instruction->as<OldOpType>();
+
+    // disable peephole optimizations
+    generator.m_lastOpcodeID = op_end;
+
+    // Change the opcode to get_by_val.
+    // 1. dst stays the same.
+    // 2. base stays the same.
+    // 3. property gets switched to the original property.
+
+    if constexpr (std::is_same<OldOpType, OpGetDirectPname>::value) {
+        static_assert(sizeof(OpGetByVal) <= sizeof(OpGetDirectPname));
+        OpGetByVal::emit<OpcodeSize::Wide32>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
+    } else if constexpr (std::is_same<OldOpType, OpInStructureProperty>::value) {
+        static_assert(sizeof(OpInByVal) <= sizeof(OpInStructureProperty));
+        OpInByVal::emit<OpcodeSize::Wide32>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
+    } else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    // 4. nop out the remaining bytes
+    while (generator.m_writer.position() < end)
+        OpNop::emit<OpcodeSize::Narrow>(&generator);
+}
+
 void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGenerator* codeBlock, unsigned bodyBytecodeEndOffset)
 {
     Base::finalize(generator, codeBlock, bodyBytecodeEndOffset);
@@ -5191,30 +5240,13 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
 
     OpcodeID lastOpcodeID = generator.m_lastOpcodeID;
     InstructionStream::MutableRef lastInstruction = generator.m_lastInstruction;
-    for (const auto& instTuple : m_getInsts) {
-        unsigned instIndex = std::get<0>(instTuple);
-        int propertyRegIndex = std::get<1>(instTuple);
-        auto instruction = generator.m_writer.ref(instIndex);
-        auto end = instIndex + instruction->size();
-        ASSERT(instruction->isWide32());
 
-        generator.m_writer.seek(instIndex);
+    for (const auto& instTuple : m_getInsts)
+        rewriteOp<OpGetDirectPname>(generator, instTuple);
 
-        auto bytecode = instruction->as<OpGetDirectPname>();
+    for (const auto& instTuple : m_inInsts)
+        rewriteOp<OpInStructureProperty>(generator, instTuple);
 
-        // disable peephole optimizations
-        generator.m_lastOpcodeID = op_end;
-
-        // Change the opcode to get_by_val.
-        // 1. dst stays the same.
-        // 2. base stays the same.
-        // 3. property gets switched to the original property.
-        OpGetByVal::emit<OpcodeSize::Wide32>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
-
-        // 4. nop out the remaining bytes
-        while (generator.m_writer.position() < end)
-            OpNop::emit<OpcodeSize::Narrow>(&generator);
-    }
     generator.m_writer.seek(generator.m_writer.size());
     if (generator.m_lastInstruction.offset() + generator.m_lastInstruction->size() != generator.m_writer.size()) {
         generator.m_lastOpcodeID = lastOpcodeID;

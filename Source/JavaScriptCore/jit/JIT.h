@@ -619,6 +619,7 @@ namespace JSC {
         void emit_op_unsigned(const Instruction*);
         void emit_op_urshift(const Instruction*);
         void emit_op_has_structure_property(const Instruction*);
+        void emit_op_in_structure_property(const Instruction*);
         void emit_op_has_indexed_property(const Instruction*);
         void emit_op_get_direct_pname(const Instruction*);
         void emit_op_enumerator_structure_pname(const Instruction*);

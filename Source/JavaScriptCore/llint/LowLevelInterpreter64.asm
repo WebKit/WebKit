@@ -2847,3 +2847,27 @@ llintOp(op_log_shadow_chicken_tail, OpLogShadowChickenTail, macro (size, get, di
     callSlowPath(_llint_slow_path_log_shadow_chicken_tail)
     dispatch()
 end)
+
+macro hasStructurePropertyImpl(size, get, dispatch, return, slowPathCall)
+    get(m_base, t0)
+    loadConstantOrVariable(size, t0, t1)
+    btqnz t1, notCellMask, .slowPath
+
+    loadVariable(get, m_enumerator, t0)
+    loadi JSCell::m_structureID[t1], t1
+    bineq t1, JSPropertyNameEnumerator::m_cachedStructureID[t0], .slowPath
+
+    return(ValueTrue)
+
+.slowPath:
+    callSlowPath(slowPathCall)
+    dispatch()
+end
+
+llintOpWithReturn(op_has_structure_property, OpHasStructureProperty, macro (size, get, dispatch, return)
+    hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_has_structure_property)
+end)
+
+llintOpWithReturn(op_in_structure_property, OpInStructureProperty, macro (size, get, dispatch, return)
+    hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_in_structure_property)
+end)

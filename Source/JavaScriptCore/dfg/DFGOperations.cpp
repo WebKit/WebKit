@@ -2274,6 +2274,15 @@ EncodedJSValue JIT_OPERATION operationHasGenericProperty(JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty))));
 }
 
+EncodedJSValue JIT_OPERATION operationInStructureProperty(JSGlobalObject* globalObject, JSCell* base, JSCell* property)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, property)));
+}
+
 size_t JIT_OPERATION operationHasIndexedPropertyByInt(JSGlobalObject* globalObject, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
 {
     VM& vm = globalObject->vm();

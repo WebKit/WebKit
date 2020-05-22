@@ -238,6 +238,7 @@ namespace JSC {
         using Base = ForInContext;
     public:
         using GetInst = std::tuple<unsigned, int>;
+        using InInst = GetInst;
 
         StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, unsigned bodyBytecodeStartOffset)
             : ForInContext(localRegister, Type::StructureForIn, bodyBytecodeStartOffset)
@@ -256,6 +257,11 @@ namespace JSC {
             m_getInsts.append(GetInst { instIndex, propertyRegIndex });
         }
 
+        void addInInst(unsigned instIndex, int propertyRegIndex)
+        {
+            m_inInsts.append(InInst { instIndex, propertyRegIndex });
+        }
+
         void finalize(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, unsigned bodyBytecodeEndOffset);
 
     private:
@@ -263,6 +269,7 @@ namespace JSC {
         RefPtr<RegisterID> m_propertyRegister;
         RefPtr<RegisterID> m_enumeratorRegister;
         Vector<GetInst> m_getInsts;
+        Vector<InInst> m_inInsts;
     };
 
     class IndexedForInContext : public ForInContext {
@@ -381,6 +388,10 @@ namespace JSC {
         friend class IndexedForInContext;
         friend class StructureForInContext;
         friend class StrictModeScope;
+
+        template <typename OldOpType, typename TupleType>
+        friend void rewriteOp(BytecodeGenerator&, TupleType&);
+
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
 

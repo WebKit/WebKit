@@ -1447,6 +1447,7 @@ public:
     void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
     void compileHasStructureProperty(Node*);
+    void compileInStructureProperty(Node*);
     void compileGetDirectPname(Node*);
     void compileGetPropertyEnumerator(Node*);
     void compileGetEnumeratorPname(Node*);

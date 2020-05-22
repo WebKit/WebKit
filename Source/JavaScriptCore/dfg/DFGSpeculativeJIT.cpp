@@ -12826,6 +12826,33 @@ void SpeculativeJIT::compileHasStructureProperty(Node* node)
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
 
+void SpeculativeJIT::compileInStructureProperty(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand property(this, node->child2());
+    SpeculateCellOperand enumerator(this, node->child3());
+    JSValueRegsTemporary result(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg propertyGPR = property.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    CCallHelpers::JumpList wrongStructure;
+
+    m_jit.load32(MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()), resultRegs.payloadGPR());
+    wrongStructure.append(m_jit.branch32(MacroAssembler::NotEqual,
+        resultRegs.payloadGPR(),
+        MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::cachedStructureIDOffset())));
+
+    moveTrueTo(resultRegs.payloadGPR());
+    MacroAssembler::Jump done = m_jit.jump();
+
+    done.link(&m_jit);
+
+    addSlowPathGenerator(slowPathCall(wrongStructure, this, operationInStructureProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR));
+    blessedBooleanResult(resultRegs.payloadGPR(), node);
+}
+
 void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
 {
     if (node->child1().useKind() == CellUse) {

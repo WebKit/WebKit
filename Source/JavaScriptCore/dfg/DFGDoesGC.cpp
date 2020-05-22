@@ -297,6 +297,7 @@ bool doesGC(Graph& graph, Node* node)
     case HasIndexedProperty:
     case HasOwnProperty:
     case HasStructureProperty:
+    case InStructureProperty:
     case InById:
     case InByVal:
     case InstanceOf:

@@ -280,6 +280,7 @@ inline CapabilityLevel canCompile(Node* node)
     case BooleanToNumber:
     case HasGenericProperty:
     case HasStructureProperty:
+    case InStructureProperty:
     case HasIndexedProperty:
     case GetDirectPname:
     case GetEnumerableLength:
