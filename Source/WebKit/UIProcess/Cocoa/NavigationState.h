@@ -276,7 +276,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_networkActivity;
-    RunLoop::Timer<NavigationState> m_releaseNetwrokActivityTimer;
+    RunLoop::Timer<NavigationState> m_releaseNetworkActivityTimer;
 #endif
 };
 

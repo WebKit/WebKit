@@ -1,3 +1,18 @@
+2020-05-21  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Fix misspelling -- m_releaseNetwrokActivityTimer --> m_releaseNetworkActivityTimer
+        https://bugs.webkit.org/show_bug.cgi?id=212237
+
+        Reviewed by Simon Fraser.
+
+        No new tests required -- simply fixing a misspelling.
+
+        * UIProcess/Cocoa/NavigationState.h: Rename m_releaseNetwrokActivityTimer to m_releaseNetworkActivityTimer
+        * UIProcess/Cocoa/NavigationState.mm: Rename m_releaseNetwrokActivityTimer to m_releaseNetworkActivityTimer
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::releaseNetworkActivity):
+        (WebKit::NavigationState::didChangeIsLoading):
+
 2020-05-21  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Remove trivial uses of Color::rgb()

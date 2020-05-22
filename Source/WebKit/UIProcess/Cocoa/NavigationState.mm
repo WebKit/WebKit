@@ -105,7 +105,7 @@ NavigationState::NavigationState(WKWebView *webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
 #if PLATFORM(IOS_FAMILY)
-    , m_releaseNetwrokActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityAfterLoadCompletion)
+    , m_releaseNetworkActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityAfterLoadCompletion)
 #endif
 {
     ASSERT(m_webView->_page);
@@ -1321,7 +1321,7 @@ void NavigationState::releaseNetworkActivity(NetworkActivityReleaseReason reason
         break;
     }
     m_networkActivity = nullptr;
-    m_releaseNetwrokActivityTimer.stop();
+    m_releaseNetworkActivityTimer.stop();
 }
 #endif
 
@@ -1333,9 +1333,9 @@ void NavigationState::didChangeIsLoading()
         if ([UIApp isSuspendedUnderLock])
             return;
 
-        if (m_releaseNetwrokActivityTimer.isActive()) {
+        if (m_releaseNetworkActivityTimer.isActive()) {
             RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState keeps its process network assertion because a new page load started", this);
-            m_releaseNetwrokActivityTimer.stop();
+            m_releaseNetworkActivityTimer.stop();
         }
         if (!m_networkActivity) {
             RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState is taking a process network assertion because a page load started", this);
@@ -1345,7 +1345,7 @@ void NavigationState::didChangeIsLoading()
         // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
         // before suspending the WebContent process <rdar://problem/27910964>.
         RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState will release its process network assertion soon because the page load completed", this);
-        m_releaseNetwrokActivityTimer.startOneShot(3_s);
+        m_releaseNetworkActivityTimer.startOneShot(3_s);
     }
 #endif
 
