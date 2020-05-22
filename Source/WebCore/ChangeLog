@@ -1,3 +1,18 @@
+2020-05-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix rare scrolling thread crash firing the m_delayedRenderingUpdateDetectionTimer timer
+        https://bugs.webkit.org/show_bug.cgi?id=212250
+
+        Reviewed by Tim Horton.
+
+        It seems that we can fire the m_delayedRenderingUpdateDetectionTimer timer after the
+        ScrollingTree has been destroyed (possibly because it's destroyed on another thread
+        and CFRunLoopTimerRef isn't threadsafe), so explicitly clear the timer in invalidate()
+        while holding m_treeMutex.
+
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::invalidate):
+
 2020-05-21  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Move Color coder definitions to Color to allow for future encaspulation improvements

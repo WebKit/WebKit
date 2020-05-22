@@ -89,6 +89,9 @@ void ThreadedScrollingTree::invalidate()
     // ScrollingCoordinator's page is destroyed.
     ASSERT(ScrollingThread::isCurrentThread());
 
+    LockHolder treeLocker(m_treeMutex);
+    m_delayedRenderingUpdateDetectionTimer = nullptr;
+
     // Since this can potentially be the last reference to the scrolling coordinator,
     // we need to release it on the main thread since it has member variables (such as timers)
     // that expect to be destroyed from the main thread.
