@@ -51,6 +51,10 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKShippingMethod)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentInstallmentConfiguration)
 #endif
 
+#if HAVE(PASSKIT_INSTALLMENT_ITEMS)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentInstallmentItem)
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationController)
 #endif

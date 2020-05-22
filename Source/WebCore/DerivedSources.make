@@ -104,6 +104,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorContactField.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentConfiguration.idl \
+	$(WebCore)/Modules/applepay/ApplePayInstallmentItem.idl \
+	$(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
+	$(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \

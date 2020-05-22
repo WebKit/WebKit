@@ -623,6 +623,9 @@ WHLSLStandardLibraryFunctionMap.cpp
     JSApplePayErrorCode.cpp
     JSApplePayErrorContactField.cpp
     JSApplePayInstallmentConfiguration.cpp
+    JSApplePayInstallmentItem.cpp
+    JSApplePayInstallmentItemType.cpp
+    JSApplePayInstallmentRetailChannel.cpp
     JSApplePayLineItem.cpp
     JSApplePayMerchantCapability.cpp
     JSApplePayModifier.cpp

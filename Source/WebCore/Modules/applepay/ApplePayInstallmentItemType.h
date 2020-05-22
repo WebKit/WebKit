@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,18 @@
 
 #pragma once
 
-#if HAVE(PASSKIT_INSTALLMENTS)
-
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS NSDictionary;
-OBJC_CLASS PKPaymentInstallmentConfiguration;
+#if ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)
 
 namespace WebCore {
 
-class Document;
-struct ApplePayInstallmentConfiguration;
-template<typename> class ExceptionOr;
-
-class WEBCORE_EXPORT PaymentInstallmentConfiguration {
-public:
-    static ExceptionOr<PaymentInstallmentConfiguration> create(const ApplePayInstallmentConfiguration&);
-
-    PaymentInstallmentConfiguration() = default;
-    PaymentInstallmentConfiguration(RetainPtr<PKPaymentInstallmentConfiguration>&&);
-
-    PKPaymentInstallmentConfiguration *platformConfiguration() const;
-    ApplePayInstallmentConfiguration applePayInstallmentConfiguration() const;
-
-private:
-    PaymentInstallmentConfiguration(const ApplePayInstallmentConfiguration&, NSDictionary *applicationMetadata);
-
-    RetainPtr<PKPaymentInstallmentConfiguration> m_configuration;
+enum class ApplePayInstallmentItemType : uint8_t {
+    Generic,
+    Phone,
+    Pad,
+    Watch,
+    Mac,
 };
 
 } // namespace WebCore
 
-#endif // HAVE(PASSKIT_INSTALLMENTS)
+#endif // ENABLE(APPLE_PAY_INSTALLMENT_ITEMS)

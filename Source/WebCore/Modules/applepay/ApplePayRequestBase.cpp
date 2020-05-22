@@ -106,8 +106,12 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
         result.setSupportedCountries(WTFMove(request.supportedCountries));
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    if (request.installmentConfiguration)
-        result.setInstallmentConfiguration(WTFMove(*request.installmentConfiguration));
+    if (request.installmentConfiguration) {
+        auto installmentConfiguration = PaymentInstallmentConfiguration::create(*request.installmentConfiguration);
+        if (installmentConfiguration.hasException())
+            return installmentConfiguration.releaseException();
+        result.setInstallmentConfiguration(installmentConfiguration.releaseReturnValue());
+    }
 #endif
 
     return WTFMove(result);

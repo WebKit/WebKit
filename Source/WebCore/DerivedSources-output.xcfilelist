@@ -79,6 +79,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorContactField.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorContactField.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentConfiguration.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentItem.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentItem.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentItemType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentItemType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentRetailChannel.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayInstallmentRetailChannel.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayLineItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayMerchantCapability.cpp

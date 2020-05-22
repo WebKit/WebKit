@@ -1,3 +1,13 @@
+2020-05-22  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add new ApplePayInstallmentConfiguration members
+        https://bugs.webkit.org/show_bug.cgi?id=212160
+        <rdar://problem/60703650>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/PlatformEnableCocoa.h: Defined ENABLE_APPLE_PAY_INSTALLMENT_IDENTIFIERS.
+
 2020-05-21  Robin Morisset  <rmorisset@apple.com>
 
         Various compile-time boolean flags could/should be marked constexpr

@@ -39,6 +39,9 @@ http/tests/ssl/applepay/ [ Pass ]
 # ApplePayInstallmentConfiguration was first available in Catalina.
 [ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentConfiguration.https.html [ Skip ]
 
+# ApplePayInstallmentItem is not available in Mojave or Catalina.
+[ Mojave Catalina ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Skip ]
+
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 

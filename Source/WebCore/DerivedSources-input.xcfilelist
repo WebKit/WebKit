@@ -25,6 +25,9 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorContactField.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentConfiguration.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentItem.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentItemType.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayInstallmentRetailChannel.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayLineItem.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayMerchantCapability.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPayment.idl

@@ -1,3 +1,15 @@
+2020-05-22  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add new ApplePayInstallmentConfiguration members
+        https://bugs.webkit.org/show_bug.cgi?id=212160
+        <rdar://problem/60703650>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/ssl/applepay/ApplePayInstallmentItems.https-expected.txt:
+        * http/tests/ssl/applepay/ApplePayInstallmentItems.https.html: Added.
+        * platform/mac-wk2/TestExpectations: Skipped test on Mojave and Catalina.
+
 2020-05-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Gardening after r262056
