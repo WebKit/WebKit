@@ -727,6 +727,7 @@ class WebkitFlatpak:
 
         env_var_prefixes_to_keep = [
             "G",
+            "CCACHE",
             "GIGACAGE",
             "GST",
             "GTK",

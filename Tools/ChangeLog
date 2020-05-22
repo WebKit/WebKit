@@ -1,3 +1,16 @@
+2020-05-22  Javier Fernandez  <jfernandez@igalia.com>
+
+        [Flatpak SDK] CCACHE_ env vars are not forwarded to the sandbox environment
+        https://bugs.webkit.org/show_bug.cgi?id=212257
+
+        Reviewed by Philippe Normand.
+
+        Added the "CCACHE" prefix to the ones the SDK should keep from the
+        user's environment, and forwarded to the Flatpak sandbox.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-05-22  Tim Horton  <timothy_horton@apple.com>
 
         iOS: Pressing tab in the Mail subject field moves focus to the body, but pressing shift tab doesn't move it back
