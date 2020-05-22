@@ -12,11 +12,12 @@
 <link rel="stylesheet" href="/css/support/grid.css">
 <link rel="stylesheet" href="../../support/alignment.css">
 <meta name="assert" content="Grid items orthogonal to the Baseline Context along the inline or block axis and an intrinsically-sized column or row respectively, don't participate in baseline alignment in the, row-like or column-like respectively, shared alignment context.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 .inline-grid {
   position: relative;
   border: solid;
-  -webkit-text-orientation: sideways;
+  text-orientation: sideways;
   font-family: Ahem;
 }
 
@@ -50,7 +51,10 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
-<body onload="checkLayout('.inline-grid')">
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
+<body onload="document.fonts.ready.then(() => { checkLayout('.inline-grid'); })">
 
 <pre>auto-sized rows - horizonal grid and verticalLR item - column-axis baseline</pre>
 <div class="inline-grid alignItemsBaseline columns height200">
@@ -88,7 +92,7 @@
 </div>
 
 <pre>max-flex-sized rows - horizonal grid and verticalLR item - column-axis baseline<br>baseline is not applied initially, but orthogonal items force repeating the track sizing and height is not indefinite in that phase.</pre>
-<!--  https://github.com/w3c/csswg-drafts/issues/3046  -->
+<!-- https://github.com/w3c/csswg-drafts/issues/3046 -->
 <div class="inline-grid alignItemsBaseline columns max-flex-rows">
   <div class="firstRowFirstColumn bigFont paddingBottom" data-offset-x="0"   data-offset-y="376" data-expected-width="100" data-expected-height="75">É</div>
   <div class="firstRowSecondColumn verticalLR"           data-offset-x="100" data-offset-y="0"   data-expected-width="100" data-expected-height="416">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
@@ -131,7 +135,7 @@
 </div>
 
 <pre>max-flex-sized columns - horizontal grid item - row-axis baseline<br>baseline is not applied initially, but orthogonal items force repeating the track sizing and height is not indefinite in that phase.</pre>
-<!--  https://github.com/w3c/csswg-drafts/issues/3046  -->
+<!-- https://github.com/w3c/csswg-drafts/issues/3046 -->
 <div class="inline-grid justifyItemsBaseline rows max-flex-columns">
   <div class="firstRowFirstColumn bigFont verticalLR paddingLeft" data-offset-x="0"   data-offset-y="0"   data-expected-width="75"  data-expected-height="100">É</div>
   <div class="secondRowFirstColumn"                               data-offset-x="35"  data-offset-y="100" data-expected-width="416" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
@@ -174,7 +178,7 @@
 </div>
 
 <pre>max-flex-sized rows - verticalLR grid and horizontal item - column-axis baseline<br>baseline is not applied initially, but orthogonal items force repeating the track sizing and height is not indefinite in that phase.</pre>
-<!--  https://github.com/w3c/csswg-drafts/issues/3046  -->
+<!-- https://github.com/w3c/csswg-drafts/issues/3046 -->
 <div class="inline-grid verticalLR alignItemsBaseline columns max-flex-rows">
   <div class="firstRowFirstColumn bigFont paddingLeft" data-offset-x="0"   data-offset-y="0"   data-expected-width="75"  data-expected-height="100">É</div>
   <div class="firstRowSecondColumn horizontalTB"       data-offset-x="35"  data-offset-y="100" data-expected-width="416" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
@@ -217,7 +221,7 @@
 </div>
 
 <pre>max-flex-sized rows - verticalRL grid and horizontal item - column-axis baseline<br>baseline is not applied initially, but orthogonal items force repeating the track sizing and height is not indefinite in that phase.</pre>
-<!--  https://github.com/w3c/csswg-drafts/issues/3046  -->
+<!-- https://github.com/w3c/csswg-drafts/issues/3046 -->
 <div class="inline-grid verticalRL alignItemsBaseline columns max-flex-rows">
   <div class="firstRowFirstColumn bigFont paddingLeft" data-offset-x="-10" data-offset-y="0"   data-expected-width="75"  data-expected-height="100">É</div>
   <div class="firstRowSecondColumn horizontalTB"       data-offset-x="25"  data-offset-y="100" data-expected-width="416" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>

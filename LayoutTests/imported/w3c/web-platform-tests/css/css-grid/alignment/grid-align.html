@@ -35,8 +35,11 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
 
-<body onload="checkLayout('.grid')">
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 
 <div style="position: relative">
     <div class="grid fit-content" data-expected-width="200" data-expected-height="400">
@@ -56,7 +59,7 @@
     </div>
 </div>
 
-<!--  Default alignment and initial values.  -->
+<!-- Default alignment and initial values. -->
 <div style="position: relative">
     <div class="grid fit-content alignItemsCenter" data-expected-width="200" data-expected-height="400">
         <div class="cell alignSelfAuto firstRowFirstColumn" data-offset-x="0" data-offset-y="80" data-expected-width="20" data-expected-height="40"></div>
@@ -75,7 +78,7 @@
     </div>
 </div>
 
-<!--  RTL direction (it should not affect the block-flow direction).  -->
+<!-- RTL direction (it should not affect the block-flow direction). -->
 <div style="position: relative">
      <div class="grid fit-content directionRTL" data-expected-width="200" data-expected-height="400">
          <div class="alignSelfStretch firstRowFirstColumn" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="200"></div>
@@ -94,7 +97,7 @@
      </div>
 </div>
 
-<!--  RTL direction (it should not affect the block-flow) with opposite directions grid container vs grid item.  -->
+<!-- RTL direction (it should not affect the block-flow) with opposite directions grid container vs grid item. -->
 <div style="position: relative">
      <div class="grid fit-content" data-expected-width="200" data-expected-height="400">
          <div class="alignSelfStretch firstRowFirstColumn directionRTL" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="200"></div>
@@ -113,7 +116,7 @@
      </div>
 </div>
 
-<!--  Vertical RL writing mode.  -->
+<!-- Vertical RL writing mode. -->
 <div style="position: relative">
     <div class="grid fit-content verticalRL" data-expected-width="400" data-expected-height="200">
         <div class="alignSelfStretch firstRowFirstColumn" data-offset-x="200" data-offset-y="0" data-expected-width="200" data-expected-height="100"></div>
@@ -132,7 +135,7 @@
     </div>
 </div>
 
-<!--  Vertical LR writing mode.  -->
+<!-- Vertical LR writing mode. -->
 <div style="position: relative">
     <div class="grid fit-content verticalLR" data-expected-width="400" data-expected-height="200">
         <div class="alignSelfStretch firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="100"></div>
@@ -151,7 +154,7 @@
     </div>
 </div>
 
-<!--  Vertical RL writing mode with opposite block-flow directions grid container vs grid item.  -->
+<!-- Vertical RL writing mode with opposite block-flow directions grid container vs grid item. -->
 <div style="position: relative">
     <div class="grid fit-content verticalRL" data-expected-width="400" data-expected-height="200">
         <div class="alignSelfStretch firstRowFirstColumn verticalLR" data-offset-x="200" data-offset-y="0" data-expected-width="200" data-expected-height="100">
@@ -185,7 +188,7 @@
     </div>
 </div>
 
-<!--  Vertical LR writing mode with opposite block-flow directions grid container vs grid item.  -->
+<!-- Vertical LR writing mode with opposite block-flow directions grid container vs grid item. -->
 <div style="position: relative">
     <div class="grid fit-content verticalLR" data-expected-width="400" data-expected-height="200">
         <div class="alignSelfStretch firstRowFirstColumn verticalRL" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="100">

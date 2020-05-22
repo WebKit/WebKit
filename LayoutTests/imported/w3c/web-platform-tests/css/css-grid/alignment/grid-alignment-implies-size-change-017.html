@@ -8,6 +8,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-align/#valdef-align-self-stretch">
 <link rel="help" href="https://drafts.csswg.org/css-align/#valdef-align-self-normal">
 <meta name="assert" content="Changing the grid item's align-items value from 'start' to 'stretch' causes replaced items to shrink.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 .grid {
   position: relative;
@@ -28,6 +29,7 @@
 <script src="/resources/check-layout-th.js"></script>
 <script src="support/style-change.js"></script>
 <script>
+setup({ explicit_done: true });
 function runTest() {
   evaluateStyleChange(item, "before", "data-expected-height", 100);
   grid.style.alignItems = "stretch";
@@ -35,7 +37,7 @@ function runTest() {
   done();
 }
 </script>
-<body onload="runTest()">
+<body onload="document.fonts.ready.then(() => { runTest(); })">
 <div class="grid" id="grid">
   <img data-expected-width="100" id="item" src="support/100x100-green.png"></img>
 </div>

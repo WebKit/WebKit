@@ -5,6 +5,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos" title="9. Absolute Positioning">
 <meta name="flags" content="ahem">
 <meta name="assert" content="Items should extend to fill the width of the absolutely positioned grid container.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 .grid {
   display: grid;
@@ -34,8 +35,11 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
 
-<body onload="checkLayout('.grid')">
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 
 <div id="log"></div>
 

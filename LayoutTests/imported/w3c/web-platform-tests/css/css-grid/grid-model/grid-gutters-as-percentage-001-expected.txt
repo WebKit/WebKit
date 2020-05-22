@@ -1,0 +1,109 @@
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+PASS .grid 9 
+PASS .grid 10 
+PASS .grid 11 
+PASS .grid 12 
+PASS .grid 13 
+PASS .grid 14 
+PASS .grid 15 
+PASS .grid 16 
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'auto' width, which will reduce the available space for tracks; however, they can grow exceeding their content's max-width.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'instrinsic' width, which reduce the available space for tracks; however, since we use 'fit-content' intrinsic size, first column's width is reduced and height increased to let its content to fit.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'auto' width, which will reduce the available space for tracks; however, they can grow exceeding their content's max-width.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'instrinsic' width, which reduce the available space for tracks; however, since we use 'fit-content' intrinsic size, first column's width is reduced and height increased to let its content to fit.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'auto' width, which reduce the available space for tracks; however, they are fixed sized and fit.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'intrinsic' width, which reduce the available space for tracks; however, they are fixed sized and don't fit so they overflow the grid container.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'auto' width, which reduce the available space for tracks; however, they are fixed sized and fit.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Both row and column gaps are based on definite sizes, but they will reduce the available space for tracks; however, since the container's specified inline size is not enough, first column's width is reduced and height increased to let its content to fit.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Both row and column gaps are based on definite sizes, but they will reduce the available space for tracks; however, they can grow exceeding their content's max-width.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Both row and column gaps are based on definite sizes, they will reduce the available space for tracks; however, they are fixed sized and don't fit so they overflow the grid container.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Both row and column gaps are based on definite sizes, they will reduce the available space for tracks; however, they are fixed sized and fit.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'instrinsic' width, which reduce the available space for tracks; however, since we use 'fit-content' intrinsic size, only 1 repeteation is allowed, so tracks are adjusted to fit in the intrinsic size reduced by the gaps.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Both row and column gaps are based on definite sizes, they will reduce the available space for tracks; however, repeat auto-fill allows all of them to fit.
+
+XXX X XX X
+XX XXX X X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+XXXXX X XX
+Both row and column gaps are based on definite sizes, they will reduce the available space for tracks; however, repeat auto-fill allows only 1 repetition.
+
+XXX X XX X
+XX XXX X X
+X XX XXX X
+XXXXX X XX
+Grid with positioned items. Height is indefinite, so row gaps should be based on grid's 'auto' height. Column gaps based on a grid's 'auto' width, which reduce the available space for tracks; however, they are fixed sized and fit.
+
+XXX X XX XXX XXX X XX XX XXX XXXXXX X XX
+Grid with positioned items. Both row and column gaps are based on definite sizes, they will reduce the available space for tracks; however, they are fixed sized and don't fit so they overflow the grid container.
+
+XXX X XX XXX XXX X XX XX XXX XXXXXX X XX

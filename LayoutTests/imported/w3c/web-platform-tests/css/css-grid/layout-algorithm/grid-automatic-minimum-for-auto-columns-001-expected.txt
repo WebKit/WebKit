@@ -1,0 +1,51 @@
+XXXXXX
+XX
+XX XX XX
+XXX XX X
+X X X X X X
+XX
+XXXX XXXX
+XX XXXXX X
+XX
+XXXXXX
+XXXX XXXX
+XX
+XX XXXXXXXX
+XXXX XXXX
+XX XX
+XXXXXX X XXX
+XX XX XX
+X X
+XXXX
+X XXX XX
+XXX XXXX
+XX XX XX
+XXXXX X XXXXX
+X XXX XX
+XXXXX XXXXX
+XX XX
+XX XX XX XX
+XXX
+X XX XXX
+X XX X
+XXX X
+XXX X
+XXX X
+XX XXX
+XX XXX XX
+XX XXX XX
+XXXXXX
+XXXXXX
+XXXXXX
+XX XXX X
+XX XXX X
+XX XXX X
+X XXXX X
+X XXXX X
+X XXXX X
+
+PASS Check that min-width is honored when sizing auto columns. 
+PASS Check that min-width is honored when sizing auto columns and spanning grid items. 
+PASS Check the interactions between width and min-width and auto tracks. 
+PASS Check that borders and paddings are considering when computing min sizes. 
+

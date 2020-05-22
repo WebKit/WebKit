@@ -101,12 +101,12 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 # Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
 webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Failure ]
-webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-03.html [ ImageOnlyFailure ]
-webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-04.html [ ImageOnlyFailure ]
-webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-vertical-rl-05.html [ ImageOnlyFailure ]
-webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-vertical-rl-04.html [ ImageOnlyFailure ]
-webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-06.html [ ImageOnlyFailure ]
-webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-07.html [ ImageOnlyFailure ]
+webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-003.html [ ImageOnlyFailure ]
+webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-004.html [ ImageOnlyFailure ]
+webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-005.html [ ImageOnlyFailure ]
+webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-004.html [ ImageOnlyFailure ]
+webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-006.html [ ImageOnlyFailure ]
+webkit.org/b/170293 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-007.html [ ImageOnlyFailure ]
 
 
 # A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations

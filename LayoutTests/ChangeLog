@@ -1,3 +1,218 @@
+2020-05-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [css-grid] Update WPT imported tests and deduplicate common tests
+        https://bugs.webkit.org/show_bug.cgi?id=212187
+
+        Reviewed by Javier Fernandez.
+
+        This updates the WPT css-flexbox imported tests and deduplicates
+        our old versions of this tests in favor of the WPT ones.
+
+        Below is the complete list of tests deduplicated.
+        Format is: WPT-test-name => old-test(s) removed
+
+        imported/w3c/web-platform-tests/css/css-grid/abspos/empty-grid-001.html => fast/css-grid-layout/empty-grid.html
+        imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-crash.html => imported/blink/fast/css-grid-layout/positioned-grid-items-crash.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-001.html => fast/css-grid-layout/grid-baseline.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-002.html => fast/css-grid-layout/grid-baseline-margins-1.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-003.html => fast/css-grid-layout/grid-baseline-margins-2.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-004.html => fast/css-grid-layout/grid-baseline-must-respect-grid-order.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-container-auto-margins-scrollbars-001.html => fast/css-grid-layout/grid-container-scroll-accounts-for-auto-margin.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-and-self-alignment-001.html => fast/css-grid-layout/grid-content-alignment-and-self-alignment.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-and-self-alignment-002.html => fast/css-grid-layout/grid-content-alignment-and-self-alignment-spanning.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-auto-sized-tracks-001.html => fast/css-grid-layout/grid-content-alignment-stretch-only-valid-for-auto-sized-tracks.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-001.html => fast/css-grid-layout/grid-content-alignment-overflow.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-span-001.html => fast/css-grid-layout/grid-content-alignment-with-span.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-span-vertical-lr-001.html => fast/css-grid-layout/grid-content-alignment-with-span-vertical-lr.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-with-span-vertical-rl-001.html => fast/css-grid-layout/grid-content-alignment-with-span-vertical-rl.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-001.html => fast/css-grid-layout/grid-self-baseline-01.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-002-b.html => fast/css-grid-layout/grid-self-baseline-02-b.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-002.html => fast/css-grid-layout/grid-self-baseline-02.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-003.html => fast/css-grid-layout/grid-self-baseline-03.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-004.html => fast/css-grid-layout/grid-self-baseline-04.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-005.html => fast/css-grid-layout/grid-self-baseline-05.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-006.html => fast/css-grid-layout/grid-self-baseline-06.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-007.html => fast/css-grid-layout/grid-self-baseline-07.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-001.html => fast/css-grid-layout/grid-self-baseline-horiz-01.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-002.html => fast/css-grid-layout/grid-self-baseline-horiz-02.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-003.html => fast/css-grid-layout/grid-self-baseline-horiz-03.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-004.html => fast/css-grid-layout/grid-self-baseline-horiz-04.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-005.html => fast/css-grid-layout/grid-self-baseline-horiz-05.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-006.html => fast/css-grid-layout/grid-self-baseline-horiz-06.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-horiz-007.html => fast/css-grid-layout/grid-self-baseline-horiz-07.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-001.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-01.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-002.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-02.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-003.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-03.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-004.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-04.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-005.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-05.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-006.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-06.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-lr-007.html => fast/css-grid-layout/grid-self-baseline-vertical-lr-07.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-001.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-01.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-002.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-02.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-003.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-03.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-004.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-04.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-005.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-05.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-006.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-06.html
+        imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-vertical-rl-007.html => fast/css-grid-layout/grid-self-baseline-vertical-rl-07.html
+        imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-001.html => fast/css-grid-layout/anonymous-grid-items.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/explicit-grid-size-001.html => fast/css-grid-layout/explicit-grid-size.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-content-distribution-001.html => fast/css-grid-layout/flex-content-distribution.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-content-resolution-columns-001.html => fast/css-grid-layout/flex-content-resolution-columns.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-content-resolution-columns-002.html => fast/css-grid-layout/flex-and-minmax-content-resolution-columns.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-content-resolution-rows-001.html => fast/css-grid-layout/flex-content-resolution-rows.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-content-resolution-rows-002.html => fast/css-grid-layout/flex-and-minmax-content-resolution-rows.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-factor-sum-less-than-1-001.html => fast/css-grid-layout/flex-factor-sum-less-than-1.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/flex-item-grid-container-percentage-rows-001.html => fast/css-grid-layout/flex-item-grid-container-percentage-rows.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-add-item-with-positioned-items-crash.html => fast/css-grid-layout/grid-add-item-with-positioned-items.html imported/blink/fast/css-grid-layout/grid-add-item-with-positioned-items.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-add-positioned-block-item-after-inline-item-crash.html => fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item.html imported/blink/fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001.html => fast/css-grid-layout/grid-auto-fill-columns.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001.html => fast/css-grid-layout/grid-auto-fill-rows.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001.html => fast/css-grid-layout/grid-auto-fit-columns.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001.html => fast/css-grid-layout/grid-auto-fit-rows.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-intrinsic-001.html => fast/css-grid-layout/grid-auto-repeat-intrinsic.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-positioned-container-001.html => fast/css-grid-layout/grid-auto-repeat-positioned-container.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-change-intrinsic-size-with-auto-repeat-tracks-001.html => fast/css-grid-layout/grid-change-intrinsic-size-with-auto-repeat-tracks.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-automatic-minimum-intrinsic-aspect-ratio-001.html => fast/css-grid-layout/grid-automatic-minimum-intrinsic-aspect-ratio.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html => imported/blink/fast/css-grid-layout/grid-item-margins-and-writing-modes.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-script-001.html => imported/blink/fast/css-grid-layout/grid-element-bad-cast-addchild.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-items/remove-svg-grid-item-001.html => imported/blink/fast/css-grid-layout/grid-element-remove-svg-child.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/column-property-should-not-apply-on-grid-container-001.html => fast/css-grid-layout/column-property-should-not-apply-on-grid-container.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/compute-intrinsic-widths-scrollbar-001.html => fast/css-grid-layout/compute-intrinsic-widths-scrollbar.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/fixed-width-intrinsic-width-should-exclude-scrollbar-001.html => fast/css-grid-layout/fixed-width-intrinsic-width-should-exclude-scrollbar-width-in-grid.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-margin-border-padding-scrollbar-001.html => fast/css-grid-layout/grid-container-margin-border-padding-scrollbar.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbars-sizing-002.html => fast/css-grid-layout/grid-container-width-should-include-scroll-bar-width.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-float-002.html => fast/css-grid-layout/floating-not-effect-on-grid-items.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-floats-no-intrude-002.html => fast/css-grid-layout/float-not-protruding-into-next-grid-item.html
+        imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-margins-no-collapse-002.html => fast/css-grid-layout/grid-item-margins-not-collapse.html
+        imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/auto-margins-ignored-during-track-sizing-001.html => fast/css-grid-layout/auto-margins-ignored-during-track-sizing.html
+        imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-columns-min-max-width-001.html => fast/css-grid-layout/flex-sizing-columns-min-max-width.html
+        imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-min-max-height-001.html => fast/css-grid-layout/flex-sizing-rows-min-max-height.html
+        imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-automatic-minimum-for-auto-columns-001.html => fast/css-grid-layout/grid-automatic-minimum-for-auto-columns.html
+        imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-automatic-minimum-for-auto-rows-001.html => fast/css-grid-layout/grid-automatic-minimum-for-auto-rows.html
+        imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-container-percentage-001.html => fast/css-grid-layout/grid-container-percentage-columns.html
+        imported/w3c/web-platform-tests/css/css-grid/placement/grid-container-change-named-grid-recompute-child-positions-001.html => fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child.html
+
+        * TestExpectations:
+        * fast/css-grid-layout/anonymous-grid-items-expected.html: Removed.
+        * fast/css-grid-layout/anonymous-grid-items.html: Removed.
+        * fast/css-grid-layout/auto-margins-ignored-during-track-sizing.html: Removed.
+        * fast/css-grid-layout/column-property-should-not-apply-on-grid-container.html: Removed.
+        * fast/css-grid-layout/compute-intrinsic-widths-scrollbar-expected.txt: Removed.
+        * fast/css-grid-layout/compute-intrinsic-widths-scrollbar.html: Removed.
+        * fast/css-grid-layout/empty-grid-expected.txt: Removed.
+        * fast/css-grid-layout/empty-grid.html: Removed.
+        * fast/css-grid-layout/explicit-grid-size-expected.txt: Removed.
+        * fast/css-grid-layout/fixed-width-intrinsic-width-should-exclude-scrollbar-width-in-grid-expected.txt: Removed.
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-columns-expected.txt: Removed.
+        * fast/css-grid-layout/flex-content-resolution-columns-expected.txt: Removed.
+        * fast/css-grid-layout/flex-content-resolution-rows-expected.txt: Removed.
+        * fast/css-grid-layout/flex-factor-sum-less-than-1-expected.txt: Removed.
+        * fast/css-grid-layout/flex-item-grid-container-percentage-rows.html: Removed.
+        * fast/css-grid-layout/flex-sizing-columns-min-max-width-expected.txt: Removed.
+        * fast/css-grid-layout/flex-sizing-rows-min-max-height-expected.txt: Removed.
+        * fast/css-grid-layout/float-not-protruding-into-next-grid-item-expected.html: Removed.
+        * fast/css-grid-layout/float-not-protruding-into-next-grid-item.html: Removed.
+        * fast/css-grid-layout/floating-not-effect-on-grid-items-expected.txt: Removed.
+        * fast/css-grid-layout/floating-not-effect-on-grid-items.html: Removed.
+        * fast/css-grid-layout/grid-add-item-with-positioned-items-expected.txt: Removed.
+        * fast/css-grid-layout/grid-add-item-with-positioned-items.html: Removed.
+        * fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item-expected.txt: Removed.
+        * fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item.html: Removed.
+        * fast/css-grid-layout/grid-auto-fill-columns-expected.txt: Removed.
+        * fast/css-grid-layout/grid-auto-fill-rows-expected.txt: Removed.
+        * fast/css-grid-layout/grid-auto-fit-columns-expected.txt: Removed.
+        * fast/css-grid-layout/grid-auto-fit-rows-expected.txt: Removed.
+        * fast/css-grid-layout/grid-auto-repeat-intrinsic-expected.txt: Removed.
+        * fast/css-grid-layout/grid-auto-repeat-intrinsic.html: Removed.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-columns-expected.txt: Removed.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-columns.html: Removed.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-rows-expected.txt: Removed.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-rows.html: Removed.
+        * fast/css-grid-layout/grid-automatic-minimum-intrinsic-aspect-ratio.html: Removed.
+        * fast/css-grid-layout/grid-container-change-named-grid-lines-recompute-child-expected.txt: Removed.
+        * fast/css-grid-layout/grid-container-margin-border-padding-scrollbar-expected.txt: Removed.
+        * fast/css-grid-layout/grid-container-margin-border-padding-scrollbar.html: Removed.
+        * fast/css-grid-layout/grid-container-scroll-accounts-for-auto-margin.html: Removed.
+        * fast/css-grid-layout/grid-container-width-should-include-scroll-bar-width-expected.txt: Removed.
+        * fast/css-grid-layout/grid-container-width-should-include-scroll-bar-width.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment-spanning-expected.txt: Removed.
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment-spanning.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-and-self-alignment.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-overflow.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-stretch-only-valid-for-auto-sized-tracks.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-with-span-vertical-lr.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-with-span-vertical-rl.html: Removed.
+        * fast/css-grid-layout/grid-content-alignment-with-span.html: Removed.
+        * fast/css-grid-layout/grid-item-margins-not-collapse.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-01.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-02-b.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-02-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-02.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-03-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-03.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-04-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-04.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-05.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-06-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-06.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-07.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-01-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-01.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-02-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-02.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-03-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-03.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-04-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-04.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-05-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-05.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-06-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-06.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-horiz-07.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-01-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-01.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-02-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-02.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-03-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-03.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-04-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-04.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-05-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-05.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-06-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-06.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-07-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-lr-07.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-01-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-01.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-02-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-02.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-03-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-03.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-04-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-04.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-05-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-05.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-06-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-06.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-07-expected.html: Removed.
+        * fast/css-grid-layout/grid-self-baseline-vertical-rl-07.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-add-item-with-positioned-items-expected.txt: Removed.
+        * imported/blink/fast/css-grid-layout/grid-add-item-with-positioned-items.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item-expected.txt: Removed.
+        * imported/blink/fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-element-bad-cast-addchild-expected.txt: Removed.
+        * imported/blink/fast/css-grid-layout/grid-element-bad-cast-addchild.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-element-remove-svg-child-expected.txt: Removed.
+        * imported/blink/fast/css-grid-layout/grid-element-remove-svg-child.html: Removed.
+        * imported/blink/fast/css-grid-layout/positioned-grid-items-crash-expected.txt: Removed.
+        * imported/blink/fast/css-grid-layout/positioned-grid-items-crash.html: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2020-05-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update test expectations after r262047

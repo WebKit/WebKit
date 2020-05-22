@@ -14,6 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-auto-flow-sparse-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-auto-placement-implicit-tracks-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-container-change-grid-tracks-recompute-child-positions-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-container-change-named-grid-recompute-child-positions-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-grid-span-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-grid-span.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-lines-expected.html
@@ -24,3 +28,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-layout-placement-shorthands.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-006-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-template-areas-must-keep-named-columns-order-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-template-areas-must-keep-named-columns-order-001.html

@@ -16,5 +16,23 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/README.md
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/anonymous-grid-items-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/chrome-bug-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/chrome-bug-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/chrome-crash-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-child-percent-basis-resize-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-non-auto-height-stretch-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-layout-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-tracks-stretched-with-different-flex-factors-sum.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/table-grid-item-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/table-grid-item-dynamic-001.html

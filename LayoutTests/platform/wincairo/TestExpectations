@@ -595,7 +595,7 @@ fast/css-generated-content/nested-quote-more-than-pairs.html [ ImageOnlyFailure 
 fast/css-generated-content/quote-first-letter.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/quotes-lang-case-insensitive.html [ ImageOnlyFailure Pass ]
 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure Pass ]
-fast/css-grid-layout/float-not-protruding-into-next-grid-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-floats-no-intrude-002.html [ ImageOnlyFailure ]
 fast/css-grid-layout/min-width-height-auto-overflow.html [ ImageOnlyFailure ]
 fast/custom-elements/defined-update-style.html [ ImageOnlyFailure ]
 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]

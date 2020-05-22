@@ -26,17 +26,17 @@ PASS 'grid' with: grid-template-columns: [a] repeat(2, [b] auto [c]) [d]; and gr
 PASS 'emptyGrid' with: grid-template-columns: [a] min-content repeat(2, [b] 1fr [c] calc(20px + 10%)) [d] minmax(30em, 50em) [e]; and grid-template-rows: [z] min-content repeat(2, [y] 1fr [x] calc(10% + 40px)) [w] minmax(3em, 5em) [v]; 
 PASS 'grid' with: grid-template-columns: [a] min-content repeat(2, [b] 1fr [c] calc(20px + 10%)) [d] minmax(30em, 50em) [e]; and grid-template-rows: [z] min-content repeat(2, [y] 1fr [x] calc(10% + 40px)) [w] minmax(3em, 5em) [v]; 
 PASS 'emptyGrid' with: grid-template-columns: repeat(-1, auto); and grid-template-rows: repeat(-1, auto); 
-FAIL 'grid' with: grid-template-columns: repeat(-1, auto); and grid-template-rows: repeat(-1, auto); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: repeat(-1, auto); and grid-template-rows: repeat(-1, auto); 
 PASS 'emptyGrid' with: grid-template-columns: repeat(auto, 2); and grid-template-rows: repeat(auto, 2); 
-FAIL 'grid' with: grid-template-columns: repeat(auto, 2); and grid-template-rows: repeat(auto, 2); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: repeat(auto, 2); and grid-template-rows: repeat(auto, 2); 
 PASS 'emptyGrid' with: grid-template-columns: repeat 2, auto; and grid-template-rows: repeat 2, auto; 
-FAIL 'grid' with: grid-template-columns: repeat 2, auto; and grid-template-rows: repeat 2, auto; assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: repeat 2, auto; and grid-template-rows: repeat 2, auto; 
 PASS 'emptyGrid' with: grid-template-columns: repeat(2 auto); and grid-template-rows: repeat(2 auto); 
-FAIL 'grid' with: grid-template-columns: repeat(2 auto); and grid-template-rows: repeat(2 auto); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: repeat(2 auto); and grid-template-rows: repeat(2 auto); 
 PASS 'emptyGrid' with: grid-template-columns: 100px (repeat 2, auto); and grid-template-rows: (repeat 2, auto); 
-FAIL 'grid' with: grid-template-columns: 100px (repeat 2, auto); and grid-template-rows: (repeat 2, auto); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: 100px (repeat 2, auto); and grid-template-rows: (repeat 2, auto); 
 PASS 'emptyGrid' with: grid-template-columns: repeat(2, 50px repeat(2, 100px)); and grid-template-rows: repeat(2, 50px repeat(2, 100px)); 
-FAIL 'grid' with: grid-template-columns: repeat(2, 50px repeat(2, 100px)); and grid-template-rows: repeat(2, 50px repeat(2, 100px)); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: repeat(2, 50px repeat(2, 100px)); and grid-template-rows: repeat(2, 50px repeat(2, 100px)); 
 PASS 'emptyGrid' with: grid-template-columns: 100px repeat(2, [a]); and grid-template-rows: 100px repeat(2, [a]); 
-FAIL 'grid' with: grid-template-columns: 100px repeat(2, [a]); and grid-template-rows: 100px repeat(2, [a]); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: 100px repeat(2, [a]); and grid-template-rows: 100px repeat(2, [a]); 
 GRID ITEM

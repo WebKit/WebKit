@@ -39,8 +39,11 @@ body {
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
 
-<body onload="checkLayout('.grid')">
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 
 <div style="position: relative">
     <div class="grid fit-content" data-expected-width="200" data-expected-height="400">
@@ -132,7 +135,7 @@ body {
     </div>
 </div>
 
-<!--  RTL direction (it should not affect the block-flow direction).  -->
+<!-- RTL direction (it should not affect the block-flow direction). -->
 <div style="position: relative">
     <div class="grid fit-content directionRTL alignItemsStretch justifyItemsStretch" data-expected-width="200" data-expected-height="400">
         <div class="firstRowFirstColumn" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="200"></div>
@@ -142,7 +145,7 @@ body {
     </div>
 </div>
 
-<!--  RTL direction (it should not affect the block-flow) with opposite directions grid container vs grid item.  -->
+<!-- RTL direction (it should not affect the block-flow) with opposite directions grid container vs grid item. -->
 <div style="position: relative">
     <div class="grid fit-content alignItemsStretch justifyItemsStretch" data-expected-width="200" data-expected-height="400">
         <div class="firstRowFirstColumn  directionRTL" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="200"></div>
@@ -152,7 +155,7 @@ body {
     </div>
 </div>
 
-<!--  Vertical RL writing mode.  -->
+<!-- Vertical RL writing mode. -->
 <div style="position: relative">
     <div class="grid fit-content verticalRL alignItemsStretch justifyItemsStretch" data-expected-width="400" data-expected-height="200">
         <div class="firstRowFirstColumn" data-offset-x="200" data-offset-y="0" data-expected-width="200" data-expected-height="100"></div>
@@ -171,7 +174,7 @@ body {
     </div>
 </div>
 
-<!--  Vertical LR writing mode.  -->
+<!-- Vertical LR writing mode. -->
 <div style="position: relative">
     <div class="grid fit-content verticalLR alignItemsStretch justifyItemsStretch" data-expected-width="400" data-expected-height="200">
         <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="100"></div>

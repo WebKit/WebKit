@@ -8,6 +8,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-align/#valdef-justify-self-stretch">
 <link rel="help" href="https://drafts.csswg.org/css-align/#valdef-align-self-stretch">
 <meta name="assert" content="The stretched grid items along the column and/or row axis respect their defined margin-box's boundaries.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 .grid {
   position: relative;
@@ -54,7 +55,10 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
-<body onload="checkLayout('.grid')">
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 <div class="grid">
   <div data-offset-x="240" data-offset-y="0"   data-expected-width="10"  data-expected-height="90"  class="firstRowFirstColumn">X XX X</div>
   <div data-offset-x="120" data-offset-y="100" data-expected-width="130" data-expected-height="60"  class="firstRowSecondColumn">XX X<br>X XXX<br>X<br>XX XXX</div>

@@ -1,0 +1,26 @@
+direction: LTR | distribution: 'space-between'
+
+direction: LTR | distribution: 'space-around'
+
+direction: LTR | distribution: 'space-evenly'
+
+direction: LTR | distribution: 'stretch'
+
+direction: RTL | distribution: 'space-between'
+
+direction: RTL | distribution: 'space-around'
+
+direction: RTL | distribution: 'space-evenly''
+
+direction: RTL | distribution: 'stretch'
+
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+

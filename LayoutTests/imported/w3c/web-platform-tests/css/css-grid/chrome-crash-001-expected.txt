@@ -1,0 +1,4 @@
+text
+
+PASS The renderer should not crash. 
+

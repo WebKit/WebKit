@@ -19,6 +19,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-definite-sizes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-containing-block-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/empty-grid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-item-absolute-positioning-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-item-absolute-positioning-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/grid-paint-positioned-children-001-expected.html
@@ -150,6 +159,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-016.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-017-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-should-not-create-implicit-tracks-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-should-not-take-up-space-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/abspos/positioned-grid-items-sizing-001-expected.html

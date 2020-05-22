@@ -1,0 +1,169 @@
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+PASS .grid 9 
+PASS .grid 10 
+PASS .grid 11 
+PASS .grid 12 
+PASS .grid 13 
+PASS .grid 14 
+PASS .grid 15 
+PASS .grid 16 
+PASS .grid 17 
+PASS .grid 18 
+PASS .grid 19 
+PASS .grid 20 
+PASS .grid 21 
+PASS .grid 22 
+PASS .grid 23 
+PASS .grid 24 
+direction: LTR | distribution: 'space-between' | self-alignment: center
+
+X
+X
+X
+X
+direction: LTR | distribution: 'space-between' | self-alignment: end
+
+X
+X
+X
+X
+direction: LTR | distribution: 'space-around' | self-alignment: center
+
+X
+X
+X
+X
+direction: LTR | distribution: 'space-around' | self-alignment: end
+
+X
+X
+X
+X
+direction: LTR | distribution: 'space-evenly' | self-alignment: center
+
+X
+X
+X
+X
+direction: LTR | distribution: 'space-evenly' | self-alignment: end
+
+X
+X
+X
+X
+direction: LTR | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: center
+
+X
+X
+X
+X
+direction: LTR | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: end
+
+X
+X
+X
+X
+direction: LTR | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: center
+
+X
+X
+X
+X
+direction: LTR | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: end
+
+X
+X
+X
+X
+direction: LTR | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: center
+
+X
+X
+X
+X
+direction: LTR | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: end
+
+X
+X
+X
+X
+direction: RTL | distribution: 'space-between' | self-alignment: center
+
+X
+X
+X
+X
+direction: RTL | distribution: 'space-between' | self-alignment: end
+
+X
+X
+X
+X
+direction: RTL | distribution: 'space-around' | self-alignment: center
+
+X
+X
+X
+X
+direction: RTL | distribution: 'space-around' | self-alignment: end
+
+X
+X
+X
+X
+direction: RTL | distribution: 'space-evenly' | self-alignment: center
+
+X
+X
+X
+X
+direction: RTL | distribution: 'space-evenly' | self-alignment: end
+
+X
+X
+X
+X
+direction: RTL | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: center
+
+X
+X
+X
+X
+direction: RTL | grid-gap: 10px 20px | distribution: 'space-between' | self-alignment: end
+
+X
+X
+X
+X
+direction: RTL | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: center
+
+X
+X
+X
+X
+direction: RTL | grid-gap: 10px 20px | distribution: 'space-around' | self-alignment: end
+
+X
+X
+X
+X
+direction: RTL | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: center
+
+X
+X
+X
+X
+direction: RTL | grid-gap: 10px 20px | distribution: 'space-evenly' | self-alignment: end
+
+X
+X
+X
+X

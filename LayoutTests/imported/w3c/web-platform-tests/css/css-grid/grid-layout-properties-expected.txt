@@ -2,8 +2,8 @@
 PASS display: grid 
 PASS display: inline-grid 
 PASS grid-template-columns 
-FAIL grid-template-columns.initial assert_equals: initial value of grid-template-columns should be none expected "none" but got "150px"
-FAIL grid-template-columns.none assert_equals: none expected "none" but got "150px"
+PASS grid-template-columns.initial 
+PASS grid-template-columns.none 
 PASS grid-template-columns.<line-names> 
 PASS grid-template-columns.<track-size>.auto 
 PASS grid-template-columns.<track-size>.<track-breadth>.<length> 
@@ -12,32 +12,32 @@ PASS grid-template-columns.<track-size>.<track-breadth>.<flex>
 PASS grid-template-columns.<track-size>.<track-breadth>.min-content 
 PASS grid-template-columns.<track-size>.<track-breadth>.max-content 
 PASS grid-template-columns.<track-size>.<track-breadth>.minmax() 
-FAIL grid-template-columns.reset assert_equals: reset expected "none" but got "150px"
+PASS grid-template-columns.reset 
 PASS grid-template-rows 
-FAIL grid-template-rows.initial assert_equals: initial value of grid-template-rows should be none expected "none" but got "50px 50px 50px"
-FAIL grid-template-rows.none assert_equals: none expected "none" but got "50px 50px 50px"
-FAIL grid-template-rows.<line-names> assert_equals: <line-names> expected "[a] 50px [b] 50px [c]" but got "[a] 50px [b] 50px [c] 50px"
-FAIL grid-template-rows.<track-size>.auto assert_equals: <track-size>.auto expected "50px" but got "50px 50px 50px"
-FAIL grid-template-rows.<track-size>.<track-breadth>.<length> assert_equals: <track-size>.<track-breadth>.<length> expected "100px" but got "100px 50px 50px"
-FAIL grid-template-rows.<track-size>.<track-breadth>.<percentage> assert_equals: <track-size>.<track-breadth>.<percentage> expected "150px" but got "150px 50px 50px"
-FAIL grid-template-rows.<track-size>.<track-breadth>.<flex> assert_equals: <track-size>.<track-breadth>.<flex> expected "50px" but got "50px 50px 50px"
-FAIL grid-template-rows.<track-size>.<track-breadth>.min-content assert_equals: <track-size>.<track-breadth>.min-content expected "50px" but got "50px 50px 50px"
-FAIL grid-template-rows.<track-size>.<track-breadth>.max-content assert_equals: <track-size>.<track-breadth>.max-content expected "50px" but got "50px 50px 50px"
-FAIL grid-template-rows.<track-size>.<track-breadth>.minmax() assert_equals: <track-size>.<track-breadth>.minmax() expected "200px" but got "200px 50px 50px"
-FAIL grid-template-rows.reset assert_equals: reset expected "none" but got "50px 50px 50px"
+PASS grid-template-rows.initial 
+PASS grid-template-rows.none 
+PASS grid-template-rows.<line-names> 
+PASS grid-template-rows.<track-size>.auto 
+PASS grid-template-rows.<track-size>.<track-breadth>.<length> 
+PASS grid-template-rows.<track-size>.<track-breadth>.<percentage> 
+PASS grid-template-rows.<track-size>.<track-breadth>.<flex> 
+PASS grid-template-rows.<track-size>.<track-breadth>.min-content 
+PASS grid-template-rows.<track-size>.<track-breadth>.max-content 
+PASS grid-template-rows.<track-size>.<track-breadth>.minmax() 
+PASS grid-template-rows.reset 
 PASS grid-template-areas 
 PASS grid-template-areas.initial 
 PASS grid-template-areas.none 
 PASS grid-template-areas.<string>+ 
 PASS grid-template-areas.reset 
 PASS grid-template 
-FAIL grid-template.initial assert_equals: initial value of grid-template should be none expected "none" but got "50px 50px 50px / 150px / none"
-FAIL grid-template.none assert_equals: none expected "none" but got "50px 50px 50px / 150px / none"
+FAIL grid-template.initial assert_equals: initial value of grid-template should be 50px 50px 50px / 150px expected "50px 50px 50px / 150px" but got "50px 50px 50px / 150px / none"
+FAIL grid-template.none assert_equals: none expected "50px 50px 50px / 150px" but got "50px 50px 50px / 150px / none"
 FAIL grid-template.<grid-template-rows> / <grid-template-columns> assert_equals: <grid-template-rows> / <grid-template-columns> expected "100px 100px / 200px 200px" but got "100px 100px / 200px 200px / none"
 FAIL grid-template.<line-names> assert_equals: <line-names> expected "[a] auto [b] auto [c] / [d] auto [e] auto [f]" but got "[a] auto [b] auto [c] / [d] auto [e] auto [f] / none"
 FAIL grid-template.<string>+ assert_equals: <string>+ expected "\"a b\" \"a b\"" but got "auto auto / none / \"a b\" \"a b\""
 FAIL grid-template.<string><track-size>+ assert_equals: <string><track-size>+ expected "100px / \"a b\" 50px" but got "auto auto / none / \"a b\" \"a b\""
-FAIL grid-template.reset assert_equals: reset expected "none" but got "50px 50px 50px / 150px / none"
+FAIL grid-template.reset assert_equals: reset expected "50px 50px 50px / 150px" but got "50px 50px 50px / 150px / none"
 PASS grid-auto-columns 
 PASS grid-auto-columns.initial 
 PASS grid-auto-columns.<track-size>.auto 
@@ -62,8 +62,8 @@ PASS grid-auto-flow
 PASS grid-auto-flow.initial 
 PASS grid-auto-flow.row 
 PASS grid-auto-flow.column 
-PASS grid-auto-flow.dense 
-PASS grid-auto-flow.row dense 
+FAIL grid-auto-flow.dense assert_equals: dense expected "dense" but got "row dense"
+FAIL grid-auto-flow.row dense assert_equals: row dense expected "dense" but got "row dense"
 PASS grid-auto-flow.column dense 
 PASS grid-auto-flow.reset 
 PASS grid-row-start 

@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/anonymous-grid-item-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/anonymous-grid-item-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/explicitly-sized-grid-item-as-table-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/explicitly-sized-grid-item-as-table.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-automatic-minimum-intrinsic-aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-inline-items-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-inline-items-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-inline-items-002-expected.xht
@@ -75,7 +77,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-containing-block-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-overflow-auto-max-height-percentage-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-overflow-auto-max-height-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-percentage-sizes-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-percentage-sizes-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-percentage-sizes-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-percentage-sizes-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-percentage-sizes-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-percentage-sizes-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-rel-pos-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-rel-pos-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-rel-pos-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-rel-pos-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-script-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-script-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-002-expected.xht
@@ -257,6 +276,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/ref-filled-green-100px-square-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/remove-svg-grid-item-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/remove-svg-grid-item-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/table-with-infinite-max-intrinsic-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/whitespace-in-grid-item-001-expected.html

@@ -1,6 +1,6 @@
 
 PASS 'emptyGrid' with: grid-template-columns: none; and grid-template-rows: none; 
-FAIL 'grid' with: grid-template-columns: none; and grid-template-rows: none; assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: none; and grid-template-rows: none; 
 PASS 'emptyGrid' with: grid-template-columns: auto; and grid-template-rows: auto; 
 PASS 'grid' with: grid-template-columns: auto; and grid-template-rows: auto; 
 PASS 'emptyGrid' with: grid-template-columns: 500px; and grid-template-rows: 300px; 
@@ -36,11 +36,11 @@ PASS 'grid' with: grid-template-columns: minmax(25px, 75px) 750px; and grid-temp
 PASS 'emptyGrid' with: grid-template-columns: min-content 1fr calc(20px + 10%) minmax(30em, 50em); and grid-template-rows: min-content 1fr calc(10% + 40px) minmax(3em, 5em); 
 PASS 'grid' with: grid-template-columns: min-content 1fr calc(20px + 10%) minmax(30em, 50em); and grid-template-rows: min-content 1fr  calc(10% + 40px) minmax(3em, 5em); 
 PASS 'emptyGrid' with: grid-template-columns: foo; and grid-template-rows: bar; 
-FAIL 'grid' with: grid-template-columns: foo; and grid-template-rows: bar; assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: foo; and grid-template-rows: bar; 
 PASS 'emptyGrid' with: grid-template-columns: auto none; and grid-template-rows: none auto; 
-FAIL 'grid' with: grid-template-columns: auto none; and grid-template-rows: none auto; assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: auto none; and grid-template-rows: none auto; 
 PASS 'emptyGrid' with: grid-template-columns: 100px, 200px; and grid-template-rows: 300px, 400px; 
-FAIL 'grid' with: grid-template-columns: 100px, 200px; and grid-template-rows: 300px, 400px; assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: 100px, 200px; and grid-template-rows: 300px, 400px; 
 PASS 'emptyGrid' with: grid-template-columns: minmax(100px, 200px, 300px); and grid-template-rows: minmax(100px, 200px, 300px); 
-FAIL 'grid' with: grid-template-columns: minmax(100px, 200px, 300px); and grid-template-rows: minmax(100px, 200px, 300px); assert_in_array: gridTemplateColumns value "90px" not in array ["none"]
+PASS 'grid' with: grid-template-columns: minmax(100px, 200px, 300px); and grid-template-rows: minmax(100px, 200px, 300px); 
 GRID ITEM

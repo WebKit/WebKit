@@ -13,4 +13,5 @@ PASS e.style['grid-template-rows'] = "[one]" should not set the property value
 PASS e.style['grid-template-rows'] = "[one] 10px [two] [three]" should not set the property value 
 PASS e.style['grid-template-rows'] = "repeat(auto-fill, -10px)" should not set the property value 
 PASS e.style['grid-template-rows'] = "repeat(auto-fill, 10px) repeat(auto-fit, 20%)" should not set the property value 
+PASS e.style['grid-template-rows'] = "[auto] 1px" should not set the property value 
 

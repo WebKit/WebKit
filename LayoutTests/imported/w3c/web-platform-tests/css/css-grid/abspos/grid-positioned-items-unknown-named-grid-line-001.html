@@ -4,6 +4,7 @@
 <link rel="author" title="Manuel Rego Casasnovas" href="mailto:rego@igalia.com">
 <link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos" title="9. Absolute Positioning">
 <meta name="assert" content="This test checks that grid placement properties of absolutely positioned items can reference implicit grid lines.">
+<link rel="stylesheet" href="/fonts/ahem.css">
 <link rel="stylesheet" href="/css/support/grid.css">
 <style>
 
@@ -45,8 +46,11 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
 
-<body onload="checkLayout('.grid')">
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 
 <div id="log"></div>
 

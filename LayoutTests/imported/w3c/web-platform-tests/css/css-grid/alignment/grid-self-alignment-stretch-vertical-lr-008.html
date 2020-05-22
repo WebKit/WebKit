@@ -8,6 +8,7 @@
 <link rel="help" href="https://drafts.csswg.org/css-align/#valdef-justify-self-stretch">
 <link rel="help" href="https://drafts.csswg.org/css-align/#valdef-align-self-stretch">
 <meta name="assert" content="The stretched orthogonal grid items along the column and/or row axis include their defined padding-box.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
 <style>
 .grid {
   position: relative;
@@ -55,7 +56,10 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/check-layout-th.js"></script>
-<body onload="checkLayout('.grid')">
+<script type="text/javascript">
+  setup({ explicit_done: true });
+</script>
+<body onload="document.fonts.ready.then(() => { checkLayout('.grid'); })">
 <div class="grid">
   <div data-offset-x="0"   data-offset-y="0"   data-expected-width="60"  data-expected-height="100" class="firstRowFirstColumn">X XX X</div>
   <div data-offset-x="0"   data-offset-y="100" data-expected-width="150" data-expected-height="40"  class="firstRowSecondColumn">XX X<br>X XXX<br>X<br>XX XXX</div>

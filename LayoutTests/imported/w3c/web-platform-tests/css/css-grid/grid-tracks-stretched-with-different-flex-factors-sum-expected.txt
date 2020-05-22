@@ -1,0 +1,8 @@
+When the sum of all track's flex factor is < 1, they don't exhaust the available space, which is used to stretch the 'auto' sized tracks.
+
+When the sum of all track's flex factor is >= 1, they exhaust the available space, hence the 'stretch' alignment is not applied to the 'auto' sized tracks.
+
+
+PASS .grid 1 
+PASS .grid 2 
+
