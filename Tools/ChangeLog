@@ -1,3 +1,35 @@
+2020-05-22  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Make TestController::resetStateToConsistentValues() more robust against failures to navigate to about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=212268
+        <rdar://problem/63493074>
+
+        Reviewed by Geoffrey Garen.
+
+        Make TestController::resetStateToConsistentValues() more robust against failures to navigate to about:blank.
+
+        In <rdar://problem/63493074>, we have evidence that TestController::resetStateToConsistentValues() sometimes
+        fails to load about:blank, likely due to an unresponsive WebProcess. When this happens, WebKitTestRunner
+        reports the test as timing out and logs this on stderr:
+        """
+        <unknown> - TestController::run - Failed to reset state to consistent values
+        #PROCESS UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 57421)
+        """
+
+        This is unfortunate because this does not indicate that anything is particularly wrong with the test in
+        question. Rather, it indicates that the WebProcess is unresponsive (likely due to a hang caused by a
+        previous test), which prevents WebKitTestRunner to reset the state in order to run the test.
+
+        I propose that if we fail to load about:blank once, we log an error message to stderr but then terminate
+        the WebProcess and try once again, to make WebKitTestRunner more robust.
+        I have verified the change locally, by injecting a script in resetStateToConsistentValues() that causes
+        a WebProcess hang. Before my change, the test would time out and the same logging as in
+        <rdar://problem/63493074> would show. After my change though, the test would pass successfully despite the
+        WebProcess hang.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2020-05-22  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] jhbuild is broken with GCC 10.0

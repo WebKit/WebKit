@@ -1142,12 +1142,22 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_serverTrustEvaluationCallbackCallsCount = 0;
     m_shouldDismissJavaScriptAlertsAsynchronously = false;
 
+    auto loadAboutBlank = [this] {
+        m_doneResetting = false;
+        WKPageLoadURL(m_mainWebView->page(), blankURL());
+        runUntil(m_doneResetting, m_currentInvocation->shortTimeout());
+        return m_doneResetting;
+    };
+
     // Reset main page back to about:blank
-    m_doneResetting = false;
-    WKPageLoadURL(m_mainWebView->page(), blankURL());
-    runUntil(m_doneResetting, m_currentInvocation->shortTimeout());
-    if (!m_doneResetting)
-        return false;
+    if (!loadAboutBlank()) {
+        WTFLogAlways("Failed to load 'about:blank', terminating process and trying again.");
+        WKPageTerminate(m_mainWebView->page());
+        if (!loadAboutBlank()) {
+            WTFLogAlways("Failed to load 'about:blank' again after termination.");
+            return false;
+        }
+    }
     
     if (resetStage == ResetStage::AfterTest) {
         updateLiveDocumentsAfterTest();
