@@ -1,3 +1,19 @@
+2020-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Excessive hang time in iOS Safari under waitForDidUpdateActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=212272
+        <rdar://problem/62787789>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState):
+        Make the view state change timeout equivalent on iOS and macOS.
+
+        We believe that it is preferable to paint white than block the UI
+        process main thread for half a second. Reduce the timeout on iOS
+        to be the same as it has been for years on macOS.
+
 2020-05-22  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to unblock third party cookies from WKWebViews with ResourceLoadStatistics turned on

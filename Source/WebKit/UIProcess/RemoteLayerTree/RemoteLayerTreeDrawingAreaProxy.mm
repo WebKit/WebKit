@@ -462,12 +462,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     static Seconds activityStateUpdateTimeout = [] {
         if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
             return Seconds([value doubleValue]);
-
-#if PLATFORM(IOS_FAMILY)
-        return Seconds::fromMilliseconds(500);
-#else
         return Seconds::fromMilliseconds(250);
-#endif
     }();
 
     auto startTime = MonotonicTime::now();
