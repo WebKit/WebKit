@@ -1,3 +1,24 @@
+2020-05-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Updates to the isolated tree must happen before posting notifications to clients.
+        https://bugs.webkit.org/show_bug.cgi?id=212266
+
+        Reviewed by Chris Fleizach.
+
+        Multiple tests.
+
+        In AXObjectCache::notificationPostTimerFired we were updating the
+        isolated tree after the notifications were posted to the platform
+        clients. This caused that in some cases when the client requested info
+        as the result of those notifications, the isolated tree was out-of-date.
+        In this patch updateIsolatedTree is called before notifying platform clients.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        (WebCore::AXObjectCache::updateIsolatedTree):
+
 2020-05-22  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Make alpha premultiplication code more consistent and clear regarding what works with extended colors

@@ -1013,6 +1013,7 @@ void AXObjectCache::childrenChanged(AXCoreObject* obj)
 
 void AXObjectCache::notificationPostTimerFired()
 {
+    AXTRACE("AXObjectCache::notificationPostTimerFired");
     // During LayoutTests, accessibility may be disabled between the time the notifications are queued and the timer fires.
     // Thus check here and return if accessibility is disabled.
     if (!accessibilityEnabled())
@@ -1028,42 +1029,44 @@ void AXObjectCache::notificationPostTimerFired()
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = WTFMove(m_notificationsToPost);
 
+    // Filter out the notifications that are not going to be posted to platform clients.
+    Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> notificationsToPost;
+    notificationsToPost.reserveCapacity(notifications.size());
     for (const auto& note : notifications) {
-        AXCoreObject* obj = note.first.get();
-        if (!obj->objectID())
+        ASSERT(note.first);
+        if (!note.first->objectID() || !note.first->axObjectCache())
             continue;
 
-        if (!obj->axObjectCache())
-            continue;
-        
 #ifndef NDEBUG
         // Make sure none of the render views are in the process of being layed out.
         // Notifications should only be sent after the renderer has finished
-        if (is<AccessibilityRenderObject>(*obj)) {
-            if (auto* renderer = downcast<AccessibilityRenderObject>(*obj).renderer())
+        if (is<AccessibilityRenderObject>(*note.first)) {
+            if (auto* renderer = downcast<AccessibilityRenderObject>(*note.first).renderer())
                 ASSERT(!renderer->view().frameView().layoutContext().layoutState());
         }
 #endif
 
-        AXNotification notification = note.second;
-        
         // Ensure that this menu really is a menu. We do this check here so that we don't have to create
         // the axChildren when the menu is marked as opening.
-        if (notification == AXMenuOpened) {
-            obj->updateChildrenIfNecessary();
-            if (obj->roleValue() != AccessibilityRole::Menu)
+        if (note.second == AXMenuOpened) {
+            note.first->updateChildrenIfNecessary();
+            if (note.first->roleValue() != AccessibilityRole::Menu)
                 continue;
         }
-        
-        if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
-            childrenChanged(obj->parentObject());
 
-        postPlatformNotification(obj, notification);
+        if (note.second == AXChildrenChanged && note.first->parentObjectIfExists()
+            && note.first->lastKnownIsIgnoredValue() != note.first->accessibilityIsIgnored())
+            childrenChanged(note.first->parentObject());
+
+        notificationsToPost.append(note);
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(notifications);
+    updateIsolatedTree(notificationsToPost);
 #endif
+
+    for (const auto& note : notificationsToPost)
+        postPlatformNotification(note.first.get(), note.second);
 }
 
 void AXObjectCache::passwordNotificationPostTimerFired()
@@ -1387,6 +1390,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
 void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
+    AXTRACE("AXObjectCache::postTextStateChangeNotification");
     stopCachingComputedObjectAttributes();
 
 #if PLATFORM(COCOA)
@@ -1421,6 +1425,7 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
 
 void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
 {
+    AXTRACE("AXObjectCache::postTextStateChangeNotification");
     if (!node || type == AXTextEditTypeUnknown)
         return;
 
@@ -3138,7 +3143,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     AXLOG(std::make_pair(&object, notification));
     AXLOG(*this);
 
-    if (!m_pageID)
+    if (!m_pageID || object.objectID() == InvalidAXID)
         return;
 
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
@@ -3148,11 +3153,12 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     switch (notification) {
     case AXCheckedStateChanged:
     case AXSelectedTextChanged:
-    case AXValueChanged: {
-        if (object.objectID() != InvalidAXID)
-            tree->updateNode(object);
+    case AXValueChanged:
+        tree->updateNode(object);
         break;
-    }
+    case AXChildrenChanged:
+        tree->updateChildren(object);
+        break;
     default:
         break;
     }
