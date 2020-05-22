@@ -1,3 +1,12 @@
+2020-05-22  Alex Christensen  <achristensen@webkit.org>
+
+        Make download resume workaround forgiving of changes in CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=212273
+
+        Reviewed by Geoffrey Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2020-05-22  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add new ApplePayInstallmentConfiguration members

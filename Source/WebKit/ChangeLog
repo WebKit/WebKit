@@ -1,3 +1,15 @@
+2020-05-22  Alex Christensen  <achristensen@webkit.org>
+
+        Make download resume workaround forgiving of changes in CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=212273
+
+        Reviewed by Geoffrey Garen.
+
+        They broke my workaround.  See rdar://problem/63512518
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:]):
+
 2020-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [IPC] Add support for specifying `Async WantsConnection` in message files

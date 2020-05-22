@@ -957,7 +957,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 {
 #if PLATFORM(IOS_FAMILY)
     // This is to work around rdar://problem/63249830
-    downloadTask.downloadFile.skipUnlink = YES;
+    if ([downloadTask respondsToSelector:@selector(downloadFile)] && [downloadTask.downloadFile respondsToSelector:@selector(setSkipUnlink:)])
+        downloadTask.downloadFile.skipUnlink = YES;
 #endif
 }
 

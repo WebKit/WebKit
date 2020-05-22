@@ -425,7 +425,7 @@ WTF_EXTERN_C_END
 - (void)_setCookiesRemovedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* __nullable removedCookies, NSString* __nullable domainForRemovedCookies, bool removeAllCookies))cookiesRemovedHandler onQueue:(dispatch_queue_t __nullable)queue;
 @end
 
-@interface __NSCFLocalDownloadFile
+@interface __NSCFLocalDownloadFile : NSObject
 @end
 @interface __NSCFLocalDownloadFile ()
 @property (readwrite, assign) BOOL skipUnlink;

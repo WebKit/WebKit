@@ -1160,7 +1160,8 @@ TEST(_WKDownload, ResumedDownloadCanHandleAuthenticationChallenge)
     Util::run(&isDone);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
+// FIXME: Enable this everywhere once rdar://problem/63249830 or rdar://problem/63512518 is fixed.
+#if HAVE(NETWORK_FRAMEWORK) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000))
 
 template<size_t length>
 String longString(LChar c)
