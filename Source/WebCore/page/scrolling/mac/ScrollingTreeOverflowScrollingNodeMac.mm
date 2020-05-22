@@ -49,7 +49,7 @@ ScrollingTreeOverflowScrollingNodeMac::ScrollingTreeOverflowScrollingNodeMac(Scr
 
 ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac() = default;
 
-void ScrollingTreeOverflowScrollingNodeMac::wasRemovedFromTree()
+void ScrollingTreeOverflowScrollingNodeMac::willBeDestroyed()
 {
     m_delegate.nodeWillBeDestroyed();
 }

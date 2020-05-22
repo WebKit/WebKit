@@ -260,7 +260,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
         m_latchingController.nodeWasRemoved(nodeID);
 
         if (auto node = m_nodeMap.take(nodeID))
-            node->wasRemovedFromTree();
+            node->willBeDestroyed();
     }
 
     LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(ScrollingStateTreeAsTextBehaviorDebug));
@@ -269,7 +269,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 void ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* stateNode, CommitTreeState& state)
 {
     if (!stateNode) {
-        m_nodeMap.clear();
+        removeAllNodes();
         m_rootNode = nullptr;
         return;
     }
@@ -289,7 +289,7 @@ void ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
             // This is the root node. Clear the node map.
             ASSERT(stateNode->isFrameScrollingNode());
             m_rootNode = downcast<ScrollingTreeFrameScrollingNode>(node.get());
-            m_nodeMap.clear();
+            removeAllNodes();
         } 
         m_nodeMap.set(nodeID, node.get());
     }
@@ -336,6 +336,14 @@ void ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
     if (is<ScrollingTreeScrollingNode>(*node) && !downcast<ScrollingTreeScrollingNode>(*node).synchronousScrollingReasons().isEmpty())
         state.synchronousScrollingNodes.add(nodeID);
 #endif
+}
+
+void ScrollingTree::removeAllNodes()
+{
+    for (auto iter : m_nodeMap)
+        iter.value->willBeDestroyed();
+
+    m_nodeMap.clear();
 }
 
 void ScrollingTree::applyLayerPositionsAfterCommit()

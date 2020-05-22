@@ -63,7 +63,7 @@ protected:
     unsigned exposedUnfilledArea() const;
 
 private:
-    void wasRemovedFromTree() final;
+    void willBeDestroyed() final;
 
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
 

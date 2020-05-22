@@ -53,7 +53,7 @@ protected:
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
 private:
-    void wasRemovedFromTree() final;
+    void willBeDestroyed() final;
 
     ScrollingTreeScrollingNodeDelegateMac m_delegate;
 };

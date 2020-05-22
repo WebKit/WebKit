@@ -57,7 +57,7 @@ ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(Scrolling
 
 ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac() = default;
 
-void ScrollingTreeFrameScrollingNodeMac::wasRemovedFromTree()
+void ScrollingTreeFrameScrollingNodeMac::willBeDestroyed()
 {
     m_delegate.nodeWillBeDestroyed();
 }

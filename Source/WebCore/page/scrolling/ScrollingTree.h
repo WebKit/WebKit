@@ -206,6 +206,8 @@ private:
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
+    
+    void removeAllNodes();
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 

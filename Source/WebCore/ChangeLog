@@ -1,3 +1,32 @@
+2020-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Make sure we clean up CFTimerRefs when destroying scrolling tree nodes
+        https://bugs.webkit.org/show_bug.cgi?id=212278
+        <rdar://problem/63548212>
+
+        Reviewed by Tim Horton.
+
+        When destroying scrolling tree nodes, make sure we explicitly stop the RunLoop::Timers,
+        and do this for all nodes when clearing the m_nodeMap, not just for orphaned nodes as
+        was done in r262042.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNodeRecursive):
+        (WebCore::ScrollingTree::removeAllNodes):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::willBeDestroyed):
+        (WebCore::ScrollingTreeNode::wasRemovedFromTree): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::willBeDestroyed):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::wasRemovedFromTree): Deleted.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::willBeDestroyed):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::wasRemovedFromTree): Deleted.
+
 2020-05-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Updates to the isolated tree must happen before posting notifications to clients.
