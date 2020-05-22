@@ -27,6 +27,7 @@
 #import "WebKit2Initialize.h"
 
 #import "LogInitialization.h"
+#import "VersionChecks.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/LogInitialization.h>
 #import <mutex>
@@ -44,6 +45,8 @@ static std::once_flag flag;
 
 static void runInitializationCode(void* = nullptr)
 {
+    RELEASE_ASSERT_WITH_MESSAGE([NSThread isMainThread], "InitializeWebKit2 should be called on the main thread");
+
     AtomString::init();
 #if PLATFORM(IOS_FAMILY)
     InitWebCoreThreadSystemInterface();
@@ -65,7 +68,7 @@ void InitializeWebKit2()
     // Make sure the initialization code is run only once and on the main thread since things like RunLoop::initializeMainRunLoop()
     // are only safe to call on the main thread.
     std::call_once(flag, [] {
-        if ([NSThread isMainThread])
+        if ([NSThread isMainThread] || linkedOnOrAfter(SDKVersion::FirstWithInitializeWebKit2MainThreadAssertion))
             runInitializationCode();
         else
             dispatch_sync_f(dispatch_get_main_queue(), nullptr, runInitializationCode);

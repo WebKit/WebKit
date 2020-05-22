@@ -1,3 +1,20 @@
+2020-05-22  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT() that InitializeWebKit2() is getting called on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=212283
+
+        Reviewed by Alex Christensen.
+
+        RELEASE_ASSERT() that InitializeWebKit2() is getting called on the main thread, behind
+        a linked-on-after check. In r217137, we tried to add a dispatch_sync() to the main thread to
+        work around the issue but it was a hack and it can cause deadlocks. It is best to force
+        developers to fix their code by crashing.
+
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::runInitializationCode):
+        (WebKit::InitializeWebKit2):
+        * UIProcess/Cocoa/VersionChecks.h:
+
 2020-05-22  Alex Christensen  <achristensen@webkit.org>
 
         Make download resume workaround forgiving of changes in CFNetwork
