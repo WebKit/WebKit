@@ -1,3 +1,14 @@
+2020-05-22  Oriol Brufau  <obrufau@igalia.com>
+
+        Don't put out-of-flow boxes in anonymous flex/grid items
+        https://bugs.webkit.org/show_bug.cgi?id=205386
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Expect tests to pass.
+
+        * TestExpectations:
+
 2020-05-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] fast/text/font-collection.html is failing

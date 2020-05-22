@@ -1,3 +1,21 @@
+2020-05-22  Oriol Brufau  <obrufau@igalia.com>
+
+        Don't put out-of-flow boxes in anonymous flex/grid items
+        https://bugs.webkit.org/show_bug.cgi?id=205386
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        A single anonymous flex/grid item should just contain a contiguous
+        sequence of text runs.
+
+        This patch is based on https://crrev.com/533825 from Chromium.
+
+        Tests: imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-004.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-items/anonymous-grid-item-001.html
+
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation):
+
 2020-05-22  Tim Horton  <timothy_horton@apple.com>
 
         iOS: Pressing tab in the Mail subject field moves focus to the body, but pressing shift tab doesn't move it back

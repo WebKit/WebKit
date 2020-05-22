@@ -222,7 +222,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
             ASSERT(beforeChild->isAnonymousBlock());
             ASSERT(beforeChild->parent() == &parent);
         }
-    } else if (!parent.childrenInline() && (child->isFloatingOrOutOfFlowPositioned() || child->isInline())) {
+    } else if (!parent.childrenInline() && ((child->isFloatingOrOutOfFlowPositioned() && !parent.isFlexibleBox() && !parent.isRenderGrid()) || child->isInline())) {
         // If we're inserting an inline child but all of our children are blocks, then we have to make sure
         // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
         // a new one is created and inserted into our list of children in the appropriate position.
