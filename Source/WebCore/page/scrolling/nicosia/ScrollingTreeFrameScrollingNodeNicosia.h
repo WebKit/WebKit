@@ -58,7 +58,7 @@ private:
 
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping) const override;
 
-    void currentScrollPositionChanged() override;
+    void currentScrollPositionChanged(ScrollingLayerPositionAction) override;
 
     void repositionScrollingLayers() override;
     void repositionRelatedLayers() override;
