@@ -483,7 +483,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
             float relativeOffset = (*newStops[y].offset - offset1) / (offset2 - offset1);
             float multiplier = std::pow(relativeOffset, std::log(.5f) / std::log(midpoint));
             // FIXME: Why not premultiply here?
-            newStops[y].color = blend(color1, color2, multiplier, false /* do not premultiply */);
+            newStops[y].color = blendWithoutPremultiply(color1, color2, multiplier);
         }
 
         stops.remove(x);

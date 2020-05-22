@@ -90,7 +90,9 @@ constexpr RGBA32 makeRGB(int r, int g, int b);
 constexpr RGBA32 makeRGBA(int r, int g, int b, int a);
 
 RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling = true);
+RGBA32 makePremultipliedRGBA(RGBA32);
 RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
+RGBA32 makeUnPremultipliedRGBA(RGBA32);
 
 WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
 WEBCORE_EXPORT RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
@@ -207,6 +209,9 @@ public:
     WEBCORE_EXPORT std::pair<ColorSpace, FloatComponents> colorSpaceAndComponents() const;
 
     // This will convert non-sRGB colorspace colors into sRGB.
+    WEBCORE_EXPORT SimpleColor toSRGBASimpleColorLossy() const;
+
+    // This will convert non-sRGB colorspace colors into sRGB.
     WEBCORE_EXPORT FloatComponents toSRGBAComponentsLossy() const;
 
     Color light() const;
@@ -317,12 +322,11 @@ private:
 bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
-Color colorFromPremultipliedARGB(RGBA32);
-RGBA32 premultipliedARGBFromColor(const Color&);
 // One or both must be extended colors.
 WEBCORE_EXPORT bool extendedColorsEqual(const Color&, const Color&);
 
-Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied = true);
+Color blend(const Color& from, const Color& to, double progress);
+Color blendWithoutPremultiply(const Color& from, const Color& to, double progress);
 
 int differenceSquared(const Color&, const Color&);
 

@@ -55,9 +55,23 @@ RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling)
     return makeRGBA(premultipliedChannel(r, a, ceiling), premultipliedChannel(g, a, ceiling), premultipliedChannel(b, a, ceiling), a);
 }
 
+RGBA32 makePremultipliedRGBA(RGBA32 pixelColor)
+{
+    if (pixelColor.isOpaque())
+        return pixelColor;
+    return makePremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
+}
+
 RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a)
 {
     return makeRGBA(unpremultipliedChannel(r, a), unpremultipliedChannel(g, a), unpremultipliedChannel(b, a), a);
+}
+
+RGBA32 makeUnPremultipliedRGBA(RGBA32 pixelColor)
+{
+    if (pixelColor.isVisible() && !pixelColor.isOpaque())
+        return makeUnPremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
+    return pixelColor;
 }
 
 static int colorFloatToRGBAByte(float f)
@@ -496,6 +510,15 @@ std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
     return { ColorSpace::SRGB, FloatComponents { red() / 255.0f, green() / 255.0f, blue() / 255.0f,  alpha() / 255.0f } };
 }
 
+SimpleColor Color::toSRGBASimpleColorLossy() const
+{
+    if (!isExtended())
+        return rgb();
+
+    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    return makeRGBA32FromFloats(r, g, b, a);
+}
+
 FloatComponents Color::toSRGBAComponentsLossy() const
 {
     auto [colorSpace, components] = colorSpaceAndComponents();
@@ -511,27 +534,6 @@ FloatComponents Color::toSRGBAComponentsLossy() const
     return { };
 }
 
-Color colorFromPremultipliedARGB(RGBA32 pixelColor)
-{
-    if (pixelColor.isVisible() && !pixelColor.isOpaque())
-        return makeUnPremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
-    return pixelColor;
-}
-
-RGBA32 premultipliedARGBFromColor(const Color& color)
-{
-    if (color.isOpaque()) {
-        if (color.isExtended())
-            return makeRGB(color.asExtended().red() * 255, color.asExtended().green() * 255, color.asExtended().blue() * 255);
-        return color.rgb();
-    }
-
-    if (color.isExtended())
-        return makePremultipliedRGBA(color.asExtended().red() * 255, color.asExtended().green() * 255, color.asExtended().blue() * 255, color.asExtended().alpha() * 255);
-
-    return makePremultipliedRGBA(color.red(), color.green(), color.blue(), color.alpha());
-}
-
 bool extendedColorsEqual(const Color& a, const Color& b)
 {
     if (a.isExtended() && b.isExtended())
@@ -541,30 +543,43 @@ bool extendedColorsEqual(const Color& a, const Color& b)
     return false;
 }
 
-Color blend(const Color& from, const Color& to, double progress, bool blendPremultiplied)
+Color blend(const Color& from, const Color& to, double progress)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
     // We need to preserve the state of the valid flag at the end of the animation
     if (progress == 1 && !to.isValid())
         return Color();
 
-    if (blendPremultiplied) {
-        // Since premultipliedARGBFromColor() bails on zero alpha, special-case that.
-        Color premultFrom = from.alpha() ? premultipliedARGBFromColor(from) : Color::transparent;
-        Color premultTo = to.alpha() ? premultipliedARGBFromColor(to) : Color::transparent;
+    // Since makePremultipliedRGBA() bails on zero alpha, special-case that.
+    auto premultFrom = from.alpha() ? makePremultipliedRGBA(from.toSRGBASimpleColorLossy()) : Color::transparent;
+    auto premultTo = to.alpha() ? makePremultipliedRGBA(to.toSRGBASimpleColorLossy()) : Color::transparent;
 
-        Color premultBlended(blend(premultFrom.red(), premultTo.red(), progress),
-            blend(premultFrom.green(), premultTo.green(), progress),
-            blend(premultFrom.blue(), premultTo.blue(), progress),
-            blend(premultFrom.alpha(), premultTo.alpha(), progress));
+    RGBA32 premultBlended = makeRGBA(
+        WebCore::blend(premultFrom.redComponent(), premultTo.redComponent(), progress),
+        WebCore::blend(premultFrom.greenComponent(), premultTo.greenComponent(), progress),
+        WebCore::blend(premultFrom.blueComponent(), premultTo.blueComponent(), progress),
+        WebCore::blend(premultFrom.alphaComponent(), premultTo.alphaComponent(), progress)
+    );
 
-        return Color(colorFromPremultipliedARGB(premultBlended.rgb()));
-    }
+    return makeUnPremultipliedRGBA(premultBlended);
+}
 
-    return Color(blend(from.red(), to.red(), progress),
-        blend(from.green(), to.green(), progress),
-        blend(from.blue(), to.blue(), progress),
-        blend(from.alpha(), to.alpha(), progress));
+Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
+{
+    // FIXME: ExtendedColor - needs to handle color spaces.
+    // We need to preserve the state of the valid flag at the end of the animation
+    if (progress == 1 && !to.isValid())
+        return { };
+
+    auto fromSRGB = from.toSRGBASimpleColorLossy();
+    auto toSRGB = from.toSRGBASimpleColorLossy();
+
+    return {
+        WebCore::blend(fromSRGB.redComponent(), toSRGB.redComponent(), progress),
+        WebCore::blend(fromSRGB.greenComponent(), toSRGB.greenComponent(), progress),
+        WebCore::blend(fromSRGB.blueComponent(), toSRGB.blueComponent(), progress),
+        WebCore::blend(fromSRGB.alphaComponent(), toSRGB.alphaComponent(), progress)
+    };
 }
 
 void Color::tagAsValid()

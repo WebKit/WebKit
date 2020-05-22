@@ -1,3 +1,58 @@
+2020-05-22  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Make alpha premultiplication code more consistent and clear regarding what works with extended colors
+        https://bugs.webkit.org/show_bug.cgi?id=212265
+
+        Reviewed by Simon Fraser.
+
+        - Adds premultiplied(const FloatComponents&) to do premutiplication directly on FloatComponents
+          rather than doing it on the ints and losing precision.
+        - Makes non-FloatComponent alpha premultiplication all take place only for SimpleColors as that
+          is what callers need. The existing premulitplication for ExtendedColors in blend() was incorrect
+          as it never did a conversion to sRGB.
+        - Adds new toSRGBASimpleColorLossy() (to complement toSRGBAComponentsLossy()). Will make it easy
+          to find all the conversions in the future.
+        - Broke non-premultiplying blend() out of blend() (removing parameter) and made a new blendWithoutPremultiply()
+          function for it (no callers needed to make this decision dynamically).
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::computeStops):
+        Use blendWithoutPremultiply() explicitly.
+
+        * platform/graphics/Color.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::makePremultipliedRGBA): Renamed from premultipliedARGBFromColor and now only operates on SimpleColors.
+        (WebCore::makeUnPremultipliedRGBA): Renamed from colorFromPremultipliedARGB and now only operates on SimpleColors.
+        (WebCore::colorFromPremultipliedARGB): Deleted.
+        (WebCore::premultipliedARGBFromColor): Deleted.
+
+        (WebCore::Color::toSRGBASimpleColorLossy const):
+        Added. Useful for finding all non-colorspace preserving users of the color channels. 
+
+        (WebCore::blend):
+        (WebCore::blendWithoutPremultiply):
+        Split these out from each other. Made blend() use toSRGBASimpleColorLossy() and do all
+        operations on SimpleColors directly. The old code that preported to work with extended
+        colors was nonsense as it didn't actually take the colorspaces into account, just grabbed
+        the channels regardless of space.  
+        
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace):
+        Adopt update premulitiplication names and stay in SimpleColor for entire conversion.
+
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        Adopt update premulitiplication names.
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::premultiplied):
+        * platform/graphics/ColorUtilities.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        Add and adopt premultiplied(const FloatComponents&).
+
 2020-05-22  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add new ApplePayInstallmentConfiguration members

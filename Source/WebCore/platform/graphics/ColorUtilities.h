@@ -191,6 +191,8 @@ float lightness(const FloatComponents& sRGBCompontents);
 float luminance(const FloatComponents& sRGBCompontents);
 float contrastRatio(const FloatComponents&, const FloatComponents&);
 
+FloatComponents premultiplied(const FloatComponents& sRGBCompontents);
+
 class ColorMatrix {
 public:
     static ColorMatrix grayscaleMatrix(float);

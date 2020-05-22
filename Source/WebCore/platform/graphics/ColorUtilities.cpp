@@ -283,6 +283,17 @@ FloatComponents hslToSRGB(const FloatComponents& hslColor)
     };
 }
 
+FloatComponents premultiplied(const FloatComponents& sRGBComponents)
+{
+    auto [r, g, b, a] = sRGBComponents;
+    return {
+        r * a,
+        g * a,
+        b * a,
+        a
+    };
+}
+
 ColorMatrix::ColorMatrix()
 {
     makeIdentity();

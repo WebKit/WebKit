@@ -253,8 +253,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
     glUseProgram(program->programID());
 
-    // FIXME: Do the premultiply on FloatComponents directly.
-    auto [r, g, b, a] = Color(premultipliedARGBFromColor(color)).toSRGBAComponentsLossy();
+    auto [r, g, b, a] = premultiplied(color.toSRGBAComponentsLossy());
     glUniform4f(program->colorLocation(), r, g, b, a);
     glLineWidth(width);
 
@@ -415,8 +414,7 @@ static void prepareFilterProgram(TextureMapperShaderProgram& program, const Filt
             break;
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
-            // FIXME: Do the premultiply on FloatComponents directly.
-            auto [r, g, b, a] = Color(premultipliedARGBFromColor(shadow.color())).toSRGBAComponentsLossy();
+            auto [r, g, b, a] = premultiplied(shadow.color().toSRGBAComponentsLossy());
             glUniform4f(program.colorLocation(), r, g, b, a);
             glUniform2f(program.blurRadiusLocation(), 0, shadow.stdDeviation() / float(size.height()));
             glUniform2f(program.shadowOffsetLocation(), 0, 0);
@@ -678,8 +676,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     glUseProgram(program->programID());
 
-    // FIXME: Do the premultiply on FloatComponents directly.
-    auto [r, g, b, a] = Color(premultipliedARGBFromColor(color)).toSRGBAComponentsLossy();
+    auto [r, g, b, a] = premultiplied(color.toSRGBAComponentsLossy());
     glUniform4f(program->colorLocation(), r, g, b, a);
     if (a < 1 && isBlendingAllowed)
         flags |= ShouldBlend;
