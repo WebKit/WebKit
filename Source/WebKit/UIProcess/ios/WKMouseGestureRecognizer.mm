@@ -192,8 +192,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         _lastLocation = [self locationInView:self.view];
         self.state = UIGestureRecognizerStateBegan;
     }
-
-    [super _hoverEntered:touches withEvent:event];
 }
 
 - (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -208,8 +206,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 
     if (_currentHoverEvent == event && [touches containsObject:_currentTouch.get()])
         self.state = UIGestureRecognizerStateChanged;
-
-    [super _hoverMoved:touches withEvent:event];
 }
 
 - (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -222,14 +218,11 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         _currentTouch = nil;
         self.state = UIGestureRecognizerStateEnded;
     }
-
-    [super _hoverExited:touches withEvent:event];
 }
 
 - (void)_hoverCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [self _hoverExited:touches withEvent:event];
-    [super _hoverCancelled:touches withEvent:event];
 }
 
 - (CGPoint)locationInView:(UIView *)view

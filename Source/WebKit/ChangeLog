@@ -1,3 +1,25 @@
+2020-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r261978): Cannot click on links with trackpad on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=212262
+
+        Reviewed by Andy Estes.
+
+        No new tests; our current WKMouseGestureRecognizer testing strategy
+        unfortunately bypasses this particular problem.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer _hoverEntered:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverExited:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverCancelled:withEvent:]):
+        Don't call super in any of the hover callbacks now that we derive from
+        UIHoverGestureRecognizer. We want to wholly own the state of the gesture,
+        including differences from UIHoverGestureRecognizer behavior such as
+        remaining in the recognizing state while the trackpad button is pressed.
+        We don't need any of the code in the default implementation, so just
+        override it entirely. This returns behavior to what it was like before r261978.
+
 2020-05-21  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Move Color coder definitions to Color to allow for future encaspulation improvements
