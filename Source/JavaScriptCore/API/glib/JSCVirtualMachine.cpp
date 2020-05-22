@@ -33,7 +33,7 @@
  * @see_also: JSCContext
  *
  * JSCVirtualMachine represents a group of JSCContext<!-- -->s. It allows
- * concurrent JavaScript exeution by creating a different instance of
+ * concurrent JavaScript execution by creating a different instance of
  * JSCVirtualMachine in each thread.
  *
  * To create a group of JSCContext<!-- -->s pass the same JSCVirtualMachine

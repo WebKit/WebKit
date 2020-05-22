@@ -1,3 +1,11 @@
+2020-05-22  Paulo Matos  <pmatos@igalia.com>
+
+        Fix typo in JSCVirtualMachine documentation
+
+        Unreviewed Typo Fix.
+
+        * API/glib/JSCVirtualMachine.cpp:
+
 2020-05-21  Robin Morisset  <rmorisset@apple.com>
 
         Various compile-time boolean flags could/should be marked constexpr
