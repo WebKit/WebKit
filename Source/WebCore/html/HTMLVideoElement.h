@@ -89,15 +89,13 @@ public:
     void setFullscreenMode(VideoFullscreenMode);
     void fullscreenModeChanged(VideoFullscreenMode) final;
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
-    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
-    void setPictureInPictureObserver(PictureInPictureObserver*);
-    WEBCORE_EXPORT void setPictureInPictureAPITestEnabled(bool);
-#endif
-#endif
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+    WEBCORE_EXPORT void didEnterFullscreen();
+    WEBCORE_EXPORT void didExitFullscreen();
     void setVideoFullscreenFrame(FloatRect) final;
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    void setPictureInPictureObserver(PictureInPictureObserver*);
+#endif
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -136,12 +134,10 @@ private:
     unsigned m_lastReportedVideoWidth { 0 };
     unsigned m_lastReportedVideoHeight { 0 };
 
+    bool m_isEnteringOrExitingPictureInPicture { false };
+    bool m_isWaitingForPictureInPictureWindowFrame { false };
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    bool m_waitingForPictureInPictureWindowFrame { false };
-    bool m_isFullscreen { false };
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
-
-    bool m_pictureInPictureAPITestEnabled { false };
 #endif
 };
 

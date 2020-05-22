@@ -1,3 +1,41 @@
+2020-05-21  Peng Liu  <peng.liu6@apple.com>
+
+        Fix issues of the Picture-in-Picture API under stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=212191
+
+        Reviewed by Eric Carlson.
+
+        The current implementation of the Picture-in-Picture API is not robust under stress tests.
+        Changing the video presentation mode of a video element between inline and picture-in-picture
+        continuously may corrupt the internal states of the video element.
+
+        This patch refactors the approach to tracking the progress of video presentation mode changes
+        and make sure no new requestPictureInPicture() or exitPictureInPicture() will trigger
+        a presentation mode change unless the previous operations are completed.
+
+        This patch also removes the code for testing purposes in the HTMLVideoElement class.
+
+        Covered by existing tests.
+
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::toPresentationMode):
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+        (WebCore::HTMLVideoElement::fullscreenModeChanged):
+        (WebCore::HTMLVideoElement::didEnterFullscreen):
+        (WebCore::HTMLVideoElement::didExitFullscreen):
+        (WebCore::HTMLVideoElement::setPictureInPictureObserver):
+        (WebCore::HTMLVideoElement::setVideoFullscreenFrame):
+        (WebCore::HTMLVideoElement::didBecomeFullscreenElement): Deleted.
+        (WebCore::HTMLVideoElement::setPictureInPictureAPITestEnabled): Deleted.
+        * html/HTMLVideoElement.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPictureInPictureAPITestEnabled): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Remove setPictureInPictureAPITestEnabled().
+
 2020-05-21  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Remove trivial uses of Color::rgb()

@@ -1,7 +1,7 @@
 This tests that entering and leaving Picture-in-Picture toggles CSS selector.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 EXPECTED (getComputedStyle(video).color == 'rgb(0, 0, 255)') OK

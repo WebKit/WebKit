@@ -5,10 +5,15 @@
     <script src="../media-file.js"></script>
     <script>
         window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
-            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
 
             document.exitPictureInPicture()
             .then(() => {

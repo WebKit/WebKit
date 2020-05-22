@@ -1,7 +1,7 @@
 This tests that request Picture-in-Picture requires a user gesture.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 EXPECTED (error.name == 'NotAllowedError') OK

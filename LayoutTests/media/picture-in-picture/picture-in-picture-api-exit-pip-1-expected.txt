@@ -1,7 +1,7 @@
 This tests that exit Picture-in-Picture resolves when there is a Picture-in-Picture video.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 EVENT(enterpictureinpicture)

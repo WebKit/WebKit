@@ -1,3 +1,35 @@
+2020-05-21  Peng Liu  <peng.liu6@apple.com>
+
+        Fix issues of the Picture-in-Picture API under stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=212191
+
+        Reviewed by Eric Carlson.
+
+        Refactor the layout tests for the Picture-in-Picture API with the Mock VideoPresentation Mode.
+
+        * media/picture-in-picture/picture-in-picture-api-css-selector-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-css-selector.html:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-1-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-1.html:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-2-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-2.html:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-3-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-3.html:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-4-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-enter-pip-4.html:
+        * media/picture-in-picture/picture-in-picture-api-events-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-events.html:
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-1-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-1.html:
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-2-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-exit-pip-2.html:
+        * media/picture-in-picture/picture-in-picture-api-pip-window-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-pip-window.html:
+        * media/picture-in-picture/picture-in-picture-events-expected.txt:
+        * media/picture-in-picture/picture-in-picture-events.html:
+        * media/picture-in-picture/picture-in-picture-interruption-expected.txt:
+        * media/picture-in-picture/picture-in-picture-interruption.html:
+
 2020-05-21  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Don't create renderers for whitespace nodes

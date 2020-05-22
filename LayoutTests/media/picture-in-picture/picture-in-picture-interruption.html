@@ -5,9 +5,15 @@
     <script src="../media-file.js"></script>
     <script>
         window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
 
             run('video.src = findMediaFile("video", "../content/test")');
             await waitFor(video, 'canplaythrough');
@@ -15,7 +21,10 @@
             run('video.play()');
             await waitFor(video, 'playing');
 
-            runWithKeyDown(function(){ video.webkitSetPresentationMode('picture-in-picture'); });
+            runWithKeyDown(() => {
+                video.webkitSetPresentationMode('picture-in-picture');
+            });
+
             await waitFor(video, 'webkitpresentationmodechanged');
 
             run('internals.beginMediaSessionInterruption("enteringbackground")');

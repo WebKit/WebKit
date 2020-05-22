@@ -1,7 +1,7 @@
 This tests that request Picture-in-Picture requires video track for the video element.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("audio", "../content/test"))
 EVENT(canplaythrough)
 EXPECTED (error.name == 'InvalidStateError') OK

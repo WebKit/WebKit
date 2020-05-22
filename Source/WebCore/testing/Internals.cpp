@@ -5604,13 +5604,6 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
 }
 #endif
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
-void Internals::setPictureInPictureAPITestEnabled(HTMLVideoElement& videoElement, bool enabled)
-{
-    videoElement.setPictureInPictureAPITestEnabled(enabled);
-}
-#endif
-
 void Internals::setMaxCanvasPixelMemory(unsigned size)
 {
     HTMLCanvasElement::setMaxPixelMemoryForTesting(size);

@@ -17,16 +17,24 @@
     </style>
     <script>
         window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
-            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
 
             run('video.src = findMediaFile("video", "../content/test")');
             await waitFor(video, 'canplaythrough');
             testExpected('getComputedStyle(video).color', 'rgb(0, 0, 255)');
 
-            runWithKeyDown(function() { video.requestPictureInPicture() });
+            runWithKeyDown(() => {
+                video.requestPictureInPicture();
+            });
+
             await waitFor(video, 'enterpictureinpicture');
             testExpected('getComputedStyle(video).color', 'rgb(0, 255, 0)');
 

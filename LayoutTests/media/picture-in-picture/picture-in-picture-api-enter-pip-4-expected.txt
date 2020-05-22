@@ -1,7 +1,7 @@
 This tests that request Picture-in-Picture resolves on user click.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 END OF TEST

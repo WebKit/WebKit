@@ -1,3 +1,20 @@
+2020-05-21  Peng Liu  <peng.liu6@apple.com>
+
+        Fix issues of the Picture-in-Picture API under stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=212191
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::enterFullscreen):
+        Mock the behavior of the VideoFullscreenInterface[AVKit|Mac] regarding
+        the Picture-in-Picture mode support.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+        Add callbacks for the end of entering/exiting fullscreen.
+
 2020-05-21  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Fix misspelling -- m_releaseNetwrokActivityTimer --> m_releaseNetworkActivityTimer

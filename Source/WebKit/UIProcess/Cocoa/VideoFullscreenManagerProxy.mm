@@ -554,6 +554,7 @@ void VideoFullscreenManagerProxy::enterFullscreen(uint64_t contextId)
     MESSAGE_CHECK_CONTEXTID(contextId);
     if (m_mockVideoPresentationModeEnabled) {
         didEnterFullscreen(contextId);
+        setVideoLayerFrame(contextId, {0, 0, 200, 150});
         return;
     }
 

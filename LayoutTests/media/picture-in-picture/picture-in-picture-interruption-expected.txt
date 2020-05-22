@@ -1,6 +1,7 @@
 This tests that video is in the correct media session state after ending a background interruption while pipped.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
 RUN(video.play())

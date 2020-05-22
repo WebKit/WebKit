@@ -1,7 +1,7 @@
 This tests that exit Picture-in-Picture rejects when there is no Picture-in-Picture video.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 EXPECTED (error.name == 'InvalidStateError') OK
 END OF TEST
 

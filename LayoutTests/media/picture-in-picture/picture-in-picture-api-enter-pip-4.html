@@ -5,14 +5,19 @@
     <script src="../media-file.js"></script>
     <script>
         window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
-            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
 
             run('video.src = findMediaFile("video", "../content/test")');
             await waitFor(video, 'canplaythrough');
-            runWithKeyDown(function() {
+            runWithKeyDown(() => {
                 video.requestPictureInPicture()
                 .then(() => {
                     document.exitPictureInPicture().then(endTest).catch(() => {

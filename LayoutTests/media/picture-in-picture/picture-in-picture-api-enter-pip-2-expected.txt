@@ -1,7 +1,7 @@
 This tests that request Picture-in-Picture requires loaded metadata for the video element.
 
 RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
-RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
 EXPECTED (error.name == 'InvalidStateError') OK
 END OF TEST
 

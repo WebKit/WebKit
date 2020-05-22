@@ -987,10 +987,6 @@ public:
     void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
 #endif
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
-    void setPictureInPictureAPITestEnabled(HTMLVideoElement&, bool);
-#endif
-
     int processIdentifier() const;
 
     Ref<InternalsSetLike> createInternalsSetLike();
