@@ -59,7 +59,13 @@ endif ()
 
 # Set the debugger working directory for Visual Studio
 if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
-    set_target_properties(TestWTF TestWebCore TestWebKit PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    set_target_properties(TestWTF PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    if (ENABLE_WEBCORE)
+        set_target_properties(TestWebCore PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    endif ()
+    if (ENABLE_WEBCORE)
+        set_target_properties(TestWebKit PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    endif ()
 endif ()
 
 add_definitions(
