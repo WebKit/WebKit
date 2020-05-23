@@ -1,3 +1,15 @@
+2020-05-22  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Enable JSC shell to run
+        https://bugs.webkit.org/show_bug.cgi?id=212294
+
+        Reviewed by Ross Kirsling.
+
+        * shell/PlatformPlayStation.cmake:
+        Set working directory for Visual Studio
+        * shell/playstation/Initializer.cpp:
+        Load libJavaScriptCore as we now build it as SHARED.
+
 2020-05-22  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Array.prototype.splice doesn't set "length" of returned object

@@ -29,16 +29,19 @@
 #include "config.h"
 #include <dlfcn.h>
 
+static void loadLibraryOrExit(const char* name)
+{
+    if (!dlopen(name, RTLD_NOW)) {
+        fprintf(stderr, "Failed to load %s.\n", name);
+        exit(EXIT_FAILURE);
+    }
+}
+
 __attribute__((constructor(101)))
 static void initializer(void)
 {
-    void* handle = dlopen("SystemServices", RTLD_NOW);
-    if (!handle)
-        exit(1);
-    handle = dlopen("Perf", RTLD_NOW);
-    if (!handle)
-        exit(1);
-    handle = dlopen("PosixWebKit", RTLD_NOW);
-    if (!handle)
-        exit(1);
+    loadLibraryOrExit("SystemServices");
+    loadLibraryOrExit("Perf");
+    loadLibraryOrExit("PosixWebKit");
+    loadLibraryOrExit("libJavaScriptCore");
 }

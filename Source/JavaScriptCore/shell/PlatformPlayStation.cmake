@@ -19,3 +19,8 @@ endif ()
 
 set(PLAYSTATION_jsc_PROCESS_NAME "JSCShell")
 set(PLAYSTATION_jsc_MAIN_THREAD_NAME "JSCShell")
+
+# Set the debugger working directory for Visual Studio
+if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
+    set_target_properties(jsc PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+endif ()

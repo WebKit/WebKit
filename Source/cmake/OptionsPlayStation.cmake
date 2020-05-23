@@ -232,6 +232,12 @@ macro(WEBKIT_EXECUTABLE _target)
             target_link_options(${_target} PRIVATE -Wl,--wrap=${WRAP})
         endforeach ()
     endif ()
+    add_custom_command(TARGET ${_target}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${WEBKIT_LIBRARIES_DIR}/tools/sce_sys/
+            $<TARGET_FILE_DIR:${_target}>/sce_sys/
+    )
 endmacro()
 
 function(PLAYSTATION_COPY_SHARED_LIBRARIES target_name)
