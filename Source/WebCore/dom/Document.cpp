@@ -1924,13 +1924,14 @@ void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate
 {
     ASSERT(!inRenderTreeUpdate());
 
-    // NOTE: Preserve the order of definitions below so the destructors are called in proper sequence.
     Style::PostResolutionCallbackDisabler callbackDisabler(*this);
-    SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
-    RenderTreeUpdater updater(*this, callbackDisabler);
-    // End of ordered definitions
-
-    updater.commit(WTFMove(styleUpdate));
+    {
+        SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
+        {
+            RenderTreeUpdater updater(*this, callbackDisabler);
+            updater.commit(WTFMove(styleUpdate));
+        }
+    }
 }
 
 void Document::resolveStyle(ResolveStyleType type)

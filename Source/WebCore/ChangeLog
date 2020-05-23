@@ -1,3 +1,13 @@
+2020-05-23  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: (!s_current || &m_view != &s_current->m_view) in RenderTreeBuilder::RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=212163
+
+        Unreviewed. Improve readability. Replace comments with curly brackets for scoping.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateRenderTree):
+
 2020-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Maximum constraint of a cell should never be smaller than the minimum width
