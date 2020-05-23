@@ -41,9 +41,7 @@ namespace Layout {
 LayoutUnit TableFormattingContext::Geometry::cellHeigh(const ContainerBox& cellBox) const
 {
     ASSERT(cellBox.isInFlow());
-    if (auto height = computedHeight(cellBox))
-        return *height;
-    return contentHeightForFormattingContextRoot(cellBox);
+    return std::max(computedHeight(cellBox).valueOr(0_lu), contentHeightForFormattingContextRoot(cellBox));
 }
 
 Edges TableFormattingContext::Geometry::computedCellBorder(const TableGrid::Cell& cell) const

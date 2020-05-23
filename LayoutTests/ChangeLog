@@ -1,3 +1,13 @@
+2020-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Used height of a cell is the maximum of the computed and the content height.
+        https://bugs.webkit.org/show_bug.cgi?id=212302
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-tall-cell-content-with-fixed-height-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-tall-cell-content-with-fixed-height.html: Added.
+
 2020-05-23  Caio Lima  <ticaiolima@gmail.com>
 
         [bmalloc] Fix OOM errors on MIPS after r261667

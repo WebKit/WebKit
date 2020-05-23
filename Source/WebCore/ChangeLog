@@ -1,5 +1,19 @@
 2020-05-23  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Used height of a cell is the maximum of the computed and the content height.
+        https://bugs.webkit.org/show_bug.cgi?id=212302
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/table-simple-tall-cell-content-with-fixed-height.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::cellHeigh const):
+
+2020-05-23  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Non-collapsing row border should not make the table wider/taller
         https://bugs.webkit.org/show_bug.cgi?id=212263
 
