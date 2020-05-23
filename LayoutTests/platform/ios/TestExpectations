@@ -3475,7 +3475,6 @@ webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failu
 webkit.org/b/207858 fast/canvas/webgl/oes-vertex-array-object.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/context/context-lost-restored.html [ Pass Failure ]
-webkit.org/b/207858 webgl/1.0.3/conformance/extensions/ext-sRGB.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/misc/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]

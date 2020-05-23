@@ -1,5 +1,19 @@
 2020-05-22  Kenneth Russell  <kbr@chromium.org>
 
+        [ANGLE - iOS] webgl/1.0.3/conformance/extensions/ext-sRGB.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212277
+
+        Reviewed by Dean Jackson.
+
+        Properly translate GL_EXT_sRGB enums to ES 3.0 enums when
+        GL_EXT_sRGB is not supported.
+
+        * src/libANGLE/renderer/gl/formatutilsgl.cpp:
+        (rx::nativegl::GetNativeInternalFormat):
+        (rx::nativegl::GetNativeFormat):
+
+2020-05-22  Kenneth Russell  <kbr@chromium.org>
+
         [ANGLE - iOS] fast/canvas/webgl/webgl-depth-texture.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=212271
 
