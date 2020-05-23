@@ -1,3 +1,26 @@
+2020-05-23  Charlie Turner  <cturner@igalia.com>
+
+        Error sending IPC message: Broken pipe
+        https://bugs.webkit.org/show_bug.cgi?id=206052
+
+        Reviewed by Adrian Perez de Castro.
+
+        The Connection implementation on *nix was not handling socket
+        shutdowns gracefully, this was leading to many IPC error messages
+        being printed. It looks like the "errors" were actually
+        application issues, trying to send messages during socket shutdown
+        sequences, rather than more serious message drop problems.
+
+        Unclear how to autotest this, but manual testing opening lots of tabs
+        definitely hits these codepaths.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::readyReadHandler): Handle ECONNRESET by cleanly
+        closing the connection.
+        (IPC::Connection::sendOutputMessage): Ditto, also handle the
+        wrinkle that for "reasons", Linux can return EPIPE when it means
+        ECONNRESET.
+
 2020-05-22  James Savage  <james.savage@apple.com>
 
         Create Swift overlay for WebKit framework

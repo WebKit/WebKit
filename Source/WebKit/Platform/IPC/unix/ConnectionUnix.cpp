@@ -322,6 +322,11 @@ void Connection::readyReadHandler()
             if (errno == EAGAIN || errno == EWOULDBLOCK)
                 return;
 
+            if (errno == ECONNRESET) {
+                connectionDidClose();
+                return;
+            }
+
             if (m_isConnected) {
                 WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), strerror(errno));
                 connectionDidClose();
@@ -542,6 +547,17 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
             poll(&pollfd, 1, -1);
             continue;
 #endif
+        }
+
+#if OS(LINUX)
+        // Linux can return EPIPE instead of ECONNRESET
+        if (errno == EPIPE || errno == ECONNRESET)
+#else
+        if (errno == ECONNRESET)
+#endif
+        {
+            connectionDidClose();
+            return false;
         }
 
         if (m_isConnected)
