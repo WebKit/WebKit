@@ -1,0 +1,512 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7D20070C22F4EB72008DF640 /* libswiftWebKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D20067522F2652E008DF640 /* libswiftWebKit.dylib */; };
+		7D20071B22F4ECCA008DF640 /* libswiftWebKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D20068722F26721008DF640 /* libswiftWebKit.dylib */; };
+		B3A5D38F23F78F5400B17727 /* WebKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D38823F78F5400B17727 /* WebKitTests.swift */; };
+		B3A5D39023F78F5400B17727 /* WebKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D38823F78F5400B17727 /* WebKitTests.swift */; };
+		B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */; };
+		B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7D20070D22F4EB72008DF640 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7D81A8D522E936E700739BB9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D20067422F2652E008DF640;
+			remoteInfo = "WebKit-macOS";
+		};
+		7D20071C22F4ECCA008DF640 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7D81A8D522E936E700739BB9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D20068622F26721008DF640;
+			remoteInfo = "WebKit-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		7D20067522F2652E008DF640 /* libswiftWebKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libswiftWebKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D20068722F26721008DF640 /* libswiftWebKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libswiftWebKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D20070722F4EB72008DF640 /* WebKitSwiftOverlayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebKitSwiftOverlayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D20071622F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WebKitSwiftOverlayTests-maccatalyst.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A5D38823F78F5400B17727 /* WebKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebKitTests.swift; sourceTree = "<group>"; };
+		B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebKitSwiftOverlay.swift; path = ../UIProcess/API/Cocoa/WebKitSwiftOverlay.swift; sourceTree = SOURCE_ROOT; };
+		B3A5D39423F790E100B17727 /* WebKitSwiftOverlay.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitSwiftOverlay.xcconfig; sourceTree = "<group>"; };
+		B3A5D39523F790E100B17727 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		B3A5D39623F790E100B17727 /* WebKitSwiftOverlay-maccatalyst.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WebKitSwiftOverlay-maccatalyst.xcconfig"; sourceTree = "<group>"; };
+		B3A5D39723F790E100B17727 /* WebKitSwiftOverlayTests-maccatalyst.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WebKitSwiftOverlayTests-maccatalyst.xcconfig"; sourceTree = "<group>"; };
+		B3A5D39823F790E100B17727 /* WebKitSwiftOverlayTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitSwiftOverlayTests.xcconfig; sourceTree = "<group>"; };
+		B3A5D39923F790E100B17727 /* install-swiftmodules.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-swiftmodules.sh"; sourceTree = "<group>"; };
+		B3A5D39A23F790E700B17727 /* WebKitSwiftOverlayTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKitSwiftOverlayTests-Info.plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7D20067322F2652E008DF640 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20068522F26721008DF640 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20070422F4EB72008DF640 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D20070C22F4EB72008DF640 /* libswiftWebKit.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20071322F4ECCA008DF640 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D20071B22F4ECCA008DF640 /* libswiftWebKit.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7D20067622F2652E008DF640 /* Swift Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				B3A5D39923F790E100B17727 /* install-swiftmodules.sh */,
+				B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */,
+			);
+			name = "Swift Overlay";
+			path = SwiftOverlay;
+			sourceTree = "<group>";
+		};
+		7D2006D622F3D3DA008DF640 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7D20070822F4EB72008DF640 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B3A5D39A23F790E700B17727 /* WebKitSwiftOverlayTests-Info.plist */,
+				B3A5D38823F78F5400B17727 /* WebKitTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		7D81A8D422E936E700739BB9 = {
+			isa = PBXGroup;
+			children = (
+				7DF02CBE22F4DF1A00C66A76 /* Configurations */,
+				7D20067622F2652E008DF640 /* Swift Overlay */,
+				7D20070822F4EB72008DF640 /* Tests */,
+				7D81A8DE22E936E700739BB9 /* Products */,
+				7D2006D622F3D3DA008DF640 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		7D81A8DE22E936E700739BB9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7D20067522F2652E008DF640 /* libswiftWebKit.dylib */,
+				7D20068722F26721008DF640 /* libswiftWebKit.dylib */,
+				7D20071622F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst.xctest */,
+				7D20070722F4EB72008DF640 /* WebKitSwiftOverlayTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7DF02CBE22F4DF1A00C66A76 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				B3A5D39523F790E100B17727 /* Base.xcconfig */,
+				B3A5D39623F790E100B17727 /* WebKitSwiftOverlay-maccatalyst.xcconfig */,
+				B3A5D39423F790E100B17727 /* WebKitSwiftOverlay.xcconfig */,
+				B3A5D39723F790E100B17727 /* WebKitSwiftOverlayTests-maccatalyst.xcconfig */,
+				B3A5D39823F790E100B17727 /* WebKitSwiftOverlayTests.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		7D20067122F2652E008DF640 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20068322F26721008DF640 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		7D20067422F2652E008DF640 /* WebKitSwiftOverlay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D20067B22F2652E008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlay" */;
+			buildPhases = (
+				7D20067122F2652E008DF640 /* Headers */,
+				7D20067222F2652E008DF640 /* Sources */,
+				7D20067322F2652E008DF640 /* Frameworks */,
+				7D20069122F26787008DF640 /* Install Swift Module */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebKitSwiftOverlay;
+			productName = SafariServices;
+			productReference = 7D20067522F2652E008DF640 /* libswiftWebKit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7D20068622F26721008DF640 /* WebKitSwiftOverlay-maccatalyst */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D20068D22F26721008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlay-maccatalyst" */;
+			buildPhases = (
+				7D20068322F26721008DF640 /* Headers */,
+				7D20068422F26721008DF640 /* Sources */,
+				7D20068522F26721008DF640 /* Frameworks */,
+				7D20069222F2679B008DF640 /* Install Swift Module */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "WebKitSwiftOverlay-maccatalyst";
+			productName = "WebKit-iOS";
+			productReference = 7D20068722F26721008DF640 /* libswiftWebKit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		7D20070622F4EB72008DF640 /* WebKitSwiftOverlayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D20070F22F4EB72008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlayTests" */;
+			buildPhases = (
+				7D20070322F4EB72008DF640 /* Sources */,
+				7D20070422F4EB72008DF640 /* Frameworks */,
+				7D20070522F4EB72008DF640 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7D20070E22F4EB72008DF640 /* PBXTargetDependency */,
+			);
+			name = WebKitSwiftOverlayTests;
+			productName = WebKitTests;
+			productReference = 7D20070722F4EB72008DF640 /* WebKitSwiftOverlayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7D20071522F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D20071E22F4ECCA008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlayTests-maccatalyst" */;
+			buildPhases = (
+				7D20071222F4ECCA008DF640 /* Sources */,
+				7D20071322F4ECCA008DF640 /* Frameworks */,
+				7D20071422F4ECCA008DF640 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7D20071D22F4ECCA008DF640 /* PBXTargetDependency */,
+			);
+			name = "WebKitSwiftOverlayTests-maccatalyst";
+			productName = "WebKitTests-iOS";
+			productReference = 7D20071622F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7D81A8D522E936E700739BB9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+				ORGANIZATIONNAME = Apple;
+				TargetAttributes = {
+					7D20067422F2652E008DF640 = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1200;
+					};
+					7D20068622F26721008DF640 = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1200;
+					};
+					7D20070622F4EB72008DF640 = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1200;
+					};
+					7D20071522F4ECCA008DF640 = {
+						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1200;
+					};
+				};
+			};
+			buildConfigurationList = 7D81A8D822E936E700739BB9 /* Build configuration list for PBXProject "WebKitSwiftOverlay" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7D81A8D422E936E700739BB9;
+			productRefGroup = 7D81A8DE22E936E700739BB9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7D20067422F2652E008DF640 /* WebKitSwiftOverlay */,
+				7D20068622F26721008DF640 /* WebKitSwiftOverlay-maccatalyst */,
+				7D20070622F4EB72008DF640 /* WebKitSwiftOverlayTests */,
+				7D20071522F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7D20070522F4EB72008DF640 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20071422F4ECCA008DF640 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7D20069122F26787008DF640 /* Install Swift Module */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Install Swift Module";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec \"${SOURCE_ROOT}/SwiftOverlay/install-swiftmodules.sh\"\n";
+		};
+		7D20069222F2679B008DF640 /* Install Swift Module */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Install Swift Module";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec \"${SOURCE_ROOT}/SwiftOverlay/install-swiftmodules.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7D20067222F2652E008DF640 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20068422F26721008DF640 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20070322F4EB72008DF640 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A5D38F23F78F5400B17727 /* WebKitTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7D20071222F4ECCA008DF640 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A5D39023F78F5400B17727 /* WebKitTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7D20070E22F4EB72008DF640 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D20067422F2652E008DF640 /* WebKitSwiftOverlay */;
+			targetProxy = 7D20070D22F4EB72008DF640 /* PBXContainerItemProxy */;
+		};
+		7D20071D22F4ECCA008DF640 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D20068622F26721008DF640 /* WebKitSwiftOverlay-maccatalyst */;
+			targetProxy = 7D20071C22F4ECCA008DF640 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7D20067C22F2652E008DF640 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39423F790E100B17727 /* WebKitSwiftOverlay.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D20067D22F2652E008DF640 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39423F790E100B17727 /* WebKitSwiftOverlay.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7D20068E22F26721008DF640 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39623F790E100B17727 /* WebKitSwiftOverlay-maccatalyst.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D20068F22F26721008DF640 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39623F790E100B17727 /* WebKitSwiftOverlay-maccatalyst.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7D20071022F4EB72008DF640 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39823F790E100B17727 /* WebKitSwiftOverlayTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D20071122F4EB72008DF640 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39823F790E100B17727 /* WebKitSwiftOverlayTests.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7D20071F22F4ECCA008DF640 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39723F790E100B17727 /* WebKitSwiftOverlayTests-maccatalyst.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D20072022F4ECCA008DF640 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39723F790E100B17727 /* WebKitSwiftOverlayTests-maccatalyst.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7D81A8E422E936E700739BB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39523F790E100B17727 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7D81A8E522E936E700739BB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3A5D39523F790E100B17727 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D20067B22F2652E008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D20067C22F2652E008DF640 /* Debug */,
+				7D20067D22F2652E008DF640 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D20068D22F26721008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlay-maccatalyst" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D20068E22F26721008DF640 /* Debug */,
+				7D20068F22F26721008DF640 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D20070F22F4EB72008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D20071022F4EB72008DF640 /* Debug */,
+				7D20071122F4EB72008DF640 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D20071E22F4ECCA008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlayTests-maccatalyst" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D20071F22F4ECCA008DF640 /* Debug */,
+				7D20072022F4ECCA008DF640 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D81A8D822E936E700739BB9 /* Build configuration list for PBXProject "WebKitSwiftOverlay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D81A8E422E936E700739BB9 /* Debug */,
+				7D81A8E522E936E700739BB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7D81A8D522E936E700739BB9 /* Project object */;
+}

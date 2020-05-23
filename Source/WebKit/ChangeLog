@@ -1,3 +1,57 @@
+2020-05-22  James Savage  <james.savage@apple.com>
+
+        Create Swift overlay for WebKit framework
+        https://bugs.webkit.org/show_bug.cgi?id=211270
+        <rdar://problem/60549174>
+
+        Reviewed by Brady Eidson.
+
+        Provides Swift-only overlay methods for our NS_REFINED_FOR_SWIFT API.
+        The overlay does not provide different API than its Objective-C counterparts,
+        so overlay testing focuses on ensuring that the overlay produces the
+        expected interface, and provides the expected mappings to and from ObjC.
+
+        The overlay is defined in a separate Xcode project (from WebKit) by
+        recommendation from the Swift team. Due to build system constraints this
+        project cannot be a sibbling of WebKit.xcodeproj, and must live in a
+        subdirectory. However, because it generally acts as part of the WebKit
+        framework, it still uses the same Version.xcconfig and source file
+        locations as standard WebKit sources.
+
+        * SwiftOverlay/Configurations/Base.xcconfig: Added. Set some default
+            warnings and product configuration.
+        * SwiftOverlay/Configurations/WebKitSwiftOverlay-maccatalyst.xcconfig: Added.
+            Override SDK configurations to build for Catalyst.
+        * SwiftOverlay/Configurations/WebKitSwiftOverlay.xcconfig: Added.
+            These flags were all provided by the Xcode template.
+        * SwiftOverlay/Configurations/WebKitSwiftOverlayTests-maccatalyst.xcconfig: Added.
+            See above.
+        * SwiftOverlay/Configurations/WebKitSwiftOverlayTests.xcconfig: Added.
+            See above.
+        * SwiftOverlay/SwiftOverlay/install-swiftmodules.sh: Added. Provided by the
+            Swift team.
+        * SwiftOverlay/Tests/WebKitSwiftOverlayTests-Info.plist: Added.
+        * SwiftOverlay/Tests/WebKitTests.swift: Added.
+        (WebKitTests.testAPI): This ensures that the function names come through as we
+            expect them to. It also ensures that the functions were correctly set to
+            public visiblity.
+        (WebKitTests.testWKPDFConfigurationRect): This does the same as the above, but
+            also exercises the null <-> nil conversion, and that regular values are
+            correctly round tripped to Objective-C.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/project.pbxproj: Added.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/xcshareddata/xcschemes/Everything (Catalyst).xcscheme: Added.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/xcshareddata/xcschemes/Everything.xcscheme: Added.
+        * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift: Added.
+        (WKPDFConfiguration.rect): Provide mapping of CGRect.null to nil for Swift.
+        (WKWebView.callAsyncJavaScript(_:arguments:in:completion:)): Provide a Result
+        in the completion handler, and default value for arguments.
+        (WKWebView.evaluateJavaScript(_:in:completion:)): Ditto.
+        (WKWebView.createPDF(configuration:completionHandler:)): Provide a Swift function
+            that takes a Result<Data, Error> instead of (Data?, Error?) tuple. Provide
+            a default value for the configuration.
+        (WKWebView.createWebArchiveData(completionHandler:)): See above.
+        (WKWebView.find(_:configuration:completionHandler:)): See above.
+
 2020-05-22  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT() that InitializeWebKit2() is getting called on the main thread

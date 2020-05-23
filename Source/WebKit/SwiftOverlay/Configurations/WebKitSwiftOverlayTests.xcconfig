@@ -1,0 +1,46 @@
+// Copyright (C) 2020 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+CLANG_CXX_LANGUAGE_STANDARD = gnu++14;
+CLANG_CXX_LIBRARY = libc++;
+CODE_SIGN_STYLE = Automatic;
+COPY_PHASE_STRIP = NO;
+ENABLE_NS_ASSERTIONS = NO;
+ENABLE_STRICT_OBJC_MSGSEND = YES;
+GCC_C_LANGUAGE_STANDARD = gnu11;
+GCC_DYNAMIC_NO_PIC = NO;
+GCC_NO_COMMON_BLOCKS = YES;
+GCC_OPTIMIZATION_LEVEL = 0;
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 $(inherited);
+INFOPLIST_FILE = Tests/WebKitSwiftOverlayTests-Info.plist;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKitTests-macOS;
+PRODUCT_NAME = $(TARGET_NAME);
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug] = DEBUG;
+SWIFT_COMPILATION_MODE = wholemodule;
+
+SDKROOT = macosx.internal
+SDKROOT[sdk=iphoneos*] = iphoneos.internal
+SDKROOT[sdk=appletv*] = appletvos.internal
+SDKROOT[sdk=watchos*] = watchos.internal
