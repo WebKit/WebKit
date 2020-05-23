@@ -1,5 +1,5 @@
 // https://bugs.webkit.org/show_bug.cgi?id=190755
-//@ skip if ["arm", "mips"].include?($architecture) and $hostOS == "linux"
+//@ skip if $architecture == "arm" and $hostOS == "linux"
 //  &&&&
 description('Test that we do not overflow the stack while handling regular expressions');
 

@@ -41,20 +41,39 @@ void ObjectTypeTable::set(UniqueLockHolder&, Chunk* chunk, ObjectType objectType
         if (bits == &sentinelBits) {
             // This is initial allocation of ObjectTypeTable. In this case, it could be possible that for the first registration,
             // some VAs are already allocated for a different purpose, and later they will be reused for bmalloc. In that case,
-            // soon, we will see a smaller index request than this initial one. We subtract a 128MB offset to the initial newBegin
-            // to cover such patterns without extending table too quickly.
-            newBegin = std::min<unsigned>(index, index - ObjectTypeTable::Bits::bitCountPerWord * 4);
+            // soon, we will see a smaller index request than this initial one. We try to subtract a 128MB offset to the initial
+            // newBegin to cover such patterns without extending table too quickly, and if we can't subtract 128MB, we will set
+            // newBegin to 0.  
+            constexpr unsigned offsetForInitialAllocation = ObjectTypeTable::Bits::bitCountPerWord * 4;
+            if (index < offsetForInitialAllocation)
+                newBegin = 0;
+            else
+                newBegin = index - offsetForInitialAllocation;
             newEnd = index + 1;
         } else if (index < bits->begin()) {
             BASSERT(bits->begin());
             BASSERT(bits->end());
-            newBegin = std::min<unsigned>(index, bits->begin() - bits->count());
+            // We need to verify if "bits->begin() - bits->count()" doesn't underflow,
+            // otherwise we will set "newBegin" as "index" and it creates a pathological
+            // case that will keep increasing BitVector everytime we access
+            // "index < bits->begin()".
+            if (bits->begin() < bits->count())
+                newBegin = 0;
+            else
+                newBegin = std::min<unsigned>(index, bits->begin() - bits->count());
             newEnd = bits->end();
         } else {
             BASSERT(bits->begin());
             BASSERT(bits->end());
             newBegin = bits->begin();
-            newEnd = std::max<unsigned>(index + 1, bits->end() + bits->count());
+            // We need to verify if "bits->end() + bits->count()" doesn't overflow,
+            // otherwise we will set "newEnd" as "index + 1" and it creates a
+            // pathological case that will keep increasing BitVector everytime we access
+            // "index > bits->end()".
+            if (std::numeric_limits<unsigned>::max() - bits->count() < bits->end())
+                newEnd = std::numeric_limits<unsigned>::max();
+            else
+                newEnd = std::max<unsigned>(index + 1, bits->end() + bits->count());
         }
         newBegin = static_cast<unsigned>(roundDownToMultipleOf<size_t>(ObjectTypeTable::Bits::bitCountPerWord, newBegin));
         BASSERT(newEnd > newBegin);

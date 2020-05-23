@@ -1,3 +1,12 @@
+2020-05-23  Caio Lima  <ticaiolima@gmail.com>
+
+        [bmalloc] Fix OOM errors on MIPS after r261667
+        https://bugs.webkit.org/show_bug.cgi?id=212016
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/script-tests/stack-overflow-regexp.js:
+
 2020-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Non-collapsing row border should not make the table wider/taller

@@ -1,3 +1,14 @@
+2020-05-23  Caio Lima  <ticaiolima@gmail.com>
+
+        [bmalloc] Fix OOM errors on MIPS after r261667
+        https://bugs.webkit.org/show_bug.cgi?id=212016
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-buffer-view-watchpoint-can-be-fired-in-really-add-in-dfg.js:
+        * stress/big-int-mod-memory-stress.js:
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+
 2020-05-22  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Array.prototype.splice doesn't set "length" of returned object
