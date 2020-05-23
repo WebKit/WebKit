@@ -110,6 +110,16 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
             topBorder = std::max(topBorder, geometry().computedBorder(boxInFirstRox).vertical.top);
             bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
         }
+
+        auto& rows = grid.rows().list();
+        topBorder = std::max(topBorder, geometry().computedBorder(rows[0].box()).vertical.top);
+        for (auto& row : rows) {
+            auto horiztonalBorder = geometry().computedBorder(row.box()).horizontal;
+            leftBorder = std::max(leftBorder, horiztonalBorder.left);
+            rightBorder = std::max(rightBorder, horiztonalBorder.right);
+        }
+        bottomBorder = std::max(topBorder, geometry().computedBorder(rows[rows.size() - 1].box()).vertical.bottom);
+
         auto collapsedBorder = Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
         grid.setCollapsedBorder(collapsedBorder);
 
