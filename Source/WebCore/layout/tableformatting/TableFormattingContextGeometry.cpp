@@ -95,14 +95,14 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::i
     auto& cellBox = cell.box();
     auto& style = cellBox.style();
 
-    auto computedIntrinsicWidthConstraints = [&] {
+    auto computedIntrinsicWidthConstraints = [&]() -> FormattingContext::IntrinsicWidthConstraints {
         // Even fixed width cells expand to their minimum content width
         // <td style="width: 10px">test_content</td> will size to max(minimum content width, computed width).
         auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
         if (cellBox.hasChild())
             intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, layoutState())->computedIntrinsicWidthConstraints();
-        if (auto width = fixedValue(style.logicalWidth()))
-            return FormattingContext::IntrinsicWidthConstraints { std::max(intrinsicWidthConstraints.minimum, *width), *width };
+        if (auto fixedWidth = fixedValue(style.logicalWidth()))
+            return { std::max(intrinsicWidthConstraints.minimum, *fixedWidth), std::max(intrinsicWidthConstraints.minimum, *fixedWidth) };
         return intrinsicWidthConstraints;
     };
     // FIXME Check for box-sizing: border-box;

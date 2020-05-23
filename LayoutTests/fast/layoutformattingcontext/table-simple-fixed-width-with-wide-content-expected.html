@@ -1,0 +1,13 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+div {
+    height: 42px;
+    width: 42px;
+    border: 1px solid green;
+    position: absolute;
+}
+</style>
+<div style="top: 10px; left: 10px;"></div>
+<div style="top: 10px; left: 56px;"></div>
+<div style="top: 56px; left: 10px;"></div>
+<div style="top: 56px; left: 56px;"></div>

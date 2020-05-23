@@ -1,5 +1,15 @@
 2020-05-23  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Maximum constraint of a cell should never be smaller than the minimum width
+        https://bugs.webkit.org/show_bug.cgi?id=212304
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-fixed-width-with-wide-content-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-fixed-width-with-wide-content.html: Added.
+
+2020-05-23  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Used height of a cell is the maximum of the computed and the content height.
         https://bugs.webkit.org/show_bug.cgi?id=212302
 
