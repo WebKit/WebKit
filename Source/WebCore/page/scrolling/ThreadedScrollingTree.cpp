@@ -148,6 +148,11 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
 
     LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " bouncing to main thread");
 
+    if (RunLoop::isMain()) {
+        m_scrollingCoordinator->updateScrollPositionAfterAsyncScroll(node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollType::User, scrollingLayerPositionAction);
+        return;
+    }
+
     RunLoop::main().dispatch([strongThis = makeRef(*this), nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);

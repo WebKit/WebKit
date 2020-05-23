@@ -264,7 +264,7 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     bool inBackForwardCache = frameView->frame().document()->backForwardCacheState() != Document::NotInBackForwardCache;
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
     if (inProgrammaticScroll || inBackForwardCache)
-        updateScrollPositionAfterAsyncScroll(scrollingNodeID, scrollPosition, { }, ScrollType::Programmatic, ScrollingLayerPositionAction::Set);
+        updateScrollPositionAfterAsyncScroll(scrollingNodeID, scrollPosition, { }, ScrollType::Programmatic, ScrollingLayerPositionAction::Set, InformWheelEventMonitor::No);
 
     ASSERT(inProgrammaticScroll == (scrollType == ScrollType::Programmatic));
 
@@ -299,7 +299,7 @@ void AsyncScrollingCoordinator::synchronizeStateFromScrollingTree()
     m_scrollingTree->traverseScrollingTree([&](ScrollingNodeID nodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit) {
         if (scrollPosition && scrolledSinceLastCommit) {
             LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::synchronizeStateFromScrollingTree - node " << nodeID << " scroll position " << scrollPosition);
-            updateScrollPositionAfterAsyncScroll(nodeID, scrollPosition.value(), layoutViewportOrigin, ScrollType::User, ScrollingLayerPositionAction::Set);
+            updateScrollPositionAfterAsyncScroll(nodeID, scrollPosition.value(), layoutViewportOrigin, ScrollType::User, ScrollingLayerPositionAction::Set, InformWheelEventMonitor::No);
         }
     });
 }
@@ -331,10 +331,6 @@ void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(Scr
         m_updateNodeScrollPositionTimer.stop();
         updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.layoutViewportOrigin, ScrollType::User, m_scheduledScrollUpdate.updateLayerPositionAction);
         updateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, ScrollType::User, scrollingLayerPositionAction);
-        
-        if (m_scheduledScrollUpdate.nodeID != nodeID)
-            noteScrollingThreadSyncCompleteForNode(m_scheduledScrollUpdate.nodeID);
-        noteScrollingThreadSyncCompleteForNode(nodeID);
         return;
     }
 
@@ -345,7 +341,6 @@ void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(Scr
 void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired()
 {
     updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.layoutViewportOrigin, ScrollType::User, m_scheduledScrollUpdate.updateLayerPositionAction);
-    noteScrollingThreadSyncCompleteForNode(m_scheduledScrollUpdate.nodeID);
 }
 
 FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
@@ -380,9 +375,12 @@ FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID 
     return nullptr;
 }
 
-void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, Optional<FloatPoint> layoutViewportOrigin, ScrollType scrollType, ScrollingLayerPositionAction scrollingLayerPositionAction)
+void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNodeID scrollingNodeID, const FloatPoint& scrollPosition, Optional<FloatPoint> layoutViewportOrigin, ScrollType scrollType, ScrollingLayerPositionAction scrollingLayerPositionAction, InformWheelEventMonitor informWheelEventMonitor)
 {
     ASSERT(isMainThread());
+
+    if (informWheelEventMonitor == InformWheelEventMonitor::Yes)
+        noteScrollingThreadSyncCompleteForNode(scrollingNodeID);
 
     if (!m_page)
         return;

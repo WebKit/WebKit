@@ -1,3 +1,29 @@
+2020-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Stuttery overflow scrolling in slow-scrolling regions (facebook messenger, feedly.com)
+        https://bugs.webkit.org/show_bug.cgi?id=212291
+        <rdar://problem/61940624>
+
+        Reviewed by Tim Horton.
+
+        Now that we do scrolling tree commits on the main thread, ThreadedScrollingTree::scrollingTreeNodeDidScroll()
+        can be called on the main thread. In this case, don't do an RunLoop::main().dispatch() which introduces
+        asynchrony; just call into the ScrollingCoordinator synchronously.
+
+        Do some minor refactoring to move noteScrollingThreadSyncCompleteForNode() into updateScrollPositionAfterAsyncScroll().
+
+        Hard to test because it involves scrolling thread/main thread interactions.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::synchronizeStateFromScrollingTree):
+        (WebCore::AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+
 2020-05-22  Zalan Bujtas  <zalan@apple.com>
 
         Nullptr deref in WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation when parent and beforeChild are siblings

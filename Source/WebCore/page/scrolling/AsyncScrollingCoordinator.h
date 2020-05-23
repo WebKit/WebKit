@@ -53,6 +53,9 @@ public:
 
     WEBCORE_EXPORT void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, const Optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction);
 
+    enum class InformWheelEventMonitor { Yes, No };
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction, InformWheelEventMonitor = InformWheelEventMonitor::Yes);
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) final;
 
@@ -76,8 +79,6 @@ protected:
     ScrollingStateTree* scrollingStateTree() { return m_scrollingStateTree.get(); }
 
     RefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
-
-    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction);
 
     WEBCORE_EXPORT String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
