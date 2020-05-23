@@ -4933,7 +4933,7 @@
 		E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */; };
 		E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E425A49918292B840020CFCF /* CollectionIndexCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E42E76DC1C7AF77600E3614D /* StyleUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E76DB1C7AF77600E3614D /* StyleUpdate.h */; };
+		E42E76DC1C7AF77600E3614D /* StyleUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E76DB1C7AF77600E3614D /* StyleUpdate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E43105BA16750F1600DB2FB8 /* NodeTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4343D232392778400EBBB66 /* LineLayoutTraversalSimplePath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4343D212392778300EBBB66 /* LineLayoutTraversalSimplePath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4343D252392779000EBBB66 /* LineLayoutTraversalComplexPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4343D242392778F00EBBB66 /* LineLayoutTraversalComplexPath.h */; settings = {ATTRIBUTES = (Private, ); }; };

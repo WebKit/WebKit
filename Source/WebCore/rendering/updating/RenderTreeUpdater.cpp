@@ -78,7 +78,7 @@ RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdates*
 {
 }
 
-RenderTreeUpdater::RenderTreeUpdater(Document& document)
+RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCallbackDisabler&)
     : m_document(document)
     , m_generatedContent(makeUnique<GeneratedContent>(*this))
     , m_builder(renderView())
@@ -120,8 +120,6 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
         return;
     
     TraceScope scope(RenderTreeBuildStart, RenderTreeBuildEnd);
-
-    Style::PostResolutionCallbackDisabler callbackDisabler(m_document);
 
     m_styleUpdate = WTFMove(styleUpdate);
 

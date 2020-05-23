@@ -1476,6 +1476,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/StyleChange.h
     style/StyleScope.h
+    style/StyleUpdate.h
     style/StyleValidity.h
 
     svg/SVGLengthContext.h

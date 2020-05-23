@@ -1,3 +1,16 @@
+2020-05-22  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: (!s_current || &m_view != &s_current->m_view) in RenderTreeBuilder::RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=212163
+        <rdar://problem/57028096>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test for the crash.
+
+        * fast/rendering/nested-render-tree-update-crash-expected.txt: Added.
+        * fast/rendering/nested-render-tree-update-crash.html: Added.
+
 2020-05-22  Zalan Bujtas  <zalan@apple.com>
 
         Nullptr deref in WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation when parent and beforeChild are siblings

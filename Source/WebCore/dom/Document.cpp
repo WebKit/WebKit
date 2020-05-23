@@ -1920,6 +1920,19 @@ bool Document::hasPendingFullStyleRebuild() const
     return hasPendingStyleRecalc() && m_needsFullStyleRebuild;
 }
 
+void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate)
+{
+    ASSERT(!inRenderTreeUpdate());
+
+    // NOTE: Preserve the order of definitions below so the destructors are called in proper sequence.
+    Style::PostResolutionCallbackDisabler callbackDisabler(*this);
+    SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
+    RenderTreeUpdater updater(*this, callbackDisabler);
+    // End of ordered definitions
+
+    updater.commit(WTFMove(styleUpdate));
+}
+
 void Document::resolveStyle(ResolveStyleType type)
 {
     ASSERT(!view() || !view()->isPainting());
@@ -2004,11 +2017,7 @@ void Document::resolveStyle(ResolveStyleType type)
         m_inStyleRecalc = false;
 
         if (styleUpdate) {
-            SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
-
-            RenderTreeUpdater updater(*this);
-            updater.commit(WTFMove(styleUpdate));
-
+            updateRenderTree(WTFMove(styleUpdate));
             frameView.styleAndRenderTreeDidChange();
         }
 
@@ -2042,14 +2051,10 @@ void Document::resolveStyle(ResolveStyleType type)
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
 {
-    ASSERT(!m_inRenderTreeUpdate);
-    SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
-
     auto textUpdate = makeUnique<Style::Update>(*this);
     textUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
 
-    RenderTreeUpdater renderTreeUpdater(*this);
-    renderTreeUpdater.commit(WTFMove(textUpdate));
+    updateRenderTree(WTFMove(textUpdate));
 }
 
 bool Document::needsStyleRecalc() const

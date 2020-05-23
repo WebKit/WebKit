@@ -55,6 +55,7 @@
 #include "SecurityPolicyViolationEvent.h"
 #include "StringWithDirection.h"
 #include "StyleColor.h"
+#include "StyleUpdate.h"
 #include "Supplementable.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
@@ -643,6 +644,7 @@ public:
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
+    void updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate);
     
     bool updateLayoutIfDimensionsOutOfDate(Element&, DimensionsCheck = AllDimensionsCheck);
     

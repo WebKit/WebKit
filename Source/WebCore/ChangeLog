@@ -1,3 +1,29 @@
+2020-05-22  Jack Lee  <shihchieh_lee@apple.com>
+
+        ASSERTION FAILED: (!s_current || &m_view != &s_current->m_view) in RenderTreeBuilder::RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=212163
+        <rdar://problem/57028096>
+
+        Reviewed by Geoffrey Garen.
+
+        Calling ~PostResolutionCallbackDisabler() before completing render tree updating and releasing RenderTreeBuilder 
+        triggers this assertion. Therefore we added a utility function "updateRenderTree" in which PostResolutionCallback
+        is delayed until RenderTreeUpdater is released and m_inRenderTreeUpdate is cleared.
+
+        Test: fast/rendering/nested-render-tree-update-crash.html
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::updateRenderTree):
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateTextRenderer):
+        * dom/Document.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::RenderTreeUpdater):
+        (WebCore::RenderTreeUpdater::commit):
+        * rendering/updating/RenderTreeUpdater.h:
+
 2020-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Stuttery overflow scrolling in slow-scrolling regions (facebook messenger, feedly.com)
