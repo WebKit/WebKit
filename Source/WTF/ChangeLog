@@ -1,3 +1,14 @@
+2020-05-22  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::isValidEnum() has a typo in static_assert making it a tautological comparison
+        <https://webkit.org/b/212290>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/EnumTraits.h:
+        (WTF::isValidEnum): Use sizeof(std::underlying_type_t<E>)
+        instead of std::underlying_type_t<E>() to fix the bug.
+
 2020-05-22  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT() that InitializeWebKit2() is getting called on the main thread

@@ -56,7 +56,7 @@ template<typename U> class HasCustomIsValidEnum : public std::false_type { };
 template<typename E, typename T, std::enable_if_t<std::is_enum<E>::value && !std::is_same<std::underlying_type_t<E>, bool>::value && !HasCustomIsValidEnum<E>::value>* = nullptr>
 constexpr bool isValidEnum(T t)
 {
-    static_assert(sizeof(T) >= std::underlying_type_t<E>(), "Integral type must be at least the size of the underlying enum type");
+    static_assert(sizeof(T) >= sizeof(std::underlying_type_t<E>), "Integral type must be at least the size of the underlying enum type");
 
     return EnumValueChecker<T, typename EnumTraits<E>::values>::isValidEnum(t);
 }
