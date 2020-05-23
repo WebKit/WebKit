@@ -113,12 +113,18 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
     auto& grid = formattingState().tableGrid();
     auto& rows = grid.rows().list();
 
-    auto rowWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
     auto rowLogicalTop = grid.verticalSpacing();
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto& row = rows[rowIndex];
         auto& rowBox = row.box();
         auto& rowDisplayBox = formattingState().displayBox(rowBox);
+
+        rowDisplayBox.setPadding(geometry().computedPadding(rowBox, availableHorizontalSpace));
+        // Internal table elements do not have margins.
+        rowDisplayBox.setHorizontalMargin({ });
+        rowDisplayBox.setHorizontalComputedMargin({ });
+        rowDisplayBox.setVerticalMargin({ { }, { } });
+
 
         auto computedRowBorder = [&] {
             auto border = geometry().computedBorder(rowBox);
@@ -132,15 +138,28 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
                 border.vertical.bottom = { };
             return border;
         }();
-        rowDisplayBox.setBorder(computedRowBorder);
-        rowDisplayBox.setPadding(geometry().computedPadding(rowBox, availableHorizontalSpace));
-        // Internal table elements do not have margins.
-        rowDisplayBox.setHorizontalMargin({ });
-        rowDisplayBox.setHorizontalComputedMargin({ });
-        rowDisplayBox.setVerticalMargin({ { }, { } });
+        if (computedRowBorder.height() > row.logicalHeight()) {
+            // FIXME: This is an odd quirk when the row border overflows the row.
+            // We don't paint row borders so it does not matter too much, but if we don't
+            // set this fake border value, than we either end up with a negative content box
+            // or with a wide frame box.
+            // If it happens to cause issues in the display tree, we could also consider
+            // a special frame box override, where padding box + border != frame box.
+            computedRowBorder.vertical.top = { };
+            computedRowBorder.vertical.bottom = { };
+        }
+        rowDisplayBox.setContentBoxHeight(row.logicalHeight() - computedRowBorder.height());
 
-        rowDisplayBox.setContentBoxHeight(row.logicalHeight());
-        rowDisplayBox.setContentBoxWidth(rowWidth);
+        auto rowLogicalWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
+        if (computedRowBorder.width() > rowLogicalWidth) {
+            // See comment above.
+            computedRowBorder.horizontal.left = { };
+            computedRowBorder.horizontal.right = { };
+        }
+        rowDisplayBox.setContentBoxWidth(rowLogicalWidth - computedRowBorder.width());
+
+        rowDisplayBox.setBorder(computedRowBorder);
+
         rowDisplayBox.setTop(rowLogicalTop);
         rowDisplayBox.setLeft({ });
 

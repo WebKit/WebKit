@@ -1,3 +1,26 @@
+2020-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Non-collapsing row border should not make the table wider/taller
+        https://bugs.webkit.org/show_bug.cgi?id=212263
+
+        Reviewed by Antti Koivisto.
+
+        Non-collapsing row border eats into the content box but oddly it does not
+        constraint the cell boxes, so we can end up with smaller row content box than
+        the cell box it contains.
+
+        Test: fast/layoutformattingcontext/table-simple-row-border.html
+
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::Edges::width const):
+        (WebCore::Layout::Edges::height const):
+        (WebCore::Layout::HorizontalEdges::width const): Deleted.
+        (WebCore::Layout::VerticalEdges::height const): Deleted.
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::intrinsicWidthConstraintsForCell):
+
 2020-05-22  Jack Lee  <shihchieh_lee@apple.com>
 
         ASSERTION FAILED: (!s_current || &m_view != &s_current->m_view) in RenderTreeBuilder::RenderTreeBuilder

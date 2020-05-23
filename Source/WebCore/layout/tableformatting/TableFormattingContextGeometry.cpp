@@ -110,7 +110,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::Geometry::i
     // FIXME Check for box-sizing: border-box;
     auto intrinsicWidthConstraints = constrainByMinMaxWidth(cellBox, computedIntrinsicWidthConstraints());
     // Expand with border
-    intrinsicWidthConstraints.expand(computedCellBorder(cell).horizontal.width());
+    intrinsicWidthConstraints.expand(computedCellBorder(cell).width());
     // padding
     intrinsicWidthConstraints.expand(fixedValue(style.paddingLeft()).valueOr(0) + fixedValue(style.paddingRight()).valueOr(0));
     // and margin
