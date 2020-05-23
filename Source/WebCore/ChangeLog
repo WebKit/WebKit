@@ -1,3 +1,29 @@
+2020-05-22  Zalan Bujtas  <zalan@apple.com>
+
+        Nullptr deref in WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation when parent and beforeChild are siblings
+        https://bugs.webkit.org/show_bug.cgi?id=212116
+        <rdar://problem/62993844>
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes the case when a nested fragmented context has a spanner and we try to form a continuation while this nested fragmented context is being destroyed.
+
+        1. The continuation is triggered by a style change that turns a previously out-of-flow block container into an inflow box
+        (and the parent inline level container can't have the box as a direct child anymore).
+        2. An unrelated style change nukes the nested fragmented context. We need to "re-assign" the spanner to the parent fragment.
+
+        These 2 changes are split into 2 phases; first we take care of the tree mutation triggered by the continuation (updateRendererStyle), while
+        we do the fragmented context cleanup (updateAfterDescendants) in a separate step.
+        This 2 phase setup confuses the "where to put this spanner" logic.
+
+        This patch addresses the issue by keeping the spanner inside the about-to-be-destroyed fragmented context while forming the continuation (phase #1) and let the second phase (updateAfterDescendants)
+        deal with the spanner moving.
+
+        Test: fast/multicol/nested-multicol-with-spanner-and-continuation.html
+
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::isValidColumnSpanner):
+
 2020-05-22  Chris Dumez  <cdumez@apple.com>
 
         Revoking an object URL immediately after triggering navigation causes navigation to fail

@@ -1,3 +1,14 @@
+2020-05-22  Zalan Bujtas  <zalan@apple.com>
+
+        Nullptr deref in WebCore::RenderTreeBuilder::Block::attachIgnoringContinuation when parent and beforeChild are siblings
+        https://bugs.webkit.org/show_bug.cgi?id=212116
+        <rdar://problem/62993844>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/nested-multicol-with-spanner-and-continuation-expected.txt: Added.
+        * fast/multicol/nested-multicol-with-spanner-and-continuation.html: Added.
+
 2020-05-22  Kenneth Russell  <kbr@chromium.org>
 
         [ANGLE - iOS] webgl/1.0.3/conformance/extensions/ext-sRGB.html is failing
