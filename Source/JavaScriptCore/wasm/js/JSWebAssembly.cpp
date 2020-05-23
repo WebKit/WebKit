@@ -32,7 +32,9 @@
 #include "CatchScope.h"
 #include "Exception.h"
 #include "JSCBuiltins.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSObjectInlines.h"
 #include "JSPromise.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
@@ -41,6 +43,7 @@
 #include "Options.h"
 #include "PromiseTimer.h"
 #include "StrongInlines.h"
+#include "StructureInlines.h"
 #include "ThrowScope.h"
 
 namespace JSC {

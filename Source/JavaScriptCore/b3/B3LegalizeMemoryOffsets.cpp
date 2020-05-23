@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3InsertionSet.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"

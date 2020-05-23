@@ -31,7 +31,10 @@
 #include "AuxiliaryBarrierInlines.h"
 #include "GetterSetter.h"
 #include "IntegrityInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyGlobal.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyGlobalProtoFuncValueOf(JSGlobalObject*, CallFrame*);

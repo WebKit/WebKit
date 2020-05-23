@@ -28,7 +28,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValueInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "StructureInlines.h"
 #include "WebAssemblyRuntimeErrorPrototype.h"
 
 #include "WebAssemblyRuntimeErrorConstructor.lut.h"

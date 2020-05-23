@@ -28,9 +28,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyMemory.h"
+#include "StructureInlines.h"
 #include "WasmMemory.h"
 #include "WasmPageCount.h"
 #include "WebAssemblyMemoryPrototype.h"

@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "Error.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSModuleEnvironment.h"
 #include "JSObjectInlines.h"
 #include "JSWebAssemblyGlobal.h"

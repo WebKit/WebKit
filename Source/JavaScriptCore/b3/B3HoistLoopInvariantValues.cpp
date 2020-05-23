@@ -34,6 +34,7 @@
 #include "B3NaturalLoops.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
+#include "B3ValueInlines.h"
 #include <wtf/RangeSet.h>
 
 namespace JSC { namespace B3 {

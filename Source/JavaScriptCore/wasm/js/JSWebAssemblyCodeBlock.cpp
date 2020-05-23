@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "WasmModuleInformation.h"
 #include "WasmToJS.h"

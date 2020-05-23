@@ -34,6 +34,7 @@
 #include "B3Dominators.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
+#include "B3ProcedureInlines.h"
 #include "B3SlotBaseValue.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"

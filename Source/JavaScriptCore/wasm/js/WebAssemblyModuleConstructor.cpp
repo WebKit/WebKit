@@ -29,8 +29,11 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "ArrayBuffer.h"
+#include "ButterflyInlines.h"
 #include "JSArrayBuffer.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyModule.h"
 #include "ObjectConstructor.h"

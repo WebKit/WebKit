@@ -28,9 +28,14 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AuxiliaryBarrierInlines.h"
 #include "JSArrayBuffer.h"
-#include "JSWebAssemblyMemory.h"
+#include "JSCJSValueInlines.h"
+#include "JSGlobalObjectInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyMemory.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject*, CallFrame*);

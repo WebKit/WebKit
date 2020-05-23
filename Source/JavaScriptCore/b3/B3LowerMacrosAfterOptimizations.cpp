@@ -36,6 +36,7 @@
 #include "B3ConstPtrValue.h"
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
+#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 

@@ -31,6 +31,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
 #include "B3Procedure.h"
+#include "B3ValueInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 {

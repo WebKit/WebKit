@@ -49,6 +49,7 @@
 #include "B3PhaseScope.h"
 #include "B3PhiChildren.h"
 #include "B3Procedure.h"
+#include "B3ProcedureInlines.h"
 #include "B3SlotBaseValue.h"
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"

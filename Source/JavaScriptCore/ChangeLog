@@ -1,3 +1,58 @@
+2020-05-23  Paulo Matos  <pmatos@igalia.com>
+
+        Fix non-unified builds for x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=212297
+
+        Reviewed by Adrian Perez de Castro.
+
+        * b3/B3BasicBlock.cpp:
+        * b3/B3CaseCollection.cpp:
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3EnsureLoopPreHeaders.cpp:
+        * b3/B3FenceValue.cpp:
+        * b3/B3HoistLoopInvariantValues.cpp:
+        * b3/B3LegalizeMemoryOffsets.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3MathExtras.cpp:
+        * b3/B3MemoryValue.cpp:
+        * b3/B3Procedure.cpp:
+        * b3/B3StackmapValue.cpp:
+        * b3/B3SwitchValue.cpp:
+        * b3/B3UseCounts.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3VariableValue.cpp:
+        * b3/B3WasmAddressValue.cpp:
+        * b3/B3WasmBoundsCheckValue.cpp:
+        * ftl/FTLCommonValues.cpp:
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLOSREntry.cpp:
+        * ftl/FTLOSRExitCompiler.cpp:
+        * wasm/WasmInstance.cpp:
+        * wasm/WasmStreamingParser.cpp:
+        * wasm/js/JSToWasm.cpp:
+        * wasm/js/JSToWasmICCallee.cpp:
+        * wasm/js/JSWebAssembly.cpp:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+
 2020-05-22  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Enable JSC shell to run

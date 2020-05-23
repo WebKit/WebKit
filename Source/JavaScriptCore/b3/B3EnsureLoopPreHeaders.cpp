@@ -31,6 +31,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3NaturalLoops.h"
+#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 

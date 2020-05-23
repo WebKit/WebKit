@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
+#include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"

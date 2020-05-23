@@ -30,6 +30,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
+#include "JSObjectInlines.h"
 #include "JSToWasm.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
@@ -38,6 +39,8 @@
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "ProtoCallFrameInlines.h"
+#include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"

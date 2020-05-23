@@ -28,6 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AuxiliaryBarrierInlines.h"
+#include "JSObjectInlines.h"
+#include "StructureInlines.h"
 #include "WebAssemblyRuntimeErrorPrototype.lut.h"
 
 namespace JSC {

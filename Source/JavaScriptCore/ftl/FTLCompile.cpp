@@ -33,6 +33,7 @@
 #include "B3Generate.h"
 #include "B3StackSlot.h"
 #include "B3Value.h"
+#include "B3ValueInlines.h"
 #include "CodeBlockWithJITType.h"
 #include "CCallHelpers.h"
 #include "DFGGraphSafepoint.h"

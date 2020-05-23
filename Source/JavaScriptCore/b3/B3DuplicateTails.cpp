@@ -34,6 +34,7 @@
 #include "B3InsertionSet.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
+#include "B3ValueInlines.h"
 #include <wtf/IndexSet.h>
 
 namespace JSC { namespace B3 {

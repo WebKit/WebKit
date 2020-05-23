@@ -28,8 +28,13 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AuxiliaryBarrierInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSGlobalObjectInlines.h"
+#include "JSObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyTable.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(JSGlobalObject*, CallFrame*);

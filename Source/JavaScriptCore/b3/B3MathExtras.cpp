@@ -34,6 +34,7 @@
 #include "B3ConstDoubleValue.h"
 #include "B3ConstPtrValue.h"
 #include "B3UpsilonValue.h"
+#include "B3ValueInlines.h"
 #include "JSCPtrTag.h"
 #include "MathCommon.h"
 
