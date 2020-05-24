@@ -29,6 +29,7 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
+#include "EnterPictureInPictureEvent.h"
 #include "EventNames.h"
 #include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferred.h"

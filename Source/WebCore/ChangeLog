@@ -1,3 +1,14 @@
+2020-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some missing includes due to unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=212306
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp: Include EnterPictureInPictureEvent.h.
+
+        * platform/PictureInPictureObserver.h: Include WeakPtr and forward declare the IntSize class.
+
 2020-05-24  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Move SimpleColor into its own files
