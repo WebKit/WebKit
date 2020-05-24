@@ -1,3 +1,111 @@
+2020-05-24  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Move SimpleColor into its own files
+        https://bugs.webkit.org/show_bug.cgi?id=212309
+
+        Reviewed by Simon Fraser.
+
+        Move SimpleColor into its own files. It's about time.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Color.cpp:
+        (WebCore::premultipliedChannel): Deleted.
+        (WebCore::unpremultipliedChannel): Deleted.
+        (WebCore::makePremultipliedRGBA): Deleted.
+        (WebCore::makeUnPremultipliedRGBA): Deleted.
+        (WebCore::colorFloatToRGBAByte): Deleted.
+        (WebCore::makeRGBA32FromFloats): Deleted.
+        (WebCore::makeRGBAFromHSLA): Deleted.
+        (WebCore::makeRGBAFromCMYKA): Deleted.
+        (WebCore::SimpleColor::serializationForHTML const): Deleted.
+        (WebCore::decimalDigit): Deleted.
+        (WebCore::fractionDigitsForFractionalAlphaValue): Deleted.
+        (WebCore::SimpleColor::serializationForCSS const): Deleted.
+        (WebCore::RGBA32::serializationForRenderTreeAsText const): Deleted.
+        * platform/graphics/Color.h:
+        (WebCore::SimpleColor::SimpleColor): Deleted.
+        (WebCore::SimpleColor::value const): Deleted.
+        (WebCore::SimpleColor::redComponent const): Deleted.
+        (WebCore::SimpleColor::greenComponent const): Deleted.
+        (WebCore::SimpleColor::blueComponent const): Deleted.
+        (WebCore::SimpleColor::alphaComponent const): Deleted.
+        (WebCore::SimpleColor::alphaComponentAsFloat const): Deleted.
+        (WebCore::SimpleColor::isOpaque const): Deleted.
+        (WebCore::SimpleColor::isVisible const): Deleted.
+        (WebCore::SimpleColor::colorWithAlpha const): Deleted.
+        (WebCore::SimpleColor::get const): Deleted.
+        (WebCore::roundAndClampColorChannel): Deleted.
+        (WebCore::fastMultiplyBy255): Deleted.
+        (WebCore::fastDivideBy255): Deleted.
+        (WebCore::makeRGB): Deleted.
+        (WebCore::makeRGBA): Deleted.
+        * platform/graphics/SimpleColor.cpp: Copied from platform/graphics/Color.cpp.
+        (WebCore::SimpleColor::serializationForRenderTreeAsText const):
+        (): Deleted.
+        (WebCore::colorFloatToRGBAByte): Deleted.
+        (WebCore::parseHexColorInternal): Deleted.
+        (WebCore::Color::parseHexColor): Deleted.
+        (WebCore::differenceSquared): Deleted.
+        (WebCore::findNamedColor): Deleted.
+        (WebCore::Color::Color): Deleted.
+        (WebCore::Color::operator=): Deleted.
+        (WebCore::Color::serialized const): Deleted.
+        (WebCore::Color::cssText const): Deleted.
+        (WebCore::RGBA32::serializationForRenderTreeAsText const): Deleted.
+        (WebCore::Color::nameForRenderTreeAsText const): Deleted.
+        (WebCore::Color::light const): Deleted.
+        (WebCore::Color::dark const): Deleted.
+        (WebCore::Color::isDark const): Deleted.
+        (WebCore::Color::lightness const): Deleted.
+        (WebCore::blendComponent): Deleted.
+        (WebCore::Color::blend const): Deleted.
+        (WebCore::Color::blendWithWhite const): Deleted.
+        (WebCore::Color::colorWithAlphaMultipliedBy const): Deleted.
+        (WebCore::Color::colorWithAlphaMultipliedByUsingAlternativeRounding const): Deleted.
+        (WebCore::Color::colorWithAlpha const): Deleted.
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const): Deleted.
+        (WebCore::Color::colorSpaceAndComponents const): Deleted.
+        (WebCore::Color::toSRGBASimpleColorLossy const): Deleted.
+        (WebCore::Color::toSRGBAComponentsLossy const): Deleted.
+        (WebCore::extendedColorsEqual): Deleted.
+        (WebCore::blend): Deleted.
+        (WebCore::blendWithoutPremultiply): Deleted.
+        (WebCore::Color::tagAsValid): Deleted.
+        (WebCore::Color::asExtended const): Deleted.
+        (WebCore::operator<<): Deleted.
+        * platform/graphics/SimpleColor.h: Copied from platform/graphics/Color.h.
+        (WebCore::SimpleColor::alphaComponentAsFloat const):
+        (WebCore::SimpleColor::colorWithAlpha const):
+        (WebCore::SimpleColor::get const):
+        (WebCore::colorFloatToRGBAByte):
+        (WebCore::Color::Color): Deleted.
+        (WebCore::Color::isHashTableDeletedValue const): Deleted.
+        (WebCore::Color::~Color): Deleted.
+        (WebCore::Color::isValid const): Deleted.
+        (WebCore::Color::isOpaque const): Deleted.
+        (WebCore::Color::isVisible const): Deleted.
+        (WebCore::Color::red const): Deleted.
+        (WebCore::Color::green const): Deleted.
+        (WebCore::Color::blue const): Deleted.
+        (WebCore::Color::alpha const): Deleted.
+        (WebCore::Color::alphaAsFloat const): Deleted.
+        (WebCore::Color::opaqueColor const): Deleted.
+        (WebCore::Color::isSemantic const): Deleted.
+        (WebCore::Color::isExtended const): Deleted.
+        (WebCore::Color::setRGB): Deleted.
+        (WebCore::Color::setIsSemantic): Deleted.
+        (WebCore::equalIgnoringSemanticColor): Deleted.
+        (WebCore::Color::hash const): Deleted.
+        (WebCore::Color::colorWithAlphaMultipliedByUsingAlternativeRounding const): Deleted.
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const): Deleted.
+        (WebCore::Color::rgb const): Deleted.
+        (WebCore::Color::isBlackColor): Deleted.
+        (WebCore::Color::isWhiteColor): Deleted.
+        (WebCore::Color::encode const): Deleted.
+        (WebCore::Color::decode): Deleted.
+
 2020-05-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Ignore section borders even when border collapse is off.

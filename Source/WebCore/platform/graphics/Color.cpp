@@ -40,71 +40,6 @@ namespace WebCore {
 static constexpr SimpleColor lightenedBlack { 0xFF545454 };
 static constexpr SimpleColor darkenedWhite { 0xFFABABAB };
 
-static inline unsigned premultipliedChannel(unsigned c, unsigned a, bool ceiling = true)
-{
-    return fastDivideBy255(ceiling ? c * a + 254 : c * a);
-}
-
-static inline unsigned unpremultipliedChannel(unsigned c, unsigned a)
-{
-    return (fastMultiplyBy255(c) + a - 1) / a;
-}
-
-RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling)
-{
-    return makeRGBA(premultipliedChannel(r, a, ceiling), premultipliedChannel(g, a, ceiling), premultipliedChannel(b, a, ceiling), a);
-}
-
-RGBA32 makePremultipliedRGBA(RGBA32 pixelColor)
-{
-    if (pixelColor.isOpaque())
-        return pixelColor;
-    return makePremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
-}
-
-RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a)
-{
-    return makeRGBA(unpremultipliedChannel(r, a), unpremultipliedChannel(g, a), unpremultipliedChannel(b, a), a);
-}
-
-RGBA32 makeUnPremultipliedRGBA(RGBA32 pixelColor)
-{
-    if (pixelColor.isVisible() && !pixelColor.isOpaque())
-        return makeUnPremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
-    return pixelColor;
-}
-
-static int colorFloatToRGBAByte(float f)
-{
-    // We use lroundf and 255 instead of nextafterf(256, 0) to match CG's rounding
-    return std::max(0, std::min(static_cast<int>(lroundf(255.0f * f)), 255));
-}
-
-RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a)
-{
-    return makeRGBA(colorFloatToRGBAByte(r), colorFloatToRGBAByte(g), colorFloatToRGBAByte(b), colorFloatToRGBAByte(a));
-}
-
-RGBA32 makeRGBAFromHSLA(float hue, float saturation, float lightness, float alpha)
-{
-    const float scaleFactor = 255.0;
-    FloatComponents floatResult = hslToSRGB({ hue, saturation, lightness, alpha });
-    return makeRGBA(
-        round(floatResult.components[0] * scaleFactor),
-        round(floatResult.components[1] * scaleFactor),
-        round(floatResult.components[2] * scaleFactor),
-        round(floatResult.components[3] * scaleFactor));
-}
-
-RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a)
-{
-    double colors = 1 - k;
-    int r = static_cast<int>(nextafter(256, 0) * (colors * (1 - c)));
-    int g = static_cast<int>(nextafter(256, 0) * (colors * (1 - m)));
-    int b = static_cast<int>(nextafter(256, 0) * (colors * (1 - y)));
-    return makeRGBA(r, g, b, static_cast<float>(nextafter(256, 0) * a));
-}
-
 // originally moved here from the CSS parser
 template <typename CharacterType>
 static inline bool parseHexColorInternal(const CharacterType* name, unsigned length, RGBA32& rgb)
@@ -292,13 +227,6 @@ Color& Color::operator=(Color&& other)
     return *this;
 }
 
-String SimpleColor::serializationForHTML() const
-{
-    if (isOpaque())
-        return makeString('#', hex(redComponent(), 2, Lowercase), hex(greenComponent(), 2, Lowercase), hex(blueComponent(), 2, Lowercase));
-    return serializationForCSS();
-}
-
 String Color::serialized() const
 {
     if (isExtended())
@@ -306,47 +234,11 @@ String Color::serialized() const
     return rgb().serializationForHTML();
 }
 
-static char decimalDigit(unsigned number)
-{
-    ASSERT(number < 10);
-    return '0' + number;
-}
-
-static std::array<char, 4> fractionDigitsForFractionalAlphaValue(uint8_t alpha)
-{
-    ASSERT(alpha > 0);
-    ASSERT(alpha < 0xFF);
-    if (((alpha * 100 + 0x7F) / 0xFF * 0xFF + 50) / 100 != alpha)
-        return { { decimalDigit(alpha * 10 / 0xFF % 10), decimalDigit(alpha * 100 / 0xFF % 10), decimalDigit((alpha * 1000 + 0x7F) / 0xFF % 10), '\0' } };
-    if (int thirdDigit = (alpha * 100 + 0x7F) / 0xFF % 10)
-        return { { decimalDigit(alpha * 10 / 0xFF), decimalDigit(thirdDigit), '\0', '\0' } };
-    return { { decimalDigit((alpha * 10 + 0x7F) / 0xFF), '\0', '\0', '\0' } };
-}
-
-String SimpleColor::serializationForCSS() const
-{
-    switch (alphaComponent()) {
-    case 0:
-        return makeString("rgba(", redComponent(), ", ", greenComponent(), ", ", blueComponent(), ", 0)");
-    case 0xFF:
-        return makeString("rgb(", redComponent(), ", ", greenComponent(), ", ", blueComponent(), ')');
-    default:
-        return makeString("rgba(", redComponent(), ", ", greenComponent(), ", ", blueComponent(), ", 0.", fractionDigitsForFractionalAlphaValue(alphaComponent()).data(), ')');
-    }
-}
-
 String Color::cssText() const
 {
     if (isExtended())
         return asExtended().cssText();
     return rgb().serializationForCSS();
-}
-
-String RGBA32::serializationForRenderTreeAsText() const
-{
-    if (alphaComponent() < 0xFF)
-        return makeString('#', hex(redComponent(), 2), hex(greenComponent(), 2), hex(blueComponent(), 2), hex(alphaComponent(), 2));
-    return makeString('#', hex(redComponent(), 2), hex(greenComponent(), 2), hex(blueComponent(), 2));
 }
 
 String Color::nameForRenderTreeAsText() const

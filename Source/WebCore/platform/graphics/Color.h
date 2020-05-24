@@ -27,6 +27,7 @@
 
 #include "ColorSpace.h"
 #include "ExtendedColor.h"
+#include "SimpleColor.h"
 #include <algorithm>
 #include <cmath>
 #include <unicode/uchar.h>
@@ -55,69 +56,6 @@ typedef struct _GdkRGBA GdkRGBA;
 namespace WebCore {
 
 struct FloatComponents;
-
-// Color value with 8-bit components for red, green, blue, and alpha.
-// For historical reasons, stored as a 32-bit integer, with alpha in the high bits: ARGB.
-class SimpleColor {
-public:
-    constexpr SimpleColor(uint32_t value = 0) : m_value { value } { }
-
-    constexpr uint32_t value() const { return m_value; }
-
-    constexpr uint8_t redComponent() const { return m_value >> 16; }
-    constexpr uint8_t greenComponent() const { return m_value >> 8; }
-    constexpr uint8_t blueComponent() const { return m_value; }
-    constexpr uint8_t alphaComponent() const { return m_value >> 24; }
-
-    constexpr float alphaComponentAsFloat() const { return static_cast<float>(alphaComponent()) / 0xFF; }
-
-    constexpr bool isOpaque() const { return alphaComponent() == 0xFF; }
-    constexpr bool isVisible() const { return alphaComponent(); }
-
-    String serializationForHTML() const;
-    String serializationForCSS() const;
-    String serializationForRenderTreeAsText() const;
-
-    constexpr SimpleColor colorWithAlpha(uint8_t alpha) const { return { (m_value & 0x00FFFFFF) | alpha << 24 }; }
-
-    template<std::size_t N>
-    constexpr uint8_t get() const
-    {
-        static_assert(N < 4);
-        if constexpr (!N)
-            return redComponent();
-        else if constexpr (N == 1)
-            return greenComponent();
-        else if constexpr (N == 2)
-            return blueComponent();
-        else if constexpr (N == 3)
-            return alphaComponent();
-    }
-
-private:
-    uint32_t m_value { 0 };
-};
-
-bool operator==(SimpleColor, SimpleColor);
-bool operator!=(SimpleColor, SimpleColor);
-
-// FIXME: Remove this after migrating to the new name.
-using RGBA32 = SimpleColor;
-
-constexpr RGBA32 makeRGB(int r, int g, int b);
-constexpr RGBA32 makeRGBA(int r, int g, int b, int a);
-
-RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling = true);
-RGBA32 makePremultipliedRGBA(RGBA32);
-RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
-RGBA32 makeUnPremultipliedRGBA(RGBA32);
-
-WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
-WEBCORE_EXPORT RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
-RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
-
-uint8_t roundAndClampColorChannel(int);
-uint8_t roundAndClampColorChannel(float);
 
 class Color {
     WTF_MAKE_FAST_ALLOCATED;
@@ -350,25 +288,12 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
 
 int differenceSquared(const Color&, const Color&);
 
-uint16_t fastMultiplyBy255(uint16_t value);
-uint16_t fastDivideBy255(uint16_t);
-
 #if USE(CG)
 WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
-
-inline bool operator==(SimpleColor a, SimpleColor b)
-{
-    return a.value() == b.value();
-}
-
-inline bool operator!=(SimpleColor a, SimpleColor b)
-{
-    return !(a == b);
-}
 
 inline bool operator==(const Color& a, const Color& b)
 {
@@ -396,30 +321,6 @@ inline unsigned Color::hash() const
         return asExtended().hash();
 
     return WTF::intHash(m_colorData.rgbaAndFlags);
-}
-
-inline uint8_t roundAndClampColorChannel(int value)
-{
-    return std::max(0, std::min(255, value));
-}
-
-inline uint8_t roundAndClampColorChannel(float value)
-{
-    return std::max(0.f, std::min(255.f, std::round(value)));
-}
-
-inline uint16_t fastMultiplyBy255(uint16_t value)
-{
-    return (value << 8) - value;
-}
-
-inline uint16_t fastDivideBy255(uint16_t value)
-{
-    // While this is an approximate algorithm for division by 255, it gives perfectly accurate results for 16-bit values.
-    // FIXME: Since this gives accurate results for 16-bit values, we should get this optimization into compilers like clang.
-    uint16_t approximation = value >> 8;
-    uint16_t remainder = value - (approximation * 255) + 1;
-    return approximation + (remainder >> 8);
 }
 
 inline Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(Optional<float> alpha) const
@@ -534,33 +435,9 @@ Optional<Color> Color::decode(Decoder& decoder)
     return Color { SimpleColor { value } };
 }
 
-constexpr RGBA32 makeRGB(int r, int g, int b)
-{
-    return makeRGBA(r, g, b, 0xFF);
-}
-
-constexpr RGBA32 makeRGBA(int r, int g, int b, int a)
-{
-    return { static_cast<unsigned>(std::max(0, std::min(a, 0xFF)) << 24 | std::max(0, std::min(r, 0xFF)) << 16 | std::max(0, std::min(g, 0xFF)) << 8 | std::max(0, std::min(b, 0xFF))) };
-}
-
 } // namespace WebCore
 
 namespace WTF {
 template<> struct DefaultHash<WebCore::Color>;
 template<> struct HashTraits<WebCore::Color>;
-}
-
-namespace std {
-
-template<>
-class tuple_size<WebCore::SimpleColor> : public std::integral_constant<std::size_t, 4> {
-};
-
-template<std::size_t N>
-class tuple_element<N, WebCore::SimpleColor> {
-public:
-    using type = uint8_t;
-};
-
 }
