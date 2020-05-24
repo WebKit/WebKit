@@ -261,7 +261,8 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         // Table rows and tbody have 0 width for some reason when border collapsing is on.
         if (is<RenderTableRow>(renderer) && downcast<RenderTableRow>(renderer).table()->collapseBorders())
             return false;
-        if (is<RenderTableSection>(renderer) && downcast<RenderTableSection>(renderer).table()->collapseBorders())
+        // Section borders are either collapsed or ignored. However they may produce negative padding boxes.
+        if (is<RenderTableSection>(renderer) && (downcast<RenderTableSection>(renderer).table()->collapseBorders() || renderer.style().hasBorder()))
             return false;
     }
     if (!areEssentiallyEqual(frameRect, displayBox.rect())) {

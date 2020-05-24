@@ -1,5 +1,15 @@
 2020-05-24  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Ignore section borders even when border collapse is off.
+        https://bugs.webkit.org/show_bug.cgi?id=212336
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-thead-border-ignore-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-thead-border-ignore.html: Added.
+
+2020-05-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Take sections into account when computing collapsed border.
         https://bugs.webkit.org/show_bug.cgi?id=212311
 

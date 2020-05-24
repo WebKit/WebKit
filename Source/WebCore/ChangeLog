@@ -1,3 +1,17 @@
+2020-05-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Ignore section borders even when border collapse is off.
+        https://bugs.webkit.org/show_bug.cgi?id=212336
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/table-simple-thead-border-ignore.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+
 2020-05-24  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Stop allowing direct access to the underlying SimpleColor (it is almost always incorrect with respect to extended colors)

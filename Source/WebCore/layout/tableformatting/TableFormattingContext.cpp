@@ -193,8 +193,8 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     for (auto& section : grid.sections()) {
         auto& sectionBox = section.box();
         auto& sectionDisplayBox = formattingState().displayBox(sectionBox);
-        // FIXME: Multiple sections can have their own borders.
-        sectionDisplayBox.setBorder(grid.collapsedBorder() ? Edges(): geometry().computedBorder(sectionBox));
+        // Section borders are either collapsed or ignored.
+        sectionDisplayBox.setBorder({ });
         sectionDisplayBox.setPadding(geometry().computedPadding(sectionBox, constraints.horizontal.logicalWidth));
         // Internal table elements do not have margins.
         sectionDisplayBox.setHorizontalMargin({ });
