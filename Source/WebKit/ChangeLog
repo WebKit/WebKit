@@ -1,3 +1,12 @@
+2020-05-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove unused file since r261570
+
+        I forgot to remove DragAndDropHandler.h.
+
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/DragAndDropHandler.h: Removed.
+
 2020-05-23  Charlie Turner  <cturner@igalia.com>
 
         Error sending IPC message: Broken pipe

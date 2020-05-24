@@ -28,7 +28,6 @@
 #pragma once
 
 #include "APIPageConfiguration.h"
-#include "DragAndDropHandler.h"
 #include "GestureController.h"
 #include "InputMethodState.h"
 #include "SameDocumentNavigationType.h"
