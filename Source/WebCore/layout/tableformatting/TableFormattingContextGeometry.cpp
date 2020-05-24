@@ -54,29 +54,38 @@ Edges TableFormattingContext::Geometry::computedCellBorder(const TableGrid::Cell
 
     // We might want to cache these collapsed borders on the grid.
     auto cellPosition = cell.position();
+    // Collapsed border left from table and adjacent cells.
     if (!cellPosition.column)
         border.horizontal.left = collapsedBorder->horizontal.left / 2;
     else {
         auto adjacentBorderRight = computedBorder(m_grid.slot({ cellPosition.column - 1, cellPosition.row })->cell().box()).horizontal.right;
         border.horizontal.left = std::max(border.horizontal.left, adjacentBorderRight) / 2;
     }
+    // Collapsed border right from table and adjacent cells.
     if (cellPosition.column == m_grid.columns().size() - 1)
         border.horizontal.right = collapsedBorder->horizontal.right / 2;
     else {
         auto adjacentBorderLeft = computedBorder(m_grid.slot({ cellPosition.column + 1, cellPosition.row })->cell().box()).horizontal.left;
         border.horizontal.right = std::max(border.horizontal.right, adjacentBorderLeft) / 2;
     }
+    // Collapsed border top from table, row and adjacent cells.
+    auto& rows = m_grid.rows().list();
     if (!cellPosition.row)
         border.vertical.top = collapsedBorder->vertical.top / 2;
     else {
         auto adjacentBorderBottom = computedBorder(m_grid.slot({ cellPosition.column, cellPosition.row - 1 })->cell().box()).vertical.bottom;
-        border.vertical.top = std::max(border.vertical.top, adjacentBorderBottom) / 2;
+        auto adjacentRowBottom = computedBorder(rows[cellPosition.row - 1].box()).vertical.bottom;
+        auto adjacentCollapsedBorder = std::max(adjacentBorderBottom, adjacentRowBottom);
+        border.vertical.top = std::max(border.vertical.top, adjacentCollapsedBorder) / 2;
     }
+    // Collapsed border bottom from table, row and adjacent cells.
     if (cellPosition.row == m_grid.rows().size() - 1)
         border.vertical.bottom = collapsedBorder->vertical.bottom / 2;
     else {
         auto adjacentBorderTop = computedBorder(m_grid.slot({ cellPosition.column, cellPosition.row + 1 })->cell().box()).vertical.top;
-        border.vertical.bottom = std::max(border.vertical.bottom, adjacentBorderTop) / 2;
+        auto adjacentRowTop = computedBorder(rows[cellPosition.row + 1].box()).vertical.top;
+        auto adjacentCollapsedBorder = std::max(adjacentBorderTop, adjacentRowTop);
+        border.vertical.bottom = std::max(border.vertical.bottom, adjacentCollapsedBorder) / 2;
     }
     return border;
 }

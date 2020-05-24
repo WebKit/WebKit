@@ -1,3 +1,15 @@
+2020-05-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Take collapsed in-between row border into account when computing cell height
+        https://bugs.webkit.org/show_bug.cgi?id=212307
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/table-simple-collapsed-row-border2.html
+
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::computedCellBorder const):
+
 2020-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Take row border into account when computing collapsed borders.
