@@ -686,7 +686,8 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
 
 void TextureMapperGL::clearColor(const Color& color)
 {
-    glClearColor(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f, color.alpha() / 255.0f);
+    auto [r, g, b, a] = color.toSRGBAComponentsLossy();
+    glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

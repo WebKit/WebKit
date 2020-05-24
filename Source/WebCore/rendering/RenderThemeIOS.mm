@@ -1554,7 +1554,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             auto it = globalCSSValueToSystemColorMap().find(CSSValueKey { cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel });
             if (it == globalCSSValueToSystemColorMap().end())
                 return RenderTheme::systemColor(cssValueID, options);
-            return Color(it->value.rgb(), Color::Semantic);
+            return it->value.semanticColor();
         }
         auto color = systemColorFromCSSValueID(cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel);
         if (color)

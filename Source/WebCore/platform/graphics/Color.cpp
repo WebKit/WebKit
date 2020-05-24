@@ -180,12 +180,12 @@ int differenceSquared(const Color& c1, const Color& c2)
     // FIXME: This should probably return a floating point number, but many of the call
     // sites have picked comparison values based on feel. We'd need to break out
     // our logarithm tables to change them :)
-    int c1Red = c1.isExtended() ? c1.asExtended().red() * 255 : c1.red();
-    int c1Green = c1.isExtended() ? c1.asExtended().green() * 255 : c1.green();
-    int c1Blue = c1.isExtended() ? c1.asExtended().blue() * 255 : c1.blue();
-    int c2Red = c2.isExtended() ? c2.asExtended().red() * 255 : c2.red();
-    int c2Green = c2.isExtended() ? c2.asExtended().green() * 255 : c2.green();
-    int c2Blue = c2.isExtended() ? c2.asExtended().blue() * 255 : c2.blue();
+    int c1Red = c1.isExtended() ? c1.asExtended().red() * 255 : c1.rgb().redComponent();
+    int c1Green = c1.isExtended() ? c1.asExtended().green() * 255 : c1.rgb().greenComponent();
+    int c1Blue = c1.isExtended() ? c1.asExtended().blue() * 255 : c1.rgb().blueComponent();
+    int c2Red = c2.isExtended() ? c2.asExtended().red() * 255 : c2.rgb().redComponent();
+    int c2Green = c2.isExtended() ? c2.asExtended().green() * 255 : c2.rgb().greenComponent();
+    int c2Blue = c2.isExtended() ? c2.asExtended().blue() * 255 : c2.rgb().blueComponent();
     int dR = c1Red - c2Red;
     int dG = c1Green - c2Green;
     int dB = c1Blue - c2Blue;
@@ -250,12 +250,16 @@ Color::Color(Color&& other)
 }
 
 Color::Color(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
+    : Color(ExtendedColor::create(c1, c2, c3, alpha, colorSpace))
+{
+}
+
+Color::Color(Ref<ExtendedColor>&& extendedColor)
 {
     // Zero the union, just in case a 32-bit system only assigns the
     // top 32 bits when copying the extendedColor pointer below.
     m_colorData.rgbaAndFlags = 0;
-    auto extendedColorRef = ExtendedColor::create(c1, c2, c3, alpha, colorSpace);
-    m_colorData.extendedColor = &extendedColorRef.leakRef();
+    m_colorData.extendedColor = &extendedColor.leakRef();
     ASSERT(isExtended());
 }
 
@@ -363,17 +367,17 @@ Color Color::light() const
 
     float v = std::max({ r, g, b });
 
-    if (v == 0.0f) {
-        // Lightened black with alpha.
-        return Color(0x54, 0x54, 0x54, alpha());
-    }
+    if (v == 0.0f)
+        return lightenedBlack.colorWithAlpha(alpha());
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
-    return Color(static_cast<int>(multiplier * r * scaleFactor),
-                 static_cast<int>(multiplier * g * scaleFactor),
-                 static_cast<int>(multiplier * b * scaleFactor),
-                 alpha());
+    return {
+        static_cast<int>(multiplier * r * scaleFactor),
+        static_cast<int>(multiplier * g * scaleFactor),
+        static_cast<int>(multiplier * b * scaleFactor),
+        alpha()
+    };
 }
 
 Color Color::dark() const
@@ -389,10 +393,12 @@ Color Color::dark() const
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
-    return Color(static_cast<int>(multiplier * r * scaleFactor),
-                 static_cast<int>(multiplier * g * scaleFactor),
-                 static_cast<int>(multiplier * b * scaleFactor),
-                 alpha());
+    return {
+        static_cast<int>(multiplier * r * scaleFactor),
+        static_cast<int>(multiplier * g * scaleFactor),
+        static_cast<int>(multiplier * b * scaleFactor),
+        alpha()
+    };
 }
 
 bool Color::isDark() const
@@ -409,19 +415,6 @@ float Color::lightness() const
     return WebCore::lightness(toSRGBAComponentsLossy());
 }
 
-static int blendComponent(int c, int a)
-{
-    // We use white.
-    float alpha = a / 255.0f;
-    int whiteBlend = 255 - a;
-    c -= whiteBlend;
-    return static_cast<int>(c / alpha);
-}
-
-const int cStartAlpha = 153; // 60%
-const int cEndAlpha = 204; // 80%;
-const int cAlphaIncrement = 17; // Increments in between.
-
 Color Color::blend(const Color& source) const
 {
     if (!isVisible() || source.isOpaque())
@@ -430,37 +423,55 @@ Color Color::blend(const Color& source) const
     if (!source.alpha())
         return *this;
 
-    int d = 255 * (alpha() + source.alpha()) - alpha() * source.alpha();
-    int a = d / 255;
-    int r = (red() * alpha() * (255 - source.alpha()) + 255 * source.alpha() * source.red()) / d;
-    int g = (green() * alpha() * (255 - source.alpha()) + 255 * source.alpha() * source.green()) / d;
-    int b = (blue() * alpha() * (255 - source.alpha()) + 255 * source.alpha() * source.blue()) / d;
-    return Color(r, g, b, a);
+    auto [selfR, selfG, selfB, selfA] = toSRGBASimpleColorLossy();
+    auto [sourceR, sourceG, sourceB, sourceA] = source.toSRGBASimpleColorLossy();
+
+    int d = 0xFF * (selfA + sourceA) - selfA * sourceA;
+    int a = d / 0xFF;
+    int r = (selfR * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceR) / d;
+    int g = (selfG * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceG) / d;
+    int b = (selfB * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceB) / d;
+
+    return makeRGBA(r, g, b, a);
 }
 
 Color Color::blendWithWhite() const
 {
+    constexpr int startAlpha = 153; // 60%
+    constexpr int endAlpha = 204; // 80%;
+    constexpr int alphaIncrement = 17;
+
+    auto blendComponent = [](int c, int a) -> int {
+        float alpha = a / 255.0f;
+        int whiteBlend = 255 - a;
+        c -= whiteBlend;
+        return static_cast<int>(c / alpha);
+    };
+
     // If the color contains alpha already, we leave it alone.
     if (!isOpaque())
         return *this;
 
-    Color newColor;
-    for (int alpha = cStartAlpha; alpha <= cEndAlpha; alpha += cAlphaIncrement) {
+    auto [existingR, existingG, existingB, existingAlpha] = toSRGBASimpleColorLossy();
+
+    Color result;
+    for (int alpha = startAlpha; alpha <= endAlpha; alpha += alphaIncrement) {
         // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
         // at the current alpha.  Try using less transparency if the numbers end up being negative.
-        int r = blendComponent(red(), alpha);
-        int g = blendComponent(green(), alpha);
-        int b = blendComponent(blue(), alpha);
+        int r = blendComponent(existingR, alpha);
+        int g = blendComponent(existingG, alpha);
+        int b = blendComponent(existingB, alpha);
         
-        newColor = Color(r, g, b, alpha);
+        result = makeRGBA(r, g, b, alpha);
 
         if (r >= 0 && g >= 0 && b >= 0)
             break;
     }
 
+    // FIXME: Why is preserving the semantic bit desired and/or correct here?
     if (isSemantic())
-        newColor.setIsSemantic();
-    return newColor;
+        result.setIsSemantic();
+    return result;
 }
 
 Color Color::colorWithAlphaMultipliedBy(float amount) const
@@ -477,13 +488,15 @@ Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(float amount) co
 
 Color Color::colorWithAlpha(float alpha) const
 {
-    if (isExtended())
-        return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
+    if (isExtended()) {
+        auto& extendedColor = asExtended();
+        return Color { extendedColor.red(), extendedColor.green(), extendedColor.blue(), alpha, extendedColor.colorSpace() };
+    }
 
     // FIXME: This is where this function differs from colorWithAlphaUsingAlternativeRounding.
-    int newAlpha = alpha * 255;
+    uint8_t newAlpha = alpha * 0xFF;
 
-    Color result = { red(), green(), blue(), newAlpha };
+    Color result = rgb().colorWithAlpha(newAlpha);
     if (isSemantic())
         result.setIsSemantic();
     return result;
@@ -491,13 +504,35 @@ Color Color::colorWithAlpha(float alpha) const
 
 Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
 {
-    if (isExtended())
-        return Color { m_colorData.extendedColor->red(), m_colorData.extendedColor->green(), m_colorData.extendedColor->blue(), alpha, m_colorData.extendedColor->colorSpace() };
+    if (isExtended()) {
+        auto& extendedColor = asExtended();
+        return Color { extendedColor.red(), extendedColor.green(), extendedColor.blue(), alpha, extendedColor.colorSpace() };
+    }
 
-    Color result = SimpleColor { (rgb().value() & 0x00FFFFFF) | colorFloatToRGBAByte(alpha) << 24 };
+    // FIXME: This is where this function differs from colorWithAlphaUsing.
+    uint8_t newAlpha = colorFloatToRGBAByte(alpha);
+
+    Color result = rgb().colorWithAlpha(newAlpha);
     if (isSemantic())
         result.setIsSemantic();
     return result;
+}
+
+Color Color::invertedColorWithAlpha(float alpha) const
+{
+    if (isExtended())
+        return Color { asExtended().invertedColorWithAlpha(alpha) };
+
+    auto [r, g, b, existingAlpha] = rgb();
+    return { 0xFF - r, 0xFF - g, 0xFF - b, colorFloatToRGBAByte(alpha) };
+}
+
+Color Color::semanticColor() const
+{
+    if (isSemantic())
+        return *this;
+
+    return { toSRGBASimpleColorLossy(), Semantic };
 }
 
 std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
@@ -507,7 +542,8 @@ std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
         return { extendedColor.colorSpace(), extendedColor.channels() };
     }
 
-    return { ColorSpace::SRGB, FloatComponents { red() / 255.0f, green() / 255.0f, blue() / 255.0f,  alpha() / 255.0f } };
+    auto [r, g, b, a] = rgb();
+    return { ColorSpace::SRGB, FloatComponents { r / 255.0f, g / 255.0f, b / 255.0f,  a / 255.0f } };
 }
 
 SimpleColor Color::toSRGBASimpleColorLossy() const

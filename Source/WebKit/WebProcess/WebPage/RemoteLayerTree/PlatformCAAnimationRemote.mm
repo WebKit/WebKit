@@ -693,8 +693,8 @@ static NSObject* animationValueFromKeyframeValue(const PlatformCAAnimationRemote
         return @(keyframeValue.numberValue());
             
     case PlatformCAAnimationRemote::KeyframeValue::ColorKeyType: {
-        Color color = keyframeValue.colorValue();
-        return @[ @(color.red()), @(color.green()), @(color.blue()), @(color.alpha()) ];
+        auto [r, g, b, a] = keyframeValue.colorValue().toSRGBASimpleColorLossy();
+        return @[ @(r), @(g), @(b), @(a) ];
     }
 
     case PlatformCAAnimationRemote::KeyframeValue::PointKeyType: {

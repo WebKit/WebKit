@@ -63,6 +63,8 @@ public:
 
     WEBCORE_EXPORT String cssText() const;
 
+    Ref<ExtendedColor> invertedColorWithAlpha(float) const;
+
 private:
     ExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
         : m_channels(c1, c2, c3, alpha)

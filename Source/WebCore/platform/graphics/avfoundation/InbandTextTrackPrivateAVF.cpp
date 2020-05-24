@@ -64,24 +64,23 @@ InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
     disconnect();
 }
 
-static bool makeRGBA32FromARGBCFArray(CFArrayRef colorArray, RGBA32& color)
+static Optional<SimpleColor> makeRGBA32FromARGBCFArray(CFArrayRef colorArray)
 {
     if (CFArrayGetCount(colorArray) < 4)
-        return false;
+        return WTF::nullopt;
 
     float componentArray[4];
     for (int i = 0; i < 4; i++) {
         CFNumberRef value = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(colorArray, i));
         if (CFGetTypeID(value) != CFNumberGetTypeID())
-            return false;
+            return WTF::nullopt;
 
         float component;
         CFNumberGetValue(value, kCFNumberFloatType, &component);
         componentArray[i] = component;
     }
 
-    color = makeRGBA32FromFloats(componentArray[1], componentArray[2], componentArray[3], componentArray[0]);
-    return true;
+    return makeRGBA32FromFloats(componentArray[1], componentArray[2], componentArray[3], componentArray[0]);
 }
 
 Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString)
@@ -268,10 +267,10 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
                     continue;
                 
-                RGBA32 color;
-                if (!makeRGBA32FromARGBCFArray(arrayValue, color))
+                auto color = makeRGBA32FromARGBCFArray(arrayValue);
+                if (!color)
                     continue;
-                cueData->setForegroundColor(color);
+                cueData->setForegroundColor(*color);
                 continue;
             }
             
@@ -280,10 +279,10 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
                     continue;
                 
-                RGBA32 color;
-                if (!makeRGBA32FromARGBCFArray(arrayValue, color))
+                auto color = makeRGBA32FromARGBCFArray(arrayValue);
+                if (!color)
                     continue;
-                cueData->setBackgroundColor(color);
+                cueData->setBackgroundColor(*color);
                 continue;
             }
 
@@ -292,10 +291,10 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
                     continue;
                 
-                RGBA32 color;
-                if (!makeRGBA32FromARGBCFArray(arrayValue, color))
+                auto color = makeRGBA32FromARGBCFArray(arrayValue);
+                if (!color)
                     continue;
-                cueData->setHighlightColor(color);
+                cueData->setHighlightColor(*color);
                 continue;
             }
         }

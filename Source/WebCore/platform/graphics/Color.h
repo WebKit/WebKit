@@ -69,12 +69,30 @@ public:
     constexpr uint8_t blueComponent() const { return m_value; }
     constexpr uint8_t alphaComponent() const { return m_value >> 24; }
 
+    constexpr float alphaComponentAsFloat() const { return static_cast<float>(alphaComponent()) / 0xFF; }
+
     constexpr bool isOpaque() const { return alphaComponent() == 0xFF; }
     constexpr bool isVisible() const { return alphaComponent(); }
 
     String serializationForHTML() const;
     String serializationForCSS() const;
     String serializationForRenderTreeAsText() const;
+
+    constexpr SimpleColor colorWithAlpha(uint8_t alpha) const { return { (m_value & 0x00FFFFFF) | alpha << 24 }; }
+
+    template<std::size_t N>
+    constexpr uint8_t get() const
+    {
+        static_assert(N < 4);
+        if constexpr (!N)
+            return redComponent();
+        else if constexpr (N == 1)
+            return greenComponent();
+        else if constexpr (N == 2)
+            return blueComponent();
+        else if constexpr (N == 3)
+            return alphaComponent();
+    }
 
 private:
     uint32_t m_value { 0 };
@@ -171,6 +189,7 @@ public:
     // FIXME: If the colorSpace is sRGB and the values can all be
     // converted exactly to integers, we should make a normal Color.
     WEBCORE_EXPORT Color(float, float, float, float, ColorSpace);
+    WEBCORE_EXPORT Color(Ref<ExtendedColor>&&);
 
     WEBCORE_EXPORT Color(const Color&);
     WEBCORE_EXPORT Color(Color&&);
@@ -195,14 +214,8 @@ public:
     bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : rgb().isOpaque(); }
     bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : rgb().isVisible(); }
 
-    int red() const { return rgb().redComponent(); }
-    int green() const { return rgb().greenComponent(); }
-    int blue() const { return rgb().blueComponent(); }
-    int alpha() const { return rgb().alphaComponent(); }
-
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : static_cast<float>(rgb().alphaComponent()) / 0xFF; }
-
-    RGBA32 rgb() const;
+    int alpha() const { return isExtended() ? asExtended().alpha() * 255 : rgb().alphaComponent(); }
+    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : rgb().alphaComponentAsFloat(); }
 
     unsigned hash() const;
 
@@ -225,6 +238,8 @@ public:
     Color blend(const Color&) const;
     Color blendWithWhite() const;
 
+    Color invertedColorWithAlpha(float alpha) const;
+
     Color colorWithAlphaMultipliedBy(float) const;
     Color colorWithAlpha(float) const;
 
@@ -235,6 +250,7 @@ public:
     WEBCORE_EXPORT Color colorWithAlphaUsingAlternativeRounding(float) const;
 
     Color opaqueColor() const { return colorWithAlpha(1.0f); }
+    Color semanticColor() const;
 
     // True if the color originated from a CSS semantic color name.
     bool isSemantic() const { return !isExtended() && (m_colorData.rgbaAndFlags & isSemanticRBGAColorBit); }
@@ -247,6 +263,7 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT Color(CGColorRef);
     WEBCORE_EXPORT Color(CGColorRef, SemanticTag);
+    friend WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
 #endif
 
 #if PLATFORM(WIN)
@@ -288,6 +305,8 @@ public:
     friend bool operator==(const Color& a, const Color& b);
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
 
+    friend int differenceSquared(const Color&, const Color&);
+
     static bool isBlackColor(const Color&);
     static bool isWhiteColor(const Color&);
 
@@ -295,6 +314,7 @@ public:
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
+    RGBA32 rgb() const;
     void setRGB(int r, int g, int b) { setRGB(makeRGB(r, g, b)); }
     void setRGB(RGBA32);
     void setIsSemantic() { m_colorData.rgbaAndFlags |= isSemanticRBGAColorBit; }
@@ -529,4 +549,18 @@ constexpr RGBA32 makeRGBA(int r, int g, int b, int a)
 namespace WTF {
 template<> struct DefaultHash<WebCore::Color>;
 template<> struct HashTraits<WebCore::Color>;
+}
+
+namespace std {
+
+template<>
+class tuple_size<WebCore::SimpleColor> : public std::integral_constant<std::size_t, 4> {
+};
+
+template<std::size_t N>
+class tuple_element<N, WebCore::SimpleColor> {
+public:
+    using type = uint8_t;
+};
+
 }

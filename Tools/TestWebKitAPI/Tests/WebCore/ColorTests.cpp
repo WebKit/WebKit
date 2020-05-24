@@ -182,26 +182,29 @@ TEST(Color, Validity)
     validColor = Color(1, 2, 3, 4);
     EXPECT_TRUE(validColor.isValid());
     EXPECT_FALSE(validColor.isExtended());
-    EXPECT_EQ(validColor.red(), 1);
-    EXPECT_EQ(validColor.green(), 2);
-    EXPECT_EQ(validColor.blue(), 3);
-    EXPECT_EQ(validColor.alpha(), 4);
+    auto simpleValidColor = validColor.toSRGBASimpleColorLossy();
+    EXPECT_EQ(simpleValidColor.redComponent(), 1);
+    EXPECT_EQ(simpleValidColor.greenComponent(), 2);
+    EXPECT_EQ(simpleValidColor.blueComponent(), 3);
+    EXPECT_EQ(simpleValidColor.alphaComponent(), 4);
 
     Color yetAnotherValidColor(WTFMove(validColor));
     EXPECT_TRUE(yetAnotherValidColor.isValid());
     EXPECT_FALSE(yetAnotherValidColor.isExtended());
-    EXPECT_EQ(yetAnotherValidColor.red(), 1);
-    EXPECT_EQ(yetAnotherValidColor.green(), 2);
-    EXPECT_EQ(yetAnotherValidColor.blue(), 3);
-    EXPECT_EQ(yetAnotherValidColor.alpha(), 4);
+    auto simpleYetAnotherValidColor = yetAnotherValidColor.toSRGBASimpleColorLossy();
+    EXPECT_EQ(simpleYetAnotherValidColor.redComponent(), 1);
+    EXPECT_EQ(simpleYetAnotherValidColor.greenComponent(), 2);
+    EXPECT_EQ(simpleYetAnotherValidColor.blueComponent(), 3);
+    EXPECT_EQ(simpleYetAnotherValidColor.alphaComponent(), 4);
 
     otherValidColor = WTFMove(yetAnotherValidColor);
     EXPECT_TRUE(otherValidColor.isValid());
     EXPECT_FALSE(otherValidColor.isExtended());
-    EXPECT_EQ(otherValidColor.red(), 1);
-    EXPECT_EQ(otherValidColor.green(), 2);
-    EXPECT_EQ(otherValidColor.blue(), 3);
-    EXPECT_EQ(otherValidColor.alpha(), 4);
+    auto simpleOtherValidColor = otherValidColor.toSRGBASimpleColorLossy();
+    EXPECT_EQ(simpleOtherValidColor.redComponent(), 1);
+    EXPECT_EQ(simpleOtherValidColor.greenComponent(), 2);
+    EXPECT_EQ(simpleOtherValidColor.blueComponent(), 3);
+    EXPECT_EQ(simpleOtherValidColor.alphaComponent(), 4);
 }
 
 } // namespace TestWebKitAPI

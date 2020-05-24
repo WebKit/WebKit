@@ -78,7 +78,7 @@ static void prepareCairoContextSource(cairo_t* cr, cairo_pattern_t* pattern, cai
     } else {
         // Solid color source
         if (globalAlpha < 1)
-            setSourceRGBAFromColor(cr, color.colorWithAlphaUsingAlternativeRounding(color.alpha() / 255.f * globalAlpha));
+            setSourceRGBAFromColor(cr, color.colorWithAlphaMultipliedByUsingAlternativeRounding(globalAlpha));
         else
             setSourceRGBAFromColor(cr, color);
     }
@@ -1121,7 +1121,7 @@ void drawFocusRing(PlatformContextCairo& platformContext, const Path& path, floa
     // so as to be consistent with how we draw rectangular focus rings.
 
     // Force the alpha to 50%. This matches what the Mac does with outline rings.
-    Color ringColor = makeRGBA(color.red(), color.green(), color.blue(), 127);
+    Color ringColor = color.colorWithAlpha(.5);
 
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);

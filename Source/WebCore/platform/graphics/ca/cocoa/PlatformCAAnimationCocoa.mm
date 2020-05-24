@@ -396,7 +396,8 @@ void PlatformCAAnimationCocoa::setFromValue(const Color& value)
 {
     if (!isBasicAnimation())
         return;
-    [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:@[@(value.red()), @(value.green()), @(value.blue()), @(value.alpha())]];
+    auto [r, g, b, a] = value.toSRGBASimpleColorLossy();
+    [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:@[@(r), @(g), @(b), @(a)]];
 }
 
 void PlatformCAAnimationCocoa::setFromValue(const FilterOperation* operation, int internalFilterPropertyIndex)
@@ -438,7 +439,8 @@ void PlatformCAAnimationCocoa::setToValue(const Color& value)
 {
     if (!isBasicAnimation())
         return;
-    [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:@[@(value.red()), @(value.green()), @(value.blue()), @(value.alpha())]];
+    auto [r, g, b, a] = value.toSRGBASimpleColorLossy();
+    [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:@[@(r), @(g), @(b), @(a)]];
 }
 
 void PlatformCAAnimationCocoa::setToValue(const FilterOperation* operation, int internalFilterPropertyIndex)
@@ -494,7 +496,8 @@ void PlatformCAAnimationCocoa::setValues(const Vector<Color>& value)
         return;
 
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setValues:createNSArray(value, [] (auto& color) {
-        return @[@(color.red()), @(color.green()), @(color.blue()), @(color.alpha())];
+        auto [r, g, b, a] = color.toSRGBASimpleColorLossy();
+        return @[@(r), @(g), @(b), @(a)];
     }).get()];
 }
 

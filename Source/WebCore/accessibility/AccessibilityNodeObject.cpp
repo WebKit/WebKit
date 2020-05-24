@@ -1962,10 +1962,10 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
     if (!is<HTMLInputElement>(node()))
         return;
 
-    auto color = downcast<HTMLInputElement>(*node()).valueAsColor();
-    r = color.red();
-    g = color.green();
-    b = color.blue();
+    auto color = downcast<HTMLInputElement>(*node()).valueAsColor().toSRGBASimpleColorLossy();
+    r = color.redComponent();
+    g = color.greenComponent();
+    b = color.blueComponent();
 #endif
 }
 

@@ -1,3 +1,173 @@
+2020-05-24  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Stop allowing direct access to the underlying SimpleColor (it is almost always incorrect with respect to extended colors)
+        https://bugs.webkit.org/show_bug.cgi?id=212184
+
+        Reviewed by Dean Jackson.
+
+        - Makes Color::rgb() private, removing a class of extended color bugs from users 
+          of the Color class. To get the equivilent functionality, users of the class must
+          now use toSRGBASimpleColorLossy() which does actually does the conversion to sRGB
+          if necessary and makes it clear to the caller that precision is being lost. 
+        - Removes Color::red()/green()/blue() entirely. They were just calling down to 
+          Color::rgb(), and going forward, it won't make sense to think about rgb components
+          of Colors in general, since some extended color spaces don't deal in them (e.g. Lab)
+          Color::alpha() was kept (and fixed to work even with ExtendedColor) since all
+          ExtendedColors do need to have alpha.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::colorValue const):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::colorValue const):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * css/DeprecatedCSSOMRGBColor.h:
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsWindowCSS const):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS const):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextColor const):
+        User Color::colorWithAlpha() to avoid the need to muck with components directly.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::differenceSquared):
+        Use rgb() directly, which is ok, since this is explicitly checking isExtended().
+        This code is still wrong (there is a FIXME) as it assumes the two colors are in
+        the same color space.
+
+        (WebCore::Color::Color):
+        Add constructor which takes an ExtendedColor to allow functions like 
+        Color::invertedColorWithAlpha to delegate their functionality to ExtendedColor.
+        
+        (WebCore::Color::light const):
+        Use new SimpleColor::colorWithAlpha() to avoid hardcoding constants here.
+
+        (WebCore::Color::blend const):
+        (WebCore::Color::blendWithWhite const):
+        Use toSRGBASimpleColorLossy() to get access to color components. These
+        are still not ideal implementations, as they don't preserve extended colors
+        as well as they could, but now they don't return bogus values for extended
+        colors. Minor cleanup bringing constants and lambda inside the function they
+        are used in.
+        
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const):
+        Minor cleanups to use a more consistent style and make use of the new
+        SimpleColor::colorWithAlpha.
+        
+        (WebCore::Color::invertedColorWithAlpha const):
+        Added. Used to avoid direct component usage in line box code.
+
+        (WebCore::Color::semanticColor const):
+        Added. Hopefully temporary. Used by RenderThemeIOS.mm to convert
+        a Color from a map into a Color with the semantic bit set. This 
+        should not be necessary as every color in the map should already
+        have it set, but to avoid uncessary possible behavior changes this
+        preserves that functionality until it can be researched further.
+        Fixing coders to preserve the semantic bit may be required to 
+        elliminate the need.
+        
+        (WebCore::Color::colorSpaceAndComponents const):
+        Use rgb() rather than the individual components which have been removed.
+        
+        * platform/graphics/Color.h:
+        (WebCore::SimpleColor::alphaComponentAsFloat const):
+        Added. Needed by DeprecatedCSSOMRGBColor and useful to Color.
+
+        (WebCore::SimpleColor::colorWithAlpha const):
+        Useful to simplify Color::colorWithAlpha implementations and
+        in Color::dark().
+
+        (WebCore::SimpleColor::get const):
+        Added tuple interface to SimpleColor to support structure bindings.
+        NOTE: Unlike the storage of SimpleColor (ARGB), this produces the
+        bindings in the more familiar [r,g,b,a] to match FloatComponents.
+        
+        (WebCore::Color::alpha const):
+        Made work with ExtendedColor as well.
+        
+        (WebCore::Color::red const): Deleted.
+        (WebCore::Color::green const): Deleted.
+        (WebCore::Color::blue const): Deleted.
+        Removed.
+
+        (CGColorRef cachedCGColor): 
+        (int differenceSquared): 
+        Made friends so they could use Color::rgb().
+
+        (WebCore::Color::rgb const): 
+        Made private.
+
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::invertedColorWithAlpha const):
+        * platform/graphics/ExtendedColor.h:
+        Added invertedColorWithAlpha to allow inversion to be encapsulated.
+        When future color spaces are added, we may need to choose per-colorspace
+        algorithms for this instead of the trivial one used today.
+
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::PlatformCAAnimationCocoa::setFromValue):
+        (WebCore::PlatformCAAnimationCocoa::setToValue):
+        (WebCore::PlatformCAAnimationCocoa::setValues):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimationWin::setFromValue):
+        (PlatformCAAnimationWin::setToValue):
+        (PlatformCAAnimationWin::setValues):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawFocusRing):
+        Use Color::colorWithAlpha() to avoid needing access to components.
+
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::clearColor):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::drawGlyphs):
+        Use colorWithAlphaMultipliedBy() to avoid needing access to components.
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        Use colorWithAlphaMultipliedBy() to avoid needing access to components.
+
+        * platform/graphics/win/FontCascadeDirect2D.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        Use colorWithAlphaMultipliedBy() to avoid needing access to components.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paintSelection):
+        Use invertedColorWithAlpha() to avoid needing access to components.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::resolveStyleForMarkedText):
+        Use invertedColorWithAlpha() to avoid needing access to components.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        Use opaqueColor() to avoid needing access to components.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const):
+        Use opaqueColor() to avoid needing access to components.
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationColorFunction::animate):
+        Use toSRGBASimpleColorLossy() to get access to color components.
+
 2020-05-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Take sections into account when computing collapsed border.

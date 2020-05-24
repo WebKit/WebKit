@@ -2495,7 +2495,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 continue;
             }
 
-            Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
+            Color fillColor = shadowColor.opaqueColor();
             auto shadowCastingRect = areaCastingShadowInHole(borderRect.rect(), shadowPaintingExtent, shadowSpread, shadowOffset);
             auto pixelSnappedOuterRect = snapRectToDevicePixels(shadowCastingRect, deviceScaleFactor);
 

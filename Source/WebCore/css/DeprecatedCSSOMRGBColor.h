@@ -37,7 +37,7 @@ public:
     DeprecatedCSSOMPrimitiveValue& blue() { return m_blue; }
     DeprecatedCSSOMPrimitiveValue& alpha() { return m_alpha; }
 
-    Color color() const { return m_color; }
+    SimpleColor color() const { return m_color; }
 
 private:
     template<typename NumberType> static Ref<DeprecatedCSSOMPrimitiveValue> createWrapper(CSSStyleDeclaration& owner, NumberType number)
@@ -46,15 +46,15 @@ private:
     }
 
     DeprecatedCSSOMRGBColor(CSSStyleDeclaration& owner, const Color& color)
-        : m_color(color)
-        , m_red(createWrapper(owner, color.red()))
-        , m_green(createWrapper(owner, color.green()))
-        , m_blue(createWrapper(owner, color.blue()))
-        , m_alpha(createWrapper(owner, color.alphaAsFloat()))
+        : m_color(color.toSRGBASimpleColorLossy())
+        , m_red(createWrapper(owner, m_color.redComponent()))
+        , m_green(createWrapper(owner, m_color.greenComponent()))
+        , m_blue(createWrapper(owner, m_color.blueComponent()))
+        , m_alpha(createWrapper(owner, m_color.alphaComponentAsFloat()))
     {
     }
 
-    Color m_color;
+    SimpleColor m_color;
     Ref<DeprecatedCSSOMPrimitiveValue> m_red;
     Ref<DeprecatedCSSOMPrimitiveValue> m_green;
     Ref<DeprecatedCSSOMPrimitiveValue> m_blue;

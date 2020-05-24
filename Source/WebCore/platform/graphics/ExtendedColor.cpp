@@ -63,4 +63,10 @@ String ExtendedColor::cssText() const
     return makeString("color(", colorSpace, ' ', red(), ' ', green(), ' ', blue(), " / ", alpha(), ')');
 }
 
+Ref<ExtendedColor> ExtendedColor::invertedColorWithAlpha(float alpha) const
+{
+    auto [c1, c2, c3, existingAlpha] = channels();
+    return ExtendedColor::create(1.0f - c1, 1.0f - c2, 1.0f - c3, alpha, colorSpace());
+}
+
 }

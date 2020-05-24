@@ -276,7 +276,7 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
     CGFloat opacity = MACaptionAppearanceGetWindowOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255)), important);
+    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, windowColor.colorWithAlpha(opacity), important);
 
     if (!opacity)
         return windowStyle;
@@ -301,7 +301,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
     CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    return colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
+    return colorPropertyCSS(CSSPropertyBackgroundColor, backgroundColor.colorWithAlpha(opacity), important);
 }
 
 Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
@@ -317,7 +317,7 @@ Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
     CGFloat opacity = MACaptionAppearanceGetForegroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    return Color(textColor.red(), textColor.green(), textColor.blue(), static_cast<int>(opacity * 255));
+    return textColor.colorWithAlpha(opacity);
 }
     
 String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const

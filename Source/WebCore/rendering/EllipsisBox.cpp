@@ -134,7 +134,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     // If the text color ends up being the same as the selection background, invert the selection
     // background.
     if (textColor == c)
-        c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
+        c = c.invertedColorWithAlpha(1.0);
 
     const RootInlineBox& rootBox = root();
     GraphicsContextStateSaver stateSaver(context);
