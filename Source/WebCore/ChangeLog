@@ -1,5 +1,28 @@
 2020-05-24  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Take sections into account when computing collapsed border.
+        https://bugs.webkit.org/show_bug.cgi?id=212311
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/table-simple-collapsed-tbody-border.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree):
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Section::Section):
+        (WebCore::Layout::TableGrid::appendCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Section::box const):
+        (WebCore::Layout::TableGrid::sections const):
+        (WebCore::Layout::TableGrid::sections):
+
+2020-05-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Take collapsed in-between row border into account when computing cell height
         https://bugs.webkit.org/show_bug.cgi?id=212307
 

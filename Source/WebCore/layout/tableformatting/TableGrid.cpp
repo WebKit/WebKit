@@ -35,6 +35,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableGrid);
 
+TableGrid::Section::Section(const ContainerBox& sectionBox)
+    : m_layoutBox(makeWeakPtr(sectionBox))
+{
+}
+
 TableGrid::Column::Column(const ContainerBox* columnBox)
     : m_layoutBox(makeWeakPtr(columnBox))
 {
@@ -177,6 +182,14 @@ void TableGrid::appendCell(const ContainerBox& cellBox)
 
     if (isInNewRow)
         m_rows.addRow(cellBox.parent());
+
+    auto& lastRowBox = m_rows.list().last().box();
+    auto needsNewSection = m_sections.isEmpty() || &lastRowBox.parent() != &m_sections.last().box();
+    if (needsNewSection) {
+        auto& tableSection = lastRowBox.parent();
+        ASSERT(tableSection.isTableHeader() || tableSection.isTableBody() || tableSection.isTableFooter());
+        m_sections.append({ tableSection });
+    }
 
     m_cells.add(WTFMove(cell));
 }

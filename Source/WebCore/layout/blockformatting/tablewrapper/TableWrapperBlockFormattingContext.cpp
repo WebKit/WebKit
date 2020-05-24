@@ -111,14 +111,23 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
             bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
         }
 
+        auto& sections = grid.sections();
+        topBorder = std::max(topBorder, geometry().computedBorder(sections.first().box()).vertical.top);
+        for (auto& section : sections) {
+            auto horiztonalBorder = geometry().computedBorder(section.box()).horizontal;
+            leftBorder = std::max(leftBorder, horiztonalBorder.left);
+            rightBorder = std::max(rightBorder, horiztonalBorder.right);
+        }
+        bottomBorder = std::max(bottomBorder, geometry().computedBorder(sections.last().box()).vertical.bottom);
+
         auto& rows = grid.rows().list();
-        topBorder = std::max(topBorder, geometry().computedBorder(rows[0].box()).vertical.top);
+        topBorder = std::max(topBorder, geometry().computedBorder(rows.first().box()).vertical.top);
         for (auto& row : rows) {
             auto horiztonalBorder = geometry().computedBorder(row.box()).horizontal;
             leftBorder = std::max(leftBorder, horiztonalBorder.left);
             rightBorder = std::max(rightBorder, horiztonalBorder.right);
         }
-        bottomBorder = std::max(topBorder, geometry().computedBorder(rows[rows.size() - 1].box()).vertical.bottom);
+        bottomBorder = std::max(bottomBorder, geometry().computedBorder(rows.last().box()).vertical.bottom);
 
         auto collapsedBorder = Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
         grid.setCollapsedBorder(collapsedBorder);

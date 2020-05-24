@@ -190,11 +190,12 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     auto& grid = formattingState().tableGrid();
     auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
     auto logicalTop = constraints.vertical.logicalTop;
-    for (auto& section : childrenOfType<ContainerBox>(root())) {
-        auto& sectionDisplayBox = formattingState().displayBox(section);
+    for (auto& section : grid.sections()) {
+        auto& sectionBox = section.box();
+        auto& sectionDisplayBox = formattingState().displayBox(sectionBox);
         // FIXME: Multiple sections can have their own borders.
-        sectionDisplayBox.setBorder(grid.collapsedBorder() ? Edges(): geometry().computedBorder(section));
-        sectionDisplayBox.setPadding(geometry().computedPadding(section, constraints.horizontal.logicalWidth));
+        sectionDisplayBox.setBorder(grid.collapsedBorder() ? Edges(): geometry().computedBorder(sectionBox));
+        sectionDisplayBox.setPadding(geometry().computedPadding(sectionBox, constraints.horizontal.logicalWidth));
         // Internal table elements do not have margins.
         sectionDisplayBox.setHorizontalMargin({ });
         sectionDisplayBox.setHorizontalComputedMargin({ });
