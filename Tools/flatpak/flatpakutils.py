@@ -655,7 +655,9 @@ class WebkitFlatpak:
             building = False
 
         flatpak_command = ["flatpak", "run",
+                           "--user",
                            "--die-with-parent",
+                           "--filesystem=host",
                            "--allow=devel",
                            "--talk-name=org.a11y.Bus",
                            "--talk-name=org.gtk.vfs",
@@ -673,7 +675,6 @@ class WebkitFlatpak:
             flatpak_command.extend([
                 "--device=all",
                 "--device=dri",
-                "--filesystem=host",
                 "--share=ipc",
                 "--share=network",
                 "--socket=pulseaudio",
@@ -790,7 +791,8 @@ class WebkitFlatpak:
         flatpak_env = os.environ
         flatpak_env.update({
             "FLATPAK_BWRAP": os.path.join(scriptdir, "webkit-bwrap"),
-            "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path)
+            "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path),
+            "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
 
         try:

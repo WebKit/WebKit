@@ -30,8 +30,13 @@ def main(args: list) -> int:
     bind_mounts = {
         "/app/webkit":  source_root,
         # Access to /run/host is required by the crash log reporter.
-        f"/run/host{tmpdir}": f"{tmpdir}"
+        f"/run/host{tmpdir}": f"{tmpdir}",
+        "/run/shm": "/dev/shm",
     }
+
+    flatpak_user_dir = os.environ.get("WEBKIT_FLATPAK_USER_DIR")
+    if flatpak_user_dir:
+        bind_mounts["/var/tmp"] = os.path.join(flatpak_user_dir, "var", "tmp")
 
     try_bind_mounts = {
         "/run/icecc": "/var/run/icecc"

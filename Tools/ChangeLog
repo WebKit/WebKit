@@ -1,5 +1,19 @@
 2020-05-25  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION(r262057): [Flatpak SDK] sccache-dist server no longer starting
+        https://bugs.webkit.org/show_bug.cgi?id=212326
+
+        Reviewed by Žan Doberšek.
+
+        A few mount points were missing in the sandbox created by
+        `flatpak run` preventing the sccache-dist server to start and keep running.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap:
+
+2020-05-25  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Fixup icecc support
         https://bugs.webkit.org/show_bug.cgi?id=212301
 
