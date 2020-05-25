@@ -1,3 +1,18 @@
+2020-05-25  Youenn Fablet  <youenn@apple.com>
+
+        AVVideoCaptureSource should notify of video samples in a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=212072
+
+        Reviewed by Eric Carlson.
+
+        Do not hop to the main thread to send samples.
+        Instead, directly call the observer callback.
+        Manually tested.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection):
+
 2020-05-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late May 2020 edition

@@ -542,25 +542,15 @@ void AVVideoCaptureSource::computeSampleRotation()
     notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
 
-void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
-{
-    if (!isProducingData() || muted())
-        return;
-
-    m_buffer = &sample.get();
-    setIntrinsicSize(expandedIntSize(sample->presentationSize()));
-    dispatchMediaSampleToObservers(WTFMove(sample));
-}
-
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef sampleBuffer, AVCaptureConnection* captureConnection)
 {
     if (++m_framesCount <= framesToDropWhenStarting)
         return;
 
     auto sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
-    scheduleDeferredTask([this, sample = WTFMove(sample)] () mutable {
-        processNewFrame(WTFMove(sample));
-    });
+    m_buffer = &sample.get();
+    setIntrinsicSize(expandedIntSize(sample->presentationSize()));
+    dispatchMediaSampleToObservers(WTFMove(sample));
 }
 
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)

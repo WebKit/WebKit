@@ -107,7 +107,6 @@ private:
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
-    void processNewFrame(Ref<MediaSample>&&);
     IntSize sizeForPreset(NSString*);
 
     AVCaptureDevice* device() const { return m_device.get(); }
