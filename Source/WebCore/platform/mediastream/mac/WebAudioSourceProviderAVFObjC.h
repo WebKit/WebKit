@@ -45,6 +45,7 @@ namespace WebCore {
 
 class AudioSampleDataSource;
 class CAAudioStreamDescription;
+class WebAudioBufferList;
 
 class WEBCORE_EXPORT WebAudioSourceProviderAVFObjC final
     : public WebAudioSourceProvider
@@ -76,6 +77,7 @@ private:
     size_t m_listBufferSize { 0 };
     Optional<CAAudioStreamDescription> m_inputDescription;
     Optional<CAAudioStreamDescription> m_outputDescription;
+    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
     RefPtr<AudioSampleDataSource> m_dataSource;
 
     uint64_t m_writeCount { 0 };

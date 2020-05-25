@@ -1,3 +1,20 @@
+2020-05-24  Youenn Fablet  <youenn@apple.com>
+
+        Do not allocate a WebAudioBufferList in the AudioContext rendering thread
+        https://bugs.webkit.org/show_bug.cgi?id=212132
+
+        Reviewed by Eric Carlson.
+
+        Instead of allocating the buffer in the rendering thread, we do that in the audio sample producer thread.
+        Also, we do it only once versus one for each rendering call previously.
+        Covered by existing tests.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::unprepare):
+
 2020-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add some missing includes due to unified sources
