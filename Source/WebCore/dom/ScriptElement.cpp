@@ -181,8 +181,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (wasParserInserted && !hasAsyncAttribute())
         m_forceAsync = true;
 
-    // FIXME: HTML5 spec says we should check that all children are either comments or empty text nodes.
-    if (!hasSourceAttribute() && !m_element.firstChild())
+    auto sourceText = scriptContent();
+    if (!hasSourceAttribute() && sourceText.isEmpty())
         return false;
 
     if (!m_element.isConnected())
@@ -266,7 +266,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     } else {
         ASSERT(scriptType == ScriptType::Classic);
         TextPosition position = document.isInDocumentWrite() ? TextPosition() : scriptStartPosition;
-        executeClassicScript(ScriptSourceCode(scriptContent(), URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+        executeClassicScript(ScriptSourceCode(sourceText, URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
     }
 
     return true;

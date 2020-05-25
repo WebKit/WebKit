@@ -1,3 +1,14 @@
+2020-05-25  Rob Buis  <rbuis@igalia.com>
+
+        Use child text content when determining whether to bail early in running a script
+        https://bugs.webkit.org/show_bug.cgi?id=182695
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test results.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/emptyish-script-elements-expected.txt:
+
 2020-05-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them
