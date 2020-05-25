@@ -4,7 +4,7 @@ sources:
 - kind: git_tag
   url: gitlab_gnome_org:GNOME/gtk.git
   track: master
-  ref: 3.24.19-102-g642924a0f183653ba8ed3a7c2cf78267787ae9ef
+  ref: 3.98.4-116-gbe8fc8f26b974c0972a4e24d741c78ea3012fb93
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
