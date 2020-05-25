@@ -1,3 +1,15 @@
+2020-05-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late May 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=212342
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * loader/ImageLoader.h: Add missing inclusion of Element.h and remove forward declaration.
+        * page/PageConfiguration.h: Add missing inclusion of ShouldRelaxThirdPartyCookieBlocking.h
+
 2020-05-25  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerPrivateMediaStreamAVFObjC::m_activeVideoTrack should be a VideoTrackPrivateMediaStream

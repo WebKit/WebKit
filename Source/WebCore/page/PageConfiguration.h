@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

@@ -24,6 +24,7 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
+#include "Element.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
@@ -32,7 +33,6 @@ namespace WebCore {
 
 class DeferredPromise;
 class Document;
-class Element;
 class ImageLoader;
 class Page;
 class RenderImageResource;
