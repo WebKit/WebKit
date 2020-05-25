@@ -325,8 +325,7 @@ inline const ExtendedColor& Color::asExtended() const
 
 inline const SimpleColor Color::asSimpleColor() const
 {
-    // FIXME: We should ASSERT(!isExtended()) here once we have verified all
-    // call sites are checking isExtended().
+    ASSERT(!isExtended());
     return { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) };
 }
 

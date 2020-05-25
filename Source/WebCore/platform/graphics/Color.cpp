@@ -171,13 +171,15 @@ String Color::cssText() const
 
 String Color::nameForRenderTreeAsText() const
 {
+    if (isExtended())
+        return asExtended().cssText();
     return asSimpleColor().serializationForRenderTreeAsText();
 }
 
 Color Color::light() const
 {
     // Hardcode this common case for speed.
-    if (asSimpleColor() == black)
+    if (!isExtended() && asSimpleColor() == black)
         return lightenedBlack;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -202,7 +204,7 @@ Color Color::light() const
 Color Color::dark() const
 {
     // Hardcode this common case for speed.
-    if (asSimpleColor() == white)
+    if (!isExtended() && asSimpleColor() == white)
         return darkenedWhite;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);

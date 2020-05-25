@@ -1,3 +1,27 @@
+2020-05-25  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Assert !isExtended() in Color::asSimpleColor()...finally
+        https://bugs.webkit.org/show_bug.cgi?id=212357
+
+        Reviewed by Simon Fraser.
+
+        Reap the reward of the cleanup, and add the ASSERT(!isExtended()) to Color::asSimpleColor()
+        as was the original goal of this effort. Only tree non-checked places remained and were 
+        trivial to add isExtended() checks for.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::nameForRenderTreeAsText const):
+        Use ExtenedColor::cssText() for the RenderTree representation. It is stable 
+        and as good as any, no need to re-invent the wheel here.
+
+        (WebCore::Color::light const):
+        (WebCore::Color::dark const):
+        Add isExtended() checks before doing white/black checks,
+
+        * platform/graphics/Color.h:
+        (WebCore::Color::asSimpleColor const):
+        Add ASSERT.
+
 2020-05-24  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Use the name SimpleColor consistently
