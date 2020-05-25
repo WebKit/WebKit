@@ -196,7 +196,7 @@ static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint32
     if (location == DOMKeyLocationNumpad) {
         if (WKStringIsEqualToUTF8CString(keyRef, "leftArrow"))
             return WPE_KEY_KP_Left;
-        if (WKStringIsEqualToUTF8CString(keyRef, "rightArror"))
+        if (WKStringIsEqualToUTF8CString(keyRef, "rightArrow"))
             return WPE_KEY_KP_Right;
         if (WKStringIsEqualToUTF8CString(keyRef, "upArrow"))
             return WPE_KEY_KP_Up;

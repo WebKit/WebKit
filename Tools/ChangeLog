@@ -1,3 +1,13 @@
+2020-05-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][WKTR] Fix typo in EventSenderProxyWPE
+        https://bugs.webkit.org/show_bug.cgi?id=212340
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::wpeKeySymForKeyRef): Fix typo rightArror -> rightArrow.
+
 2020-05-25  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r262057): [Flatpak SDK] sccache-dist server no longer starting
