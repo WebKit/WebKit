@@ -1,3 +1,14 @@
+2020-05-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, emit baselines for update-the-source-set.html after r261929.
+        https://bugs.webkit.org/show_bug.cgi?id=212216
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt: Added.
+
 2020-05-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Ignore section borders even when border collapse is off.
