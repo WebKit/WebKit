@@ -1,3 +1,29 @@
+2020-05-25  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Prevent grid-template-rows from serializing adjacent <line-names>
+        https://bugs.webkit.org/show_bug.cgi?id=212345
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The parser for the grid-template shorthand has this code:
+
+            // Persists between loop iterations so we can use the same value for
+            // consecutive <line-names> values
+            RefPtr<CSSGridLineNamesValue> lineNames;
+
+        However, this wasn't working because of a lineNames.releaseNonNull() at
+        the end of the loop. So each iteration started with a null lineNames, and
+        consecutive <line-names> values were not merged together.
+
+        Tests: fast/css-grid-layout/grid-template-shorthand-get-set.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-shorthand-valid.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand.html
+               imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns):
+
 2020-05-25  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Assert !isExtended() in Color::asSimpleColor()...finally

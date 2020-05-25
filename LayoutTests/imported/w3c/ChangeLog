@@ -1,3 +1,17 @@
+2020-05-25  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Prevent grid-template-rows from serializing adjacent <line-names>
+        https://bugs.webkit.org/show_bug.cgi?id=212345
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update test expectations.
+
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid-expected.txt:
+
 2020-05-25  Rob Buis  <rbuis@igalia.com>
 
         Use child text content when determining whether to bail early in running a script
