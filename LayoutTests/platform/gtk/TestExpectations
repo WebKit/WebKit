@@ -4694,6 +4694,9 @@ imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/i
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
 
+# Passing since r262008.
+imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////

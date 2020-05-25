@@ -1,3 +1,13 @@
+2020-05-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update test expectations after r262060
+        https://bugs.webkit.org/show_bug.cgi?id=212346
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-05-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][WKTR] Fix typo in EventSenderProxyWPE
