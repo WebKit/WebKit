@@ -713,6 +713,15 @@ Bug(WPE) css3/scroll-snap [ Skip ]
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/tests/contentfiltering [ Skip ]
 
+webkit.org/b/212347 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-column-reverse-wrap.html [ ImageOnlyFailure ]
+webkit.org/b/212347 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-column-wrap.html [ ImageOnlyFailure ]
+
+webkit.org/b/212348 printing/simple-lines-break.html [ ImageOnlyFailure ]
+
+webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
+
+webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1347,6 +1356,8 @@ webkit.org/b/212082 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass ]
 webkit.org/b/212158 imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/212352 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1428,6 +1439,9 @@ webkit.org/b/212202 fast/scrolling/overflow-scroll-past-max.html [ Timeout ]
 webkit.org/b/212202 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
 webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Timeout ]
 webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Timeout ]
+
+# webkit.org/b/188506 fast/dom/timer-throttling-hidden-page.html [ Failure ]
+webkit.org/b/212350 fast/dom/timer-throttling-hidden-page.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -1940,8 +1954,6 @@ webkit.org/b/188505 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/188505 fast/dom/title-directionality.html [ Failure ]
 webkit.org/b/188505 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/188505 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
-
-webkit.org/b/188506 fast/dom/timer-throttling-hidden-page.html [ Failure ]
 
 webkit.org/b/188507 fast/dom/Window/webkitConvertPoint.html [ Failure ]
 

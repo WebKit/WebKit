@@ -1,3 +1,17 @@
+2020-05-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update test expectations after r262120
+        https://bugs.webkit.org/show_bug.cgi?id=212353
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/canvas/webgl/webgl-compressed-texture-astc-expected.txt: Renamed from LayoutTests/platform/gtk/fast/canvas/webgl/webgl-compressed-texture-astc-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/canvas/webgl/readPixels-float-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/dom/navigator-detached-no-crash-expected.txt: Emit baseline after r260075.
+
 2020-05-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flex] Allow indefinite size flex items to be definite wrt resolving percentages inside them
