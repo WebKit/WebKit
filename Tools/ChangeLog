@@ -1,5 +1,18 @@
 2020-05-25  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Fixup icecc support
+        https://bugs.webkit.org/show_bug.cgi?id=212301
+
+        Reviewed by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Allow homedir access from the
+        sandbox, this is needed because the icecc toolchains paths refer
+        to the host environment, not the sandbox.
+        (WebkitFlatpak.pack_toolchain): Fix byte-string formatting issue, happening in Python3.
+
+2020-05-25  Philippe Normand  <pnormand@igalia.com>
+
         [GTK4] SDK contains too old GTK4
         https://bugs.webkit.org/show_bug.cgi?id=212334
 

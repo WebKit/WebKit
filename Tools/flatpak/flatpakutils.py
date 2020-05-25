@@ -762,6 +762,7 @@ class WebkitFlatpak:
             _log.debug('Enabling the icecream compiler')
             if share_network_option not in flatpak_command:
                 flatpak_command.append(share_network_option)
+            flatpak_command.append("--filesystem=home")
 
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
@@ -873,7 +874,7 @@ class WebkitFlatpak:
             toolchains_directory = os.path.join(self.build_root, "Toolchains")
             if not os.path.isdir(toolchains_directory):
                 os.makedirs(toolchains_directory)
-            archive_filename = os.path.join(toolchains_directory, "webkit-sdk-%s-%s" % (compilers[0], icc_version_filename))
+            archive_filename = os.path.join(toolchains_directory, "webkit-sdk-{name}-{filename}".format(name=compilers[0], filename=icc_version_filename.decode()))
             os.rename(icc_version_filename, archive_filename)
             self.icc_version[compilers[0]] = archive_filename
             Console.message("Created %s self-contained toolchain archive", archive_filename)
