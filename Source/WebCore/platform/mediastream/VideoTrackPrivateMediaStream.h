@@ -35,7 +35,7 @@ namespace WebCore {
 class VideoTrackPrivateMediaStream final : public VideoTrackPrivate {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateMediaStream)
 public:
-    static RefPtr<VideoTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)
+    static Ref<VideoTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)
     {
         return adoptRef(*new VideoTrackPrivateMediaStream(streamTrack));
     }

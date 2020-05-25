@@ -166,7 +166,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
         track->streamTrack().removeObserver(*this);
 
     if (m_activeVideoTrack)
-        m_activeVideoTrack->source().removeVideoSampleObserver(*this);
+        m_activeVideoTrack->streamTrack().source().removeVideoSampleObserver(*this);
 
     [m_boundsChangeListener invalidate];
 
@@ -305,14 +305,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sam
     if (m_displayMode != LivePreview && !m_waitingForFirstImage)
         return;
 
-    // FIXME: We should not query the map each time we get a sample.
-    auto videoTrack = m_videoTrackMap.get(m_activeVideoTrack->id());
-    MediaTime timelineOffset = videoTrack->timelineOffset();
+    MediaTime timelineOffset = m_activeVideoTrack->timelineOffset();
     if (timelineOffset == MediaTime::invalidTime()) {
         timelineOffset = calculateTimelineOffset(sample, rendererLatency);
-        videoTrack->setTimelineOffset(timelineOffset);
+        m_activeVideoTrack->setTimelineOffset(timelineOffset);
 
-        INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", m_activeVideoTrack->id(), " set to ", timelineOffset);
+        INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", m_activeVideoTrack->streamTrack().id(), " set to ", timelineOffset);
     }
 
     DEBUG_LOG(LOGIDENTIFIER, "original sample = ", sample);
@@ -347,11 +345,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidChan
 {
     ASSERT(&layer == m_sampleBufferDisplayLayer.get());
     UNUSED_PARAM(layer);
-    if (!m_activeVideoTrack)
-        return;
-
-    if (auto track = m_videoTrackMap.get(m_activeVideoTrack->id()))
-        track->setTimelineOffset(MediaTime::invalidTime());
+    if (m_activeVideoTrack)
+        m_activeVideoTrack->setTimelineOffset(MediaTime::invalidTime());
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
@@ -782,25 +777,25 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect fra
     m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
-typedef enum {
+enum class TrackState {
     Add,
     Remove,
     Configure
-} TrackState;
+};
 
 template <typename RefT>
-void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), const Function<void(typename RefT::ValueType&, int, TrackState)>& configureTrack)
+void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), const Function<void(std::reference_wrapper<typename std::remove_pointer<typename RefT::PtrTraits::StorageType>::type>, int, TrackState)>& configureTrack)
 {
     Vector<RefT> removedTracks;
     Vector<RefT> addedTracks;
-    Vector<RefPtr<MediaStreamTrackPrivate>> addedPrivateTracks;
+    Vector<Ref<MediaStreamTrackPrivate>> addedPrivateTracks;
 
     for (const auto& track : currentTracks) {
         if (track->type() != trackType)
             continue;
 
         if (!trackMap.contains(track->id()))
-            addedPrivateTracks.append(track);
+            addedPrivateTracks.append(*track);
     }
 
     for (const auto& track : trackMap.values()) {
@@ -814,22 +809,22 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
         trackMap.remove(track->streamTrack().id());
 
     for (auto& track : addedPrivateTracks) {
-        RefT newTrack = itemFactory(*track.get());
-        trackMap.add(track->id(), newTrack);
-        addedTracks.append(newTrack);
+        RefT newTrack = itemFactory(track.get());
+        trackMap.add(track->id(), newTrack.copyRef());
+        addedTracks.append(WTFMove(newTrack));
     }
 
     int index = 0;
     for (auto& track : removedTracks)
-        configureTrack(*track, index++, TrackState::Remove);
+        configureTrack(track.get(), index++, TrackState::Remove);
 
     index = 0;
     for (auto& track : addedTracks)
-        configureTrack(*track, index++, TrackState::Add);
+        configureTrack(track.get(), index++, TrackState::Add);
 
     index = 0;
     for (const auto& track : trackMap.values())
-        configureTrack(*track, index++, TrackState::Configure);
+        configureTrack(track.get(), index++, TrackState::Configure);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
@@ -846,7 +841,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
         if (auto* activeVideoTrack = this->activeVideoTrack()) {
             for (const auto& track : m_videoTrackMap.values()) {
                 if (&track->streamTrack() == activeVideoTrack) {
-                    m_activeVideoTrack = activeVideoTrack;
+                    m_activeVideoTrack = track.ptr();
                     if (track->selected())
                         hideVideoLayer = false;
                     break;
@@ -871,9 +866,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
 
         if (oldVideoTrack != m_activeVideoTrack) {
             if (oldVideoTrack)
-                oldVideoTrack->source().removeVideoSampleObserver(*this);
+                oldVideoTrack->streamTrack().source().removeVideoSampleObserver(*this);
             if (m_activeVideoTrack)
-                m_activeVideoTrack->source().addVideoSampleObserver(*this);
+                m_activeVideoTrack->streamTrack().source().addVideoSampleObserver(*this);
         }
     });
 }

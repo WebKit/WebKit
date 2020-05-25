@@ -224,7 +224,7 @@ private:
 
     MediaPlayer* m_player { nullptr };
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
-    RefPtr<MediaStreamTrackPrivate> m_activeVideoTrack;
+    RefPtr<VideoTrackPrivateMediaStream> m_activeVideoTrack;
     std::unique_ptr<PAL::Clock> m_clock;
 
     MediaTime m_pausedTime;
@@ -239,8 +239,8 @@ private:
     };
     CurrentFramePainter m_imagePainter;
 
-    HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
-    HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
+    HashMap<String, Ref<AudioTrackPrivateMediaStream>> m_audioTrackMap;
+    HashMap<String, Ref<VideoTrackPrivateMediaStream>> m_videoTrackMap;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };

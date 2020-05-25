@@ -1,3 +1,25 @@
+2020-05-25  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerPrivateMediaStreamAVFObjC::m_activeVideoTrack should be a VideoTrackPrivateMediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=212129
+
+        Reviewed by Eric Carlson.
+
+        Instead of looking in the map when wanting to get the VideoTrackPrivateMediaStream corresponding to the active video track,
+        store directly the VideoTrackPrivateMediaStream as the active video track and use streamTrack() to get the corresponding MediaStreamTrack.
+        Small refactoring to use more Ref<>.
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidChange):
+        (WebCore::updateTracksOfType):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+        * platform/mediastream/AudioTrackPrivateMediaStream.h:
+        * platform/mediastream/VideoTrackPrivateMediaStream.h:
+
 2020-05-24  Youenn Fablet  <youenn@apple.com>
 
         Do not allocate a WebAudioBufferList in the AudioContext rendering thread

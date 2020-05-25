@@ -40,7 +40,7 @@ class AudioTrackPrivateMediaStream final
     , private RealtimeMediaSource::AudioSampleObserver {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaStream)
 public:
-    static RefPtr<AudioTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)
+    static Ref<AudioTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)
     {
         return adoptRef(*new AudioTrackPrivateMediaStream(streamTrack));
     }
