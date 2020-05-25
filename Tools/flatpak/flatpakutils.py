@@ -786,7 +786,7 @@ class WebkitFlatpak:
         if not kwargs.get('building_gst'):
             gst_env = self.setup_gstbuild(building)
 
-        flatpak_command += extra_flatpak_args + gst_env + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
+        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + gst_env + args[1:]
 
         flatpak_env = os.environ
         flatpak_env.update({

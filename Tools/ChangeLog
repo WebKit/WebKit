@@ -1,3 +1,15 @@
+2020-05-25  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [Flatpak][GStreamer] compilation fails when GST_BUILD_PATH is defined
+        https://bugs.webkit.org/show_bug.cgi?id=212343
+
+        Reviewed by Philippe Normand.
+
+        Flatpak's command has to be expressed before gst-env declaration.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-05-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][WKTR] Fix typo in EventSenderProxyWPE
