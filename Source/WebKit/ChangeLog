@@ -1,3 +1,15 @@
+2020-05-24  Rob Buis  <rbuis@igalia.com>
+
+        Remove NetworkProcess/FileAPI
+        https://bugs.webkit.org/show_bug.cgi?id=212335
+
+        Reviewed by Sam Weinig.
+
+        Remove NetworkProcess/FileAPI, the only file it contains is unused.
+        It seems this could have been removed in r248593.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp: Removed.
+
 2020-05-24  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Stop allowing direct access to the underlying SimpleColor (it is almost always incorrect with respect to extended colors)
