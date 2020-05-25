@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock {DETAILS} at (0,0) size 800x18
         RenderBlock {SUMMARY} at (0,0) size 800x18
-          RenderDetailsMarker {DIV} at (0,4) size 11x11: down
+          RenderDetailsMarker {DIV} at (0,3) size 11x11: down
           RenderText {#text} at (16,0) size 71x18
             text run at (16,0) width 71: "summary 1"
 caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {SUMMARY} of child 1 {DETAILS} of body

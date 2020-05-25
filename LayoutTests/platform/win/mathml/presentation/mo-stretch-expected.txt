@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x280
-  RenderBlock {HTML} at (0,0) size 800x280
-    RenderBody {BODY} at (8,8) size 784x264
+layer at (0,0) size 800x281
+  RenderBlock {HTML} at (0,0) size 800x281
+    RenderBody {BODY} at (8,8) size 784x265
       RenderMathMLMath {math} at (0,0) size 113x35
         RenderMathMLRow {mrow} at (0,0) size 113x35
           RenderMathMLOperator {mo} at (0,4) size 8x27
@@ -248,7 +248,7 @@ layer at (0,0) size 800x280
       RenderText {#text} at (397,95) size 5x18
         text run at (397,95) width 5: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderMathMLMath {math} at (0,174) size 149x91
+      RenderMathMLMath {math} at (0,175) size 149x91
         RenderMathMLRoot {msqrt} at (0,0) size 149x91
           RenderMathMLOperator {mo} at (12,7) size 12x70
             RenderBlock (anonymous) at (0,0) size 7x16

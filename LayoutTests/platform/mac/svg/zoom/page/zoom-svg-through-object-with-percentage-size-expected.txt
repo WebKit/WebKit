@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x385
-  RenderBlock {html} at (0,0) size 800x385
-    RenderBody {body} at (5,5) size 790x374
-      RenderTable {table} at (41,0) size 707x374
-        RenderTableSection (anonymous) at (0,0) size 707x374
-          RenderTableRow {tr} at (0,0) size 707x374
-            RenderTableCell {td} at (0,0) size 707x374 [r=0 c=0 rs=1 cs=3]
-              RenderTable {table} at (6,6) size 694x361
-                RenderTableSection (anonymous) at (0,0) size 693x360
+layer at (0,0) size 800x386
+  RenderBlock {html} at (0,0) size 800x386
+    RenderBody {body} at (5,5) size 790x375
+      RenderTable {table} at (41,0) size 707x375
+        RenderTableSection (anonymous) at (0,0) size 707x375
+          RenderTableRow {tr} at (0,0) size 707x375
+            RenderTableCell {td} at (0,0) size 707x375 [r=0 c=0 rs=1 cs=3]
+              RenderTable {table} at (6,6) size 694x362
+                RenderTableSection (anonymous) at (0,0) size 693x361
                   RenderTableRow {tr} at (0,1) size 693x68
                     RenderTableCell {td} at (1,1) size 691x68 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {h1} at (5,20) size 680x27
@@ -21,8 +21,8 @@ layer at (0,0) size 800x385
                     RenderTableCell {td} at (347,69) size 345x25 [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (146,6) size 53x13
                         text run at (146,6) width 53: "PNG Image"
-                  RenderTableRow {tr} at (0,95) size 693x264
-                    RenderTableCell {td} at (1,95) size 345x264 [r=2 c=0 rs=1 cs=1]
+                  RenderTableRow {tr} at (0,95) size 693x265
+                    RenderTableCell {td} at (1,95) size 345x265 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {object} at (5,5) size 334x251
                         layer at (0,0) size 333x250
                           RenderView at (0,0) size 333x250
@@ -42,6 +42,6 @@ layer at (0,0) size 800x385
                                 chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 265.71: "$Revision: 1.7 $"
                             RenderSVGRect {rect} at (0,0) size 333x250 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {td} at (347,95) size 345x264 [r=2 c=1 rs=1 cs=1]
+                    RenderTableCell {td} at (347,95) size 345x265 [r=2 c=1 rs=1 cs=1]
                       RenderImage {img} at (5,5) size 334x251
                       RenderText {#text} at (0,0) size 0x0

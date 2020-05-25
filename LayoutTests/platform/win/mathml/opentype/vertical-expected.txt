@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x379
-  RenderBlock {HTML} at (0,0) size 800x379
-    RenderBody {BODY} at (8,16) size 784x347
+layer at (0,0) size 800x381
+  RenderBlock {HTML} at (0,0) size 800x381
+    RenderBody {BODY} at (8,16) size 784x349
       RenderBlock {P} at (0,0) size 784x22
         RenderMathMLMath {math} at (0,0) size 99x20
           RenderMathMLOperator {mo} at (0,0) size 6x20
@@ -67,7 +67,7 @@ layer at (0,0) size 800x379
                 text run at (0,0) width 6: "\x{27E9}"
           RenderMathMLSpace {mspace} at (98,10) size 0x8
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,38) size 784x30
+      RenderBlock {P} at (0,38) size 784x31
         RenderMathMLMath {math} at (0,0) size 103x31
           RenderMathMLOperator {mo} at (0,2) size 6x27
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -183,7 +183,7 @@ layer at (0,0) size 800x379
                 text run at (0,0) width 9: "\x{21D5}"
           RenderMathMLSpace {mspace} at (196,0) size 0x16
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,84) size 784x46
+      RenderBlock {P} at (0,85) size 784x46
         RenderMathMLMath {math} at (0,0) size 107x47
           RenderMathMLOperator {mo} at (0,3) size 6x41
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -247,7 +247,7 @@ layer at (0,0) size 800x379
                 text run at (0,0) width 6: "\x{27E9}"
           RenderMathMLSpace {mspace} at (106,4) size 0x24
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,146) size 784x67
+      RenderBlock {P} at (0,147) size 784x67
         RenderMathMLMath {math} at (0,0) size 123x68
           RenderMathMLOperator {mo} at (0,4) size 7x59
             RenderBlock (anonymous) at (0,0) size 6x16
@@ -363,7 +363,7 @@ layer at (0,0) size 800x379
                 text run at (0,0) width 9: "\x{21D5}"
           RenderMathMLSpace {mspace} at (196,0) size 0x32
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,229) size 784x118
+      RenderBlock {P} at (0,230) size 784x119
         RenderMathMLMath {math} at (0,0) size 122x119
           RenderMathMLOperator {mo} at (0,0) size 6x119
             RenderBlock (anonymous) at (0,0) size 6x16

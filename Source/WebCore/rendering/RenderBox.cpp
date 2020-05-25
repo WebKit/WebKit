@@ -4764,14 +4764,13 @@ LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction
 int RenderBox::baselinePosition(FontBaseline baselineType, bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
     if (isReplaced()) {
-        int result = direction == HorizontalLine ? m_marginBox.top() + height() + m_marginBox.bottom() : m_marginBox.right() + width() + m_marginBox.left();
+        auto result = roundToInt(direction == HorizontalLine ? m_marginBox.top() + height() + m_marginBox.bottom() : m_marginBox.right() + width() + m_marginBox.left());
         if (baselineType == AlphabeticBaseline)
             return result;
         return result - result / 2;
     }
     return 0;
 }
-
 
 RenderLayer* RenderBox::enclosingFloatPaintingLayer() const
 {

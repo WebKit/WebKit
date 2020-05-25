@@ -1,3 +1,164 @@
+2020-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        [Subpixel layout] Bad scrolling on mercurynews.com article
+        https://bugs.webkit.org/show_bug.cgi?id=201038
+        <rdar://problem/28489812>
+
+        Reviewed by Dean Jackson.
+
+        * fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not-expected.html: Added.
+        * fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html: Added.
+        * platform/ios/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt:
+        * platform/ios/css3/flexbox/flexbox-baseline-expected.txt:
+        * platform/ios/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/ios/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/ios/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/ios/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/ios/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/ios/fast/borders/fieldsetBorderRadius-expected.txt: Copied from LayoutTests/platform/mac/fast/borders/fieldsetBorderRadius-expected.txt.
+        * platform/ios/fast/forms/select-item-background-clip-expected.txt:
+        * platform/ios/fast/gradients/list-item-gradient-expected.txt:
+        * platform/ios/fast/html/details-add-child-1-expected.txt:
+        * platform/ios/fast/html/details-add-child-2-expected.txt:
+        * platform/ios/fast/html/details-add-details-child-1-expected.txt:
+        * platform/ios/fast/html/details-add-details-child-2-expected.txt:
+        * platform/ios/fast/html/details-add-summary-1-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-1-expected.txt:
+        * platform/ios/fast/html/details-add-summary-10-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-10-expected.txt:
+        * platform/ios/fast/html/details-add-summary-2-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-2-expected.txt:
+        * platform/ios/fast/html/details-add-summary-3-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-3-expected.txt:
+        * platform/ios/fast/html/details-add-summary-4-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-4-expected.txt:
+        * platform/ios/fast/html/details-add-summary-5-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-5-expected.txt:
+        * platform/ios/fast/html/details-add-summary-6-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-6-expected.txt:
+        * platform/ios/fast/html/details-add-summary-7-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-7-expected.txt:
+        * platform/ios/fast/html/details-add-summary-8-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-8-expected.txt:
+        * platform/ios/fast/html/details-add-summary-9-and-click-expected.txt:
+        * platform/ios/fast/html/details-add-summary-9-expected.txt:
+        * platform/ios/fast/html/details-add-summary-child-1-expected.txt:
+        * platform/ios/fast/html/details-add-summary-child-2-expected.txt:
+        * platform/ios/fast/html/details-marker-style-expected.txt:
+        * platform/ios/fast/html/details-marker-style-mixed-expected.txt:
+        * platform/ios/fast/html/details-nested-1-expected.txt:
+        * platform/ios/fast/html/details-nested-2-expected.txt:
+        * platform/ios/fast/html/details-no-summary1-expected.txt:
+        * platform/ios/fast/html/details-no-summary2-expected.txt:
+        * platform/ios/fast/html/details-no-summary3-expected.txt:
+        * platform/ios/fast/html/details-no-summary4-expected.txt:
+        * platform/ios/fast/html/details-open-javascript-expected.txt:
+        * platform/ios/fast/html/details-open1-expected.txt:
+        * platform/ios/fast/html/details-open2-expected.txt:
+        * platform/ios/fast/html/details-open3-expected.txt:
+        * platform/ios/fast/html/details-open4-expected.txt:
+        * platform/ios/fast/html/details-open5-expected.txt:
+        * platform/ios/fast/html/details-open6-expected.txt:
+        * platform/ios/fast/html/details-position-expected.txt:
+        * platform/ios/fast/html/details-remove-child-1-expected.txt:
+        * platform/ios/fast/html/details-remove-child-2-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-1-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-2-and-click-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-2-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-3-and-click-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-3-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-4-and-click-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-4-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-5-and-click-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-5-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-6-and-click-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-6-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-child-1-expected.txt:
+        * platform/ios/fast/html/details-remove-summary-child-2-expected.txt:
+        * platform/ios/fast/html/details-replace-summary-child-expected.txt:
+        * platform/ios/fast/html/details-replace-text-expected.txt:
+        * platform/ios/fast/html/details-writing-mode-expected.txt:
+        * platform/ios/fast/html/details-writing-mode-mixed-expected.txt:
+        * platform/ios/fast/writing-mode/fieldsets-expected.txt:
+        * platform/ios/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/ios/mathml/presentation/mo-stretch-expected.txt:
+        * platform/ios/mathml/presentation/roots-expected.txt:
+        * platform/mac/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt:
+        * platform/mac/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.txt:
+        * platform/mac/fast/css-generated-content/details-summary-before-after-expected.txt:
+        * platform/mac/fast/forms/basic-buttons-expected.txt:
+        * platform/mac/fast/html/details-add-child-1-expected.txt:
+        * platform/mac/fast/html/details-add-child-2-expected.txt:
+        * platform/mac/fast/html/details-add-details-child-1-expected.txt:
+        * platform/mac/fast/html/details-add-details-child-2-expected.txt:
+        * platform/mac/fast/html/details-add-summary-1-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-1-expected.txt:
+        * platform/mac/fast/html/details-add-summary-10-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-10-expected.txt:
+        * platform/mac/fast/html/details-add-summary-2-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-2-expected.txt:
+        * platform/mac/fast/html/details-add-summary-3-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-3-expected.txt:
+        * platform/mac/fast/html/details-add-summary-4-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-4-expected.txt:
+        * platform/mac/fast/html/details-add-summary-5-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-5-expected.txt:
+        * platform/mac/fast/html/details-add-summary-6-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-6-expected.txt:
+        * platform/mac/fast/html/details-add-summary-7-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-7-expected.txt:
+        * platform/mac/fast/html/details-add-summary-8-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-8-expected.txt:
+        * platform/mac/fast/html/details-add-summary-9-and-click-expected.txt:
+        * platform/mac/fast/html/details-add-summary-9-expected.txt:
+        * platform/mac/fast/html/details-add-summary-child-1-expected.txt:
+        * platform/mac/fast/html/details-add-summary-child-2-expected.txt:
+        * platform/mac/fast/html/details-marker-style-expected.txt:
+        * platform/mac/fast/html/details-nested-1-expected.txt:
+        * platform/mac/fast/html/details-nested-2-expected.txt:
+        * platform/mac/fast/html/details-no-summary1-expected.txt:
+        * platform/mac/fast/html/details-no-summary2-expected.txt:
+        * platform/mac/fast/html/details-no-summary3-expected.txt:
+        * platform/mac/fast/html/details-no-summary4-expected.txt:
+        * platform/mac/fast/html/details-open-javascript-expected.txt:
+        * platform/mac/fast/html/details-open1-expected.txt:
+        * platform/mac/fast/html/details-open2-expected.txt:
+        * platform/mac/fast/html/details-open3-expected.txt:
+        * platform/mac/fast/html/details-open4-expected.txt:
+        * platform/mac/fast/html/details-open5-expected.txt:
+        * platform/mac/fast/html/details-open6-expected.txt:
+        * platform/mac/fast/html/details-position-expected.txt:
+        * platform/mac/fast/html/details-remove-child-1-expected.txt:
+        * platform/mac/fast/html/details-remove-child-2-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-1-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-2-and-click-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-2-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-3-and-click-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-3-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-4-and-click-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-4-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-5-and-click-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-5-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-6-and-click-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-6-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-child-1-expected.txt:
+        * platform/mac/fast/html/details-remove-summary-child-2-expected.txt:
+        * platform/mac/fast/html/details-replace-summary-child-expected.txt:
+        * platform/mac/fast/html/details-replace-text-expected.txt:
+        * platform/mac/fast/html/details-writing-mode-expected.txt:
+        * platform/mac/fast/writing-mode/fieldsets-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+
 2020-05-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update test expectations after r262120

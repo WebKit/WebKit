@@ -1,3 +1,23 @@
+2020-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        [Subpixel layout] Bad scrolling on mercurynews.com article
+        https://bugs.webkit.org/show_bug.cgi?id=201038
+        <rdar://problem/28489812>
+
+        Reviewed by Dean Jackson.
+
+        The scrolling is caused by the mismatching subpixel handling between block and inline content.
+        Inline content (and in this particular case ascent/descent handling) is still integral based while block content supports fractional pixel values.
+        When the (inline)line height relies on the (block)inline-block height, we need to make sure that the computed line height encloses the inline-block.
+        This patch changes the rounding behavior of computed the line height from floor to round.
+
+        Test: fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::baselinePosition const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox const):
+
 2020-05-25  Rob Buis  <rbuis@igalia.com>
 
         Use child text content when determining whether to bail early in running a script
