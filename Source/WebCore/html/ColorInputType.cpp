@@ -68,11 +68,11 @@ static bool isValidSimpleColor(StringView string)
 }
 
 // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#rules-for-parsing-simple-colour-values
-static Optional<RGBA32> parseSimpleColorValue(StringView string)
+static Optional<SimpleColor> parseSimpleColorValue(StringView string)
 {
     if (!isValidSimpleColor(string))
         return WTF::nullopt;
-    return makeRGB(toASCIIHexValue(string[1], string[2]), toASCIIHexValue(string[3], string[4]), toASCIIHexValue(string[5], string[6]));
+    return makeSimpleColor(toASCIIHexValue(string[1], string[2]), toASCIIHexValue(string[3], string[4]), toASCIIHexValue(string[5], string[6]));
 }
 
 ColorInputType::~ColorInputType()

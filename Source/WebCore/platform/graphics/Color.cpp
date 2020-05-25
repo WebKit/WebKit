@@ -30,7 +30,6 @@
 #include "ColorUtilities.h"
 #include "HashTools.h"
 #include <wtf/Assertions.h>
-#include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -40,87 +39,18 @@ namespace WebCore {
 static constexpr SimpleColor lightenedBlack { 0xFF545454 };
 static constexpr SimpleColor darkenedWhite { 0xFFABABAB };
 
-// originally moved here from the CSS parser
-template <typename CharacterType>
-static inline bool parseHexColorInternal(const CharacterType* name, unsigned length, RGBA32& rgb)
-{
-    if (length != 3 && length != 4 && length != 6 && length != 8)
-        return false;
-    unsigned value = 0;
-    for (unsigned i = 0; i < length; ++i) {
-        if (!isASCIIHexDigit(name[i]))
-            return false;
-        value <<= 4;
-        value |= toASCIIHexValue(name[i]);
-    }
-    if (length == 6) {
-        rgb = { 0xFF000000 | value };
-        return true;
-    }
-    if (length == 8) {
-        // We parsed the values into RGBA order, but the RGBA32 type
-        // expects them to be in ARGB order, so we right rotate eight bits.
-        rgb = { value << 24 | value >> 8 };
-        return true;
-    }
-    if (length == 4) {
-        // #abcd converts to ddaabbcc in RGBA32.
-        rgb = { (value & 0xF) << 28 | (value & 0xF) << 24
-            | (value & 0xF000) << 8 | (value & 0xF000) << 4
-            | (value & 0xF00) << 4 | (value & 0xF00)
-            | (value & 0xF0) | (value & 0xF0) >> 4 };
-        return true;
-    }
-    // #abc converts to #aabbcc
-    rgb = { 0xFF000000
-        | (value & 0xF00) << 12 | (value & 0xF00) << 8
-        | (value & 0xF0) << 8 | (value & 0xF0) << 4
-        | (value & 0xF) << 4 | (value & 0xF) };
-    return true;
-}
-
-bool Color::parseHexColor(const LChar* name, unsigned length, RGBA32& rgb)
-{
-    return parseHexColorInternal(name, length, rgb);
-}
-
-bool Color::parseHexColor(const UChar* name, unsigned length, RGBA32& rgb)
-{
-    return parseHexColorInternal(name, length, rgb);
-}
-
-bool Color::parseHexColor(const String& name, RGBA32& rgb)
-{
-    unsigned length = name.length();
-    if (!length)
-        return false;
-    if (name.is8Bit())
-        return parseHexColor(name.characters8(), name.length(), rgb);
-    return parseHexColor(name.characters16(), name.length(), rgb);
-}
-
-bool Color::parseHexColor(const StringView& name, RGBA32& rgb)
-{
-    unsigned length = name.length();
-    if (!length)
-        return false;
-    if (name.is8Bit())
-        return parseHexColor(name.characters8(), name.length(), rgb);
-    return parseHexColor(name.characters16(), name.length(), rgb);
-}
-
 int differenceSquared(const Color& c1, const Color& c2)
 {
     // FIXME: This is assuming that the colors are in the same colorspace.
     // FIXME: This should probably return a floating point number, but many of the call
     // sites have picked comparison values based on feel. We'd need to break out
     // our logarithm tables to change them :)
-    int c1Red = c1.isExtended() ? c1.asExtended().red() * 255 : c1.rgb().redComponent();
-    int c1Green = c1.isExtended() ? c1.asExtended().green() * 255 : c1.rgb().greenComponent();
-    int c1Blue = c1.isExtended() ? c1.asExtended().blue() * 255 : c1.rgb().blueComponent();
-    int c2Red = c2.isExtended() ? c2.asExtended().red() * 255 : c2.rgb().redComponent();
-    int c2Green = c2.isExtended() ? c2.asExtended().green() * 255 : c2.rgb().greenComponent();
-    int c2Blue = c2.isExtended() ? c2.asExtended().blue() * 255 : c2.rgb().blueComponent();
+    int c1Red = c1.isExtended() ? c1.asExtended().red() * 255 : c1.asSimpleColor().redComponent();
+    int c1Green = c1.isExtended() ? c1.asExtended().green() * 255 : c1.asSimpleColor().greenComponent();
+    int c1Blue = c1.isExtended() ? c1.asExtended().blue() * 255 : c1.asSimpleColor().blueComponent();
+    int c2Red = c2.isExtended() ? c2.asExtended().red() * 255 : c2.asSimpleColor().redComponent();
+    int c2Green = c2.isExtended() ? c2.asExtended().green() * 255 : c2.asSimpleColor().greenComponent();
+    int c2Blue = c2.isExtended() ? c2.asExtended().blue() * 255 : c2.asSimpleColor().blueComponent();
     int dR = c1Red - c2Red;
     int dG = c1Green - c2Green;
     int dB = c1Blue - c2Blue;
@@ -146,30 +76,28 @@ static inline const NamedColor* findNamedColor(const String& name)
 Color::Color(const String& name)
 {
     if (name[0] == '#') {
-        RGBA32 color;
-        bool valid;
-
+        Optional<SimpleColor> color;
         if (name.is8Bit())
-            valid = parseHexColor(name.characters8() + 1, name.length() - 1, color);
+            color = SimpleColor::parseHexColor(name.characters8() + 1, name.length() - 1);
         else
-            valid = parseHexColor(name.characters16() + 1, name.length() - 1, color);
+            color = SimpleColor::parseHexColor(name.characters16() + 1, name.length() - 1);
 
-        if (valid)
-            setRGB(color);
+        if (color)
+            setSimpleColor(*color);
     } else {
         if (auto* foundColor = findNamedColor(name))
-            setRGB({ foundColor->ARGBValue });
+            setSimpleColor({ foundColor->ARGBValue });
     }
 }
 
 Color::Color(const char* name)
 {
     if (name[0] == '#') {
-        SimpleColor color;
-        if (parseHexColor(reinterpret_cast<const LChar*>(&name[1]), std::strlen(&name[1]), color))
-            setRGB(color);
+        auto color = SimpleColor::parseHexColor(reinterpret_cast<const LChar*>(&name[1]), std::strlen(&name[1]));
+        if (color)
+            setSimpleColor(*color);
     } else if (auto* foundColor = findColor(name, strlen(name)))
-        setRGB({ foundColor->ARGBValue });
+        setSimpleColor({ foundColor->ARGBValue });
 }
 
 Color::Color(const Color& other)
@@ -192,8 +120,8 @@ Color::Color(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
 Color::Color(Ref<ExtendedColor>&& extendedColor)
 {
     // Zero the union, just in case a 32-bit system only assigns the
-    // top 32 bits when copying the extendedColor pointer below.
-    m_colorData.rgbaAndFlags = 0;
+    // top 32 bits when copying the ExtendedColor pointer below.
+    m_colorData.simpleColorAndFlags = 0;
     m_colorData.extendedColor = &extendedColor.leakRef();
     ASSERT(isExtended());
 }
@@ -222,7 +150,7 @@ Color& Color::operator=(Color&& other)
         m_colorData.extendedColor->deref();
 
     m_colorData = other.m_colorData;
-    other.m_colorData.rgbaAndFlags = invalidRGBAColor;
+    other.m_colorData.simpleColorAndFlags = invalidSimpleColor;
 
     return *this;
 }
@@ -231,26 +159,25 @@ String Color::serialized() const
 {
     if (isExtended())
         return asExtended().cssText();
-    return rgb().serializationForHTML();
+    return asSimpleColor().serializationForHTML();
 }
 
 String Color::cssText() const
 {
     if (isExtended())
         return asExtended().cssText();
-    return rgb().serializationForCSS();
+    return asSimpleColor().serializationForCSS();
 }
 
 String Color::nameForRenderTreeAsText() const
 {
-    // FIXME: Handle extended colors.
-    return rgb().serializationForRenderTreeAsText();
+    return asSimpleColor().serializationForRenderTreeAsText();
 }
 
 Color Color::light() const
 {
     // Hardcode this common case for speed.
-    if (rgb() == black)
+    if (asSimpleColor() == black)
         return lightenedBlack;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -275,7 +202,7 @@ Color Color::light() const
 Color Color::dark() const
 {
     // Hardcode this common case for speed.
-    if (rgb() == white)
+    if (asSimpleColor() == white)
         return darkenedWhite;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -324,7 +251,7 @@ Color Color::blend(const Color& source) const
     int g = (selfG * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceG) / d;
     int b = (selfB * selfA * (0xFF - sourceA) + 0xFF * sourceA * sourceB) / d;
 
-    return makeRGBA(r, g, b, a);
+    return makeSimpleColor(r, g, b, a);
 }
 
 Color Color::blendWithWhite() const
@@ -354,7 +281,7 @@ Color Color::blendWithWhite() const
         int g = blendComponent(existingG, alpha);
         int b = blendComponent(existingB, alpha);
         
-        result = makeRGBA(r, g, b, alpha);
+        result = makeSimpleColor(r, g, b, alpha);
 
         if (r >= 0 && g >= 0 && b >= 0)
             break;
@@ -388,7 +315,7 @@ Color Color::colorWithAlpha(float alpha) const
     // FIXME: This is where this function differs from colorWithAlphaUsingAlternativeRounding.
     uint8_t newAlpha = alpha * 0xFF;
 
-    Color result = rgb().colorWithAlpha(newAlpha);
+    Color result = asSimpleColor().colorWithAlpha(newAlpha);
     if (isSemantic())
         result.setIsSemantic();
     return result;
@@ -402,9 +329,9 @@ Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
     }
 
     // FIXME: This is where this function differs from colorWithAlphaUsing.
-    uint8_t newAlpha = colorFloatToRGBAByte(alpha);
+    uint8_t newAlpha = colorFloatToSimpleColorByte(alpha);
 
-    Color result = rgb().colorWithAlpha(newAlpha);
+    Color result = asSimpleColor().colorWithAlpha(newAlpha);
     if (isSemantic())
         result.setIsSemantic();
     return result;
@@ -415,8 +342,8 @@ Color Color::invertedColorWithAlpha(float alpha) const
     if (isExtended())
         return Color { asExtended().invertedColorWithAlpha(alpha) };
 
-    auto [r, g, b, existingAlpha] = rgb();
-    return { 0xFF - r, 0xFF - g, 0xFF - b, colorFloatToRGBAByte(alpha) };
+    auto [r, g, b, existingAlpha] = asSimpleColor();
+    return { 0xFF - r, 0xFF - g, 0xFF - b, colorFloatToSimpleColorByte(alpha) };
 }
 
 Color Color::semanticColor() const
@@ -434,17 +361,18 @@ std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
         return { extendedColor.colorSpace(), extendedColor.channels() };
     }
 
-    auto [r, g, b, a] = rgb();
+    auto [r, g, b, a] = asSimpleColor();
     return { ColorSpace::SRGB, FloatComponents { r / 255.0f, g / 255.0f, b / 255.0f,  a / 255.0f } };
 }
 
 SimpleColor Color::toSRGBASimpleColorLossy() const
 {
-    if (!isExtended())
-        return rgb();
+    if (isExtended()) {
+        auto [r, g, b, a] = toSRGBAComponentsLossy();
+        return makeSimpleColorFromFloats(r, g, b, a);
+    }
 
-    auto [r, g, b, a] = toSRGBAComponentsLossy();
-    return makeRGBA32FromFloats(r, g, b, a);
+    return asSimpleColor();
 }
 
 FloatComponents Color::toSRGBAComponentsLossy() const
@@ -476,20 +404,20 @@ Color blend(const Color& from, const Color& to, double progress)
     // FIXME: ExtendedColor - needs to handle color spaces.
     // We need to preserve the state of the valid flag at the end of the animation
     if (progress == 1 && !to.isValid())
-        return Color();
+        return { };
 
-    // Since makePremultipliedRGBA() bails on zero alpha, special-case that.
-    auto premultFrom = from.alpha() ? makePremultipliedRGBA(from.toSRGBASimpleColorLossy()) : Color::transparent;
-    auto premultTo = to.alpha() ? makePremultipliedRGBA(to.toSRGBASimpleColorLossy()) : Color::transparent;
+    // Since makePremultipliedSimpleColor() bails on zero alpha, special-case that.
+    auto premultFrom = from.alpha() ? makePremultipliedSimpleColor(from.toSRGBASimpleColorLossy()) : Color::transparent;
+    auto premultTo = to.alpha() ? makePremultipliedSimpleColor(to.toSRGBASimpleColorLossy()) : Color::transparent;
 
-    RGBA32 premultBlended = makeRGBA(
+    SimpleColor premultBlended = makeSimpleColor(
         WebCore::blend(premultFrom.redComponent(), premultTo.redComponent(), progress),
         WebCore::blend(premultFrom.greenComponent(), premultTo.greenComponent(), progress),
         WebCore::blend(premultFrom.blueComponent(), premultTo.blueComponent(), progress),
         WebCore::blend(premultFrom.alphaComponent(), premultTo.alphaComponent(), progress)
     );
 
-    return makeUnPremultipliedRGBA(premultBlended);
+    return makeUnpremultipliedSimpleColor(premultBlended);
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
@@ -512,13 +440,7 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
 
 void Color::tagAsValid()
 {
-    m_colorData.rgbaAndFlags |= validRGBAColor;
-}
-
-const ExtendedColor& Color::asExtended() const
-{
-    ASSERT(isExtended());
-    return *m_colorData.extendedColor;
+    m_colorData.simpleColorAndFlags |= validSimpleColor;
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

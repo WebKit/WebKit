@@ -51,8 +51,10 @@ RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>:
 
 namespace WebCore {
 
-static RGBA32 makeRGBAFromCGColor(CGColorRef color)
+static SimpleColor makeSimpleColorFromCGColor(CGColorRef color)
 {
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
     size_t numComponents = CGColorGetNumberOfComponents(color);
     const CGFloat* components = CGColorGetComponents(color);
 
@@ -77,27 +79,31 @@ static RGBA32 makeRGBAFromCGColor(CGColorRef color)
     }
 
     static const double scaleFactor = nextafter(256.0, 0.0);
-    return makeRGBA(r * scaleFactor, g * scaleFactor, b * scaleFactor, a * scaleFactor);
+    return makeSimpleColor(r * scaleFactor, g * scaleFactor, b * scaleFactor, a * scaleFactor);
 }
 
 Color::Color(CGColorRef color)
 {
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
     if (!color) {
-        m_colorData.rgbaAndFlags = invalidRGBAColor;
+        m_colorData.simpleColorAndFlags = invalidSimpleColor;
         return;
     }
 
-    setRGB(makeRGBAFromCGColor(color));
+    setSimpleColor(makeSimpleColorFromCGColor(color));
 }
 
 Color::Color(CGColorRef color, SemanticTag)
 {
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
     if (!color) {
-        m_colorData.rgbaAndFlags = invalidRGBAColor;
+        m_colorData.simpleColorAndFlags = invalidSimpleColor;
         return;
     }
 
-    setRGB(makeRGBAFromCGColor(color));
+    setSimpleColor(makeSimpleColorFromCGColor(color));
     setIsSemantic();
 }
 
@@ -124,7 +130,7 @@ static CGColorRef leakCGColor(const Color& color)
 CGColorRef cachedCGColor(const Color& color)
 {
     if (!color.isExtended()) {
-        switch (color.rgb().value()) {
+        switch (color.asSimpleColor().value()) {
         case Color::transparent.value(): {
             static CGColorRef transparentCGColor = leakCGColor(color);
             return transparentCGColor;
@@ -140,7 +146,7 @@ CGColorRef cachedCGColor(const Color& color)
         }
     }
 
-    ASSERT(color.isExtended() || color.rgb().value());
+    ASSERT(color.isExtended() || color.asSimpleColor().value());
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
     return cache.get().get(color).get();

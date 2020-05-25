@@ -1,3 +1,150 @@
+2020-05-24  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Use the name SimpleColor consistently
+        https://bugs.webkit.org/show_bug.cgi?id=212337
+
+        Reviewed by Anders Carlsson.
+        
+        - Removes RGBA32 type alias, updating all remaining users of it.
+        - Renames functions that take/return SimpleColor to use the name
+          SimpleColor rather than RGB (e.g. makeRGBA -> makeSimpleColor)
+        - Moves hex color parsing from Color to SimpleColor, as that is
+          the type it returns. Also took the opportunity to make it return
+          an Optional<SimpleColor> instead of using a bool/out parameter.
+        - Move Color::compositionFill to editing/CompositionHighlight.h
+          It makes no real sense to keep it in Color.h
+        - Replaces rgb() function in Color with asSimpleColor() for 
+          symmetry with asExtended().
+        - Replaced std::max(a, std::min(value, b)) with std::clamp(value, a, b)
+          for clarity.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::fastParseColorInternal):
+        (WebCore::CSSParserFastPaths::parseColor):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHexColor):
+        * editing/CompositionHighlight.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        * html/ColorInputType.cpp:
+        (WebCore::parseSimpleColorValue):
+        * html/HTMLElement.cpp:
+        (WebCore::parseColorStringWithCrazyLegacyRules):
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::activeSelectionForegroundColor const):
+        (WebCore::ThemeAdwaita::activeSelectionBackgroundColor const):
+        (WebCore::ThemeAdwaita::inactiveSelectionForegroundColor const):
+        * platform/graphics/Color.cpp:
+        (WebCore::differenceSquared):
+        (WebCore::Color::Color):
+        (WebCore::Color::operator=):
+        (WebCore::Color::serialized const):
+        (WebCore::Color::cssText const):
+        (WebCore::Color::nameForRenderTreeAsText const):
+        (WebCore::Color::light const):
+        (WebCore::Color::dark const):
+        (WebCore::Color::blend const):
+        (WebCore::Color::blendWithWhite const):
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const):
+        (WebCore::Color::invertedColorWithAlpha const):
+        (WebCore::Color::colorSpaceAndComponents const):
+        (WebCore::Color::toSRGBASimpleColorLossy const):
+        (WebCore::blend):
+        (WebCore::Color::tagAsValid):
+        (WebCore::parseHexColorInternal): Deleted.
+        (WebCore::Color::parseHexColor): Deleted.
+        (WebCore::Color::asExtended const): Deleted.
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+        (WebCore::Color::isHashTableDeletedValue const):
+        (WebCore::Color::isValid const):
+        (WebCore::Color::isOpaque const):
+        (WebCore::Color::isVisible const):
+        (WebCore::Color::alpha const):
+        (WebCore::Color::alphaAsFloat const):
+        (WebCore::Color::isSemantic const):
+        (WebCore::Color::isExtended const):
+        (WebCore::Color::setIsSemantic):
+        (WebCore::operator==):
+        (WebCore::equalIgnoringSemanticColor):
+        (WebCore::Color::hash const):
+        (WebCore::Color::asExtended const):
+        (WebCore::Color::asSimpleColor const):
+        (WebCore::Color::setSimpleColor):
+        (WebCore::Color::isBlackColor):
+        (WebCore::Color::isWhiteColor):
+        (WebCore::Color::encode const):
+        (WebCore::Color::decode):
+        (WebCore::Color::setRGB): Deleted.
+        (WebCore::Color::rgb const): Deleted.
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::clampedColorComponent):
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::blendPixel):
+        (WebCore::ImageBackingStore::pixelValue const):
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::makePremultipliedSimpleColor):
+        (WebCore::makeUnpremultipliedSimpleColor):
+        (WebCore::makeSimpleColorFromFloats):
+        (WebCore::makeSimpleColorFromHSLA):
+        (WebCore::makeSimpleColorFromCMYKA):
+        (WebCore::parseHexColorInternal):
+        (WebCore::SimpleColor::parseHexColor):
+        (WebCore::makePremultipliedRGBA): Deleted.
+        (WebCore::makeUnPremultipliedRGBA): Deleted.
+        (WebCore::makeRGBA32FromFloats): Deleted.
+        (WebCore::makeRGBAFromHSLA): Deleted.
+        (WebCore::makeRGBAFromCMYKA): Deleted.
+        * platform/graphics/SimpleColor.h:
+        (WebCore::roundAndClampColorChannel):
+        (WebCore::colorFloatToSimpleColorByte):
+        (WebCore::makeSimpleColor):
+        (WebCore::colorFloatToRGBAByte): Deleted.
+        (WebCore::makeRGB): Deleted.
+        (WebCore::makeRGBA): Deleted.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::makeSimpleColorFromARGBCFArray):
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes):
+        (WebCore::makeRGBA32FromARGBCFArray): Deleted.
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace):
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::makeSimpleColorFromCGColor):
+        (WebCore::Color::Color):
+        (WebCore::cachedCGColor):
+        (WebCore::makeRGBAFromCGColor): Deleted.
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::Color):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        (WebCore::colorFromNSColor):
+        (WebCore::semanticColorFromNSColor):
+        (WebCore::makeRGBAFromNSColor): Deleted.
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::Color):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker):
+        * platform/graphics/win/PlatformContextDirect2D.cpp:
+        (WebCore::PlatformContextDirect2D::brushWithColor):
+        * platform/ios/ColorIOS.mm:
+        (WebCore::colorFromUIColor):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForTouchAction):
+        (WebCore::patternForEventListenerRegionType):
+        * rendering/RenderThemeAdwaita.cpp:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::menuBackgroundColor):
+
 2020-05-25  Zalan Bujtas  <zalan@apple.com>
 
         [Subpixel layout] Bad scrolling on mercurynews.com article

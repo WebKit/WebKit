@@ -28,10 +28,12 @@ namespace WebCore {
 
 Color::Color(const GdkRGBA& c)
 {
-    setRGB(makeRGBA(static_cast<int>(c.red * 255),
+    setSimpleColor(makeSimpleColor(
+        static_cast<int>(c.red * 255),
         static_cast<int>(c.green * 255),
         static_cast<int>(c.blue * 255),
-        static_cast<int>(c.alpha * 255)));
+        static_cast<int>(c.alpha * 255)
+    ));
 }
 
 Color::operator GdkRGBA() const

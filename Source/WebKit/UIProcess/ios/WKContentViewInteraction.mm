@@ -4624,7 +4624,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
         if (!attributes[NSMarkedClauseSegmentAttributeName])
             return;
 
-        WebCore::Color highlightColor { WebCore::Color::compositionFill };
+        WebCore::Color highlightColor { WebCore::CompositionHighlight::defaultCompositionFillColor };
         if (UIColor *uiColor = attributes[NSBackgroundColorAttributeName])
             highlightColor = WebCore::colorFromUIColor(uiColor);
         highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), highlightColor });

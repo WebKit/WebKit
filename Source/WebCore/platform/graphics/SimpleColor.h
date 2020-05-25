@@ -28,12 +28,16 @@
 #include "ColorUtilities.h"
 #include <algorithm>
 #include <cmath>
+#include <unicode/uchar.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
+#include <wtf/text/LChar.h>
 
 namespace WebCore {
 
 // Color value with 8-bit components for red, green, blue, and alpha.
 // For historical reasons, stored as a 32-bit integer, with alpha in the high bits: ARGB.
+// FIXME: This class should be consolidated with ColorComponents.
 class SimpleColor {
 public:
     constexpr SimpleColor(uint32_t value = 0) : m_value { value } { }
@@ -70,6 +74,11 @@ public:
             return alphaComponent();
     }
 
+    static Optional<SimpleColor> parseHexColor(const String&);
+    static Optional<SimpleColor> parseHexColor(const StringView&);
+    static Optional<SimpleColor> parseHexColor(const LChar*, unsigned);
+    static Optional<SimpleColor> parseHexColor(const UChar*, unsigned);
+
 private:
     uint32_t m_value { 0 };
 };
@@ -77,20 +86,17 @@ private:
 bool operator==(SimpleColor, SimpleColor);
 bool operator!=(SimpleColor, SimpleColor);
 
-// FIXME: Remove this after migrating to the new name.
-using RGBA32 = SimpleColor;
+constexpr SimpleColor makeSimpleColor(int r, int g, int b);
+constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a);
 
-constexpr RGBA32 makeRGB(int r, int g, int b);
-constexpr RGBA32 makeRGBA(int r, int g, int b, int a);
+SimpleColor makePremultipliedSimpleColor(int r, int g, int b, int a, bool ceiling = true);
+SimpleColor makePremultipliedSimpleColor(SimpleColor);
+SimpleColor makeUnpremultipliedSimpleColor(int r, int g, int b, int a);
+SimpleColor makeUnpremultipliedSimpleColor(SimpleColor);
 
-RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling = true);
-RGBA32 makePremultipliedRGBA(RGBA32);
-RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a);
-RGBA32 makeUnPremultipliedRGBA(RGBA32);
-
-WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
-WEBCORE_EXPORT RGBA32 makeRGBAFromHSLA(float h, float s, float l, float a);
-RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
+WEBCORE_EXPORT SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a);
+WEBCORE_EXPORT SimpleColor makeSimpleColorFromHSLA(float h, float s, float l, float a);
+SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a);
 
 uint8_t roundAndClampColorChannel(int);
 uint8_t roundAndClampColorChannel(float);
@@ -98,7 +104,7 @@ uint8_t roundAndClampColorChannel(float);
 uint16_t fastMultiplyBy255(uint16_t value);
 uint16_t fastDivideBy255(uint16_t);
 
-uint8_t colorFloatToRGBAByte(float);
+uint8_t colorFloatToSimpleColorByte(float);
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
@@ -112,12 +118,12 @@ inline bool operator!=(SimpleColor a, SimpleColor b)
 
 inline uint8_t roundAndClampColorChannel(int value)
 {
-    return std::max(0, std::min(255, value));
+    return std::clamp(value, 0, 255);
 }
 
 inline uint8_t roundAndClampColorChannel(float value)
 {
-    return std::max(0.f, std::min(255.f, std::round(value)));
+    return std::clamp(std::round(value), 0.f, 255.f);
 }
 
 inline uint16_t fastMultiplyBy255(uint16_t value)
@@ -134,21 +140,21 @@ inline uint16_t fastDivideBy255(uint16_t value)
     return approximation + (remainder >> 8);
 }
 
-inline uint8_t colorFloatToRGBAByte(float f)
+inline uint8_t colorFloatToSimpleColorByte(float f)
 {
     // FIXME: Consolidate with clampedColorComponent().
     // We use lroundf and 255 instead of nextafterf(256, 0) to match CG's rounding
-    return std::max(0, std::min(static_cast<int>(lroundf(255.0f * f)), 255));
+    return std::clamp(static_cast<int>(lroundf(255.0f * f)), 0, 255);
 }
 
-constexpr RGBA32 makeRGB(int r, int g, int b)
+constexpr SimpleColor makeSimpleColor(int r, int g, int b)
 {
-    return makeRGBA(r, g, b, 0xFF);
+    return makeSimpleColor(r, g, b, 0xFF);
 }
 
-constexpr RGBA32 makeRGBA(int r, int g, int b, int a)
+constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
 {
-    return { static_cast<unsigned>(std::max(0, std::min(a, 0xFF)) << 24 | std::max(0, std::min(r, 0xFF)) << 16 | std::max(0, std::min(g, 0xFF)) << 8 | std::max(0, std::min(b, 0xFF))) };
+    return { static_cast<unsigned>(std::clamp(a, 0, 0xFF) << 24 | std::clamp(r, 0, 0xFF) << 16 | std::clamp(g, 0, 0xFF) << 8 | std::clamp(b, 0, 0xFF)) };
 }
 
 } // namespace WebCore

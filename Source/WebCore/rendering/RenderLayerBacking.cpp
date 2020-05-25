@@ -3085,7 +3085,7 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
 struct PatternDescription {
     ASCIILiteral name;
     FloatSize phase;
-    RGBA32 fillColor;
+    SimpleColor fillColor;
 };
 
 static RefPtr<Pattern> patternForDescription(PatternDescription description, FloatSize contentOffset, GraphicsContext& destContext)
@@ -3145,7 +3145,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
         return 0;
     };
 
-    constexpr auto fillColor = makeRGBA(0, 0, 0, 128);
+    constexpr auto fillColor = makeSimpleColor(0, 0, 0, 128);
 
     static const PatternDescription patternDescriptions[] = {
         { "auto"_s, { }, fillColor },
@@ -3165,7 +3165,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 
 static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
-    constexpr auto fillColor = makeRGBA(0, 128, 0, 128);
+    constexpr auto fillColor = makeSimpleColor(0, 128, 0, 128);
 
     auto patternAndPhase = [&]() -> PatternDescription {
         switch (type) {

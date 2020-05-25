@@ -53,8 +53,8 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     if (cairo_surface_get_type(image.get()) != CAIRO_SURFACE_TYPE_IMAGE)
         return Color();
 
-    RGBA32* pixel = reinterpret_cast_ptr<RGBA32*>(cairo_image_surface_get_data(image.get()));
-    return makeUnPremultipliedRGBA(*pixel);
+    SimpleColor* pixel = reinterpret_cast_ptr<SimpleColor*>(cairo_image_surface_get_data(image.get()));
+    return makeUnpremultipliedSimpleColor(*pixel);
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, const ImagePaintingOptions& options)

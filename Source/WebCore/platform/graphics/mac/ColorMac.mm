@@ -53,8 +53,10 @@ bool usesTestModeFocusRingColor()
     return useOldAquaFocusRingColor;
 }
 
-static RGBA32 makeRGBAFromNSColor(NSColor *color)
+static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
 {
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
     ASSERT_ARG(color, color);
 
     CGFloat redComponent;
@@ -80,24 +82,28 @@ static RGBA32 makeRGBAFromNSColor(NSColor *color)
         NSUInteger pixel[4];
         [offscreenRep getPixel:pixel atX:0 y:0];
 
-        return makeRGBA(pixel[0], pixel[1], pixel[2], pixel[3]);
+        return makeSimpleColor(pixel[0], pixel[1], pixel[2], pixel[3]);
     }
 
     [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
     END_BLOCK_OBJC_EXCEPTIONS;
 
     static const double scaleFactor = nextafter(256.0, 0.0);
-    return makeRGBA(scaleFactor * redComponent, scaleFactor * greenComponent, scaleFactor * blueComponent, scaleFactor * alpha);
+    return makeSimpleColor(scaleFactor * redComponent, scaleFactor * greenComponent, scaleFactor * blueComponent, scaleFactor * alpha);
 }
 
 Color colorFromNSColor(NSColor *color)
 {
-    return Color(makeRGBAFromNSColor(color));
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
+    return Color(makeSimpleColorFromNSColor(color));
 }
 
 Color semanticColorFromNSColor(NSColor *color)
 {
-    return Color(makeRGBAFromNSColor(color), Color::Semantic);
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
+    return Color(makeSimpleColorFromNSColor(color), Color::Semantic);
 }
 
 NSColor *nsColor(const Color& color)

@@ -165,7 +165,7 @@ inline bool operator!=(const ColorComponents& a, const ColorComponents& b)
 inline uint8_t clampedColorComponent(float f)
 {
     // See also colorFloatToRGBAByte().
-    return std::max(0, std::min(static_cast<int>(lroundf(255.0f * f)), 255));
+    return std::clamp(static_cast<int>(lroundf(255.0f * f)), 0, 255);
 }
 
 inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)

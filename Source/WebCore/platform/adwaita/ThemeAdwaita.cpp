@@ -36,28 +36,28 @@
 namespace WebCore {
 
 static const unsigned focusLineWidth = 1;
-static const Color focusRingColor = makeRGBA(46, 52, 54, 150);
+static const Color focusRingColor = makeSimpleColor(46, 52, 54, 150);
 static const unsigned arrowSize = 16;
-static const Color arrowColor = makeRGB(46, 52, 54);
+static const Color arrowColor = makeSimpleColor(46, 52, 54);
 static const int buttonFocusOffset = -3;
 static const unsigned buttonPadding = 5;
 static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeAdwaita.
-static const Color buttonBorderColor = makeRGB(205, 199, 194);
-static const Color buttonBackgroundColor = makeRGB(244, 242, 241);
-static const Color buttonBackgroundPressedColor = makeRGB(214, 209, 205);
-static const Color buttonBackgroundHoveredColor = makeRGB(248, 248, 247);
-static const Color buttonBackgroundDisabledColor = makeRGB(246, 246, 244);
-static const Color toggleBackgroundColor = makeRGB(255, 255, 255);
-static const Color toggleBackgroundHoveredColor = makeRGB(242, 242, 242);
-static const Color toggleBackgroundDisabledColor = makeRGB(252, 252, 252);
+static const Color buttonBorderColor = makeSimpleColor(205, 199, 194);
+static const Color buttonBackgroundColor = makeSimpleColor(244, 242, 241);
+static const Color buttonBackgroundPressedColor = makeSimpleColor(214, 209, 205);
+static const Color buttonBackgroundHoveredColor = makeSimpleColor(248, 248, 247);
+static const Color buttonBackgroundDisabledColor = makeSimpleColor(246, 246, 244);
+static const Color toggleBackgroundColor = makeSimpleColor(255, 255, 255);
+static const Color toggleBackgroundHoveredColor = makeSimpleColor(242, 242, 242);
+static const Color toggleBackgroundDisabledColor = makeSimpleColor(252, 252, 252);
 static const double toggleSize = 14.;
 static const int toggleFocusOffset = 2;
-static const Color toggleColor = makeRGB(46, 52, 54);
-static const Color toggleDisabledColor = makeRGB(160, 160, 160);
-static const Color spinButtonBorderColor = makeRGB(220, 223, 227);
-static const Color spinButtonBackgroundColor = makeRGB(252, 252, 252);
-static const Color spinButtonBackgroundHoveredColor = makeRGBA(46, 52, 54, 50);
-static const Color spinButtonBackgroundPressedColor = makeRGBA(46, 52, 54, 70);
+static const Color toggleColor = makeSimpleColor(46, 52, 54);
+static const Color toggleDisabledColor = makeSimpleColor(160, 160, 160);
+static const Color spinButtonBorderColor = makeSimpleColor(220, 223, 227);
+static const Color spinButtonBackgroundColor = makeSimpleColor(252, 252, 252);
+static const Color spinButtonBackgroundHoveredColor = makeSimpleColor(46, 52, 54, 50);
+static const Color spinButtonBackgroundPressedColor = makeSimpleColor(46, 52, 54, 70);
 
 #if !PLATFORM(GTK) || USE(GTK4)
 Theme& Theme::singleton()
@@ -69,17 +69,17 @@ Theme& Theme::singleton()
 
 Color ThemeAdwaita::activeSelectionForegroundColor() const
 {
-    return makeRGB(255, 255, 255);
+    return makeSimpleColor(255, 255, 255);
 }
 
 Color ThemeAdwaita::activeSelectionBackgroundColor() const
 {
-    return makeRGB(52, 132, 228);
+    return makeSimpleColor(52, 132, 228);
 }
 
 Color ThemeAdwaita::inactiveSelectionForegroundColor() const
 {
-    return makeRGB(252, 252, 252);
+    return makeSimpleColor(252, 252, 252);
 }
 
 Color ThemeAdwaita::inactiveSelectionBackgroundColor() const

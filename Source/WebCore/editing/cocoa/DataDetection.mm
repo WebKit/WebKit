@@ -625,10 +625,10 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Da
                         // so the color will appear on light and dark backgrounds, since only one color can be specified.
                         double overrideLightness = 0.5;
                         double overrideAlphaMultiplier = 0.38;
-                        auto underlineColor = Color(makeRGBAFromHSLA(hue, saturation, overrideLightness, overrideAlphaMultiplier * alpha));
+                        auto underlineColor = makeSimpleColorFromHSLA(hue, saturation, overrideLightness, overrideAlphaMultiplier * alpha);
 
                         anchorElement->setInlineStyleProperty(CSSPropertyColor, CSSValueCurrentcolor);
-                        anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, underlineColor.cssText());
+                        anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, underlineColor.serializationForCSS());
                     }
                 }
             }

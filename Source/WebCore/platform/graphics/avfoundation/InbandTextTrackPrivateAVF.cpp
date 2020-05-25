@@ -64,7 +64,7 @@ InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
     disconnect();
 }
 
-static Optional<SimpleColor> makeRGBA32FromARGBCFArray(CFArrayRef colorArray)
+static Optional<SimpleColor> makeSimpleColorFromARGBCFArray(CFArrayRef colorArray)
 {
     if (CFArrayGetCount(colorArray) < 4)
         return WTF::nullopt;
@@ -80,7 +80,7 @@ static Optional<SimpleColor> makeRGBA32FromARGBCFArray(CFArrayRef colorArray)
         componentArray[i] = component;
     }
 
-    return makeRGBA32FromFloats(componentArray[1], componentArray[2], componentArray[3], componentArray[0]);
+    return makeSimpleColorFromFloats(componentArray[1], componentArray[2], componentArray[3], componentArray[0]);
 }
 
 Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString)
@@ -267,7 +267,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
                     continue;
                 
-                auto color = makeRGBA32FromARGBCFArray(arrayValue);
+                auto color = makeSimpleColorFromARGBCFArray(arrayValue);
                 if (!color)
                     continue;
                 cueData->setForegroundColor(*color);
@@ -279,7 +279,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
                     continue;
                 
-                auto color = makeRGBA32FromARGBCFArray(arrayValue);
+                auto color = makeSimpleColorFromARGBCFArray(arrayValue);
                 if (!color)
                     continue;
                 cueData->setBackgroundColor(*color);
@@ -291,7 +291,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
                 if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
                     continue;
                 
-                auto color = makeRGBA32FromARGBCFArray(arrayValue);
+                auto color = makeSimpleColorFromARGBCFArray(arrayValue);
                 if (!color)
                     continue;
                 cueData->setHighlightColor(*color);

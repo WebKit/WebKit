@@ -1248,7 +1248,7 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
 void InlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin)
 {
     if (!renderer().frame().editor().compositionUsesCustomHighlights()) {
-        paintMarkedTextBackground(paintInfo, boxOrigin, Color::compositionFill, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
+        paintMarkedTextBackground(paintInfo, boxOrigin, CompositionHighlight::defaultCompositionFillColor, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
         return;
     }
 

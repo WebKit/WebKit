@@ -409,20 +409,18 @@ static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
 }
 
 template <typename CharacterType>
-static Color fastParseColorInternal(const CharacterType* characters, unsigned length, bool quirksMode)
+static Optional<SimpleColor> fastParseColorInternal(const CharacterType* characters, unsigned length, bool quirksMode)
 {
     CSSUnitType expect = CSSUnitType::CSS_UNKNOWN;
 
     if (length >= 4 && characters[0] == '#') {
-        RGBA32 rgb;
-        if (Color::parseHexColor(characters + 1, length - 1, rgb))
-            return Color(rgb);
+        if (auto color = SimpleColor::parseHexColor(characters + 1, length - 1))
+            return color;
     }
 
     if (quirksMode && (length == 3 || length == 6)) {
-        RGBA32 rgb;
-        if (Color::parseHexColor(characters, length, rgb))
-            return Color(rgb);
+        if (auto color = SimpleColor::parseHexColor(characters, length))
+            return color;
     }
 
     // Try rgba() syntax.
@@ -435,16 +433,16 @@ static Color fastParseColorInternal(const CharacterType* characters, unsigned le
         int alpha;
 
         if (!parseColorIntOrPercentage(current, end, ',', expect, red))
-            return Color();
+            return WTF::nullopt;
         if (!parseColorIntOrPercentage(current, end, ',', expect, green))
-            return Color();
+            return WTF::nullopt;
         if (!parseColorIntOrPercentage(current, end, ',', expect, blue))
-            return Color();
+            return WTF::nullopt;
         if (!parseAlphaValue(current, end, ')', alpha))
-            return Color();
+            return WTF::nullopt;
         if (current != end)
-            return Color();
-        return Color(makeRGBA(red, green, blue, alpha));
+            return WTF::nullopt;
+        return makeSimpleColor(red, green, blue, alpha);
     }
 
     // Try rgb() syntax.
@@ -455,17 +453,17 @@ static Color fastParseColorInternal(const CharacterType* characters, unsigned le
         int green;
         int blue;
         if (!parseColorIntOrPercentage(current, end, ',', expect, red))
-            return Color();
+            return WTF::nullopt;
         if (!parseColorIntOrPercentage(current, end, ',', expect, green))
-            return Color();
+            return WTF::nullopt;
         if (!parseColorIntOrPercentage(current, end, ')', expect, blue))
-            return Color();
+            return WTF::nullopt;
         if (current != end)
-            return Color();
-        return Color(makeRGB(red, green, blue));
+            return WTF::nullopt;
+        return makeSimpleColor(red, green, blue);
     }
 
-    return Color();
+    return WTF::nullopt;
 }
 
 RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserMode parserMode, CSSValuePool& valuePool)
@@ -481,14 +479,14 @@ RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserM
     bool quirksMode = isQuirksModeBehavior(parserMode);
 
     // Fast path for hex colors and rgb()/rgba() colors
-    Color color;
+    Optional<SimpleColor> color;
     if (string.is8Bit())
         color = fastParseColorInternal(string.characters8(), string.length(), quirksMode);
     else
         color = fastParseColorInternal(string.characters16(), string.length(), quirksMode);
-    if (!color.isValid())
+    if (!color)
         return nullptr;
-    return valuePool.createColorValue(color);
+    return valuePool.createColorValue(*color);
 }
 
 bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, const CSSParserContext& context)

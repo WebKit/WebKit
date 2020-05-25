@@ -1,3 +1,14 @@
+2020-05-24  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Use the name SimpleColor consistently
+        https://bugs.webkit.org/show_bug.cgi?id=212337
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (compositionHighlights):
+        Update for new name of CompositionHighlight::defaultCompositionFillColor.
+
 2020-05-24  Rob Buis  <rbuis@igalia.com>
 
         Remove NetworkProcess/FileAPI

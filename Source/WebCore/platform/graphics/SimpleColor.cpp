@@ -43,53 +43,53 @@ static inline unsigned unpremultipliedChannel(unsigned c, unsigned a)
     return (fastMultiplyBy255(c) + a - 1) / a;
 }
 
-RGBA32 makePremultipliedRGBA(int r, int g, int b, int a, bool ceiling)
+SimpleColor makePremultipliedSimpleColor(int r, int g, int b, int a, bool ceiling)
 {
-    return makeRGBA(premultipliedChannel(r, a, ceiling), premultipliedChannel(g, a, ceiling), premultipliedChannel(b, a, ceiling), a);
+    return makeSimpleColor(premultipliedChannel(r, a, ceiling), premultipliedChannel(g, a, ceiling), premultipliedChannel(b, a, ceiling), a);
 }
 
-RGBA32 makePremultipliedRGBA(RGBA32 pixelColor)
+SimpleColor makePremultipliedSimpleColor(SimpleColor pixelColor)
 {
     if (pixelColor.isOpaque())
         return pixelColor;
-    return makePremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
+    return makePremultipliedSimpleColor(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
 }
 
-RGBA32 makeUnPremultipliedRGBA(int r, int g, int b, int a)
+SimpleColor makeUnpremultipliedSimpleColor(int r, int g, int b, int a)
 {
-    return makeRGBA(unpremultipliedChannel(r, a), unpremultipliedChannel(g, a), unpremultipliedChannel(b, a), a);
+    return makeSimpleColor(unpremultipliedChannel(r, a), unpremultipliedChannel(g, a), unpremultipliedChannel(b, a), a);
 }
 
-RGBA32 makeUnPremultipliedRGBA(RGBA32 pixelColor)
+SimpleColor makeUnpremultipliedSimpleColor(SimpleColor pixelColor)
 {
     if (pixelColor.isVisible() && !pixelColor.isOpaque())
-        return makeUnPremultipliedRGBA(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
+        return makeUnpremultipliedSimpleColor(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
     return pixelColor;
 }
 
-RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a)
+SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a)
 {
-    return makeRGBA(colorFloatToRGBAByte(r), colorFloatToRGBAByte(g), colorFloatToRGBAByte(b), colorFloatToRGBAByte(a));
+    return makeSimpleColor(colorFloatToSimpleColorByte(r), colorFloatToSimpleColorByte(g), colorFloatToSimpleColorByte(b), colorFloatToSimpleColorByte(a));
 }
 
-RGBA32 makeRGBAFromHSLA(float hue, float saturation, float lightness, float alpha)
+SimpleColor makeSimpleColorFromHSLA(float hue, float saturation, float lightness, float alpha)
 {
     const float scaleFactor = 255.0;
     FloatComponents floatResult = hslToSRGB({ hue, saturation, lightness, alpha });
-    return makeRGBA(
+    return makeSimpleColor(
         round(floatResult.components[0] * scaleFactor),
         round(floatResult.components[1] * scaleFactor),
         round(floatResult.components[2] * scaleFactor),
         round(floatResult.components[3] * scaleFactor));
 }
 
-RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a)
+SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a)
 {
     double colors = 1 - k;
     int r = static_cast<int>(nextafter(256, 0) * (colors * (1 - c)));
     int g = static_cast<int>(nextafter(256, 0) * (colors * (1 - m)));
     int b = static_cast<int>(nextafter(256, 0) * (colors * (1 - y)));
-    return makeRGBA(r, g, b, static_cast<float>(nextafter(256, 0) * a));
+    return makeSimpleColor(r, g, b, static_cast<float>(nextafter(256, 0) * a));
 }
 
 String SimpleColor::serializationForHTML() const
@@ -134,5 +134,74 @@ String SimpleColor::serializationForRenderTreeAsText() const
         return makeString('#', hex(redComponent(), 2), hex(greenComponent(), 2), hex(blueComponent(), 2), hex(alphaComponent(), 2));
     return makeString('#', hex(redComponent(), 2), hex(greenComponent(), 2), hex(blueComponent(), 2));
 }
+
+// originally moved here from the CSS parser
+template <typename CharacterType>
+static inline Optional<SimpleColor> parseHexColorInternal(const CharacterType* name, unsigned length)
+{
+    if (length != 3 && length != 4 && length != 6 && length != 8)
+        return WTF::nullopt;
+    unsigned value = 0;
+    for (unsigned i = 0; i < length; ++i) {
+        if (!isASCIIHexDigit(name[i]))
+            return WTF::nullopt;
+        value <<= 4;
+        value |= toASCIIHexValue(name[i]);
+    }
+    if (length == 6)
+        return SimpleColor { 0xFF000000 | value };
+    if (length == 8) {
+        // We parsed the values into RGBA order, but the SimpleColor type
+        // expects them to be in ARGB order, so we right rotate eight bits.
+        return SimpleColor { value << 24 | value >> 8 };
+    }
+    if (length == 4) {
+        // #abcd converts to ddaabbcc in SimpleColor.
+        return SimpleColor {
+              (value & 0xF) << 28 | (value & 0xF) << 24
+            | (value & 0xF000) << 8 | (value & 0xF000) << 4
+            | (value & 0xF00) << 4 | (value & 0xF00)
+            | (value & 0xF0) | (value & 0xF0) >> 4
+        };
+    }
+    // #abc converts to #aabbcc
+    return SimpleColor {
+          (0xFF000000)
+        | (value & 0xF00) << 12 | (value & 0xF00) << 8
+        | (value & 0xF0) << 8 | (value & 0xF0) << 4
+        | (value & 0xF) << 4 | (value & 0xF)
+    };
+}
+
+Optional<SimpleColor> SimpleColor::parseHexColor(const LChar* name, unsigned length)
+{
+    return parseHexColorInternal(name, length);
+}
+
+Optional<SimpleColor> SimpleColor::parseHexColor(const UChar* name, unsigned length)
+{
+    return parseHexColorInternal(name, length);
+}
+
+Optional<SimpleColor> SimpleColor::parseHexColor(const String& name)
+{
+    unsigned length = name.length();
+    if (!length)
+        return WTF::nullopt;
+    if (name.is8Bit())
+        return parseHexColor(name.characters8(), name.length());
+    return parseHexColor(name.characters16(), name.length());
+}
+
+Optional<SimpleColor> SimpleColor::parseHexColor(const StringView& name)
+{
+    unsigned length = name.length();
+    if (!length)
+        return WTF::nullopt;
+    if (name.is8Bit())
+        return parseHexColor(name.characters8(), name.length());
+    return parseHexColor(name.characters16(), name.length());
+}
+
 
 } // namespace WebCore

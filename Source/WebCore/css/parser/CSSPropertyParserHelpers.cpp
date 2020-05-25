@@ -529,7 +529,6 @@ static int clampRGBComponent(const CSSPrimitiveValue& value)
 static Color parseRGBParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueRgb || range.peek().functionId() == CSSValueRgba);
-    Color result;
     CSSParserTokenRange args = consumeFunction(range);
     RefPtr<CSSPrimitiveValue> colorParameter = consumeNumber(args, ValueRangeAll);
     if (!colorParameter)
@@ -588,12 +587,10 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
         alphaComponent = static_cast<int>(lroundf(clampTo<double>(alpha, 0.0, 1.0) * 255.0f));
     };
 
-    result = Color(makeRGBA(colorArray[0], colorArray[1], colorArray[2], alphaComponent));
-
     if (!args.atEnd())
         return Color();
 
-    return result;
+    return makeSimpleColor(colorArray[0], colorArray[1], colorArray[2], alphaComponent);
 }
 
 static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
@@ -645,7 +642,7 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return Color();
 
-    return Color(makeRGBAFromHSLA(static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha)));
+    return makeSimpleColorFromHSLA(static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha));
 }
 
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)
@@ -695,11 +692,13 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
 
 static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
 {
-    RGBA32 result;
+    SimpleColor result;
     const CSSParserToken& token = range.peek();
     if (token.type() == HashToken) {
-        if (!Color::parseHexColor(token.value(), result))
+        auto simpleColor = SimpleColor::parseHexColor(token.value());
+        if (!simpleColor)
             return Color();
+        result = *simpleColor;
     } else if (acceptQuirkyColors) {
         String color;
         if (token.type() == NumberToken || token.type() == DimensionToken) {
@@ -718,13 +717,15 @@ static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
         unsigned length = color.length();
         if (length != 3 && length != 6)
             return Color();
-        if (!Color::parseHexColor(color, result))
+        auto simpleColor = SimpleColor::parseHexColor(color);
+        if (!simpleColor)
             return Color();
+        result = *simpleColor;
     } else {
         return Color();
     }
     range.consumeIncludingWhitespace();
-    return Color(result);
+    return result;
 }
 
 static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssParserMode)

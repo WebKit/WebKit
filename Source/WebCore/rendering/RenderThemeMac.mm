@@ -551,7 +551,7 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
     fontDescription.setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
 }
 
-static RGBA32 menuBackgroundColor()
+static SimpleColor menuBackgroundColor()
 {
     RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
         bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
@@ -568,7 +568,7 @@ static RGBA32 menuBackgroundColor()
     NSUInteger pixel[4];
     [offscreenRep getPixel:pixel atX:0 y:0];
 
-    return makeRGBA(pixel[0], pixel[1], pixel[2], pixel[3]);
+    return makeSimpleColor(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const

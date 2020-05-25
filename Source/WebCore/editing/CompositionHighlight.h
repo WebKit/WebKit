@@ -39,9 +39,15 @@ struct CompositionHighlight {
     {
     }
 
+#if PLATFORM(IOS_FAMILY)
+    static constexpr SimpleColor defaultCompositionFillColor { 0x3CAFC0E3 };
+#else
+    static constexpr SimpleColor defaultCompositionFillColor { 0xFFE1DD55 };
+#endif
+
     unsigned startOffset { 0 };
     unsigned endOffset { 0 };
-    Color color { Color::compositionFill };
+    Color color { defaultCompositionFillColor };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<CompositionHighlight> decode(Decoder&);

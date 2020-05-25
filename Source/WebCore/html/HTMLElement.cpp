@@ -973,7 +973,7 @@ void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropert
     addPropertyToPresentationAttributeStyle(style, propertyID, value);
 }
 
-static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)
+static SimpleColor parseColorStringWithCrazyLegacyRules(const String& colorString)
 {
     // Per spec, only look at the first 128 digits of the string.
     const size_t maxColorLength = 128;
@@ -1002,7 +1002,7 @@ static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)
     digitBuffer.append('0');
 
     if (digitBuffer.size() < 6)
-        return makeRGB(toASCIIHexValue(digitBuffer[0]), toASCIIHexValue(digitBuffer[1]), toASCIIHexValue(digitBuffer[2]));
+        return makeSimpleColor(toASCIIHexValue(digitBuffer[0]), toASCIIHexValue(digitBuffer[1]), toASCIIHexValue(digitBuffer[2]));
 
     // Split the digits into three components, then search the last 8 digits of each component.
     ASSERT(digitBuffer.size() >= 6);
@@ -1026,7 +1026,7 @@ static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)
     int redValue = toASCIIHexValue(digitBuffer[redIndex], digitBuffer[redIndex + 1]);
     int greenValue = toASCIIHexValue(digitBuffer[greenIndex], digitBuffer[greenIndex + 1]);
     int blueValue = toASCIIHexValue(digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);
-    return makeRGB(redValue, greenValue, blueValue);
+    return makeSimpleColor(redValue, greenValue, blueValue);
 }
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"
