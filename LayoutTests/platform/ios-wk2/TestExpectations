@@ -1324,8 +1324,6 @@ webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.ht
 
 webkit.org/b/207161 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ Pass Failure ]
 
-webkit.org/b/207197 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass Failure Crash ]
-
 webkit.org/b/206627 storage/websql [ Skip ]
 
 webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properties-value-002.html [ Pass Failure ]
