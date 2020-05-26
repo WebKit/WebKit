@@ -198,13 +198,19 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
 void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFlowContent& constraints)
 {
     auto& grid = formattingState().tableGrid();
+    auto& tableBox = root();
     auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
     auto logicalTop = constraints.vertical.logicalTop;
-    for (auto& sectionBox : childrenOfType<ContainerBox>(root())) {
+    auto verticalSpacing = grid.verticalSpacing();
+    auto paddingBefore = Optional<LayoutUnit> { verticalSpacing };
+    auto paddingAfter = verticalSpacing;
+    for (auto& sectionBox : childrenOfType<ContainerBox>(tableBox)) {
         auto& sectionDisplayBox = formattingState().displayBox(sectionBox);
         // Section borders are either collapsed or ignored.
         sectionDisplayBox.setBorder({ });
-        sectionDisplayBox.setPadding(geometry().computedPadding(sectionBox, constraints.horizontal.logicalWidth));
+        // Use fake vertical padding to space out the sections.
+        sectionDisplayBox.setPadding(Edges { { }, { paddingBefore.valueOr(0_lu), paddingAfter } });
+        paddingBefore = WTF::nullopt;
         // Internal table elements do not have margins.
         sectionDisplayBox.setHorizontalMargin({ });
         sectionDisplayBox.setHorizontalComputedMargin({ });
@@ -212,10 +218,12 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
 
         sectionDisplayBox.setContentBoxWidth(sectionWidth);
         auto sectionContentHeight = LayoutUnit { };
-        for (auto& rowBox : childrenOfType<ContainerBox>(sectionBox))
-            sectionContentHeight += geometryForBox(rowBox).height() + grid.verticalSpacing();
-        // FIXME: Let's try not add vertical spacing to the content box.
-        sectionContentHeight += grid.verticalSpacing();
+        size_t rowCount = 0;
+        for (auto& rowBox : childrenOfType<ContainerBox>(sectionBox)) {
+            sectionContentHeight += geometryForBox(rowBox).height();
+            ++rowCount;
+        }
+        sectionContentHeight += verticalSpacing * (rowCount - 1);
         sectionDisplayBox.setContentBoxHeight(sectionContentHeight);
         sectionDisplayBox.setLeft(constraints.horizontal.logicalLeft);
         sectionDisplayBox.setTop(logicalTop);
