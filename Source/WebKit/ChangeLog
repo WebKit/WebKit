@@ -1,3 +1,19 @@
+2020-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Fix context menu
+        https://bugs.webkit.org/show_bug.cgi?id=212344
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSizeAllocate): Call gtk_native_check_resize() on the popover to make it appear.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::destroyMenuWidget): There's no gtk_widget_destroy() in GTK4 so we can just unparent it.
+        (WebKit::bindModelToMenuWidget): Do not set the action namespace because that's not possible in GTK4.
+        (WebKit::WebContextMenuProxyGtk::append): Use group.name again for the action name passed to
+        g_menu_item_set_action_and_target_value().
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk): Use destroyMenuWidget().
+
 2020-05-25  Alex Christensen  <achristensen@webkit.org>
 
         Expose more network metrics to WebCoreNSURLSession

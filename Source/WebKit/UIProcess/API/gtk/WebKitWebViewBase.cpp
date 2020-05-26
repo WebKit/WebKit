@@ -778,6 +778,11 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
         gtk_widget_size_allocate(priv->dialog, &childAllocation);
     }
 
+#if USE(GTK4)
+    if (priv->activeContextMenuProxy)
+        gtk_native_check_resize(GTK_NATIVE(priv->activeContextMenuProxy->gtkWidget()));
+#endif
+
     if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
         drawingArea->setSize(viewRect.size());
 }
