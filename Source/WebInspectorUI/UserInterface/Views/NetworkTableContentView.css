@@ -227,12 +227,12 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     top: calc(var(--navigation-bar-height) - var(--timeline-ruler-height));
 }
 
-.content-view.network .message-text-view {
+.content-view.network-table > .message-text-view {
     top: var(--navigation-bar-height);
     bottom: var(--network-statistics-height);
 }
 
-.content-view.network .message-text-view > .message {
+.content-view.network-table > .message-text-view > .message {
     font-size: var(--message-text-view-font-size);
     font-weight: normal;
 }

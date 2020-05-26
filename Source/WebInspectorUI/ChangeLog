@@ -1,3 +1,17 @@
+2020-05-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: Timing: gaps around the "An error occurred trying to load this resource" message
+        https://bugs.webkit.org/show_bug.cgi?id=212384
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network-table > .message-text-view): Added.
+        (.content-view.network-table > .message-text-view > .message): Added.
+        (.content-view.network .message-text-view): Deleted.
+        (.content-view.network .message-text-view > .message): Deleted.
+        Be more specific with the selector so it doesn't apply as broadly.
+
 2020-05-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Storage: don't request the list of IndexedDB database names multiple times for the same security origin
