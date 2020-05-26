@@ -1,3 +1,24 @@
+2020-05-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] ActionSheetTests.DataDetectorsLinkIsNotPresentedAsALink is failing consistently
+        https://bugs.webkit.org/show_bug.cgi?id=212363
+        <rdar://problem/63508866>
+
+        Reviewed by Tim Horton.
+
+        This test began to consistently throw an exception after <https://trac.webkit.org/r261157>, due to how
+        UserInterfaceSwizzler always instantiates the shared UIApplication. This apparently causes -[WKContentView
+        resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:] to return `nil` instead of a replica view. As a
+        result, we crash under `createFallbackTargetedPreview` as we're attempting to assemble a targeted preview for
+        the context menu interaction.
+
+        Since this seems to only affect this particular API test, work around it by swizzling out
+        `-resizableSnapshotViewFromRect:afterScreenUpdates:withCapInsets:` in this API test to return a non-null UIView.
+
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::swizzledResizableSnapshotViewFromRect):
+        (TestWebKitAPI::TEST):
+
 2020-05-24  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Use the name SimpleColor consistently
