@@ -1,3 +1,14 @@
+2020-05-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        IteratorClose should suppress GetMethod errors
+        https://bugs.webkit.org/show_bug.cgi?id=212378
+
+        Reviewed by Keith Miller.
+
+        * stress/custom-iterators.js:
+        * stress/iterator-return-abrupt-lookup-builtins.js: Added.
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-05-23  Caio Lima  <ticaiolima@gmail.com>
 
         [bmalloc] Fix OOM errors on MIPS after r261667

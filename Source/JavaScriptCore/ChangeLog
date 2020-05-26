@@ -1,3 +1,32 @@
+2020-05-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        IteratorClose should suppress GetMethod errors
+        https://bugs.webkit.org/show_bug.cgi?id=212378
+
+        Reviewed by Keith Miller.
+
+        This patch implements recent spec change [1] that prevents "return" method lookup error
+        from overriding outer exception, aligning JSC with V8 and SpiderMonkey.
+
+        It is accomplished by moving pushTry() before emitGetById() in BytecodeGenerator.cpp
+        (covered by test262 suite) and removal of RETURN_IF_EXCEPTION in IteratorOperations.cpp
+        (added a stress test).
+
+        Before this patch, JSC partly implemented the spec change [1] by suppressing TypeError
+        if "return" method of iterator was not callable.
+
+        BytecodeGenerator::emitDelegateYield() is intentionally left unchanged.
+        Also, this patch utilizes emitIteratorGenericClose() to avoid code duplication.
+        for/of microbenchmarks are neutral.
+
+        [1]: https://github.com/tc39/ecma262/pull/1408
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGenericEnumeration):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorClose):
+
 2020-05-26  Mark Lam  <mark.lam@apple.com>
 
         SamplingProfiler::takeSample() should not assume that ENABLE(WEBASSEMBLY) means Wasm is enabled.

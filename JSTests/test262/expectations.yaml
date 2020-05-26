@@ -3258,9 +3258,6 @@ test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-obj
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/async-func-decl-dstr-array-elem-target-simple-strict.js:
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-await-of/iterator-close-throw-get-method-abrupt.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«function Object() {'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«function Object() {'
 test/language/statements/for-await-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
@@ -3475,9 +3472,6 @@ test/language/statements/for-of/head-lhs-non-asnmt-trgt.js:
 test/language/statements/for-of/head-var-no-expr.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/iterator-close-throw-get-method-abrupt.js:
-  default: 'Test262Error: Expected a Test262Error but got a Object'
-  strict mode: 'Test262Error: Expected a Test262Error but got a Object'
 test/language/statements/for-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/head-lhs-let.js:

@@ -135,7 +135,7 @@ try {
         throw "Error: Terminate iteration.";
     }
 } catch (e) {
-    if (String(e) !== "Error: looking up return.")
+    if (String(e) !== "Error: Terminate iteration.")
         throw e;
 }
 

@@ -4082,26 +4082,12 @@ void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, Ex
             emitLabel(finallyBodyLabel.get());
             restoreScopeRegister();
 
-            Ref<Label> finallyDone = newLabel();
-
-            RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
-            emitJumpIfTrue(emitIsUndefined(newTemporary(), returnMethod.get()), finallyDone.get());
-
             Ref<Label> returnCallTryStart = newLabel();
             emitLabel(returnCallTryStart.get());
             TryData* returnCallTryData = pushTry(returnCallTryStart.get(), catchLabel.get(), HandlerType::SynthesizedCatch);
 
-            CallArguments returnArguments(*this, nullptr);
-            move(returnArguments.thisRegister(), iterator.get());
-            emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
-
-            if (isForAwait)
-                emitAwait(value.get());
-
-            emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), finallyDone.get());
-            emitThrowTypeError("Iterator result interface is not an object."_s);
-
-            emitLabel(finallyDone.get());
+            emitIteratorGenericClose(iterator.get(), node, shouldEmitAwait);
+            Ref<Label> finallyDone = newEmittedLabel();
             emitFinallyCompletion(finallyContext, endCatchLabel.get());
 
             popTry(returnCallTryData, finallyDone.get());
@@ -4238,23 +4224,12 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitLabel(finallyBodyLabel.get());
             restoreScopeRegister();
 
-            Ref<Label> finallyDone = newLabel();
-
-            RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
-            emitJumpIfTrue(emitIsUndefined(newTemporary(), returnMethod.get()), finallyDone.get());
-
             Ref<Label> returnCallTryStart = newLabel();
             emitLabel(returnCallTryStart.get());
             TryData* returnCallTryData = pushTry(returnCallTryStart.get(), catchLabel.get(), HandlerType::SynthesizedCatch);
 
-            CallArguments returnArguments(*this, nullptr);
-            move(returnArguments.thisRegister(), iterator.get());
-            emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
-
-            emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), finallyDone.get());
-            emitThrowTypeError("Iterator result interface is not an object."_s);
-
-            emitLabel(finallyDone.get());
+            emitIteratorGenericClose(iterator.get(), node, EmitAwait::No);
+            Ref<Label> finallyDone = newEmittedLabel();
             emitFinallyCompletion(finallyContext, endCatchLabel.get());
 
             popTry(returnCallTryData, finallyDone.get());
