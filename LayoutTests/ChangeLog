@@ -1,3 +1,15 @@
+2020-05-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION: [ iOS wk2 Debug ] multiple fast/text/international/system-language tests are flaky crashing - WTFCrashWithInfo - WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
+        https://bugs.webkit.org/show_bug.cgi?id=211958
+        <rdar://problem/63275549>
+
+        Reviewed by Darin Adler.
+
+        Tests no longer crashing.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-26  Antoine Quint  <graouts@apple.com>
 
         Hardware fill-forwards animation and transitions don't interact correctly

@@ -1747,9 +1747,4 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 
 webkit.org/b/211928 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Pass Timeout ]
 
-webkit.org/b/211958 [ Debug ] fast/text/international/system-language/han-quotes.html [ Pass Crash ]
-webkit.org/b/211958 [ Debug ] fast/text/international/system-language/navigator-language/navigator-language-es-419.html [ Pass Crash ]
-webkit.org/b/211958 [ Debug ] fast/text/international/system-language/navigator-language/navigator-language-hi.html [ Pass Crash ]
-webkit.org/b/211958 [ Debug ] fast/text/international/system-language/navigator-language/navigator-language-pt-PT.html [ Pass Crash ]
-
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
