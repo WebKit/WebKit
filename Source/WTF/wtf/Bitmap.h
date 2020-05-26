@@ -58,8 +58,8 @@ public:
     void invert();
     int64_t findRunOfZeros(size_t runLength) const;
     size_t count(size_t start = 0) const;
-    size_t isEmpty() const;
-    size_t isFull() const;
+    bool isEmpty() const;
+    bool isFull() const;
     
     void merge(const Bitmap&);
     void filter(const Bitmap&);
@@ -119,7 +119,7 @@ public:
     void mergeAndClear(Bitmap&);
     void setAndClear(Bitmap&);
 
-    void setEachNthBit(size_t start, size_t n);
+    void setEachNthBit(size_t n, size_t start = 0, size_t end = bitmapSize);
 
     bool operator==(const Bitmap&) const;
     bool operator!=(const Bitmap&) const;
@@ -293,7 +293,7 @@ inline size_t Bitmap<bitmapSize, WordType>::count(size_t start) const
 }
 
 template<size_t bitmapSize, typename WordType>
-inline size_t Bitmap<bitmapSize, WordType>::isEmpty() const
+inline bool Bitmap<bitmapSize, WordType>::isEmpty() const
 {
     for (size_t i = 0; i < words; ++i)
         if (bits[i])
@@ -302,7 +302,7 @@ inline size_t Bitmap<bitmapSize, WordType>::isEmpty() const
 }
 
 template<size_t bitmapSize, typename WordType>
-inline size_t Bitmap<bitmapSize, WordType>::isFull() const
+inline bool Bitmap<bitmapSize, WordType>::isFull() const
 {
     for (size_t i = 0; i < words; ++i)
         if (~bits[i]) {
@@ -430,12 +430,15 @@ inline void Bitmap<bitmapSize, WordType>::setAndClear(Bitmap& other)
 }
 
 template<size_t bitmapSize, typename WordType>
-inline void Bitmap<bitmapSize, WordType>::setEachNthBit(size_t start, size_t n)
+inline void Bitmap<bitmapSize, WordType>::setEachNthBit(size_t n, size_t start, size_t end)
 {
-    size_t index = start;
-    size_t wordIndex = index / wordSize;
-    index = index - wordIndex * wordSize;
-    while (wordIndex < words) {
+    ASSERT(start <= end);
+    ASSERT(end <= bitmapSize);
+
+    size_t wordIndex = start / wordSize;
+    size_t endWordIndex = end / wordSize;
+    size_t index = start - wordIndex * wordSize;
+    while (wordIndex < endWordIndex) {
         while (index < wordSize) {
             bits[wordIndex] |= (one << index);
             index += n;
@@ -443,6 +446,13 @@ inline void Bitmap<bitmapSize, WordType>::setEachNthBit(size_t start, size_t n)
         index -= wordSize;
         wordIndex++;
     }
+
+    size_t endIndex = end - endWordIndex * wordSize;
+    while (index < endIndex) {
+        bits[wordIndex] |= (one << index);
+        index += n;
+    }
+
     if constexpr (!!(bitmapSize % wordSize)) {
         constexpr size_t remainingBits = bitmapSize % wordSize;
         constexpr WordType mask = (static_cast<WordType>(1) << remainingBits) - 1;

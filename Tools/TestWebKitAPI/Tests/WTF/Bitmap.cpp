@@ -981,27 +981,44 @@ void testBitmapSetEachNthBitImpl(size_t size, size_t wordSize, const Bitmap& zer
     Bitmap temp;
 
     EXPECT_TRUE(temp == zeroes);
-    temp.setEachNthBit(0, 1);
+    temp.setEachNthBit(1);
     EXPECT_TRUE(temp == ones);
 
     size_t nValues[] = { 1, 2, wordSize / 2, wordSize - 1, wordSize, size / 2, size - 1, size };
     size_t nValuesCount = sizeof(nValues) / sizeof(nValues[0]);
 
-    for (size_t start = 0; start < wordSize; ++start) {
-        for (size_t j = 0; j < nValuesCount; ++j) {
-            size_t n = nValues[j];
-            temp.clearAll();
-            temp.setEachNthBit(start, n);
+    size_t startEndValues[] = { 0, 1, 2, wordSize / 2, wordSize - 1, wordSize, size / 2, size - 1, size };
+    constexpr size_t numberOfStartEndValues = sizeof(startEndValues) / sizeof(startEndValues[0]);
 
-            for (size_t i = 0; i < start; ++i)
-                EXPECT_FALSE(temp.get(i));
+    for (size_t start = 0; start < numberOfStartEndValues; ++start) {
+        for (size_t end = start; end < numberOfStartEndValues; ++end) {
+            size_t startIndex = startEndValues[start];
+            size_t endIndex = startEndValues[end];
+            if (endIndex < startIndex)
+                continue;
+            if (startIndex > size)
+                continue;
+            if (endIndex > size)
+                continue;
 
-            size_t count = 0;
-            for (size_t i = start; i < size; ++i) {
-                bool expected = !count;
-                EXPECT_TRUE(temp.get(i) == expected);
-                count++;
-                count = count % n;
+            for (size_t j = 0; j < nValuesCount; ++j) {
+                size_t n = nValues[j];
+                temp.clearAll();
+                temp.setEachNthBit(n, startIndex, endIndex);
+
+                for (size_t i = 0; i < startIndex; ++i)
+                    EXPECT_FALSE(temp.get(i));
+
+                size_t count = 0;
+                for (size_t i = startIndex; i < endIndex; ++i) {
+                    bool expected = !count;
+                    EXPECT_TRUE(temp.get(i) == expected);
+                    count++;
+                    count = count % n;
+                }
+
+                for (size_t i = endIndex; i < size; ++i)
+                    EXPECT_FALSE(temp.get(i));
             }
         }
     }

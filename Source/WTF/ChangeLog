@@ -1,3 +1,19 @@
+2020-05-26  Mark Lam  <mark.lam@apple.com>
+
+        Enhance Bitmap::setEachNthBit() to also take an end index.
+        https://bugs.webkit.org/show_bug.cgi?id=212386
+        <rdar://problem/63643324>
+
+        Reviewed by Robin Morisset.
+
+        Previously, it was only taking the n interval, and the start index.
+        Also fixed isEmpty() and isFull() to return a bool instead of size_t.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::isEmpty const):
+        (WTF::WordType>::isFull const):
+        (WTF::WordType>::setEachNthBit):
+
 2020-05-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add static analyzers
