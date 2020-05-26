@@ -95,6 +95,9 @@ void DrawingAreaCoordinatedGraphics::setNeedsDisplayInRect(const IntRect& rect)
 {
     if (m_layerTreeHost) {
         ASSERT(m_dirtyRegion.isEmpty());
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
+        m_layerTreeHost->setNonCompositedContentsNeedDisplay(rect);
+#endif
         return;
     }
 
@@ -588,7 +591,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
         if (!m_layerTreeStateIsFrozen)
             m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
     } else {
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
         m_layerTreeHost = makeUnique<LayerTreeHost>(m_webPage);
         changeWindowScreen();
 #else

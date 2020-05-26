@@ -116,6 +116,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(WPE_RENDERER)
     encoder << hostFileDescriptor;
 #endif
+#if PLATFORM(WIN)
+    encoder << nativeWindowHandle;
+#endif
     encoder << appleMailPaginationQuirkEnabled;
     encoder << appleMailLinesClampEnabled;
     encoder << shouldScaleViewToFitDocument;
@@ -355,6 +358,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 
 #if USE(WPE_RENDERER)
     if (!decoder.decode(parameters.hostFileDescriptor))
+        return WTF::nullopt;
+#endif
+
+#if PLATFORM(WIN)
+    if (!decoder.decode(parameters.nativeWindowHandle))
         return WTF::nullopt;
 #endif
 

@@ -177,6 +177,9 @@ struct WebPageCreationParameters {
 #if USE(WPE_RENDERER)
     IPC::Attachment hostFileDescriptor;
 #endif
+#if PLATFORM(WIN)
+    uint64_t nativeWindowHandle;
+#endif
     bool appleMailPaginationQuirkEnabled;
     bool appleMailLinesClampEnabled;
     bool shouldScaleViewToFitDocument;

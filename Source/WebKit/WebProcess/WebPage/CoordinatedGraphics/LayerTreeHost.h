@@ -39,8 +39,11 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 
-#if USE(COORDINATED_GRAPHICS)
-#endif
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
+
+#include "LayerTreeHostTextureMapper.h"
+
+#else // USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
 
 namespace WebCore {
 class IntRect;
@@ -223,3 +226,5 @@ inline RefPtr<WebCore::DisplayRefreshMonitor> LayerTreeHost::createDisplayRefres
 #endif
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_TEXTURE_MAPPER)

@@ -33,6 +33,7 @@
 #include <WebKit/WKCertificateInfoCurl.h>
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKInspector.h>
+#include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
 #include <WebKit/WKProtectionSpaceCurl.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
@@ -225,6 +226,16 @@ void WebKitBrowserWindow::setPreference(UINT menuID, bool enable)
     auto pgroup = WKPageGetPageGroup(page);
     auto pref = WKPageGroupGetPreferences(pgroup);
     switch (menuID) {
+    case IDM_ACC_COMPOSITING:
+        WKPreferencesSetAcceleratedCompositingEnabled(pref, enable);
+        break;
+    case IDM_COMPOSITING_BORDERS:
+        WKPreferencesSetCompositingBordersVisible(pref, enable);
+        WKPreferencesSetCompositingRepaintCountersVisible(pref, enable);
+        break;
+    case IDM_DEBUG_INFO_LAYER:
+        WKPreferencesSetTiledScrollingIndicatorVisible(pref, enable);
+        break;
     case IDM_DISABLE_IMAGES:
         WKPreferencesSetLoadsImagesAutomatically(pref, !enable);
         break;

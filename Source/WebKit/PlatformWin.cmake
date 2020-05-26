@@ -81,7 +81,7 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
-    WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+    WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp
 

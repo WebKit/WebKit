@@ -1,3 +1,72 @@
+2020-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK2] Use GraphicsLayerTextureMapper for Accelerated Compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=211883
+
+        Reviewed by Don Olmstead.
+
+        GraphicsLayerTextureMapper is a simple GraphicsLayer
+        implementation using TextureMapper which is used for WinCairo WebKit1.
+
+        Add a new LayerTreeHost implementation for
+        GraphicsLayerTextureMapper by copying WinCairo WebKit1's
+        AcceleratedCompositingContext.
+
+        Windows WebKitTestRunner can't capture the window content for
+        pixel dump tests yet.
+
+        * PlatformWin.cmake:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp: Added.
+        (WebKit::LayerTreeHost::prepareForRendering):
+        (WebKit::LayerTreeHost::compositeLayersToContext):
+        (WebKit::LayerTreeHost::flushPendingLayerChanges):
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        (WebKit::LayerTreeHost::setLayerFlushSchedulingEnabled):
+        (WebKit::LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush):
+        (WebKit::LayerTreeHost::scheduleLayerFlush):
+        (WebKit::LayerTreeHost::cancelPendingLayerFlush):
+        (WebKit::LayerTreeHost::setRootCompositingLayer):
+        (WebKit::LayerTreeHost::setViewOverlayRootLayer):
+        (WebKit::LayerTreeHost::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHost::scrollNonCompositedContents):
+        (WebKit::LayerTreeHost::flushAndRenderLayers):
+        (WebKit::LayerTreeHost::forceRepaint):
+        (WebKit::LayerTreeHost::forceRepaintAsync):
+        (WebKit::LayerTreeHost::sizeDidChange):
+        (WebKit::LayerTreeHost::pauseRendering):
+        (WebKit::LayerTreeHost::resumeRendering):
+        (WebKit::LayerTreeHost::graphicsLayerFactory):
+        (WebKit::LayerTreeHost::contentsSizeChanged):
+        (WebKit::LayerTreeHost::didChangeViewportAttributes):
+        (WebKit::LayerTreeHost::setIsDiscardable):
+        (WebKit::LayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::LayerTreeHost::createDisplayRefreshMonitor):
+        (WebKit::LayerTreeHost::window):
+        (WebKit::LayerTreeHost::enabled):
+        (WebKit::LayerTreeHost::paintContents):
+        (WebKit::LayerTreeHost::deviceScaleFactor const):
+        (WebKit::LayerTreeHost::applyDeviceScaleFactor):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.h: Added.
+        (WebKit::LayerTreeHost::layerTreeContext const):
+        (WebKit::LayerTreeHost::displayID const):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::nativeWindowHandle):
+        * WebProcess/win/WebProcessMainWin.cpp:
+
 2020-05-25  Darin Adler  <darin@apple.com>
 
         Eliminate Color constructors that take strings, moving color parsing entirely into the CSS parser

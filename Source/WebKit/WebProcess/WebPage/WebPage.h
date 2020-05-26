@@ -1335,6 +1335,10 @@ public:
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier);
 #endif
 
+#if PLATFORM(WIN)
+    uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1827,6 +1831,10 @@ private:
 
 #if ENABLE(ACCESSIBILITY) && USE(ATK)
     GRefPtr<AtkObject> m_accessibilityObject;
+#endif
+
+#if PLATFORM(WIN)
+    uint64_t m_nativeWindowHandle { 0 };
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

@@ -7814,6 +7814,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.hostFileDescriptor = pageClient().hostFileDescriptor();
 #endif
 
+#if PLATFORM(WIN)
+    parameters.nativeWindowHandle = reinterpret_cast<uint64_t>(viewWidget());
+#endif
+
     for (auto& iterator : m_urlSchemeHandlersByScheme)
         parameters.urlSchemeHandlers.set(iterator.key, iterator.value->identifier());
 
