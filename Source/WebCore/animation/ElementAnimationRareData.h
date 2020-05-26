@@ -51,10 +51,13 @@ public:
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
     PropertyToTransitionMap& completedTransitionsByProperty() { return m_completedTransitionsByProperty; }
     PropertyToTransitionMap& runningTransitionsByProperty() { return m_runningTransitionsByProperty; }
+    const RenderStyle* lastStyleChangeEventStyle() const { return m_lastStyleChangeEventStyle.get(); }
+    void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style) { m_lastStyleChangeEventStyle = WTFMove(style); }
 
 private:
 
     std::unique_ptr<KeyframeEffectStack> m_keyframeEffectStack;
+    std::unique_ptr<const RenderStyle> m_lastStyleChangeEventStyle;
     AnimationCollection m_webAnimations;
     AnimationCollection m_cssAnimations;
     AnimationCollection m_transitions;

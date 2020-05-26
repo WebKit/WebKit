@@ -1,3 +1,19 @@
+2020-05-26  Antoine Quint  <graouts@apple.com>
+
+        Hardware fill-forwards animation and transitions don't interact correctly
+        https://bugs.webkit.org/show_bug.cgi?id=187839
+        <rdar://problem/42410412>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that reproduces the issue shown by the original test case for this bug. While an animation is running
+        for a CSS property, we change the underlying value for that animated property which is also set as the transition-property
+        value. The correct behavior is to not start a CSS Transition either when changing the underlying value during the
+        CSS Animation nor at the end of the CSS Animation.
+
+        * webanimations/updating-property-targeted-by-css-transition-during-css-animation-expected.txt: Added.
+        * webanimations/updating-property-targeted-by-css-transition-during-css-animation.html: Added.
+
 2020-05-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip revoke-blob-url-after-navigation.html on Windows.

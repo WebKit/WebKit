@@ -1,0 +1,3 @@
+
+PASS Updating a CSS property set as a transition-property while a CSS Animation is already animating that property. 
+

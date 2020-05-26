@@ -162,8 +162,6 @@ public:
     bool isCurrentlyAffectingProperty(CSSPropertyID, Accelerated = Accelerated::No) const;
     bool isRunningAcceleratedAnimationForProperty(CSSPropertyID) const;
 
-    const RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
-
     bool requiresPseudoElement() const;
 
 private:
@@ -206,7 +204,6 @@ private:
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;
     PseudoId m_pseudoId { PseudoId::None };
-    std::unique_ptr<const RenderStyle> m_unanimatedStyle;
 
     AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };
     BlendingKeyframesSource m_blendingKeyframesSource { BlendingKeyframesSource::WebAnimation };

@@ -3900,6 +3900,18 @@ PropertyToTransitionMap& Element::ensureRunningTransitionsByProperty()
     return ensureAnimationRareData().runningTransitionsByProperty();
 }
 
+const RenderStyle* Element::lastStyleChangeEventStyle() const
+{
+    if (auto* animationData = animationRareData())
+        return animationData->lastStyleChangeEventStyle();
+    return nullptr;
+}
+
+void Element::setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style)
+{
+    ensureAnimationRareData().setLastStyleChangeEventStyle(WTFMove(style));
+}
+
 #if ENABLE(RESIZE_OBSERVER)
 
 void Element::disconnectFromResizeObservers()

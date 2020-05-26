@@ -317,6 +317,9 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
             if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
                 m_document.timeline().updateCSSTransitionsForElement(element, *oldStyle, *newStyle);
 
+            // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
+            // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
+            // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
             if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
                 m_document.timeline().updateCSSAnimationsForElement(element, oldStyle, *newStyle);
         }
@@ -325,10 +328,14 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     // Now we can update all Web animations, which will include CSS Animations as well
     // as animations created via the JS API.
     if (element.hasKeyframeEffects()) {
+        // Record the style prior to applying animations for this style change event.
+        element.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*newStyle));
+        // Apply all keyframe effects to the new style.
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
         animationImpact = element.applyKeyframeEffects(*animatedStyle);
         newStyle = WTFMove(animatedStyle);
-    }
+    } else
+        element.setLastStyleChangeEventStyle(nullptr);
 
     // Old code path for CSS Animations and CSS Transitions.
     if (!RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {

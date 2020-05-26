@@ -1,3 +1,55 @@
+2020-05-26  Antoine Quint  <graouts@apple.com>
+
+        Hardware fill-forwards animation and transitions don't interact correctly
+        https://bugs.webkit.org/show_bug.cgi?id=187839
+        <rdar://problem/42410412>
+
+        Reviewed by Simon Fraser.
+
+        Test: webanimations/updating-property-targeted-by-css-transition-during-css-animation.html
+
+        We didn't follow the CSS Transitions spec closely enough when it came to defining the correct before and after
+        change styles during a style change event.
+
+        We now correctly set the before-change style as one of three possible values:
+        
+            1. if there are running CSS-originated animations, we ensure those are updated to the current time and
+               resolve them to get the style,
+            2. otherwise we use the RenderStyle recorded in Style::TreeResolver::createAnimatedElementUpdate() prior
+               to applying animations during the last style change event,
+            3. otherwise we use the previous computed style, which should not have any animated values.
+        
+        As for the after-change style, we also need to ensure any running CSS Animations are update to the current time
+        and resolve them to get the style. Otherwise, we just use the current computed style prior to applying animations.
+
+        Finally, we can exit from AnimationTimeline::updateCSSTransitionsForElementAndProperty() early if we find that
+        we have a JS-originated animation running for the given property on the given element since we know that that
+        animation will yield an overriding value for both the before and after change styles since JS-originated animations
+        have the hightest composite order.
+
+        This means we no longer need to track the unanimated style on KeyframeEffect.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/AnimationTimeline.h:
+        * animation/ElementAnimationRareData.h:
+        (WebCore::ElementAnimationRareData::lastStyleChangeEventStyle const):
+        (WebCore::ElementAnimationRareData::setLastStyleChangeEventStyle):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::clearBlendingKeyframes):
+        (WebCore::KeyframeEffect::apply):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        * animation/KeyframeEffect.h:
+        (WebCore::KeyframeEffect::unanimatedStyle const): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::lastStyleChangeEventStyle const):
+        (WebCore::Element::setLastStyleChangeEventStyle):
+        * dom/Element.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
 2020-05-26  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Remove red()/green()/blue() accessors from ExtendedColor in preperation for supporting non-RGB based ColorSpaces

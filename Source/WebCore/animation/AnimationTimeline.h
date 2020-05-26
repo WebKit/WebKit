@@ -75,7 +75,7 @@ public:
     void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, Element&);
 
     void updateCSSAnimationsForElement(Element&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle);
-    void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle);
+    void updateCSSTransitionsForElement(Element&, const RenderStyle& currentStyle, const RenderStyle& newStyle);
 
 protected:
     explicit AnimationTimeline();

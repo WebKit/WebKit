@@ -835,7 +835,6 @@ bool KeyframeEffect::forceLayoutIfNeeded()
 void KeyframeEffect::clearBlendingKeyframes()
 {
     m_blendingKeyframesSource = BlendingKeyframesSource::WebAnimation;
-    m_unanimatedStyle = nullptr;
     m_blendingKeyframes.clear();
 }
 
@@ -1215,9 +1214,6 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
 
     if (!computedTiming.progress)
         return;
-
-    if (!m_unanimatedStyle)
-        m_unanimatedStyle = RenderStyle::clonePtr(targetStyle);
 
     setAnimatedPropertiesInStyle(targetStyle, computedTiming.progress.value());
 }
@@ -1615,11 +1611,14 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         if (!m_blendingKeyframes.hasImplicitKeyframes())
             return renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes);
 
-        ASSERT(m_unanimatedStyle);
         ASSERT(m_target);
+
+        auto* lastStyleChangeEventStyle = m_target->lastStyleChangeEventStyle();
+        ASSERT(lastStyleChangeEventStyle);
+
         KeyframeList explicitKeyframes(m_blendingKeyframes.animationName());
         explicitKeyframes.copyKeyframes(m_blendingKeyframes);
-        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), m_unanimatedStyle.get());
+        explicitKeyframes.fillImplicitKeyframes(*m_target, m_target->styleResolver(), lastStyleChangeEventStyle);
         return renderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), explicitKeyframes);
     };
 

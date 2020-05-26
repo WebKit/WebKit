@@ -502,6 +502,9 @@ public:
     CSSAnimationCollection& animationsCreatedByMarkup();
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&&);
 
+    const RenderStyle* lastStyleChangeEventStyle() const;
+    void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&&);
+
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT bool containsFullScreenElement() const;
     void setContainsFullScreenElement(bool);

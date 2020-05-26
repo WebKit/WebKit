@@ -20,7 +20,7 @@ PASS Animation.play produces expected style change events
 PASS Animation.pause produces expected style change events 
 PASS Animation.updatePlaybackRate produces expected style change events 
 PASS Animation.reverse produces expected style change events 
-FAIL Animation.persist produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+PASS Animation.persist produces expected style change events 
 FAIL Animation.commitStyles produces expected style change events assert_true: A transition should have been triggered expected true got false
 PASS Animation.Animation constructor produces expected style change events 
 
