@@ -1,3 +1,7 @@
+list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
+    API/JSRemoteInspectorServer.h
+)
+
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/inspector/remote/socket"
 )
@@ -18,6 +22,7 @@ list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
 list(APPEND JavaScriptCore_SOURCES
     API/JSRemoteInspector.cpp
+    API/JSRemoteInspectorServer.cpp
 
     inspector/remote/RemoteAutomationTarget.cpp
     inspector/remote/RemoteConnectionToTarget.cpp

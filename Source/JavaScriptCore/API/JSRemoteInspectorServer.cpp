@@ -30,7 +30,7 @@
 
 uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t port)
 {
-    const auto& server = Inspector::RemoteInspectorServer::singleton();
+    auto& server = Inspector::RemoteInspectorServer::singleton();
     if (!server.start(address, port))
         return 0;
 

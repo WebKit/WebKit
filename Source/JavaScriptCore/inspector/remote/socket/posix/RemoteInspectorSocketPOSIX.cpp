@@ -85,12 +85,21 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
         ::close(fdListen);
         return WTF::nullopt;
     }
+
     error = setsockopt(fdListen, SOL_SOCKET, SO_REUSEPORT, &enabled, sizeof(enabled));
     if (error < 0) {
         LOG_ERROR("setsockopt() SO_REUSEPORT, errno = %d", errno);
         ::close(fdListen);
         return WTF::nullopt;
     }
+
+#if PLATFORM(PLAYSTATION)
+    if (setsockopt(fdListen, SOL_SOCKET, SO_USE_DEVLAN, &enabled, sizeof(enabled)) < 0) {
+        LOG_ERROR("setsocketopt() SO_USE_DEVLAN, errno = %d", errno);
+        ::close(fdListen);
+        return WTF::nullopt;
+    }
+#endif
 
     // FIXME: Support AF_INET6 connections.
     address.sin_family = AF_INET;
