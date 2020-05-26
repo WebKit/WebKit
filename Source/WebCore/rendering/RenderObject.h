@@ -239,7 +239,6 @@ public:
     virtual bool isTableCell() const { return false; }
     virtual bool isRenderTableCol() const { return false; }
     virtual bool isTableCaption() const { return false; }
-    virtual bool isTableRow() const { return false; }
     virtual bool isTableSection() const { return false; }
     virtual bool isTextControl() const { return false; }
     virtual bool isTextArea() const { return false; }
@@ -396,6 +395,7 @@ public:
     bool isLineBreakOpportunity() const { return isLineBreak() && isWBR(); }
     bool isTextOrLineBreak() const { return isText() || isLineBreak(); }
     bool isBox() const { return m_bitfields.isBox(); }
+    bool isTableRow() const { return m_bitfields.isTableRow(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
     bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
@@ -488,6 +488,7 @@ public:
     void setIsText() { ASSERT(!isBox()); m_bitfields.setIsTextOrRenderView(true); }
     void setIsLineBreak() { m_bitfields.setIsLineBreak(true); }
     void setIsBox() { m_bitfields.setIsBox(true); }
+    void setIsTableRow() { m_bitfields.setIsTableRow(true); }
     void setIsRenderView() { ASSERT(isBox()); m_bitfields.setIsTextOrRenderView(true); }
     void setReplaced(bool b = true) { m_bitfields.setIsReplaced(b); }
     void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
@@ -820,6 +821,7 @@ private:
             , m_isAnonymous(node.isDocumentNode())
             , m_isTextOrRenderView(false)
             , m_isBox(false)
+            , m_isTableRow(false)
             , m_isInline(true)
             , m_isReplaced(false)
             , m_isLineBreak(false)
@@ -851,6 +853,7 @@ private:
         ADD_BOOLEAN_BITFIELD(isAnonymous, IsAnonymous);
         ADD_BOOLEAN_BITFIELD(isTextOrRenderView, IsTextOrRenderView);
         ADD_BOOLEAN_BITFIELD(isBox, IsBox);
+        ADD_BOOLEAN_BITFIELD(isTableRow, IsTableRow);
         ADD_BOOLEAN_BITFIELD(isInline, IsInline);
         ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);
         ADD_BOOLEAN_BITFIELD(isLineBreak, IsLineBreak);
@@ -859,7 +862,6 @@ private:
         ADD_BOOLEAN_BITFIELD(hasLayer, HasLayer);
         ADD_BOOLEAN_BITFIELD(hasOverflowClip, HasOverflowClip); // Set in the case of overflow:auto/scroll/hidden
         ADD_BOOLEAN_BITFIELD(hasTransformRelatedProperty, HasTransformRelatedProperty);
-        ADD_BOOLEAN_BITFIELD(unused, Unused);
 
         ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);
 
