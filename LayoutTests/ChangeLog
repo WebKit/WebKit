@@ -1,5 +1,18 @@
 2020-05-26  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Gardening, update pending baselines after r262127
+        https://bugs.webkit.org/show_bug.cgi?id=212370
+
+        Unrevewed gardening.
+
+        * platform/wpe/fast/borders/fieldsetBorderRadius-expected.txt: Added.
+        * platform/wpe/fast/html/details-marker-style-mixed-expected.txt: Added.
+        * platform/wpe/mathml/presentation/roots-expected.txt:
+        * platform/wpe/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+
+2020-05-26  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update pending baselines after r262127
         https://bugs.webkit.org/show_bug.cgi?id=212369
 
