@@ -70,6 +70,11 @@ public:
     // ALPN Protocol ID: https://w3c.github.io/resource-timing/#bib-RFC7301
     String protocol;
     bool complete { false };
+    bool cellular { false };
+    bool expensive { false };
+    bool constrained { false };
+    bool multipath { false };
+    bool isReusedConnection { false };
 };
 
 class NetworkLoadMetrics : public NetworkLoadMetricsWithoutNonTimingData {
@@ -95,6 +100,11 @@ public:
         copy.responseEnd = responseEnd;
         copy.complete = complete;
         copy.protocol = protocol.isolatedCopy();
+        copy.cellular = cellular;
+        copy.expensive = expensive;
+        copy.constrained = constrained;
+        copy.multipath = multipath;
+        copy.isReusedConnection = isReusedConnection;
 
         copy.remoteAddress = remoteAddress.isolatedCopy();
         copy.connectionIdentifier = connectionIdentifier.isolatedCopy();
@@ -124,6 +134,11 @@ public:
             && responseStart == other.responseStart
             && responseEnd == other.responseEnd
             && complete == other.complete
+            && cellular == other.cellular
+            && expensive == other.expensive
+            && constrained == other.constrained
+            && multipath == other.multipath
+            && isReusedConnection == other.isReusedConnection
             && protocol == other.protocol
             && remoteAddress == other.remoteAddress
             && connectionIdentifier == other.connectionIdentifier
@@ -180,6 +195,11 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << responseStart;
     encoder << responseEnd;
     encoder << complete;
+    encoder << cellular;
+    encoder << expensive;
+    encoder << constrained;
+    encoder << multipath;
+    encoder << isReusedConnection;
     encoder << protocol;
     encoder << remoteAddress;
     encoder << connectionIdentifier;
@@ -207,6 +227,11 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.responseStart)
         && decoder.decode(metrics.responseEnd)
         && decoder.decode(metrics.complete)
+        && decoder.decode(metrics.cellular)
+        && decoder.decode(metrics.expensive)
+        && decoder.decode(metrics.constrained)
+        && decoder.decode(metrics.multipath)
+        && decoder.decode(metrics.isReusedConnection)
         && decoder.decode(metrics.protocol)
         && decoder.decode(metrics.remoteAddress)
         && decoder.decode(metrics.connectionIdentifier)

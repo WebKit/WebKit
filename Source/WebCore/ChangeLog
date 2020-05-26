@@ -1,3 +1,24 @@
+2020-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        Expose more network metrics to WebCoreNSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=212359
+        <rdar://problem/62909440>
+
+        Reviewed by Darin Adler.
+
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        (WebCore::NetworkLoadMetrics::operator== const):
+        (WebCore::NetworkLoadMetrics::encode const):
+        (WebCore::NetworkLoadMetrics::decode):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionTaskTransactionMetrics networkProtocolName]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics isReusedConnection]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics cellular]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics expensive]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics constrained]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics multipath]):
+
 2020-05-25  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Prevent grid-template-rows from serializing adjacent <line-names>

@@ -59,6 +59,12 @@ static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds de
 @property (nullable, copy, readonly) NSDate *requestStartDate;
 @property (nullable, copy, readonly) NSDate *responseStartDate;
 @property (nullable, copy, readonly) NSDate *responseEndDate;
+@property (nullable, copy, readonly) NSString *networkProtocolName;
+@property (assign, readonly, getter=isReusedConnection) BOOL reusedConnection;
+@property (readonly, getter=isCellular) BOOL cellular;
+@property (readonly, getter=isExpensive) BOOL expensive;
+@property (readonly, getter=isConstrained) BOOL constrained;
+@property (readonly, getter=isMultipath) BOOL multipath;
 @end
 
 @implementation WebCoreNSURLSessionTaskTransactionMetrics {
@@ -125,6 +131,42 @@ static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds de
 - (nullable NSDate *)responseEndDate
 {
     return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseEnd);
+}
+
+@dynamic networkProtocolName;
+- (nullable NSString *)networkProtocolName
+{
+    return _metrics.protocol;
+}
+
+@dynamic reusedConnection;
+- (BOOL)isReusedConnection
+{
+    return _metrics.isReusedConnection;
+}
+
+@dynamic cellular;
+- (BOOL)cellular
+{
+    return _metrics.cellular;
+}
+
+@dynamic expensive;
+- (BOOL)expensive
+{
+    return _metrics.expensive;
+}
+
+@dynamic constrained;
+- (BOOL)constrained
+{
+    return _metrics.constrained;
+}
+
+@dynamic multipath;
+- (BOOL)multipath
+{
+    return _metrics.multipath;
 }
 
 @end

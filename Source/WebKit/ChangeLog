@@ -1,3 +1,14 @@
+2020-05-25  Alex Christensen  <achristensen@webkit.org>
+
+        Expose more network metrics to WebCoreNSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=212359
+        <rdar://problem/62909440>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2020-05-24  Sam Weinig  <weinig@apple.com>
 
         Extended Color Cleanup: Use the name SimpleColor consistently

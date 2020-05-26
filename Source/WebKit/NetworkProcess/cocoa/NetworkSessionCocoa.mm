@@ -792,6 +792,13 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         networkLoadMetrics.responseEnd = Seconds(responseEndInterval);
         networkLoadMetrics.markComplete();
         networkLoadMetrics.protocol = String(m.networkProtocolName);
+#if HAVE(CFNETWORK_METRICS_CONNECTION_PROPERTIES)
+        networkLoadMetrics.cellular = m.cellular;
+        networkLoadMetrics.expensive = m.expensive;
+        networkLoadMetrics.constrained = m.constrained;
+        networkLoadMetrics.multipath = m.multipath;
+#endif
+        networkLoadMetrics.isReusedConnection = m.isReusedConnection;
 
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
