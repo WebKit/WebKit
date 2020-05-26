@@ -733,7 +733,7 @@ public:
     bool clipCrossesPaintingBoundary() const;
 
     // Pass offsetFromRoot if known.
-    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const LayoutRect* cachedBoundingBox = nullptr) const;
+    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const Optional<LayoutRect>& cachedBoundingBox = WTF::nullopt) const;
 
     enum CalculateLayerBoundsFlag {
         IncludeSelfTransform                    = 1 << 0,

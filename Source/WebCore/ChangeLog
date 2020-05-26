@@ -1,5 +1,24 @@
 2020-05-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Use an Optional<> for LayerFragment::boundingBox
+        https://bugs.webkit.org/show_bug.cgi?id=212358
+
+        Reviewed by Zalan Bujtas.
+
+        Replace a bool + LayoutRect with Optional<LayoutRect>.
+
+        * rendering/LayerFragment.h:
+        (WebCore::LayerFragment::setRects):
+        (WebCore::LayerFragment::moveBy):
+        (WebCore::LayerFragment::intersect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::updatePaintingInfoForFragments):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+
+2020-05-25  Simon Fraser  <simon.fraser@apple.com>
+
         Make isTableRow() an inline function
         https://bugs.webkit.org/show_bug.cgi?id=212360
 
