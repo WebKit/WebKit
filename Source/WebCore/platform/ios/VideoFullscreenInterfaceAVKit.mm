@@ -942,8 +942,13 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     [m_playerViewController setDelegate:nil];
     [m_playerViewController setPlayerController:nil];
     
-    if (m_currentMode.hasPictureInPicture())
+    if (m_currentMode.hasPictureInPicture()) {
         [m_playerViewController stopPictureInPicture];
+
+        if (m_videoFullscreenModel)
+            m_videoFullscreenModel->didExitPictureInPicture();
+    }
+
     if (m_currentMode.hasFullscreen()) {
         [[m_playerViewController view] layoutIfNeeded];
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL success, NSError* error) {
@@ -1134,9 +1139,6 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
         m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->didExitPictureInPicture();
 
     if (m_enterFullscreenNeedsExitPictureInPicture)
         doEnterFullscreen();

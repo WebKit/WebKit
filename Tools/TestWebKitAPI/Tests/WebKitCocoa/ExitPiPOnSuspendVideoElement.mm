@@ -25,11 +25,13 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+// We can enable the test for old iOS versions after <rdar://problem/63572534> is fixed.
+#if ENABLE(VIDEO_PRESENTATION_MODE) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000))
 
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebCore/PictureInPictureSupport.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/RetainPtr.h>
@@ -57,6 +59,9 @@ namespace TestWebKitAPI {
 
 TEST(PictureInPicture, ExitPiPOnSuspendVideoElement)
 {
+    if (!WebCore::supportsPictureInPicture())
+        return;
+
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;

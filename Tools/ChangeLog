@@ -1,3 +1,18 @@
+2020-05-26  Peng Liu  <peng.liu6@apple.com>
+
+        ASSERTION FAILED: m_clientCounts.contains(contextId) - WebKit::VideoFullscreenManagerProxy::removeClientForContext()
+        https://bugs.webkit.org/show_bug.cgi?id=212308
+
+        Disable TestWebKitAPI.PictureInPicture.ExitPiPOnSuspendVideoElement for old iOS versions
+        due to an issue of AVKit.
+
+        In addition, don't run the test if Picture-in-Picture is not supported.
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm:
+        (TestWebKitAPI::TEST):
+
 2020-05-26  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds

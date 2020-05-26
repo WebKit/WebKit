@@ -1,3 +1,30 @@
+2020-05-26  Peng Liu  <peng.liu6@apple.com>
+
+        ASSERTION FAILED: m_clientCounts.contains(contextId) - WebKit::VideoFullscreenManagerProxy::removeClientForContext()
+        https://bugs.webkit.org/show_bug.cgi?id=212308
+
+        Refactor the implementation of the callback hasVideoInPictureInPictureDidChange().
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::didEnterPictureInPicture):
+        (WebKit::VideoFullscreenModelContext::didExitPictureInPicture):
+
+        (WebKit::VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange):
+        Add this function to wrap m_page->uiClient().hasVideoInPictureInPictureDidChange().
+
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        Remove the call to hasVideoInPictureInPictureDidChange() because it is too early to do so.
+
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode):
+        Add a call to hasVideoInPictureInPictureDidChange() on Mac as well. This fixes the timeout of
+        TestWebKitAPI.PictureInPicture.ExitPiPOnSuspendVideoElement on Mac.
+
+        (WebKit::VideoFullscreenManagerProxy::fullscreenModeChanged):
+        Remove the call to hasVideoInPictureInPictureDidChange() because it is not necessary.
+
 2020-05-26  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds
