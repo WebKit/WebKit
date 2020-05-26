@@ -1,3 +1,39 @@
+2020-05-26  Keith Rollin  <krollin@apple.com>
+
+        Enable the use of XCBuild by default in Apple builds
+        https://bugs.webkit.org/show_bug.cgi?id=209890
+        <rdar://problem/44182078>
+
+        Reviewed by Darin Adler.
+
+        Switch from the "legacy" Xcode build system to the "new" build system
+        (also known as "XCBuild"). Switching to the new system speeds up
+        builds by a small percentage, better validates projects for
+        build-related issues (such as dependency cycles), lets WebKit benefit
+        from future improvements in XCBuild such as those coming from the
+        underlying llbuild open source project, and prepares us for any other
+        tools built for this new ecosystem.
+
+        Specific changes:
+
+        - Remove Xcode project and workspace settings that selected the Build
+          system, allowing the default to take hold (which is currently the
+          New build system).
+        - Updated webkitdirs.pm with a terser check for Xcode version.
+        - Update build-webkit and Makefile.shared to be explicit when using
+          the old build system (no longer treat it as a default or fall-back
+          configuration).
+        - Update various xcconfig files similarly to treat the default as
+          using the new build system.
+        - Update various post-processing build steps to check for Xcode 11.4
+          and to no longer treat the default as using the old build system.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (canUseXCBuild):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2020-05-26  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: simctl list may have stderr logging

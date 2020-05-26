@@ -3003,7 +3003,7 @@
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
-				6E28B8742294DD8000717E69 /* ShellScript */,
+				6E28B8742294DD8000717E69 /* Adjust ANGLE Paths */,
 			);
 			buildRules = (
 				53E934DB230609D800DE060C /* PBXBuildRule */,
@@ -3042,7 +3042,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6E28B8742294DD8000717E69 /* ShellScript */ = {
+		6E28B8742294DD8000717E69 /* Adjust ANGLE Paths */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3051,13 +3051,14 @@
 			);
 			inputPaths = (
 			);
+			name = "Adjust ANGLE Paths";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1100\" -a \"${USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.sh\"\n";
+			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
