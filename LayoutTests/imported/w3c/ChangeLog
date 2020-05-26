@@ -1,3 +1,16 @@
+2020-05-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [css-flexbox] WPT Test css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=212054
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Update the test to use the Ahem font, and rely on different font colors (instead of different glyps)
+        to check that each box of the test is placed correctly.
+
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse-expected.html:
+        * web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse.html:
+
 2020-05-25  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Prevent grid-template-rows from serializing adjacent <line-names>

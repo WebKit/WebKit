@@ -169,8 +169,6 @@ webkit.org/b/212300 fast/text/font-collection-2.html [ ImageOnlyFailure ]
 # 10. TESTS PASSING
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/212054 imported/w3c/web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse.html [ Pass ]
-
 fast/text/emoji-gender-2-3.html [ Pass ]
 fast/text/emoji-gender-2-4.html [ Pass ]
 fast/text/emoji-gender-2-5.html [ Pass ]

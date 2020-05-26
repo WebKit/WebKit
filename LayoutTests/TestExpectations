@@ -4258,7 +4258,6 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-a
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-narrow-content.html [ ImageOnlyFailure ]
-webkit.org/b/212054 imported/w3c/web-platform-tests/css/css-flexbox/flex-lines/multi-line-wrap-reverse-column-reverse.html [ ImageOnlyFailure ]
 
 # CSS Masonry Layout not supported.
 imported/w3c/web-platform-tests/css/css-grid/masonry.tentative [ Skip ]
