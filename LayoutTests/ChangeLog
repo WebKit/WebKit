@@ -1,5 +1,23 @@
 2020-05-25  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Gardening, update baselines after r262127
+        https://bugs.webkit.org/show_bug.cgi?id=212365
+
+        Unreviewed gardening.
+
+        * platform/wpe/fast/html/details-no-summary4-expected.txt:
+        * platform/wpe/fast/html/details-open-javascript-expected.txt:
+        * platform/wpe/fast/html/details-open2-expected.txt:
+        * platform/wpe/fast/html/details-open4-expected.txt:
+        * platform/wpe/fast/html/details-replace-summary-child-expected.txt:
+        * platform/wpe/fast/html/details-replace-text-expected.txt:
+        * platform/wpe/fast/html/details-writing-mode-expected.txt:
+        * platform/wpe/fast/html/details-writing-mode-mixed-expected.txt:
+        * platform/wpe/fast/writing-mode/fieldsets-expected.txt:
+        * platform/wpe/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+
+2020-05-25  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update baselines after r262127
         https://bugs.webkit.org/show_bug.cgi?id=212364
 
