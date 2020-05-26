@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+body {
+   margin: 10px;
+}
+table {
+    border-spacing: 0px;
+}
+
+td {
+    width: 20px;
+    height: 20px;
+    padding: 0px;
+}
+
+th {
+    width: 20px;
+    height: 20px;
+    padding: 0px;
+}
+
+thead {
+    outline: 10px solid green;
+}
+
+tbody {
+    outline: 10px solid green;
+}
+
+tfoot {
+    outline: 10px solid green;
+}
+</style>
+<table>
+<thead>
+<tr><th></th><th></th></tr>
+<tr><th></th><th></th></tr>
+<tr><th></th><th></th></tr>
+</thead>
+<tbody>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+<tr><td></td><td></td></tr>
+</tbody>
+<tfoot>
+<tr><th></th><th></th></tr>
+<tr><th></th><th></th></tr>
+<tr><th></th><th></th></tr>
+</tfoot>
+</table>

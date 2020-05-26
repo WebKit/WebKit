@@ -1,3 +1,29 @@
+2020-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for multiple sections
+        https://bugs.webkit.org/show_bug.cgi?id=212354
+
+        Reviewed by Antti Koivisto.
+
+        Let's keep the grid about rows and columns and about distributing available space.
+        Use the layout tree to find sections. 
+
+        Test: fast/layoutformattingcontext/table-simple-multiple-sections.html
+
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::Section::Section): Deleted.
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Section::box const): Deleted.
+        (WebCore::Layout::TableGrid::sections const): Deleted.
+        (WebCore::Layout::TableGrid::sections): Deleted.
+
 2020-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Use screen font options as default

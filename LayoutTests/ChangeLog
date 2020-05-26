@@ -1,3 +1,13 @@
+2020-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for multiple sections
+        https://bugs.webkit.org/show_bug.cgi?id=212354
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-simple-multiple-sections-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-multiple-sections.html: Added.
+
 2020-05-26  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ Mac wk1 ] fast/events/form-onchange.html is flaky failing.

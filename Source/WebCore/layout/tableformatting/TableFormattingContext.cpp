@@ -68,17 +68,24 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
     auto& columnList = grid.columns().list();
     auto& rowList = grid.rows().list();
     // Final table cell layout. At this point all percentage values can be resolved.
+    auto sectionOffset = LayoutUnit { };
+    auto* currentSection = &rowList.first().box().parent();
     for (auto& cell : grid.cells()) {
         auto& cellBox = cell->box();
         auto& cellDisplayBox = formattingState().displayBox(cellBox);
-        cellDisplayBox.setTop(rowList[cell->startRow()].logicalTop());
+        auto& section = rowList[cell->startRow()].box().parent();
+        if (&section != currentSection) {
+            currentSection = &section;
+            // While the grid is a continuous flow of rows, in the display tree they are relative to their sections.
+            sectionOffset = rowList[cell->startRow()].logicalTop();
+        }
+        cellDisplayBox.setTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
         cellDisplayBox.setLeft(columnList[cell->startColumn()].logicalLeft());
         auto availableVerticalSpace = rowList[cell->startRow()].logicalHeight();
         for (size_t rowIndex = cell->startRow() + 1; rowIndex < cell->endRow(); ++rowIndex)
             availableVerticalSpace += rowList[rowIndex].logicalHeight();
         availableVerticalSpace += (cell->rowSpan() - 1) * grid.verticalSpacing();
         layoutCell(*cell, availableHorizontalSpace, availableVerticalSpace);
-        
         // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to 
         // use some kind of intrinsic padding similar to RenderTableCell.
         auto paddingTop = cellDisplayBox.paddingTop().valueOr(LayoutUnit { });
@@ -114,6 +121,7 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
     auto& rows = grid.rows().list();
 
     auto rowLogicalTop = grid.verticalSpacing();
+    const ContainerBox* previousRow = nullptr;
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
         auto& row = rows[rowIndex];
         auto& rowBox = row.box();
@@ -124,7 +132,6 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
         rowDisplayBox.setHorizontalMargin({ });
         rowDisplayBox.setHorizontalComputedMargin({ });
         rowDisplayBox.setVerticalMargin({ { }, { } });
-
 
         auto computedRowBorder = [&] {
             auto border = geometry().computedBorder(rowBox);
@@ -157,14 +164,17 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             computedRowBorder.horizontal.right = { };
         }
         rowDisplayBox.setContentBoxWidth(rowLogicalWidth - computedRowBorder.width());
-
         rowDisplayBox.setBorder(computedRowBorder);
 
+        if (previousRow && &previousRow->parent() != &rowBox.parent()) {
+            // This row is in a different section.
+            rowLogicalTop = { };
+        }
         rowDisplayBox.setTop(rowLogicalTop);
         rowDisplayBox.setLeft({ });
 
-        row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += row.logicalHeight() + grid.verticalSpacing();
+        previousRow = &rowBox;
     }
 
     auto& columns = grid.columns();
@@ -190,8 +200,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     auto& grid = formattingState().tableGrid();
     auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
     auto logicalTop = constraints.vertical.logicalTop;
-    for (auto& section : grid.sections()) {
-        auto& sectionBox = section.box();
+    for (auto& sectionBox : childrenOfType<ContainerBox>(root())) {
         auto& sectionDisplayBox = formattingState().displayBox(sectionBox);
         // Section borders are either collapsed or ignored.
         sectionDisplayBox.setBorder({ });
@@ -202,8 +211,12 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         sectionDisplayBox.setVerticalMargin({ { }, { } });
 
         sectionDisplayBox.setContentBoxWidth(sectionWidth);
-        sectionDisplayBox.setContentBoxHeight(grid.rows().list().last().logicalBottom() + grid.verticalSpacing());
-
+        auto sectionContentHeight = LayoutUnit { };
+        for (auto& rowBox : childrenOfType<ContainerBox>(sectionBox))
+            sectionContentHeight += geometryForBox(rowBox).height() + grid.verticalSpacing();
+        // FIXME: Let's try not add vertical spacing to the content box.
+        sectionContentHeight += grid.verticalSpacing();
+        sectionDisplayBox.setContentBoxHeight(sectionContentHeight);
         sectionDisplayBox.setLeft(constraints.horizontal.logicalLeft);
         sectionDisplayBox.setTop(logicalTop);
 

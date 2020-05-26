@@ -61,16 +61,6 @@ public:
     void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
     Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
-    class Section {
-    public:
-        Section(const ContainerBox&);
-
-        const ContainerBox& box() const { return *m_layoutBox.get(); }
-
-    private:
-        WeakPtr<const ContainerBox> m_layoutBox;
-    };
-
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:
@@ -217,10 +207,6 @@ public:
         FormattingContext::IntrinsicWidthConstraints m_widthConstraints;
     };
 
-    using Sections = Vector<Section>;
-    const Sections& sections() const { return m_sections; }
-    Sections& sections() { return m_sections; }
-
     const Columns& columns() const { return m_columns; }
     Columns& columns() { return m_columns; }
 
@@ -240,7 +226,6 @@ private:
     Columns m_columns;
     Rows m_rows;
     Cells m_cells;
-    Sections m_sections;
     SlotMap m_slotMap;
 
     LayoutUnit m_horizontalSpacing;

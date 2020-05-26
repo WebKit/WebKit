@@ -111,14 +111,13 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
             bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
         }
 
-        auto& sections = grid.sections();
-        topBorder = std::max(topBorder, geometry().computedBorder(sections.first().box()).vertical.top);
-        for (auto& section : sections) {
-            auto horiztonalBorder = geometry().computedBorder(section.box()).horizontal;
+        topBorder = std::max(topBorder, geometry().computedBorder(*tableBox.firstChild()).vertical.top);
+        for (auto& section : childrenOfType<ContainerBox>(tableBox)) {
+            auto horiztonalBorder = geometry().computedBorder(section).horizontal;
             leftBorder = std::max(leftBorder, horiztonalBorder.left);
             rightBorder = std::max(rightBorder, horiztonalBorder.right);
         }
-        bottomBorder = std::max(bottomBorder, geometry().computedBorder(sections.last().box()).vertical.bottom);
+        bottomBorder = std::max(bottomBorder, geometry().computedBorder(*tableBox.lastChild()).vertical.bottom);
 
         auto& rows = grid.rows().list();
         topBorder = std::max(topBorder, geometry().computedBorder(rows.first().box()).vertical.top);
