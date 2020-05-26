@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x171
-  RenderBlock {HTML} at (0,0) size 800x172
-    RenderBody {BODY} at (5,5) size 790x161
+layer at (0,0) size 800x172
+  RenderBlock {HTML} at (0,0) size 800x173
+    RenderBody {BODY} at (5,5) size 790x162
       RenderEmbeddedObject {OBJECT} at (0,0) size 159x159 [border: (1px dashed #800000)]
         layer at (0,0) size 153x153
           RenderView at (0,0) size 153x153
         layer at (0,0) size 153x153
           RenderSVGRoot {svg} at (0,0) size 153x153
             RenderSVGEllipse {circle} at (0,0) size 153x153 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
-      RenderText {#text} at (158,148) size 4x12
-        text run at (158,148) width 4: " "
+      RenderText {#text} at (158,149) size 4x12
+        text run at (158,149) width 4: " "
       RenderEmbeddedObject {OBJECT} at (161,0) size 160x159 [border: (1px dashed #800000)]
         layer at (0,0) size 153x153
           RenderView at (0,0) size 153x153
