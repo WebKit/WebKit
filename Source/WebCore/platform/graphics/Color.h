@@ -94,9 +94,6 @@ public:
         setSimpleColor(makeSimpleColorFromCMYKA(c, m, y, k, a));
     }
 
-    WEBCORE_EXPORT explicit Color(const String&);
-    explicit Color(const char*);
-
     explicit Color(WTF::HashTableDeletedValueType)
     {
         static_assert(deletedHashValue & invalidSimpleColor, "Color's deleted hash value must not look like an ExtendedColor");

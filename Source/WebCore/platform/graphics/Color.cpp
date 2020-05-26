@@ -28,7 +28,6 @@
 
 #include "AnimationUtilities.h"
 #include "ColorUtilities.h"
-#include "HashTools.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -53,49 +52,6 @@ int differenceSquared(const Color& c1, const Color& c2)
     int dG = c1Green - c2Green;
     int dB = c1Blue - c2Blue;
     return dR * dR + dG * dG + dB * dB;
-}
-
-static inline const NamedColor* findNamedColor(const String& name)
-{
-    char buffer[64]; // easily big enough for the longest color name
-    unsigned length = name.length();
-    if (length > sizeof(buffer) - 1)
-        return nullptr;
-    for (unsigned i = 0; i < length; ++i) {
-        UChar c = name[i];
-        if (!c || !WTF::isASCII(c))
-            return nullptr;
-        buffer[i] = toASCIILower(static_cast<char>(c));
-    }
-    buffer[length] = '\0';
-    return findColor(buffer, length);
-}
-
-Color::Color(const String& name)
-{
-    if (name[0] == '#') {
-        Optional<SimpleColor> color;
-        if (name.is8Bit())
-            color = SimpleColor::parseHexColor(name.characters8() + 1, name.length() - 1);
-        else
-            color = SimpleColor::parseHexColor(name.characters16() + 1, name.length() - 1);
-
-        if (color)
-            setSimpleColor(*color);
-    } else {
-        if (auto* foundColor = findNamedColor(name))
-            setSimpleColor({ foundColor->ARGBValue });
-    }
-}
-
-Color::Color(const char* name)
-{
-    if (name[0] == '#') {
-        auto color = SimpleColor::parseHexColor(reinterpret_cast<const LChar*>(&name[1]), std::strlen(&name[1]));
-        if (color)
-            setSimpleColor(*color);
-    } else if (auto* foundColor = findColor(name, strlen(name)))
-        setSimpleColor({ foundColor->ARGBValue });
 }
 
 Color::Color(const Color& other)

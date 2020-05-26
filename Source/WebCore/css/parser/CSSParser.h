@@ -37,6 +37,7 @@ class Color;
 class Element;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
+class SimpleColor;
 class StyleRuleBase;
 class StyleRuleKeyframe;
 class StyleSheetContents;
@@ -84,9 +85,11 @@ public:
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 
-    static Color parseColor(const String&, bool strict = false);
-    static Color parseColorWorkerSafe(const String&, CSSValuePool&, bool strict = false);
-    static Color parseSystemColor(const String&, const CSSParserContext*);
+    WEBCORE_EXPORT static Color parseColor(const String&, bool strict = false);
+    static Color parseColorWorkerSafe(StringView);
+    static Color parseSystemColor(StringView);
+    static Optional<SimpleColor> parseNamedColor(StringView);
+    static Optional<SimpleColor> parseHexColor(StringView);
 
 private:
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);

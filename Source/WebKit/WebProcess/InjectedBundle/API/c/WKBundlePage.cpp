@@ -625,7 +625,7 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
             highlights.uncheckedAppend({
                 static_cast<unsigned>(startOffset),
                 static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"))->value()),
-                WebCore::Color(static_cast<API::String*>(dictionary->get("color"))->string())
+                WebCore::CSSParser::parseColor(static_cast<API::String*>(dictionary->get("color"))->string())
             });
         }
     }

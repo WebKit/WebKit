@@ -94,66 +94,49 @@ bool CSSParser::parseSupportsCondition(const String& condition)
 
 Color CSSParser::parseColor(const String& string, bool strict)
 {
-    if (string.isEmpty())
-        return Color();
-    
-    // Try named colors first.
-    Color namedColor { string };
-    if (namedColor.isValid())
-        return namedColor;
-    
-    // Try the fast path to parse hex and rgb.
-    RefPtr<CSSValue> value = CSSParserFastPaths::parseColor(string, strict ? HTMLStandardMode : HTMLQuirksMode, CSSValuePool::singleton());
-
-    // If that fails, try the full parser.
-    if (!value)
-        value = parseSingleValue(CSSPropertyColor, string, strictCSSParserContext());
-    if (!value || !value->isPrimitiveValue())
-        return Color();
-    const auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
+        return *color;
+    // FIXME: Unclear why we want to ignore the boolean argument "strict" and always pass strictCSSParserContext here.
+    auto value = parseSingleValue(CSSPropertyColor, string, strictCSSParserContext());
+    if (!is<CSSPrimitiveValue>(value))
+        return { };
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
     if (!primitiveValue.isRGBColor())
-        return Color();
+        return { };
     return primitiveValue.color();
 }
 
-Color CSSParser::parseColorWorkerSafe(const String& string, CSSValuePool& valuePool, bool strict)
+Color CSSParser::parseColorWorkerSafe(StringView string)
 {
-    if (string.isEmpty())
-        return Color();
-
-    // Try named colors first.
-    Color namedColor { string };
-    if (namedColor.isValid())
-        return namedColor;
-
-    // Try the fast path to parse hex and rgb.
-    RefPtr<CSSValue> value = CSSParserFastPaths::parseColor(string, strict ? HTMLStandardMode : HTMLQuirksMode, valuePool);
-
-    if (!value || !value->isPrimitiveValue())
-        return Color();
-    const auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (!primitiveValue.isRGBColor())
-        return Color();
-    return primitiveValue.color();
+    if (auto color = CSSParserFastPaths::parseSimpleColor(string))
+        return *color;
+    // FIXME: This function does not parse many types of valid CSS color syntax, such as color with non-sRGB color spaces.
+    return { };
 }
 
-Color CSSParser::parseSystemColor(const String& string, const CSSParserContext* context)
+Color CSSParser::parseSystemColor(StringView string)
 {
-    CSSValueID id = cssValueKeywordID(string);
-    if (!StyleColor::isSystemColor(id))
-        return Color();
+    auto keyword = cssValueKeywordID(string);
+    if (!StyleColor::isSystemColor(keyword))
+        return { };
+    return RenderTheme::singleton().systemColor(keyword, { });
+}
 
-    OptionSet<StyleColor::Options> options;
-    if (context && context->useSystemAppearance)
-        options.add(StyleColor::Options::UseSystemAppearance);
-    return RenderTheme::singleton().systemColor(id, options);
+Optional<SimpleColor> CSSParser::parseNamedColor(StringView string)
+{
+    return CSSParserFastPaths::parseNamedColor(string);
+}
+
+Optional<SimpleColor> CSSParser::parseHexColor(StringView string)
+{
+    return CSSParserFastPaths::parseHexColor(string);
 }
 
 RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)
 {
     if (string.isEmpty())
         return nullptr;
-    if (RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode))
+    if (auto value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
         return value;
     CSSTokenizer tokenizer(string);
     return CSSPropertyParser::parseSingleValue(propertyID, tokenizer.tokenRange(), context);
@@ -162,10 +145,8 @@ RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const Str
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
-    RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode);
-    if (value)
+    if (auto value = CSSParserFastPaths::maybeParseValue(propertyID, string, context))
         return declaration.addParsedProperty(CSSProperty(propertyID, WTFMove(value), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
-
     CSSParser parser(context);
     return parser.parseValue(declaration, propertyID, string, important);
 }

@@ -26,12 +26,6 @@
 #pragma once
 
 #include "ColorUtilities.h"
-#include <algorithm>
-#include <cmath>
-#include <unicode/uchar.h>
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
-#include <wtf/text/LChar.h>
 
 namespace WebCore {
 
@@ -73,11 +67,6 @@ public:
         else if constexpr (N == 3)
             return alphaComponent();
     }
-
-    static Optional<SimpleColor> parseHexColor(const String&);
-    static Optional<SimpleColor> parseHexColor(const StringView&);
-    static Optional<SimpleColor> parseHexColor(const LChar*, unsigned);
-    static Optional<SimpleColor> parseHexColor(const UChar*, unsigned);
 
 private:
     uint32_t m_value { 0 };
@@ -161,12 +150,10 @@ constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
 
 namespace std {
 
-template<>
-class tuple_size<WebCore::SimpleColor> : public std::integral_constant<std::size_t, 4> {
+template<> class tuple_size<WebCore::SimpleColor> : public std::integral_constant<std::size_t, 4> {
 };
 
-template<std::size_t N>
-class tuple_element<N, WebCore::SimpleColor> {
+template<std::size_t N> class tuple_element<N, WebCore::SimpleColor> {
 public:
     using type = uint8_t;
 };

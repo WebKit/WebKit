@@ -973,28 +973,47 @@ void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropert
     addPropertyToPresentationAttributeStyle(style, propertyID, value);
 }
 
-static SimpleColor parseColorStringWithCrazyLegacyRules(const String& colorString)
+// Color parsing that matches HTML's "rules for parsing a legacy color value"
+// https://html.spec.whatwg.org/#rules-for-parsing-a-legacy-colour-value
+static Optional<SimpleColor> parseLegacyColorValue(StringView string)
 {
-    // Per spec, only look at the first 128 digits of the string.
-    const size_t maxColorLength = 128;
-    // We'll pad the buffer with two extra 0s later, so reserve two more than the max.
-    Vector<char, maxColorLength+2> digitBuffer;
+    // An empty string doesn't apply a color.
+    if (string.isEmpty())
+        return WTF::nullopt;
 
-    size_t i = 0;
-    // Skip a leading #.
-    if (colorString[0] == '#')
-        i = 1;
+    string = string.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+    if (string.isEmpty())
+        return Color::black;
+
+    // "transparent" doesn't apply a color either.
+    if (equalLettersIgnoringASCIICase(string, "transparent"))
+        return WTF::nullopt;
+
+    if (auto namedColor = CSSParser::parseNamedColor(string))
+        return namedColor;
+
+    if (string.length() == 4 && string[0] == '#' && isASCIIHexDigit(string[1]) && isASCIIHexDigit(string[2]) && isASCIIHexDigit(string[3]))
+        return makeSimpleColor(toASCIIHexValue(string[1]) * 0x11, toASCIIHexValue(string[2]) * 0x11, toASCIIHexValue(string[3]) * 0x11);
+
+    // Per spec, only look at the first 128 digits of the string.
+    constexpr unsigned maxColorLength = 128;
+
+    // We'll pad the buffer with two extra 0s later, so reserve two more than the max.
+    Vector<char, maxColorLength + 2> digitBuffer;
 
     // Grab the first 128 characters, replacing non-hex characters with 0.
     // Non-BMP characters are replaced with "00" due to them appearing as two "characters" in the String.
-    for (; i < colorString.length() && digitBuffer.size() < maxColorLength; i++) {
-        if (!isASCIIHexDigit(colorString[i]))
+    unsigned i = 0;
+    if (string[0] == '#') // Skip a leading #.
+        i = 1;
+    for (; i < string.length() && digitBuffer.size() < maxColorLength; i++) {
+        if (!isASCIIHexDigit(string[i]))
             digitBuffer.append('0');
         else
-            digitBuffer.append(colorString[i]);
+            digitBuffer.append(string[i]);
     }
 
-    if (!digitBuffer.size())
+    if (digitBuffer.isEmpty())
         return Color::black;
 
     // Pad the buffer out to at least the next multiple of three in size.
@@ -1006,11 +1025,11 @@ static SimpleColor parseColorStringWithCrazyLegacyRules(const String& colorStrin
 
     // Split the digits into three components, then search the last 8 digits of each component.
     ASSERT(digitBuffer.size() >= 6);
-    size_t componentLength = digitBuffer.size() / 3;
-    size_t componentSearchWindowLength = std::min<size_t>(componentLength, 8);
-    size_t redIndex = componentLength - componentSearchWindowLength;
-    size_t greenIndex = componentLength * 2 - componentSearchWindowLength;
-    size_t blueIndex = componentLength * 3 - componentSearchWindowLength;
+    unsigned componentLength = digitBuffer.size() / 3;
+    unsigned componentSearchWindowLength = std::min(componentLength, 8U);
+    unsigned redIndex = componentLength - componentSearchWindowLength;
+    unsigned greenIndex = componentLength * 2 - componentSearchWindowLength;
+    unsigned blueIndex = componentLength * 3 - componentSearchWindowLength;
     // Skip digits until one of them is non-zero, or we've only got two digits left in the component.
     while (digitBuffer[redIndex] == '0' && digitBuffer[greenIndex] == '0' && digitBuffer[blueIndex] == '0' && (componentLength - redIndex) > 2) {
         redIndex++;
@@ -1029,28 +1048,10 @@ static SimpleColor parseColorStringWithCrazyLegacyRules(const String& colorStrin
     return makeSimpleColor(redValue, greenValue, blueValue);
 }
 
-// Color parsing that matches HTML's "rules for parsing a legacy color value"
 void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& attributeValue)
 {
-    // An empty string doesn't apply a color. (One containing only whitespace does, which is why this check occurs before stripping.)
-    if (attributeValue.isEmpty())
-        return;
-
-    String colorString = attributeValue.stripWhiteSpace();
-
-    // "transparent" doesn't apply a color either.
-    if (equalLettersIgnoringASCIICase(colorString, "transparent"))
-        return;
-
-    Color color;
-    // We can't always use the default Color constructor because it accepts
-    // 4/8-digit hex, which conflict with some legacy HTML content using attributes.
-    if ((colorString.length() != 5 && colorString.length() != 9) || colorString[0] != '#')
-        color = Color(colorString);
-    if (!color.isValid())
-        color = Color(parseColorStringWithCrazyLegacyRules(colorString));
-
-    style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(color));
+    if (auto color = parseLegacyColorValue(attributeValue))
+        style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(*color));
 }
 
 bool HTMLElement::willRespondToMouseMoveEvents()

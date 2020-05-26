@@ -1,3 +1,73 @@
+2020-05-25  Darin Adler  <darin@apple.com>
+
+        Eliminate Color constructors that take strings, moving color parsing entirely into the CSS parser
+        https://bugs.webkit.org/show_bug.cgi?id=212296
+
+        Reviewed by Sam Weinig.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor): Moved more of the logic into
+        CSSParserFastPaths::parseSimpleColor. Also added a FIXME about what
+        seems to be a mistake about strict mode.
+        (WebCore::CSSParser::parseColorWorkerSafe): Ditto.
+        (WebCore::CSSParser::parseSystemColor): Removed unused context argument.
+        (WebCore::CSSParser::parseNamedColor): Added.
+        (WebCore::CSSParser::parseHexColor): Added.
+        (WebCore::CSSParser::parseSingleValue): Use auto.
+        (WebCore::CSSParser::parseValue): Ditto.
+
+        * css/parser/CSSParser.h: Exported parseColor. Removed unused value pool
+        and strict arguments from parseColorWorkerSafe. Removed unused context
+        argument from parseSystemColor. Added parseNamedColor and parseHexColor.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseSimpleLengthValue): Take a StringView.
+        (WebCore::finishParsingHexColor): Added, logic moved from Color constructor.
+        (WebCore::parseHexColorInternal): Ditto.
+        (WebCore::parseNumericColor): Added, logic moved from fastParseColorInternal.
+        (WebCore::parseColor): Turned into a non-member function since it's private
+        to this file. Use auto a bit more, and removed unneeded value pool argument.
+        (WebCore::finishParsingNamedColor): Added, logic moved from Color constructor.
+        (WebCore::parseNamedColorInternal): Ditto.
+        (WebCore::parseSimpleColorInternal): Ditto.
+        (WebCore::CSSParserFastPaths::parseSimpleColor): Ditto.
+        (WebCore::CSSParserFastPaths::parseHexColor): Ditto.
+        (WebCore::CSSParserFastPaths::parseNamedColor): Ditto.
+        (WebCore::isUniversalKeyword): Take a StringView.
+        (WebCore::parseKeywordValue): Ditto.
+        (WebCore::parseSimpleTransform): Ditto.
+        (WebCore::parseCaretColor): Ditto. Also take a parser context rather than
+        a parser mode.
+        (WebCore::CSSParserFastPaths::maybeParseValue): Take a StringView.
+
+        * css/parser/CSSParserFastPaths.h: Cut down includes. Use StringView.
+        Added parseSimpleColor, parseHexColor, and parseNamedColor.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHexColor): Return an
+        Optional<SimpleColor> instead of a Color.
+        (WebCore::CSSPropertyParserHelpers::consumeColor): Refactor a bit for clarity.
+
+        * html/HTMLElement.cpp:
+        (WebCore::parseLegacyColorValue): Renamed from parseColorStringWithCrazyLegacyRules
+        and refactored a bit. Made this match the HTML specification more closely.
+        (WebCore::HTMLElement::addHTMLColorToStyle): Simplify now that more of the logic
+        was moved into parseLegacyColorValue.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::parseColor): Removed unneeded arguments for parseColorWorkerSafe
+        and for parseSystemColor.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::findNamedColor): Deleted.
+        (WebCore::Color::Color): Deleted overloadds that take strings.
+        * platform/graphics/Color.h: Updated for the above.
+
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::parseHexColorInternal): Deleted.
+        (WebCore::SimpleColor::parseHexColor): Deleted.
+        * platform/graphics/SimpleColor.h: Removed parseHexColor functions.
+
 2020-05-26  Antoine Quint  <graouts@apple.com>
 
         Hardware fill-forwards animation and transitions don't interact correctly

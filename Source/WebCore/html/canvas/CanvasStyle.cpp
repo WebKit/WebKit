@@ -54,17 +54,15 @@ bool isCurrentColorString(const String& colorString)
 Color parseColor(const String& colorString, CanvasBase& canvasBase)
 {
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (canvasBase.isOffscreenCanvas()) {
-        auto& canvas = downcast<OffscreenCanvas>(canvasBase);
-        return CSSParser::parseColorWorkerSafe(colorString, canvas.cssValuePool());
-    }
+    if (canvasBase.isOffscreenCanvas())
+        return CSSParser::parseColorWorkerSafe(colorString);
 #else
     UNUSED_PARAM(canvasBase);
 #endif
     Color color = CSSParser::parseColor(colorString);
     if (color.isValid())
         return color;
-    return CSSParser::parseSystemColor(colorString, nullptr);
+    return CSSParser::parseSystemColor(colorString);
 }
 
 Color currentColor(CanvasBase& canvasBase)

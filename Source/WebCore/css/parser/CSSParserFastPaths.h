@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -29,29 +29,30 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSValue;
-class CSSValuePool;
-class StyleSheetContents;
+class SimpleColor;
+
 struct CSSParserContext;
 
 class CSSParserFastPaths {
 public:
-    // Parses simple values like '10px' or 'green', but makes no guarantees
-    // about handling any property completely.
-    static RefPtr<CSSValue> maybeParseValue(CSSPropertyID, const String&, const CSSParserContext&);
+    // Parses simple values like '10px' or 'green', but makes no guarantees about handling any property completely.
+    static RefPtr<CSSValue> maybeParseValue(CSSPropertyID, StringView, const CSSParserContext&);
 
-    // Properties handled here shouldn't be explicitly handled in CSSPropertyParser
+    // Properties handled here shouldn't be explicitly handled in CSSPropertyParser.
     static bool isKeywordPropertyID(CSSPropertyID);
     static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
-    static RefPtr<CSSValue> parseColor(const String&, CSSParserMode, CSSValuePool&);
+    // Parses numeric and named colors.
+    static Optional<SimpleColor> parseSimpleColor(StringView, bool strict = false);
+    static Optional<SimpleColor> parseHexColor(StringView); // Hex colors of length 3, 4, 6, or 8, without leading "#".
+    static Optional<SimpleColor> parseNamedColor(StringView);
 };
 
 } // namespace WebCore
