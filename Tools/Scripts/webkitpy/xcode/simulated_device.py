@@ -129,8 +129,9 @@ class SimulatedDeviceManager(object):
             return
 
         try:
-            simctl_json = json.loads(host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'list', '--json'], decode_output=False))
+            simctl_json = json.loads(host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'list', '--json'], decode_output=False, return_stderr=False))
         except (ValueError, ScriptError):
+            _log.error('Failed to decode json output')
             return
 
         SimulatedDeviceManager._device_identifier_to_name = {device['identifier']: device['name'] for device in simctl_json['devicetypes']}
@@ -569,7 +570,7 @@ class SimulatedDevice(object):
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 
-        system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=True)
+        system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=True, return_stderr=False)
         if re.search(r'"{}"'.format(home_screen_service), system_processes) or re.search(r'A\s+{}'.format(home_screen_service), system_processes):
             return True
         return False
@@ -644,6 +645,7 @@ class SimulatedDevice(object):
                     ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,
                     env=environment_to_use,
                     error_handler=_log_debug_error,
+                    return_stderr=False,
                 )
                 match = re.match(r'(?P<bundle>[^:]+): (?P<pid>\d+)\n', output)
                 # FIXME: We shouldn't need to check the PID <rdar://problem/31154075>.

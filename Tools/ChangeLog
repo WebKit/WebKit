@@ -1,3 +1,17 @@
+2020-05-26  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: simctl list may have stderr logging
+        https://bugs.webkit.org/show_bug.cgi?id=212376
+        <rdar://problem/63517635>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.populate_available_devices): Only parse stdout, log error when
+        json decoding fails.
+        (SimulatedDevice.is_usable): Only parse stdout.
+        (SimulatedDevice.launch_app): Ditto.
+
 2020-05-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] ActionSheetTests.DataDetectorsLinkIsNotPresentedAsALink is failing consistently
