@@ -32,7 +32,7 @@
 
 /* This ensures that users #include <wtf/Platform.h> rather than one of the helper files files directly. */
 #define WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
-
+/* IWYU pragma: begin_exports */
 
 /* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
@@ -73,7 +73,7 @@
 #include <WebKitAdditions/AdditionalPlatform.h>
 #endif
 
-
+/* IWYU pragma: end_exports */
 #undef WTF_PLATFORM_GUARD_AGAINST_INDIRECT_INCLUSION
 
 

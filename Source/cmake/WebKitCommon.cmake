@@ -50,6 +50,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(WebKitFS)
     include(WebKitCCache)
     include(WebKitCompilerFlags)
+    include(WebKitStaticAnalysis)
     include(WebKitFeatures)
     include(WebKitFindPackage)
 

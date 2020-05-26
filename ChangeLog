@@ -1,3 +1,20 @@
+2020-05-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add static analyzers
+        https://bugs.webkit.org/show_bug.cgi?id=212280
+
+        Reviewed by David Kilzer.
+
+        Add support for static analyzers within CMake builds. Supported analyzers are
+        clang-tidy, iwyu (include-what-you-use) and lwyu (link-what-you-use). They can
+        be enabled by passing a semicolon separated list to CMake through the ANALYZERS
+        option.
+
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+        * Source/cmake/WebKitStaticAnalysis.cmake: Added.
+
 2020-05-26  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds
