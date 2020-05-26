@@ -1,3 +1,21 @@
+2020-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Use screen font options as default
+        https://bugs.webkit.org/show_bug.cgi?id=212332
+
+        Reviewed by Adrian Perez de Castro.
+
+        There's no gdk_screen_get_font_options() in GTK4, so we need to get the individual properties from the settings
+        and build a cairo_font_options_t. We can just do the same in GTK3 to avoid ifdefs. Add a helper
+        SystemFontOptions singleton class to monitor and parse the font settings.
+
+        * platform/graphics/gtk/GdkCairoUtilities.cpp:
+        (WebCore::SystemFontOptions::singleton):
+        (WebCore::SystemFontOptions::SystemFontOptions):
+        (WebCore::SystemFontOptions::fontOptions const):
+        (WebCore::SystemFontOptions::updateFontOptions):
+        (WebCore::getDefaultCairoFontOptions):
+
 2020-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Use an Optional<> for LayerFragment::boundingBox
