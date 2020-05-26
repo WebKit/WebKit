@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -292,6 +292,7 @@ private:
         OP2_IMUL_GvEv       = 0xAF,
         OP2_CMPXCHGb        = 0xB0,
         OP2_CMPXCHG         = 0xB1,
+        OP2_BTR             = 0xB3,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_POPCNT          = 0xB8,
         OP2_GROUP_BT_EvIb   = 0xBA,
@@ -1645,6 +1646,13 @@ public:
     void bsfq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.twoByteOp64(OP2_BSF, dst, src);
+    }
+#endif
+
+#if CPU(X86_64)
+    void btrq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp64(OP2_BTR, dst, src);
     }
 #endif
 

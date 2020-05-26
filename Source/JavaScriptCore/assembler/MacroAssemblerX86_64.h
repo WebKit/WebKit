@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,8 @@ public:
     static constexpr unsigned numFPRs = 16;
     
     static constexpr Scale ScalePtr = TimesEight;
+
+    static constexpr RegisterID InvalidGPRReg = X86Registers::InvalidGPRReg;
 
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
@@ -497,6 +499,44 @@ public:
         }
         m_assembler.bsfq_rr(src, dst);
         ctzAfterBsf<64>(dst);
+    }
+
+    void countTrailingZeros64WithoutNullCheck(RegisterID src, RegisterID dst)
+    {
+#if ASSERT_ENABLED
+        Jump notZero = branchTest64(NonZero, src);
+        abortWithReason(MacroAssemblerOops, __LINE__);
+        notZero.link(this);
+#endif
+        if (supportsBMI1()) {
+            m_assembler.tzcntq_rr(src, dst);
+            return;
+        }
+        m_assembler.bsfq_rr(src, dst);
+    }
+
+    void clearBit64(RegisterID bitToClear, RegisterID dst, RegisterID = InvalidGPRReg)
+    {
+        m_assembler.btrq_rr(dst, bitToClear);
+    }
+
+    enum class ClearBitsAttributes {
+        OKToClobberMask,
+        MustPreserveMask
+    };
+
+    void clearBits64WithMask(RegisterID mask, RegisterID dest, ClearBitsAttributes maskPreservation = ClearBitsAttributes::OKToClobberMask)
+    {
+        not64(mask);
+        m_assembler.andq_rr(mask, dest);
+        if (maskPreservation == ClearBitsAttributes::MustPreserveMask)
+            not64(mask);
+    }
+
+    void clearBits64WithMask(RegisterID src, RegisterID mask, RegisterID dest, ClearBitsAttributes maskPreservation = ClearBitsAttributes::OKToClobberMask)
+    {
+        move(src, dest);
+        clearBits64WithMask(mask, dest, maskPreservation);
     }
 
     void countPopulation64(RegisterID src, RegisterID dst)

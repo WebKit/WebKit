@@ -313,7 +313,7 @@ static Vector<int32_t> int32Operands()
     };
 }
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
 static Vector<int64_t> int64Operands()
 {
     return Vector<int64_t> {
@@ -467,6 +467,198 @@ void testBranchTestBit64AddrImm()
 }
 
 #endif
+
+#if CPU(X86_64) || CPU(ARM64)
+void testClearBit64()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        GPRReg scratchGPR = GPRInfo::argumentGPR2;
+        jit.clearBit64(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0, scratchGPR);
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    constexpr unsigned bitsInWord = sizeof(uint64_t) * 8;
+
+    for (unsigned i = 0; i < bitsInWord; ++i) {
+        uint64_t word = std::numeric_limits<uint64_t>::max();
+        constexpr uint64_t one = 1;
+        CHECK_EQ(invoke<uint64_t>(test, word, i), (word & ~(one << i)));
+    }
+
+    for (unsigned i = 0; i < bitsInWord; ++i) {
+        uint64_t word = 0;
+        CHECK_EQ(invoke<uint64_t>(test, word, i), 0);
+    }
+}
+
+void testClearBits64WithMask()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.clearBits64WithMask(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto value : int64Operands()) {
+        uint64_t word = std::numeric_limits<uint64_t>::max();
+        CHECK_EQ(invoke<uint64_t>(test, word, value), (word & ~value));
+    }
+
+    for (auto value : int64Operands()) {
+        uint64_t word = 0;
+        CHECK_EQ(invoke<uint64_t>(test, word, value), 0);
+    }
+
+#if ENABLE(MASM_PROBE)
+    uint64_t savedMask = 0;
+    auto test2 = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.probe([&] (Probe::Context& context) {
+            savedMask = context.gpr<uint64_t>(GPRInfo::argumentGPR1);
+        });
+
+        jit.clearBits64WithMask(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0, CCallHelpers::ClearBitsAttributes::MustPreserveMask);
+
+        jit.probe([&] (Probe::Context& context) {
+            CHECK_EQ(savedMask, context.gpr<uint64_t>(GPRInfo::argumentGPR1));
+        });
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto value : int64Operands()) {
+        uint64_t word = std::numeric_limits<uint64_t>::max();
+        CHECK_EQ(invoke<uint64_t>(test2, word, value), (word & ~value));
+    }
+
+    for (auto value : int64Operands()) {
+        uint64_t word = 0;
+        CHECK_EQ(invoke<uint64_t>(test2, word, value), 0);
+    }
+#endif
+}
+
+void testClearBits64WithMaskTernary()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::argumentGPR2);
+        jit.move(GPRInfo::argumentGPR1, GPRInfo::argumentGPR3);
+        jit.clearBits64WithMask(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto value : int64Operands()) {
+        uint64_t word = std::numeric_limits<uint64_t>::max();
+        CHECK_EQ(invoke<uint64_t>(test, word, value), (word & ~value));
+    }
+
+    for (auto value : int64Operands()) {
+        uint64_t word = 0;
+        CHECK_EQ(invoke<uint64_t>(test, word, value), 0);
+    }
+
+#if ENABLE(MASM_PROBE)
+    uint64_t savedMask = 0;
+    auto test2 = compile([&] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::argumentGPR2);
+        jit.move(GPRInfo::argumentGPR1, GPRInfo::argumentGPR3);
+
+        jit.probe([&] (Probe::Context& context) {
+            savedMask = context.gpr<uint64_t>(GPRInfo::argumentGPR2);
+        });
+
+        jit.clearBits64WithMask(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, GPRInfo::returnValueGPR, CCallHelpers::ClearBitsAttributes::MustPreserveMask);
+
+        jit.probe([&] (Probe::Context& context) {
+            CHECK_EQ(savedMask, context.gpr<uint64_t>(GPRInfo::argumentGPR2));
+        });
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto value : int64Operands()) {
+        uint64_t word = std::numeric_limits<uint64_t>::max();
+        CHECK_EQ(invoke<uint64_t>(test2, word, value), (word & ~value));
+    }
+
+    for (auto value : int64Operands()) {
+        uint64_t word = 0;
+        CHECK_EQ(invoke<uint64_t>(test2, word, value), 0);
+    }
+#endif
+}
+
+static void testCountTrailingZeros64Impl(bool wordCanBeZero)
+{
+    auto test = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        if (wordCanBeZero)
+            jit.countTrailingZeros64(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        else
+            jit.countTrailingZeros64WithoutNullCheck(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    constexpr size_t numberOfBits = sizeof(uint64_t) * 8;
+
+    auto expectedNumberOfTrailingZeros = [=] (uint64_t word) -> size_t {
+        size_t count = 0;
+        for (size_t i = 0; i < numberOfBits; ++i) {
+            if (word & 1)
+                break;
+            word >>= 1;
+            count++;
+        }
+        return count;
+    };
+
+    for (auto word : int64Operands()) {
+        if (!wordCanBeZero && !word)
+            continue;
+        CHECK_EQ(invoke<size_t>(test, word), expectedNumberOfTrailingZeros(word));
+    }
+
+    for (size_t i = 0; i < numberOfBits; ++i) {
+        uint64_t one = 1;
+        uint64_t word = one << i;
+        CHECK_EQ(invoke<size_t>(test, word), i);
+    }
+}
+
+void testCountTrailingZeros64()
+{
+    bool wordCanBeZero = true;
+    testCountTrailingZeros64Impl(wordCanBeZero);
+}
+
+void testCountTrailingZeros64WithoutNullCheck()
+{
+    bool wordCanBeZero = false;
+    testCountTrailingZeros64Impl(wordCanBeZero);
+}
+#endif // CPU(X86_64) || CPU(ARM64)
 
 void testCompareDouble(MacroAssembler::DoubleCondition condition)
 {
@@ -2299,6 +2491,14 @@ void run(const char* filter)
     RUN(testBranchTestBit64RegReg());
     RUN(testBranchTestBit64RegImm());
     RUN(testBranchTestBit64AddrImm());
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+    RUN(testClearBit64());
+    RUN(testClearBits64WithMask());
+    RUN(testClearBits64WithMaskTernary());
+    RUN(testCountTrailingZeros64());
+    RUN(testCountTrailingZeros64WithoutNullCheck());
 #endif
 
 #if CPU(ARM64)

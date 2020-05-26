@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,8 @@ public:
     
     static constexpr RegisterID dataTempRegister = ARM64Registers::ip0;
     static constexpr RegisterID memoryTempRegister = ARM64Registers::ip1;
+
+    static constexpr RegisterID InvalidGPRReg = ARM64Registers::InvalidGPRReg;
 
     RegisterID scratchRegister()
     {
@@ -436,7 +438,32 @@ public:
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.and_<64>(dest, dest, dataTempRegister);
     }
-    
+
+    void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
+    {
+        if (scratchForMask == InvalidGPRReg)
+            scratchForMask = scratchRegister();
+
+        move(TrustedImm32(1), scratchForMask);
+        lshift64(bitToClear, scratchForMask);
+        clearBits64WithMask(scratchForMask, dest);
+    }
+
+    enum class ClearBitsAttributes {
+        OKToClobberMask,
+        MustPreserveMask
+    };
+
+    void clearBits64WithMask(RegisterID mask, RegisterID dest, ClearBitsAttributes = ClearBitsAttributes::OKToClobberMask)
+    {
+        clearBits64WithMask(dest, mask, dest);
+    }
+
+    void clearBits64WithMask(RegisterID src, RegisterID mask, RegisterID dest, ClearBitsAttributes = ClearBitsAttributes::OKToClobberMask)
+    {
+        m_assembler.bic<64>(dest, src, mask);
+    }
+
     void countLeadingZeros32(RegisterID src, RegisterID dest)
     {
         m_assembler.clz<32>(dest, src);
@@ -459,6 +486,18 @@ public:
         // Arm does not have a count trailing zeros only a count leading zeros.
         m_assembler.rbit<64>(dest, src);
         m_assembler.clz<64>(dest, dest);
+    }
+
+    void countTrailingZeros64WithoutNullCheck(RegisterID src, RegisterID dest)
+    {
+#if ASSERT_ENABLED
+        Jump notZero = branchTest64(NonZero, src);
+        abortWithReason(MacroAssemblerOops, __LINE__);
+        notZero.link(this);
+#endif
+        // Arm did not need an explicit null check to begin with. So, we can do
+        // exactly the same thing as in countTrailingZeros64().
+        countTrailingZeros64(src, dest);
     }
 
     void byteSwap16(RegisterID dst)

@@ -1,3 +1,48 @@
+2020-05-26  Mark Lam  <mark.lam@apple.com>
+
+        Add some new emitters to the X86_64 and ARM64 MacroAssemblers.
+        https://bugs.webkit.org/show_bug.cgi?id=212385
+
+        Reviewed by Robin Morisset.
+
+        This patch adds these MacroAssembler emitters: 
+            clearBit64
+            clearBits64WithMask
+            countTrailingZeros64WithoutNullCheck
+
+        clearBit64 clears a bit.
+
+        clearBits64WithMask does the equivalent of and64 with the 1's complement of the
+        provided mask.
+
+        countTrailingZeros64WithoutNullCheck does the same thing as countTrailingZeros64,
+        except that it assumes that the word in the register it is processing will never
+        be null, and therefore skips the null check.  This is useful in code generation
+        that already does a null check ahead of time.  So, there's no need to do a
+        redundant null check.
+
+        Also added testmasm tests for these emitters.
+
+        * assembler/AbortReason.h:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::clearBit64):
+        (JSC::MacroAssemblerARM64::clearBits64WithMask):
+        (JSC::MacroAssemblerARM64::countTrailingZeros64WithoutNullCheck):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::countTrailingZeros64WithoutNullCheck):
+        (JSC::MacroAssemblerX86_64::clearBit64):
+        (JSC::MacroAssemblerX86_64::clearBits64WithMask):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::btrq_rr):
+        * assembler/testmasm.cpp:
+        (JSC::testClearBit64):
+        (JSC::testClearBits64WithMask):
+        (JSC::testClearBits64WithMaskTernary):
+        (JSC::testCountTrailingZeros64Impl):
+        (JSC::testCountTrailingZeros64):
+        (JSC::testCountTrailingZeros64WithoutNullCheck):
+        (JSC::run):
+
 2020-05-26  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Enable RemoteWebInspector
