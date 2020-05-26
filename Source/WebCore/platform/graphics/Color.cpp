@@ -41,16 +41,14 @@ static constexpr SimpleColor darkenedWhite { 0xFFABABAB };
 
 int differenceSquared(const Color& c1, const Color& c2)
 {
-    // FIXME: This is assuming that the colors are in the same colorspace.
+    // FIXME: ExtendedColor - needs to handle color spaces.
     // FIXME: This should probably return a floating point number, but many of the call
     // sites have picked comparison values based on feel. We'd need to break out
     // our logarithm tables to change them :)
-    int c1Red = c1.isExtended() ? c1.asExtended().red() * 255 : c1.asSimpleColor().redComponent();
-    int c1Green = c1.isExtended() ? c1.asExtended().green() * 255 : c1.asSimpleColor().greenComponent();
-    int c1Blue = c1.isExtended() ? c1.asExtended().blue() * 255 : c1.asSimpleColor().blueComponent();
-    int c2Red = c2.isExtended() ? c2.asExtended().red() * 255 : c2.asSimpleColor().redComponent();
-    int c2Green = c2.isExtended() ? c2.asExtended().green() * 255 : c2.asSimpleColor().greenComponent();
-    int c2Blue = c2.isExtended() ? c2.asExtended().blue() * 255 : c2.asSimpleColor().blueComponent();
+
+    auto [c1Red, c1Blue, c1Green, c1Alpha] = c1.toSRGBASimpleColorLossy();
+    auto [c2Red, c2Blue, c2Green, c2Alpha] = c2.toSRGBASimpleColorLossy();
+
     int dR = c1Red - c2Red;
     int dG = c1Green - c2Green;
     int dB = c1Blue - c2Blue;
@@ -309,10 +307,8 @@ Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(float amount) co
 
 Color Color::colorWithAlpha(float alpha) const
 {
-    if (isExtended()) {
-        auto& extendedColor = asExtended();
-        return Color { extendedColor.red(), extendedColor.green(), extendedColor.blue(), alpha, extendedColor.colorSpace() };
-    }
+    if (isExtended())
+        return asExtended().colorWithAlpha(alpha);
 
     // FIXME: This is where this function differs from colorWithAlphaUsingAlternativeRounding.
     uint8_t newAlpha = alpha * 0xFF;
@@ -325,10 +321,8 @@ Color Color::colorWithAlpha(float alpha) const
 
 Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
 {
-    if (isExtended()) {
-        auto& extendedColor = asExtended();
-        return Color { extendedColor.red(), extendedColor.green(), extendedColor.blue(), alpha, extendedColor.colorSpace() };
-    }
+    if (isExtended())
+        return asExtended().colorWithAlpha(alpha);
 
     // FIXME: This is where this function differs from colorWithAlphaUsing.
     uint8_t newAlpha = colorFloatToSimpleColorByte(alpha);

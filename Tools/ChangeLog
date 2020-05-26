@@ -1,3 +1,14 @@
+2020-05-26  Sam Weinig  <weinig@apple.com>
+
+        Extended Color Cleanup: Remove red()/green()/blue() accessors from ExtendedColor in preperation for supporting non-RGB based ColorSpaces
+        https://bugs.webkit.org/show_bug.cgi?id=212366
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update tests to pull values from the channels rather than from the red()/green()/blue() accessors.
+
 2020-05-26  Peng Liu  <peng.liu6@apple.com>
 
         ASSERTION FAILED: m_clientCounts.contains(contextId) - WebKit::VideoFullscreenManagerProxy::removeClientForContext()

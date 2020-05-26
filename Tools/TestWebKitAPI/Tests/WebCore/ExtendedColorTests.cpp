@@ -38,10 +38,13 @@ TEST(ExtendedColor, Constructor)
 {
     Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
-    EXPECT_FLOAT_EQ(1.0, c1.asExtended().red());
-    EXPECT_FLOAT_EQ(0.5, c1.asExtended().green());
-    EXPECT_FLOAT_EQ(0.25, c1.asExtended().blue());
-    EXPECT_FLOAT_EQ(1.0, c1.asExtended().alpha());
+
+    auto [r, g, b, alpha] = c1.asExtended().channels();
+
+    EXPECT_FLOAT_EQ(1.0, r);
+    EXPECT_FLOAT_EQ(0.5, g);
+    EXPECT_FLOAT_EQ(0.25, b);
+    EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(1u, c1.asExtended().refCount());
     EXPECT_EQ(c1.cssText(), "color(display-p3 1 0.5 0.25)");
 }
@@ -53,10 +56,12 @@ TEST(ExtendedColor, CopyConstructor)
 
     Color c2(c1);
 
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().red());
-    EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
-    EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
+    auto [r, g, b, alpha] = c2.asExtended().channels();
+
+    EXPECT_FLOAT_EQ(1.0, r);
+    EXPECT_FLOAT_EQ(0.5, g);
+    EXPECT_FLOAT_EQ(0.25, b);
+    EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(2u, c1.asExtended().refCount());
     EXPECT_EQ(2u, c2.asExtended().refCount());
     EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
@@ -69,10 +74,12 @@ TEST(ExtendedColor, Assignment)
 
     Color c2 = c1;
 
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().red());
-    EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
-    EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
+    auto [r, g, b, alpha] = c2.asExtended().channels();
+
+    EXPECT_FLOAT_EQ(1.0, r);
+    EXPECT_FLOAT_EQ(0.5, g);
+    EXPECT_FLOAT_EQ(0.25, b);
+    EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(2u, c1.asExtended().refCount());
     EXPECT_EQ(2u, c2.asExtended().refCount());
     EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
@@ -152,10 +159,12 @@ TEST(ExtendedColor, MoveConstructor)
     EXPECT_FALSE(c1.isExtended());
     EXPECT_FALSE(c1.isValid());
 
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().red());
-    EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
-    EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
+    auto [r, g, b, alpha] = c2.asExtended().channels();
+
+    EXPECT_FLOAT_EQ(1.0, r);
+    EXPECT_FLOAT_EQ(0.5, g);
+    EXPECT_FLOAT_EQ(0.25, b);
+    EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(1u, c2.asExtended().refCount());
     EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
@@ -172,10 +181,12 @@ TEST(ExtendedColor, MoveAssignment)
     EXPECT_FALSE(c1.isExtended());
     EXPECT_FALSE(c1.isValid());
 
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().red());
-    EXPECT_FLOAT_EQ(0.5, c2.asExtended().green());
-    EXPECT_FLOAT_EQ(0.25, c2.asExtended().blue());
-    EXPECT_FLOAT_EQ(1.0, c2.asExtended().alpha());
+    auto [r, g, b, alpha] = c2.asExtended().channels();
+
+    EXPECT_FLOAT_EQ(1.0, r);
+    EXPECT_FLOAT_EQ(0.5, g);
+    EXPECT_FLOAT_EQ(0.25, b);
+    EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(1u, c2.asExtended().refCount());
     EXPECT_EQ(c2.cssText(), "color(display-p3 1 0.5 0.25)");
 }
@@ -188,10 +199,12 @@ TEST(ExtendedColor, BasicReferenceCounting)
     Color* c2 = new Color(*c1);
     Color* c3 = new Color(*c2);
 
-    EXPECT_FLOAT_EQ(1.0, c2->asExtended().red());
-    EXPECT_FLOAT_EQ(0.5, c2->asExtended().green());
-    EXPECT_FLOAT_EQ(0.25, c2->asExtended().blue());
-    EXPECT_FLOAT_EQ(1.0, c2->asExtended().alpha());
+    auto [r, g, b, alpha] = c2->asExtended().channels();
+
+    EXPECT_FLOAT_EQ(1.0, r);
+    EXPECT_FLOAT_EQ(0.5, g);
+    EXPECT_FLOAT_EQ(0.25, b);
+    EXPECT_FLOAT_EQ(1.0, alpha);
     EXPECT_EQ(3u, c2->asExtended().refCount());
     EXPECT_EQ(c2->cssText(), "color(display-p3 1 0.5 0.25)");
 

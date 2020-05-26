@@ -337,21 +337,15 @@ inline void Color::setSimpleColor(SimpleColor simpleColor)
 
 inline bool Color::isBlackColor(const Color& color)
 {
-    if (color.isExtended()) {
-        const ExtendedColor& extendedColor = color.asExtended();
-        return !extendedColor.red() && !extendedColor.green() && !extendedColor.blue() && extendedColor.alpha() == 1;
-    }
-
+    if (color.isExtended())
+        return color.asExtended().isBlack();
     return color.asSimpleColor() == Color::black;
 }
 
 inline bool Color::isWhiteColor(const Color& color)
 {
-    if (color.isExtended()) {
-        const ExtendedColor& extendedColor = color.asExtended();
-        return extendedColor.red() == 1 && extendedColor.green() == 1 && extendedColor.blue() == 1 && extendedColor.alpha() == 1;
-    }
-    
+    if (color.isExtended())
+        return color.asExtended().isWhite();
     return color.asSimpleColor() == Color::white;
 }
 
@@ -360,11 +354,14 @@ void Color::encode(Encoder& encoder) const
 {
     if (isExtended()) {
         encoder << true;
-        encoder << asExtended().red();
-        encoder << asExtended().green();
-        encoder << asExtended().blue();
-        encoder << asExtended().alpha();
-        encoder << asExtended().colorSpace();
+
+        auto& extendedColor = asExtended();
+        auto [c1, c2, c3, alpha] = extendedColor.channels();
+        encoder << c1;
+        encoder << c2;
+        encoder << c3;
+        encoder << alpha;
+        encoder << extendedColor.colorSpace();
         return;
     }
 
@@ -389,22 +386,22 @@ Optional<Color> Color::decode(Decoder& decoder)
         return WTF::nullopt;
 
     if (isExtended) {
-        float red;
-        float green;
-        float blue;
+        float c1;
+        float c2;
+        float c3;
         float alpha;
         ColorSpace colorSpace;
-        if (!decoder.decode(red))
+        if (!decoder.decode(c1))
             return WTF::nullopt;
-        if (!decoder.decode(green))
+        if (!decoder.decode(c2))
             return WTF::nullopt;
-        if (!decoder.decode(blue))
+        if (!decoder.decode(c3))
             return WTF::nullopt;
         if (!decoder.decode(alpha))
             return WTF::nullopt;
         if (!decoder.decode(colorSpace))
             return WTF::nullopt;
-        return Color { red, green, blue, alpha, colorSpace };
+        return Color { c1, c2, c3, alpha, colorSpace };
     }
 
     bool isValid;

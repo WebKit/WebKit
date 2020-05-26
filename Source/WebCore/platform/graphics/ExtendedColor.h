@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ColorSpace.h"
-
 #include "ColorUtilities.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -38,32 +37,20 @@ class ExtendedColor : public RefCounted<ExtendedColor> {
 public:
     static Ref<ExtendedColor> create(float, float, float, float alpha, ColorSpace = ColorSpace::SRGB);
 
-    float red() const
-    {
-        return m_channels.components[0];
-    }
-
-    float green() const
-    {
-        return m_channels.components[1];
-    }
-
-    float blue() const
-    {
-        return m_channels.components[2];
-    }
-
     float alpha() const { return m_channels.components[3]; }
 
     const FloatComponents& channels() const { return m_channels; }
-
     ColorSpace colorSpace() const { return m_colorSpace; }
 
     WEBCORE_EXPORT unsigned hash() const;
 
     WEBCORE_EXPORT String cssText() const;
 
+    Ref<ExtendedColor> colorWithAlpha(float) const;
     Ref<ExtendedColor> invertedColorWithAlpha(float) const;
+
+    bool isWhite() const;
+    bool isBlack() const;
 
 private:
     ExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
