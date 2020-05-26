@@ -1,3 +1,18 @@
+2020-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop a few beforeload event tests that no longer make sense after r261971.
+
+        We dropped support for the BeforeLoadEvent in r261971 so these tests do not make
+        sense anymore. Those tests also cause flakiness such as <rdar://63623324> now that
+        they no longer run as expected.
+
+        * fast/events/form-iframe-target-before-load-crash-expected.txt: Removed.
+        * fast/events/form-iframe-target-before-load-crash.html: Removed.
+        * fast/events/form-iframe-target-before-load-crash2-expected.txt: Removed.
+        * fast/events/form-iframe-target-before-load-crash2.html: Removed.
+        * fast/events/form-iframe-target-before-load-crash3-expected.txt: Removed.
+        * fast/events/form-iframe-target-before-load-crash3.html: Removed.
+
 2020-05-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for multiple sections
