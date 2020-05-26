@@ -1,3 +1,10 @@
+2020-05-26  Andy Estes  <aestes@apple.com>
+
+        Fix the engineering build on internal SDKs
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Silenced a deprecation warning.
+
 2020-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK2] Use GraphicsLayerTextureMapper for Accelerated Compositing mode
