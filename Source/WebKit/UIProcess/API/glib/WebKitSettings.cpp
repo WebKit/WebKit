@@ -3855,7 +3855,7 @@ const gchar* webkit_settings_get_media_content_types_requiring_hardware_support(
 /**
  * webkit_settings_set_media_content_types_requiring_hardware_support:
  * @settings: a #WebKitSettings
- * @content_types: (allow-none) list of media content types requiring hardware support split by semicolons (:) or %NULL to use the default value.
+ * @content_types: (allow-none): list of media content types requiring hardware support split by semicolons (:) or %NULL to use the default value.
  *
  * Set the #WebKitSettings:media-content-types-requiring-hardware-support property.
  *
