@@ -124,7 +124,6 @@ public:
     bool operator==(const Bitmap&) const;
     bool operator!=(const Bitmap&) const;
 
-    void operator=(const Bitmap&);
     void operator|=(const Bitmap&);
     void operator&=(const Bitmap&);
     void operator^=(const Bitmap&);
@@ -474,13 +473,6 @@ template<size_t bitmapSize, typename WordType>
 inline bool Bitmap<bitmapSize, WordType>::operator!=(const Bitmap& other) const
 {
     return !(*this == other);
-}
-
-template<size_t bitmapSize, typename WordType>
-inline void Bitmap<bitmapSize, WordType>::operator=(const Bitmap& other)
-{
-    for (size_t i = 0; i < words; ++i)
-        bits[i] = other.bits[i];
 }
 
 template<size_t bitmapSize, typename WordType>
