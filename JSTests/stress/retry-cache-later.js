@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runNoCJIT("--useLLInt=false", "--useDFGJIT=false")
 
 function foo(o) {

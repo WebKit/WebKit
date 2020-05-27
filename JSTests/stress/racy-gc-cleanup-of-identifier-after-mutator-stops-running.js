@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runDefault("--numberOfGCMarkers=1", "--useDFGJIT=false", "--useLLInt=false")
 
 function foo() {

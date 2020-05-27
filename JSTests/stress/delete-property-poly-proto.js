@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ requireOptions("--forcePolyProto=1", "--useLLInt=0")
 
 class A {

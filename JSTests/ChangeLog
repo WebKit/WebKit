@@ -1,3 +1,26 @@
+2020-05-26  Mark Lam  <mark.lam@apple.com>
+
+        JSC stress tests that require --useLLInt=0 should be skipped on --no-jit test runs.
+        https://bugs.webkit.org/show_bug.cgi?id=212400
+
+        Reviewed by Saam Barati.
+
+        That's because using --useLLInt=0 and --useJIT=0 together is not a "coherent"
+        (read "valid") configuration.  We should be able to do a --no-jit test run with
+        the JSC_useJIT=0 environmental variable set.  Before this patch, the following
+        tests will all fail.  This patch skips them.
+
+        * stress/delete-property-poly-proto.js:
+        * stress/dfg-compare-eq-via-nonSpeculativeNonPeepholeCompareNullOrUndefined.js:
+        * stress/getter-setter-inlining-should-emit-movhint.js:
+        * stress/merging-ic-variants-should-bail-if-structures-overlap.js:
+        * stress/poly-proto-setter-adds-setter-in-middle.js:
+        * stress/poly-proto-setter-changes-setter-2.js:
+        * stress/poly-proto-setter-changes-setter.js:
+        * stress/racy-gc-cleanup-of-identifier-after-mutator-stops-running.js:
+        * stress/regress-192717.js:
+        * stress/retry-cache-later.js:
+
 2020-05-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         IteratorClose should suppress GetMethod errors

@@ -1,4 +1,6 @@
+//@ skip if not $jitTests
 //@ requireOptions("--forcePolyProto=1", "--useLLInt=0", "--repatchBufferingCountdown=0")
+
 function assert_eq(a, b) {
     
 }

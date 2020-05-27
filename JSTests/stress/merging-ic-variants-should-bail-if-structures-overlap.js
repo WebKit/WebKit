@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runDefault("--validateGraphAtEachPhase=1", "--useLLInt=0")
 
 let items = [];

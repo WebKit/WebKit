@@ -1,4 +1,6 @@
+//@ skip if not $jitTests
 //@ requireOptions("--forcePolyProto=1", "--useLLInt=0", "--repatchBufferingCountdown=0")
+
 let correct = false
 
 class A {
