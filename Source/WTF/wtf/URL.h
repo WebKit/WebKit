@@ -188,7 +188,6 @@ private:
     friend class URLParser;
 
     WTF_EXPORT_PRIVATE void invalidate();
-    void copyToBuffer(Vector<char, 512>& buffer) const;
     unsigned hostStart() const;
     unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);

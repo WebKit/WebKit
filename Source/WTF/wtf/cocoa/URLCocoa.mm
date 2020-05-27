@@ -69,15 +69,11 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     }
 
     RetainPtr<CFURLRef> cfURL;
-
-    // Fast path if the input data is 8-bit to avoid copying into a temporary buffer.
     if (LIKELY(m_string.is8Bit()))
         cfURL = WTF::createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
     else {
-        // Slower path.
-        WTF::URLCharBuffer buffer;
-        copyToBuffer(buffer);
-        cfURL = WTF::createCFURLFromBuffer(buffer.data(), buffer.size());
+        CString utf8 = m_string.utf8();
+        cfURL = WTF::createCFURLFromBuffer(utf8.data(), utf8.length());
     }
 
     if (protocolIsInHTTPFamily() && !WTF::isCFURLSameOrigin(cfURL.get(), *this))

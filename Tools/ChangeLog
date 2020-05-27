@@ -1,3 +1,14 @@
+2020-05-26  Alex Christensen  <achristensen@webkit.org>
+
+        UTF-8 encode strings of invalid URLs when converting WTF::URL to NSURL instead of truncating the UTF-16 encoding
+        https://bugs.webkit.org/show_bug.cgi?id=212393
+        <rdar://problem/63095503>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2020-05-26  Mark Lam  <mark.lam@apple.com>
 
         Enhance Bitmap::setEachNthBit() to also take an end index.

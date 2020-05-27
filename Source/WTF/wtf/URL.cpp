@@ -41,20 +41,6 @@
 
 namespace WTF {
 
-// Copies the source to the destination, assuming all the source characters are ASCII.
-// The destination buffer must be large enough. Null characters are allowed in the
-// source string, and no attempt is made to null-terminate the destination buffer.
-static void copyASCII(const String& string, char* destination)
-{
-    if (string.is8Bit())
-        memcpy(destination, string.characters8(), string.length());
-    else {
-        auto source = string.characters16();
-        for (unsigned i = 0, length = string.length(); i < length; i++)
-            destination[i] = static_cast<char>(source[i]);
-    }
-}
-
 void URL::invalidate()
 {
     m_isValid = false;
@@ -736,14 +722,6 @@ bool URL::isHierarchical() const
         return false;
     ASSERT(m_string[m_schemeEnd] == ':');
     return m_string[m_schemeEnd + 1] == '/';
-}
-
-void URL::copyToBuffer(Vector<char, 512>& buffer) const
-{
-    // FIXME: This throws away the high bytes of all the characters in the string!
-    // That's fine for a valid URL, which is all ASCII, but not for invalid URLs.
-    buffer.resize(m_string.length());
-    copyASCII(m_string, buffer.data());
 }
 
 static bool protocolIsInternal(StringView string, const char* protocol)

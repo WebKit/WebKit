@@ -1,3 +1,24 @@
+2020-05-26  Alex Christensen  <achristensen@webkit.org>
+
+        UTF-8 encode strings of invalid URLs when converting WTF::URL to NSURL instead of truncating the UTF-16 encoding
+        https://bugs.webkit.org/show_bug.cgi?id=212393
+        <rdar://problem/63095503>
+
+        Reviewed by Tim Horton.
+
+        This only changes behavior in code that is marked as UNLIKELY because it can only be reached by invalid unicode URLs,
+        but it can be reached and should behave in a reasonable manner in those cases.  This makes Safari behave more similarly
+        to Firefox in this case instead of doing something similar to no other browser.
+
+        * wtf/URL.cpp:
+        (WTF::copyASCII): Deleted.
+        (WTF::URL::copyToBuffer const): Deleted.
+        * wtf/URL.h:
+        * wtf/cf/URLCF.cpp:
+        (WTF::URL::createCFURL const):
+        * wtf/cocoa/URLCocoa.mm:
+        (WTF::URL::createCFURL const):
+
 2020-05-26  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Disable LLINT_EMBEDDED_OPCODE_ID

@@ -24,8 +24,9 @@
  */
 
 #import "config.h"
-#import <wtf/URL.h>
 
+#import "WTFStringUtilities.h"
+#import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -203,6 +204,9 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
 
     NSString *encodedHostName = WTF::encodeHostName(@"http://.com");
     EXPECT_TRUE(encodedHostName == nil);
+
+    WTF::URL url2(URL(), utf16String(u"http://\u2267\u222E\uFE63"));
+    EXPECT_STREQ([[url2 absoluteString] UTF8String], "http://%E2%89%A7%E2%88%AE%EF%B9%A3");
 }
 
 TEST(WTF_URLExtras, URLExtras_Nil)
