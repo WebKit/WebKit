@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,21 +33,96 @@
 
 namespace WTF {
 
+// Detecting in C++ whether a type is defined, part 3: SFINAE and incomplete types
+// <https://devblogs.microsoft.com/oldnewthing/20190710-00/?p=102678>
+template<typename, typename = void>
+constexpr bool is_type_complete_v = false;
+
+template<typename T>
+constexpr bool is_type_complete_v<T, std::void_t<decltype(sizeof(T))>> = true;
+
+
+template<typename E> class OptionSet;
+
+
+// OptionSetTraits are like EnumTraits, but for validating OptionSet values.
+template<typename> struct OptionSetTraits;
+
+template<typename E, E...> struct OptionSetValues;
+
+template<typename T, typename E> struct OptionSetValueChecker;
+
+template<typename T, typename E, E e, E... es>
+struct OptionSetValueChecker<T, OptionSetValues<E, e, es...>> {
+    static constexpr T allValidBits()
+    {
+        return static_cast<T>(e) | OptionSetValueChecker<T, OptionSetValues<E, es...>>::allValidBits();
+    }
+
+    static constexpr bool isValidOptionSetEnum(T t)
+    {
+        return (static_cast<T>(e) == t) ? true : OptionSetValueChecker<T, OptionSetValues<E, es...>>::isValidOptionSetEnum(t);
+    }
+};
+
+template<typename T, typename E>
+struct OptionSetValueChecker<T, OptionSetValues<E>> {
+    static constexpr T allValidBits()
+    {
+        return 0;
+    }
+
+    static constexpr bool isValidOptionSetEnum(T)
+    {
+        return false;
+    }
+};
+
+
+template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+constexpr bool isValidOptionSetEnum(E e)
+{
+    return OptionSetValueChecker<std::underlying_type_t<E>, typename OptionSetTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
+}
+
+template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+constexpr bool isValidOptionSetEnum(E e)
+{
+    // FIXME: Remove once all OptionSet<> enums have OptionSetTraits<> defined.
+    return hasOneBitSet(static_cast<typename OptionSet<E>::StorageType>(e));
+}
+
+
+template<typename E, std::enable_if_t<std::is_enum<E>::value && is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
+{
+    auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename OptionSetTraits<E>::values>::allValidBits();
+    return rawValue & allValidBitsValue;
+}
+
+template<typename E, std::enable_if_t<std::is_enum<E>::value && !is_type_complete_v<OptionSetTraits<E>>>* = nullptr>
+constexpr typename OptionSet<E>::StorageType maskRawValue(typename OptionSet<E>::StorageType rawValue)
+{
+    // FIXME: Remove once all OptionSet<> enums have OptionSetTraits<> defined.
+    return rawValue;
+}
+
+
 // OptionSet is a class that represents a set of enumerators in a space-efficient manner. The enumerators
 // must be powers of two greater than 0. This class is useful as a replacement for passing a bitmask of
 // enumerators around.
-template<typename T> class OptionSet {
+template<typename E> class OptionSet {
     WTF_MAKE_FAST_ALLOCATED;
-    static_assert(std::is_enum<T>::value, "T is not an enum type");
+    static_assert(std::is_enum<E>::value, "T is not an enum type");
 
 public:
-    using StorageType = std::make_unsigned_t<std::underlying_type_t<T>>;
+    using StorageType = std::make_unsigned_t<std::underlying_type_t<E>>;
 
     template<typename StorageType> class Iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         // Isolate the rightmost set bit.
-        T operator*() const { return static_cast<T>(m_value & -m_value); }
+        E operator*() const { return static_cast<E>(m_value & -m_value); }
 
         // Iterates from smallest to largest enum value by turning off the rightmost set bit.
         Iterator& operator++()
@@ -69,29 +144,23 @@ public:
     };
     using iterator = Iterator<StorageType>;
 
-    static constexpr OptionSet fromRaw(StorageType storageType)
+    static constexpr OptionSet fromRaw(StorageType rawValue)
     {
-        return OptionSet(static_cast<T>(storageType), FromRawValue);
+        return OptionSet(static_cast<E>(maskRawValue<E>(rawValue)), FromRawValue);
     }
 
     constexpr OptionSet() = default;
 
-    constexpr OptionSet(T t)
-        : m_storage(static_cast<StorageType>(t))
+    constexpr OptionSet(E e)
+        : m_storage(static_cast<StorageType>(e))
     {
-#ifndef NDEBUG
-        // This assertion will conflict with the constexpr attribute if we enable it on NDEBUG builds.
-        ASSERT_WITH_MESSAGE(!m_storage || hasOneBitSet(m_storage), "Enumerator is not a zero or a positive power of two.");
-#endif
+        ASSERT(!m_storage || isValidOptionSetEnum(e));
     }
 
-    constexpr OptionSet(std::initializer_list<T> initializerList)
+    constexpr OptionSet(std::initializer_list<E> initializerList)
     {
         for (auto& option : initializerList) {
-#ifndef NDEBUG
-            // This assertion will conflict with the constexpr attribute if we enable it on NDEBUG builds.
-            ASSERT_WITH_MESSAGE(hasOneBitSet(static_cast<StorageType>(option)), "Enumerator is not a positive power of two.");
-#endif
+            ASSERT(isValidOptionSetEnum(option));
             m_storage |= static_cast<StorageType>(option);
         }
     }
@@ -105,7 +174,7 @@ public:
 
     constexpr explicit operator bool() { return !isEmpty(); }
 
-    constexpr bool contains(T option) const
+    constexpr bool contains(E option) const
     {
         return containsAny(option);
     }
@@ -162,13 +231,13 @@ public:
 
 private:
     enum InitializationTag { FromRawValue };
-    constexpr OptionSet(T t, InitializationTag)
-        : m_storage(static_cast<StorageType>(t))
+    constexpr OptionSet(E e, InitializationTag)
+        : m_storage(static_cast<StorageType>(e))
     {
     }
     StorageType m_storage { 0 };
 };
 
-}
+} // namespace WTF
 
 using WTF::OptionSet;

@@ -1,3 +1,35 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        Add OptionSetTraits<> and use with WebCore::DragDestinationAction
+        <https://webkit.org/b/212397>
+
+        Reviewed by Alex Christensen.
+
+        Add OptionSetTraits<> (similar to EnumTraits<>) to define all
+        valid values for a given enum type.  This allows us to use that
+        bitmask with OptionSet<>::fromRaw() to clear undefined bits, and
+        to validate enum values used with the OptionSet<> constructors.
+
+        Note that the extra validation possible with OptionSetTraits<>
+        is enabled based on the existence of that type using the new
+        WTF::is_type_complete_v<> type trait.  Other OptionSet<> enums
+        fall back to the original validation checks.
+
+        Finally, typename <T> is changed to <E> for OptionSet<> to
+        emphasize that it's an enum typename.
+
+        * wtf/OptionSet.h:
+        (WTF::is_type_complete_v): Add.
+        (WTF::OptionSetTraits): Add.
+        (WTF::OptionSetValues): Add.
+        (WTF::OptionSetValueChecker): Add.
+        (WTF::isValidOptionSetEnum): Add.
+        (WTF::maskRawValue): Add.
+        (WTF::OptionSet::Iterator::operator* const):
+        (WTF::OptionSet::fromRaw):
+        (WTF::OptionSet::OptionSet):
+        (WTF::OptionSet::contains const):
+
 2020-05-27  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wdeprecated-copy caused by Bitmap copy assignment operator

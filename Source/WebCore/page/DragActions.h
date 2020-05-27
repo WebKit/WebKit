@@ -93,4 +93,13 @@ template<> struct EnumTraits<WebCore::DragHandlingMethod> {
     >;
 };
 
+template<> struct OptionSetTraits<WebCore::DragDestinationAction> {
+    using values = OptionSetValues<
+        WebCore::DragDestinationAction,
+        WebCore::DragDestinationAction::DHTML,
+        WebCore::DragDestinationAction::Edit,
+        WebCore::DragDestinationAction::Load
+    >;
+};
+
 } // namespace WTF

@@ -1,3 +1,14 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        Add OptionSetTraits<> and use with WebCore::DragDestinationAction
+        <https://webkit.org/b/212397>
+
+        Reviewed by Alex Christensen.
+
+        * page/DragActions.h:
+        (WTF::OptionSetTraits<WebCore::DragDestinationAction>):
+        - Add for use with OptionSet<>.
+
 2020-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support reading "image/png" on ClipboardItem
