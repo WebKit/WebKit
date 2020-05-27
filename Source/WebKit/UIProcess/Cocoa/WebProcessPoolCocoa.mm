@@ -453,33 +453,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
     }
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CFPREFS_DIRECT_MODE) && PLATFORM(IOS_FAMILY)
     if (_AXSApplicationAccessibilityEnabled())
         parameters.preferencesExtensionHandles = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, WTF::nullopt);
-#endif
-
-    auto globalPreferencesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, nullptr, nullptr));
-    static CFStringRef keys[] = {
-        CFSTR("AppleLanguages"),
-        CFSTR("AppleLanguagesSchemaVersion"),
-        CFSTR("AppleLocale")
-    };
-    for (size_t i = 0; i < std::size(keys); ++i) {
-        auto value = adoptCF(CFPreferencesCopyAppValue(keys[i], CFSTR("kCFPreferencesAnyApplication")));
-        if (!value)
-            continue;
-        CFDictionaryAddValue(globalPreferencesDictionary.get(), keys[i], value.get());
-    }
-    if (CFDictionaryGetCount(globalPreferencesDictionary.get()) > 0) {
-        NSError *e = nil;
-        auto data = retainPtr([NSKeyedArchiver archivedDataWithRootObject:(__bridge NSMutableDictionary *)globalPreferencesDictionary.get() requiringSecureCoding:YES error:&e]);
-        if (e) {
-            ASSERT_NOT_REACHED();
-            WTFLogAlways("Failed to archive global preferences dictionary with NSKeyedArchiver.");
-        } else
-            parameters.encodedGlobalPreferences = String([data base64EncodedStringWithOptions:0]);
-    }
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

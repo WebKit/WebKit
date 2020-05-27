@@ -276,36 +276,4 @@ TEST(WebKit, PreferenceObserverStartedOnActivation)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(WebKit, GlobalPreferences)
-{
-    NSString *globalDomain = @"kCFPreferencesAnyApplication";
-    NSString *globalKey = @"AppleLanguages";
-
-    NSArray *languages = @[@"en-US", @"nb-US"];
-
-    CFPreferencesSetAppValue(static_cast<CFStringRef>(globalKey), static_cast<CFArrayRef>(languages), static_cast<CFStringRef>(globalDomain));
-
-    auto userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:globalDomain]);
-    [userDefaults.get() setObject:languages forKey:globalKey];
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
-    configuration.get().processPool = (WKProcessPool *)context.get();
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    auto preferenceValue = [&] {
-        NSString *js = [NSString stringWithFormat:@"window.internals.encodedPreferenceValue(\"%@\",\"%@\")", globalDomain, globalKey];
-        return [webView stringByEvaluatingJavaScript:js];
-    };
-
-    auto encodedString = preferenceValue();
-    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:encodedString options:0]);
-    ASSERT_TRUE(encodedData);
-    NSError *err = nil;
-    auto object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
-    ASSERT_TRUE(!err);
-    ASSERT_TRUE(object);
-    ASSERT_TRUE([object isEqual:languages]);
-}
-
 #endif // WK_HAVE_C_SPI

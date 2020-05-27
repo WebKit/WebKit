@@ -1,3 +1,17 @@
+2020-05-27  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, reverting r260840.
+
+        This patch is no longer needed after preferences root cause
+        has been fixed.
+
+        Reverted changeset:
+
+        "[Cocoa] Global preferences are not accessible in the
+        WebContent process when CFPrefs direct mode is enabled"
+        https://bugs.webkit.org/show_bug.cgi?id=211075
+        https://trac.webkit.org/changeset/260840
+
 2020-05-27  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Unreviewed, fix -Wcomment build warning after r261986
