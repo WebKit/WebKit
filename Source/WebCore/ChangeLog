@@ -1,3 +1,21 @@
+2020-05-27  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Move ColorMatrix to its own files
+        https://bugs.webkit.org/show_bug.cgi?id=212431
+
+        Reviewed by Dean Jackson.
+
+        Move ColorMatrix to its own files from ColorUtilities.h/cpp
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ColorMatrix.cpp: Copied from Source/WebCore/platform/graphics/ColorUtilities.cpp.
+        * platform/graphics/ColorMatrix.h: Copied from Source/WebCore/platform/graphics/ColorUtilities.h.
+        * platform/graphics/ColorUtilities.cpp:
+        * platform/graphics/ColorUtilities.h:
+        * platform/graphics/filters/FilterOperation.cpp:
+
 2020-05-27  David Kilzer  <ddkilzer@apple.com>
 
         Add OptionSetTraits<> and use with WebCore::DragDestinationAction

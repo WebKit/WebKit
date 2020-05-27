@@ -2338,6 +2338,7 @@
 		7C9ACAC01F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB51F3CDC0200F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h */; };
 		7C9ACAC21F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB31F3CDC0100F3AA09 /* JSCryptoRsaKeyAlgorithm.h */; };
 		7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */; };
+		7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CAC6AE8247F082000E61D59 /* ColorMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CB5CA401E525C7300FAEF13 /* MediaQueryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CBBBCC71F560581005EFAAC /* DOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */; };
 		7CBBBCCA1F5617C5005EFAAC /* JSDOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */; };
@@ -10162,6 +10163,8 @@
 		7C9DBFEA1A9C489F000D6B25 /* HTMLAttachmentElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLAttachmentElement.idl; sourceTree = "<group>"; };
 		7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAttachmentElement.cpp; sourceTree = "<group>"; };
 		7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAttachmentElement.h; sourceTree = "<group>"; };
+		7CAC6AE6247F081F00E61D59 /* ColorMatrix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorMatrix.cpp; sourceTree = "<group>"; };
+		7CAC6AE8247F082000E61D59 /* ColorMatrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorMatrix.h; sourceTree = "<group>"; };
 		7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExpression.cpp; sourceTree = "<group>"; };
 		7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryExpression.h; sourceTree = "<group>"; };
 		7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertWebGL.cpp; sourceTree = "<group>"; };
@@ -25420,6 +25423,8 @@
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
+				7CAC6AE6247F081F00E61D59 /* ColorMatrix.cpp */,
+				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
 				0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */,
 				0FE6C76C1FBFB7A60025C053 /* ColorUtilities.h */,
@@ -29966,6 +29971,7 @@
 				F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */,
 				CE5169E721F1B84700EA4F78 /* ColorIOS.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
+				7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */,
 				BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */,
@@ -33006,6 +33012,7 @@
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				DF19E2AC24772BC1007BDACB /* ShouldRelaxThirdPartyCookieBlocking.h in Headers */,
 				8362E8C120CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h in Headers */,
+				7C31C88E247AD595005BF319 /* SimpleColor.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */,
 				585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */,
@@ -33568,7 +33575,6 @@
 				CD336F6417FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h in Headers */,
 				CD336F6817FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h in Headers */,
 				CD8B5A43180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.h in Headers */,
-				7C31C88E247AD595005BF319 /* SimpleColor.h in Headers */,
 				070E81D11BF27656001FDA48 /* VideoTrackPrivateMediaStream.h in Headers */,
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
