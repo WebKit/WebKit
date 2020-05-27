@@ -104,9 +104,9 @@ void WebFakeXRDevice::simulateResetPose()
 {
 }
 
-WebFakeXRInputController WebFakeXRDevice::simulateInputSourceConnection(FakeXRInputSourceInit)
+Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(FakeXRInputSourceInit)
 {
-    return WebFakeXRInputController();
+    return WebFakeXRInputController::create();
 }
 
 ExceptionOr<Ref<WebXRRigidTransform>> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)

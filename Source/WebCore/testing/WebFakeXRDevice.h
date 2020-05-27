@@ -99,7 +99,7 @@ public:
 
     void simulateResetPose();
 
-    WebFakeXRInputController simulateInputSourceConnection(FakeXRInputSourceInit);
+    Ref<WebFakeXRInputController> simulateInputSourceConnection(FakeXRInputSourceInit);
 
     static ExceptionOr<Ref<FakeXRView>> parseView(const FakeXRViewInit&);
 

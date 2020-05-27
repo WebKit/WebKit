@@ -30,13 +30,16 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Timer.h"
 #include "WebXRInputSourceArray.h"
 #include "WebXRRenderState.h"
 #include "WebXRSpace.h"
 #include "XREnvironmentBlendMode.h"
+#include "XRFrameRequestCallback.h"
 #include "XRReferenceSpaceType.h"
 #include "XRSessionMode.h"
 #include "XRVisibilityState.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +47,6 @@
 
 namespace WebCore {
 
-class XRFrameRequestCallback;
 class WebXRReferenceSpace;
 class WebXRSystem;
 struct XRRenderStateInit;
@@ -69,7 +71,7 @@ public:
     void updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(const XRReferenceSpaceType&, RequestReferenceSpacePromise&&);
 
-    int requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
+    XRFrameRequestCallback::Id requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
     void cancelAnimationFrame(int handle);
 
     void end(EndPromise&&);
@@ -91,6 +93,9 @@ private:
 
     void shutdown();
 
+    void animationTimerFired();
+    void scheduleAnimation();
+
     XREnvironmentBlendMode m_environmentBlendMode;
     XRVisibilityState m_visibilityState;
     RefPtr<WebXRInputSourceArray> m_inputSources;
@@ -101,6 +106,13 @@ private:
     WeakPtr<PlatformXR::Device> m_device;
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
+
+    XRFrameRequestCallback::Id m_nextCallbackId { 0 };
+    Vector<Ref<XRFrameRequestCallback>> m_callbacks;
+    Vector<Ref<XRFrameRequestCallback>> m_runningCallbacks;
+
+    Timer m_animationTimer;
+    MonotonicTime m_lastAnimationFrameTimestamp;
 };
 
 } // namespace WebCore

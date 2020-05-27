@@ -38,6 +38,8 @@ namespace WebCore {
 
 class WebFakeXRInputController final : public RefCounted<WebFakeXRInputController> {
 public:
+    static Ref<WebFakeXRInputController> create() { return adoptRef(*new WebFakeXRInputController); }
+
     void setHandedness(XRHandedness);
 
     void setTargetRayMode(XRTargetRayMode);
@@ -63,6 +65,9 @@ public:
     void setSupportedButtons(Vector<FakeXRButtonStateInit>);
 
     void updateButtonState(FakeXRButtonStateInit);
+
+private:
+    WebFakeXRInputController() = default;
 };
 
 } // namespace WebCore

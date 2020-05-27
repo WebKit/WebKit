@@ -977,7 +977,10 @@ webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSessio
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
+webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
 
 # Passing since r259532.
 imported/w3c/web-platform-tests/css/css-ui/outline-019.html

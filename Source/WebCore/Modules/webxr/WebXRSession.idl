@@ -41,7 +41,7 @@
     void updateRenderState(optional XRRenderStateInit stateInit);
     [NewObject] Promise<WebXRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
 
-    long requestAnimationFrame(XRFrameRequestCallback callback);
+    unsigned long requestAnimationFrame(XRFrameRequestCallback callback);
     void cancelAnimationFrame(long handle);
 
     Promise<void> end();

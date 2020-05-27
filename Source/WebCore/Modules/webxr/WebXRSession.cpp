@@ -28,7 +28,9 @@
 
 #if ENABLE(WEBXR)
 
+#include "WebXRFrame.h"
 #include "WebXRSystem.h"
+#include "XRFrameRequestCallback.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -46,9 +48,10 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_mode(mode)
     , m_device(makeWeakPtr(device))
     , m_activeRenderState(WebXRRenderState::create(mode))
+    , m_animationTimer(*this, &WebXRSession::animationTimerFired)
 {
     // TODO: If no other features of the user agent have done so already,
-    // perform the necessary platform-specific steps to initialize the device’s
+    // perform the necessary platform-specific steps to initialize the device's
     // tracking and rendering capabilities, including showing any necessary
     // instructions to the user.
 }
@@ -83,13 +86,82 @@ void WebXRSession::requestReferenceSpace(const XRReferenceSpaceType&, RequestRef
 {
 }
 
-int WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&&)
+void WebXRSession::animationTimerFired()
 {
-    return 0;
+    m_lastAnimationFrameTimestamp = MonotonicTime::now();
+
+    if (m_callbacks.isEmpty())
+        return;
+
+    // TODO: retrieve frame from platform.
+    auto frame = WebXRFrame::create(*this);
+
+    m_runningCallbacks.swap(m_callbacks);
+    for (auto& callback : m_runningCallbacks) {
+        if (callback->isCancelled())
+            continue;
+        callback->handleEvent(m_lastAnimationFrameTimestamp.secondsSinceEpoch().milliseconds(), frame.get());
+    }
+
+    m_runningCallbacks.clear();
 }
 
-void WebXRSession::cancelAnimationFrame(int)
+void WebXRSession::scheduleAnimation()
 {
+    if (m_animationTimer.isActive())
+        return;
+
+    if (m_ended)
+        return;
+
+    // TODO: use device's refresh rate. Let's start with 60fps.
+    Seconds animationInterval = 15_ms;
+    Seconds scheduleDelay = std::max(animationInterval - (MonotonicTime::now() - m_lastAnimationFrameTimestamp), 0_s);
+    m_animationTimer.startOneShot(scheduleDelay);
+}
+
+// https://immersive-web.github.io/webxr/#dom-xrsession-requestanimationframe
+XRFrameRequestCallback::Id WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&& callback)
+{
+    // 1. Let session be the target XRSession object.
+    // 2. Increment session's animation frame callback identifier by one.
+    XRFrameRequestCallback::Id newId = ++m_nextCallbackId;
+
+    // 3. Append callback to session's list of animation frame callbacks, associated with session's
+    // animation frame callback identifier's current value.
+    callback->setCallbackId(newId);
+    m_callbacks.append(WTFMove(callback));
+
+    scheduleAnimation();
+
+    // 4. Return session's animation frame callback identifier's current value.
+    return newId;
+}
+
+// https://immersive-web.github.io/webxr/#dom-xrsession-cancelanimationframe
+void WebXRSession::cancelAnimationFrame(int callbackId)
+{
+    // 1. Let session be the target XRSession object.
+    // 2. Find the entry in session's list of animation frame callbacks or session's list of
+    //    currently running animation frame callbacks that is associated with the value handle.
+    // 3. If there is such an entry, set its cancelled boolean to true and remove it from
+    //    session's list of animation frame callbacks.
+    size_t position = m_callbacks.findMatching([callbackId] (auto& item) {
+        return item->callbackId() == callbackId;
+    });
+
+    if (position != notFound) {
+        m_callbacks[position]->cancel();
+        m_callbacks.remove(position);
+        return;
+    }
+
+    position = m_runningCallbacks.findMatching([callbackId] (auto& item) {
+        return item->callbackId() == callbackId;
+    });
+
+    if (position != notFound)
+        m_runningCallbacks[position]->cancel();
 }
 
 // https://immersive-web.github.io/webxr/#shut-down-the-session
