@@ -1,3 +1,14 @@
+2020-05-27  Kenneth Russell  <kbr@chromium.org>
+
+        Update MobileMiniBrowser project settings to current Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=212428
+
+        Reviewed by Dean Jackson.
+
+        Accept Xcode's suggested upgrade to use the new build system.
+
+        * WebKit.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings:
+
 2020-05-27  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Manette_INCLUDE_DIR and Manette_LIBRARY are undefined.

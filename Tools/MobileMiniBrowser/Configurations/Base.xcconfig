@@ -82,6 +82,8 @@ VALIDATE_PRODUCT = YES;
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter -Wundef
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator;
-SDKROOT = macosx.internal;
+SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
+SDKROOT_ = macosx;
+SDKROOT_YES = macosx.internal;
 
 CODE_SIGN_IDENTITY = -;
