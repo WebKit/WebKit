@@ -1,3 +1,14 @@
+2020-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SMILTimeContainer must protect its m_scheduledAnimations while it does updateAnimations()
+        https://bugs.webkit.org/show_bug.cgi?id=212192
+        <rdar://problem/56717734>
+
+        Reviewed by Youenn Fablet.
+
+        * svg/animations/css-animation-reinsert-target-expected.txt: Added.
+        * svg/animations/css-animation-reinsert-target.html: Added.
+
 2020-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         Rendering artifacts when scrolling overlays

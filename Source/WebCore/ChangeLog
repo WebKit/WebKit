@@ -1,3 +1,28 @@
+2020-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SMILTimeContainer must protect its m_scheduledAnimations while it does updateAnimations()
+        https://bugs.webkit.org/show_bug.cgi?id=212192
+        <rdar://problem/56717734>
+
+        Reviewed by Youenn Fablet.
+
+        updateAnimations() needs to protect m_scheduledAnimations while processing
+        the scheduled animations. m_scheduledAnimations may be changed from JavaScript
+        callbacks. This will invalidate the HashMap iterators while the one used
+        by the for-loop in updateAnimations() is still in use.
+
+        To allow copying m_scheduledAnimations, the value of the entry has to be
+        of type AnimationVector instead of std::unique_ptr<AnimationVector>.        
+
+        Test: svg/animations/css-animation-reinsert-target.html
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::schedule):
+        (WebCore::SMILTimeContainer::unschedule):
+        (WebCore::SMILTimeContainer::processScheduledAnimations):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+
 2020-05-26  Alex Christensen  <achristensen@webkit.org>
 
         MacApplication::isSafari should allow safari bundle id variants
