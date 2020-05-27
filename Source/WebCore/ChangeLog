@@ -1,3 +1,26 @@
+2020-05-26  Jer Noble  <jer.noble@apple.com>
+
+        Can't scrub video on https://www.judiciary.senate.gov
+        https://bugs.webkit.org/show_bug.cgi?id=212270
+        <rdar://problem/57922919>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-duration-seekable.html
+
+        www.judiciary.senate.gov uses the Akamai Media Player, which doesn't query HTMLMediaElement.duration
+        directly. Rather, when it receives a "durationchange" event, it calculates the duration by using the
+        HTMLMediaElement.seekable ranges to determine the effective media duration. But no event is fired when
+        the seekable ranges change, and when they first query HTMLMediaElement.seekable, AVFoundation hasn't
+        yet updated seekable ranges, so we report an empty set of seekable ranges.
+
+        The HTML specification suggests that UAs "should adopt a very liberal and optimistic view of what is
+        seekable." With that advice in mind, when we are asked by the page for our seekable ranges, and we do
+        not yet have the official ranges from AVPlayerItem, lets just respond with [0, duration).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable const):
+
 2020-05-25  Darin Adler  <darin@apple.com>
 
         Eliminate Color constructors that take strings, moving color parsing entirely into the CSS parser
