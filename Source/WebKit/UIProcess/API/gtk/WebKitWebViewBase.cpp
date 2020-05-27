@@ -727,7 +727,7 @@ static void webkitWebViewBaseDispose(GObject* gobject)
 }
 
 #if USE(GTK4)
-void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
+static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 {
     int scaleFactor = gtk_widget_get_scale_factor(widget);
     int width = gtk_widget_get_width(widget) * scaleFactor;
