@@ -1,3 +1,33 @@
+2020-05-26  Darin Adler  <darin@apple.com>
+
+        Sort PlatformEnableCocoa.h and add definitions for the simple cases from FeatureDefines.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=212389
+
+        Reviewed by Anders Carlsson.
+
+        Added more PlatformEnableCocoa.h; allowing us to later remove things from
+        FeatureDefines.xcconfig (patch forthcoming).
+
+        * wtf/PlatformEnableCocoa.h: Added definitions from FeatureDefines.xcconfig that
+        were simple, and that differ from the defaults in PlatformEnable.h. That includes
+        3D_TRANSFORMS, ACCESSIBILITY_ISOLATED_TREE (macOS >= 10.6), APPLICATION_MANIFEST,
+        ASYNC_SCROLLING, ATTACHMENT_ELEMENT, AVF_CAPTIONS, CACHE_PARTITIONING,
+        CSS_COMPOSITING, CSS_PAINTING_API, CSS_SCROLL_SNAP, CSS_SELECTORS_LEVEL4,
+        CSS_TRAILING_WORD, CSS_TYPED_OM, DATACUE_VALUE, DATALIST_ELEMENT, FILTERS_LEVEL_2,
+        GPU_PROCESS, INDEXED_DATABASE, INDEXED_DATABASE_IN_WORKERS, INSPECTOR_TELEMETRY,
+        INTERSECTION_OBSERVER, LAYOUT_FORMATTING_CONTEXT, LEGACY_CSS_VENDOR_PREFIXES,
+        LEGACY_CUSTOM_PROTOCOL_MANAGER, MEDIA_CONTROLS_SCRIPT, MEMORY_SAMPLER,
+        MOUSE_CURSOR_SCALE (macOS), NETWORK_CACHE_SPECULATIVE_REVALIDATION,
+        NETWORK_CACHE_STALE_WHILE_REVALIDATE, NOTIFICATIONS (macOS), PDFKIT_PLUGIN (macOS),
+        PERIODIC_MEMORY_MONITOR (macOS), PUBLIC_SUFFIX_LIST, RESIZE_OBSERVER,
+        RESOURCE_LOAD_STATISTICS, RUBBER_BANDING (macOS), SANDBOX_EXTENSIONS,
+        SERVER_PRECONNECT, SERVICE_CONTROLS (macOS), SHAREABLE_RESOURCE,
+        TELEPHONE_NUMBER_DETECTION, TEXT_AUTOSIZING, USERSELECT_ALL, USER_MESSAGE_HANDLERS,
+        VARIATION_FONTS, VIDEO, VIDEO_USES_ELEMENT_FULLSCREEN (macOS),
+        WEBDRIVER_KEYBOARD_INTERACTIONS, WEBDRIVER_MOUSE_INTERACTIONS (macOS),
+        WEBGL, WEBGL2, WEB_AUDIO, WEB_CRYPTO, and WIRELESS_PLAYBACK_TARGET. Sorted and
+        merged all the existing settings.
+
 2020-05-26  Alex Christensen  <achristensen@webkit.org>
 
         UTF-8 encode strings of invalid URLs when converting WTF::URL to NSURL instead of truncating the UTF-16 encoding
