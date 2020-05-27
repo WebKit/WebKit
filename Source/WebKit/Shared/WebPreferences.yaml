@@ -1313,8 +1313,8 @@ ImageBitmapEnabled:
 HTTP3Enabled:
   type: bool
   defaultValue: false
-  humanReadableName: "HTTP3"
-  humanReadableDescription: "Enable HTTP3"
+  humanReadableName: "HTTP/3"
+  humanReadableDescription: "Enable HTTP/3"
   category: experimental
   webcoreBinding: none
   condition: HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
