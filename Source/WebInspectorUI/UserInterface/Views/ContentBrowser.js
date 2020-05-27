@@ -262,7 +262,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
     async handleFindNextShortcut()
     {
-        if (this._findBanner.searchQuery !== WI.findString) {
+        if (!this._findBanner.showing && this._findBanner.searchQuery !== WI.findString) {
             let searchQuery = WI.findString;
             this._findBanner.searchQuery = searchQuery;
 
@@ -280,7 +280,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
     async handleFindPreviousShortcut()
     {
-        if (this._findBanner.searchQuery !== WI.findString) {
+        if (!this._findBanner.showing && this._findBanner.searchQuery !== WI.findString) {
             let searchQuery = WI.findString;
             this._findBanner.searchQuery = searchQuery;
 

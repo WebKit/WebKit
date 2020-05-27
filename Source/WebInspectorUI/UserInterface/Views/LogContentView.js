@@ -323,7 +323,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     highlightPreviousSearchMatch()
     {
-        if (!this.hasPerformedSearch || this._findBanner.searchQuery !== WI.findString) {
+        if (!this.hasPerformedSearch || (!this._findBanner.showing && this._findBanner.searchQuery !== WI.findString)) {
             this._findBanner.searchQuery = WI.findString;
 
             this.performSearch(this._findBanner.searchQuery);
@@ -343,7 +343,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     highlightNextSearchMatch()
     {
-        if (!this.hasPerformedSearch || this._findBanner.searchQuery !== WI.findString) {
+        if (!this.hasPerformedSearch || (!this._findBanner.showing && this._findBanner.searchQuery !== WI.findString)) {
             this._findBanner.searchQuery = WI.findString;
 
             this.performSearch(this._findBanner.searchQuery);
