@@ -1,3 +1,19 @@
+2020-05-27  Youenn Fablet  <youenn@apple.com>
+
+        [ Mac wk2 ] http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=209622
+        <rdar://problem/60938860>
+
+        Reviewed by Darin Adler.
+
+        The test is flaky by nature as the event source load and navigation load are happening asynchronously.
+        In most cases but not always, the loading of the CachedResource will fail synchronously and will trigger the console message.
+        Do not output the console log message since the goal of the test is to not crash.
+
+        * http/tests/eventsource/eventsource-reconnect-during-navigate-crash-expected.txt:
+        * http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support reading "image/png" on ClipboardItem

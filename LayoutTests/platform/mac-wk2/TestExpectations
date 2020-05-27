@@ -1016,8 +1016,6 @@ webkit.org/b/209283 tiled-drawing/scrolling/scroll-iframe-latched-selects.html [
 
 webkit.org/b/209564 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/209622 http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html [ Pass Failure ]
-
 webkit.org/b/209624 [ Release ] tiled-drawing/scrolling/fixed/four-bars-zoomed.html [ Pass Failure ]
 
 webkit.org/b/209672 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure Crash ]
