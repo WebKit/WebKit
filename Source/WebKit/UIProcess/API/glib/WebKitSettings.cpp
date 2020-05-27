@@ -1550,7 +1550,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * WebKitSettings:media-content-types-requiring-hardware-support:
      *
      * List of media content types requiring hardware support, split by semicolons (:).
-     * For example: 'video/webm; codecs="vp*":video/mp4; codecs="avc*":video/*; codecs="av1*"'.
+     * For example: 'video/webm; codecs="vp*":video/mp4; codecs="avc*":video/&ast; codecs="av1*"'.
      *
      * Since: 2.30
      */

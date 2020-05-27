@@ -1,3 +1,14 @@
+2020-05-27  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Unreviewed, fix -Wcomment build warning after r261986
+        https://bugs.webkit.org/show_bug.cgi?id=211950
+        <rdar://problem/63482718>
+
+        If we replace the /* with /&ast; then GCC won't complain that it looks like a comment.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+
 2020-05-27  Brent Fulgham  <bfulgham@apple.com>
 
         Adjust HTTP3 label to the more correct HTTP/3
