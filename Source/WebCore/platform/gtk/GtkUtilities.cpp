@@ -76,6 +76,7 @@ bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
 IntPoint widgetRootCoords(GtkWidget* widget, int x, int y)
 {
 #if USE(GTK4)
+    UNUSED_PARAM(widget);
     return { x, y };
 #else
     int xRoot, yRoot;
