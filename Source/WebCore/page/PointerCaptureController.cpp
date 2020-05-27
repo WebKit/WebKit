@@ -462,9 +462,11 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     capturingData.previousTarget = nullptr;
 #endif
 
-    auto& target = capturingData.targetOverride;
-    if (!target)
-        target = m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent).innerNonSharedElement();
+    auto target = [&]() -> RefPtr<Element> {
+        if (capturingData.targetOverride)
+            return capturingData.targetOverride;
+        return m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent).innerNonSharedElement();
+    }();
 
     if (!target)
         return;
