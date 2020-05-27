@@ -1,0 +1,18 @@
+This test verifies that multiple images can be written to and read from the system clipboard. To manually run the test, tap the copy button, and then tap paste.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doneWriting became true
+PASS items.length is 2
+PASS item.types.length is 1
+PASS item.types.includes('image/png') is true
+PASS Pasted 60 by 60 image.
+PASS item.types.length is 1
+PASS item.types.includes('image/png') is true
+PASS Pasted 20 by 20 image.
+PASS doneReading became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

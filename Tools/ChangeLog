@@ -1,3 +1,16 @@
+2020-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support reading "image/png" on ClipboardItem
+        https://bugs.webkit.org/show_bug.cgi?id=212339
+        <rdar://problem/63588957>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to verify that TIFF images on the system pasteboard on macOS are automatically converted to
+        PNG data, and is accessible through `ClipboardItem` through the "image/png" type.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm:
+
 2020-05-27  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, reverting r260840.

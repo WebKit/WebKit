@@ -215,25 +215,22 @@ static Ref<SharedBuffer> convertTIFFToPNG(SharedBuffer& tiffBuffer)
 }
 #endif
 
-void Pasteboard::read(PasteboardFileReader& reader)
+void Pasteboard::read(PasteboardFileReader& reader, Optional<size_t> itemIndex)
 {
-    auto filenames = readFilePaths();
-    if (!filenames.isEmpty()) {
-        for (auto& filename : filenames)
-            reader.readFilename(filename);
-        return;
+    if (!itemIndex) {
+        auto filenames = readFilePaths();
+        if (!filenames.isEmpty()) {
+            for (auto& filename : filenames)
+                reader.readFilename(filename);
+            return;
+        }
     }
 
-    auto allInfo = allPasteboardItemInfo();
-    if (!allInfo)
-        return;
-
-    for (size_t itemIndex = 0; itemIndex < allInfo->size(); ++itemIndex) {
-        auto& info = allInfo->at(itemIndex);
+    auto readBufferAtIndex = [&](const PasteboardItemInfo& info, size_t itemIndex) {
         for (auto cocoaType : info.platformTypesByFidelity) {
             auto imageType = cocoaTypeToImageType(cocoaType);
             auto* mimeType = imageTypeToMIMEType(imageType);
-            if (!mimeType)
+            if (!mimeType || !reader.shouldReadBuffer(mimeType))
                 continue;
             auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
@@ -245,6 +242,17 @@ void Pasteboard::read(PasteboardFileReader& reader)
                 break;
             }
         }
+    };
+
+    if (itemIndex) {
+        if (auto info = pasteboardItemInfo(*itemIndex))
+            readBufferAtIndex(*info, *itemIndex);
+        return;
+    }
+
+    if (auto allInfo = allPasteboardItemInfo()) {
+        for (size_t itemIndex = 0; itemIndex < allInfo->size(); ++itemIndex)
+            readBufferAtIndex(allInfo->at(itemIndex), itemIndex);
     }
 }
 

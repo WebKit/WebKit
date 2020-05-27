@@ -77,6 +77,9 @@ private:
 
     Pasteboard& activePasteboard();
 
+    enum class SessionIsValid { No, Yes };
+    SessionIsValid updateSessionValidity();
+
     class ItemWriter : public RefCounted<ItemWriter> {
     public:
         static Ref<ItemWriter> create(Clipboard& clipboard, Ref<DeferredPromise>&& promise)

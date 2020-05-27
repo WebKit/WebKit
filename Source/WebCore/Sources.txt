@@ -34,6 +34,7 @@ loader/cache/CachedApplicationManifest.cpp
 #endif
 
 Modules/async-clipboard/Clipboard.cpp
+Modules/async-clipboard/ClipboardImageReader.cpp
 Modules/async-clipboard/ClipboardItem.cpp
 Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp
 Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp

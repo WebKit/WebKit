@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100px;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        doneWriting = false;
+        doneReading = false;
+
+        description("This test verifies that multiple images can be written to and read from the system clipboard. To manually run the test, tap the copy button, and then tap paste.");
+
+        async function runTest() {
+            const copyButton = document.getElementById("copy");
+            const pasteButton = document.getElementById("paste");
+            const imagesContainer = document.getElementById("imagesContainer");
+            copyButton.addEventListener("click", async event => {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ "image/png" : Promise.resolve(imageBlob()) }),
+                    new ClipboardItem({ "image/png" : Promise.resolve(imageBlob(sampleBase64PNGImageData2())) })
+                ]);
+                doneWriting = true;
+            });
+
+            pasteButton.addEventListener("click", async event => {
+                try {
+                    items = await navigator.clipboard.read();
+                    shouldBe("items.length", "2");
+                    for (const item of items) {
+                        window.item = item;
+                        shouldBe("item.types.length", "1");
+                        shouldBeTrue("item.types.includes('image/png')");
+                        const imageData = await item.getType("image/png");
+                        const image = await loadImage(imageData);
+                        imagesContainer.appendChild(image);
+                        await image.decode();
+                        const clientRect = image.getBoundingClientRect();
+                        testPassed(`Pasted ${clientRect.width} by ${clientRect.height} image.`);
+                    }
+                } catch (exception) {
+                    testFailed(`Caught exception: ${exception}`);
+                } finally {
+                    doneReading = true;
+                }
+            });
+
+            await UIHelper.activateElement(copyButton);
+            await new Promise(resolve => shouldBecomeEqual("doneWriting", "true", resolve));
+
+            await UIHelper.activateElement(pasteButton);
+            await new Promise(resolve => shouldBecomeEqual("doneReading", "true", resolve));
+
+            [pasteButton, copyButton].map(button => button.remove());
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button id="copy">Copy</button>
+        <button id="paste">Paste</button>
+        <div id="imagesContainer"></div>
+    </body>
+</html>

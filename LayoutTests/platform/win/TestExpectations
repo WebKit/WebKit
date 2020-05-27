@@ -1210,6 +1210,7 @@ webkit.org/b/203100 editing/async-clipboard/clipboard-read-text.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-read-while-pasting.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/sanitize-when-writing-image.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/sanitize-when-reading-markup.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-read-write-images.html [ Skip ]
 
 webkit.org/b/140783 [ Release ] editing/pasteboard/copy-standalone-image.html [ Failure ImageOnlyFailure ]
 webkit.org/b/140783 [ Debug ] editing/pasteboard/copy-standalone-image.html [ Skip ] # Debug Assertion

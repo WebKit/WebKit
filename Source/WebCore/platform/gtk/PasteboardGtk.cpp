@@ -303,7 +303,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     }
 }
 
-void Pasteboard::read(PasteboardFileReader& reader)
+void Pasteboard::read(PasteboardFileReader& reader, Optional<size_t>)
 {
     if (m_selectionData) {
         for (const auto& filePath : m_selectionData->filenames())

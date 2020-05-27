@@ -106,7 +106,7 @@ static bool shouldTreatAtLeastOneTypeAsFile(NSArray<NSString *> *platformTypes)
 
 #if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 
-static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
+static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType, PlatformPasteboard::IncludeImageTypes includeImageTypes)
 {
     auto cfType = platformType.createCFString();
     if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
@@ -119,10 +119,13 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
         return "text/uri-list"_s;
 
+    if (includeImageTypes == PlatformPasteboard::IncludeImageTypes::Yes && UTTypeConformsTo(cfType.get(), kUTTypePNG))
+        return "image/png"_s;
+
     return nullptr;
 }
 
-static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, Function<bool()>&& shouldAvoidExposingURLType)
+static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformPasteboard::IncludeImageTypes includeImageTypes, Function<bool()>&& shouldAvoidExposingURLType)
 {
     ListHashSet<String> domPasteboardTypes;
     for (NSString *type in platformTypes) {
@@ -134,7 +137,7 @@ static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, Function<
             continue;
         }
 
-        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
+        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type, includeImageTypes)) {
             auto domTypeAsString = String::fromUTF8(coercedType);
             if (domTypeAsString == "text/uri-list"_s && ([platformTypes containsObject:(__bridge NSString *)kUTTypeFileURL] || shouldAvoidExposingURLType()))
                 continue;
@@ -233,7 +236,7 @@ Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_
         info.isNonTextType = true;
     }
 
-    info.webSafeTypesByFidelity = webSafeTypes(registeredTypeIdentifiers, [&] {
+    info.webSafeTypesByFidelity = webSafeTypes(registeredTypeIdentifiers, IncludeImageTypes::Yes, [&] {
         return shouldTreatAtLeastOneTypeAsFile(registeredTypeIdentifiers) && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString(index, kUTTypeURL));
     });
 
@@ -564,7 +567,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         }
     }
 
-    auto webSafePasteboardTypes = webSafeTypes([m_pasteboard pasteboardTypes], [&] {
+    auto webSafePasteboardTypes = webSafeTypes([m_pasteboard pasteboardTypes], IncludeImageTypes::No, [&] {
         BOOL ableToDetermineProtocolOfPasteboardURL = ![m_pasteboard isKindOfClass:[WebItemProviderPasteboard class]];
         return ableToDetermineProtocolOfPasteboardURL && stringForType(kUTTypeURL).isEmpty();
     });
@@ -596,18 +599,28 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
         }
     }
 
-    data.forEachPlatformString([&] (auto& type, auto& value) {
-        if (!value)
+    data.forEachPlatformStringOrBuffer([&] (auto& type, auto& value) {
+        auto cocoaType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type, PlatformPasteboard::IncludeImageTypes::Yes);
+        if (cocoaType.isEmpty())
             return;
 
-        NSString *stringValue = value;
-        auto cocoaType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type, PlatformPasteboard::IncludeImageTypes::Yes).createCFString();
-        if (UTTypeConformsTo(cocoaType.get(), kUTTypeURL))
-            [representationsToRegister addRepresentingObject:[NSURL URLWithString:stringValue]];
-        else if (UTTypeConformsTo(cocoaType.get(), kUTTypePlainText))
-            [representationsToRegister addRepresentingObject:stringValue];
-        else
-            [representationsToRegister addData:[stringValue dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)cocoaType.get()];
+        if (WTF::holds_alternative<String>(value)) {
+            if (WTF::get<String>(value).isNull())
+                return;
+
+            NSString *nsStringValue = WTF::get<String>(value);
+            auto cfType = cocoaType.createCFString();
+            if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
+                [representationsToRegister addRepresentingObject:[NSURL URLWithString:nsStringValue]];
+            else if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
+                [representationsToRegister addRepresentingObject:nsStringValue];
+            else
+                [representationsToRegister addData:[nsStringValue dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)cocoaType];
+            return;
+        }
+
+        auto buffer = WTF::get<Ref<SharedBuffer>>(value);
+        [representationsToRegister addData:buffer->createNSData().get() forType:(NSString *)cocoaType];
     });
 
     return representationsToRegister;

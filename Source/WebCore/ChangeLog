@@ -1,3 +1,98 @@
+2020-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support reading "image/png" on ClipboardItem
+        https://bugs.webkit.org/show_bug.cgi?id=212339
+        <rdar://problem/63588957>
+
+        Reviewed by Tim Horton.
+
+        Adds support for reading "image/png" data via ClipboardItem.getType(). See below for more details.
+
+        Tests:  ClipboardTests.ConvertTIFFToPNGWhenPasting
+                editing/async-clipboard/clipboard-read-write-images.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::getType):
+        (WebCore::Clipboard::updateSessionValidity):
+
+        Factor out logic for invalidating the `Clipboard`'s active `Pasteboard` object into a helper method. This is
+        invoked after reading data from the clipboard, and verifies that the changeCount of the pasteboard is still the
+        same as it was upon initially reading the contents of the clipboard. If the clipboard contents changed, we
+        invalidate the session, and `Clipboard` is subsequently denied pasteboard access (until the next time the user
+        explicitly grants programmatic pasteboard access).
+
+        Note that this step is here for correctness rather than security. While it is true that a compromised web
+        process could fake the changeCount at any given moment, other fairly recent changes around WebPasteboardProxy in
+        the UI process makes it impossible to take advantage of this fact to arbitrarily read content from the system
+        pasteboard. Instead of simply reading the empty string, this invalidation ensures that we actually reject the
+        promise returned by the async clipboard API.
+
+        * Modules/async-clipboard/Clipboard.h:
+        * Modules/async-clipboard/ClipboardImageReader.cpp: Added.
+
+        Add a PasteboardFileReader subclass that is responsible for sanitizing image data from the pasteboard into
+        data that may be exposed to the page via clipboard API. On both macOS and iOS, this ensures that potentially
+        sensitive EXIF data is stripped via conversion to the platform image type and back. On macOS, this additionally
+        allows us to handle transcoding TIFF data on the pasteboard to PNG (this is covered by the new API test).
+
+        (WebCore::ClipboardImageReader::readBuffer):
+
+        Add a stub implementation for non-Cocoa platforms for now, which don't implement this part of the API.
+
+        (WebCore::ClipboardImageReader::shouldReadBuffer const):
+
+        Add a new hook to skip over certain types when reading pasteboard data into Files. In particular,
+        `ClipboardImageReader` skips over any MIME type that does not match the MIME type specified (for now, this is
+        limited to "image/png", but may be extended to include more image types in the future after we implement more
+        transcoding logic).
+
+        * Modules/async-clipboard/ClipboardImageReader.h: Added.
+        (WebCore::ClipboardImageReader::ClipboardImageReader):
+        (WebCore::ClipboardImageReader::takeResult):
+        * Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm: Added.
+        (WebCore::ClipboardImageReader::readBuffer):
+
+        Add iOS-specific `(PNG) => PNG` transcoding logic.
+
+        * Modules/async-clipboard/mac/ClipboardImageReaderMac.mm: Added.
+        (WebCore::ClipboardImageReader::readBuffer):
+
+        Add macOS-specific `(PNG, TIFF) => PNG` transcoding logic.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Pasteboard.h:
+        (WebCore::PasteboardFileReader::shouldReadBuffer const):
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::read):
+
+        Add support for targeting a given pasteboard item index when reading files on Cocoa platforms.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+        (WebCore::webSafeTypes):
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
+        Expose "image/png" as one of the readable pasteboard types on iOS when using the async clipboard API. For some
+        reason, this adjustment was made on macOS, but wasn't done on iOS, which led to a missing "image/png" type when
+        asking for `ClipboardItem.types`.
+
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+
+        Add support for writing "image/png "data to the system pasteboard (note that this data has been sanitized
+        already, as it has been processed through `ClipboardItemTypeLoader::sanitizeDataIfNeeded()`). We simply needed
+        to use `forEachPlatformStringOrBuffer` instead of just `forEachPlatformString` when writing the custom
+        pasteboard data.
+
+        (WebCore::createItemProviderRegistrationList):
+        * platform/libwpe/PasteboardLibWPE.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read):
+
 2020-05-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r254541): Valid mime types can only be added to the HashSet of the supported types for encoding

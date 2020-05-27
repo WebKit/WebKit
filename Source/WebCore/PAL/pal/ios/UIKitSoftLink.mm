@@ -70,5 +70,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityPostNotification, void,
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIGraphicsPopContext, void, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIGraphicsPushContext, void, (CGContextRef context), (context))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIImagePNGRepresentation, NSData *, (UIImage *image), (image))
 
 #endif

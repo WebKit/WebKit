@@ -5085,6 +5085,7 @@
 		F4B422C4220C0568009E1E7D /* DOMPasteAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
+		F4C5F2072479E88200E9B4F5 /* ClipboardImageReader.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C5F2052479E7EE00E9B4F5 /* ClipboardImageReader.h */; };
 		F4D07558234D822D00881E73 /* ClipboardItemDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C447A2346535E0039A79D /* ClipboardItemDataSource.h */; };
 		F4D07559234D823300881E73 /* ClipboardItemPasteboardDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C44802346547A0039A79D /* ClipboardItemPasteboardDataSource.h */; };
 		F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15795,6 +15796,10 @@
 		F49786871FF45FA500E060AB /* PasteboardItemInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardItemInfo.h; sourceTree = "<group>"; };
 		F49E98E421DEE6C1009AE55E /* EditAction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EditAction.cpp; sourceTree = "<group>"; };
 		F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPasteAccess.h; sourceTree = "<group>"; };
+		F4C5F2052479E7EE00E9B4F5 /* ClipboardImageReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClipboardImageReader.h; sourceTree = "<group>"; };
+		F4C5F2082479E9C800E9B4F5 /* ClipboardImageReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClipboardImageReader.cpp; sourceTree = "<group>"; };
+		F4C5F2132479FC4E00E9B4F5 /* ClipboardImageReaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClipboardImageReaderMac.mm; path = mac/ClipboardImageReaderMac.mm; sourceTree = "<group>"; };
+		F4C5F2162479FCD100E9B4F5 /* ClipboardImageReaderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClipboardImageReaderIOS.mm; path = ios/ClipboardImageReaderIOS.mm; sourceTree = "<group>"; };
 		F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedAttachmentData.h; sourceTree = "<group>"; };
 		F4D9817D2195FBF6008230FC /* ChangeListTypeCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeListTypeCommand.h; sourceTree = "<group>"; };
 		F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeListTypeCommand.cpp; sourceTree = "<group>"; };
@@ -27910,9 +27915,13 @@
 		F440E76A233D93C80063F9AB /* async-clipboard */ = {
 			isa = PBXGroup;
 			children = (
+				F4C5F2152479FCAF00E9B4F5 /* ios */,
+				F4C5F2122479FC4000E9B4F5 /* mac */,
 				F440E76E233D94D30063F9AB /* Clipboard.cpp */,
 				F440E772233D94D50063F9AB /* Clipboard.h */,
 				F440E774233D94D60063F9AB /* Clipboard.idl */,
+				F4C5F2082479E9C800E9B4F5 /* ClipboardImageReader.cpp */,
+				F4C5F2052479E7EE00E9B4F5 /* ClipboardImageReader.h */,
 				F440E775233D94D60063F9AB /* ClipboardItem.cpp */,
 				F440E770233D94D40063F9AB /* ClipboardItem.h */,
 				F440E777233D94D70063F9AB /* ClipboardItem.idl */,
@@ -27935,6 +27944,22 @@
 				F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */,
 			);
 			name = EditingHistory;
+			sourceTree = "<group>";
+		};
+		F4C5F2122479FC4000E9B4F5 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				F4C5F2132479FC4E00E9B4F5 /* ClipboardImageReaderMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
+		F4C5F2152479FCAF00E9B4F5 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				F4C5F2162479FCD100E9B4F5 /* ClipboardImageReaderIOS.mm */,
+			);
+			name = ios;
 			sourceTree = "<group>";
 		};
 		F523D18402DE42E8018635CA /* css */ = {
@@ -29920,6 +29945,7 @@
 				F440E77D233D94D70063F9AB /* Clipboard.h in Headers */,
 				7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
+				F4C5F2072479E88200E9B4F5 /* ClipboardImageReader.h in Headers */,
 				F440E77B233D94D70063F9AB /* ClipboardItem.h in Headers */,
 				F46C447E234654540039A79D /* ClipboardItemBindingsDataSource.h in Headers */,
 				F4D07558234D822D00881E73 /* ClipboardItemDataSource.h in Headers */,

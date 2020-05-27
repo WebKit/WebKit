@@ -105,7 +105,7 @@ void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, Opti
     notImplemented();
 }
 
-void Pasteboard::read(PasteboardFileReader&)
+void Pasteboard::read(PasteboardFileReader&, Optional<size_t>)
 {
 }
 
