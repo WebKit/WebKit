@@ -1,3 +1,13 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION: Build errors during JavaScriptCore "Generate Derived Sources" about missing Availability.h header and invalid SDKROOT [-Wmissing-sysroot]
+        <https://webkit.org/b/212436>
+
+        Unreviewed build fix.
+
+        * Scripts/generate-derived-sources.sh: Pass SDKROOT to `make`
+        command from the current environment.
+
 2020-05-27  Mark Lam  <mark.lam@apple.com>
 
         Add missing #include for when LLINT_TRACING is enabled.
