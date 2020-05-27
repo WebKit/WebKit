@@ -1,3 +1,74 @@
+2020-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt:
+        * platform/wincairo/css3/flexbox/flexbox-baseline-expected.txt:
+        * platform/wincairo/fast/css-generated-content/details-summary-before-after-expected.txt:
+        * platform/wincairo/fast/gradients/list-item-gradient-expected.txt:
+        * platform/wincairo/fast/html/details-add-child-1-expected.txt:
+        * platform/wincairo/fast/html/details-add-child-2-expected.txt:
+        * platform/wincairo/fast/html/details-add-details-child-1-expected.txt:
+        * platform/wincairo/fast/html/details-add-details-child-2-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-1-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-1-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-10-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-10-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-2-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-2-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-3-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-3-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-4-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-4-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-5-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-5-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-6-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-6-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-7-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-7-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-8-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-8-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-9-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-9-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-child-1-expected.txt:
+        * platform/wincairo/fast/html/details-add-summary-child-2-expected.txt:
+        * platform/wincairo/fast/html/details-marker-style-expected.txt:
+        * platform/wincairo/fast/html/details-nested-1-expected.txt:
+        * platform/wincairo/fast/html/details-nested-2-expected.txt:
+        * platform/wincairo/fast/html/details-no-summary1-expected.txt:
+        * platform/wincairo/fast/html/details-no-summary2-expected.txt:
+        * platform/wincairo/fast/html/details-no-summary3-expected.txt:
+        * platform/wincairo/fast/html/details-no-summary4-expected.txt:
+        * platform/wincairo/fast/html/details-open-javascript-expected.txt:
+        * platform/wincairo/fast/html/details-open1-expected.txt:
+        * platform/wincairo/fast/html/details-open2-expected.txt:
+        * platform/wincairo/fast/html/details-open3-expected.txt:
+        * platform/wincairo/fast/html/details-open4-expected.txt:
+        * platform/wincairo/fast/html/details-open5-expected.txt:
+        * platform/wincairo/fast/html/details-open6-expected.txt:
+        * platform/wincairo/fast/html/details-position-expected.txt:
+        * platform/wincairo/fast/html/details-remove-child-1-expected.txt:
+        * platform/wincairo/fast/html/details-remove-child-2-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-1-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-2-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-2-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-3-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-3-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-4-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-4-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-5-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-5-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-6-and-click-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-6-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-child-1-expected.txt:
+        * platform/wincairo/fast/html/details-remove-summary-child-2-expected.txt:
+        * platform/wincairo/fast/html/details-replace-summary-child-expected.txt:
+        * platform/wincairo/fast/html/details-replace-text-expected.txt:
+        * platform/wincairo/fast/html/details-writing-mode-expected.txt:
+        * platform/wincairo/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/wincairo/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt:
+
 2020-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SMILTimeContainer must protect its m_scheduledAnimations while it does updateAnimations()

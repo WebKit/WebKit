@@ -13,7 +13,7 @@ layer at (0,0) size 800x122
             RenderInline (generated) at (0,0) size 39x19
               RenderText at (0,0) size 39x19
                 text run at (0,0) width 39: "before"
-            RenderDetailsMarker {DIV} at (39,5) size 11x11: down
+            RenderDetailsMarker {DIV} at (39,4) size 11x11: down
             RenderText {#text} at (55,0) size 58x19
               text run at (55,0) width 58: "Summary"
           RenderBlock {DIV} at (1,21) size 780x22 [border: (1px solid #000000)]

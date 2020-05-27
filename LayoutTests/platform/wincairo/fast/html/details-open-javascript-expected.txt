@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x46
         RenderBlock {SUMMARY} at (0,0) size 784x20
-          RenderDetailsMarker {DIV} at (0,5) size 11x11: down
+          RenderDetailsMarker {DIV} at (0,4) size 11x11: down
           RenderText {#text} at (16,0) size 47x19
             text run at (16,0) width 47: "details1"
         RenderBlock (anonymous) at (0,20) size 784x26
@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DETAILS} at (0,46) size 784x20
         RenderBlock {SUMMARY} at (0,0) size 784x20
-          RenderDetailsMarker {DIV} at (0,5) size 11x11: right
+          RenderDetailsMarker {DIV} at (0,4) size 11x11: right
           RenderText {#text} at (16,0) size 47x19
             text run at (16,0) width 47: "details2"
 layer at (12,33) size 146x16
