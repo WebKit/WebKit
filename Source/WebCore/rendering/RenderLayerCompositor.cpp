@@ -1929,9 +1929,10 @@ void RenderLayerCompositor::addToOverlapMap(LayerOverlapMap& overlapMap, const R
     if (layer.hasCompositedScrollingAncestor()) {
         // Compute a clip up to the composited scrolling ancestor, then convert it to absolute coordinates.
         auto& scrollingScope = clippingScopes.last();
-        clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&scrollingScope.layer, TemporaryClipRects, IgnoreOverlayScrollbarSize, IgnoreOverflowClip)).rect();
+        auto& scopeLayer = scrollingScope.layer;
+        clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&scopeLayer, TemporaryClipRects, IgnoreOverlayScrollbarSize, IgnoreOverflowClip)).rect();
         if (!clipRect.isInfinite())
-            clipRect.setLocation(layer.convertToLayerCoords(&rootRenderLayer(), clipRect.location()));
+            clipRect.setLocation(scopeLayer.convertToLayerCoords(&rootRenderLayer(), clipRect.location()));
     } else
         clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
 

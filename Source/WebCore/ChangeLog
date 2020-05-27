@@ -1,3 +1,19 @@
+2020-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (async oveflow): scrubber missing from inline video inside overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=212391
+        <rdar://problem/63089859>
+
+        Reviewed by Zalan Bujtas.
+
+        backgroundClipRect() is in the coordinate space of the ClipRectContext's rootLayer, not the receiver,
+        so when converting to absolute coordinates we must use the ClipRectContext's rootLayer.
+
+        Test: compositing/layer-creation/overlap-in-scroller.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap const):
+
 2020-05-26  Jer Noble  <jer.noble@apple.com>
 
         Can't scrub video on https://www.judiciary.senate.gov
