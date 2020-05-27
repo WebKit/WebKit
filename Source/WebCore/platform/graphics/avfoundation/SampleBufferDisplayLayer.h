@@ -69,6 +69,9 @@ public:
 
     virtual PlatformLayer* rootLayer() = 0;
 
+    enum class RenderPolicy { TimingInfo, Immediately };
+    virtual void setRenderPolicy(RenderPolicy) { };
+
 protected:
     explicit SampleBufferDisplayLayer(Client&);
 

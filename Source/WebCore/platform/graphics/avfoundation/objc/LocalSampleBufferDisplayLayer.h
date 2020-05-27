@@ -72,6 +72,7 @@ public:
 
     void enqueueSample(MediaSample&) final;
     void clearEnqueuedSamples() final;
+    void setRenderPolicy(RenderPolicy) final;
 
 private:
     void removeOldSamplesFromPendingQueue();
@@ -82,10 +83,16 @@ private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     RetainPtr<PlatformLayer> m_rootLayer;
+    RenderPolicy m_renderPolicy { RenderPolicy::TimingInfo };
 
     using PendingSampleQueue = Deque<Ref<MediaSample>>;
     PendingSampleQueue m_pendingVideoSampleQueue;
 };
+
+inline void LocalSampleBufferDisplayLayer::setRenderPolicy(RenderPolicy renderPolicy)
+{
+    m_renderPolicy = renderPolicy;
+}
 
 }
 

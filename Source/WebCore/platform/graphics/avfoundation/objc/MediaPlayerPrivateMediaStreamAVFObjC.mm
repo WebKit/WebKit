@@ -379,6 +379,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!m_sampleBufferDisplayLayer)
         return;
 
+    if (activeVideoTrack->source().isCaptureSource())
+        m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
+
     auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
     m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [this, weakThis = makeWeakPtr(this), size](auto didSucceed) {
         if (!didSucceed) {
@@ -867,8 +870,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
         if (oldVideoTrack != m_activeVideoTrack) {
             if (oldVideoTrack)
                 oldVideoTrack->streamTrack().source().removeVideoSampleObserver(*this);
-            if (m_activeVideoTrack)
+            if (m_activeVideoTrack) {
+                if (m_sampleBufferDisplayLayer && m_activeVideoTrack->streamTrack().source().isCaptureSource())
+                    m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
                 m_activeVideoTrack->streamTrack().source().addVideoSampleObserver(*this);
+            }
         }
     });
 }

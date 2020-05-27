@@ -1,3 +1,35 @@
+2020-05-27  Youenn Fablet  <youenn@apple.com>
+
+        Video freezes when attaching a local MediaStream to multiple elements
+        https://bugs.webkit.org/show_bug.cgi?id=194802
+        <rdar://problem/63613107>
+
+        Reviewed by Eric Carlson.
+
+        AVSampleBufferDisplayLayer sometimes does not update the rendering when the same local source is rendered several times.
+        To workaround this, we set kCMSampleAttachmentKey_DisplayImmediately to true, which fixes the issue as per my testing.
+        We clone the sample buffer before setting this property as it might not be thread safe to modify the attachments of a sample
+        that might also be encoded.
+        We implement this at LocalSampleBufferDisplayLayer level and enable this for local capture sources only.
+
+        Manually tested.
+
+        * platform/graphics/avfoundation/SampleBufferDisplayLayer.h:
+        (WebCore::SampleBufferDisplayLayer::setRenderPolicy):
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        (WebCore::LocalSampleBufferDisplayLayer::setRenderPolicy):
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        (WebCore::LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::setSampleBufferAsDisplayImmediately):
+        (WebCore::MediaSampleAVFObjC::setAsDisplayImmediately):
+        (WebCore::MediaSampleAVFObjC::cloneSampleBuffer):
+
 2020-05-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Implement XRSession::requestAnimationFrame()

@@ -30,7 +30,8 @@
 
 #import "Color.h"
 #import "IntSize.h"
-#import "MediaSample.h"
+#import "Logging.h"
+#import "MediaSampleAVFObjC.h"
 
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
@@ -295,13 +296,28 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
         return;
     }
 
-    [m_sampleBufferDisplayLayer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
+    auto sampleToEnqueue = sample.platformSample().sample.cmSampleBuffer;
+    RetainPtr<CMSampleBufferRef> newSampleBuffer;
+
+    // If needed, we set the sample buffer to kCMSampleAttachmentKey_DisplayImmediately as a workaround to rdar://problem/49274083.
+    // We clone the sample buffer as modifying the attachments of a sample buffer used elsewhere (encoding e.g.) may not be thread safe.
+    if (m_renderPolicy == RenderPolicy::Immediately) {
+        newSampleBuffer = MediaSampleAVFObjC::cloneSampleBufferAndSetAsDisplayImmediately(sampleToEnqueue);
+        sampleToEnqueue = newSampleBuffer.get();
+    }
+
+    [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleToEnqueue];
 }
 
 void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
 {
     if (m_pendingVideoSampleQueue.isEmpty() || !m_client)
         return;
+
+    if (m_renderPolicy == RenderPolicy::Immediately) {
+        m_pendingVideoSampleQueue.clear();
+        return;
+    }
 
     auto decodeTime = m_pendingVideoSampleQueue.first()->decodeTime();
     if (!decodeTime.isValid() || decodeTime < MediaTime::zeroTime()) {

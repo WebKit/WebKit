@@ -40,6 +40,7 @@ public:
     static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned long width, unsigned long height);
 
     WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
+    static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);
 
     RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
 

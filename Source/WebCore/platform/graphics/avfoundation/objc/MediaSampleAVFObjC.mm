@@ -311,13 +311,18 @@ RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
     return result;
 }
 
-void MediaSampleAVFObjC::setAsDisplayImmediately(MediaSample& sample)
+static inline void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
 {
-    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sample.platformSample().sample.cmSampleBuffer, true);
+    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
         CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
+}
+
+void MediaSampleAVFObjC::setAsDisplayImmediately(MediaSample& sample)
+{
+    setSampleBufferAsDisplayImmediately(sample.platformSample().sample.cmSampleBuffer);
 }
 
 bool MediaSampleAVFObjC::isHomogeneous() const
@@ -388,6 +393,39 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
         samples.uncheckedAppend(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
     }
     return samples;
+}
+
+RetainPtr<CMSampleBufferRef> MediaSampleAVFObjC::cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef sample)
+{
+    auto pixelBuffer = static_cast<CVImageBufferRef>(PAL::CMSampleBufferGetImageBuffer(sample));
+    if (!pixelBuffer)
+        return nullptr;
+
+    CMVideoFormatDescriptionRef formatDescription = nullptr;
+    auto status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer, &formatDescription);
+    if (status)
+        return nullptr;
+    auto retainedFormatDescription = adoptCF(formatDescription);
+
+    CMItemCount itemCount = 0;
+    status = CMSampleBufferGetSampleTimingInfoArray(sample, 0, nullptr, &itemCount);
+    if (status)
+        return nullptr;
+
+    Vector<CMSampleTimingInfo> timingInfoArray;
+    timingInfoArray.grow(itemCount);
+    status = CMSampleBufferGetSampleTimingInfoArray(sample, itemCount, timingInfoArray.data(), nullptr);
+    if (status)
+        return nullptr;
+
+    CMSampleBufferRef newSampleBuffer;
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, formatDescription, timingInfoArray.data(), &newSampleBuffer);
+    if (status)
+        return nullptr;
+
+    setSampleBufferAsDisplayImmediately(newSampleBuffer);
+
+    return adoptCF(newSampleBuffer);
 }
 
 }
