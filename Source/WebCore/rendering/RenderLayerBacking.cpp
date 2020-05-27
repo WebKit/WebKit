@@ -2965,7 +2965,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
     if (m_scrolledContentsLayer && m_scrolledContentsLayer->drawsContent()) {
         FloatRect layerDirtyRect = pixelSnappedRectForPainting;
-        layerDirtyRect.move(-m_scrolledContentsLayer->offsetFromRenderer() + toLayoutSize(m_scrolledContentsLayer->scrollOffset()) - m_subpixelOffsetFromRenderer);
+        layerDirtyRect.move(-m_scrolledContentsLayer->offsetFromRenderer() + toLayoutSize(m_owningLayer.scrollOffset()) - m_subpixelOffsetFromRenderer);
         m_scrolledContentsLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
 }

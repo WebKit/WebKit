@@ -1,3 +1,24 @@
+2020-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Rendering artifacts when scrolling overlays
+        https://bugs.webkit.org/show_bug.cgi?id=204120
+        <rdar://problem/57121358>
+
+        Reviewed by Zalan Bujtas.
+
+        RenderLayerBacking::setContentsNeedDisplayInRect() needs to adjust repaint rects in the
+        scrolled contents layer by the RenderLayer's scrollOffset, because that's what's used
+        during repaint rect computation. We haven't yet pushed the new scroll offset onto the
+        GraphicsLayer, so m_scrolledContentsLayer->scrollOffset() would be stale here.
+
+        I tested RTL to make sure that scrollOffset(), and not scrollPosition() is the correct
+        function to tall.
+
+        Test: compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+
 2020-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         An SVG animated property animator can stop animation while other animators are still running
