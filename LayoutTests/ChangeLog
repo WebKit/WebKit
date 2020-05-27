@@ -1,3 +1,12 @@
+2020-05-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ macOS ] http/tests/media/now-playing-info.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=206699
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Remove flaky expectation since the test is consistently passing.
+
 2020-05-27  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ Mac wk2 ] fast/mediastream/mock-media-source-webaudio.html is flaky timing out.
