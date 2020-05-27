@@ -1,3 +1,15 @@
+2020-05-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        App-bound sessions should be for iOS only
+        https://bugs.webkit.org/show_bug.cgi?id=212426
+        <rdar://problem/63678147>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::SessionWrapper::initialize):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+
 2020-05-27  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Avoid possible WTR event timing going back in time and fix conversion from s to ms

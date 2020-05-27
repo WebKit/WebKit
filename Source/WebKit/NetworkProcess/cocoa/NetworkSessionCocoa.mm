@@ -1127,7 +1127,9 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
+#if PLATFORM(IOS_FAMILY)
     NETWORK_SESSION_COCOA_ADDITIONS_1
+#endif
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
@@ -1284,8 +1286,10 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::Resour
         ASSERT_NOT_REACHED();
 #endif
 
+#if PLATFORM(IOS_FAMILY)
     if (shouldBeConsideredAppBound == NavigatingToAppBoundDomain::Yes)
         return appBoundSession(storedCredentialsPolicy);
+#endif
 
     switch (storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
