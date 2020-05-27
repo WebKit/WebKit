@@ -1,3 +1,14 @@
+2020-05-27  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r261277): [ Mac iOS ] webrtc/datachannel/gather-candidates-networkprocess-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=212218
+        <rdar://problem/63496692>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/gather-candidates-networkprocess-crash.html:
+        Create a new peer connection after the network process crash to validate it does not stay hanging.
+
 2020-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
