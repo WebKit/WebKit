@@ -1,3 +1,20 @@
+2020-05-27  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebNotificationManager::removeNotificationFromContextMap()
+        https://bugs.webkit.org/show_bug.cgi?id=212410
+        <rdar://63496726>
+
+        Reviewed by Alex Christensen.
+
+        Protect the notification object in WebNotificationManager::didDestroyNotification() since
+        removing it from m_notificationIDMap will deref it and may end up destroying the notification
+        object otherwise.
+
+        Test: http/tests/notifications/crash-on-navigation.html
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::didDestroyNotification):
+
 2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK] Make webkitWebViewBaseSnapshot static
