@@ -1912,7 +1912,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (WebCore::DragData)dragDataForSession:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
     auto dragOperationMask = static_cast<WebCore::DragOperation>(operation);
-    auto dragDestinationMask = static_cast<WebCore::DragDestinationAction>([self dragDestinationActionMaskForSession:session]);
+    auto dragDestinationMask = OptionSet<WebCore::DragDestinationAction>::fromRaw([self dragDestinationActionMaskForSession:session]);
     return { session, WebCore::roundedIntPoint(clientPosition), WebCore::roundedIntPoint(globalPosition), dragOperationMask, WebCore::DragApplicationNone, dragDestinationMask };
 }
 
@@ -6724,9 +6724,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     return static_cast<WebCore::DragApplicationFlags>(flags);
 }
 
-- (WebCore::DragDestinationAction)actionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+- (OptionSet<WebCore::DragDestinationAction>)actionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    return (WebCore::DragDestinationAction)[[self _UIDelegateForwarder] webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
+    return OptionSet<WebCore::DragDestinationAction>::fromRaw([[self _UIDelegateForwarder] webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo]);
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo

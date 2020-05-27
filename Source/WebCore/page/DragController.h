@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,7 @@ struct PromisedAttachmentInfo;
         DragHandlingMethod dragHandlingMethod() const { return m_dragHandlingMethod; }
 
         Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
-        DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
+        OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
         DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
         
         Element* draggableElement(const Frame*, Element* start, const IntPoint&, DragState&) const;
@@ -108,7 +108,7 @@ struct PromisedAttachmentInfo;
         bool concludeEditDrag(const DragData&);
         DragOperation dragEnteredOrUpdated(const DragData&);
         DragOperation operationForLoad(const DragData&);
-        DragHandlingMethod tryDocumentDrag(const DragData&, DragDestinationAction, DragOperation&);
+        DragHandlingMethod tryDocumentDrag(const DragData&, OptionSet<DragDestinationAction>, DragOperation&);
         bool tryDHTMLDrag(const DragData&, DragOperation&);
         DragOperation dragOperation(const DragData&);
         void clearDragCaret();
@@ -149,7 +149,7 @@ struct PromisedAttachmentInfo;
         unsigned m_numberOfItemsToBeAccepted { 0 };
         DragHandlingMethod m_dragHandlingMethod { DragHandlingMethod::None };
 
-        DragDestinationAction m_dragDestinationAction { DragDestinationActionNone };
+        OptionSet<DragDestinationAction> m_dragDestinationActionMask;
         DragSourceAction m_dragSourceAction { DragSourceActionNone };
         bool m_didInitiateDrag { false };
         DragOperation m_sourceDragOperation { DragOperationNone }; // Set in startDrag when a drag starts from a mouse down within WebKit

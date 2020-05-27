@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "IntPoint.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -74,11 +75,11 @@ public:
     enum class DraggingPurpose { ForEditing, ForFileUpload, ForColorControl };
 
     // clientPosition is taken to be the position of the drag event within the target window, with (0,0) at the top left
-    WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone, DragDestinationAction actions = DragDestinationActionAny);
-    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone, DragDestinationAction actions = DragDestinationActionAny);
+    WEBCORE_EXPORT DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone, OptionSet<DragDestinationAction> actionMask = DragDestinationActionAny());
+    WEBCORE_EXPORT DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone, OptionSet<DragDestinationAction> actionMask = DragDestinationActionAny());
     // This constructor should used only by WebKit2 IPC because DragData
     // is initialized by the decoder and not in the constructor.
-    DragData() { }
+    DragData() = default;
 #if PLATFORM(WIN)
     WEBCORE_EXPORT DragData(const DragDataMap&, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation sourceOperationMask, DragApplicationFlags = DragApplicationNone);
     const DragDataMap& dragDataMap();
@@ -101,7 +102,7 @@ public:
     bool containsColor() const;
     bool containsFiles() const;
     unsigned numberOfFiles() const;
-    DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
+    OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
     void setFileNames(Vector<String>& fileNames) { m_fileNames = WTFMove(fileNames); }
     const Vector<String>& fileNames() const { return m_fileNames; }
 #if PLATFORM(COCOA)
@@ -119,7 +120,7 @@ public:
         m_platformDragData = data.m_platformDragData;
         m_draggingSourceOperationMask = data.m_draggingSourceOperationMask;
         m_applicationFlags = data.m_applicationFlags;
-        m_dragDestinationAction = data.m_dragDestinationAction;
+        m_dragDestinationActionMask = data.m_dragDestinationActionMask;
         return *this;
     }
 #endif
@@ -131,7 +132,7 @@ private:
     DragOperation m_draggingSourceOperationMask;
     DragApplicationFlags m_applicationFlags;
     Vector<String> m_fileNames;
-    DragDestinationAction m_dragDestinationAction;
+    OptionSet<DragDestinationAction> m_dragDestinationActionMask;
 #if PLATFORM(COCOA)
     String m_pasteboardName;
 #endif

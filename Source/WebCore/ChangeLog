@@ -1,3 +1,43 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        Use OptionSet<DragDestinationAction> for mask values
+        <https://webkit.org/b/212115>
+        <rdar://problem/63423380>
+
+        Reviewed by Alex Christensen.
+
+        DragDestinationAction is used as both individual values and as a
+        bit mask. This changes bit mask uses to OptionSet<> and renames
+        variables to denote masks.
+
+        * page/DragActions.h:
+        (WebCore::DragDestinationAction):
+        - Convert to enum class and remove *None and *Any values.
+        (WebCore::DragDestinationActionAny):
+        - Add helper function to return OptionSet<DragDestinationAction>
+          with all values set.
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::concludeEditDrag):
+        * page/DragController.h:
+        (WebCore::DragController::dragDestinationAction const): Rename.
+        (WebCore::DragController::dragDestinationActionMask const):
+        - Rename dragDestinationAction() to dragDestinationActionMask().
+        * platform/DragData.cpp:
+        (WebCore::DragData::DragData):
+        * platform/DragData.h:
+        (WebCore::DragData::DragData):
+        - Use DragDestinationActionAny() in place of removed
+          DragDestinationActionAny.
+        (WebCore::DragData::dragDestinationAction const): Rename.
+        (WebCore::DragData::dragDestinationActionMask const):
+        - Rename dragDestinationAction() to dragDestinationActionMask().
+        (WebCore::DragData::operator =):
+        * platform/cocoa/DragDataCocoa.mm:
+        (WebCore::DragData::DragData):
+
 2020-05-27  Youenn Fablet  <youenn@apple.com>
 
         Video freezes when attaching a local MediaStream to multiple elements

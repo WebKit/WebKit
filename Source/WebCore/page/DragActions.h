@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,23 @@
 #pragma once
 
 #include <limits.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
-// WebCoreDragDestinationAction should be kept in sync with WebDragDestinationAction.
-typedef enum {
-    DragDestinationActionNone    = 0,
-    DragDestinationActionDHTML   = 1,
-    DragDestinationActionEdit    = 2,
-    DragDestinationActionLoad    = 4,
-    DragDestinationActionAny     = UINT_MAX
-} DragDestinationAction;
+// WebCore::DragDestinationAction must be kept in sync with WebDragDestinationAction and WKDragDestinationAction.
+enum class DragDestinationAction : uint8_t {
+    DHTML = 1,
+    Edit  = 2,
+    Load  = 4
+};
+
+inline constexpr OptionSet<DragDestinationAction> DragDestinationActionAny()
+{
+    return OptionSet<DragDestinationAction> { DragDestinationAction::DHTML, DragDestinationAction::Edit, DragDestinationAction::Load };
+}
 
 // WebCoreDragSourceAction should be kept in sync with WebDragSourceAction.
 typedef enum {

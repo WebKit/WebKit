@@ -1,3 +1,17 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        Use OptionSet<DragDestinationAction> for mask values
+        <https://webkit.org/b/212115>
+        <rdar://problem/63423380>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::willPerformDragDestinationAction):
+        * WebView/WebView.mm:
+        (-[WebView dragDataForSession:client:global:operation:]):
+        (-[WebView actionMaskForDraggingInfo:]):
+
 2020-05-26  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds

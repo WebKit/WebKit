@@ -1,3 +1,24 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        Use OptionSet<DragDestinationAction> for mask values
+        <https://webkit.org/b/212115>
+        <rdar://problem/63423380>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+        - Switch from decodeEnum() and encodeEnum() to modern
+          equivalents that check for valid enum values.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragDataForDropSession:dragDestinationAction:]):
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::willPerformDragDestinationAction):
+
 2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make PointerLock work
