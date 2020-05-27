@@ -1,3 +1,13 @@
+2020-05-27  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed. A couple transformations missing from r262214.
+
+        Was making fast/events/touch/tap-highlight-color.html to fail.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::addTouchPoint):
+
 2020-05-27  Kenneth Russell  <kbr@chromium.org>
 
         Update MobileMiniBrowser project settings to current Xcode

@@ -314,7 +314,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     struct wpe_input_xkb_keymap_entry* entries;
     uint32_t entriesCount;
     wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keySym, &entries, &entriesCount);
-    struct wpe_input_keyboard_event event { static_cast<uint32_t>(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, true, modifiers};
+    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, true, modifiers};
     wpe_view_backend_dispatch_keyboard_event(viewBackend(*m_testController), &event);
     event.pressed = false;
     wpe_view_backend_dispatch_keyboard_event(viewBackend(*m_testController), &event);
@@ -323,7 +323,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 
 void EventSenderProxy::addTouchPoint(int x, int y)
 {
-    struct wpe_input_touch_event_raw rawEvent { wpe_input_touch_event_type_down, static_cast<uint32_t>(m_time), static_cast<int>(m_touchEvents.size()), static_cast<int32_t>(x), static_cast<int32_t>(y) };
+    struct wpe_input_touch_event_raw rawEvent { wpe_input_touch_event_type_down, secToMsTimestamp(m_time), static_cast<int>(m_touchEvents.size()), static_cast<int32_t>(x), static_cast<int32_t>(y) };
     m_touchEvents.append(rawEvent);
     m_updatedTouchEvents.add(rawEvent.id);
 }
