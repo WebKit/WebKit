@@ -55,6 +55,7 @@ class LayerTreeHost : public WebCore::GraphicsLayerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LayerTreeHost(WebPage&);
+    ~LayerTreeHost();
 
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
     void setLayerFlushSchedulingEnabled(bool);

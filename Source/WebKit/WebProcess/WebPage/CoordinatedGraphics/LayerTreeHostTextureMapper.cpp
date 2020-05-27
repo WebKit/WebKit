@@ -126,6 +126,8 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
 }
 
+LayerTreeHost::~LayerTreeHost() = default;
+
 void LayerTreeHost::setLayerFlushSchedulingEnabled(bool)
 {
 }
