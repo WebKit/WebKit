@@ -53,7 +53,38 @@ This will define the following variables in your project:
 #]=======================================================================]
 
 find_package(PkgConfig)
-pkg_check_modules(PC_MANETTE IMPORTED_TARGET manette-0.2)
+pkg_check_modules(PC_MANETTE QUIET manette-0.2)
+set(Manette_COMPILE_OPTIONS ${PC_MANETTE_CFLAGS_OTHER})
+set(Manette_VERSION ${PC_MANETTE_VERSION})
+
+find_path(Manette_INCLUDE_DIR
+    NAMES libmanette.h
+    HINTS ${PC_MANETTE_INCLUDEDIR}
+          ${PC_MANETTE_INCLUDE_DIRS}
+)
+
+find_library(Manette_LIBRARY
+    NAMES ${Manette_NAMES} manette-0.2
+    HINTS ${PC_MANETTE_LIBDIR}
+          ${PC_MANETTE_LIBRARY_DIRS}
+)
+
+if (Manette_INCLUDE_DIR AND NOT Manette_VERSION)
+    if (EXISTS "${Manette_INCLUDE_DIR}/manette-version.h")
+        file(READ "${Manette_INCLUDE_DIR}/manette-version.h" Manette_VERSION_CONTENT)
+
+        string(REGEX MATCH "#define +LIBMANETTE_MAJOR_VERSION +([0-9]+)" _dummy "${Manette_VERSION_CONTENT}")
+        set(Manette_VERSION_MAJOR "${CMAKE_MATCH_1}")
+
+        string(REGEX MATCH "#define +LIBMANETTE_MINOR_VERSION +([0-9]+)" _dummy "${Manette_VERSION_CONTENT}")
+        set(Manette_VERSION_MINOR "${CMAKE_MATCH_1}")
+
+        string(REGEX MATCH "#define +LIBMANETTE_MICRO_VERSION +([0-9]+)" _dummy "${Manette_VERSION_CONTENT}")
+        set(Manette_VERSION_PATCH "${CMAKE_MATCH_1}")
+
+        set(Manette_VERSION "${Manette_VERSION_MAJOR}.${Manette_VERSION_MINOR}.${Manette_VERSION_PATCH}")
+    endif ()
+endif ()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Manette
@@ -62,11 +93,18 @@ find_package_handle_standard_args(Manette
     VERSION_VAR Manette_VERSION
 )
 
-if (TARGET PkgConfig::PC_MANETTE AND NOT TARGET Manette::Manette)
-    add_library(Manette::Manette INTERFACE IMPORTED GLOBAL)
-    set_property(TARGET Manette::Manette PROPERTY
-        INTERFACE_LINK_LIBRARIES PkgConfig::PC_MANETTE
+if (Manette_LIBRARY AND NOT TARGET Manette::Manette)
+    add_library(Manette::Manette UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(Manette::Manette PROPERTIES
+        IMPORTED_LOCATION "${Manette_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${Manette_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${Manette_INCLUDE_DIR}"
     )
 endif ()
 
 mark_as_advanced(Manette_INCLUDE_DIR Manette_LIBRARY)
+
+if (Manette_FOUND)
+    set(Manette_LIBRARIES ${Manette_LIBRARY})
+    set(Manette_INCLUDE_DIRS ${Manette_INCLUDE_DIR})
+endif ()

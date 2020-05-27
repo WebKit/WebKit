@@ -1,3 +1,18 @@
+2020-05-27  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Manette_INCLUDE_DIR and Manette_LIBRARY are undefined.
+        https://bugs.webkit.org/show_bug.cgi?id=212236
+
+        Reviewed by Michael Catanzaro.
+
+        The cmake complains Manette_INCLUDE_DIR and Manette_LIBRARY are missing
+        in finding the manette package where GAMEPAD is enabled for the gtk port.
+        In r261965, we thought they would be automatically defined with IMPORTED_TARGET
+        but they seem not. We explicitly find the header and library paths, following FindOpenJPEG.cmake.
+
+        * Source/cmake/FindManette.cmake:
+        * Source/cmake/OptionsGTK.cmake: REQUIRED removed.
+
 2020-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK2] Use GraphicsLayerTextureMapper for Accelerated Compositing mode

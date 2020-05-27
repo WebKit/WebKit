@@ -246,7 +246,7 @@ if (USE_WPE_RENDERER)
 endif ()
 
 if (ENABLE_GAMEPAD)
-    find_package(Manette 0.2.4 REQUIRED)
+    find_package(Manette 0.2.4)
     if (NOT Manette_FOUND)
         message(FATAL_ERROR "libmanette is required for ENABLE_GAMEPAD")
     endif ()
