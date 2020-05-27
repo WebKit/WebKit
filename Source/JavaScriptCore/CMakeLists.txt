@@ -1150,12 +1150,15 @@ set(JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator_templates.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/__init__.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/models.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/preprocess.pl
 )
 
 set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Animation.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/ApplicationCache.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Audit.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Browser.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/CPUProfiler.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/CSS.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Canvas.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Console.json
@@ -1164,40 +1167,23 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOMStorage.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Database.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Debugger.json
-    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Browser.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/GenericTypes.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Heap.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/IndexedDB.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Inspector.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/LayerTree.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Memory.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Network.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Page.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Recording.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Runtime.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/ScriptProfiler.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Security.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/ServiceWorker.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Target.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Timeline.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Worker.json
 )
-
-if (ENABLE_INDEXED_DATABASE)
-    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
-        ${JAVASCRIPTCORE_DIR}/inspector/protocol/IndexedDB.json
-    )
-endif ()
-
-if (ENABLE_RESOURCE_USAGE)
-    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
-        ${JAVASCRIPTCORE_DIR}/inspector/protocol/CPUProfiler.json
-        ${JAVASCRIPTCORE_DIR}/inspector/protocol/Memory.json
-    )
-endif ()
-
-if (ENABLE_SERVICE_WORKER)
-    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
-        ${JAVASCRIPTCORE_DIR}/inspector/protocol/ServiceWorker.json
-    )
-endif ()
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
@@ -1216,11 +1202,19 @@ add_custom_command(
            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.cpp
            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
     MAIN_DEPENDENCY ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector" --framework JavaScriptCore ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
+add_custom_command(
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js.in
+    MAIN_DEPENDENCY ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
+    DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector --framework WebInspectorUI ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
+    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/preprocess.pl --input ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js.in --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --output ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
+    VERBATIM)
+add_custom_target(InspectorBackendCommands DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js")
 
 # JSCBuiltins
 

@@ -136,41 +136,6 @@ class Frameworks:
     Test = Framework("Test")
 
 
-class Platform:
-    def __init__(self, name):
-        self.name = name
-
-    @staticmethod
-    def fromString(platformString):
-        platformString = platformString.lower()
-        if platformString == "ios":
-            return Platforms.iOS
-
-        if platformString == "macos":
-            return Platforms.macOS
-
-        if platformString == "all":
-            return Platforms.All
-
-        if platformString == "generic" or not platformString:
-            return Platforms.Generic
-
-        raise ParseException("Unknown platform: %s" % platformString)
-
-
-class Platforms:
-    All = Platform("all")
-    Generic = Platform("generic")
-    iOS = Platform("ios")
-    macOS = Platform("macos")
-
-    # Allow iteration over all platforms. See <http://stackoverflow.com/questions/5434400/>.
-    class __metaclass__(type):
-        def __iter__(self):
-            for attr in dir(Platforms):
-                if not attr.startswith("__"):
-                    yield getattr(Platforms, attr)
-
 class TypeReference:
     def __init__(self, type_kind, referenced_type_name, enum_values, array_items):
         self.type_kind = type_kind
@@ -439,7 +404,7 @@ class Protocol:
                 raise ParseException("Malformed domain specification: events is not an array")
             events.extend([self.parse_event(event, debuggable_types) for event in json['events']])
 
-        self.domains.append(Domain(json['domain'], json.get('description', ''), json.get('featureGuard'), debuggable_types, target_types, isSupplemental, version, types, commands, events))
+        self.domains.append(Domain(json['domain'], json.get('description', ''), json.get('condition'), debuggable_types, target_types, isSupplemental, version, types, commands, events))
 
     def parse_type_declaration(self, json):
         check_for_required_properties(['id', 'type'], json, "type")
@@ -457,8 +422,7 @@ class Protocol:
             raise ParseException("Malformed domain specification: type declaration for %s has duplicate member names" % json['id'])
 
         type_ref = TypeReference(json['type'], json.get('$ref'), json.get('enum'), json.get('items'))
-        platform = Platform.fromString(json.get('platform', 'generic'))
-        return TypeDeclaration(json['id'], type_ref, json.get("description", ""), platform, type_members)
+        return TypeDeclaration(json['id'], type_ref, json.get("description", ""), json.get('condition'), type_members)
 
     def parse_type_member(self, json):
         check_for_required_properties(['name'], json, "type member")
@@ -509,8 +473,7 @@ class Protocol:
             if len(duplicate_names) > 0:
                 raise ParseException("Malformed domain specification: return parameter list for command %s has duplicate parameter names" % json['name'])
 
-        platform = Platform.fromString(json.get('platform', 'generic'))
-        return Command(json['name'], target_types, call_parameters, return_parameters, json.get('description', ""), platform, json.get('async', False))
+        return Command(json['name'], target_types, call_parameters, return_parameters, json.get('description', ""), json.get('condition'), json.get('async', False))
 
     def parse_event(self, json, debuggable_types):
         check_for_required_properties(['name'], json, "event")
@@ -544,8 +507,7 @@ class Protocol:
             if len(duplicate_names) > 0:
                 raise ParseException("Malformed domain specification: parameter list for event %s has duplicate parameter names" % json['name'])
 
-        platform = Platform.fromString(json.get('platform', 'generic'))
-        return Event(json['name'], target_types, event_parameters, json.get('description', ""), platform)
+        return Event(json['name'], target_types, event_parameters, json.get('description', ""), json.get('condition'))
 
     def parse_call_or_return_parameter(self, json):
         check_for_required_properties(['name'], json, "parameter")
@@ -643,10 +605,10 @@ class Protocol:
 
 
 class Domain:
-    def __init__(self, domain_name, description, feature_guard, debuggable_types, target_types, isSupplemental, version, type_declarations, commands, events):
+    def __init__(self, domain_name, description, condition, debuggable_types, target_types, isSupplemental, version, type_declarations, commands, events):
         self.domain_name = domain_name
         self.description = description
-        self.feature_guard = feature_guard
+        self.condition = condition
         self.debuggable_types = debuggable_types
         self.target_types = target_types
         self.is_supplemental = isSupplemental
@@ -686,11 +648,11 @@ class Domains:
 
 
 class TypeDeclaration:
-    def __init__(self, type_name, type_ref, description, platform, type_members):
+    def __init__(self, type_name, type_ref, description, condition, type_members):
         self.type_name = type_name
         self.type_ref = type_ref
         self.description = description
-        self.platform = platform
+        self.condition = condition
         self.type_members = type_members
 
         if self.type_name != ucfirst(self.type_name):
@@ -734,13 +696,13 @@ class Parameter:
 
 
 class Command:
-    def __init__(self, command_name, target_types, call_parameters, return_parameters, description, platform, is_async):
+    def __init__(self, command_name, target_types, call_parameters, return_parameters, description, condition, is_async):
         self.command_name = command_name
         self.target_types = target_types
         self.call_parameters = call_parameters
         self.return_parameters = return_parameters
         self.description = description
-        self.platform = platform
+        self.condition = condition
         self.is_async = is_async
 
     def resolve_type_references(self, protocol, domain):
@@ -754,12 +716,12 @@ class Command:
 
 
 class Event:
-    def __init__(self, event_name, target_types, event_parameters, description, platform):
+    def __init__(self, event_name, target_types, event_parameters, description, condition):
         self.event_name = event_name
         self.target_types = target_types
         self.event_parameters = event_parameters
         self.description = description
-        self.platform = platform
+        self.condition = condition
 
     def resolve_type_references(self, protocol, domain):
         log.debug(">> Resolving type references for parameters in event: %s" % self.event_name)

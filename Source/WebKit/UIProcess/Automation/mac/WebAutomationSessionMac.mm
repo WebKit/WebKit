@@ -42,7 +42,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#pragma mark Commands for Platform: 'macOS'
+#pragma mark Commands for 'PLATFORM(MAC)'
 
 void WebAutomationSession::inspectBrowsingContext(const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)
 {

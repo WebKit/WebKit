@@ -229,7 +229,9 @@ public:
     static void frameStoppedLoading(Frame&);
     static void frameScheduledNavigation(Frame&, Seconds delay);
     static void frameClearedScheduledNavigation(Frame&);
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     static void defaultAppearanceDidChange(Page&, bool useDarkAppearance);
+#endif
     static void willDestroyCachedResource(CachedResource&);
 
     static bool willInterceptRequest(const Frame*, const ResourceRequest&);
@@ -434,7 +436,9 @@ private:
     static void frameStoppedLoadingImpl(InstrumentingAgents&, Frame&);
     static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, Seconds delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, Frame&);
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     static void defaultAppearanceDidChangeImpl(InstrumentingAgents&, bool useDarkAppearance);
+#endif
     static void willDestroyCachedResourceImpl(CachedResource&);
 
     static bool willInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
@@ -1237,11 +1241,13 @@ inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& fra
         frameClearedScheduledNavigationImpl(*instrumentingAgents, frame);
 }
 
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
 inline void InspectorInstrumentation::defaultAppearanceDidChange(Page& page, bool useDarkAppearance)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     defaultAppearanceDidChangeImpl(instrumentingAgentsForPage(page), useDarkAppearance);
 }
+#endif
 
 inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& cachedResource)
 {

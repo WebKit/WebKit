@@ -480,10 +480,6 @@ foreach (_file ${ObjCForwardingHeaders})
     file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
 endforeach ()
 
-list(APPEND WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
-    --platform=macOS
-)
-
 set(SecItemShimDirectory ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks)
 add_library(SecItemShim SHARED WebProcess/mac/SecItemShimLibrary.mm)
 WEBKIT_CREATE_SYMLINK(SecItemShim ${SecItemShimDirectory} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks)

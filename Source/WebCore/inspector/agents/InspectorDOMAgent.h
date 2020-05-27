@@ -131,7 +131,11 @@ public:
     void discardSearchResults(ErrorString&, const String& searchId) override;
     void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
     void getAttributes(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<String>>& result) override;
+#if PLATFORM(IOS_FAMILY)
+    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig) override;
+#else
     void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers) override;
+#endif
     void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
     void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
     void hideHighlight(ErrorString&) override;

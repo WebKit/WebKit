@@ -105,7 +105,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
                 domain_lines.append('static constexpr unsigned VERSION = %s;' % version)
 
             domain_lines.append('} // %s' % domain.domain_name)
-            sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
+            sections.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 
         if len(sections) == 0:
             return ''
@@ -132,10 +132,10 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             domain_lines.append('namespace %s {' % domain.domain_name)
 
             # Forward-declare all classes so the type builders won't break if rearranged.
-            domain_lines.extend('class %s;' % object_type.raw_name() for object_type in object_types)
-            domain_lines.extend('enum class %s;' % enum_type.raw_name() for enum_type in enum_types)
+            domain_lines.extend(self.wrap_with_guard_for_condition(object_type.declaration().condition, 'class %s;' % object_type.raw_name()) for object_type in object_types)
+            domain_lines.extend(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'enum class %s;' % enum_type.raw_name()) for enum_type in enum_types)
             domain_lines.append('} // %s' % domain.domain_name)
-            sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
+            sections.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 
         if len(sections) == 0:
             return ''
@@ -170,7 +170,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
             typedef_lines.append('typedef %s %s;' % (primitive_name, declaration.type_name))
-            sections.append('\n'.join(typedef_lines))
+            sections.append(self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(typedef_lines)))
 
         for declaration in array_declarations:
             element_type = CppGenerator.cpp_protocol_type_for_type(declaration.type.element_type)
@@ -178,13 +178,13 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
             typedef_lines.append('typedef JSON::ArrayOf<%s> %s;' % (element_type, declaration.type_name))
-            sections.append('\n'.join(typedef_lines))
+            sections.append(self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(typedef_lines)))
 
         lines = []
         lines.append('namespace %s {' % domain.domain_name)
         lines.append('\n'.join(sections))
         lines.append('} // %s' % domain.domain_name)
-        return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_enum_constant_value_conversion_methods(self):
         if not self.assigned_enum_values():
@@ -225,9 +225,11 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
         lines = []
         lines.append('namespace %s {' % domain.domain_name)
-        lines.append('\n'.join(sections))
+        lines.append('')
+        lines.append('\n\n'.join(sections))
+        lines.append('')
         lines.append('} // %s' % domain.domain_name)
-        return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_class_for_object_declaration(self, type_declaration, domain):
         if len(type_declaration.type_members) == 0:
@@ -278,14 +280,14 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
                 lines.append('    %s static const char* %s;' % (export_macro, ucfirst(type_member.member_name)))
 
         lines.append('};')
-        lines.append('')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(type_declaration.condition, '\n'.join(lines))
 
     def _generate_struct_for_enum_declaration(self, enum_declaration):
         lines = []
-        lines.append('/* %s */' % enum_declaration.description)
+        if len(enum_declaration.description):
+            lines.append('/* %s */' % enum_declaration.description)
         lines.extend(self._generate_struct_for_enum_type(enum_declaration.type_name, enum_declaration.type))
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(enum_declaration.condition, '\n'.join(lines))
 
     def _generate_struct_for_anonymous_enum_member(self, enum_member):
         def apply_indentation(line):
@@ -381,10 +383,10 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             for type_declaration in declarations_to_generate:
                 for type_member in type_declaration.type_members:
                     if isinstance(type_member.type, EnumType):
-                        type_arguments.append((CppGenerator.cpp_protocol_type_for_type_member(type_member, type_declaration), False))
+                        type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_protocol_type_for_type_member(type_member, type_declaration)), False))
 
                 if isinstance(type_declaration.type, ObjectType):
-                    type_arguments.append((CppGenerator.cpp_protocol_type_for_type(type_declaration.type), Generator.type_needs_runtime_casts(type_declaration.type)))
+                    type_arguments.append((self.wrap_with_guard_for_condition(type_declaration.condition, CppGenerator.cpp_protocol_type_for_type(type_declaration.type)), Generator.type_needs_runtime_casts(type_declaration.type)))
 
         struct_keywords = ['struct']
         function_keywords = ['static void']
@@ -437,19 +439,20 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             domain_lines.append("// Enums in the '%s' Domain" % domain.domain_name)
             for enum_type in enum_types:
                 cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type(enum_type)
-                domain_lines.append('template<>')
-                domain_lines.append('%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+                domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, 'template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type)))
 
             for object_type in object_types:
+                object_lines = []
                 for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
                     cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type_member(enum_member, object_type.declaration())
-                    domain_lines.append('template<>')
-                    domain_lines.append('%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+                    object_lines.append('template<>\n%s parseEnumValueFromString<%s>(const String&);' % (return_type_with_export_macro(cpp_protocol_type), cpp_protocol_type))
+                if len(object_lines):
+                    domain_lines.append(self.wrap_with_guard_for_condition(object_type.declaration().condition, '\n'.join(object_lines)))
 
             if len(domain_lines) == 1:
                 continue  # No real declarations to emit, just the domain comment. Skip.
 
-            sections.append(self.wrap_with_guard_for_domain(domain, '\n'.join(domain_lines)))
+            sections.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 
         if len(sections) == 1:
             return [] # No real sections to emit, just the namespace and template declaration. Skip.
@@ -474,14 +477,20 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
                 lines.append('')
                 lines.append('template<typename T> struct DefaultHash;')
 
-            lines.append('')
-            lines.append("// Hash declarations in the '%s' Domain" % domain.domain_name)
+            domain_lines = []
+
+            domain_lines.append('')
+            domain_lines.append("// Hash declarations in the '%s' Domain" % domain.domain_name)
 
             for enum_type in enum_types:
-                lines.append('template<>')
-                lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> {' % (domain.domain_name, enum_type.raw_name()))
-                lines.append('    typedef IntHash<Inspector::Protocol::%s::%s> Hash;' % (domain.domain_name, enum_type.raw_name()))
-                lines.append('};')
+                enum_lines = []
+                enum_lines.append('template<>')
+                enum_lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> {' % (domain.domain_name, enum_type.raw_name()))
+                enum_lines.append('    typedef IntHash<Inspector::Protocol::%s::%s> Hash;' % (domain.domain_name, enum_type.raw_name()))
+                enum_lines.append('};')
+                domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, '\n'.join(enum_lines)))
+
+            lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 
         if len(lines) == 0:
             return []

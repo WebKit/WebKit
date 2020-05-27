@@ -437,7 +437,7 @@
         {
             "name": "inspectBrowsingContext",
             "description": "Inspect the specified browsing context using Web Inspector.",
-            "platform": "macos",
+            "condition": "defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be inspected." },
                 { "name": "enableAutoCapturing", "type": "boolean", "optional": true, "description": "If this option is present and set to true, the Web Inspector will automatically start a timeline recording of the specified browsing context once it is attached. Note that this disables the debugger for the duration of the recording." }

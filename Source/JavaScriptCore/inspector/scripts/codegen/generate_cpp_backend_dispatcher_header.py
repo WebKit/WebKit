@@ -91,7 +91,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         lines = []
         lines.append('#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         for domain in domains:
-            lines.append(self.wrap_with_guard_for_domain(domain, 'class Alternate%sBackendDispatcher;' % domain.domain_name))
+            lines.append(self.wrap_with_guard_for_condition(domain.condition, 'class Alternate%sBackendDispatcher;' % domain.domain_name))
         lines.append('#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)')
         return '\n'.join(lines)
 
@@ -113,7 +113,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'commandDeclarations': "\n".join(command_declarations)
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_condition(domain.condition, Template(CppTemplates.BackendDispatcherHeaderDomainHandlerDeclaration).substitute(None, **handler_args))
 
     def _generate_anonymous_enum_for_parameter(self, parameter, command):
         enum_args = {
@@ -161,7 +161,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'parameters': ", ".join(parameters)
         }
         lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(command.condition, '\n'.join(lines))
 
     def _generate_async_handler_declaration_for_command(self, command):
         callbackName = "%sCallback" % ucfirst(command.command_name)
@@ -192,7 +192,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'outParameters': ", ".join(out_parameters),
         }
 
-        return Template(CppTemplates.BackendDispatcherHeaderAsyncCommandDeclaration).substitute(None, **command_args)
+        return self.wrap_with_guard_for_condition(command.condition, Template(CppTemplates.BackendDispatcherHeaderAsyncCommandDeclaration).substitute(None, **command_args))
 
     def _generate_dispatcher_declarations_for_domain(self, domain):
         classComponents = ['class']
@@ -220,7 +220,7 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
             'commandDeclarations': "\n".join(declarations)
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_condition(domain.condition, Template(CppTemplates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_command(self, command):
-        return "    void %s(long requestId, RefPtr<JSON::Object>&& parameters);" % command.command_name
+        return self.wrap_with_guard_for_condition(command.condition, "    void %s(long requestId, RefPtr<JSON::Object>&& parameters);" % command.command_name)

@@ -108,7 +108,7 @@ public:
     void setAlternateDispatcher(Alternate${domainName}BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
 private:
     Alternate${domainName}BackendDispatcher* m_alternateDispatcher { nullptr };
-#endif""")
+#endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)""")
 
     BackendDispatcherHeaderAsyncCommandDeclaration = (
     """    ${classAndExportMacro} ${callbackName} : public BackendDispatcher::CallbackBase {
@@ -127,8 +127,8 @@ private:
     message->getObject("params"_s, parameters);
 
 ${dispatchCases}
-    else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'${domainName}." + method + "' was not found");
+
+    m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, "'${domainName}." + method + "' was not found");
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (

@@ -127,8 +127,7 @@ private:
 ${successCallback}
 ${conversions}
 ${invocation}
-}
-""")
+}""")
 
     ConfigurationCommandProperty = (
     """@property (nonatomic, retain, setter=set${domainName}Handler:) id<${objcPrefix}${domainName}DomainHandler> ${variableNamePrefix}Handler;""")

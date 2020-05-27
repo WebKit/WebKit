@@ -317,17 +317,9 @@ AUTOMATION_PROTOCOL_OUTPUT_FILES = \
 #
 AUTOMATION_PROTOCOL_OUTPUT_PATTERNS = $(subst .,%,$(AUTOMATION_PROTOCOL_OUTPUT_FILES))
 
-ifeq ($(OS),MACOS)
-ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
-	AUTOMATION_BACKEND_PLATFORM_ARGUMENTS = --platform iOS
-else
-	AUTOMATION_BACKEND_PLATFORM_ARGUMENTS = --platform macOS
-endif
-endif # MACOS
-
 # JSON-RPC Frontend Dispatchers, Backend Dispatchers, Type Builders
 $(AUTOMATION_PROTOCOL_OUTPUT_PATTERNS) : $(AUTOMATION_PROTOCOL_INPUT_FILES) $(AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit $(AUTOMATION_BACKEND_PLATFORM_ARGUMENTS) --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
 
 all : $(AUTOMATION_PROTOCOL_OUTPUT_FILES)
 

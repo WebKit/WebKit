@@ -128,9 +128,8 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 '',
                 '    return WTF::nullopt;',
                 '}',
-                '',
             ])
-            return body_lines
+            return '\n'.join(body_lines)
 
         type_declarations = self.type_declarations_for_domain(domain)
         declaration_types = [decl.type for decl in type_declarations]
@@ -146,17 +145,23 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.append("// Enums in the '%s' Domain" % domain.domain_name)
         for enum_type in enum_types:
             cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type(enum_type)
-            lines.extend(generate_conversion_method_body(enum_type, cpp_protocol_type))
+            lines.append('')
+            lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, generate_conversion_method_body(enum_type, cpp_protocol_type)))
 
         for object_type in object_types:
+            object_lines = []
             for enum_member in filter(type_member_is_anonymous_enum_type, object_type.members):
                 cpp_protocol_type = CppGenerator.cpp_protocol_type_for_type_member(enum_member, object_type.declaration())
-                lines.extend(generate_conversion_method_body(enum_member.type, cpp_protocol_type))
+                object_lines.append(generate_conversion_method_body(enum_member.type, cpp_protocol_type))
+            if len(object_lines):
+                if len(lines):
+                    lines.append('')
+                lines.append(self.wrap_with_guard_for_condition(object_type.declaration().condition, '\n'.join(object_lines)))
 
         if len(lines) == 1:
             return ''  # No real declarations to emit, just the domain comment.
 
-        return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_enum_mapping_and_conversion_methods(self, domains):
         sections = []
@@ -173,12 +178,15 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
     def _generate_open_field_names(self):
         lines = []
         for domain in self.domains_to_generate():
+            domain_lines = []
             type_declarations = self.type_declarations_for_domain(domain)
             for type_declaration in [decl for decl in type_declarations if Generator.type_has_open_fields(decl.type)]:
                 open_members = Generator.open_fields(type_declaration)
                 for type_member in sorted(open_members, key=lambda member: member.member_name):
                     field_name = '::'.join(['Inspector', 'Protocol', domain.domain_name, ucfirst(type_declaration.type_name), ucfirst(type_member.member_name)])
-                    lines.append('const char* %s = "%s";' % (field_name, type_member.member_name))
+                    domain_lines.append('const char* %s = "%s";' % (field_name, type_member.member_name))
+            if len(domain_lines):
+                lines.append(self.wrap_with_guard_for_condition(domain.condition, '\n'.join(domain_lines)))
 
         return '\n'.join(lines)
 
@@ -188,16 +196,22 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         declarations_to_generate = [decl for decl in type_declarations if self.type_needs_shape_assertions(decl.type)]
 
         for type_declaration in declarations_to_generate:
+            type_lines = []
             for type_member in type_declaration.type_members:
                 if isinstance(type_member.type, EnumType):
-                    sections.append(self._generate_assertion_for_enum(type_member, type_declaration))
+                    type_lines.append(self._generate_assertion_for_enum(type_member, type_declaration))
 
             if isinstance(type_declaration.type, ObjectType):
-                sections.append(self._generate_assertion_for_object_declaration(type_declaration))
+                type_lines.append(self._generate_assertion_for_object_declaration(type_declaration))
                 if Generator.type_needs_runtime_casts(type_declaration.type):
-                    sections.append(self._generate_runtime_cast_for_object_declaration(type_declaration))
+                    type_lines.append(self._generate_runtime_cast_for_object_declaration(type_declaration))
+            if len(type_lines):
+                sections.append(self.wrap_with_guard_for_condition(type_declaration.condition, '\n\n'.join(type_lines)))
 
-        return '\n\n'.join(sections)
+        if not len(sections):
+            return ''
+
+        return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(sections))
 
     def _generate_runtime_cast_for_object_declaration(self, object_declaration):
         args = {

@@ -108,13 +108,19 @@ public:
     void setBootstrapScript(ErrorString&, const String* optionalSource) final;
     void searchInResource(ErrorString&, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
     void searchInResources(ErrorString&, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&) override;
+#if !PLATFORM(IOS_FAMILY)
     void setShowRulers(ErrorString&, bool) override;
+#endif
     void setShowPaintRects(ErrorString&, bool show) override;
     void setEmulatedMedia(ErrorString&, const String&) override;
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     void setForcedAppearance(ErrorString&, const String&) override;
+#endif
     void snapshotNode(ErrorString&, int nodeId, String* outDataURL) override;
     void snapshotRect(ErrorString&, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL) override;
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
     void archive(ErrorString&, String* data) override;
+#endif
 
     // InspectorInstrumentation
     void domContentEventFired();
@@ -126,7 +132,9 @@ public:
     void frameStoppedLoading(Frame&);
     void frameScheduledNavigation(Frame&, Seconds delay);
     void frameClearedScheduledNavigation(Frame&);
+#if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     void defaultAppearanceDidChange(bool useDarkAppearance);
+#endif
     void applyUserAgentOverride(String&);
     void applyEmulatedMedia(String&);
     void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
@@ -161,7 +169,6 @@ private:
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
     String m_emulatedMedia;
-    String m_forcedAppearance;
     String m_bootstrapScript;
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };

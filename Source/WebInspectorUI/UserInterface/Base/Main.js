@@ -2393,7 +2393,7 @@ WI._updateDownloadTabBarButton = function()
     if (!WI._reloadTabBarButton)
         return;
 
-    if (!InspectorBackend.hasDomain("Page")) {
+    if (!InspectorBackend.hasCommand("Page.archive")) {
         WI._downloadTabBarButton.hidden = true;
         WI._updateTabBarDividers();
         return;

@@ -86,7 +86,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
         for command in commands:
             command_declarations.append(self._generate_handler_implementation_for_command(domain, command))
 
-        return '\n'.join(command_declarations)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(command_declarations))
 
     def _generate_handler_implementation_for_command(self, domain, command):
         lines = []
@@ -104,7 +104,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             'invocation': self._generate_invocation_for_command(domain, command),
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerImplementation).substitute(None, **command_args))
+        return self.wrap_with_guard_for_condition(command.condition, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerImplementation).substitute(None, **command_args))
 
     def _generate_responds_to_selector_for_command(self, domain, command):
         return '[m_delegate respondsToSelector:@selector(%sWithErrorCallback:successCallback:%s)]' % (command.command_name, ''.join(map(lambda parameter: '%s:' % parameter.parameter_name, command.call_parameters)))

@@ -45,6 +45,7 @@
         {
             "id": "Appearance",
             "type": "string",
+            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
             "enum": ["Light", "Dark"],
             "description": "Page appearance name."
         },
@@ -229,6 +230,7 @@
         {
             "name": "setShowRulers",
             "description": "Requests that backend draw rulers in the inspector overlay",
+            "condition": "!(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)",
             "parameters": [
                 { "name": "result", "type": "boolean", "description": "True for showing rulers" }
             ]
@@ -250,6 +252,7 @@
         {
             "name": "setForcedAppearance",
             "description": "Forces the given appearance for the page.",
+            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Appearance name to force. Empty string disables the override." }
             ]
@@ -281,6 +284,7 @@
         {
             "name": "archive",
             "description": "Grab an archive of the page.",
+            "condition": "(defined(ENABLE_WEB_ARCHIVE) && ENABLE_WEB_ARCHIVE) && (defined(USE_CF) && USE_CF)",
             "returns": [
                 { "name": "data", "type": "string", "description": "Base64-encoded web archive." }
             ]
@@ -345,6 +349,7 @@
         {
             "name": "defaultAppearanceDidChange",
             "description": "Fired when page's default appearance changes, even if there is a forced appearance.",
+            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
             ]

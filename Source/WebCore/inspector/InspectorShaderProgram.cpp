@@ -26,6 +26,8 @@
 #include "config.h"
 #include "InspectorShaderProgram.h"
 
+#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+
 #include "InspectorCanvas.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/Optional.h>
@@ -152,10 +154,6 @@ static RefPtr<WebGPUShaderModule> shaderForType(WebGPUPipeline& pipeline, Inspec
 
 String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::ShaderType shaderType)
 {
-#if !ENABLE(WEBGL) && !ENABLE(WEBGPU)
-    UNUSED_PARAM(shaderType);
-#endif
-
     return WTF::switchOn(m_program,
 #if ENABLE(WEBGL)
         [&] (std::reference_wrapper<WebGLProgram> programWrapper) {
@@ -184,11 +182,6 @@ String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::
 
 bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, const String& source)
 {
-#if !ENABLE(WEBGL) && !ENABLE(WEBGPU)
-    UNUSED_PARAM(shaderType);
-    UNUSED_PARAM(source);
-#endif
-
     return WTF::switchOn(m_program,
 #if ENABLE(WEBGL)
         [&] (std::reference_wrapper<WebGLProgram> programWrapper) {
@@ -281,3 +274,5 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)

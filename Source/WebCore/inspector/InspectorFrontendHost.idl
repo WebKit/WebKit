@@ -93,9 +93,7 @@
     boolean isBeingInspected();
 
     readonly attribute boolean supportsDiagnosticLogging;
-#if ENABLE_INSPECTOR_TELEMETRY
-    void logDiagnosticEvent(DOMString eventName, DOMString content);
-#endif
+    [Conditional=INSPECTOR_TELEMETRY] void logDiagnosticEvent(DOMString eventName, DOMString content);
 };
 
 dictionary ContextMenuItem {

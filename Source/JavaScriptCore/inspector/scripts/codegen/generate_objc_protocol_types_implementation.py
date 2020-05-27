@@ -44,7 +44,7 @@ log = logging.getLogger('global')
 
 
 def add_newline(lines):
-    if lines and lines[-1] == '':
+    if not len(lines) or lines[-1] == '':
         return
     lines.append('')
 
@@ -91,7 +91,7 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
             if (isinstance(declaration.type, ObjectType)):
                 add_newline(lines)
                 lines.append(self.generate_type_implementation(domain, declaration))
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def generate_type_implementation(self, domain, declaration):
         lines = []
@@ -112,7 +112,7 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
             lines.append(self._generate_getter_for_member(domain, declaration, member))
         lines.append('')
         lines.append('@end')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(lines))
 
     def _generate_init_method_for_protocol_object(self, domain, declaration):
         lines = []

@@ -38,14 +38,13 @@ class InspectorGeneratorTests:
         self.reset_results = reset_results
         self.executive = executive
 
-    def generate_from_json(self, json_file, platform, output_directory):
+    def generate_from_json(self, json_file, output_directory):
         cmd = ['python',
                'JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py',
                '--outputDir', output_directory,
                '--force',
                '--framework', 'Test',
                '--test',
-               '--platform', platform,
                json_file]
 
         exit_code = 0
@@ -88,7 +87,7 @@ class InspectorGeneratorTests:
                 print('PASS: %s' % output_file)
         return changes_found
 
-    def run_tests(self, platform, input_directory, reference_directory):
+    def run_tests(self, input_directory, reference_directory):
         work_directory = reference_directory
 
         passed = True
@@ -101,7 +100,7 @@ class InspectorGeneratorTests:
             if not self.reset_results:
                 work_directory = tempfile.mkdtemp()
 
-            if self.generate_from_json(os.path.join(input_directory, input_file), platform, work_directory):
+            if self.generate_from_json(os.path.join(input_directory, input_file), work_directory):
                 passed = False
 
             if self.reset_results:
@@ -122,21 +121,10 @@ class InspectorGeneratorTests:
         all_tests_passed = True
 
         base_directory = os.path.join('JavaScriptCore', 'inspector', 'scripts', 'tests')
-
-        platform_directories = {
-            'macos': 'mac',
-            'ios': 'ios',
-            'generic': 'generic',
-            'all': 'all',
-        }
-
-        for platform_name, platform_directory in platform_directories.iteritems():
-            input_directory = os.path.join(base_directory, platform_directory)
-            reference_directory = os.path.join(input_directory, 'expected')
-            if not os.path.isdir(input_directory) or not os.path.isdir(reference_directory):
-                continue
-
-            all_tests_passed = all_tests_passed and self.run_tests(platform_name, input_directory, reference_directory)
+        input_directory = base_directory
+        reference_directory = os.path.join(input_directory, 'expected')
+        if os.path.isdir(input_directory) and os.path.isdir(reference_directory):
+            all_tests_passed = self.run_tests(input_directory, reference_directory)
 
         print('')
         if all_tests_passed:

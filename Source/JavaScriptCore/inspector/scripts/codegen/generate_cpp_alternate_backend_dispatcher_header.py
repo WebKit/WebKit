@@ -56,7 +56,7 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(CppTemplates.AlternateDispatchersHeaderPrelude).substitute(None, **template_args))
-        sections.append('\n'.join([_f for _f in map(self._generate_handler_declarations_for_domain, domains) if _f]))
+        sections.append('\n\n'.join([_f for _f in map(self._generate_handler_declarations_for_domain, domains) if _f]))
         sections.append(Template(CppTemplates.AlternateDispatchersHeaderPostlude).substitute(None, **template_args))
         return '\n\n'.join(sections)
 
@@ -87,7 +87,7 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
             'commandDeclarations': '\n'.join(command_declarations),
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_condition(domain.condition, Template(CppTemplates.AlternateBackendDispatcherHeaderDomainHandlerInterfaceDeclaration).substitute(None, **handler_args))
 
     def _generate_handler_declaration_for_command(self, command):
         lines = []
@@ -100,4 +100,4 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
             'parameters': ', '.join(parameters),
         }
         lines.append('    virtual void %(commandName)s(%(parameters)s) = 0;' % command_args)
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(command.condition, '\n'.join(lines))

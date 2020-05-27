@@ -31,12 +31,12 @@ from string import Template
 
 try:
     from .generator import Generator
-    from .models import EnumType, Frameworks, Platforms
+    from .models import EnumType, Frameworks
     from .objc_generator import ObjCGenerator
     from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 except ValueError:
     from generator import Generator
-    from models import EnumType, Frameworks, Platforms
+    from models import EnumType, Frameworks
     from objc_generator import ObjCGenerator
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -44,7 +44,7 @@ log = logging.getLogger('global')
 
 
 def add_newline(lines):
-    if lines and lines[-1] == '':
+    if not len(lines) or lines[-1] == '':
         return
     lines.append('')
 
@@ -75,7 +75,6 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         sections.append(self.generate_license())
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderPrelude).substitute(None, **header_args))
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderStandard).substitute(None))
-        sections.append(self._generate_enum_conversion_for_platforms())
         sections.extend(list(map(self._generate_enum_conversion_functions, domains)))
         sections.append(Template(ObjCTemplates.TypeConversionsHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
@@ -85,42 +84,43 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
 
         # Type enums and member enums.
         for declaration in self.type_declarations_for_domain(domain):
+            declaration_lines = []
             if isinstance(declaration.type, EnumType):
-                add_newline(lines)
-                lines.append(self._generate_anonymous_enum_conversion_for_declaration(domain, declaration))
+                add_newline(declaration_lines)
+                declaration_lines.append(self._generate_anonymous_enum_conversion_for_declaration(domain, declaration))
             else:
                 for member in declaration.type_members:
                     if (isinstance(member.type, EnumType) and member.type.is_anonymous):
-                        add_newline(lines)
-                        lines.append(self._generate_anonymous_enum_conversion_for_member(domain, declaration, member))
+                        add_newline(declaration_lines)
+                        declaration_lines.append(self._generate_anonymous_enum_conversion_for_member(domain, declaration, member))
+            if len(declaration_lines):
+                lines.append(self.wrap_with_guard_for_condition(declaration.condition, '\n\n'.join(declaration_lines)))
 
         # Anonymous command enums.
         for command in self.commands_for_domain(domain):
+            command_lines = []
             for parameter in command.call_parameters:
                 if (isinstance(parameter.type, EnumType) and parameter.type.is_anonymous):
-                    add_newline(lines)
-                    lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, command.command_name, parameter))
+                    add_newline(command_lines)
+                    command_lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, command.command_name, parameter))
             for parameter in command.return_parameters:
                 if (isinstance(parameter.type, EnumType) and parameter.type.is_anonymous):
-                    add_newline(lines)
-                    lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, command.command_name, parameter))
+                    add_newline(command_lines)
+                    command_lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, command.command_name, parameter))
+            if len(command_lines):
+                lines.append(self.wrap_with_guard_for_condition(command.condition, '\n\n'.join(command_lines)))
 
         # Anonymous event enums.
         for event in self.events_for_domain(domain):
+            event_lines = []
             for parameter in event.event_parameters:
                 if (isinstance(parameter.type, EnumType) and parameter.type.is_anonymous):
-                    add_newline(lines)
-                    lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, event.event_name, parameter))
+                    add_newline(event_lines)
+                    event_lines.append(self._generate_anonymous_enum_conversion_for_parameter(domain, event.event_name, parameter))
+            if len(event_lines):
+                lines.append(self.wrap_with_guard_for_condition(event.condition, '\n\n'.join(event_lines)))
 
-        return '\n'.join(lines)
-
-    def _generate_enum_conversion_for_platforms(self):
-        objc_enum_name = '%sPlatform' % self.objc_prefix()
-        enum_values = [platform.name for platform in Platforms]
-        lines = []
-        lines.append(self._generate_enum_objc_to_protocol_string(objc_enum_name, enum_values))
-        lines.append(self._generate_enum_from_protocol_string(objc_enum_name, enum_values))
-        return '\n\n'.join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(lines))
 
     def _generate_anonymous_enum_conversion_for_declaration(self, domain, declaration):
         objc_enum_name = self.objc_enum_name_for_anonymous_enum_declaration(declaration)

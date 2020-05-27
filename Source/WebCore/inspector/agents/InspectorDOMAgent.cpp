@@ -1207,10 +1207,17 @@ std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspector
     return highlightConfig;
 }
 
+#if PLATFORM(IOS_FAMILY)
+void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const JSON::Object* highlightConfig)
+{
+    setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig : nullptr, false);
+}
+#else
 void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const JSON::Object* highlightConfig, const bool* showRulers)
 {
     setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig : nullptr, showRulers && *showRulers);
 }
+#endif
 
 void InspectorDOMAgent::highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates)
 {

@@ -46,6 +46,45 @@ else
     DELETE = rm -f
 endif
 
+PREPROCESSOR_DEFINES = $(FEATURE_DEFINES)
+
+FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
+HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
+
+ifneq ($(SDKROOT),)
+    SDK_FLAGS=-isysroot $(SDKROOT)
+endif
+
+ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
+    WK_CURRENT_ARCH=$(word 1, $(ARCHS))
+    TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
+    PREPROCESSOR_DEFINES += WTF_PLATFORM_MAC
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
+    PREPROCESSOR_DEFINES += WTF_PLATFORM_IOS_FAMILY
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' USE_CF ' | cut -d' ' -f3), 1)
+    PREPROCESSOR_DEFINES += USE_CF
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep HAVE_OS_DARK_MODE_SUPPORT | cut -d' ' -f3), 1)
+    PREPROCESSOR_DEFINES += HAVE_OS_DARK_MODE_SUPPORT
+else
+endif
+
+ifeq ($(PLATFORM_FEATURE_DEFINES),)
+ifeq ($(OS), Windows_NT)
+PLATFORM_FEATURE_DEFINES = $(WEBKIT_LIBRARIES)/tools/vsprops/FeatureDefines.props
+else
+PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
+endif
+endif
+
 # --------
 
 .PHONY : all
@@ -243,6 +282,8 @@ INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/Animation.json \
     $(JavaScriptCore)/inspector/protocol/ApplicationCache.json \
     $(JavaScriptCore)/inspector/protocol/Audit.json \
+    $(JavaScriptCore)/inspector/protocol/Browser.json \
+    $(JavaScriptCore)/inspector/protocol/CPUProfiler.json \
     $(JavaScriptCore)/inspector/protocol/CSS.json \
     $(JavaScriptCore)/inspector/protocol/Canvas.json \
     $(JavaScriptCore)/inspector/protocol/Console.json \
@@ -251,34 +292,23 @@ INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/DOMStorage.json \
     $(JavaScriptCore)/inspector/protocol/Database.json \
     $(JavaScriptCore)/inspector/protocol/Debugger.json \
-    $(JavaScriptCore)/inspector/protocol/Browser.json \
     $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
     $(JavaScriptCore)/inspector/protocol/Heap.json \
+    $(JavaScriptCore)/inspector/protocol/IndexedDB.json \
     $(JavaScriptCore)/inspector/protocol/Inspector.json \
     $(JavaScriptCore)/inspector/protocol/LayerTree.json \
+    $(JavaScriptCore)/inspector/protocol/Memory.json \
     $(JavaScriptCore)/inspector/protocol/Network.json \
     $(JavaScriptCore)/inspector/protocol/Page.json \
     $(JavaScriptCore)/inspector/protocol/Recording.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
     $(JavaScriptCore)/inspector/protocol/ScriptProfiler.json \
     $(JavaScriptCore)/inspector/protocol/Security.json \
+    $(JavaScriptCore)/inspector/protocol/ServiceWorker.json \
     $(JavaScriptCore)/inspector/protocol/Target.json \
     $(JavaScriptCore)/inspector/protocol/Timeline.json \
     $(JavaScriptCore)/inspector/protocol/Worker.json \
 #
-
-ifeq ($(findstring ENABLE_INDEXED_DATABASE,$(FEATURE_DEFINES)), ENABLE_INDEXED_DATABASE)
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/IndexedDB.json
-endif
-
-ifeq ($(findstring ENABLE_RESOURCE_USAGE,$(FEATURE_DEFINES)), ENABLE_RESOURCE_USAGE)
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/CPUProfiler.json
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/Memory.json
-endif
-
-ifeq ($(findstring ENABLE_SERVICE_WORKER,$(FEATURE_DEFINES)), ENABLE_SERVICE_WORKER)
-    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/ServiceWorker.json
-endif
 
 INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/codegen/__init__.py \
@@ -294,6 +324,7 @@ INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/codegen/generator_templates.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/generator.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/models.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/preprocess.pl \
 	$(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py \
 #
@@ -302,7 +333,6 @@ INSPECTOR_GENERATOR_SCRIPTS = \
 # generate-inspector-protocol-bindings.py and ./CombinedDomains.json?
 INSPECTOR_DISPATCHER_FILES = \
     inspector/InspectorAlternateBackendDispatchers.h \
-    inspector/InspectorBackendCommands.js \
     inspector/InspectorBackendDispatchers.cpp \
     inspector/InspectorBackendDispatchers.h \
     inspector/InspectorFrontendDispatchers.cpp \
@@ -312,7 +342,7 @@ INSPECTOR_DISPATCHER_FILES = \
 #
 INSPECTOR_DISPATCHER_FILES_PATTERNS = $(subst .,%,$(INSPECTOR_DISPATCHER_FILES))
 
-all : $(INSPECTOR_DISPATCHER_FILES)
+all : $(INSPECTOR_DISPATCHER_FILES) inspector/InspectorBackendCommands.js
 
 # The combined JSON file depends on the actual set of domains and their file contents, so that
 # adding, modifying, or removing domains will trigger regeneration of inspector files.
@@ -327,6 +357,12 @@ CombinedDomains.json : $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
 $(INSPECTOR_DISPATCHER_FILES_PATTERNS) : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir inspector ./CombinedDomains.json
+
+inspector/InspectorBackendCommands.js : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS) $(PLATFORM_FEATURE_DEFINES)
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework WebInspectorUI --outputDir inspector ./CombinedDomains.json
+	@echo Pre-processing InspectorBackendCommands...
+	$(PERL) $(JavaScriptCore)/inspector/scripts/codegen/preprocess.pl --input inspector/InspectorBackendCommands.js.in --defines "$(PREPROCESSOR_DEFINES)" --output inspector/InspectorBackendCommands.js
+	$(DELETE) inspector/InspectorBackendCommands.js.in
 
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	echo "//# sourceURL=__InjectedScript_InjectedScriptSource.js" > ./InjectedScriptSource.min.js

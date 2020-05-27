@@ -399,6 +399,16 @@
         {
             "name": "setInspectModeEnabled",
             "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection.",
+            "condition": "defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY",
+            "parameters": [
+                { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
+            ]
+        },
+        {
+            "name": "setInspectModeEnabled",
+            "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection.",
+            "condition": "!(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)",
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." },
@@ -688,6 +698,7 @@
         {
             "name": "powerEfficientPlaybackStateChanged",
             "description": "Called when an element enters/exits a power efficient playback state.",
+            "condition": "defined(ENABLE_VIDEO) && ENABLE_VIDEO",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId" },
                 { "name": "timestamp", "$ref": "Network.Timestamp" },

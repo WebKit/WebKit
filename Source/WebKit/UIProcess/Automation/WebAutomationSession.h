@@ -200,7 +200,6 @@ public:
     void getSessionPermissions(Inspector::ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions) override;
     void setSessionPermissions(Inspector::ErrorString&, const JSON::Array& in_permissions) override;
 
-    // Platform: macOS
 #if PLATFORM(MAC)
     void inspectBrowsingContext(const String&, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&&) override;
 #endif

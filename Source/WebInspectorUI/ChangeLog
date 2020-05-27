@@ -1,3 +1,28 @@
+2020-05-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: replace `featureGuard` and `availability` with a combined `condition` that accepts any macro
+        https://bugs.webkit.org/show_bug.cgi?id=210014
+
+        Reviewed by Brian Burg.
+
+        Previously, the generated InspectorBackendCommands.js would include code for things that the
+        backend doesn't actually support. By using actual macros and preprocessing that file, we can
+        ensure that the frontend doesn't incorrectly think that something is supported by the page
+        being inspected:
+         - the `Canvas` commands and events related to shader programs/pipelines should only exist
+           when the corresponding context type exists, namely `ENABLE(WEBGL)` and `ENABLE(WEBGPU)`.
+         - iOS doesn't support showing rulers, so create a variant of `DOM.setInspectModeEnabled`
+           that only exists for `PLATFORM(IOS_FAMILY)` that doesn't have the `showRulers` optional
+           parameter, as well as removing `Page.setShowRulers` entirely.
+         - setting the forced appearance should only be possible if dark mode is supported.
+         - web archives only exist if CF is used.
+
+        * CMakeLists.txt:
+        Add a dependency on the new `InspectorBackendCommands` target.
+
+        * UserInterface/Base/Main.js:
+        (WI._updateDownloadTabBarButton):
+
 2020-05-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: ⌘G should not override the current query of the find banner if it's visible

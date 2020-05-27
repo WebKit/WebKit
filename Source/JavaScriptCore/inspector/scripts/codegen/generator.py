@@ -31,10 +31,10 @@ from string import Template
 
 try:
     from .generator_templates import GeneratorTemplates as Templates
-    from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks, Platforms
+    from .models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 except ValueError:
     from generator_templates import GeneratorTemplates as Templates
-    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks, Platforms
+    from models import PrimitiveType, ObjectType, ArrayType, EnumType, AliasedType, Frameworks
 
 log = logging.getLogger('global')
 
@@ -94,35 +94,28 @@ _TYPES_WITH_OPEN_FIELDS = {
 }
 
 class Generator:
-    def __init__(self, model, platform, input_filepath):
+    def __init__(self, model, input_filepath):
         self._model = model
-        self._platform = platform
         self._input_filepath = input_filepath
         self._settings = {}
 
     def model(self):
         return self._model
 
-    def platform(self):
-        return self._platform
-
     def set_generator_setting(self, key, value):
         self._settings[key] = value
-
-    def can_generate_platform(self, model_platform):
-        return model_platform is Platforms.Generic or self._platform is Platforms.All or model_platform is self._platform
 
     def version_for_domain(self, domain):
         return domain.version()
 
     def type_declarations_for_domain(self, domain):
-        return [type_declaration for type_declaration in domain.all_type_declarations() if self.can_generate_platform(type_declaration.platform)]
+        return domain.all_type_declarations()
 
     def commands_for_domain(self, domain):
-        return [command for command in domain.all_commands() if self.can_generate_platform(command.platform)]
+        return domain.all_commands()
 
     def events_for_domain(self, domain):
-        return [event for event in domain.all_events() if self.can_generate_platform(event.platform)]
+        return domain.all_events()
 
     # The goofy name is to disambiguate generator settings from framework settings.
     def get_generator_setting(self, key, default=None):
@@ -267,21 +260,14 @@ class Generator:
         self._assigned_enum_values.append(enum_value)
 
     # Miscellaneous text manipulation routines.
-    def wrap_with_guard_for_domain(self, domain, text):
-        if self.model().framework is Frameworks.WebInspector:
-            return text
-        guard = domain.feature_guard
-        if guard:
-            return Generator.wrap_with_guard(guard, text)
+    def wrap_with_guard_for_condition(self, condition, text):
+        if condition:
+            return '\n'.join([
+                '#if %s' % condition,
+                text,
+                '#endif // %s' % condition,
+            ])
         return text
-
-    @staticmethod
-    def wrap_with_guard(guard, text):
-        return '\n'.join([
-            '#if %s' % guard,
-            text,
-            '#endif // %s' % guard,
-        ])
 
     @staticmethod
     def stylized_name_for_enum_value(enum_value):

@@ -43,17 +43,19 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
+#if ENABLE(WEBGL) || ENABLE(WEBGPU)
 class InspectorShaderProgram;
 #if ENABLE(WEBGL)
 class WebGLProgram;
 class WebGLRenderingContextBase;
-#endif
+#endif // ENABLE(WEBGL)
 #if ENABLE(WEBGPU)
 class GPUCanvasContext;
 class WebGPUDevice;
 class WebGPUPipeline;
 class WebGPUSwapChain;
-#endif
+#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
 typedef String ErrorString;
 
@@ -79,10 +81,14 @@ public:
     void setRecordingAutoCaptureFrameCount(ErrorString&, int count) override;
     void startRecording(ErrorString&, const String& canvasId, const int* frameCount, const int* memoryLimit) override;
     void stopRecording(ErrorString&, const String& canvasId) override;
+#if ENABLE(WEBGL) || ENABLE(WEBGPU)
     void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String* source) override;
     void updateShader(ErrorString&, const String& programId, const String& shaderType, const String& source) override;
+#if ENABLE(WEBGL)
     void setShaderProgramDisabled(ErrorString&, const String& programId, bool disabled) override;
     void setShaderProgramHighlighted(ErrorString&, const String& programId, bool highlighted) override;
+#endif // ENABLE(WEBGL)
+#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     // CanvasObserver
     void canvasChanged(CanvasBase&, const FloatRect&) override;
@@ -104,14 +110,14 @@ public:
     void willDestroyWebGLProgram(WebGLProgram&);
     bool isWebGLProgramDisabled(WebGLProgram&);
     bool isWebGLProgramHighlighted(WebGLProgram&);
-#endif
+#endif // ENABLE(WEBGL)
 #if ENABLE(WEBGPU)
     void didCreateWebGPUDevice(WebGPUDevice&);
     void willDestroyWebGPUDevice(WebGPUDevice&);
     void willConfigureSwapChain(GPUCanvasContext&, WebGPUSwapChain&);
     void didCreateWebGPUPipeline(WebGPUDevice&, WebGPUPipeline&);
     void willDestroyWebGPUPipeline(WebGPUPipeline&);
-#endif
+#endif // ENABLE(WEBGPU)
 
 private:
     struct RecordingOptions {
@@ -122,28 +128,32 @@ private:
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
 
     void canvasDestroyedTimerFired();
+#if ENABLE(WEBGL) || ENABLE(WEBGPU)
     void programDestroyedTimerFired();
+#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
     void reset();
 
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
 #if ENABLE(WEBGPU)
     InspectorCanvas& bindCanvas(WebGPUDevice&, bool captureBacktrace);
-#endif
+#endif // ENABLE(WEBGPU)
     void unbindCanvas(InspectorCanvas&);
     RefPtr<InspectorCanvas> assertInspectorCanvas(ErrorString&, const String& canvasId);
     RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
 #if ENABLE(WEBGPU)
     RefPtr<InspectorCanvas> findInspectorCanvas(WebGPUDevice&);
-#endif
+#endif // ENABLE(WEBGPU)
 
+#if ENABLE(WEBGL) || ENABLE(WEBGPU)
     void unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& programId);
 #if ENABLE(WEBGL)
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
-#endif
+#endif // ENABLE(WEBGL)
 #if ENABLE(WEBGPU)
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGPUPipeline&);
-#endif
+#endif // ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
@@ -155,9 +165,11 @@ private:
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
 
+#if ENABLE(WEBGL) || ENABLE(WEBGPU)
     HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
     Vector<String> m_removedProgramIdentifiers;
     Timer m_programDestroyedTimer;
+#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     HashSet<String> m_recordingCanvasIdentifiers;
 

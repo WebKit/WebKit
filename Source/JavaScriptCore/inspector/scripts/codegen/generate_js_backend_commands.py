@@ -47,7 +47,7 @@ class JSBackendCommandsGenerator(Generator):
         Generator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
-        return "InspectorBackendCommands.js"
+        return "InspectorBackendCommands.js.in"
 
     def should_generate_domain(self, domain):
         type_declarations = self.type_declarations_for_domain(domain)
@@ -96,7 +96,7 @@ class JSBackendCommandsGenerator(Generator):
                     'enumName': declaration.type_name,
                     'enumMap': ", ".join(['%s: "%s"' % (Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in declaration.type.enum_values()])
                 }
-                lines.append('InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args)
+                lines.append(self.wrap_with_guard_for_condition(declaration.condition, 'InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args))
 
             def is_anonymous_enum_member(type_member):
                 return isinstance(type_member.type, EnumType) and type_member.type.is_anonymous
@@ -128,16 +128,18 @@ class JSBackendCommandsGenerator(Generator):
                 'callParams': ", ".join([generate_parameter_object(parameter) for parameter in command.call_parameters]),
                 'returnParams': ", ".join(['"%s"' % parameter.parameter_name for parameter in command.return_parameters]),
             }
-            lines.append('InspectorBackend.registerCommand("%(domainName)s.%(commandName)s", %(targetTypes)s, [%(callParams)s], [%(returnParams)s]);' % command_args)
+            lines.append(self.wrap_with_guard_for_condition(command.condition, 'InspectorBackend.registerCommand("%(domainName)s.%(commandName)s", %(targetTypes)s, [%(callParams)s], [%(returnParams)s]);' % command_args))
 
         for event in events:
+            event_lines = []
+
             for param in filter(is_anonymous_enum_param, event.event_parameters):
                 enum_args = {
                     'domainName': domain.domain_name,
                     'enumName': '%s%s' % (ucfirst(event.event_name), ucfirst(param.parameter_name)),
                     'enumMap': ", ".join(['%s: "%s"' % (Generator.stylized_name_for_enum_value(enum_value), enum_value) for enum_value in param.type.enum_values()]),
                 }
-                lines.append('InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args)
+                event_lines.append('InspectorBackend.registerEnum("%(domainName)s.%(enumName)s", {%(enumMap)s});' % enum_args)
 
             event_args = {
                 'domainName': domain.domain_name,
@@ -145,7 +147,9 @@ class JSBackendCommandsGenerator(Generator):
                 'targetTypes': json.dumps(event.target_types),
                 'params': ", ".join(['"%s"' % parameter.parameter_name for parameter in event.event_parameters]),
             }
-            lines.append('InspectorBackend.registerEvent("%(domainName)s.%(eventName)s", %(targetTypes)s, [%(params)s]);' % event_args)
+            event_lines.append('InspectorBackend.registerEvent("%(domainName)s.%(eventName)s", %(targetTypes)s, [%(params)s]);' % event_args)
+
+            lines.append(self.wrap_with_guard_for_condition(event.condition, '\n'.join(event_lines)))
 
         has_async_commands = any([command.is_async for command in commands])
         if len(events) > 0 or has_async_commands:
@@ -160,4 +164,4 @@ class JSBackendCommandsGenerator(Generator):
         }
         lines.append('InspectorBackend.activateDomain("%(domainName)s", %(debuggableTypes)s);' % activate_args)
 
-        return "\n".join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, "\n".join(lines))

@@ -82,7 +82,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
         for event in events:
             implementations.append(self._generate_dispatcher_implementation_for_event(event, domain))
 
-        return self.wrap_with_guard_for_domain(domain, '\n\n'.join(implementations))
+        return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(implementations))
 
     def _generate_dispatcher_implementation_for_event(self, event, domain):
         lines = []
@@ -131,4 +131,4 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
         lines.append('')
         lines.append('    m_frontendRouter.sendEvent(jsonMessage->toJSONString());')
         lines.append('}')
-        return "\n".join(lines)
+        return self.wrap_with_guard_for_condition(event.condition, "\n".join(lines))

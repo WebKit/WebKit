@@ -1,3 +1,264 @@
+2020-05-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: replace `featureGuard` and `availability` with a combined `condition` that accepts any macro
+        https://bugs.webkit.org/show_bug.cgi?id=210014
+
+        Reviewed by Brian Burg.
+
+        Previously, the generated InspectorBackendCommands.js would include code for things that the
+        backend doesn't actually support. By using actual macros and preprocessing that file, we can
+        ensure that the frontend doesn't incorrectly think that something is supported by the page
+        being inspected:
+         - the `Canvas` commands and events related to shader programs/pipelines should only exist
+           when the corresponding context type exists, namely `ENABLE(WEBGL)` and `ENABLE(WEBGPU)`.
+         - iOS doesn't support showing rulers, so create a variant of `DOM.setInspectModeEnabled`
+           that only exists for `PLATFORM(IOS_FAMILY)` that doesn't have the `showRulers` optional
+           parameter, as well as removing `Page.setShowRulers` entirely.
+         - setting the forced appearance should only be possible if dark mode is supported.
+         - web archives only exist if CF is used.
+
+        * inspector/protocol/CPUProfiler.json:
+        * inspector/protocol/Canvas.json:
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/IndexedDB.json:
+        * inspector/protocol/Inspector.json:
+        * inspector/protocol/Memory.json:
+        * inspector/protocol/Page.json:
+        * inspector/protocol/ServiceWorker.json:
+
+        * Scripts/generate-derived-sources.sh:
+        Set `CC` if it hasn't already been set.
+
+        * DerivedSources.make:
+        * DerivedSources-input.xcfilelist:
+        Preprocess `InspectorBackendCommands.js.in` to get an accurate `InspectorBackendCommands.js`
+        that follows the logic/description above.
+
+        * CMakeLists.txt:
+        Create a new `InspectorBackendCommands` target now that `InspectorBackendCommands.js` is
+        generated seprately from the rest of the protocol files.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add `ENABLE_WEB_ARCHIVE` since it's always enabled in wtf/PlatformEnableCocoa.h.
+
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+        (generate_from_specification.load_specification):
+        * inspector/scripts/codegen/generator.py:
+        (Generator.__init__):
+        (Generator.model):
+        (Generator.set_generator_setting):
+        (Generator.type_declarations_for_domain):
+        (Generator.commands_for_domain):
+        (Generator.events_for_domain):
+        (Generator.wrap_with_guard_for_condition): Added.
+        (Generator.platform): Deleted.
+        (Generator.can_generate_platform): Deleted.
+        (Generator.wrap_with_guard_for_domain): Deleted.
+        (Generator.wrap_with_guard): Deleted.
+        * inspector/scripts/codegen/models.py:
+        (Frameworks):
+        (Protocol.parse_domain):
+        (Protocol.parse_type_declaration):
+        (Protocol.parse_command):
+        (Protocol.parse_event):
+        (Domain.__init__):
+        (TypeDeclaration.__init__):
+        (Command.__init__):
+        (Event.__init__):
+        (Platform): Deleted.
+        (Platform.__init__): Deleted.
+        (Platform.fromString): Deleted.
+        (Platforms): Deleted.
+        (Platforms.__metaclass__): Deleted.
+        (Platforms.__metaclass__.__iter__): Deleted.
+        * inspector/scripts/codegen/generator_templates.py:
+        Remove `platform` as it is handled by `condition`.
+
+        * inspector/scripts/codegen/preprocess.pl: Copied from Source/WebCore/bindings/scripts/preprocessor.pm.
+
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.output_filename):
+        (JSBackendCommandsGenerator.generate_domain):
+        Output to `InspectorBackendCommands.js.in` that includes `#if` for preprocessing.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator.generate_output):
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_alternate_handler_forward_declarations_for_domains.Alternate):
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_async_handler_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_command):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.generate_output):
+        (CppBackendDispatcherImplementationGenerator._generate_handler_class_destructor_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_large_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        (CppFrontendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_event):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator._generate_versions):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain.generate_conversion_method_body):
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_open_field_names):
+        (CppProtocolTypesImplementationGenerator._generate_builders_for_domain):
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declarations_for_domain):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declaration_for_command):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_implementation_for_domain):
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_implementation_for_command):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (add_newline):
+        (ObjCHeaderGenerator.generate_output):
+        (ObjCHeaderGenerator._generate_forward_declarations):
+        (ObjCHeaderGenerator._generate_enums):
+        (ObjCHeaderGenerator._generate_types):
+        (ObjCHeaderGenerator._generate_type_interface):
+        (ObjCHeaderGenerator._generate_command_protocols):
+        (ObjCHeaderGenerator._generate_single_command_protocol):
+        (ObjCHeaderGenerator._generate_event_interfaces):
+        (ObjCHeaderGenerator._generate_single_event_interface):
+        (ObjCHeaderGenerator._generate_enum_for_platforms): Deleted.
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (add_newline):
+        (ObjCProtocolTypeConversionsHeaderGenerator.generate_output):
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_conversion_functions):
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_conversion_for_platforms): Deleted.
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (add_newline):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_interface):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_method_declaration):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_implementation):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_method_implementation):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (add_newline):
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementations):
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementation):
+        Wrap each domain, type, command, and event with the associated `condition` (if it exists).
+
+        * inspector/scripts/tests/command-targetType-matching-domain-debuggableType.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/command-targetType-matching-domain-debuggableType.json.
+        * inspector/scripts/tests/commands-with-async-attribute.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/commands-with-async-attribute.json.
+        * inspector/scripts/tests/commands-with-optional-call-return-parameters.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/commands-with-optional-call-return-parameters.json.
+        * inspector/scripts/tests/definitions-with-mac-platform.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/mac/definitions-with-mac-platform.json.
+        * inspector/scripts/tests/domain-debuggableTypes.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/domain-debuggableTypes.json.
+        * inspector/scripts/tests/domain-targetType-matching-domain-debuggableType.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/domain-targetType-matching-domain-debuggableType.json.
+        * inspector/scripts/tests/domain-targetTypes.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/domain-targetTypes.json.
+        * inspector/scripts/tests/domains-with-varying-command-sizes.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/domains-with-varying-command-sizes.json.
+        * inspector/scripts/tests/enum-values.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/enum-values.json.
+        * inspector/scripts/tests/event-targetType-matching-domain-debuggableType.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/event-targetType-matching-domain-debuggableType.json.
+        * inspector/scripts/tests/events-with-optional-parameters.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/events-with-optional-parameters.json.
+        * inspector/scripts/tests/expected/command-targetType-matching-domain-debuggableType.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/command-targetType-matching-domain-debuggableType.json-result.
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result.
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result.
+        * inspector/scripts/tests/expected/definitions-with-mac-platform.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result.
+        * inspector/scripts/tests/expected/domain-debuggableTypes.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/domain-debuggableTypes.json-result.
+        * inspector/scripts/tests/expected/domain-targetType-matching-domain-debuggableType.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/domain-targetType-matching-domain-debuggableType.json-result.
+        * inspector/scripts/tests/expected/domain-targetTypes.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/domain-targetTypes.json-result.
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result.
+        * inspector/scripts/tests/expected/enum-values.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/enum-values.json-result.
+        * inspector/scripts/tests/expected/event-targetType-matching-domain-debuggableType.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/event-targetType-matching-domain-debuggableType.json-result.
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result.
+        * inspector/scripts/tests/expected/fail-on-command-targetType-matching-domain-debuggableType.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-command-targetType-matching-domain-debuggableType.json-error.
+        * inspector/scripts/tests/expected/fail-on-command-targetTypes-type.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-command-targetTypes-type.json-error.
+        * inspector/scripts/tests/expected/fail-on-command-targetTypes-value.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-command-targetTypes-value.json-error.
+        * inspector/scripts/tests/expected/fail-on-domain-debuggableTypes-type.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-domain-debuggableTypes-type.json-error.
+        * inspector/scripts/tests/expected/fail-on-domain-debuggableTypes-value.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-domain-debuggableTypes-value.json-error.
+        * inspector/scripts/tests/expected/fail-on-domain-targetType-matching-domain-debuggableType.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-domain-targetType-matching-domain-debuggableType.json-error.
+        * inspector/scripts/tests/expected/fail-on-domain-targetTypes-type.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-domain-targetTypes-type.json-error.
+        * inspector/scripts/tests/expected/fail-on-domain-targetTypes-value.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-domain-targetTypes-value.json-error.
+        * inspector/scripts/tests/expected/fail-on-duplicate-command-call-parameter-names.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-duplicate-command-call-parameter-names.json-error.
+        * inspector/scripts/tests/expected/fail-on-duplicate-command-return-parameter-names.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-duplicate-command-return-parameter-names.json-error.
+        * inspector/scripts/tests/expected/fail-on-duplicate-event-parameter-names.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-duplicate-event-parameter-names.json-error.
+        * inspector/scripts/tests/expected/fail-on-duplicate-type-declarations.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-duplicate-type-declarations.json-error.
+        * inspector/scripts/tests/expected/fail-on-duplicate-type-member-names.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-duplicate-type-member-names.json-error.
+        * inspector/scripts/tests/expected/fail-on-enum-with-no-values.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-enum-with-no-values.json-error.
+        * inspector/scripts/tests/expected/fail-on-event-targetType-matching-domain-debuggableType.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-event-targetType-matching-domain-debuggableType.json-error.
+        * inspector/scripts/tests/expected/fail-on-event-targetTypes-type.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-event-targetTypes-type.json-error.
+        * inspector/scripts/tests/expected/fail-on-event-targetTypes-value.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-event-targetTypes-value.json-error.
+        * inspector/scripts/tests/expected/fail-on-number-typed-optional-parameter-flag.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-number-typed-optional-parameter-flag.json-error.
+        * inspector/scripts/tests/expected/fail-on-number-typed-optional-type-member.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-number-typed-optional-type-member.json-error.
+        * inspector/scripts/tests/expected/fail-on-string-typed-optional-parameter-flag.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-string-typed-optional-parameter-flag.json-error.
+        * inspector/scripts/tests/expected/fail-on-string-typed-optional-type-member.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-string-typed-optional-type-member.json-error.
+        * inspector/scripts/tests/expected/fail-on-type-declaration-using-type-reference.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-type-declaration-using-type-reference.json-error.
+        * inspector/scripts/tests/expected/fail-on-type-reference-as-primitive-type.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-type-reference-as-primitive-type.json-error.
+        * inspector/scripts/tests/expected/fail-on-type-with-lowercase-name.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-type-with-lowercase-name.json-error.
+        * inspector/scripts/tests/expected/fail-on-unknown-type-reference-in-type-declaration.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-unknown-type-reference-in-type-declaration.json-error.
+        * inspector/scripts/tests/expected/fail-on-unknown-type-reference-in-type-member.json-error: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/fail-on-unknown-type-reference-in-type-member.json-error.
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result.
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result.
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result.
+        * inspector/scripts/tests/expected/should-strip-comments.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/should-strip-comments.json-result.
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result.
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result.
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result.
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result.
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result.
+        * inspector/scripts/tests/expected/type-with-open-parameters.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/type-with-open-parameters.json-result.
+        * inspector/scripts/tests/expected/version.json-result: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/expected/version.json-result.
+        * inspector/scripts/tests/fail-on-command-targetType-matching-domain-debuggableType.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-command-targetType-matching-domain-debuggableType.json.
+        * inspector/scripts/tests/fail-on-command-targetTypes-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-command-targetTypes-type.json.
+        * inspector/scripts/tests/fail-on-command-targetTypes-value.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-command-targetTypes-value.json.
+        * inspector/scripts/tests/fail-on-domain-debuggableTypes-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-debuggableTypes-type.json.
+        * inspector/scripts/tests/fail-on-domain-debuggableTypes-value.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-debuggableTypes-value.json.
+        * inspector/scripts/tests/fail-on-domain-targetType-matching-domain-debuggableType.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-targetType-matching-domain-debuggableType.json.
+        * inspector/scripts/tests/fail-on-domain-targetTypes-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-targetTypes-type.json.
+        * inspector/scripts/tests/fail-on-domain-targetTypes-value.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-targetTypes-value.json.
+        * inspector/scripts/tests/fail-on-duplicate-command-call-parameter-names.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-duplicate-command-call-parameter-names.json.
+        * inspector/scripts/tests/fail-on-duplicate-command-return-parameter-names.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-duplicate-command-return-parameter-names.json.
+        * inspector/scripts/tests/fail-on-duplicate-event-parameter-names.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-duplicate-event-parameter-names.json.
+        * inspector/scripts/tests/fail-on-duplicate-type-declarations.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-duplicate-type-declarations.json.
+        * inspector/scripts/tests/fail-on-duplicate-type-member-names.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-duplicate-type-member-names.json.
+        * inspector/scripts/tests/fail-on-enum-with-no-values.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-enum-with-no-values.json.
+        * inspector/scripts/tests/fail-on-event-targetType-matching-domain-debuggableType.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-event-targetType-matching-domain-debuggableType.json.
+        * inspector/scripts/tests/fail-on-event-targetTypes-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-event-targetTypes-type.json.
+        * inspector/scripts/tests/fail-on-event-targetTypes-value.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-event-targetTypes-value.json.
+        * inspector/scripts/tests/fail-on-number-typed-optional-parameter-flag.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-number-typed-optional-parameter-flag.json.
+        * inspector/scripts/tests/fail-on-number-typed-optional-type-member.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-number-typed-optional-type-member.json.
+        * inspector/scripts/tests/fail-on-string-typed-optional-parameter-flag.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-string-typed-optional-parameter-flag.json.
+        * inspector/scripts/tests/fail-on-string-typed-optional-type-member.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-string-typed-optional-type-member.json.
+        * inspector/scripts/tests/fail-on-type-declaration-using-type-reference.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-type-declaration-using-type-reference.json.
+        * inspector/scripts/tests/fail-on-type-reference-as-primitive-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-type-reference-as-primitive-type.json.
+        * inspector/scripts/tests/fail-on-type-with-lowercase-name.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-type-with-lowercase-name.json.
+        * inspector/scripts/tests/fail-on-unknown-type-reference-in-type-declaration.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-unknown-type-reference-in-type-declaration.json.
+        * inspector/scripts/tests/fail-on-unknown-type-reference-in-type-member.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-unknown-type-reference-in-type-member.json.
+        * inspector/scripts/tests/generate-domains-with-feature-guards.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/generate-domains-with-feature-guards.json.
+        * inspector/scripts/tests/same-type-id-different-domain.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/same-type-id-different-domain.json.
+        * inspector/scripts/tests/shadowed-optional-type-setters.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/shadowed-optional-type-setters.json.
+        * inspector/scripts/tests/should-strip-comments.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/should-strip-comments.json.
+        * inspector/scripts/tests/type-declaration-aliased-primitive-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/type-declaration-aliased-primitive-type.json.
+        * inspector/scripts/tests/type-declaration-array-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/type-declaration-array-type.json.
+        * inspector/scripts/tests/type-declaration-enum-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/type-declaration-enum-type.json.
+        * inspector/scripts/tests/type-declaration-object-type.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/type-declaration-object-type.json.
+        * inspector/scripts/tests/type-requiring-runtime-casts.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/type-requiring-runtime-casts.json.
+        * inspector/scripts/tests/type-with-open-parameters.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/type-with-open-parameters.json.
+        * inspector/scripts/tests/version.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/version.json.
+        * inspector/scripts/tests/generic/definitions-with-mac-platform.json: Removed.
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result: Removed.
+        * inspector/scripts/tests/generic/fail-on-command-with-invalid-platform.json: Removed.
+        * inspector/scripts/tests/generic/expected/fail-on-command-with-invalid-platform.json-error: Removed.
+        * inspector/scripts/tests/generic/fail-on-type-with-invalid-platform.json: Removed.
+        * inspector/scripts/tests/generic/expected/fail-on-type-with-invalid-platform.json-error: Removed.
+        * inspector/scripts/tests/ios/definitions-with-mac-platform.json: Removed.
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result: Removed.
+        * inspector/scripts/tests/all/definitions-with-mac-platform.json: Removed.
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result: Removed.
+        Don't separate the inspector generator tests by platform.
+
 2020-05-27  Keith Miller  <keith_miller@apple.com>
 
         in_structure_property needs to handle constants on the RHS of the "in"

@@ -99,7 +99,7 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
             'objcPrefix': self.objc_prefix(),
         }
 
-        return self.wrap_with_guard_for_domain(domain, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerObjCDeclaration).substitute(None, **handler_args))
+        return self.wrap_with_guard_for_condition(domain.condition, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerObjCDeclaration).substitute(None, **handler_args))
 
     def _generate_objc_handler_declaration_for_command(self, command):
         lines = []
@@ -112,4 +112,4 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
             'parameters': ', '.join(parameters),
         }
         lines.append('    void %(commandName)s(%(parameters)s) final;' % command_args)
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(command.condition, '\n'.join(lines))

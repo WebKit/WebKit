@@ -31,12 +31,12 @@ from string import Template
 
 try:
     from .generator import Generator, ucfirst
-    from .models import ObjectType, EnumType, Platforms
+    from .models import ObjectType, EnumType
     from .objc_generator import ObjCGenerator, join_type_and_name
     from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 except ValueError:
     from generator import Generator, ucfirst
-    from models import ObjectType, EnumType, Platforms
+    from models import ObjectType, EnumType
     from objc_generator import ObjCGenerator, join_type_and_name
     from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -44,7 +44,7 @@ log = logging.getLogger('global')
 
 
 def add_newline(lines):
-    if lines and lines[-1] == '':
+    if not len(lines) or lines[-1] == '':
         return
     lines.append('')
 
@@ -87,7 +87,6 @@ class ObjCHeaderGenerator(ObjCGenerator):
         sections.append(self.generate_license())
         sections.append(Template(ObjCTemplates.HeaderPrelude).substitute(None, **headerPrelude_args))
         sections.append('\n'.join([_f for _f in map(self._generate_forward_declarations, type_domains) if _f]))
-        sections.append(self._generate_enum_for_platforms())
         sections.append('\n'.join([_f for _f in map(self._generate_enums, type_domains) if _f]))
         sections.append('\n'.join([_f for _f in map(self._generate_types, type_domains) if _f]))
 
@@ -103,42 +102,51 @@ class ObjCHeaderGenerator(ObjCGenerator):
         for declaration in self.type_declarations_for_domain(domain):
             if (isinstance(declaration.type, ObjectType)):
                 objc_name = self.objc_name_for_type(declaration.type)
-                lines.append('@class %s;' % objc_name)
-        return '\n'.join(lines)
+                lines.append(self.wrap_with_guard_for_condition(declaration.condition, '@class %s;' % objc_name))
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_enums(self, domain):
         lines = []
 
         # Type enums and member enums.
         for declaration in self.type_declarations_for_domain(domain):
+            declaration_lines = []
             if isinstance(declaration.type, EnumType):
-                add_newline(lines)
-                lines.append(self._generate_anonymous_enum_for_declaration(domain, declaration))
+                add_newline(declaration_lines)
+                declaration_lines.append(self._generate_anonymous_enum_for_declaration(domain, declaration))
             else:
                 for member in declaration.type_members:
                     if isinstance(member.type, EnumType) and member.type.is_anonymous:
-                        add_newline(lines)
-                        lines.append(self._generate_anonymous_enum_for_member(domain, declaration, member))
+                        add_newline(declaration_lines)
+                        declaration_lines.append(self._generate_anonymous_enum_for_member(domain, declaration, member))
+            if len(declaration_lines):
+                lines.append(self.wrap_with_guard_for_condition(declaration.condition, '\n\n'.join(declaration_lines)))
 
         # Anonymous command enums.
         for command in self.commands_for_domain(domain):
+            command_lines = []
             for parameter in command.call_parameters:
                 if isinstance(parameter.type, EnumType) and parameter.type.is_anonymous:
-                    add_newline(lines)
-                    lines.append(self._generate_anonymous_enum_for_parameter(domain, command.command_name, parameter))
+                    add_newline(command_lines)
+                    command_lines.append(self._generate_anonymous_enum_for_parameter(domain, command.command_name, parameter))
             for parameter in command.return_parameters:
                 if isinstance(parameter.type, EnumType) and parameter.type.is_anonymous:
-                    add_newline(lines)
-                    lines.append(self._generate_anonymous_enum_for_parameter(domain, command.command_name, parameter))
+                    add_newline(command_lines)
+                    command_lines.append(self._generate_anonymous_enum_for_parameter(domain, command.command_name, parameter))
+            if len(command_lines):
+                lines.append(self.wrap_with_guard_for_condition(command.condition, '\n\n'.join(command_lines)))
 
         # Anonymous event enums.
         for event in self.events_for_domain(domain):
+            event_lines = []
             for parameter in event.event_parameters:
                 if isinstance(parameter.type, EnumType) and parameter.type.is_anonymous:
-                    add_newline(lines)
-                    lines.append(self._generate_anonymous_enum_for_parameter(domain, event.event_name, parameter))
+                    add_newline(event_lines)
+                    event_lines.append(self._generate_anonymous_enum_for_parameter(domain, event.event_name, parameter))
+            if len(event_lines):
+                lines.append(self.wrap_with_guard_for_condition(event.condition, '\n\n'.join(event_lines)))
 
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(lines))
 
     def _generate_types(self, domain):
         lines = []
@@ -147,12 +155,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
             if isinstance(declaration.type, ObjectType):
                 add_newline(lines)
                 lines.append(self._generate_type_interface(domain, declaration))
-        return '\n'.join(lines)
-
-    def _generate_enum_for_platforms(self):
-        objc_enum_name = '%sPlatform' % self.objc_prefix()
-        enum_values = [platform.name for platform in Platforms]
-        return self._generate_enum(objc_enum_name, enum_values)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_anonymous_enum_for_declaration(self, domain, declaration):
         objc_enum_name = self.objc_enum_name_for_anonymous_enum_declaration(declaration)
@@ -194,7 +197,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         for member in optional_members:
             lines.append('/* optional */ ' + self._generate_member_property(declaration, member))
         lines.append('@end')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(lines))
 
     def _generate_init_method_for_required_members(self, domain, declaration, required_members):
         pairs = []
@@ -219,7 +222,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
             for command in self.commands_for_domain(domain):
                 lines.append(self._generate_single_command_protocol(domain, command))
             lines.append('@end')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_single_command_protocol(self, domain, command):
         pairs = []
@@ -228,7 +231,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         for parameter in command.call_parameters:
             param_name = parameter.parameter_name
             pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, command.command_name, parameter), param_name))
-        return '- (void)%sWith%s;' % (command.command_name, ' '.join(pairs))
+        return self.wrap_with_guard_for_condition(command.condition, '- (void)%sWith%s;' % (command.command_name, ' '.join(pairs)))
 
     def _callback_block_for_command(self, domain, command):
         pairs = []
@@ -249,7 +252,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
             for event in events:
                 lines.append(self._generate_single_event_interface(domain, event))
             lines.append('@end')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_single_event_interface(self, domain, event):
         if not event.event_parameters:
@@ -259,4 +262,4 @@ class ObjCHeaderGenerator(ObjCGenerator):
             param_name = parameter.parameter_name
             pairs.append('%s:(%s)%s' % (param_name, self.objc_type_for_param(domain, event.event_name, parameter), param_name))
         pairs[0] = ucfirst(pairs[0])
-        return '- (void)%sWith%s;' % (event.event_name, ' '.join(pairs))
+        return self.wrap_with_guard_for_condition(event.condition, '- (void)%sWith%s;' % (event.event_name, ' '.join(pairs)))
