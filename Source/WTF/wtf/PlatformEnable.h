@@ -95,7 +95,10 @@
 #include <wtf/PlatformEnableWinCairo.h>
 #endif
 
-
+/* --------- PlayStation port --------- */
+#if PLATFORM(PLAYSTATION)
+#include <wtf/PlatformEnablePlayStation.h>
+#endif
 
 /* ---------  ENABLE macro defaults --------- */
 

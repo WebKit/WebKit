@@ -1,3 +1,14 @@
+2020-05-26  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Disable LLINT_EMBEDDED_OPCODE_ID
+        https://bugs.webkit.org/show_bug.cgi?id=212387
+
+        Reviewed by Don Olmstead.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnablePlayStation.h: Added.
+
 2020-05-26  Mark Lam  <mark.lam@apple.com>
 
         Enhance Bitmap::setEachNthBit() to also take an end index.
