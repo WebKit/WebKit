@@ -21,6 +21,7 @@
 #include "WebKitColor.h"
 
 #include "WebKitColorPrivate.h"
+#include <WebCore/CSSParser.h>
 
 /**
  * SECTION: WebKitColor
@@ -108,7 +109,7 @@ gboolean webkit_color_parse(WebKitColor* color, const gchar* colorString)
     g_return_val_if_fail(color, FALSE);
     g_return_val_if_fail(colorString, FALSE);
 
-    auto webCoreColor = WebCore::Color(colorString);
+    auto webCoreColor = WebCore::CSSParser::parseColor({ colorString });
     if (!webCoreColor.isValid())
         return FALSE;
 

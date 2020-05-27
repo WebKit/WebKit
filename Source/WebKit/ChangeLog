@@ -1,3 +1,10 @@
+2020-05-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix after r262155.
+
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkit_color_parse): Use CSSParser::parseColor() to do the color parsing.
+
 2020-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed clang-cl build fix after r262158
