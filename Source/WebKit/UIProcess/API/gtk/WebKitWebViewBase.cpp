@@ -147,6 +147,74 @@ private:
 };
 #endif
 
+struct MotionEvent {
+    MotionEvent(const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEvent::Button button, unsigned short buttons, OptionSet<WebEvent::Modifier> modifiers)
+        : position(position)
+        , globalPosition(globalPosition)
+        , button(button)
+        , buttons(buttons)
+        , modifiers(modifiers)
+    {
+    }
+
+    MotionEvent(GtkWidget* widget, GdkEvent* event)
+    {
+        double x, y, xRoot, yRoot;
+        GdkModifierType state;
+        if (event) {
+            gdk_event_get_coords(event, &x, &y);
+            gdk_event_get_root_coords(event, &xRoot, &yRoot);
+            gdk_event_get_state(event, &state);
+        } else {
+            auto* device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(widget)));
+            widgetDevicePosition(widget, device, &x, &y, &state);
+            auto rootPoint = widgetRootCoords(widget, x, y);
+            xRoot = rootPoint.x();
+            yRoot = rootPoint.y();
+        }
+
+        position.setX(x);
+        position.setY(y);
+        globalPosition.setX(xRoot);
+        globalPosition.setY(yRoot);
+
+        if (state & GDK_CONTROL_MASK)
+            modifiers.add(WebEvent::Modifier::ControlKey);
+        if (state & GDK_SHIFT_MASK)
+            modifiers.add(WebEvent::Modifier::ShiftKey);
+        if (state & GDK_MOD1_MASK)
+            modifiers.add(WebEvent::Modifier::AltKey);
+        if (state & GDK_META_MASK)
+            modifiers.add(WebEvent::Modifier::MetaKey);
+
+        if (state & GDK_BUTTON1_MASK) {
+            button = WebMouseEvent::LeftButton;
+            buttons |= 1;
+        }
+        if (state & GDK_BUTTON2_MASK) {
+            button = WebMouseEvent::MiddleButton;
+            buttons |= 4;
+        }
+        if (state & GDK_BUTTON3_MASK) {
+            button = WebMouseEvent::RightButton;
+            buttons |= 2;
+        }
+    }
+
+    FloatSize delta(GdkEvent* event)
+    {
+        double x, y;
+        gdk_event_get_root_coords(event, &x, &y);
+        return FloatPoint(x, y) - globalPosition;
+    }
+
+    FloatPoint position;
+    FloatPoint globalPosition;
+    WebMouseEvent::Button button { WebMouseEvent::NoButton };
+    unsigned short buttons { 0 };
+    OptionSet<WebEvent::Modifier> modifiers;
+};
+
 #if !USE(GTK4)
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
 #endif
@@ -205,7 +273,7 @@ struct _WebKitWebViewBasePrivate {
     KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
     IntSize contentsSize;
-    GUniquePtr<GdkEvent> lastMotionEvent;
+    Optional<MotionEvent> lastMotionEvent;
 
     GtkWindow* toplevelOnScreenWindow { nullptr };
     unsigned long toplevelFocusInEventID { 0 };
@@ -1020,7 +1088,7 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
     ASSERT(!priv->dialog);
 
     int clickCount = 0;
-    Optional<IntPoint> movementDelta;
+    Optional<FloatSize> movementDelta;
     GdkEventType eventType = gdk_event_get_event_type(event);
     switch (eventType) {
     case GDK_BUTTON_PRESS:
@@ -1051,14 +1119,9 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
         break;
     case GDK_MOTION_NOTIFY:
         // Pointer Lock. 7.1 Attributes: movementX/Y must be updated regardless of pointer lock state.
-        if (priv->lastMotionEvent) {
-            double currentX, currentY;
-            gdk_event_get_root_coords(event, &currentX, &currentY);
-            double previousX, previousY;
-            gdk_event_get_root_coords(priv->lastMotionEvent.get(), &previousX, &previousY);
-            movementDelta = IntPoint(currentX - previousX, currentY - previousY);
-        }
-        priv->lastMotionEvent.reset(gdk_event_copy(event));
+        if (priv->lastMotionEvent)
+            movementDelta = priv->lastMotionEvent->delta(event);
+        priv->lastMotionEvent = MotionEvent(GTK_WIDGET(webViewBase), event);
         break;
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
@@ -1228,7 +1291,9 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     }
 
     if (priv->pointerLockManager) {
-        priv->pointerLockManager->didReceiveMotionEvent(reinterpret_cast<GdkEvent*>(event));
+        double x, y;
+        gdk_event_get_root_coords(reinterpret_cast<GdkEvent*>(event), &x, &y);
+        priv->pointerLockManager->didReceiveMotionEvent(FloatPoint(x, y));
         return GDK_EVENT_STOP;
     }
 
@@ -2213,25 +2278,12 @@ int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase* webkitWebViewBa
 
 void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase* webViewBase)
 {
-#if !USE(GTK4)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    RELEASE_ASSERT(!priv->pointerLockManager);
-    if (!priv->lastMotionEvent) {
-        GtkWidget* viewWidget = GTK_WIDGET(webViewBase);
-        auto* device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
-        int x, y;
-        GdkModifierType state;
-        gdk_window_get_device_position(gtk_widget_get_window(viewWidget), device, &x, &y, &state);
-        priv->lastMotionEvent.reset(gdk_event_new(GDK_MOTION_NOTIFY));
-        priv->lastMotionEvent->motion.x = x;
-        priv->lastMotionEvent->motion.y = y;
-        int rootX, rootY;
-        gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &rootX, &rootY);
-        priv->lastMotionEvent->motion.x_root = rootX;
-        priv->lastMotionEvent->motion.y_root = rootY;
-        priv->lastMotionEvent->motion.state = state;
-    }
-    priv->pointerLockManager = PointerLockManager::create(*priv->pageProxy, priv->lastMotionEvent.get());
+    ASSERT(!priv->pointerLockManager);
+    if (!priv->lastMotionEvent)
+        priv->lastMotionEvent = MotionEvent(GTK_WIDGET(webViewBase), nullptr);
+    priv->pointerLockManager = PointerLockManager::create(*priv->pageProxy, priv->lastMotionEvent->position, priv->lastMotionEvent->globalPosition,
+        priv->lastMotionEvent->button, priv->lastMotionEvent->buttons, priv->lastMotionEvent->modifiers);
     if (priv->pointerLockManager->lock()) {
         priv->pageProxy->didAllowPointerLock();
         return;
@@ -2239,19 +2291,16 @@ void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase* webViewBase)
 
     priv->pointerLockManager = nullptr;
     priv->pageProxy->didDenyPointerLock();
-#endif
 }
 
 void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase* webViewBase)
 {
-#if !USE(GTK4)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->pointerLockManager)
         return;
 
     priv->pointerLockManager->unlock();
     priv->pointerLockManager = nullptr;
-#endif
 }
 
 void webkitWebViewBaseSetInputMethodContext(WebKitWebViewBase* webViewBase, WebKitInputMethodContext* context)
@@ -2306,6 +2355,11 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
     if (priv->dialog)
         return;
 
+    if (priv->pointerLockManager) {
+        priv->pointerLockManager->didReceiveMotionEvent(FloatPoint(x, y));
+        return;
+    }
+
     WebMouseEvent::Button webEventButton = WebMouseEvent::NoButton;
     switch (button) {
     case 0:
@@ -2322,6 +2376,15 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         break;
     }
 
+    unsigned short webEventButtons = 0;
+    if (buttons & GDK_BUTTON1_MASK)
+        webEventButtons |= 1;
+    if (buttons & GDK_BUTTON2_MASK)
+        webEventButtons |= 4;
+    if (buttons & GDK_BUTTON3_MASK)
+        webEventButtons |= 2;
+
+    Optional<FloatSize> movementDelta;
     WebEvent::Type webEventType;
     switch (type) {
     case MouseEventType::Press:
@@ -2334,7 +2397,6 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
     case MouseEventType::Motion:
-        // FIXME: add movement delta for pointer lock.
         webEventType = WebEvent::MouseMove;
         if (buttons & GDK_BUTTON1_MASK)
             webEventButton = WebMouseEvent::LeftButton;
@@ -2342,19 +2404,15 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
             webEventButton = WebMouseEvent::MiddleButton;
         else if (buttons & GDK_BUTTON3_MASK)
             webEventButton = WebMouseEvent::RightButton;
+
+        if (priv->lastMotionEvent)
+            movementDelta = FloatPoint(x, y) - priv->lastMotionEvent->globalPosition;
+        priv->lastMotionEvent = MotionEvent(FloatPoint(x, y), widgetRootCoords(GTK_WIDGET(webViewBase), x, y), webEventButton, webEventButtons, toWebKitModifiers(modifiers));
         break;
     }
 
-    unsigned short webEventButtons = 0;
-    if (buttons & GDK_BUTTON1_MASK)
-        webEventButtons |= 1;
-    if (buttons & GDK_BUTTON2_MASK)
-        webEventButtons |= 4;
-    if (buttons & GDK_BUTTON3_MASK)
-        webEventButtons |= 2;
-
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(webEventType, webEventButton, webEventButtons, { x, y },
-        widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers)));
+        widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers), movementDelta));
 }
 
 void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, unsigned keyval, unsigned modifiers)

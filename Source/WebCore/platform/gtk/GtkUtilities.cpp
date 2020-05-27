@@ -84,6 +84,18 @@ IntPoint widgetRootCoords(GtkWidget* widget, int x, int y)
 #endif
 }
 
+void widgetDevicePosition(GtkWidget* widget, GdkDevice* device, double* x, double* y, GdkModifierType* state)
+{
+#if USE(GTK4)
+    gdk_surface_get_device_position(gtk_native_get_surface(gtk_widget_get_native(widget)), device, x, y, state);
+#else
+    int xInt, yInt;
+    gdk_window_get_device_position(gtk_widget_get_window(widget), device, &xInt, &yInt, state);
+    *x = xInt;
+    *y = yInt;
+#endif
+}
+
 unsigned widgetKeyvalToKeycode(GtkWidget* widget, unsigned keyval)
 {
     unsigned keycode = 0;

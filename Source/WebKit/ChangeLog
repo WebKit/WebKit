@@ -1,3 +1,50 @@
+2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make PointerLock work
+        https://bugs.webkit.org/show_bug.cgi?id=212314
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use XLib API for warp and grab, since they are no longer available in GTK4. The grab was not actuially needed
+        under Wayland. Also stop using GdkEvent to keep track of motion events and create the PointerLockManager to be
+        able to test pointer lock and movement delta.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent): Use FloatSize instead of FloatPoint for movement delta.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent): Ditto.
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (MotionEvent::MotionEvent): Helper struct to keep track of motion events without using GdkEvent.
+        (MotionEvent::delta): Return the movement delta for the given current event.
+        (webkitWebViewBaseHandleMouseEvent): Use MotionEvent instead of GdkEvent.
+        (webkitWebViewBaseMotionNotifyEvent): Pass the event coordinates to the pointer lock manager since that's the
+        only thing needed.
+        (webkitWebViewBaseRequestPointerLock): Use MotionEvent instead of GdkEvent.
+        (webkitWebViewBaseDidLosePointerLock): Remove GTK4 ifdefs.
+        (webkitWebViewBaseSynthesizeMouseEvent): Forward the event to the pointer lock manager if present. Also keep
+        track of the motion event and set the movement delta.
+        * UIProcess/gtk/PointerLockManager.cpp:
+        (WebKit::PointerLockManager::create): Receive event information as parameters instead of using GdkEvent.
+        (WebKit::PointerLockManager::PointerLockManager): Ditto.
+        (WebKit::PointerLockManager::~PointerLockManager):
+        (WebKit::PointerLockManager::lock): Remove the grab.
+        (WebKit::PointerLockManager::unlock): Remove the ungrab.
+        (WebKit::PointerLockManager::handleMotion): Use NativeWebMouseEvent constructor taking all information as parameters.
+        * UIProcess/gtk/PointerLockManager.h:
+        * UIProcess/gtk/PointerLockManagerWayland.cpp:
+        (WebKit::PointerLockManagerWayland::PointerLockManagerWayland): Receive event information as parameters instead of using GdkEvent.
+        (WebKit::PointerLockManagerWayland::lock): Hide the cursor.
+        (WebKit::PointerLockManagerWayland::unlock): Unhide the cursor.
+        * UIProcess/gtk/PointerLockManagerWayland.h:
+        * UIProcess/gtk/PointerLockManagerX11.cpp:
+        (WebKit::PointerLockManagerX11::PointerLockManagerX11): Receive event information as parameters instead of using GdkEvent.
+        (WebKit::PointerLockManagerX11::lock): Use XGrabPointer.
+        (WebKit::PointerLockManagerX11::unlock): Use XUngrabPointer.
+        (WebKit::PointerLockManagerX11::didReceiveMotionEvent): Use XWarpPointer.
+        * UIProcess/gtk/PointerLockManagerX11.h:
+
 2020-05-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build warning fix after r261986

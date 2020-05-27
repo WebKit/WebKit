@@ -29,32 +29,60 @@
 #if PLATFORM(X11)
 
 #include "WebPageProxy.h"
-#if !USE(GTK4)
+#include <X11/Xlib.h>
+
+#if USE(GTK4)
+#include <gdk/x11/gdkx.h>
+#else
 #include <gdk/gdkx.h>
 #endif
-#include <gtk/gtk.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-PointerLockManagerX11::PointerLockManagerX11(WebPageProxy& webPage, const GdkEvent* event)
-    : PointerLockManager(webPage, event)
+PointerLockManagerX11::PointerLockManagerX11(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEvent::Button button, unsigned short buttons, OptionSet<WebEvent::Modifier> modifiers)
+    : PointerLockManager(webPage, position, globalPosition, button, buttons, modifiers)
 {
 }
 
-void PointerLockManagerX11::didReceiveMotionEvent(const GdkEvent* event)
+bool PointerLockManagerX11::lock()
 {
-#if !USE(GTK4)
-    double currentX, currentY;
-    gdk_event_get_root_coords(event, &currentX, &currentY);
-    double initialX, initialY;
-    gdk_event_get_root_coords(m_event, &initialX, &initialY);
-    if (currentX == initialX && currentY == initialY)
+    if (!PointerLockManager::lock())
+        return false;
+
+    auto* viewWidget = m_webPage.viewWidget();
+    auto* display = gtk_widget_get_display(viewWidget);
+    auto* xDisplay = GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(viewWidget));
+#if USE(GTK4)
+    GRefPtr<GdkCursor> cursor = adoptGRef(gdk_cursor_new_from_name("none", nullptr));
+    auto window = GDK_SURFACE_XID(gtk_native_get_surface(gtk_widget_get_native(viewWidget)));
+    auto xCursor = gdk_x11_display_get_xcursor(display, cursor.get());
+#else
+    GRefPtr<GdkCursor> cursor = adoptGRef(gdk_cursor_new_from_name(display, "none"));
+    auto window = GDK_WINDOW_XID(gtk_widget_get_window(viewWidget));
+    auto xCursor = gdk_x11_cursor_get_xcursor(cursor.get());
+#endif
+    int eventMask = PointerMotionMask | ButtonReleaseMask | ButtonPressMask | EnterWindowMask | LeaveWindowMask;
+    return XGrabPointer(xDisplay, window, true, eventMask, GrabModeAsync, GrabModeAsync, window, xCursor, 0) == GrabSuccess;
+}
+
+bool PointerLockManagerX11::unlock()
+{
+    if (m_device)
+        XUngrabPointer(GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(m_webPage.viewWidget())), 0);
+
+    return PointerLockManager::unlock();
+}
+
+void PointerLockManagerX11::didReceiveMotionEvent(const FloatPoint& point)
+{
+    if (point == m_initialPoint)
         return;
 
-    handleMotion(IntPoint(currentX - initialX, currentY - initialY));
-    gdk_device_warp(m_device, gtk_widget_get_screen(m_webPage.viewWidget()), initialX, initialY);
-#endif
+    handleMotion(point - m_initialPoint);
+
+    auto* display = GDK_DISPLAY_XDISPLAY(gtk_widget_get_display(m_webPage.viewWidget()));
+    XWarpPointer(display, None, XRootWindow(display, 0), 0, 0, 0, 0, m_initialPoint.x(), m_initialPoint.y());
 }
 
 } // namespace WebKit

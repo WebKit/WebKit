@@ -31,18 +31,18 @@
 #include "WebPageProxy.h"
 #include "pointer-constraints-unstable-v1-client-protocol.h"
 #include <WebCore/WlUniquePtr.h>
+
 #if USE(GTK4)
 #include <gdk/wayland/gdkwayland.h>
 #else
 #include <gdk/gdkwayland.h>
 #endif
-#include <gtk/gtk.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-PointerLockManagerWayland::PointerLockManagerWayland(WebPageProxy& webPage, const GdkEvent* event)
-    : PointerLockManager(webPage, event)
+PointerLockManagerWayland::PointerLockManagerWayland(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEvent::Button button, unsigned short buttons, OptionSet<WebEvent::Modifier> modifiers)
+    : PointerLockManager(webPage, position, globalPosition, button, buttons, modifiers)
 {
     auto* display = gdk_wayland_display_get_wl_display(gtk_widget_get_display(m_webPage.viewWidget()));
     WlUniquePtr<struct wl_registry> registry(wl_display_get_registry(display));
@@ -77,7 +77,7 @@ const struct zwp_relative_pointer_v1_listener PointerLockManagerWayland::s_relat
     // relative_motion
     [](void* data, struct zwp_relative_pointer_v1*, uint32_t, uint32_t, wl_fixed_t, wl_fixed_t, wl_fixed_t deltaX, wl_fixed_t deltaY) {
         auto& manager = *reinterpret_cast<PointerLockManagerWayland*>(data);
-        manager.handleMotion({ wl_fixed_to_int(deltaX), wl_fixed_to_int(deltaY) });
+        manager.handleMotion(FloatSize(wl_fixed_to_double(deltaX), wl_fixed_to_double(deltaY)));
     }
 };
 
@@ -89,17 +89,29 @@ bool PointerLockManagerWayland::lock()
     if (!PointerLockManager::lock())
         return false;
 
+    auto* viewWidget = m_webPage.viewWidget();
+#if USE(GTK4)
+    GRefPtr<GdkCursor> cursor = adoptGRef(gdk_cursor_new_from_name("none", nullptr));
+    gtk_widget_set_cursor(viewWidget, cursor.get());
+#else
+    GRefPtr<GdkCursor> cursor = adoptGRef(gdk_cursor_new_from_name(gtk_widget_get_display(viewWidget), "none"));
+    gdk_window_set_cursor(gtk_widget_get_window(viewWidget), cursor.get());
+#endif
+
     auto* pointer = gdk_wayland_device_get_wl_pointer(m_device);
 
-    RELEASE_ASSERT(!m_relativePointer);
+    ASSERT(!m_relativePointer);
     m_relativePointer = zwp_relative_pointer_manager_v1_get_relative_pointer(m_relativePointerManager, pointer);
     zwp_relative_pointer_v1_add_listener(m_relativePointer, &s_relativePointerListener, this);
 
-#if !USE(GTK4)
-    RELEASE_ASSERT(!m_lockedPointer);
-    auto* surface = gdk_wayland_window_get_wl_surface(gtk_widget_get_window(m_webPage.viewWidget()));
-    m_lockedPointer = zwp_pointer_constraints_v1_lock_pointer(m_pointerConstraints, surface, pointer, nullptr, ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);
+    ASSERT(!m_lockedPointer);
+#if USE(GTK4)
+    auto* surface = gdk_wayland_surface_get_wl_surface(gtk_native_get_surface(gtk_widget_get_native(viewWidget)));
+#else
+    auto* surface = gdk_wayland_window_get_wl_surface(gtk_widget_get_window(viewWidget));
 #endif
+    m_lockedPointer = zwp_pointer_constraints_v1_lock_pointer(m_pointerConstraints, surface, pointer, nullptr, ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);
+
     return true;
 }
 
@@ -107,6 +119,12 @@ bool PointerLockManagerWayland::unlock()
 {
     g_clear_pointer(&m_relativePointer, zwp_relative_pointer_v1_destroy);
     g_clear_pointer(&m_lockedPointer, zwp_locked_pointer_v1_destroy);
+
+#if USE(GTK4)
+    gtk_widget_set_cursor(m_webPage.viewWidget(), nullptr);
+#else
+    gdk_window_set_cursor(gtk_widget_get_window(m_webPage.viewWidget()), nullptr);
+#endif
 
     return PointerLockManager::unlock();
 }

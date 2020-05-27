@@ -42,48 +42,41 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<PointerLockManager> PointerLockManager::create(WebPageProxy& webPage, const GdkEvent* event)
+std::unique_ptr<PointerLockManager> PointerLockManager::create(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEvent::Button button, unsigned short buttons, OptionSet<WebEvent::Modifier> modifiers)
 {
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        return makeUnique<PointerLockManagerWayland>(webPage, event);
+        return makeUnique<PointerLockManagerWayland>(webPage, position, globalPosition, button, buttons, modifiers);
 #endif
 #if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
-        return makeUnique<PointerLockManagerX11>(webPage, event);
+        return makeUnique<PointerLockManagerX11>(webPage, position, globalPosition, button, buttons, modifiers);
 #endif
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-PointerLockManager::PointerLockManager(WebPageProxy& webPage, const GdkEvent* event)
+PointerLockManager::PointerLockManager(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEvent::Button button, unsigned short buttons, OptionSet<WebEvent::Modifier> modifiers)
     : m_webPage(webPage)
-    , m_event(event)
+    , m_position(position)
+    , m_button(button)
+    , m_buttons(buttons)
+    , m_modifiers(modifiers)
+    , m_initialPoint(globalPosition)
 {
 }
 
 PointerLockManager::~PointerLockManager()
 {
-    RELEASE_ASSERT(!m_device);
+    ASSERT(!m_device);
 }
 
 bool PointerLockManager::lock()
 {
-    RELEASE_ASSERT(!m_device);
+    ASSERT(!m_device);
 
-#if !USE(GTK4)
-    auto* viewWidget = m_webPage.viewWidget();
-    m_device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
-    GRefPtr<GdkCursor> cursor = adoptGRef(gdk_cursor_new_from_name(gtk_widget_get_display(viewWidget), "none"));
-    auto grabResult = gdk_seat_grab(gdk_device_get_seat(m_device), gtk_widget_get_window(viewWidget), GDK_SEAT_CAPABILITY_ALL_POINTING, TRUE,
-        cursor.get(), nullptr, nullptr, nullptr);
-    if (grabResult != GDK_GRAB_SUCCESS) {
-        m_device = nullptr;
-        return false;
-    }
-#endif
-
-    return true;
+    m_device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(m_webPage.viewWidget())));
+    return !!m_device;
 }
 
 bool PointerLockManager::unlock()
@@ -91,16 +84,14 @@ bool PointerLockManager::unlock()
     if (!m_device)
         return false;
 
-#if !USE(GTK4)
-    gdk_seat_ungrab(gdk_device_get_seat(m_device));
     m_device = nullptr;
-#endif
+
     return true;
 }
 
-void PointerLockManager::handleMotion(IntPoint&& delta)
+void PointerLockManager::handleMotion(FloatSize&& delta)
 {
-    m_webPage.handleMouseEvent(NativeWebMouseEvent(const_cast<GdkEvent*>(m_event), 0, delta));
+    m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEvent::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta));
 }
 
 } // namespace WebKit

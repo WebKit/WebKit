@@ -43,7 +43,7 @@ class WebPageProxy;
 class PointerLockManagerWayland final : public PointerLockManager {
     WTF_MAKE_NONCOPYABLE(PointerLockManagerWayland); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PointerLockManagerWayland(WebPageProxy&, const GdkEvent*);
+    PointerLockManagerWayland(WebPageProxy&, const WebCore::FloatPoint&, const WebCore::FloatPoint&, WebMouseEvent::Button, unsigned short, OptionSet<WebEvent::Modifier>);
     ~PointerLockManagerWayland();
 
 private:

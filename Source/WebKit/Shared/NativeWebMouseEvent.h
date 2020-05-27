@@ -64,9 +64,9 @@ public:
     NativeWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *);
 #elif PLATFORM(GTK)
     NativeWebMouseEvent(const NativeWebMouseEvent&);
-    NativeWebMouseEvent(GdkEvent*, int, Optional<WebCore::IntPoint>);
-    NativeWebMouseEvent(GdkEvent*, const WebCore::IntPoint&, int, Optional<WebCore::IntPoint>);
-    NativeWebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<Modifier> modifiers);
+    NativeWebMouseEvent(GdkEvent*, int, Optional<WebCore::FloatSize>);
+    NativeWebMouseEvent(GdkEvent*, const WebCore::IntPoint&, int, Optional<WebCore::FloatSize>);
+    NativeWebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<Modifier> modifiers, Optional<WebCore::FloatSize>);
     explicit NativeWebMouseEvent(const WebCore::IntPoint&);
 #elif PLATFORM(IOS_FAMILY)
     NativeWebMouseEvent(::WebEvent *);
