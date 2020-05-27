@@ -2754,4 +2754,21 @@ void NetworkProcess::broadcastConsoleMessage(PAL::SessionID sessionID, JSC::Mess
     }
 }
 
+void NetworkProcess::updateBundleIdentifier(String&& bundleIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+#if PLATFORM(COCOA)
+    WebCore::clearApplicationBundleIdentifierTestingOverride();
+    WebCore::setApplicationBundleIdentifier(bundleIdentifier);
+#endif
+    completionHandler();
+}
+
+void NetworkProcess::clearBundleIdentifier(CompletionHandler<void()>&& completionHandler)
+{
+#if PLATFORM(COCOA)
+    WebCore::clearApplicationBundleIdentifierTestingOverride();
+#endif
+    completionHandler();
+}
+
 } // namespace WebKit

@@ -184,4 +184,6 @@ messages -> NetworkProcess LegacyReceiver {
     DisableServiceWorkerEntitlement()
     ClearServiceWorkerEntitlementOverride() -> () Async
 #endif
+    UpdateBundleIdentifier(String bundleIdentifier) -> () Async
+    ClearBundleIdentifier() -> () Async
 }

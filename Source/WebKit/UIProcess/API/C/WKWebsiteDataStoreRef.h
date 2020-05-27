@@ -177,6 +177,12 @@ WK_EXPORT void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef data
 
 WK_EXPORT void WKWebsiteDataStoreReinitializeAppBoundDomains(WKWebsiteDataStoreRef dataStoreRef);
 
+typedef void (*WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcessFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(WKWebsiteDataStoreRef dataStoreRef, WKStringRef bundleIdentifier, void* context, WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcessFunction completionHandler);
+
+typedef void (*WKWebsiteDataStoreClearBundleIdentifierInNetworkProcessFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearBundleIdentifierInNetworkProcessFunction completionHandler);
+
 #ifdef __cplusplus
 }
 #endif

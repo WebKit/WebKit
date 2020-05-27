@@ -299,7 +299,9 @@ public:
     void ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&&) const;
     void reinitializeAppBoundDomains();
     static void setAppBoundDomainsForTesting(HashSet<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
-
+    void updateBundleIdentifierInNetworkProcess(const String&, CompletionHandler<void()>&&);
+    void clearBundleIdentifierInNetworkProcess(CompletionHandler<void()>&&);
+    
 private:
     enum class ForceReinitialization : bool { No, Yes };
     void initializeAppBoundDomains(ForceReinitialization = ForceReinitialization::No);

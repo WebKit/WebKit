@@ -805,3 +805,17 @@ void WKWebsiteDataStoreReinitializeAppBoundDomains(WKWebsiteDataStoreRef dataSto
     WebKit::toImpl(dataStoreRef)->reinitializeAppBoundDomains();
 #endif
 }
+
+void WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(WKWebsiteDataStoreRef dataStoreRef, const WKStringRef bundleIdentifier, void* context, WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcessFunction completionHandler)
+{
+    WebKit::toImpl(dataStoreRef)->updateBundleIdentifierInNetworkProcess(WebKit::toImpl(bundleIdentifier)->string(), [context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
+void WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearBundleIdentifierInNetworkProcessFunction completionHandler)
+{
+    WebKit::toImpl(dataStoreRef)->clearBundleIdentifierInNetworkProcess([context, completionHandler] {
+        completionHandler(context);
+    });
+}

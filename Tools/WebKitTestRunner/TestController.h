@@ -275,6 +275,8 @@ public:
     void clearLoadedThirdPartyDomains();
     void clearAppBoundSession();
     void reinitializeAppBoundDomains();
+    void updateBundleIdentifierInNetworkProcess(const String& bundleIdentifier);
+    void clearBundleIdentifierInNetworkProcess();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }

@@ -795,8 +795,10 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     // something else for specific tests that need to run at a different window scale.
     m_mainWebView->changeWindowScaleIfNeeded(1);
     
-    if (!options.applicationBundleIdentifier.isEmpty())
+    if (!options.applicationBundleIdentifier.isEmpty()) {
         reinitializeAppBoundDomains();
+        updateBundleIdentifierInNetworkProcess(options.applicationBundleIdentifier);
+    }
 }
 
 void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test)
@@ -1164,6 +1166,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 #if PLATFORM(COCOA)
         clearApplicationBundleIdentifierTestingOverride();
 #endif
+        clearBundleIdentifierInNetworkProcess();
     }
 
     return m_doneResetting;
@@ -3902,6 +3905,20 @@ void TestController::clearAppBoundSession()
 void TestController::reinitializeAppBoundDomains()
 {
     WKWebsiteDataStoreReinitializeAppBoundDomains(TestController::websiteDataStore());
+}
+
+void TestController::updateBundleIdentifierInNetworkProcess(const String& bundleIdentifier)
+{
+    InAppBrowserPrivacyCallbackContext context(*this);
+    WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(TestController::websiteDataStore(), adoptWK(WKStringCreateWithUTF8CString(bundleIdentifier.utf8().data())).get(), &context, inAppBrowserPrivacyVoidResultCallback);
+    runUntil(context.done, noTimeout);
+}
+
+void TestController::clearBundleIdentifierInNetworkProcess()
+{
+    InAppBrowserPrivacyCallbackContext context(*this);
+    WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(TestController::websiteDataStore(), &context, inAppBrowserPrivacyVoidResultCallback);
+    runUntil(context.done, noTimeout);
 }
 
 #if !PLATFORM(COCOA)

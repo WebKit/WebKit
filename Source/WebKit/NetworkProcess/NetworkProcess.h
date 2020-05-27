@@ -355,6 +355,8 @@ public:
     void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);
 
     void broadcastConsoleMessage(PAL::SessionID, JSC::MessageSource, JSC::MessageLevel, const String& message);
+    void updateBundleIdentifier(String&&, CompletionHandler<void()>&&);
+    void clearBundleIdentifier(CompletionHandler<void()>&&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);

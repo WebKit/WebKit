@@ -1,3 +1,32 @@
+2020-05-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Make sure bundle identifier testing override is set in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=212288
+        <rdar://problem/63539061>
+
+        Reviewed by Chris Dumez.
+
+        Set the bundle identifier in the network process if a layout test
+        updates it. This value usually only gets updated when a new network
+        process is initialized, which does not happen for every test. So it
+        should be set/cleared as needed.
+
+        No new tests, will fix http/tests/in-app-browser-privacy/ tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateBundleIdentifierInNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updateBundleIdentifierInNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updateBundleIdentifierInNetworkProcess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-05-27  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, reverting r260840.

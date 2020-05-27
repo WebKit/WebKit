@@ -233,6 +233,8 @@ public:
 
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+    void updateBundleIdentifier(const String&, CompletionHandler<void()>&&);
+    void clearBundleIdentifier(CompletionHandler<void()>&&);
 
 private:
     // AuxiliaryProcessProxy

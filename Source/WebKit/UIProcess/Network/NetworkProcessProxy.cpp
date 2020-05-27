@@ -1537,6 +1537,16 @@ void NetworkProcessProxy::getAppBoundDomains(PAL::SessionID sessionID, Completio
 #endif
 }
 
+void NetworkProcessProxy::updateBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::UpdateBundleIdentifier(bundleIdentifier), WTFMove(completionHandler));
+}
+
+void NetworkProcessProxy::clearBundleIdentifier(CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::ClearBundleIdentifier(), WTFMove(completionHandler));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
