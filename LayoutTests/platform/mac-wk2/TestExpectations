@@ -996,8 +996,6 @@ webkit.org/b/208889 fast/images/decode-render-animated-image.html [ Pass ImageOn
 
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
 
-webkit.org/b/209018 [ Catalina ] webrtc/video-autoplay1.html [ Pass Failure ]
-
 webkit.org/b/209024 [ Debug ] webgpu/whlsl/vector-compare.html [ Pass Crash ]
 
 webkit.org/b/209077 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
