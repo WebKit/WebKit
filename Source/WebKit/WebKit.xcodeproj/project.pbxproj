@@ -12172,7 +12172,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exec ${SRCROOT}/mac/postprocess-framework-headers.sh\nfi\n";
+			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exec ${SRCROOT}/mac/postprocess-framework-headers.sh\nfi\n";
 		};
 		1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -12215,7 +12215,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nWKFOUNDATION_H=${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/WKFoundation.h\n\nif [[ \"${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}\" == \"YES\" ]]; then\n    UNIFDEF_OPTIONS=\"-UWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nelse\n    UNIFDEF_OPTIONS=\"-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nfi\n\nunifdef -B ${UNIFDEF_OPTIONS} -o \"${WKFOUNDATION_H}\".unifdef \"${WKFOUNDATION_H}\"\n\ncase $? in\n0)\n    rm \"${WKFOUNDATION_H}\".unifdef\n    ;;\n1)\n    mv \"${WKFOUNDATION_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nWKFOUNDATION_H=${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/WKFoundation.h\n\nif [[ \"${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}\" == \"YES\" ]]; then\n    UNIFDEF_OPTIONS=\"-UWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nelse\n    UNIFDEF_OPTIONS=\"-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nfi\n\nunifdef -B ${UNIFDEF_OPTIONS} -o \"${WKFOUNDATION_H}\".unifdef \"${WKFOUNDATION_H}\"\n\ncase $? in\n0)\n    rm \"${WKFOUNDATION_H}\".unifdef\n    ;;\n1)\n    mv \"${WKFOUNDATION_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
 		};
 		1ADAE12F1919A90C00F48E21 /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -12343,7 +12343,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nWKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UBUILDING_WPE__ -UUSE_SOUP -o \"${WKBASE_H}\".unifdef \"${WKBASE_H}\"\n\ncase $? in\n0)\n    rm \"${WKBASE_H}\".unifdef\n    ;;\n1)\n    mv \"${WKBASE_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nWKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UBUILDING_WPE__ -UUSE_SOUP -o \"${WKBASE_H}\".unifdef \"${WKBASE_H}\"\n\ncase $? in\n0)\n    rm \"${WKBASE_H}\".unifdef\n    ;;\n1)\n    mv \"${WKBASE_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
 		};
 		37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -12649,7 +12649,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_MAJOR}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    for HEADERS_DIRECTORY in \"${PUBLIC_HEADERS_FOLDER_PATH}\" \"${PRIVATE_HEADERS_FOLDER_PATH}\"; do\n        for HEADER_PATH in \"${TARGET_BUILD_DIR}/${HEADERS_DIRECTORY}/\"*.*; do\n            if [[ ! -z `grep '#import <WebKitAdditions/.*>' \"${HEADER_PATH}\"` ]]; then\n                python \"${SRCROOT}/mac/replace-webkit-additions-includes.py\" \"${HEADER_PATH}\" \"${BUILT_PRODUCTS_DIR}\" \"${SDKROOT}\" || exit $?\n            fi\n        done\n    done\nfi\n\n\n";
+			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${USE_NEW_BUILD_SYSTEM}\" != \"NO\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    for HEADERS_DIRECTORY in \"${PUBLIC_HEADERS_FOLDER_PATH}\" \"${PRIVATE_HEADERS_FOLDER_PATH}\"; do\n        for HEADER_PATH in \"${TARGET_BUILD_DIR}/${HEADERS_DIRECTORY}/\"*.*; do\n            if [[ ! -z `grep '#import <WebKitAdditions/.*>' \"${HEADER_PATH}\"` ]]; then\n                python \"${SRCROOT}/mac/replace-webkit-additions-includes.py\" \"${HEADER_PATH}\" \"${BUILT_PRODUCTS_DIR}\" \"${SDKROOT}\" || exit $?\n            fi\n        done\n    done\nfi\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
