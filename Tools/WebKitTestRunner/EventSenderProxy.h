@@ -32,11 +32,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(GTK)
-#include <WebCore/GUniquePtrGtk.h>
-#include <gdk/gdk.h>
-#endif
-
 #if PLATFORM(WPE)
 #include <wpe/wpe.h>
 #endif
@@ -48,10 +43,6 @@ OBJC_CLASS NSEvent;
 namespace WTR {
 
 class TestController;
-
-#if PLATFORM(GTK)
-struct WTREventQueueItem;
-#endif
 
 class EventSenderProxy {
     WTF_MAKE_FAST_ALLOCATED;
@@ -102,24 +93,12 @@ private:
     double currentEventTime() { return m_time; }
     void updateClickCountForButton(int button);
 
-#if PLATFORM(GTK)
-    void replaySavedEvents();
-#endif
-
     void sendMouseDownToStartPressureEvents();
 #if PLATFORM(COCOA)
     enum class PressureChangeDirection { Increasing, Decreasing };
     RetainPtr<NSEvent> beginPressureEvent(int stage);
     RetainPtr<NSEvent> pressureChangeEvent(int stage, PressureChangeDirection);
     RetainPtr<NSEvent> pressureChangeEvent(int stage, float pressure, PressureChangeDirection);
-#endif
-
-#if PLATFORM(GTK)
-    void sendOrQueueEvent(GdkEvent*);
-    void dispatchEvent(GdkEvent*);
-    GdkEvent* createMouseButtonEvent(GdkEventType, unsigned button, WKEventModifiers);
-    GUniquePtr<GdkEvent> createTouchEvent(GdkEventType, int id);
-    void sendUpdatedTouchEvents();
 #endif
 
 #if PLATFORM(WPE)
@@ -140,17 +119,11 @@ private:
     double m_clickTime;
     WKPoint m_clickPosition;
     WKEventMouseButton m_clickButton;
+    unsigned m_mouseButtonsCurrentlyDown { 0 };
 #if PLATFORM(COCOA)
     int eventNumber;
-    unsigned m_mouseButtonsCurrentlyDown { 0 };
-#elif PLATFORM(GTK)
-    Deque<WTREventQueueItem> m_eventQueue;
-    unsigned m_mouseButtonsCurrentlyDown { 0 };
-    Vector<GUniquePtr<GdkEvent>> m_touchEvents;
-    HashSet<int> m_updatedTouchEvents;
 #elif PLATFORM(WPE)
     uint32_t m_buttonState;
-    uint32_t m_mouseButtonsCurrentlyDown { 0 };
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;
     HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
 #endif

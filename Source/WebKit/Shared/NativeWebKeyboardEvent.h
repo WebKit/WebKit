@@ -75,6 +75,7 @@ public:
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     enum class HandledByInputMethod : bool { No, Yes };
     NativeWebKeyboardEvent(GdkEvent*, const String&, HandledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, Vector<String>&& commands);
+    NativeWebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isKeypad, OptionSet<Modifier>);
 #elif PLATFORM(IOS_FAMILY)
     enum class HandledByInputMethod : bool { No, Yes };
     NativeWebKeyboardEvent(::WebEvent *, HandledByInputMethod);

@@ -1,3 +1,15 @@
+2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WTR] EventSender: stop using GdkEvent API in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=212298
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update expectations for tests that are passing now.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/5195166-1-expected.txt: Removed.
+
 2020-05-27  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r261277): [ Mac iOS ] webrtc/datachannel/gather-candidates-networkprocess-crash.html is a flaky timeout

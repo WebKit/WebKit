@@ -66,6 +66,7 @@ public:
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int, Optional<WebCore::IntPoint>);
     NativeWebMouseEvent(GdkEvent*, const WebCore::IntPoint&, int, Optional<WebCore::IntPoint>);
+    NativeWebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<Modifier> modifiers);
     explicit NativeWebMouseEvent(const WebCore::IntPoint&);
 #elif PLATFORM(IOS_FAMILY)
     NativeWebMouseEvent(::WebEvent *);

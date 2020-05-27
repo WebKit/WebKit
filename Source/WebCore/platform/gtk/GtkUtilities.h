@@ -31,6 +31,8 @@ class IntPoint;
 
 IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 bool widgetIsOnscreenToplevelWindow(GtkWidget*);
+IntPoint widgetRootCoords(GtkWidget*, int, int);
+unsigned widgetKeyvalToKeycode(GtkWidget*, unsigned);
 
 template<typename GdkEventType>
 WallTime wallTimeForEvent(const GdkEventType* event)

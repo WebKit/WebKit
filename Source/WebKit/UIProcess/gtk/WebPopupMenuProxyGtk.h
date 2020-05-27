@@ -29,10 +29,10 @@
 typedef struct _GMainLoop GMainLoop;
 typedef struct _GdkDevice GdkDevice;
 typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GtkTreePath GtkTreePath;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeViewColumn GtkTreeViewColumn;
+typedef union _GdkEvent GdkEvent;
 
 namespace WebCore {
 class IntRect;
@@ -57,6 +57,9 @@ public:
     virtual void selectItem(unsigned itemIndex);
     virtual void activateItem(Optional<unsigned> itemIndex);
 
+    bool handleKeyPress(unsigned keyval, uint32_t timestamp);
+    void activateSelectedItem();
+
 protected:
     WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client&);
 
@@ -66,11 +69,11 @@ private:
     void createPopupMenu(const Vector<WebPopupItem>&, int32_t selectedIndex);
     void show();
     bool activateItemAtPath(GtkTreePath*);
-    Optional<unsigned> typeAheadFindIndex(GdkEventKey*);
-    bool typeAheadFind(GdkEventKey*);
+    Optional<unsigned> typeAheadFindIndex(unsigned keyval, uint32_t timestamp);
+    bool typeAheadFind(unsigned keyval, uint32_t timestamp);
 
     static gboolean buttonPressEventCallback(GtkWidget*, GdkEventButton*, WebPopupMenuProxyGtk*);
-    static gboolean keyPressEventCallback(GtkWidget*, GdkEventKey*, WebPopupMenuProxyGtk*);
+    static gboolean keyPressEventCallback(GtkWidget*, GdkEvent*, WebPopupMenuProxyGtk*);
     static void treeViewRowActivatedCallback(GtkTreeView*, GtkTreePath*, GtkTreeViewColumn*, WebPopupMenuProxyGtk*);
     static gboolean treeViewButtonReleaseEventCallback(GtkWidget*, GdkEventButton*, WebPopupMenuProxyGtk*);
 

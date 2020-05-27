@@ -44,6 +44,8 @@ public:
 #else
     Vector<String> commandsForKeyEvent(GdkEventKey*);
 #endif
+    Vector<String> commandsForKeyval(unsigned keyval, unsigned modifiers);
+
     void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
 
 private:

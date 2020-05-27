@@ -1485,8 +1485,6 @@ webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Ski
 
 webkit.org/b/199224 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 
-webkit.org/b/212018 fast/events/context-activated-by-key-event.html [ Crash ]
-
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3386,7 +3384,6 @@ webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Time
 
 # WebKit2 testRunner.setEditingBehaviour appears broken sometimes.
 webkit.org/b/144764 [ Release ] editing/selection/move-by-word-visually-mac.html [ Failure ]
-Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 
 # WebKit2 needs textInputController.selectedRange
 Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
@@ -3427,7 +3424,6 @@ Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
 
 # Unexplained failures
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
-Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-greek.html [ Failure ]
@@ -3591,7 +3587,6 @@ webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
-webkit.org/b/84694 fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
 # Interferes with the rAF tests that are enabled

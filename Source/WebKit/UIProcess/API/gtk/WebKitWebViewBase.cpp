@@ -48,9 +48,11 @@
 #include "WebKitEmojiChooser.h"
 #include "WebKitInputMethodContextImplGtk.h"
 #include "WebKitWebViewAccessible.h"
+#include "WebKitWebViewBaseInternal.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxyGtk.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
@@ -61,6 +63,7 @@
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <gdk/gdk.h>
@@ -2279,4 +2282,179 @@ void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBa
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, text, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTFMove(underlines), WTFMove(selectionRange), { }));
 #endif
+}
+
+static inline OptionSet<WebEvent::Modifier> toWebKitModifiers(unsigned modifiers)
+{
+    OptionSet<WebEvent::Modifier> webEventModifiers;
+    if (modifiers & GDK_CONTROL_MASK)
+        webEventModifiers.add(WebEvent::Modifier::ControlKey);
+    if (modifiers & GDK_SHIFT_MASK)
+        webEventModifiers.add(WebEvent::Modifier::ShiftKey);
+    if (modifiers & GDK_MOD1_MASK)
+        webEventModifiers.add(WebEvent::Modifier::AltKey);
+    if (modifiers & GDK_META_MASK)
+        webEventModifiers.add(WebEvent::Modifier::MetaKey);
+    if (PlatformKeyboardEvent::modifiersContainCapsLock(modifiers))
+        webEventModifiers.add(WebEvent::Modifier::CapsLockKey);
+    return webEventModifiers;
+}
+
+void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+    WebMouseEvent::Button webEventButton = WebMouseEvent::NoButton;
+    switch (button) {
+    case 0:
+        webEventButton = WebMouseEvent::NoButton;
+        break;
+    case 1:
+        webEventButton = WebMouseEvent::LeftButton;
+        break;
+    case 2:
+        webEventButton = WebMouseEvent::MiddleButton;
+        break;
+    case 3:
+        webEventButton = WebMouseEvent::RightButton;
+        break;
+    }
+
+    WebEvent::Type webEventType;
+    switch (type) {
+    case MouseEventType::Press:
+        webEventType = WebEvent::MouseDown;
+        priv->inputMethodFilter.cancelComposition();
+        gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+        break;
+    case MouseEventType::Release:
+        webEventType = WebEvent::MouseUp;
+        gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+        break;
+    case MouseEventType::Motion:
+        // FIXME: add movement delta for pointer lock.
+        webEventType = WebEvent::MouseMove;
+        if (buttons & GDK_BUTTON1_MASK)
+            webEventButton = WebMouseEvent::LeftButton;
+        else if (buttons & GDK_BUTTON2_MASK)
+            webEventButton = WebMouseEvent::MiddleButton;
+        else if (buttons & GDK_BUTTON3_MASK)
+            webEventButton = WebMouseEvent::RightButton;
+        break;
+    }
+
+    unsigned short webEventButtons = 0;
+    if (buttons & GDK_BUTTON1_MASK)
+        webEventButtons |= 1;
+    if (buttons & GDK_BUTTON2_MASK)
+        webEventButtons |= 4;
+    if (buttons & GDK_BUTTON3_MASK)
+        webEventButtons |= 2;
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(webEventType, webEventButton, webEventButtons, { x, y },
+        widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers)));
+}
+
+void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, unsigned keyval, unsigned modifiers)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+#if !USE(GTK4)
+    if (auto* popupMenu = priv->pageProxy->activePopupMenu()) {
+        auto* gtkPopupMenu = static_cast<WebPopupMenuProxyGtk*>(popupMenu);
+        if (gtkPopupMenu->handleKeyPress(keyval, GDK_CURRENT_TIME))
+            return;
+
+        if (keyval == GDK_KEY_Return) {
+            gtkPopupMenu->activateSelectedItem();
+            return;
+        }
+    }
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    if (priv->fullScreenModeActive) {
+        switch (keyval) {
+        case GDK_KEY_Escape:
+        case GDK_KEY_f:
+        case GDK_KEY_F:
+            priv->pageProxy->fullScreenManager()->requestExitFullScreen();
+            return;
+        default:
+            break;
+        }
+    }
+#endif
+
+#if !USE(GTK4)
+    if (keyval == GDK_KEY_Menu) {
+        webkitWebViewBasePopupMenu(GTK_WIDGET(webViewBase));
+        return;
+    }
+#endif
+
+    auto keycode = widgetKeyvalToKeycode(GTK_WIDGET(webViewBase), keyval);
+    auto webEventModifiers = toWebKitModifiers(modifiers);
+
+    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
+        WebEvent::KeyDown,
+        PlatformKeyboardEvent::singleCharacterString(keyval),
+        PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
+        PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
+        PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
+        PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
+        static_cast<int>(keyval),
+        priv->keyBindingTranslator.commandsForKeyval(keyval, modifiers),
+        keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9,
+        webEventModifiers));
+
+    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
+        WebEvent::KeyUp,
+        PlatformKeyboardEvent::singleCharacterString(keyval),
+        PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
+        PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
+        PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
+        PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
+        static_cast<int>(keyval),
+        { },
+        keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9,
+        webEventModifiers));
+}
+
+static inline WebWheelEvent::Phase toWebKitWheelEventPhase(WheelEventPhase phase)
+{
+    switch (phase) {
+    case WheelEventPhase::NoPhase:
+        return WebWheelEvent::Phase::PhaseNone;
+    case WheelEventPhase::Began:
+        return WebWheelEvent::Phase::PhaseBegan;
+    case WheelEventPhase::Changed:
+        return WebWheelEvent::Phase::PhaseChanged;
+    case WheelEventPhase::Ended:
+        return WebWheelEvent::Phase::PhaseEnded;
+    case WheelEventPhase::Cancelled:
+        return WebWheelEvent::Phase::PhaseCancelled;
+    case WheelEventPhase::MayBegin:
+        return WebWheelEvent::Phase::PhaseMayBegin;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase* webViewBase, double deltaX, double deltaY, int x, int y, WheelEventPhase phase, WheelEventPhase momentumPhase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+    FloatSize wheelTicks(deltaX, deltaY);
+    FloatSize delta(wheelTicks);
+    delta.scale(static_cast<float>(Scrollbar::pixelsPerLineStep()));
+
+    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent({ x, y }, widgetRootCoords(GTK_WIDGET(webViewBase), x, y),
+        delta, wheelTicks, toWebKitWheelEventPhase(phase), toWebKitWheelEventPhase(momentumPhase)));
 }

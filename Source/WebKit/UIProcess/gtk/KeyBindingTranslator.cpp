@@ -217,19 +217,24 @@ static const KeyCombinationEntry customKeyBindings[] = {
     { GDK_KEY_V,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "PasteAsPlainText" },
 };
 
-static Vector<String> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)
+static Vector<String> handleKeyBindingsForMap(const KeyCombinationEntry* map, unsigned mapSize, unsigned keyval, GdkModifierType state)
 {
     // For keypress events, we want charCode(), but keyCode() does that.
     unsigned mapKey = (state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK)) << 16 | keyval;
     if (!mapKey)
         return { };
 
-    for (unsigned i = 0; i < G_N_ELEMENTS(customKeyBindings); ++i) {
-        if (mapKey == (customKeyBindings[i].state << 16 | customKeyBindings[i].gdkKeyCode))
-            return { customKeyBindings[i].name };
+    for (unsigned i = 0; i < mapSize; ++i) {
+        if (mapKey == (map[i].state << 16 | map[i].gdkKeyCode))
+            return { map[i].name };
     }
 
     return { };
+}
+
+static Vector<String> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)
+{
+    return handleKeyBindingsForMap(customKeyBindings, G_N_ELEMENTS(customKeyBindings), keyval, state);
 }
 
 #if USE(GTK4)
@@ -260,5 +265,71 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
     return handleCustomKeyBindings(keyval, state);
 }
 #endif
+
+static const KeyCombinationEntry predefinedKeyBindings[] = {
+    { GDK_KEY_Left,         0,                                 "MoveLeft" },
+    { GDK_KEY_KP_Left,      0,                                 "MoveLeft" },
+    { GDK_KEY_Left,         GDK_SHIFT_MASK,                    "MoveBackwardAndModifySelection" },
+    { GDK_KEY_KP_Left,      GDK_SHIFT_MASK,                    "MoveBackwardAndModifySelection" },
+    { GDK_KEY_Left,         GDK_CONTROL_MASK,                  "MoveWordBackward" },
+    { GDK_KEY_KP_Left,      GDK_CONTROL_MASK,                  "MoveWordBackward" },
+    { GDK_KEY_Left,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveWordBackwardAndModifySelection" },
+    { GDK_KEY_KP_Left,      GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveWordBackwardAndModifySelectio" },
+    { GDK_KEY_Right,        0,                                 "MoveRight" },
+    { GDK_KEY_KP_Right,     0,                                 "MoveRight" },
+    { GDK_KEY_Right,        GDK_SHIFT_MASK,                    "MoveForwardAndModifySelection" },
+    { GDK_KEY_KP_Right,     GDK_SHIFT_MASK,                    "MoveForwardAndModifySelection" },
+    { GDK_KEY_Right,        GDK_CONTROL_MASK,                  "MoveWordForward" },
+    { GDK_KEY_KP_Right,     GDK_CONTROL_MASK,                  "MoveWordForward" },
+    { GDK_KEY_Right,        GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveWordForwardAndModifySelection" },
+    { GDK_KEY_KP_Right,     GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveWordForwardAndModifySelection" },
+    { GDK_KEY_Up,           0,                                 "MoveUp" },
+    { GDK_KEY_KP_Up,        0,                                 "MoveUp" },
+    { GDK_KEY_Up,           GDK_SHIFT_MASK,                    "MoveUpAndModifySelection" },
+    { GDK_KEY_KP_Up,        GDK_SHIFT_MASK,                    "MoveUpAndModifySelection" },
+    { GDK_KEY_Down,         0,                                 "MoveDown" },
+    { GDK_KEY_KP_Down,      0,                                 "MoveDown" },
+    { GDK_KEY_Down,         GDK_SHIFT_MASK,                    "MoveDownAndModifySelection" },
+    { GDK_KEY_KP_Down,      GDK_SHIFT_MASK,                    "MoveDownAndModifySelection" },
+    { GDK_KEY_Home,         0,                                 "MoveToBeginningOfLine" },
+    { GDK_KEY_KP_Home,      0,                                 "MoveToBeginningOfLine" },
+    { GDK_KEY_Home,         GDK_SHIFT_MASK,                    "MoveToBeginningOfLineAndModifySelection" },
+    { GDK_KEY_KP_Home,      GDK_SHIFT_MASK,                    "MoveToBeginningOfLineAndModifySelection" },
+    { GDK_KEY_Home,         GDK_CONTROL_MASK,                  "MoveToBeginningOfDocument" },
+    { GDK_KEY_KP_Home,      GDK_CONTROL_MASK,                  "MoveToBeginningOfDocument" },
+    { GDK_KEY_Home,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveToBeginningOfDocumentAndModifySelection" },
+    { GDK_KEY_KP_Home,      GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveToBeginningOfDocumentAndModifySelection" },
+    { GDK_KEY_End,          0,                                 "MoveToEndOfLine" },
+    { GDK_KEY_KP_End,       0,                                 "MoveToEndOfLine" },
+    { GDK_KEY_End,          GDK_SHIFT_MASK,                    "MoveToEndOfLineAndModifySelection" },
+    { GDK_KEY_KP_End,       GDK_SHIFT_MASK,                    "MoveToEndOfLineAndModifySelection" },
+    { GDK_KEY_End,          GDK_CONTROL_MASK,                  "MoveToEndOfDocument" },
+    { GDK_KEY_KP_End,       GDK_CONTROL_MASK,                  "MoveToEndOfDocument" },
+    { GDK_KEY_End,          GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveToEndOfDocumentAndModifySelection" },
+    { GDK_KEY_KP_End,       GDK_CONTROL_MASK | GDK_SHIFT_MASK, "MoveToEndOfDocumentAndModifySelection" },
+    { GDK_KEY_Page_Up,      0,                                 "MovePageUp" },
+    { GDK_KEY_KP_Page_Up,   0,                                 "MovePageUp" },
+    { GDK_KEY_Page_Up,      GDK_SHIFT_MASK,                    "MovePageUpAndModifySelection" },
+    { GDK_KEY_KP_Page_Up,   GDK_SHIFT_MASK,                    "MovePageUpAndModifySelection" },
+    { GDK_KEY_Page_Down,    0,                                 "MovePageDown" },
+    { GDK_KEY_KP_Page_Down, 0,                                 "MovePageDown" },
+    { GDK_KEY_Page_Down,    GDK_SHIFT_MASK,                    "MovePageDownAndModifySelection" },
+    { GDK_KEY_KP_Page_Down, GDK_SHIFT_MASK,                    "MovePageDownAndModifySelection" },
+    { GDK_KEY_Delete,       0,                                 "DeleteForward" },
+    { GDK_KEY_KP_Delete,    0,                                 "DeleteForward" },
+    { GDK_KEY_Delete,       GDK_CONTROL_MASK,                  "DeleteWordForward" },
+    { GDK_KEY_KP_Delete,    GDK_CONTROL_MASK,                  "DeleteWordForward" },
+    { GDK_KEY_BackSpace,    0,                                 "DeleteBackward" },
+    { GDK_KEY_BackSpace,    GDK_CONTROL_MASK,                  "DeleteWordBackward" }
+};
+
+Vector<String> KeyBindingTranslator::commandsForKeyval(unsigned keyval, unsigned modifiers)
+{
+    auto commands = handleKeyBindingsForMap(predefinedKeyBindings, G_N_ELEMENTS(predefinedKeyBindings), keyval, static_cast<GdkModifierType>(modifiers));
+    if (!commands.isEmpty())
+        return commands;
+
+    return handleCustomKeyBindings(keyval, static_cast<GdkModifierType>(modifiers));
+}
 
 } // namespace WebKit

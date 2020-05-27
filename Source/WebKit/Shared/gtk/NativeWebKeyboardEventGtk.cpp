@@ -39,9 +39,14 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& te
 {
 }
 
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(Type type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isKeypad, OptionSet<Modifier> modifiers)
+    : WebKeyboardEvent(type, text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, WTF::nullopt, WTF::nullopt, WTFMove(commands), isKeypad, modifiers, WallTime::now())
+{
+}
+
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.text(), event.handledByInputMethod(), Optional<Vector<WebCore::CompositionUnderline>>(event.preeditUnderlines()), Optional<EditingRange>(event.preeditSelectionRange()), Vector<String>(event.commands())))
-    , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
+    : WebKeyboardEvent(event.type(), event.text(), event.key(), event.code(), event.keyIdentifier(), event.windowsVirtualKeyCode(), event.nativeVirtualKeyCode(), event.handledByInputMethod(), Optional<Vector<WebCore::CompositionUnderline>>(event.preeditUnderlines()), Optional<EditingRange>(event.preeditSelectionRange()), Vector<String>(event.commands()), event.isKeypad(), event.modifiers(), event.timestamp())
+    , m_nativeEvent(event.nativeEvent() ? gdk_event_copy(event.nativeEvent()) : nullptr)
 {
 }
 

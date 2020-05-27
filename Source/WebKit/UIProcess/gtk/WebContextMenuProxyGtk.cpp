@@ -105,6 +105,8 @@ static void popupMenuWidget(GtkWidget* widget, const GdkEvent* triggerEvent, con
         gdk_event_set_device(keyEvent.get(), gdk_seat_get_keyboard(gdk_display_get_default_seat(gdk_window_get_display(window))));
         auto* event = reinterpret_cast<GdkEventKey*>(keyEvent.get());
         event->window = window;
+        // Take a ref of the GdkWindow when creating the GdkEvent, since the event will unref it on destroy.
+        g_object_ref(window);
         event->time = GDK_CURRENT_TIME;
         event->keyval = GDK_KEY_Menu;
         triggerEvent = keyEvent.get();

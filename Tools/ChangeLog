@@ -1,3 +1,37 @@
+2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WTR] EventSender: stop using GdkEvent API in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=212298
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use WebKitWebViewBase internal API to synthesize events instead of GdkEvents. The touch events support has been
+        removed because we are no longer testing touch events, since they need an actual touchscreen.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::getGDKKeySymForKeyRef):
+        (WTR::toWebKitGLibAPI):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR::EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSenderProxy::leapForward):
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::touchStart):
+        (WTR::EventSenderProxy::touchMove):
+        (WTR::EventSenderProxy::touchEnd):
+        (WTR::EventSenderProxy::touchCancel):
+        (WTR::EventSenderProxy::clearTouchPoints):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+        (WTR::EventSenderProxy::cancelTouchPoint):
+        (WTR::EventSenderProxy::setTouchPointRadius):
+        (WTR::EventSenderProxy::setTouchModifier):
+
 2020-05-26  Alex Christensen  <achristensen@webkit.org>
 
         UTF-8 encode strings of invalid URLs when converting WTF::URL to NSURL instead of truncating the UTF-16 encoding

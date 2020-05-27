@@ -1,3 +1,53 @@
+2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WTR] EventSender: stop using GdkEvent API in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=212298
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add internal API to WebKitWebViewBase to synthesize events, because with GTK4 it's not possible to
+        create events. In the case of layout tests, the web view is always the target of the events, so we don't really
+        need to send the events to GTK to process them.
+
+        * Shared/NativeWebKeyboardEvent.h: Add new constructor that doesn't receive a GdkEvent.
+        * Shared/NativeWebMouseEvent.h: Ditto.
+        * Shared/NativeWebWheelEvent.h: Ditto.
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent): Create without a GdkEvent.
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent): Ditto.
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent): Ditto.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithKeyEvent): Return early if event doesn't have a GdkEvent.
+        (WebKit::PageClientImpl::doneWithTouchEvent): Ditto.
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore): Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toWebKitModifiers):
+        (webkitWebViewBaseSynthesizeMouseEvent):
+        (webkitWebViewBaseSynthesizeKeyEvent):
+        (toWebKitWheelEventPhase):
+        (webkitWebViewBaseSynthesizeWheelEvent):
+        * UIProcess/API/gtk/WebKitWebViewBaseInternal.h: Added.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::activePopupMenu const): Return the active popup menu proxy.
+        * UIProcess/gtk/KeyBindingTranslator.cpp:
+        (WebKit::handleKeyBindingsForMap): Make it generic by receiving the map as parameter.
+        (WebKit::handleCustomKeyBindings): Call handleKeyBindingsForMap() passing the custom key bindings map.
+        (WebKit::KeyBindingTranslator::commandsForKeyval): Get commands for the predefined key bindings. This is used
+        only when synthesizing key events since we don't have a GdkEVent to forward to the GtkTextView.
+        * UIProcess/gtk/KeyBindingTranslator.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::popupMenuWidget): Take a ref of the GdkWindow when creating the GdkEvent, since the event will unref it
+        on destroy.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::handleKeyPress): Handle a key press event from its keyval and timestamp.
+        (WebKit::WebPopupMenuProxyGtk::activateSelectedItem): Activate the currently selected item.
+        (WebKit::WebPopupMenuProxyGtk::keyPressEventCallback): Call handleKeyPress().
+        (WebKit::WebPopupMenuProxyGtk::typeAheadFindIndex): Receive a keyval and timestamp instead of a GdkEvent.
+        (WebKit::WebPopupMenuProxyGtk::typeAheadFind): Ditto.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+
 2020-05-27  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds

@@ -1769,7 +1769,9 @@ public:
 #endif
 
     void setHasExecutedAppBoundBehaviorBeforeNavigation() { m_hasExecutedAppBoundBehaviorBeforeNavigation = true; }
-        
+
+    WebPopupMenuProxy* activePopupMenu() const { return m_activePopupMenu.get(); }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

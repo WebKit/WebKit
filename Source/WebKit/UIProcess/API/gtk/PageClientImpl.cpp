@@ -239,7 +239,7 @@ WebCore::IntRect PageClientImpl::rootViewToAccessibilityScreen(const WebCore::In
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
-    if (wasEventHandled || event.type() != WebEvent::Type::KeyDown)
+    if (wasEventHandled || event.type() != WebEvent::Type::KeyDown || !event.nativeEvent())
         return;
 
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
@@ -411,6 +411,8 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 {
 #if !USE(GTK4)
     const GdkEvent* touchEvent = event.nativeEvent();
+    if (!touchEvent)
+        return;
 
     GestureController& gestureController = webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (wasEventHandled) {
@@ -471,6 +473,9 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {
+    if (!event.nativeEvent())
+        return;
+
 #if !USE(GTK4)
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (controller && controller->isSwipeGestureEnabled()) {

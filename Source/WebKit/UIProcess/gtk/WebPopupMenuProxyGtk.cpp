@@ -90,6 +90,27 @@ bool WebPopupMenuProxyGtk::activateItemAtPath(GtkTreePath* path)
     return true;
 }
 
+bool WebPopupMenuProxyGtk::handleKeyPress(unsigned keyval, uint32_t timestamp)
+{
+    if (keyval == GDK_KEY_Escape) {
+        hidePopupMenu();
+        return true;
+    }
+
+    return typeAheadFind(keyval, timestamp);
+}
+
+void WebPopupMenuProxyGtk::activateSelectedItem()
+{
+    GtkTreeModel* model;
+    GtkTreeIter iter;
+    if (!gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(m_treeView)), &model, &iter))
+        return;
+
+    GUniquePtr<GtkTreePath> path(gtk_tree_model_get_path(model, &iter));
+    activateItemAtPath(path.get());
+}
+
 void WebPopupMenuProxyGtk::treeViewRowActivatedCallback(GtkTreeView*, GtkTreePath* path, GtkTreeViewColumn*, WebPopupMenuProxyGtk* popupMenu)
 {
     popupMenu->activateItemAtPath(path);
@@ -120,23 +141,18 @@ gboolean WebPopupMenuProxyGtk::buttonPressEventCallback(GtkWidget* widget, GdkEv
     return TRUE;
 }
 
-gboolean WebPopupMenuProxyGtk::keyPressEventCallback(GtkWidget* widget, GdkEventKey* event, WebPopupMenuProxyGtk* popupMenu)
+gboolean WebPopupMenuProxyGtk::keyPressEventCallback(GtkWidget* widget, GdkEvent* event, WebPopupMenuProxyGtk* popupMenu)
 {
     if (!popupMenu->m_device)
         return FALSE;
 
     guint keyval;
-    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
-    if (keyval == GDK_KEY_Escape) {
-        popupMenu->hidePopupMenu();
-        return TRUE;
-    }
-
-    if (popupMenu->typeAheadFind(event))
+    gdk_event_get_keyval(event, &keyval);
+    if (popupMenu->handleKeyPress(keyval, gdk_event_get_time(event)))
         return TRUE;
 
     // Forward the event to the tree view.
-    gtk_widget_event(popupMenu->m_treeView, reinterpret_cast<GdkEvent*>(event));
+    gtk_widget_event(popupMenu->m_treeView, event);
     return TRUE;
 }
 
@@ -357,15 +373,12 @@ void WebPopupMenuProxyGtk::cancelTracking()
     hidePopupMenu();
 }
 
-Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* event)
+Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uint32_t time)
 {
-    guint keyval;
-    gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
     gunichar keychar = gdk_keyval_to_unicode(keyval);
     if (!g_unichar_isprint(keychar))
         return WTF::nullopt;
 
-    uint32_t time = gdk_event_get_time(reinterpret_cast<GdkEvent*>(event));
     if (time < m_previousKeyEventTime)
         return WTF::nullopt;
 
@@ -427,9 +440,9 @@ Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(GdkEventKey* event)
     return WTF::nullopt;
 }
 
-bool WebPopupMenuProxyGtk::typeAheadFind(GdkEventKey* event)
+bool WebPopupMenuProxyGtk::typeAheadFind(unsigned keyval, uint32_t timestamp)
 {
-    auto searchIndex = typeAheadFindIndex(event);
+    auto searchIndex = typeAheadFindIndex(keyval, timestamp);
     if (!searchIndex)
         return false;
 
