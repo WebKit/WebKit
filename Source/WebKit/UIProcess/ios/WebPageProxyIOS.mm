@@ -1439,9 +1439,6 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     if (equalLettersIgnoringASCIICase(host, "roblox.com") || host.endsWithIgnoringASCIICase(".roblox.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "stackoverflow.com") && request.url().path().startsWithIgnoringASCIICase("/jobs/"))
-        return RecommendDesktopClassBrowsingForRequest::Yes;
-
     return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 
