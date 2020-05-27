@@ -441,6 +441,15 @@ PlatformVideoFullscreenInterface& VideoFullscreenManagerProxy::ensureInterface(u
     return *std::get<1>(ensureModelAndInterface(contextId));
 }
 
+PlatformVideoFullscreenInterface* VideoFullscreenManagerProxy::findInterface(uint64_t contextId)
+{
+    auto it = m_contextMap.find(contextId);
+    if (it == m_contextMap.end())
+        return nullptr;
+
+    return std::get<1>(it->value).get();
+}
+
 void VideoFullscreenManagerProxy::addClientForContext(uint64_t contextId)
 {
     auto addResult = m_clientCounts.add(contextId, 1);
@@ -547,7 +556,8 @@ void VideoFullscreenManagerProxy::setHasVideo(uint64_t contextId, bool hasVideo)
     if (m_mockVideoPresentationModeEnabled)
         return;
 
-    ensureInterface(contextId).hasVideoChanged(hasVideo);
+    if (auto* interface = findInterface(contextId))
+        interface->hasVideoChanged(hasVideo);
 }
 
 void VideoFullscreenManagerProxy::setVideoDimensions(uint64_t contextId, const FloatSize& videoDimensions)
@@ -556,7 +566,8 @@ void VideoFullscreenManagerProxy::setVideoDimensions(uint64_t contextId, const F
     if (m_mockVideoPresentationModeEnabled)
         return;
 
-    ensureInterface(contextId).videoDimensionsChanged(videoDimensions);
+    if (auto* interface = findInterface(contextId))
+        interface->videoDimensionsChanged(videoDimensions);
 }
 
 void VideoFullscreenManagerProxy::enterFullscreen(uint64_t contextId)

@@ -1,3 +1,23 @@
+2020-05-27  Peng Liu  <peng.liu6@apple.com>
+
+        VideoFullscreenInterfaceAVKit is leaking when a video element enters and exits fullscreen/picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=212293
+
+        VideoFullscreenManagerProxy::ensureInterface() makes sure a fullscreen interface object exists (an object
+        will be created if it does not exit). That means an extra object will be created by an IPC message from
+        the Web process after the original video fullscreen interface object has been destroyed (thats happens
+        when a video element is returning to inline from fullscreen or picture-in-picture).
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setHasVideo):
+        Don't call VideoFullscreenInterface[AVKit|Mac]::hasVideoChanged() before the instance of
+        VideoFullscreenInterface[AVKit|Mac] is ready.
+        (WebKit::VideoFullscreenManagerProxy::setVideoDimensions):
+        Don't call VideoFullscreenInterface[AVKit|Mac]::videoDimensionsChanged() after the instance of
+        VideoFullscreenInterface[AVKit|Mac] is destroyed.
+
 2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WTR] EventSender: stop using GdkEvent API in preparation for GTK4

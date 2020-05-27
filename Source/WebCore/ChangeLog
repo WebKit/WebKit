@@ -1,3 +1,30 @@
+2020-05-27  Peng Liu  <peng.liu6@apple.com>
+
+        VideoFullscreenInterfaceAVKit is leaking when a video element enters and exits fullscreen/picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=212293
+
+        Reviewed by Youenn Fablet.
+
+        WebAVPlayerViewControllerDelegate is created and retained by VideoFullscreenInterfaceAVKit,
+        but it has a RefPtr to VideoFullscreenInterfaceAVKit. This leads to a memory leak
+        when a video element enters and exit fullscreen or Picture-in-Picture. This patch
+        replaces the RefPtr with a WeakPtr to fix the leak.
+
+        With this patch, we config playerController in VideoFullscreenInterfaceAVKit::setupFullscreen()
+        and VideoFullscreenInterfaceAVKit::cleanupFullscreen(), so that we can avoid relying on
+        VideoFullscreenManagerProxy::setHasVideo() and VideoFullscreenManagerProxy::setVideoDimensions().
+        Those two functions are driven by IPC messages from the Web process, which may come before
+        VideoFullscreenInterfaceAVKit is constructed or after VideoFullscreenInterfaceAVKit
+        is destroyed.
+
+        Manually tested.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerViewControllerDelegate setFullscreenInterface:]):
+        (VideoFullscreenInterfaceAVKit::setupFullscreen):
+        (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+
 2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WTR] EventSender: stop using GdkEvent API in preparation for GTK4

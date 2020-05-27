@@ -45,6 +45,7 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -94,7 +95,7 @@ static bool ignoreWatchdogForDebugging = false;
 @class WebAVMediaSelectionOption;
 
 @interface WebAVPlayerViewControllerDelegate : NSObject <AVPlayerViewControllerDelegate_WebKitOnly> {
-    RefPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
+    WeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
 }
 @property (assign) VideoFullscreenInterfaceAVKit* fullscreenInterface;
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
@@ -103,12 +104,14 @@ static bool ignoreWatchdogForDebugging = false;
 @implementation WebAVPlayerViewControllerDelegate
 - (VideoFullscreenInterfaceAVKit*)fullscreenInterface
 {
+    ASSERT(isMainThread());
     return _fullscreenInterface.get();
 }
 
 - (void)setFullscreenInterface:(VideoFullscreenInterfaceAVKit*)fullscreenInterface
 {
-    _fullscreenInterface = fullscreenInterface;
+    ASSERT(isMainThread());
+    _fullscreenInterface = makeWeakPtr(*fullscreenInterface);
 }
 
 - (void)playerViewControllerWillStartPictureInPicture:(AVPlayerViewController *)playerViewController
@@ -891,6 +894,10 @@ void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const Int
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::setupFullscreen(%p)", this);
 
+    [playerController() setHasEnabledVideo:true];
+    [playerController() setHasVideo:true];
+    [playerController() setContentDimensions:initialRect.size()];
+
     m_allowsPictureInPicturePlayback = allowsPictureInPicturePlayback;
     m_videoView = &videoView;
     m_parentView = parentView;
@@ -973,6 +980,9 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didCleanupFullscreen();
+
+    [playerController() setHasEnabledVideo:false];
+    [playerController() setHasVideo:false];
 }
 
 void VideoFullscreenInterfaceAVKit::invalidate()

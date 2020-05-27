@@ -151,6 +151,7 @@ private:
     ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
     VideoFullscreenModelContext& ensureModel(uint64_t contextId);
     PlatformVideoFullscreenInterface& ensureInterface(uint64_t contextId);
+    PlatformVideoFullscreenInterface* findInterface(uint64_t contextId);
     void addClientForContext(uint64_t contextId);
     void removeClientForContext(uint64_t contextId);
 
