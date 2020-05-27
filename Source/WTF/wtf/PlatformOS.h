@@ -58,12 +58,12 @@
 #define WTF_OS_DARWIN 1
 #endif
 
-/* OS(IOS_FAMILY) - iOS family, including iOS, macCatalyst, tvOS, watchOS */
+/* OS(IOS_FAMILY) - iOS family, including iOS, iPadOS, macCatalyst, tvOS, watchOS */
 #if OS(DARWIN) && TARGET_OS_IPHONE
 #define WTF_OS_IOS_FAMILY 1
 #endif
 
-/* OS(IOS) - iOS only, not including macCatalyst */
+/* OS(IOS) - iOS and iPadOS only (iPhone and iPad), not including macCatalyst, not including watchOS, not including tvOS */
 #if OS(DARWIN) && (TARGET_OS_IOS && !(defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST))
 #define WTF_OS_IOS 1
 #endif
