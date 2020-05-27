@@ -1,3 +1,12 @@
+2020-05-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update openxr recipe
+        https://bugs.webkit.org/show_bug.cgi?id=212403
+
+        Reviewed by Sergio Villar Senin.
+
+        * buildstream/elements/sdk/openxr.bst: Explicitely list dependencies and bump to latest git master.
+
 2020-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WTR] EventSender: stop using GdkEvent API in preparation for GTK4
