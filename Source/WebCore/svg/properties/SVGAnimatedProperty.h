@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "SVGAttributeAnimator.h"
 #include "SVGPropertyOwner.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -52,13 +54,13 @@ public:
     virtual Optional<String> synchronize() { return WTF::nullopt; }
     
     // Control the animation life cycle.
-    bool isAnimating() const { return m_isAnimating; }
-    virtual void startAnimation() { m_isAnimating = true; }
-    virtual void stopAnimation() { m_isAnimating = false; }
+    bool isAnimating() const { return m_animators.computeSize(); }
+    virtual void startAnimation(SVGAttributeAnimator& animator) { m_animators.add(animator); }
+    virtual void stopAnimation(SVGAttributeAnimator& animator) { m_animators.remove(animator); }
     
     // Attach/Detach the animVal of the traget element's property by the instance element's property.
-    virtual void instanceStartAnimation(SVGAnimatedProperty&) { m_isAnimating = true; }
-    virtual void instanceStopAnimation() { m_isAnimating = false; }
+    virtual void instanceStartAnimation(SVGAttributeAnimator& animator, SVGAnimatedProperty&) { startAnimation(animator); }
+    virtual void instanceStopAnimation(SVGAttributeAnimator& animator) { stopAnimation(animator); }
     
 protected:
     SVGAnimatedProperty(SVGElement* contextElement)
@@ -70,7 +72,7 @@ protected:
     void commitPropertyChange(SVGProperty*) override;
     
     SVGElement* m_contextElement { nullptr };
-    bool m_isAnimating { false };
+    WeakHashSet<SVGAttributeAnimator> m_animators;
 };
 
 } // namespace WebCore

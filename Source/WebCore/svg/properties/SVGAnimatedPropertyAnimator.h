@@ -68,9 +68,9 @@ public:
 
     void start(SVGElement*) override
     {
-        m_animated->startAnimation();
+        m_animated->startAnimation(*this);
         for (auto& instance : m_animatedInstances)
-            instance->instanceStartAnimation(m_animated);
+            instance->instanceStartAnimation(*this, m_animated);
     }
 
     void apply(SVGElement* targetElement) override
@@ -89,9 +89,9 @@ public:
         if (isAnimatedStylePropertyAniamtor(targetElement))
             removeAnimatedStyleProperty(targetElement);
 
-        m_animated->stopAnimation();
+        m_animated->stopAnimation(*this);
         for (auto& instance : m_animatedInstances)
-            instance->instanceStopAnimation();
+            instance->instanceStopAnimation(*this);
     }
 
     Optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override

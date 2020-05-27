@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <clipPath>
+        <animate attributeName="clipPathUnits"/>
+        <set attributeName="clipPathUnits" max="50ms" onend="onEnd()"/>
+        <set attributeName="clipPathUnits"/>
+    </clipPath>
+    <text x="10" y="20">Passes if it does not crash.</text>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+         function onEnd() {
+            if (window.testRunner) {
+                setTimeout(() => {
+                    testRunner.notifyDone();
+                });
+            }
+        }
+    </script>
+</svg>

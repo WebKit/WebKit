@@ -29,6 +29,7 @@
 #include "QualifiedName.h"
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ enum class CalcMode : uint8_t {
     Spline
 };
 
-class SVGAttributeAnimator : public RefCounted<SVGAttributeAnimator> {
+class SVGAttributeAnimator : public RefCounted<SVGAttributeAnimator>, public CanMakeWeakPtr<SVGAttributeAnimator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGAttributeAnimator(const QualifiedName& attributeName)

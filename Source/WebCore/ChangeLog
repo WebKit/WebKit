@@ -1,3 +1,37 @@
+2020-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        An SVG animated property animator can stop animation while other animators are still running
+        https://bugs.webkit.org/show_bug.cgi?id=207417
+        <rdar://problem/59278306>
+
+        Reviewed by Simon Fraser.
+
+        An SVG animated property can be animated by multiple animators. When one
+        animator stops the animation, the animVal should not be deleted since it
+        will be used by other animators.
+
+        SVGAnimatedProperty will maintain a WeakHashSet<SVGAttributeAnimator> in
+        which the animator will be added when the animation starts and will be 
+        removed when the the animation stops. When all the animators stops their
+        animations, the animated property may delete the animVal or keep it if it
+        can be referenced by JavaScript.
+
+        Tests: svg/animations/animated-enum-mutiple-animators.svg
+               svg/animations/animated-length-mutiple-animators.svg
+
+        * svg/properties/SVGAnimatedDecoratedProperty.h:
+        * svg/properties/SVGAnimatedPrimitiveProperty.h:
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::isAnimating const):
+        (WebCore::SVGAnimatedProperty::startAnimation):
+        (WebCore::SVGAnimatedProperty::stopAnimation):
+        (WebCore::SVGAnimatedProperty::instanceStartAnimation):
+        (WebCore::SVGAnimatedProperty::instanceStopAnimation):
+        * svg/properties/SVGAnimatedPropertyAnimator.h:
+        * svg/properties/SVGAnimatedPropertyList.h:
+        * svg/properties/SVGAnimatedValueProperty.h:
+        * svg/properties/SVGAttributeAnimator.h:
+
 2020-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (async oveflow): scrubber missing from inline video inside overflow scroll

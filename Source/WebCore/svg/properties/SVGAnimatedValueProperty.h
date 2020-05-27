@@ -96,33 +96,37 @@ public:
     }
 
     // Controlling the animation.
-    void startAnimation() override
+    void startAnimation(SVGAttributeAnimator& animator) override
     {
         if (m_animVal)
             m_animVal->setValue(m_baseVal->value());
         else
             ensureAnimVal();
-        SVGAnimatedProperty::startAnimation();
+        SVGAnimatedProperty::startAnimation(animator);
     }
 
-    void stopAnimation() override
+    void stopAnimation(SVGAttributeAnimator& animator) override
     {
+        SVGAnimatedProperty::stopAnimation(animator);
         if (m_animVal)
             m_animVal->setValue(m_baseVal->value());
-        SVGAnimatedProperty::stopAnimation();
     }
 
     // Controlling the instance animation.
-    void instanceStartAnimation(SVGAnimatedProperty& animated) override
+    void instanceStartAnimation(SVGAttributeAnimator& animator, SVGAnimatedProperty& animated) override
     {
+        if (isAnimating())
+            return;
         m_animVal = static_cast<SVGAnimatedValueProperty&>(animated).animVal();
-        SVGAnimatedProperty::instanceStartAnimation(animated);
+        SVGAnimatedProperty::instanceStartAnimation(animator, animated);
     }
 
-    void instanceStopAnimation() override
+    void instanceStopAnimation(SVGAttributeAnimator& animator) override
     {
+        if (!isAnimating())
+            return;
         m_animVal = nullptr;
-        SVGAnimatedProperty::instanceStopAnimation();
+        SVGAnimatedProperty::instanceStopAnimation(animator);
     }
 
 protected:
