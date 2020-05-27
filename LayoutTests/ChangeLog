@@ -1,3 +1,19 @@
+2020-05-27  Chris Dumez  <cdumez@apple.com>
+
+        pageshow only fires the first time the back button is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=156356
+        <rdar://problem/29256489>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/history/multiple-back-forward-navigations-expected.txt: Added.
+        * fast/history/multiple-back-forward-navigations.html: Added.
+        Add layout test coverage.
+
+        * fast/history/resources/page-cache-helper.html:
+        Update page cache helper to navigate back even if the page is coming out of
+        the back/forward cache, by listening to the pageshow event.
+
 2020-05-27  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Avoid possible WTR event timing going back in time and fix conversion from s to ms

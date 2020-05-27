@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that pageshow / pagehide events are reliably fired when navigating back and forth several times.");
+jsTestIsAsync = true;
+
+let pageshowCount = 0;
+let pagehideCount = 0;
+
+addEventListener("pageshow", (_event) => {
+    event = _event;
+    debug("* pageshow - persisted: " + event.persisted);
+    pageshowCount++;
+    shouldBe("pagehideCount", "" + (pageshowCount - 1));
+    if (pageshowCount == 1) {
+        shouldBeFalse("event.persisted");
+        return;
+    }
+
+    shouldBeTrue("event.persisted");
+    if (pageshowCount == 2 || pageshowCount == 3) {
+        setTimeout(() => {
+            debug("* Navigating forward");
+            history.forward();
+        }, 0);
+        return;
+    }
+    if (pageshowCount == 4) {
+        finishJSTest();
+        return;
+    }
+});
+
+addEventListener("pagehide", (event) => {
+    debug("* pagehide - persisted: " + event.persisted);
+    pagehideCount++;
+});
+
+onload = () => {
+    setTimeout(() => {
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}
+</script>
+<iframe src="resources/dummy.html"></iframe>
+<iframe src="resources/dummy.html"></iframe>
+<iframe src="resources/dummy.html"></iframe>
+</body>
+</html>

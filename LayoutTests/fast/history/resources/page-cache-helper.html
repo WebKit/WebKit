@@ -1,9 +1,18 @@
 This page should go back. If a test outputs the contents of this
 page, then the test page failed to enter the page cache.
 <script>
+  function triggerBackNavigation() {
+      setTimeout(function() {
+          history.back();
+      }, 0);
+  }
+
+  window.addEventListener("pageshow", (event) => {
+      if (event.persisted)
+          triggerBackNavigation();
+  });
+
   window.addEventListener("load", function() {
-    setTimeout(function() {
-      history.back();
-    }, 0);
-  }, false);
+      triggerBackNavigation();
+  });
 </script>

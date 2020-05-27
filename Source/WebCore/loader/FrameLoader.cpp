@@ -2357,6 +2357,10 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     updateFirstPartyForCookies();
 
     cachedFrame.restore();
+
+    // For the main frame, this gets called in FrameLoader::commitProvisionalLoad().
+    if (!m_frame.isMainFrame())
+        checkCompleted();
 }
 
 bool FrameLoader::isHostedByObjectElement() const
