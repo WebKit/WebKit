@@ -231,7 +231,7 @@ static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, C
     memoryAvailable = memoryTotal = memoryFree = activeFile = inactiveFile = slabReclaimable = notSet;
 
     while (!feof(memInfoFile)) {
-        char token[MEMINFO_TOKEN_BUFFER_SIZE + 1];
+        char token[MEMINFO_TOKEN_BUFFER_SIZE + 1] = { 0 };
         size_t amount;
         if (fscanf(memInfoFile, "%" STRINGIFY(MEMINFO_TOKEN_BUFFER_SIZE) "s%zukB", token, &amount) != 2)
             continue;
