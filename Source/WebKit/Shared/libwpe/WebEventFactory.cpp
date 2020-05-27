@@ -52,14 +52,25 @@ static OptionSet<WebEvent::Modifier> modifiersForEventModifiers(unsigned eventMo
     return modifiers;
 }
 
-WallTime wallTimeForEventTime(uint64_t timestamp)
+WallTime wallTimeForEventTime(uint64_t msTimeStamp)
 {
-    // This works if and only if the WPE backend uses CLOCK_MONOTONIC for its
-    // event timestamps, and so long as g_get_monotonic_time() continues to do
-    // so as well, and so long as WTF::MonotonicTime continues to use
-    // g_get_monotonic_time(). It also assumes the event timestamp is in
-    // milliseconds.
-    return timestamp ? MonotonicTime::fromRawSeconds(timestamp / 1000.).approximateWallTime() : WallTime::now();
+    // WPE event time field is an uint32_t, too small for full ms timestamps since
+    // the epoch, and are expected to be just timestamps with monotonic behavior
+    // to be compared among themselves, not against WallTime-like measurements.
+    // Thus the need to define a reference origin based on the first event received.
+
+    static uint64_t firstEventTimeStamp;
+    static WallTime firstEventWallTime;
+    static std::once_flag once;
+
+    std::call_once(once, [msTimeStamp]() {
+        firstEventTimeStamp = msTimeStamp;
+        firstEventWallTime = WallTime::now();
+    });
+
+    uint64_t delta = msTimeStamp - firstEventTimeStamp;
+
+    return firstEventWallTime + Seconds(delta / 1000.);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange)

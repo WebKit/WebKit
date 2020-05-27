@@ -31,6 +31,7 @@
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
 #include <wpe/wpe.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/UniqueArray.h>
 
 namespace WTR {
@@ -58,9 +59,16 @@ struct wpe_view_backend* viewBackend(TestController& controller)
     return controller.mainWebView()->platformWindow()->backend();
 }
 
+static uint32_t secToMsTimestamp(double currentEventTime)
+{
+    return static_cast<uint32_t>(currentEventTime * 1000);
+}
+
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
-    , m_time(0)
+    // WPE event timestamps are just MonotonicTime, not actual WallTime, so we can
+    // use any point of origin, as long as we are consistent.
+    , m_time(MonotonicTime::now().secondsSinceEpoch().value())
     , m_leftMouseButtonDown(false)
     , m_clickCount(0)
     , m_clickTime(0)
@@ -135,7 +143,7 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     m_mouseButtonsCurrentlyDown |= modifierForButton(wpeButton);
     uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown | modifiers };
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown | modifiers };
     wpe_view_backend_dispatch_pointer_event(viewBackend(*m_testController), &event);
 }
 
@@ -148,7 +156,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
     m_mouseButtonsCurrentlyDown &= ~modifierForButton(wpeButton);
     uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown | modifiers };
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_button, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), wpeButton, m_buttonState, m_mouseButtonsCurrentlyDown | modifiers };
     wpe_view_backend_dispatch_pointer_event(viewBackend(*m_testController), &event);
 }
 
@@ -157,7 +165,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     m_position.x = x;
     m_position.y = y;
 
-    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), static_cast<uint32_t>(m_clickButton), m_buttonState, m_mouseButtonsCurrentlyDown };
+    struct wpe_input_pointer_event event { wpe_input_pointer_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), static_cast<uint32_t>(m_clickButton), m_buttonState, m_mouseButtonsCurrentlyDown };
     wpe_view_backend_dispatch_pointer_event(viewBackend(*m_testController), &event);
 }
 
@@ -168,11 +176,11 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
         return;
 
     if (horizontal) {
-        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), HorizontalScroll, horizontal, 0};
+        struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), HorizontalScroll, horizontal, 0};
         wpe_view_backend_dispatch_axis_event(viewBackend(*m_testController), &event);
     }
     if (vertical) {
-        struct wpe_input_axis_event event =  { wpe_input_axis_event_type_motion, static_cast<uint32_t>(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), VerticalScroll, vertical, 0};
+        struct wpe_input_axis_event event =  { wpe_input_axis_event_type_motion, secToMsTimestamp(m_time), static_cast<int>(m_position.x), static_cast<int>(m_position.y), VerticalScroll, vertical, 0};
         wpe_view_backend_dispatch_axis_event(viewBackend(*m_testController), &event);
     }
 }
@@ -327,7 +335,7 @@ void EventSenderProxy::updateTouchPoint(int index, int x, int y)
     auto& rawEvent = m_touchEvents[index];
     rawEvent.x = x;
     rawEvent.y = y;
-    rawEvent.time = m_time;
+    rawEvent.time = secToMsTimestamp(m_time);
     rawEvent.type = wpe_input_touch_event_type_motion;
     m_updatedTouchEvents.add(index);
 }
@@ -362,7 +370,7 @@ void EventSenderProxy::removeUpdatedTouchEvents()
 void EventSenderProxy::prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type eventType)
 {
     auto updatedEvents = getUpdatedTouchEvents();
-    struct wpe_input_touch_event event = { updatedEvents.data(), updatedEvents.size(), eventType, 0, static_cast<uint32_t>(m_time), 0 };
+    struct wpe_input_touch_event event = { updatedEvents.data(), updatedEvents.size(), eventType, 0, secToMsTimestamp(m_time), 0 };
     wpe_view_backend_dispatch_touch_event(viewBackend(*m_testController), &event);
     if (eventType == wpe_input_touch_event_type_up)
         removeUpdatedTouchEvents();
@@ -400,7 +408,7 @@ void EventSenderProxy::releaseTouchPoint(int index)
     ASSERT(index >= 0 && static_cast<size_t>(index) <= m_touchEvents.size());
 
     auto& rawEvent = m_touchEvents[index];
-    rawEvent.time = m_time;
+    rawEvent.time = secToMsTimestamp(m_time);
     rawEvent.type = wpe_input_touch_event_type_up;
     m_updatedTouchEvents.add(index);
 }

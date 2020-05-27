@@ -1,3 +1,27 @@
+2020-05-27  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Avoid possible WTR event timing going back in time and fix conversion from s to ms
+        https://bugs.webkit.org/show_bug.cgi?id=212338
+
+        Reviewed by Michael Catanzaro.
+
+        Make sure we cast the double m_time timestamp from seconds to uint32_t
+        milliseconds expected by WPE input events.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::secToMsTimestamp):
+        (WTR::EventSenderProxy::EventSenderProxy): Use monotonic time instead
+        of zero as the time origin. This is used only in a relative manner,
+        and we need monotonic behavior so conversion to DOM event timestamps
+        makes sense.
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::prepareAndDispatchTouchEvent):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+
 2020-05-27  Kate Cheney  <katherine_cheney@apple.com>
 
         Make sure bundle identifier testing override is set in the network process
