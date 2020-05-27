@@ -58,7 +58,6 @@ public:
     bool isGroup() const override;
     bool isHeading() const override;
     bool isHovered() const override;
-    bool isImage() const override;
     bool isImageButton() const override;
     bool isInputImage() const override;
     bool isLink() const override;

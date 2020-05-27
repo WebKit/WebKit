@@ -1,3 +1,42 @@
+2020-05-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Empty alt attribute does not ignore the image for accessibility clients in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=212432
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/img-alt-attribute-unassigned-empty.html
+
+        - AccessibilityRenderObject::computeAccessibilityIsIgnored was handling
+        the case of images too late, after checking for ariaRoleAttribute(). So
+        if an image had a role attribute, it was exposed regardless whether its
+        alt attribute was an empty string. This change moves the handling of
+        images above the check for ariaroleAttribute and hence honors the empty
+        alt attribute rule.
+        - Also images that have an aria-label attribute are now exposed.
+        - Added logging of AccessibilityObjectInclusion.
+        - Changed signature of log(RefPtr<AXCoreObject>) as pointed out by Darin Adler in a separate review.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::AXLogger::log):
+        (WebCore::operator<<):
+        * accessibility/AXLogger.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::isImage const): Moved to base class.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::AXCoreObject::isImage const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::objectInclusionFromAltText):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::updateRoleAfterChildrenCreation):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-05-27  Chris Dumez  <cdumez@apple.com>
 
         pageshow only fires the first time the back button is pressed

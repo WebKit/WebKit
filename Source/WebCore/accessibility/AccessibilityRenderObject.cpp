@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilityRenderObject.h"
 
+#include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityLabel.h"
@@ -1199,17 +1200,18 @@ bool AccessibilityRenderObject::isAllowedChildOfTree() const
     }
     return true;
 }
-    
+
 static AccessibilityObjectInclusion objectInclusionFromAltText(const String& altText)
 {
     // Don't ignore an image that has an alt tag.
     if (!altText.isAllSpecialCharacters<isHTMLSpace>())
         return AccessibilityObjectInclusion::IncludeObject;
-    
-    // The informal standard is to ignore images with zero-length alt strings.
+
+    // The informal standard is to ignore images with zero-length alt strings:
+    // https://www.w3.org/WAI/tutorials/images/decorative/.
     if (!altText.isNull())
         return AccessibilityObjectInclusion::IgnoreObject;
-    
+
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
 
@@ -1244,6 +1246,7 @@ static bool webAreaIsPresentational(RenderObject* renderer)
     
 bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 {
+    AXTRACE("AccessibilityRenderObject::computeAccessibilityIsIgnored");
 #ifndef NDEBUG
     ASSERT(m_initialized);
 #endif
@@ -1359,10 +1362,48 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     default:
         break;
     }
-    
+
+    if (isImage()) {
+        // If the image can take focus, it should not be ignored, lest the user not be able to interact with something important.
+        if (canSetFocusAttribute())
+            return false;
+
+        // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
+        // However, if this is not a native image, fallback to the attribute on the Element.
+        AccessibilityObjectInclusion altTextInclusion = AccessibilityObjectInclusion::DefaultBehavior;
+        bool isRenderImage = is<RenderImage>(renderer());
+        if (isRenderImage)
+            altTextInclusion = objectInclusionFromAltText(downcast<RenderImage>(*m_renderer).altText());
+        else
+            altTextInclusion = objectInclusionFromAltText(getAttribute(altAttr).string());
+
+        if (altTextInclusion == AccessibilityObjectInclusion::IgnoreObject)
+            return true;
+        if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
+            return false;
+
+        // If an image has the title or label attributes, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
+        if (!getAttribute(titleAttr).isEmpty() || !getAttribute(aria_labelAttr).isEmpty())
+            return false;
+
+        if (isRenderImage) {
+            // check for one-dimensional image
+            RenderImage& image = downcast<RenderImage>(*m_renderer);
+            if (image.height() <= 1 || image.width() <= 1)
+                return true;
+
+            // check whether rendered image was stretched from one-dimensional file image
+            if (image.cachedImage()) {
+                LayoutSize imageSize = image.cachedImage()->imageSizeForRenderer(&image, image.view().zoomFactor());
+                return imageSize.height() <= 1 || imageSize.width() <= 1;
+            }
+        }
+        return false;
+    }
+
     if (ariaRoleAttribute() != AccessibilityRole::Unknown)
         return false;
-    
+
     if (roleValue() == AccessibilityRole::HorizontalRule)
         return false;
     
@@ -1376,8 +1417,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     // are also editable. Only the top level content editable region should be exposed.
     if (hasContentEditableAttributeSet())
         return false;
-    
-    
+
     // if this element has aria attributes on it, it should not be ignored.
     if (supportsARIAAttributes())
         return false;
@@ -1394,46 +1434,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (is<RenderBlockFlow>(*m_renderer) && m_renderer->childrenInline() && !canSetFocusAttribute())
         return !downcast<RenderBlockFlow>(*m_renderer).hasLines() && !mouseButtonListener();
     
-    // ignore images seemingly used as spacers
-    if (isImage()) {
-        
-        // If the image can take focus, it should not be ignored, lest the user not be able to interact with something important.
-        if (canSetFocusAttribute())
-            return false;
-        
-        // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
-        // However, if this is not a native image, fallback to the attribute on the Element.
-        AccessibilityObjectInclusion altTextInclusion = AccessibilityObjectInclusion::DefaultBehavior;
-        bool isRenderImage = is<RenderImage>(renderer());
-        if (isRenderImage)
-            altTextInclusion = objectInclusionFromAltText(downcast<RenderImage>(*m_renderer).altText());
-        else
-            altTextInclusion = objectInclusionFromAltText(getAttribute(altAttr).string());
-
-        if (altTextInclusion == AccessibilityObjectInclusion::IgnoreObject)
-            return true;
-        if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
-            return false;
-        
-        // If an image has a title attribute on it, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
-        if (!getAttribute(titleAttr).isEmpty())
-            return false;
-    
-        if (isRenderImage) {
-            // check for one-dimensional image
-            RenderImage& image = downcast<RenderImage>(*m_renderer);
-            if (image.height() <= 1 || image.width() <= 1)
-                return true;
-            
-            // check whether rendered image was stretched from one-dimensional file image
-            if (image.cachedImage()) {
-                LayoutSize imageSize = image.cachedImage()->imageSizeForRenderer(&image, image.view().zoomFactor());
-                return imageSize.height() <= 1 || imageSize.width() <= 1;
-            }
-        }
-        return false;
-    }
-
     if (isCanvas()) {
         if (canvasHasFallbackContent())
             return false;
@@ -2747,6 +2747,7 @@ bool AccessibilityRenderObject::supportsExpandedTextValue() const
 
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
+    AXTRACE("AccessibilityRenderObject::determineAccessibilityRole");
     if (!m_renderer)
         return AccessibilityRole::Unknown;
 
@@ -2759,7 +2760,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // we want to ignore the treeitem's attribute role.
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
         return m_ariaRole;
-    
+
     Node* node = m_renderer->node();
     RenderBoxModelObject* cssBox = renderBoxModelObject();
 
@@ -3354,6 +3355,7 @@ void AccessibilityRenderObject::addHiddenChildren()
     
 void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 {
+    AXTRACE("AccessibilityRenderObject::updateRoleAfterChildrenCreation");
     // If a menu does not have valid menuitem children, it should not be exposed as a menu.
     auto role = roleValue();
     if (role == AccessibilityRole::Menu) {

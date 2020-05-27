@@ -500,7 +500,7 @@ public:
     virtual bool isAttachmentElement() const = 0;
     virtual bool isHeading() const = 0;
     virtual bool isLink() const = 0;
-    virtual bool isImage() const = 0;
+    bool isImage() const { return roleValue() == AccessibilityRole::Image; }
     bool isImageMap() const { return roleValue() == AccessibilityRole::ImageMap; }
     virtual bool isNativeImage() const = 0;
     virtual bool isImageButton() const = 0;
@@ -1300,6 +1300,7 @@ inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject* axObject) const
 
 // Logging helpers.
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityRole);
+WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityObjectInclusion);
 WTF::TextStream& operator<<(WTF::TextStream&, const AXCoreObject&);
 
 } // namespace WebCore

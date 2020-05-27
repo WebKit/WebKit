@@ -1,7 +1,8 @@
 
 
 
-This tests that img elements with an alt attribute and no assigned value are ignored.
+
+This tests that img elements with an alt attribute and no assigned value, or an empty alt value, are ignored.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

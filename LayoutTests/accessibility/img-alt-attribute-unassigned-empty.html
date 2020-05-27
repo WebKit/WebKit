@@ -8,6 +8,7 @@
         <div tabindex="0" role="group" id="images">
             <img alt="cake0" src="resources/cake.png" /><br />
             <img alt class="cake1 unassigned-alt" src="resources/cake.png" /><br />
+            <img alt="" class="cake1 empty-alt" src="resources/cake.png" /><br />
             <img alt="cake2" src="resources/cake.png" /><br />
         </div>
 
@@ -16,12 +17,12 @@
 
         <script>
             description(
-                'This tests that img elements with an alt attribute and no assigned value are ignored.',
+                'This tests that img elements with an alt attribute and no assigned value, or an empty alt value, are ignored.',
             );
             if (window.accessibilityController) {
                 document.getElementById('images').focus();
                 var imagesGroup = accessibilityController.focusedElement;
-                // there are 3 images, but one has an alt attribute that is unassigned, so it should be
+                // there are 4 images, but one has an alt attribute that is unassigned and another has an empty alt, so it should be
                 // ignored. as a result, the image count is 2.
                 shouldBe('imagesGroup.childrenCount', '2');
                 // make sure alt text is being read before and after
@@ -29,10 +30,6 @@
                     'platformValueForW3CName(imagesGroup.childAtIndex(0))',
                     'cake0',
                 );
-                // accessiblityController should see the <img> element w/o alt attribute as an image,
-                // and use the filename as the alt text. currently it returns an empty string.
-                // this issue is documented here: <rdar://problem/51669261>
-                // shouldBeEqualToString("platformValueForW3CName(imagesGroup.childAtIndex(1))", "cake.png");
                 shouldBeEqualToString(
                     'platformValueForW3CName(imagesGroup.childAtIndex(1))',
                     'cake2',

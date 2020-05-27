@@ -185,7 +185,6 @@ private:
         IsFileUploadButton,
         IsFocused,
         IsGroup,
-        IsImage,
         IsImageMapLink,
         IsIncrementor,
         IsIndeterminate,
@@ -381,7 +380,6 @@ private:
     bool isHeading() const override { return boolAttributeValue(AXPropertyName::IsHeading); }
     bool isLandmark() const override { return boolAttributeValue(AXPropertyName::IsLandmark); }
     bool isLink() const override { return boolAttributeValue(AXPropertyName::IsLink); }
-    bool isImage() const override { return boolAttributeValue(AXPropertyName::IsImage); }
     bool isPasswordField() const override { return boolAttributeValue(AXPropertyName::IsPasswordField); }
     bool isSearchField() const override { return boolAttributeValue(AXPropertyName::IsSearchField); }
     bool isAttachment() const override { return boolAttributeValue(AXPropertyName::IsAttachment); }

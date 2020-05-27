@@ -104,7 +104,6 @@ public:
     bool isAttachmentElement() const override { return false; }
     bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
-    bool isImage() const override { return false; }
     bool isNativeImage() const override { return false; }
     bool isImageButton() const override { return false; }
     bool isPasswordField() const override { return false; }

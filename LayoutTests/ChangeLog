@@ -1,3 +1,19 @@
+2020-05-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Empty alt attribute does not ignore the image for accessibility clients in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=212432
+        <rdar://problem/60597768>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/img-alt-attribute-unassigned-empty-expected.txt: Renamed from LayoutTests/accessibility/img-alt-attribute-unassigned-value-expected.txt.
+        * accessibility/img-alt-attribute-unassigned-empty.html: Renamed from LayoutTests/accessibility/img-alt-attribute-unassigned-value.html.
+        Added the test case for alt="" in addition to unassigned alt.
+
+        * accessibility/self-referencing-aria-labelledby.html:
+        Removed unnecessary alt="" since now that causes the image element not
+        to be exposed.
+
 2020-05-27  Chris Dumez  <cdumez@apple.com>
 
         pageshow only fires the first time the back button is pressed

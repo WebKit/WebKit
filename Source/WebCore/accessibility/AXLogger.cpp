@@ -60,7 +60,7 @@ void AXLogger::log(const String& message)
 #endif
 }
 
-void AXLogger::log(const RefPtr<AXCoreObject>& object)
+void AXLogger::log(RefPtr<AXCoreObject> object)
 {
     TextStream stream(TextStream::LineMode::MultipleLine);
 
@@ -95,6 +95,13 @@ void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotifi
         stream << *notification.first;
     else
         stream << "null";
+    LOG(Accessibility, "%s", stream.release().utf8().data());
+}
+
+void AXLogger::log(AccessibilityObjectInclusion inclusion)
+{
+    TextStream stream(TextStream::LineMode::SingleLine);
+    stream.dumpProperty("ObjectInclusion", inclusion);
     LOG(Accessibility, "%s", stream.release().utf8().data());
 }
 
@@ -569,6 +576,25 @@ TextStream& operator<<(TextStream& stream, AccessibilityRole role)
         break;
     case AccessibilityRole::Window:
         stream << "Window";
+        break;
+    }
+
+    return stream;
+}
+
+TextStream& operator<<(TextStream& stream, AccessibilityObjectInclusion inclusion)
+{
+    switch (inclusion) {
+    case AccessibilityObjectInclusion::IncludeObject:
+        stream << "IncludeObject";
+        break;
+    case AccessibilityObjectInclusion::IgnoreObject:
+        stream << "IgnoreObject";
+        break;
+    case AccessibilityObjectInclusion::DefaultBehavior:
+        stream << "DefaultBehavior";
+        break;
+    default:
         break;
     }
 

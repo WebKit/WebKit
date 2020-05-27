@@ -84,7 +84,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::IsGroup, object.isGroup());
     setProperty(AXPropertyName::IsHeading, object.isHeading());
     setProperty(AXPropertyName::IsHovered, object.isHovered());
-    setProperty(AXPropertyName::IsImage, object.isImage());
     setProperty(AXPropertyName::IsImageMapLink, object.isImageMapLink());
     setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
     setProperty(AXPropertyName::IsInlineText, object.isInlineText());
