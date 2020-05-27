@@ -1,3 +1,12 @@
+2020-05-27  Keith Miller  <keith_miller@apple.com>
+
+        in_structure_property needs to handle constants on the RHS of the "in"
+        https://bugs.webkit.org/show_bug.cgi?id=212399
+
+        Reviewed by Saam Barati.
+
+        * stress/for-in-in-structure-property-constant-virtual-register.js: Added.
+
 2020-05-26  Mark Lam  <mark.lam@apple.com>
 
         JSC stress tests that require --useLLInt=0 should be skipped on --no-jit test runs.

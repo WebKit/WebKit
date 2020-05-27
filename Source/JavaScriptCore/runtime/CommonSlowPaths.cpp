@@ -1067,7 +1067,7 @@ SLOW_PATH_DECL(slow_path_in_structure_property)
 {
     BEGIN();
     auto bytecode = pc->as<OpInStructureProperty>();
-    JSValue base = GET(bytecode.m_base).jsValue();
+    JSValue base = GET_C(bytecode.m_base).jsValue();
 #if USE(JSVALUE32_64)
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue().asCell());
     if (base.isCell() && base.asCell()->structure(vm)->id() == enumerator->cachedStructureID())
