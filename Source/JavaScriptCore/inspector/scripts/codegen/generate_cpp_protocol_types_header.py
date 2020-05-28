@@ -291,7 +291,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 
     def _generate_struct_for_anonymous_enum_member(self, enum_member):
         def apply_indentation(line):
-            if line.startswith(('#', '/*', '*/', '//')) or len(line) is 0:
+            if line.startswith(('#', '/*', '*/', '//')) or len(line) == 0:
                 return line
             else:
                 return '    ' + line
