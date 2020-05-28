@@ -56,7 +56,7 @@
                 window.resizeTo(window.innerWidth, 1000);
                 window.scrollTo(expectedScrollX, expectedScrollY);
                 window.resizeTo(window.innerWidth, 2000);
-                assertEqual("resize preserves scroll position", window.scrollY, expectedScrollY);
+                assertClose("resize preserves scroll position", window.scrollY, expectedScrollY);
                 
                 // Test HOME/END operation.
                 if (window.eventSender) {
