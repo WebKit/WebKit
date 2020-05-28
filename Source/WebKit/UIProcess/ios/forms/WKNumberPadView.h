@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,59 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKNumberPadViewAdditions.h>
+#if PLATFORM(WATCHOS)
+
+#import <UIKit/UIKit.h>
+
+typedef NS_ENUM(NSInteger, WKNumberPadButtonMode) {
+    WKNumberPadButtonModeDefault,
+    WKNumberPadButtonModeAlternate
+};
+
+typedef NS_ENUM(NSInteger, WKNumberPadButtonPosition) {
+    WKNumberPadButtonPositionBottomLeft = -2,
+    WKNumberPadButtonPositionBottomRight = -1,
+    WKNumberPadButtonPosition0 = 0,
+    WKNumberPadButtonPosition1 = 1,
+    WKNumberPadButtonPosition2 = 2,
+    WKNumberPadButtonPosition3 = 3,
+    WKNumberPadButtonPosition4 = 4,
+    WKNumberPadButtonPosition5 = 5,
+    WKNumberPadButtonPosition6 = 6,
+    WKNumberPadButtonPosition7 = 7,
+    WKNumberPadButtonPosition8 = 8,
+    WKNumberPadButtonPosition9 = 9
+};
+
+typedef NS_ENUM(NSInteger, WKNumberPadKey) {
+    WKNumberPadKeyDash = -9,
+    WKNumberPadKeyAsterisk = -8,
+    WKNumberPadKeyOctothorpe = -7,
+    WKNumberPadKeyClosingParenthesis = -6,
+    WKNumberPadKeyOpeningParenthesis = -5,
+    WKNumberPadKeyPlus = -4,
+    WKNumberPadKeyAccept = -3,
+    WKNumberPadKeyToggleMode = -2,
+    WKNumberPadKeyNone = -1,
+    WKNumberPadKey0 = WKNumberPadButtonPosition0,
+    WKNumberPadKey1 = WKNumberPadButtonPosition1,
+    WKNumberPadKey2 = WKNumberPadButtonPosition2,
+    WKNumberPadKey3 = WKNumberPadButtonPosition3,
+    WKNumberPadKey4 = WKNumberPadButtonPosition4,
+    WKNumberPadKey5 = WKNumberPadButtonPosition5,
+    WKNumberPadKey6 = WKNumberPadButtonPosition6,
+    WKNumberPadKey7 = WKNumberPadButtonPosition7,
+    WKNumberPadKey8 = WKNumberPadButtonPosition8,
+    WKNumberPadKey9 = WKNumberPadButtonPosition9
+};
+
+@class WKNumberPadViewController;
+
+@interface WKNumberPadView : UIView
+- (instancetype)initWithFrame:(CGRect)frame controller:(WKNumberPadViewController *)controller NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)decoder NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+@end
+
 #endif

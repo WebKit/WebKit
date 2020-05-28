@@ -1,5 +1,16 @@
 2020-05-28  Jonathan Bedard  <jbedard@apple.com>
 
+        watchOS: Upstream WKNumberPadView
+        https://bugs.webkit.org/show_bug.cgi?id=212499
+        <rdar://problem/63736073>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/forms/WKNumberPadView.h: Moved from WebKitAdditions.
+        * UIProcess/ios/forms/WKNumberPadView.mm: Ditto.
+
+2020-05-28  Jonathan Bedard  <jbedard@apple.com>
+
         watchOS: Upstream WKTextInputListViewController
         https://bugs.webkit.org/show_bug.cgi?id=212495
         <rdar://problem/63733949>
