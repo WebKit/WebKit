@@ -26,7 +26,7 @@ var testMatrix =
   ],
  ];
 
-description("Test permutations of various cache headers when using back navigation cache policy");
+description("Test permutations of various cache headers when using back navigation cache policy (with high priority)");
 
 // Simulate cache behavior on back navigation.
 internals.setOverrideCachePolicy("ReturnCacheDataElseLoad");
@@ -36,6 +36,7 @@ var tests = generateTests(testMatrix);
 debug("running " + tests.length + " tests");
 debug("");
 
+internals.setOverrideResourceLoadPriority("ResourceLoadPriorityVeryHigh");
 runTests(tests);
 </script>
 <script src="/js-test-resources/js-test-post.js"></script>

@@ -1,3 +1,18 @@
+2020-05-28  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html is slow
+        https://bugs.webkit.org/show_bug.cgi?id=212496
+
+        Reviewed by Geoffrey Garen.
+
+        Split test into two so that we don't lose any coverage but so that each test can run faster
+        individually.
+
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-high-priority-expected.txt: Copied from LayoutTests/http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-expected.txt.
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy-high-priority.html: Copied from LayoutTests/http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html.
+        * http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html:
+
 2020-05-28  Kate Cheney  <katherine_cheney@apple.com>
 
         Minimum user interaction time in ResourceLoadStatistics should handle the case of -1
