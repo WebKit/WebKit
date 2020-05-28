@@ -62,7 +62,7 @@ Optional<GRefPtr<GVariant>> decode(Decoder& decoder)
 
     GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString.data()));
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
-    return g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE);
+    return Optional<GRefPtr<GVariant> >(g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE));
 }
 
 } // namespace IPC
