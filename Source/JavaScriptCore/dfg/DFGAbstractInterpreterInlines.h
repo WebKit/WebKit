@@ -1733,16 +1733,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             break;
+
         case IsConstructor:
             // FIXME: We can speculate constructability from child's m_structure.
             // https://bugs.webkit.org/show_bug.cgi?id=211796
-            if (!(child.m_type & (SpecFunction | SpecProxyObject))) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-
             break;
+
         case IsCellWithType: {
             Optional<SpeculatedType> filter = node->speculatedTypeForQuery();
             if (!filter) {

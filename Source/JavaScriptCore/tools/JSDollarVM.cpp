@@ -361,6 +361,14 @@ public:
         m_hiddenValue.set(vm, this, value);
     }
 
+    static CallData getConstructData(JSCell*)
+    {
+        CallData constructData;
+        constructData.type = CallData::Type::Native;
+        constructData.native.function = callHostFunctionAsConstructor;
+        return constructData;
+    }
+
     DECLARE_INFO;
 
 private:

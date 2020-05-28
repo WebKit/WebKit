@@ -1,3 +1,18 @@
+2020-05-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [ macOS iOS ] REGRESSION(r261600?): imported/w3c/web-platform-tests/html/dom/reflection-embedded.html & imported/w3c/web-platform-tests/html/dom/reflection-forms.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=212430
+
+        Reviewed by Saam Barati.
+
+        r261600 added IsConstructor rule to DFG AI. That rule is saying that if the object is not JSFunction and not ProxyObject,
+        then it must not be a constructor. But this is wrong since any objects can implement getConstructData and DOM constructors
+        are actually implementing it while it is not JSFunction and it is not ProxyObject. This patch removes that rule.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tools/JSDollarVM.cpp:
+
 2020-05-27  Saam Barati  <sbarati@apple.com>
 
         Limit memory used by wasm/references/multitable.js on memory limited devices
