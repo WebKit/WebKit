@@ -306,7 +306,7 @@ Color Color::semanticColor() const
     return { toSRGBASimpleColorLossy(), Semantic };
 }
 
-std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
+std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const
 {
     if (isExtended()) {
         auto& extendedColor = asExtended();
@@ -314,7 +314,7 @@ std::pair<ColorSpace, FloatComponents> Color::colorSpaceAndComponents() const
     }
 
     auto [r, g, b, a] = asSimpleColor();
-    return { ColorSpace::SRGB, FloatComponents { r / 255.0f, g / 255.0f, b / 255.0f,  a / 255.0f } };
+    return { ColorSpace::SRGB, ColorComponents<float> { r / 255.0f, g / 255.0f, b / 255.0f,  a / 255.0f } };
 }
 
 SimpleColor Color::toSRGBASimpleColorLossy() const
@@ -327,7 +327,7 @@ SimpleColor Color::toSRGBASimpleColorLossy() const
     return asSimpleColor();
 }
 
-FloatComponents Color::toSRGBAComponentsLossy() const
+ColorComponents<float> Color::toSRGBAComponentsLossy() const
 {
     auto [colorSpace, components] = colorSpaceAndComponents();
     switch (colorSpace) {

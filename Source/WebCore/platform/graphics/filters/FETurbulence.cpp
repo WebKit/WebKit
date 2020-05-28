@@ -217,7 +217,7 @@ FETurbulence::StitchData FETurbulence::computeStitching(IntSize tileSize, float&
 }
 
 // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
-FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector) const
+ColorComponents<float> FETurbulence::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector) const
 {
     struct NoisePosition {
         int index; // bx0, by0 in the spec text.
@@ -322,19 +322,19 @@ FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, const St
 }
 
 // https://www.w3.org/TR/SVG/filters.html#feTurbulenceElement describes this conversion to color components.
-static inline ColorComponents toColorComponents(const FloatComponents& floatComponents)
+static inline ColorComponents<uint8_t> toIntBasedColorComponents(const ColorComponents<float>& floatComponents)
 {
     return {
-        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[0] * 255), 255)),
-        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[1] * 255), 255)),
-        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[2] * 255), 255)),
-        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[3] * 255), 255))
+        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[0] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[1] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[2] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[3] * 255), 0, 255),
     };
 }
 
-ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point) const
+ColorComponents<uint8_t> FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point) const
 {
-    FloatComponents turbulenceFunctionResult;
+    ColorComponents<float> turbulenceFunctionResult;
     FloatPoint noiseVector(point.x() * paintingData.baseFrequencyX, point.y() * paintingData.baseFrequencyY);
     float ratio = 1;
     for (int octave = 0; octave < m_numOctaves; ++octave) {
@@ -362,7 +362,7 @@ ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingDat
     if (m_type == TurbulenceType::FractalNoise)
         turbulenceFunctionResult = turbulenceFunctionResult * 0.5f + 0.5f;
 
-    return toColorComponents(turbulenceFunctionResult);
+    return toIntBasedColorComponents(turbulenceFunctionResult);
 }
 
 void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
@@ -381,7 +381,7 @@ void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData&
         for (int x = 0; x < filterRegion.width(); ++x) {
             point.setX(point.x() + 1);
             FloatPoint localPoint = inverseTransfrom.mapPoint(point);
-            ColorComponents values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
+            auto values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
             pixelArray.setRange(values.components.data(), 4, indexOfPixelChannel);
             indexOfPixelChannel += 4;
         }

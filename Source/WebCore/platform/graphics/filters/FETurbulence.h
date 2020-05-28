@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "ColorUtilities.h"
+#include "ColorComponents.h"
 #include "FilterEffect.h"
 #include "Filter.h"
 
@@ -116,8 +116,8 @@ private:
 
     void initPaint(PaintingData&);
     StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;
-    FloatComponents noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
-    ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
+    ColorComponents<float> noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
+    ColorComponents<uint8_t> calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
     void fillRegion(Uint8ClampedArray&, const PaintingData&, StitchData, int startY, int endY) const;
 
     static void fillRegionWorker(void*);

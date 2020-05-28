@@ -87,7 +87,7 @@ inline void saturateAndHueRotate(float& red, float& green, float& blue, const fl
     blue    = r * components[6] + g * components[7] + b * components[8];
 }
 
-// FIXME: this should use luminance(const FloatComponents& sRGBCompontents).
+// FIXME: this should use luminance(const ColorComponents<float>& sRGBCompontents).
 inline void luminance(float& red, float& green, float& blue, float& alpha)
 {
     alpha = 0.2125 * red + 0.7154 * green + 0.0721 * blue;

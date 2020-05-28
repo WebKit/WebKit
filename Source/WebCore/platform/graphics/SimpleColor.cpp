@@ -75,7 +75,7 @@ SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a)
 SimpleColor makeSimpleColorFromHSLA(float hue, float saturation, float lightness, float alpha)
 {
     const float scaleFactor = 255.0;
-    FloatComponents floatResult = hslToSRGB({ hue, saturation, lightness, alpha });
+    auto floatResult = hslToSRGB({ hue, saturation, lightness, alpha });
     return makeSimpleColor(
         round(floatResult.components[0] * scaleFactor),
         round(floatResult.components[1] * scaleFactor),

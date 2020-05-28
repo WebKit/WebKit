@@ -2339,6 +2339,7 @@
 		7C9ACAC21F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB31F3CDC0100F3AA09 /* JSCryptoRsaKeyAlgorithm.h */; };
 		7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */; };
 		7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CAC6AE8247F082000E61D59 /* ColorMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CAC6AF0247F411000E61D59 /* ColorComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CB5CA401E525C7300FAEF13 /* MediaQueryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CBBBCC71F560581005EFAAC /* DOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */; };
 		7CBBBCCA1F5617C5005EFAAC /* JSDOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */; };
@@ -10165,6 +10166,7 @@
 		7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAttachmentElement.h; sourceTree = "<group>"; };
 		7CAC6AE6247F081F00E61D59 /* ColorMatrix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorMatrix.cpp; sourceTree = "<group>"; };
 		7CAC6AE8247F082000E61D59 /* ColorMatrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorMatrix.h; sourceTree = "<group>"; };
+		7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorComponents.h; sourceTree = "<group>"; };
 		7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExpression.cpp; sourceTree = "<group>"; };
 		7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryExpression.h; sourceTree = "<group>"; };
 		7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertWebGL.cpp; sourceTree = "<group>"; };
@@ -25422,6 +25424,7 @@
 				A89943260B42338700D7C802 /* BitmapImage.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
+				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				7CAC6AE6247F081F00E61D59 /* ColorMatrix.cpp */,
 				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,
@@ -32797,6 +32800,7 @@
 				A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */,
 				418938B22429F9B4007FDC41 /* RetrieveRecordsOptions.h in Headers */,
 				FD3160A512B026F700C1A359 /* Reverb.h in Headers */,
+				7CAC6AF0247F411000E61D59 /* ColorComponents.h in Headers */,
 				FD3160A712B026F700C1A359 /* ReverbAccumulationBuffer.h in Headers */,
 				FD3160A912B026F700C1A359 /* ReverbConvolver.h in Headers */,
 				FD3160AB12B026F700C1A359 /* ReverbConvolverStage.h in Headers */,

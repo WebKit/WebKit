@@ -51,8 +51,6 @@ typedef struct _GdkRGBA GdkRGBA;
 
 namespace WebCore {
 
-struct FloatComponents;
-
 class Color {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -150,13 +148,13 @@ public:
 
     unsigned hash() const;
 
-    WEBCORE_EXPORT std::pair<ColorSpace, FloatComponents> colorSpaceAndComponents() const;
+    WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float>> colorSpaceAndComponents() const;
 
     // This will convert non-sRGB colorspace colors into sRGB.
     WEBCORE_EXPORT SimpleColor toSRGBASimpleColorLossy() const;
 
     // This will convert non-sRGB colorspace colors into sRGB.
-    WEBCORE_EXPORT FloatComponents toSRGBAComponentsLossy() const;
+    WEBCORE_EXPORT ColorComponents<float> toSRGBAComponentsLossy() const;
 
     Color light() const;
     Color dark() const;

@@ -85,7 +85,7 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
     return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
 }
 
-bool BasicColorMatrixFilterOperation::transformColor(FloatComponents& colorComponents) const
+bool BasicColorMatrixFilterOperation::transformColor(ColorComponents<float>& colorComponents) const
 {
     switch (m_type) {
     case GRAYSCALE: {
@@ -152,7 +152,7 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
     return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
 }
 
-bool BasicComponentTransferFilterOperation::transformColor(FloatComponents& colorComponents) const
+bool BasicComponentTransferFilterOperation::transformColor(ColorComponents<float>& colorComponents) const
 {
     switch (m_type) {
     case OPACITY:
@@ -226,9 +226,9 @@ RefPtr<FilterOperation> InvertLightnessFilterOperation::blend(const FilterOperat
     return InvertLightnessFilterOperation::create();
 }
 
-bool InvertLightnessFilterOperation::transformColor(FloatComponents& sRGBColorComponents) const
+bool InvertLightnessFilterOperation::transformColor(ColorComponents<float>& sRGBColorComponents) const
 {
-    FloatComponents hslComponents = sRGBToHSL(sRGBColorComponents);
+    auto hslComponents = sRGBToHSL(sRGBColorComponents);
     
     // Rotate the hue 180deg.
     hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
@@ -249,9 +249,10 @@ bool InvertLightnessFilterOperation::transformColor(FloatComponents& sRGBColorCo
     return true;
 }
 
-bool InvertLightnessFilterOperation::inverseTransformColor(FloatComponents& sRGBColorComponents) const
+bool InvertLightnessFilterOperation::inverseTransformColor(ColorComponents<float>& sRGBColorComponents) const
 {
-    FloatComponents rgbComponents = sRGBColorComponents;
+    auto rgbComponents = sRGBColorComponents;
+
     // Apply the matrix.
     const float matrixValues[20] = {
         -1.300, -0.097,  0.147, 0, 1.25,
@@ -263,7 +264,7 @@ bool InvertLightnessFilterOperation::inverseTransformColor(FloatComponents& sRGB
     toLightModeMatrix.transformColorComponents(rgbComponents);
 
     // Convert to HSL.
-    FloatComponents hslComponents = sRGBToHSL(rgbComponents);
+    auto hslComponents = sRGBToHSL(rgbComponents);
     // Hue rotate by 180deg.
     hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
     // And return RGB.

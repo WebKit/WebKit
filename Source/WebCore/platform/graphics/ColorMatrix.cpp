@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ColorMatrix.h"
 
+#include "ColorComponents.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -158,7 +159,7 @@ ColorMatrix ColorMatrix::sepiaMatrix(float amount)
     return matrix;
 }
 
-void ColorMatrix::transformColorComponents(FloatComponents& colorComponents) const
+void ColorMatrix::transformColorComponents(ColorComponents<float>& colorComponents) const
 {
     auto [red, green, blue, alpha] = colorComponents;
 
@@ -168,7 +169,7 @@ void ColorMatrix::transformColorComponents(FloatComponents& colorComponents) con
     colorComponents.components[3] = m_matrix[3][0] * red + m_matrix[3][1] * green + m_matrix[3][2] * blue + m_matrix[3][3] * alpha + m_matrix[3][4];
 }
 
-FloatComponents ColorMatrix::transformedColorComponents(const FloatComponents& colorComponents) const
+ColorComponents<float> ColorMatrix::transformedColorComponents(const ColorComponents<float>& colorComponents) const
 {
     auto [red, green, blue, alpha] = colorComponents;
 

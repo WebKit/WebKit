@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-struct FloatComponents;
+template<typename T> struct ColorComponents;
 
 // FIXME: This should likely be replaced by a generic matrix class. Other than
 // the specific matrix constuctors, there is nothing color specific about this.
@@ -43,8 +43,8 @@ public:
     ColorMatrix();
     ColorMatrix(const float[20]);
     
-    void transformColorComponents(FloatComponents&) const;
-    FloatComponents transformedColorComponents(const FloatComponents&) const;
+    void transformColorComponents(ColorComponents<float>&) const;
+    ColorComponents<float> transformedColorComponents(const ColorComponents<float>&) const;
 
 private:
     void makeIdentity();

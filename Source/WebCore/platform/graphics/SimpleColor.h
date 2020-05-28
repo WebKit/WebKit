@@ -87,13 +87,6 @@ WEBCORE_EXPORT SimpleColor makeSimpleColorFromFloats(float r, float g, float b, 
 WEBCORE_EXPORT SimpleColor makeSimpleColorFromHSLA(float h, float s, float l, float a);
 SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a);
 
-uint8_t roundAndClampColorChannel(int);
-uint8_t roundAndClampColorChannel(float);
-
-uint16_t fastMultiplyBy255(uint16_t value);
-uint16_t fastDivideBy255(uint16_t);
-
-uint8_t colorFloatToSimpleColorByte(float);
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
@@ -103,37 +96,6 @@ inline bool operator==(SimpleColor a, SimpleColor b)
 inline bool operator!=(SimpleColor a, SimpleColor b)
 {
     return !(a == b);
-}
-
-inline uint8_t roundAndClampColorChannel(int value)
-{
-    return std::clamp(value, 0, 255);
-}
-
-inline uint8_t roundAndClampColorChannel(float value)
-{
-    return std::clamp(std::round(value), 0.f, 255.f);
-}
-
-inline uint16_t fastMultiplyBy255(uint16_t value)
-{
-    return (value << 8) - value;
-}
-
-inline uint16_t fastDivideBy255(uint16_t value)
-{
-    // While this is an approximate algorithm for division by 255, it gives perfectly accurate results for 16-bit values.
-    // FIXME: Since this gives accurate results for 16-bit values, we should get this optimization into compilers like clang.
-    uint16_t approximation = value >> 8;
-    uint16_t remainder = value - (approximation * 255) + 1;
-    return approximation + (remainder >> 8);
-}
-
-inline uint8_t colorFloatToSimpleColorByte(float f)
-{
-    // FIXME: Consolidate with clampedColorComponent().
-    // We use lroundf and 255 instead of nextafterf(256, 0) to match CG's rounding
-    return std::clamp(static_cast<int>(lroundf(255.0f * f)), 0, 255);
 }
 
 constexpr SimpleColor makeSimpleColor(int r, int g, int b)

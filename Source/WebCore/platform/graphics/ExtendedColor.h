@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "ColorComponents.h"
 #include "ColorSpace.h"
-#include "ColorUtilities.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +39,7 @@ public:
 
     float alpha() const { return m_channels.components[3]; }
 
-    const FloatComponents& channels() const { return m_channels; }
+    const ColorComponents<float>& channels() const { return m_channels; }
     ColorSpace colorSpace() const { return m_colorSpace; }
 
     WEBCORE_EXPORT unsigned hash() const;
@@ -58,7 +58,7 @@ private:
         , m_colorSpace(colorSpace)
     { }
 
-    FloatComponents m_channels;
+    ColorComponents<float> m_channels;
     ColorSpace m_colorSpace { ColorSpace::SRGB };
 };
 

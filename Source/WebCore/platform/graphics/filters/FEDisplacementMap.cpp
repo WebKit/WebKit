@@ -86,6 +86,12 @@ void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int in
         in->transformResultColorSpace(operatingColorSpace());
 }
 
+static inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
+{
+    const unsigned bytesPerPixel = 4;
+    return x * bytesPerPixel + y * rowBytes;
+}
+
 void FEDisplacementMap::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);

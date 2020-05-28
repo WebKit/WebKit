@@ -1,3 +1,102 @@
+2020-05-27  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Refactor FloatComponents and ColorComponents into a single templatized ColorComponents class
+        https://bugs.webkit.org/show_bug.cgi?id=212446
+
+        Reviewed by Simon Fraser.
+
+        Merge FloatComponents and ColorComponents into ColorComponents<T> and move them to their own
+        header. This avoids duplicate code and paves the way for further generalization down the line.
+        
+        Also moves some utility functions to ColorUtilities.h from SimpleColor.h as they make more sense
+        in the former.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ColorComponents.h
+
+        * platform/graphics/ColorComponents.h: Copied from Source/WebCore/platform/graphics/ColorUtilities.h.
+        Moved ColorComponents to its own header and templatized it to allow it to serve the
+        needs of both the old ColorComponents and old FloatComponents classes.
+        
+        * platform/graphics/ColorUtilities.cpp:
+        * platform/graphics/ColorUtilities.h:
+        Removed ColorComponents/FloatComponents and update existing usages to their new names.
+        Also moved roundAndClampColorChannel, fastMultiplyBy255, fastDivideBy255 
+        and colorFloatToSimpleColorByte here from SimpleColor to make it clear where
+        general helper functions can go.
+        
+        * platform/graphics/Color.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::colorSpaceAndComponents const):
+        (WebCore::Color::toSRGBAComponentsLossy const):
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::channels const):
+        Update for rename of FloatComponents to ColorComponents<float>.
+
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::makeSimpleColorFromHSLA):
+        Use structured bindings and simplify code. 
+
+        * platform/graphics/SimpleColor.h:
+        (WebCore::roundAndClampColorChannel): Deleted.
+        (WebCore::fastMultiplyBy255): Deleted.
+        (WebCore::fastDivideBy255): Deleted.
+        (WebCore::colorFloatToSimpleColorByte): Deleted.
+        As noted above, moved roundAndClampColorChannel, fastMultiplyBy255, fastDivideBy255 
+        and colorFloatToSimpleColorByte to ColorUtilities.h
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        Update for rename of FloatComponents to ColorComponents<float>.
+
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::byteOffsetOfPixel):
+        Moved byteOffsetOfPixel here from ColorUtilities. This file is the only user
+        and it wasn't general in a way that was clear for other users.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        Update for rename of FloatComponents to ColorComponents<float>.
+
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::makeColorComponentsfromPixelValue):
+        Added. Used to be ColorComponents::fromRGBA(), but was only used here
+        and didn't seem generally useful.
+
+        (WebCore::makePixelValueFromColorComponents):
+        Added. Used to be ColorComponents::toRGBA(), but was only used here
+        and didn't seem generally useful.
+        
+        (WebCore::minOrMax):
+        (WebCore::columnExtremum):
+        (WebCore::kernelExtremum):
+        (WebCore::FEMorphology::platformApplyGeneric):
+        Update for rename of FloatComponents to ColorComponents<float> and ColorComponents
+        to ColorComponents<uint8_t>.
+
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::noise2D const):
+        (WebCore::toIntBasedColorComponents):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint const):
+        (WebCore::FETurbulence::fillRegion const):
+        * platform/graphics/filters/FETurbulence.h:
+        Update for rename of FloatComponents to ColorComponents<float> and ColorComponents
+        to ColorComponents<uint8_t>. Also renames toColorComponents to toIntBasedColorComponents
+        as the former was no longer specific enough. Updated to use std::clamp.
+
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicColorMatrixFilterOperation::transformColor const):
+        (WebCore::BasicComponentTransferFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::transformColor const):
+        (WebCore::FilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+        Update for rename of FloatComponents to ColorComponents<float>.
+
 2020-05-27  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r260023): ITP sparse plist decoding.
