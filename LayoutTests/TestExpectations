@@ -1146,6 +1146,9 @@ webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Fa
 
 # tee.html is flaky with unhandled promise rejections
 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ DumpJSConsoleLogInStdErr ]
+# Timeout tests.
+imported/w3c/web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Skip ]
 
 webkit.org/b/186161 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Pass Failure ]
 

@@ -1608,6 +1608,15 @@ IsITPDatabaseEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 
+ReadableByteStreamAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ReadableByteStream"
+  humanReadableDescription: "Enable Readable Byte Streams"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(STREAMS_API)
+
 ServiceWorkersEnabled:
   type: bool
   defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED

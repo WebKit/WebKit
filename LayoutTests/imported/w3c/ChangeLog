@@ -1,3 +1,15 @@
+2020-05-28  Youenn Fablet  <youenn@apple.com>
+
+        ReadableByteStream should be enabled/disabled in service workers as done in pages
+        https://bugs.webkit.org/show_bug.cgi?id=212466
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/properties.serviceworker.https-expected.txt:
+
 2020-05-27  Noam Rosenthal  <noam@webkit.org>
 
         Implement AccessKeyLabel attribute.

@@ -1,17 +1,17 @@
 
 PASS Service worker test setup 
-FAIL Can get the ReadableStreamBYOBReader constructor indirectly ReadableByteStreamController is not implemented
-FAIL Can get the ReadableByteStreamController constructor indirectly ReadableByteStreamController is not implemented
+PASS Can get the ReadableStreamBYOBReader constructor indirectly 
+PASS Can get the ReadableByteStreamController constructor indirectly 
 PASS ReadableStreamBYOBReader enforces a brand check on its argument 
-FAIL ReadableStreamBYOBReader.prototype.closed enforces a brand check undefined is not an object (evaluating 'ReadableStreamBYOBReader.prototype')
-FAIL ReadableStreamBYOBReader.prototype.cancel enforces a brand check undefined is not an object (evaluating 'ReadableStreamBYOBReader.prototype')
-FAIL ReadableStreamBYOBReader.prototype.read enforces a brand check undefined is not an object (evaluating 'ReadableStreamBYOBReader.prototype')
-FAIL ReadableStreamBYOBReader.prototype.releaseLock enforces a brand check undefined is not an object (evaluating 'ReadableStreamBYOBReader.prototype')
+PASS ReadableStreamBYOBReader.prototype.closed enforces a brand check 
+PASS ReadableStreamBYOBReader.prototype.cancel enforces a brand check 
+PASS ReadableStreamBYOBReader.prototype.read enforces a brand check 
+PASS ReadableStreamBYOBReader.prototype.releaseLock enforces a brand check 
 PASS ReadableByteStreamController enforces a brand check on its arguments 
 PASS ReadableByteStreamController can't be given a fully-constructed ReadableStream 
-FAIL ReadableByteStreamController.prototype.byobRequest enforces a brand check undefined is not an object (evaluating 'ReadableByteStreamController.prototype')
-FAIL ReadableByteStreamController.prototype.close enforces a brand check undefined is not an object (evaluating 'ReadableByteStreamController.prototype')
-FAIL ReadableByteStreamController.prototype.enqueue enforces a brand check undefined is not an object (evaluating 'ReadableByteStreamController.prototype')
-FAIL ReadableByteStreamController.prototype.error enforces a brand check undefined is not an object (evaluating 'ReadableByteStreamController.prototype')
-FAIL ReadableStreamBYOBRequest enforces brand checks ReadableByteStreamController is not implemented
+PASS ReadableByteStreamController.prototype.byobRequest enforces a brand check 
+PASS ReadableByteStreamController.prototype.close enforces a brand check 
+PASS ReadableByteStreamController.prototype.enqueue enforces a brand check 
+PASS ReadableByteStreamController.prototype.error enforces a brand check 
+PASS ReadableStreamBYOBRequest enforces brand checks 
 
