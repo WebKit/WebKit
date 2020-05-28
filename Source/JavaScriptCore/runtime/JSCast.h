@@ -57,6 +57,14 @@ inline To jsCast(JSValue from)
     return static_cast<To>(from.asCell());
 }
 
+// The first and last JSType are inclusive
+struct JSTypeRange {
+    bool contains(JSType type) const { return first <= type && type <= last; }
+
+    JSType first;
+    JSType last;
+};
+
 // Specific type overloads.
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(macro) \
     macro(JSImmutableButterfly, JSType::JSImmutableButterflyType, JSType::JSImmutableButterflyType) \
@@ -126,10 +134,10 @@ struct FinalTypeDispatcher</* isFinal */ true> {
 };
 
 template<typename Target, typename From>
-inline bool inheritsJSTypeImpl(VM& vm, From* from, JSType firstType, JSType lastType)
+inline bool inheritsJSTypeImpl(VM& vm, From* from, JSTypeRange range)
 {
     static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
-    bool canCast = firstType <= from->type() && from->type() <= lastType;
+    bool canCast = range.contains(from->type());
     // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
     ASSERT_UNUSED(vm, canCast == from->JSCell::inherits(vm, Target::info()));
     return canCast;
@@ -139,6 +147,7 @@ inline bool inheritsJSTypeImpl(VM& vm, From* from, JSType firstType, JSType last
 // way to say that we are overloading just the first type in a template list...
 template<typename Target>
 struct InheritsTraits {
+    static constexpr Optional<JSTypeRange> typeRange { WTF::nullopt };
     template<typename From>
     static inline bool inherits(VM& vm, From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(vm, from); }
 };
@@ -146,8 +155,9 @@ struct InheritsTraits {
 #define DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD(className, firstJSType, lastJSType) \
     template<> \
     struct InheritsTraits<className> { \
+        static constexpr Optional<JSTypeRange> typeRange { { static_cast<JSType>(firstJSType), static_cast<JSType>(lastJSType) } }; \
         template<typename From> \
-        static inline bool inherits(VM& vm, From* from) { return inheritsJSTypeImpl<className, From>(vm, from, static_cast<JSType>(firstJSType), static_cast<JSType>(lastJSType)); } \
+        static inline bool inherits(VM& vm, From* from) { return inheritsJSTypeImpl<className, From>(vm, from, *typeRange); } \
     }; \
 
 FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD)

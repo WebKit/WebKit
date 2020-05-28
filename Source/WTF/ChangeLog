@@ -1,3 +1,18 @@
+2020-05-27  Keith Miller  <keith_miller@apple.com>
+
+        for-of should check the iterable is a JSArray for FastArray in DFG iterator_open
+        https://bugs.webkit.org/show_bug.cgi?id=212383
+
+        Reviewed by Saam Barati.
+
+        Optional should be able to copy/move constructor itself as long as <T> is
+        trivially copyable. This lets us copy Optionals into const globals without
+        global constructors.
+
+        * wtf/Optional.h:
+        (WTF::Optional::Optional):
+        (WTF::Optional::__NOEXCEPT_):
+
 2020-05-27  Noam Rosenthal  <noam@webkit.org>
 
         Implement AccessKeyLabel attribute.

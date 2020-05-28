@@ -364,7 +364,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToLowerCase:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
-    case CheckSubClass:
+    case CheckJSCast:
     case CallDOM:
     case CallDOMGetter:
     case ArraySlice:

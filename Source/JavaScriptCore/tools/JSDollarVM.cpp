@@ -1133,9 +1133,9 @@ void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITFunctionObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
 }
 
-class DOMJITCheckSubClassObject : public DOMJITNode {
+class DOMJITCheckJSCastObject : public DOMJITNode {
 public:
-    DOMJITCheckSubClassObject(VM& vm, Structure* structure)
+    DOMJITCheckJSCastObject(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
         DollarVMAssertScope assertScope;
@@ -1151,10 +1151,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSC::JSType(LastJSCObjectType + 1), StructureFlags), info());
     }
 
-    static DOMJITCheckSubClassObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static DOMJITCheckJSCastObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITCheckSubClassObject* object = new (NotNull, allocateCell<DOMJITCheckSubClassObject>(vm.heap)) DOMJITCheckSubClassObject(vm, structure);
+        DOMJITCheckJSCastObject* object = new (NotNull, allocateCell<DOMJITCheckJSCastObject>(vm.heap)) DOMJITCheckJSCastObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }
@@ -1165,7 +1165,7 @@ public:
         VM& vm = globalObject->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto* thisObject = jsDynamicCast<DOMJITCheckSubClassObject*>(vm, callFrame->thisValue());
+        auto* thisObject = jsDynamicCast<DOMJITCheckJSCastObject*>(vm, callFrame->thisValue());
         if (!thisObject)
             return throwVMTypeError(globalObject, scope);
         return JSValue::encode(jsNumber(thisObject->value()));
@@ -1184,13 +1184,13 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-static const DOMJIT::Signature DOMJITCheckSubClassObjectSignature(DOMJITCheckSubClassObject::functionWithoutTypeCheck, DOMJITCheckSubClassObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+static const DOMJIT::Signature DOMJITCheckJSCastObjectSignature(DOMJITCheckJSCastObject::functionWithoutTypeCheck, DOMJITCheckJSCastObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
 
-void DOMJITCheckSubClassObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void DOMJITCheckJSCastObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     DollarVMAssertScope assertScope;
     Base::finishCreation(vm);
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITCheckSubClassObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "func"), 0, functionWithTypeCheck, NoIntrinsic, &DOMJITCheckJSCastObjectSignature, static_cast<unsigned>(PropertyAttribute::ReadOnly));
 }
 
 class DOMJITGetterBaseJSObject : public DOMJITNode {
@@ -1425,7 +1425,7 @@ const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::
 #else
 const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
 #endif
-const ClassInfo DOMJITCheckSubClassObject::s_info = { "DOMJITCheckSubClassObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITCheckSubClassObject) };
+const ClassInfo DOMJITCheckJSCastObject::s_info = { "DOMJITCheckJSCastObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITCheckJSCastObject) };
 const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomGetterSetter) };
 
 const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
@@ -2357,13 +2357,13 @@ static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITFunctionObject(JSGlobalO
     return JSValue::encode(result);
 }
 
-static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITCheckSubClassObject(JSGlobalObject* globalObject, CallFrame*)
+static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITCheckJSCastObject(JSGlobalObject* globalObject, CallFrame*)
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    Structure* structure = DOMJITCheckSubClassObject::createStructure(vm, globalObject, jsNull());
-    DOMJITCheckSubClassObject* result = DOMJITCheckSubClassObject::create(vm, globalObject, structure);
+    Structure* structure = DOMJITCheckJSCastObject::createStructure(vm, globalObject, jsNull());
+    DOMJITCheckJSCastObject* result = DOMJITCheckJSCastObject::create(vm, globalObject, structure);
     return JSValue::encode(result);
 }
 
@@ -3070,7 +3070,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createDOMJITGetterObject", functionCreateDOMJITGetterObject, 0);
     addFunction(vm, "createDOMJITGetterComplexObject", functionCreateDOMJITGetterComplexObject, 0);
     addFunction(vm, "createDOMJITFunctionObject", functionCreateDOMJITFunctionObject, 0);
-    addFunction(vm, "createDOMJITCheckSubClassObject", functionCreateDOMJITCheckSubClassObject, 0);
+    addFunction(vm, "createDOMJITCheckJSCastObject", functionCreateDOMJITCheckJSCastObject, 0);
     addFunction(vm, "createDOMJITGetterBaseJSObject", functionCreateDOMJITGetterBaseJSObject, 0);
     addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
 #if ENABLE(WEBASSEMBLY)

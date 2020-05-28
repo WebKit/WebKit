@@ -1589,8 +1589,8 @@ private:
         case NumberToStringWithValidRadixConstant:
             compileNumberToStringWithValidRadixConstant();
             break;
-        case CheckSubClass:
-            compileCheckSubClass();
+        case CheckJSCast:
+            compileCheckJSCast();
             break;
         case CallDOM:
             compileCallDOM();
@@ -13939,11 +13939,18 @@ private:
         crash();
     }
 
-    void compileCheckSubClass()
+    void compileCheckJSCast()
     {
         LValue cell = lowCell(m_node->child1());
 
         const ClassInfo* classInfo = m_node->classInfo();
+
+        if (classInfo->inheritsJSTypeRange) {
+            LValue hasType = isCellWithType(cell, classInfo->inheritsJSTypeRange.value(), speculationFromClassInfoInheritance(classInfo));
+            speculate(BadType, jsValueValue(cell), m_node->child1().node(), m_out.bitNot(hasType));
+            return;
+        }
+
         if (!classInfo->checkSubClassSnippet) {
             LBasicBlock loop = m_out.newBlock();
             LBasicBlock parentClass = m_out.newBlock();
@@ -17708,27 +17715,33 @@ private:
         jsValueToStrictInt52(edge, lowJSValue(edge, ManualOperandSpeculation));
     }
 
-    LValue isCellWithType(LValue cell, JSType queriedType, Optional<SpeculatedType> speculatedTypeForQuery, SpeculatedType type = SpecFullTop)
+    LValue isCellWithType(LValue cell, JSTypeRange queriedTypeRange, Optional<SpeculatedType> speculatedTypeForQuery, SpeculatedType type = SpecFullTop)
     {
         if (speculatedTypeForQuery) {
             if (LValue proven = isProvenValue(type & SpecCell, speculatedTypeForQuery.value()))
                 return proven;
         }
-        return m_out.equal(
+        if (queriedTypeRange.first == queriedTypeRange.last) {
+            return m_out.equal(
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+                m_out.constInt32(queriedTypeRange.first));
+        }
+
+        ASSERT(queriedTypeRange.last > queriedTypeRange.first);
+        LValue first = m_out.sub(
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt32(queriedType));
+            m_out.constInt32(queriedTypeRange.first));
+        return m_out.belowOrEqual(first, m_out.constInt32(queriedTypeRange.last - queriedTypeRange.first));
+    }
+
+    LValue isCellWithType(LValue cell, JSType queriedType, Optional<SpeculatedType> speculatedTypeForQuery, SpeculatedType type = SpecFullTop)
+    {
+        return isCellWithType(cell, JSTypeRange { queriedType, queriedType }, speculatedTypeForQuery, type);
     }
 
     LValue isTypedArrayView(LValue cell, SpeculatedType type = SpecFullTop)
     {
-        if (LValue proven = isProvenValue(type & SpecCell, SpecTypedArrayView))
-            return proven;
-        LValue jsType = m_out.sub(
-            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt32(FirstTypedArrayType));
-        return m_out.below(
-            jsType,
-            m_out.constInt32(NumberOfTypedArrayTypesExcludingDataView));
+        return isCellWithType(cell, JSTypeRange { static_cast<JSType>(FirstTypedArrayType), static_cast<JSType>(LastTypedArrayTypeExcludingDataView) }, SpecTypedArrayView, type);
     }
     
     LValue isObject(LValue cell, SpeculatedType type = SpecFullTop)

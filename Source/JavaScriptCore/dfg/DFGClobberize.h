@@ -1181,7 +1181,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(ButterflyLoc, JSObject_butterfly, node->child1()), LazyNode(node));
         return;
 
-    case CheckSubClass:
+    case CheckJSCast:
         def(PureValue(node, node->classInfo()));
         return;
 

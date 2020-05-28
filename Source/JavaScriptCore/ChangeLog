@@ -1,3 +1,89 @@
+2020-05-27  Keith Miller  <keith_miller@apple.com>
+
+        for-of should check the iterable is a JSArray for FastArray in DFG iterator_open
+        https://bugs.webkit.org/show_bug.cgi?id=212383
+
+        Reviewed by Saam Barati.
+
+        This patch fixes an issue where we didn't check that the iterable operand to
+        iterator_open was a JSArray when lowering the FastArray only variant of the bytecode to the DFG.
+        This meant we would OSR exit at the iterator_next's lowering then assertion failure in the
+        checkpoint OSR exit helper. To make this work, this patch extends (and renames from CheckSubClass)
+        CheckJSCast to use the same JSType information that we use for the jsCast function. In order to
+        get the JSType range from a ClassInfo* the macro that autogenerates MethodTable now also fills
+        a Optional<JSTypeRange> into the ClassInfo as well.
+
+        Lastly, speculationFromClassInfo was misused by AI. This patch
+        renames it to speculationFromClassInfoInheritance to better
+        reflect how AI was using it. The only other user of
+        speculationFromClassInfo was speculationFromStructure. Any case
+        where speculationFromClassInfoInteritance would differ from what a
+        Structure would tell you has been hoisted to
+        speculationFromStructure.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchIfType):
+        (JSC::testBranchIfNotType):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromClassInfoInheritance):
+        (JSC::speculationFromStructure):
+        (JSC::speculationFromClassInfo): Deleted.
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterClassInfo):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeCallDOM):
+        (JSC::DFG::FixupPhase::fixupCheckJSCast):
+        (JSC::DFG::FixupPhase::fixupCheckSubClass): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasClassInfo const):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileCheckJSCast):
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckJSCast):
+        (JSC::FTL::DFG::LowerDFGToB3::isCellWithType):
+        (JSC::FTL::DFG::LowerDFGToB3::isTypedArrayView):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfType):
+        (JSC::AssemblyHelpers::branchIfNotType):
+        * runtime/ClassInfo.h:
+        * runtime/JSCast.h:
+        (JSC::JSTypeRange::contains const):
+        (JSC::JSCastingHelpers::inheritsJSTypeImpl):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::assertTypeInfoFlagInvariants):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCreateDOMJITCheckJSCastObject):
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::functionCreateDOMJITCheckSubClassObject): Deleted.
+
 2020-05-27  Darin Adler  <darin@apple.com>
 
         [Cocoa] Pass all defines from Platform.h to various scripts, not just the ones from .xcconfig

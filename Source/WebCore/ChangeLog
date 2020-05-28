@@ -1,3 +1,25 @@
+2020-05-27  Keith Miller  <keith_miller@apple.com>
+
+        for-of should check the iterable is a JSArray for FastArray in DFG iterator_open
+        https://bugs.webkit.org/show_bug.cgi?id=212383
+
+        Reviewed by Saam Barati.
+
+        Update various InheritsTraits specializations to contain a typeRange member.
+        Also, change the inherits function to use inheritsJSTypeImpl like the JSC
+        variants.
+
+        * bindings/js/JSDocumentCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSDocument>::inherits):
+        * bindings/js/JSElementCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSElement>::inherits):
+        * bindings/js/JSEventCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSEvent>::inherits):
+        * bindings/js/JSNodeCustom.h:
+        (JSC::JSCastingHelpers::InheritsTraits<WebCore::JSNode>::inherits):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
 2020-05-27  Darin Adler  <darin@apple.com>
 
         [Cocoa] Pass all defines from Platform.h to various scripts, not just the ones from .xcconfig

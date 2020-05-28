@@ -194,7 +194,7 @@ private:
                 break;
             }
 
-            case CheckSubClass: {
+            case CheckJSCast: {
                 JSValue constant = m_state.forNode(node->child1()).value();
                 if (constant) {
                     if (constant.isCell() && constant.asCell()->inherits(m_graph.m_vm, node->classInfo())) {

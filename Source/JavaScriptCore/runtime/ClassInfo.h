@@ -151,7 +151,9 @@ struct MethodTable {
 
 #define HAS_MEMBER_NAMED(klass, name) (MemberCheck##name<klass>::has)
 
-#define CREATE_METHOD_TABLE(ClassName) { \
+#define CREATE_METHOD_TABLE(ClassName) \
+    JSCastingHelpers::InheritsTraits<ClassName>::typeRange, \
+    { \
         &ClassName::destroy, \
         &ClassName::visitChildren, \
         &ClassName::getCallData, \
@@ -185,10 +187,10 @@ struct MethodTable {
         &ClassName::visitOutputConstraints, \
     }, \
     ClassName::TypedArrayStorageType, \
-    sizeof(ClassName)
+    sizeof(ClassName),
 
 struct ClassInfo {
-    using CheckSubClassSnippetFunctionPtr = Ref<Snippet> (*)(void);
+    using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
 
     // A string denoting the class name. Example: "Window".
     const char* className;
@@ -196,10 +198,11 @@ struct ClassInfo {
     // nullptrif there is none.
     const ClassInfo* parentClass;
     const HashTable* staticPropHashTable;
-    CheckSubClassSnippetFunctionPtr checkSubClassSnippet;
+    CheckJSCastSnippetFunctionPtr checkSubClassSnippet;
+    const Optional<JSTypeRange> inheritsJSTypeRange; // This is range of JSTypes for doing inheritance checking. Has the form: [firstJSType, lastJSType] (inclusive).
     MethodTable methodTable;
-    TypedArrayType typedArrayStorageType;
-    unsigned staticClassSize;
+    const TypedArrayType typedArrayStorageType;
+    const unsigned staticClassSize;
 
     static ptrdiff_t offsetOfParentClass()
     {

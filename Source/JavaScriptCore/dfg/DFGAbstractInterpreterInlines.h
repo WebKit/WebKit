@@ -3507,10 +3507,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             didFoldClobberStructures();
         clearForNode(node); // The result is not a JS value.
         break;
-    case CheckSubClass: {
+    case CheckJSCast: {
+        const ClassInfo* classInfo = node->classInfo();
         JSValue constant = forNode(node->child1()).value();
         if (constant) {
-            if (constant.isCell() && constant.asCell()->inherits(m_vm, node->classInfo())) {
+            if (constant.isCell() && constant.asCell()->inherits(m_vm, classInfo)) {
+                ASSERT(!classInfo->inheritsJSTypeRange || classInfo->inheritsJSTypeRange->contains(constant.asCell()->type()));
                 m_state.setShouldTryConstantFolding(true);
                 ASSERT(constant);
                 break;
@@ -3519,10 +3521,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         AbstractValue& value = forNode(node->child1());
 
-        if (value.m_structure.isSubClassOf(node->classInfo()))
+        if (value.m_structure.isSubClassOf(classInfo))
             m_state.setShouldTryConstantFolding(true);
 
-        filterClassInfo(value, node->classInfo());
+        filterClassInfo(value, classInfo);
         break;
     }
     case CallDOMGetter: {

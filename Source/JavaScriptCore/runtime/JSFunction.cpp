@@ -912,7 +912,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
 #if ASSERT_ENABLED
 void JSFunction::assertTypeInfoFlagInvariants()
 {
-    // If you change this, you'll need to update speculationFromClassInfo.
+    // If you change this, you'll need to update speculationFromClassInfoInheritance.
     const ClassInfo* info = classInfo(vm());
     if (!(inlineTypeFlags() & ImplementsDefaultHasInstance))
         RELEASE_ASSERT(info == JSBoundFunction::info());

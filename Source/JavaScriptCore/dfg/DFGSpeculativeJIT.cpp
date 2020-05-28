@@ -891,7 +891,7 @@ void SpeculativeJIT::checkArray(Node* node)
         DFG_ASSERT(m_graph, node, arrayMode.isSomeTypedArrayView());
 
         if (arrayMode.type() == Array::AnyTypedArray)
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), nullptr, m_jit.branchIfNotType(baseReg, JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView)));
+            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), nullptr, m_jit.branchIfNotType(baseReg, JSTypeRange { JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView) }));
         else
             speculateCellTypeWithoutTypeFiltering(node->child1(), baseReg, typeForTypedArrayType(arrayMode.typedArrayType()));
         break;
@@ -9999,9 +9999,19 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
     jsValueResult(result.regs(), node);
 }
 
-void SpeculativeJIT::compileCheckSubClass(Node* node)
+void SpeculativeJIT::compileCheckJSCast(Node* node)
 {
     const ClassInfo* classInfo = node->classInfo();
+    if (classInfo->inheritsJSTypeRange) {
+        SpeculateCellOperand base(this, node->child1());
+        GPRReg baseGPR = base.gpr();
+
+        auto checkFailed = m_jit.branchIfNotType(baseGPR, classInfo->inheritsJSTypeRange.value());
+        speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), checkFailed);
+        noResult(node);
+        return;
+    }
+
     if (!classInfo->checkSubClassSnippet) {
         SpeculateCellOperand base(this, node->child1());
         GPRTemporary other(this);

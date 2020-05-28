@@ -523,7 +523,10 @@ inline bool speculationChecked(SpeculatedType actual, SpeculatedType desired)
     return (actual | desired) == desired;
 }
 
-SpeculatedType speculationFromClassInfo(const ClassInfo*);
+// The SpeculatedType returned by this function for any cell, c, has the following invariant:
+// ASSERT(!c->inherits(classInfo) || speculationChecked(speculationFromCell(c), speculationFromClassInfoInheritance(classInfo)));
+SpeculatedType speculationFromClassInfoInheritance(const ClassInfo*);
+
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
 JS_EXPORT_PRIVATE SpeculatedType speculationFromValue(JSValue);

@@ -3021,7 +3021,7 @@ sub GenerateHeader
         }
     }
 
-    # CheckSubClass Snippet function.
+    # CheckJSCast Snippet function.
     if ($interface->extendedAttributes->{DOMJIT}) {
         $headerIncludes{"<JavaScriptCore/Snippet.h>"} = 1;
         push(@headerContent, "#if ENABLE(JIT)\n");

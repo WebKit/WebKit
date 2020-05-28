@@ -1,3 +1,14 @@
+2020-05-27  Keith Miller  <keith_miller@apple.com>
+
+        for-of should check the iterable is a JSArray for FastArray in DFG iterator_open
+        https://bugs.webkit.org/show_bug.cgi?id=212383
+
+        Reviewed by Saam Barati.
+
+        * stress/check-sub-class.js:
+        * stress/for-of-iterator-open-fast-array-should-check-js-type.js: Added.
+        (foo):
+
 2020-05-27  Saam Barati  <sbarati@apple.com>
 
         hasOwnProperty inside structure property for-in loop should use an opcode like has_structure_property but for hasOwnProperty

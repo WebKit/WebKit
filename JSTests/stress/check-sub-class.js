@@ -1,5 +1,5 @@
 var createDOMJITNodeObject = $vm.createDOMJITNodeObject;
-var createDOMJITCheckSubClassObject = $vm.createDOMJITCheckSubClassObject;
+var createDOMJITCheckJSCastObject = $vm.createDOMJITCheckJSCastObject;
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
@@ -23,11 +23,11 @@ function shouldThrow(func, errorMessage) {
 
 var array = [];
 for (var i = 0; i < 100; ++i)
-    array.push(createDOMJITCheckSubClassObject());
+    array.push(createDOMJITCheckJSCastObject());
 
-// DOMJITNode is an instance of a super class (DOMJITNode) of DOMJITCheckSubClassObject.
+// DOMJITNode is an instance of a super class (DOMJITNode) of DOMJITCheckJSCastObject.
 var node = createDOMJITNodeObject();
-node.func = createDOMJITCheckSubClassObject().func;
+node.func = createDOMJITCheckJSCastObject().func;
 
 function calling(dom)
 {

@@ -234,7 +234,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetExecutable:
     case CallDOMGetter:
     case CallDOM:
-    case CheckSubClass:
+    case CheckJSCast:
     case CheckArray:
     case CheckArrayOrEmpty:
     case GetScope:

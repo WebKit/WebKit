@@ -1060,7 +1060,7 @@ private:
             break;
         }
 
-        case CheckSubClass:
+        case CheckJSCast:
             break;
 
         case SkipScope:

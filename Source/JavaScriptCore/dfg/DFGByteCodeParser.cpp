@@ -3872,7 +3872,7 @@ bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByIdVariant& va
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), thisNode);
     
     // We do not need to emit CheckIsConstant thingy here. When the custom accessor is replaced to different one, Structure transition occurs.
-    addToGraph(CheckSubClass, OpInfo(domAttribute->classInfo), thisNode);
+    addToGraph(CheckJSCast, OpInfo(domAttribute->classInfo), thisNode);
     
     bool wasSeenInJIT = true;
     GetByStatus* status = m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), GetByStatus(GetByStatus::Custom, wasSeenInJIT));
@@ -6741,9 +6741,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 ASSERT_WITH_MESSAGE(globalObject->arrayProtoValuesFunctionConcurrently(), "The only way we could have seen FastArray is if we saw this function in the LLInt/Baseline so the iterator function should be allocated.");
                 FrozenValue* frozenSymbolIteratorFunction = m_graph.freeze(globalObject->arrayProtoValuesFunctionConcurrently());
                 numberOfRemainingModes--;
-                if (!numberOfRemainingModes)
+                if (!numberOfRemainingModes) {
                     addToGraph(CheckIsConstant, OpInfo(frozenSymbolIteratorFunction), symbolIterator);
-                else {
+                    addToGraph(CheckJSCast, OpInfo(JSArray::info()), get(bytecode.m_iterable));
+                } else {
                     BasicBlock* fastArrayBlock = allocateUntargetableBlock();
                     genericBlock = allocateUntargetableBlock();
 

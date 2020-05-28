@@ -981,30 +981,38 @@ public:
     }
     
     // Note that first and last are inclusive.
-    Jump branchIfType(GPRReg cellGPR, JSType first, Optional<JSType> last = WTF::nullopt)
+    Jump branchIfType(GPRReg cellGPR, JSTypeRange range)
     {
-        if (last && *last != first) {
-            ASSERT(*last > first);
-            GPRReg scratch = scratchRegister();
-            load8(Address(cellGPR, JSCell::typeInfoTypeOffset()), scratch);
-            sub32(TrustedImm32(first), scratch);
-            return branch32(BelowOrEqual, scratch, TrustedImm32(*last - first));
-        }
+        if (range.last == range.first)
+            return branch8(Equal, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(range.first));
 
-        return branch8(Equal, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(first));
+        ASSERT(range.last > range.first);
+        GPRReg scratch = scratchRegister();
+        load8(Address(cellGPR, JSCell::typeInfoTypeOffset()), scratch);
+        sub32(TrustedImm32(range.first), scratch);
+        return branch32(BelowOrEqual, scratch, TrustedImm32(range.last - range.first));
     }
 
-    Jump branchIfNotType(GPRReg cellGPR, JSType first, Optional<JSType> last = WTF::nullopt)
+    Jump branchIfType(GPRReg cellGPR, JSType type)
     {
-        if (last && *last != first) {
-            ASSERT(*last > first);
-            GPRReg scratch = scratchRegister();
-            load8(Address(cellGPR, JSCell::typeInfoTypeOffset()), scratch);
-            sub32(TrustedImm32(first), scratch);
-            return branch32(Above, scratch, TrustedImm32(*last - first));
-        }
+        return branchIfType(cellGPR, JSTypeRange { type, type });
+    }
 
-        return branch8(NotEqual, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(first));
+    Jump branchIfNotType(GPRReg cellGPR, JSTypeRange range)
+    {
+        if (range.last == range.first)
+            return branch8(NotEqual, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(range.first));
+
+        ASSERT(range.last > range.first);
+        GPRReg scratch = scratchRegister();
+        load8(Address(cellGPR, JSCell::typeInfoTypeOffset()), scratch);
+        sub32(TrustedImm32(range.first), scratch);
+        return branch32(Above, scratch, TrustedImm32(range.last - range.first));
+    }
+
+    Jump branchIfNotType(GPRReg cellGPR, JSType type)
+    {
+        return branchIfNotType(cellGPR, JSTypeRange { type, type });
     }
 
     // FIXME: rename these to make it clear that they require their input to be a cell.

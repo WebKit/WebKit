@@ -2542,8 +2542,8 @@ private:
             break;
         }
 
-        case CheckSubClass: {
-            fixupCheckSubClass(node);
+        case CheckJSCast: {
+            fixupCheckJSCast(node);
             break;
         }
 
@@ -4036,14 +4036,14 @@ private:
         }
 
         Node* thisNode = m_graph.varArgChild(node, 1).node();
-        Node* checkSubClass = m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckSubClass, node->origin, OpInfo(signature->classInfo), Edge(thisNode));
+        Node* checkSubClass = m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckJSCast, node->origin, OpInfo(signature->classInfo), Edge(thisNode));
         node->convertToCallDOM(m_graph);
-        fixupCheckSubClass(checkSubClass);
+        fixupCheckJSCast(checkSubClass);
         fixupCallDOM(node);
         return true;
     }
 
-    void fixupCheckSubClass(Node* node)
+    void fixupCheckJSCast(Node* node)
     {
         fixEdge<CellUse>(node->child1());
     }

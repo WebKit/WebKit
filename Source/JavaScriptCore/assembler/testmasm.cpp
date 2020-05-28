@@ -2365,7 +2365,7 @@ static void testBranchIfType()
 
     auto isType = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
-        auto isType = jit.branchIfType(GPRInfo::argumentGPR0, JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView));
+        auto isType = jit.branchIfType(GPRInfo::argumentGPR0, JSC::JSTypeRange { JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView) });
         jit.move(CCallHelpers::TrustedImm32(false), GPRInfo::returnValueGPR);
         auto done = jit.jump();
         isType.link(&jit);
@@ -2399,7 +2399,7 @@ static void testBranchIfNotType()
 
     auto isNotType = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
-        auto isNotType = jit.branchIfNotType(GPRInfo::argumentGPR0, JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView));
+        auto isNotType = jit.branchIfNotType(GPRInfo::argumentGPR0, JSC::JSTypeRange { JSType(FirstTypedArrayType), JSType(LastTypedArrayTypeExcludingDataView) });
         jit.move(CCallHelpers::TrustedImm32(false), GPRInfo::returnValueGPR);
         auto done = jit.jump();
         isNotType.link(&jit);
