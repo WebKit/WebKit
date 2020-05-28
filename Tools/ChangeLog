@@ -1,3 +1,14 @@
+2020-05-28  Tim Horton  <timothy_horton@apple.com>
+
+        makeValueRefForValue should be robust against the type encoding of a NSNumber backed by a boolean
+        https://bugs.webkit.org/show_bug.cgi?id=212456
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (WTR::makeValueRefForValue):
+        Apply the fix from r260515 to this second copy of the code too.
+
 2020-05-27  Saam Barati  <sbarati@apple.com>
 
         revert logging for detecting failures in run-jsc-stress-tests
