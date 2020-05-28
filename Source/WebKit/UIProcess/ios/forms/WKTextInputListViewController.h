@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,42 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKTextInputListViewControllerAdditions.h>
-#endif
+#if PLATFORM(WATCHOS)
+
+#import "WKQuickboardListViewController.h"
+
+typedef NS_ENUM(NSInteger, WKNumberPadInputMode) {
+    WKNumberPadInputModeNone,
+    WKNumberPadInputModeNumbersAndSymbols,
+    WKNumberPadInputModeTelephone,
+    WKNumberPadInputModeNumbersOnly
+};
+
+@class WKTextInputListViewController;
+
+@protocol WKTextInputListViewControllerDelegate <WKQuickboardViewControllerDelegate>
+
+- (WKNumberPadInputMode)numericInputModeForListViewController:(WKTextInputListViewController *)controller;
+- (NSString *)textContentTypeForListViewController:(WKTextInputListViewController *)controller;
+- (NSArray<UITextSuggestion *> *)textSuggestionsForListViewController:(WKTextInputListViewController *)controller;
+- (void)listViewController:(WKTextInputListViewController *)controller didSelectTextSuggestion:(UITextSuggestion *)suggestion;
+- (BOOL)allowsDictationInputForListViewController:(PUICQuickboardViewController *)controller;
+
+@end
+
+@interface WKTextInputListViewController : WKQuickboardListViewController
+
+- (instancetype)initWithDelegate:(id <WKTextInputListViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (void)reloadTextSuggestions;
+
+@property (nonatomic, weak) id <WKTextInputListViewControllerDelegate> delegate;
+
+@end
+
+@interface WKTextInputListViewController (Testing)
+
+- (void)enterText:(NSString *)text;
+
+@end
+
+#endif // PLATFORM(WATCHOS)
