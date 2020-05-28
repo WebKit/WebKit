@@ -380,7 +380,7 @@ public:
     WEBCORE_EXPORT RefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
 
     void clear();
-    void clearUIUpdateTimer() {m_editorUIUpdateTimer.stop();}
+    void clearUIUpdateTimer() { m_editorUIUpdateTimer.stop(); }
 
     VisibleSelection selectionForCommand(Event*);
 
