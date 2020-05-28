@@ -52,19 +52,19 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(Ref<Text>&& node, unsigned 
 
 void InsertIntoTextNodeCommand::doApply()
 {
-    bool passwordEchoEnabled = document().settings().passwordEchoEnabled();
-    bool shouldSuppressPasswordEcho = document().editor().client()->shouldSuppressPasswordEcho();
-    if (passwordEchoEnabled && !shouldSuppressPasswordEcho)
+    bool passwordEchoEnabled = document().settings().passwordEchoEnabled() && !document().editor().client()->shouldSuppressPasswordEcho();
+
+    if (passwordEchoEnabled)
         document().updateLayoutIgnorePendingStylesheets();
 
     if (!m_node->hasEditableStyle())
         return;
 
-    if (passwordEchoEnabled && !shouldSuppressPasswordEcho) {
+    if (passwordEchoEnabled) {
         if (RenderText* renderText = m_node->renderer())
             renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length());
     }
-
+    
     m_node->insertData(m_offset, m_text);
 }
 

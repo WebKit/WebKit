@@ -1526,8 +1526,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if ENABLE(ORIENTATION_EVENTS)
     _private->deviceOrientation = [[self _UIKitDelegateForwarder] deviceOrientation];
 #endif
-    if ([[self _UIKitDelegateForwarder] respondsToSelector:@selector(shouldSuppressPasswordEcho)])
-        _private->shouldSuppressPasswordEcho = [[self _UIKitDelegateForwarder] shouldSuppressPasswordEcho];
 #endif
 
     if ([[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled])
