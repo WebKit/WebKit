@@ -38,13 +38,14 @@ PASS a["translate"] is true
 PASS a["dir"] is 
 PASS a["hidden"] is false
 PASS a["accessKey"] is 
+PASS a["accessKeyLabel"] is 
 PASS a["draggable"] is true
 PASS a["spellcheck"] is true
 PASS a["innerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["offsetTop"] is 699
+PASS a["offsetTop"] is 714
 PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18

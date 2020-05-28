@@ -40,6 +40,7 @@ PASS a["translate"] is true
 PASS a["dir"] is 
 PASS a["hidden"] is false
 PASS a["accessKey"] is 
+PASS a["accessKeyLabel"] is 
 PASS a["draggable"] is true
 PASS a["spellcheck"] is true
 PASS a["innerText"] is nerget

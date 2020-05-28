@@ -1,3 +1,26 @@
+2020-05-27  Noam Rosenthal  <noam@webkit.org>
+
+        Implement AccessKeyLabel attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=72715
+
+        Spec: https://html.spec.whatwg.org/multipage/interaction.html#dom-accesskeylabel
+
+        As per spec, return the modifiers+accessKey when requesting the element accessKeyLabel.
+
+        Equivalent to the existing Firefox implementation and (pending) Chrome implementation.
+
+        Alt is the hardcoded modifier for any non-cocoa platform, so hardcode it also for the label.
+        Use modifier text for Mac/iOS as it can change (e.g. for voice-over).
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/access-key-label.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::accessKeyLabel const):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+
 2020-05-27  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Refactor FloatComponents and ColorComponents into a single templatized ColorComponents class

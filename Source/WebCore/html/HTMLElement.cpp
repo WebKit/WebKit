@@ -36,6 +36,7 @@
 #include "ElementAncestorIterator.h"
 #include "EnterKeyHint.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -70,6 +71,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -721,6 +723,30 @@ void HTMLElement::click()
 bool HTMLElement::accessKeyAction(bool sendMouseEvents)
 {
     return dispatchSimulatedClick(nullptr, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+}
+
+String HTMLElement::accessKeyLabel() const
+{
+    const auto& accessKey = attributeWithoutSynchronization(accesskeyAttr);
+    if (accessKey.isEmpty())
+        return String();
+
+    StringBuilder result;
+
+#if PLATFORM(COCOA)
+    auto modifiers = EventHandler::accessKeyModifiers();
+    if (modifiers.contains(PlatformEvent::Modifier::ControlKey))
+        result.append(upArrowhead);
+    if (modifiers.contains(PlatformEvent::Modifier::AltKey))
+        result.append(WTF::Unicode::optionKey);
+#else
+    // Currently accessKeyModifier in non-cocoa platforms is hardcoded to Alt, so no reason to do extra work here.
+    // If this ever becomes configurable, make this code use EventHandler::accessKeyModifiers().
+    result.append("Alt+");
+#endif
+
+    result.append(accessKey);
+    return result.toString();
 }
 
 String HTMLElement::title() const

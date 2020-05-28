@@ -120,7 +120,7 @@ PASS HTMLElement interface: attribute dir
 PASS HTMLElement interface: attribute hidden 
 PASS HTMLElement interface: operation click() 
 PASS HTMLElement interface: attribute accessKey 
-FAIL HTMLElement interface: attribute accessKeyLabel assert_true: The prototype object must have a property "accessKeyLabel" expected true got false
+PASS HTMLElement interface: attribute accessKeyLabel 
 PASS HTMLElement interface: attribute draggable 
 PASS HTMLElement interface: attribute spellcheck 
 FAIL HTMLElement interface: attribute autocapitalize assert_true: The prototype object must have a property "autocapitalize" expected true got false

@@ -1,3 +1,14 @@
+2020-05-27  Noam Rosenthal  <noam@webkit.org>
+
+        Implement AccessKeyLabel attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=72715
+
+        Reviewed by Darin Adler.
+
+        Added character names for upArrow/option, as they're needed for accessKeyLabel.
+
+        * wtf/unicode/CharacterNames.h:
+
 2020-05-27  Saam Barati  <sbarati@apple.com>
 
         Improve comments about OS/PLATFORM(IOS) and friends

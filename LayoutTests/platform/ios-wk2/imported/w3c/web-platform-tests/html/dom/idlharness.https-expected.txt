@@ -250,7 +250,7 @@ PASS HTMLElement interface: attribute dir
 PASS HTMLElement interface: attribute hidden 
 PASS HTMLElement interface: operation click() 
 PASS HTMLElement interface: attribute accessKey 
-FAIL HTMLElement interface: attribute accessKeyLabel assert_true: The prototype object must have a property "accessKeyLabel" expected true got false
+PASS HTMLElement interface: attribute accessKeyLabel 
 PASS HTMLElement interface: attribute draggable 
 PASS HTMLElement interface: attribute spellcheck 
 PASS HTMLElement interface: attribute autocapitalize 
@@ -341,7 +341,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "hidden" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "click()" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "accessKey" with the proper type 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "accessKeyLabel" with the proper type assert_inherits: property "accessKeyLabel" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "accessKeyLabel" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "draggable" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type 

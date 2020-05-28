@@ -68,6 +68,8 @@ public:
 
     bool accessKeyAction(bool sendMouseEvents) override;
 
+    String accessKeyLabel() const;
+
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool rendererIsEverNeeded() final;
 

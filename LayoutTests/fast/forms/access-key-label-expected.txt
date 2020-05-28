@@ -1,0 +1,16 @@
+This test checks to see that accessKeyLabel attribute corresponds to the accessKey attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("b1").accessKeyLabel is modifiers + "1"
+PASS document.getElementById("i1").accessKeyLabel is modifiers + "e"
+PASS document.getElementById("i2").accessKeyLabel is modifiers + "E"
+PASS document.getElementById("l1").accessKeyLabel is modifiers + "a"
+PASS document.getElementById('no-access-key').accessKeyLabel is ""
+PASS document.getElementById('empty-access-key').accessKeyLabel is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+     
+

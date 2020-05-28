@@ -1,3 +1,27 @@
+2020-05-27  Noam Rosenthal  <noam@webkit.org>
+
+        Implement AccessKeyLabel attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=72715
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/access-key-label-expected.txt: Added.
+        * fast/forms/access-key-label.html: Added.
+                Added a test to cover accessKeyLabel scenarios.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/win/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+                HTML elements now have an accessKeyLabel property, fix expected results.
+
 2020-05-27  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Skip inspector/page/archive.html

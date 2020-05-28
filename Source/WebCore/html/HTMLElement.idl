@@ -34,7 +34,7 @@
     [CEReactions, Reflect] attribute boolean hidden;
     void click();
     [CEReactions, Reflect] attribute DOMString accessKey;
-    // readonly attribute DOMString accessKeyLabel; // FIXME: Not supported.
+    readonly attribute DOMString accessKeyLabel;
     [CEReactions] attribute boolean draggable;
     // [CEReactions] attribute HTMLMenuElement? contextMenu; // FIXME: Not supported.
     [CEReactions] attribute boolean spellcheck;
