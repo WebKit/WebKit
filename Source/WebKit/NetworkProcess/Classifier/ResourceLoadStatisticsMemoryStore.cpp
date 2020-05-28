@@ -968,6 +968,14 @@ bool ResourceLoadStatisticsMemoryStore::shouldEnforceSameSiteStrictFor(ResourceL
     return false;
 }
 
+Optional<WallTime> ResourceLoadStatisticsMemoryStore::mostRecentUserInteractionTime(const ResourceLoadStatistics& statistic)
+{
+    if (statistic.mostRecentUserInteractionTime.secondsSinceEpoch().value() <= 0)
+        return WTF::nullopt;
+
+    return statistic.mostRecentUserInteractionTime;
+}
+
 RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
@@ -984,7 +992,8 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         if (shouldExemptFromWebsiteDataDeletion(statistic.registrableDomain))
             continue;
-        oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
+        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
+            oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
@@ -1008,7 +1017,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsMemoryS
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
-    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval)
+    if (!parameters().isRunningTest && now - oldestUserInteraction < parameters().minimumTimeBetweenDataRecordsRemoval)
         toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
 
     return toDeleteOrRestrictFor;

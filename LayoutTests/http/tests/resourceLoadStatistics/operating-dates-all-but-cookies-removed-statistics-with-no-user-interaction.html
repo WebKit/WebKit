@@ -227,6 +227,9 @@
     }
 
     const originUnderTest  = "http://127.0.0.1:8000";
+    const otherOrigin = "http://localhost:8000"
+    const topFrameOrigin = "http://127.0.0.2:8000";
+    const timeStamp = Math.round((new Date()).getTime() / 1000);
     function finishTest() {
         if (testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
             addOutput("FAIL: " + originUnderTest + " still has user interaction after processing.");
@@ -236,8 +239,12 @@
         });
     }
 
+    // Do not use setEnableFeature here because we want to make sure website data deletion is not skipped
+    // by the presence of parameters().isRunningTest.
     function runTest() {
-        setEnableFeature(true, function () {
+        testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(3600);
+        // Merge a statistic with no user interaction to check the -1 case.
+        testRunner.setStatisticsMergeStatistic(otherOrigin, topFrameOrigin, "", timeStamp, false, -1, false, false, false, 0, function() {
             testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, function () {
                 // insertStatisticsExpiredStatistic(domain, hasHadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent)
                 testRunner.setStatisticsExpiredStatistic(originUnderTest, true, true, false, function() {

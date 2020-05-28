@@ -2539,6 +2539,14 @@ bool ResourceLoadStatisticsDatabaseStore::shouldEnforceSameSiteStrictFor(DomainD
     return false;
 }
 
+Optional<WallTime> ResourceLoadStatisticsDatabaseStore::mostRecentUserInteractionTime(const DomainData& statistic)
+{
+    if (statistic.mostRecentUserInteractionTime.secondsSinceEpoch().value() <= 0)
+        return WTF::nullopt;
+
+    return statistic.mostRecentUserInteractionTime;
+}
+
 RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabaseStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
@@ -2560,7 +2568,8 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
     for (auto& statistic : domains) {
         if (shouldExemptFromWebsiteDataDeletion(statistic.registrableDomain))
             continue;
-        oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
+        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
+            oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
             toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
@@ -2583,7 +2592,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
-    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval)
+    if (!parameters().isRunningTest && now - oldestUserInteraction < parameters().minimumTimeBetweenDataRecordsRemoval)
         toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));

@@ -241,6 +241,7 @@ private:
     bool createUniqueIndices();
     bool createSchema();
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
+    Optional<WallTime> mostRecentUserInteractionTime(const DomainData&);
     
     const String m_storageDirectoryPath;
     mutable WebCore::SQLiteDatabase m_database;

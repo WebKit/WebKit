@@ -1,3 +1,31 @@
+2020-05-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        Minimum user interaction time in ResourceLoadStatistics should handle the case of -1
+        https://bugs.webkit.org/show_bug.cgi?id=212445
+        <rdar://problem/63696470>
+
+        Reviewed by John Wilander.
+
+        30 day website data deletion is covered by operating-dates-all-website-data-removed.html.
+        These new test cases check that deletion occurs when including statistics with no
+        user interaction (most recent user interaction time of -1) and with
+        the check for ITP testing turned off to test using the hour long wait
+        to delete expired data.
+
+        It also deletes
+        http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed.html
+        because 7 day website data deletion is covered by the new test cases.
+
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-database.html: Added.
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction.html: Added.
+
+        * LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-database-expected.txt: Removed.
+        * LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-expected.txt: Removed.
+        * LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed.html: Removed.
+        * LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-database.html: Removed.
+
 2020-05-28  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS ] media/video-play-audio-require-user-gesture.html is a flaky timeout
