@@ -1,3 +1,14 @@
+2020-05-28  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up WebKit.xcodeproj/project.pbxproj
+        https://bugs.webkit.org/show_bug.cgi?id=212491
+
+        Reviewed by Simon Fraser.
+
+        Remove the references to deleted files and merge duplicated folders.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-28  Kate Cheney  <katherine_cheney@apple.com>
 
         Minimum user interaction time in ResourceLoadStatistics should handle the case of -1
