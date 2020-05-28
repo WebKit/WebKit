@@ -1,3 +1,35 @@
+2020-05-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r262143. rdar://problem/63517635
+
+    webkitpy: simctl list may have stderr logging
+    https://bugs.webkit.org/show_bug.cgi?id=212376
+    <rdar://problem/63517635>
+    
+    Unreviewed infrastructure fix.
+    
+    * Scripts/webkitpy/xcode/simulated_device.py:
+    (SimulatedDeviceManager.populate_available_devices): Only parse stdout, log error when
+    json decoding fails.
+    (SimulatedDevice.is_usable): Only parse stdout.
+    (SimulatedDevice.launch_app): Ditto.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262143 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-26  Jonathan Bedard  <jbedard@apple.com>
+
+            webkitpy: simctl list may have stderr logging
+            https://bugs.webkit.org/show_bug.cgi?id=212376
+            <rdar://problem/63517635>
+
+            Unreviewed infrastructure fix.
+
+            * Scripts/webkitpy/xcode/simulated_device.py:
+            (SimulatedDeviceManager.populate_available_devices): Only parse stdout, log error when
+            json decoding fails.
+            (SimulatedDevice.is_usable): Only parse stdout.
+            (SimulatedDevice.launch_app): Ditto.
+
 2020-05-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for rdar://59610140 and rdar://59611168.
