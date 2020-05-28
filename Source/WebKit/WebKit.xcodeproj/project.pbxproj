@@ -12371,6 +12371,11 @@
 				"$(SRCROOT)/Resources/WebContentProcess.xib",
 			);
 			name = "Copy Custom WebContent Resources to Framework Private Headers";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/WebContent.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/Info-WebContent.plist",
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/PrivateHeaders/CustomWebContentResources/WebContentProcess.xib",
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/copy-webcontent-resources-to-private-headers.sh\n";

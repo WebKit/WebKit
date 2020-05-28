@@ -1,3 +1,23 @@
+2020-05-27  Keith Rollin  <krollin@apple.com>
+
+        Add output file specifications to "Copy Custom WebContent Resources to Framework Private Headers" build phase in WebKit/WebContent
+        https://bugs.webkit.org/show_bug.cgi?id=212452
+        <rdar://problem/63700546>
+
+        Reviewed by Timothy Hatcher.
+
+        The "Copy Custom WebContent Resources to Framework Private Headers"
+        build phase in the WebContent target of the WebKit project doesn't
+        advertise the files that it produces. This has consequences on later
+        build phases that consume those files. In particular, XCBuild is left
+        not knowing where those files are coming from, and it fails saying
+        that those files don't exist. Fix this by adding the output files to
+        the "output files" section of the custom build phase.
+
+        No new tests -- this is just a build fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-05-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (PSON): Resizing WKWebView during cross-site navigation results in the page laying out at the wrong size
