@@ -1,3 +1,20 @@
+2020-05-28  Alex Christensen  <achristensen@webkit.org>
+
+        Make fast/loader/create-frame-in-DOMContentLoaded.html less flaky
+        https://bugs.webkit.org/show_bug.cgi?id=212454
+        <rdar://problem/61833551>
+
+        Reviewed by Chris Dumez.
+
+        We have records of this test failing extremely rarely going back at least a few months.
+        I think it may have become flaky related to r253279 because eventLoop().performMicrotaskCheckpoint() is now called more often
+        and the test runner's logic to gather the text nodes for test output is tied up with the load and DOMContentLoaded event handlers
+        if you don't use waitUntilDone/notifyDone.  In any case, this test was added in r90038 to verify incorrect behavior that we've been
+        meaning to fix in the last 9 years, and with waitUntilDone/notifyDone it does that, but without being a burden on our bot watchers
+        who do such good work and help find real problems.
+
+        * fast/loader/create-frame-in-DOMContentLoaded.html:
+
 2020-05-28  Youenn Fablet  <youenn@apple.com>
 
         ReadableByteStream should be enabled/disabled in service workers as done in pages
