@@ -104,6 +104,7 @@ class JSGlobalObject;
     v(Array, nullptr) \
     v(applyFunction, nullptr) \
     v(callFunction, nullptr) \
+    v(hasOwnPropertyFunction, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

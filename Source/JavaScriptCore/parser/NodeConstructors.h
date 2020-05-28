@@ -449,6 +449,11 @@ namespace JSC {
     {
     }
 
+    inline HasOwnPropertyFunctionCallDotNode::HasOwnPropertyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : FunctionCallDotNode(location, base, ident, args, divot, divotStart, divotEnd)
+    {
+    }
+
     inline PostfixNode::PostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator oper, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : PrefixNode(location, expr, oper, divot, divotStart, divotEnd)
     {

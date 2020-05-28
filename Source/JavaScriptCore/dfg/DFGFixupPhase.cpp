@@ -2179,9 +2179,10 @@ private:
             fixEdge<KnownCellUse>(node->child3());
             break;
         }
+        case HasOwnStructureProperty:
         case InStructureProperty: {
             fixEdge<CellUse>(node->child1());
-            fixEdge<StringUse>(node->child2());
+            fixEdge<KnownStringUse>(node->child2());
             fixEdge<KnownCellUse>(node->child3());
             break;
         }

@@ -1828,6 +1828,58 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
     return returnValue.get();
 }
 
+RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> returnValue = generator.finalDestination(dst);
+    RefPtr<RegisterID> base = generator.emitNode(m_base);
+
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(base.get());
+
+    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+
+    RefPtr<RegisterID> function = generator.emitGetById(generator.newTemporary(), base.get(), generator.propertyNames().hasOwnProperty);
+    if (isOptionalChainBase())
+        generator.emitOptionalCheck(function.get());
+
+    RELEASE_ASSERT(m_args->m_listNode && m_args->m_listNode->m_expr && !m_args->m_listNode->m_next);  
+    ExpressionNode* argument = m_args->m_listNode->m_expr;
+    RELEASE_ASSERT(argument->isResolveNode());
+    StructureForInContext* structureContext = nullptr;
+    Variable argumentVariable = generator.variable(static_cast<ResolveNode*>(argument)->identifier());
+    if (argumentVariable.isLocal()) {
+        RegisterID* property = argumentVariable.local();
+        structureContext = generator.findStructureForInContext(property);
+    }
+
+    if (structureContext && structureContext->base() == base.get()) {
+        Ref<Label> realCall = generator.newLabel();
+        Ref<Label> end = generator.newLabel();
+
+        unsigned branchInsnOffset = generator.emitWideJumpIfNotFunctionHasOwnProperty(function.get(), realCall.get());
+        generator.emitHasOwnStructureProperty(returnValue.get(), base.get(), generator.emitNode(argument), structureContext->enumerator());
+        generator.emitJump(end.get());
+
+        generator.emitLabel(realCall.get());
+        {
+            CallArguments callArguments(generator, m_args);
+            generator.move(callArguments.thisRegister(), base.get());
+            generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+        }
+
+        generator.emitLabel(end.get());
+
+        generator.recordHasOwnStructurePropertyInForInLoop(*structureContext, branchInsnOffset, realCall);
+    } else {
+        CallArguments callArguments(generator, m_args);
+        generator.move(callArguments.thisRegister(), base.get());
+        generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+    }
+
+    generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
+    return returnValue.get();
+}
+
 static bool areTrivialApplyArguments(ArgumentsNode* args)
 {
     return !args->m_listNode || !args->m_listNode->m_expr || !args->m_listNode->m_next
@@ -3695,11 +3747,10 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (m_lexpr->isAssignResolveNode())
         generator.emitNode(generator.ignoredResult(), m_lexpr);
 
-    RefPtr<RegisterID> base = generator.newTemporary();
     RefPtr<RegisterID> length;
     RefPtr<RegisterID> enumerator;
 
-    generator.emitNode(base.get(), m_expr);
+    RefPtr<RegisterID> base = generator.emitNode(m_expr);
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
     RefPtr<RegisterID> enumeratorIndex;
 
@@ -3777,7 +3828,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         generator.emitProfileControlFlow(profilerStartOffset);
 
-        generator.pushStructureForInScope(local.get(), enumeratorIndex.get(), propertyName.get(), enumerator.get());
+        generator.pushStructureForInScope(local.get(), enumeratorIndex.get(), propertyName.get(), enumerator.get(), base.get());
         generator.emitNode(dst, m_statement);
         generator.popStructureForInScope(local.get());
 

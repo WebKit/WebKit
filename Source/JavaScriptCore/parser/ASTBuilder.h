@@ -1444,6 +1444,19 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
         // Reflect.apply yet. See https://bugs.webkit.org/show_bug.cgi?id=190668.
         if (!dot->base()->isResolveNode() || static_cast<ResolveNode*>(dot->base())->identifier() != "Reflect")
             node = new (m_parserArena) ApplyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd, callOrApplyChildDepth);
+    } else if (!previousBaseWasSuper 
+        && dot->identifier() == m_vm.propertyNames->hasOwnProperty
+        && args->m_listNode
+        && args->m_listNode->m_expr
+        && args->m_listNode->m_expr->isResolveNode()
+        && !args->m_listNode->m_next
+        && dot->base()->isResolveNode()
+        && static_cast<ResolveNode*>(dot->base())->identifier() != "Reflect") {
+        // We match the AST pattern:
+        // <resolveNode>.hasOwnProperty(<resolveNode>)
+        // i.e:
+        // o.hasOwnProperty(p)
+        node = new (m_parserArena) HasOwnPropertyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);
     }
     if (!node)
         node = new (m_parserArena) FunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);

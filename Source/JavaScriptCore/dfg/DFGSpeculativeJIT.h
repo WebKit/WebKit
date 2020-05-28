@@ -1447,6 +1447,9 @@ public:
     void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
     void compileHasStructureProperty(Node*);
+    template <typename Function>
+    void compileHasOwnStructurePropertyImpl(Node*, Function);
+    void compileHasOwnStructureProperty(Node*);
     void compileInStructureProperty(Node*);
     void compileGetDirectPname(Node*);
     void compileGetPropertyEnumerator(Node*);

@@ -618,7 +618,10 @@ namespace JSC {
         void emit_op_unexpected_load(const Instruction*);
         void emit_op_unsigned(const Instruction*);
         void emit_op_urshift(const Instruction*);
+        template <typename OpCodeType>
+        void emit_op_has_structure_propertyImpl(const Instruction*);
         void emit_op_has_structure_property(const Instruction*);
+        void emit_op_has_own_structure_property(const Instruction*);
         void emit_op_in_structure_property(const Instruction*);
         void emit_op_has_indexed_property(const Instruction*);
         void emit_op_get_direct_pname(const Instruction*);

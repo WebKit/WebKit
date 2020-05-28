@@ -1,3 +1,121 @@
+2020-05-27  Saam Barati  <sbarati@apple.com>
+
+        hasOwnProperty inside structure property for-in loop should use an opcode like has_structure_property but for hasOwnProperty
+        https://bugs.webkit.org/show_bug.cgi?id=212248
+
+        Reviewed by Keith Miller.
+
+        This patch applies the same principles from r262083 but to hasOwnProperty.
+        
+        In this patch, we have a fast path for this syntactic pattern when
+        iterating structure properties:
+        
+        for (let <p> in <o>)
+            if (<o>.hasOwnProperty(<p>))
+        
+        We look for both <p> and <o> as resolve nodes, and we look for them being the
+        same values both in the header and inside the body.
+        
+        Using a simple static analysis, when we detect this pattern, we compare the
+        result of `<o>.hasOwnProperty` to the original hasOwnProperty function. If
+        it's the same, we execute the fast path new bytecode has_own_structure_property,
+        which on the fast path is two loads, a compare and branch, and a materialization of
+        the boolean constant true.
+        
+        On the slow path, has_own_structure_property just executes the runtime code 
+        for hasOwnProperty.
+        
+        In my testing, this seems like it might be 3-5% faster on Speedometer 2's
+        react subtests. I was getting some noise when running the tests locally,
+        so I can't say for certain it's a definite speedup. But the data implies
+        it has a good chance at being a speedup.
+
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/LinkTimeConstant.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitWideJumpIfNotFunctionHasOwnProperty):
+        (JSC::BytecodeGenerator::recordHasOwnStructurePropertyInForInLoop):
+        (JSC::BytecodeGenerator::emitHasOwnStructureProperty):
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        (JSC::StructureForInContext::finalize):
+        (JSC::BytecodeGenerator::findStructureForInContext):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::StructureForInContext::base const):
+        (JSC::StructureForInContext::addHasOwnPropertyJump):
+        * bytecompiler/Label.h:
+        (JSC::GenericBoundLabel::GenericBoundLabel):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::HasOwnPropertyFunctionCallDotNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasStructureProperty):
+        (JSC::DFG::SpeculativeJIT::compileHasOwnStructurePropertyImpl):
+        (JSC::DFG::SpeculativeJIT::compileHasOwnStructureProperty):
+        (JSC::DFG::SpeculativeJIT::compileInStructureProperty):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasOwnStructureProperty):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_structure_propertyImpl):
+        (JSC::JIT::emit_op_has_structure_property):
+        (JSC::JIT::emit_op_has_own_structure_property):
+        (JSC::JIT::emit_op_in_structure_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_structure_propertyImpl):
+        (JSC::JIT::emit_op_has_structure_property):
+        (JSC::JIT::emit_op_has_own_structure_property):
+        (JSC::JIT::emit_op_in_structure_property):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/NodeConstructors.h:
+        (JSC::HasOwnPropertyFunctionCallDotNode::HasOwnPropertyFunctionCallDotNode):
+        * parser/Nodes.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeHasOwnProperty):
+        (JSC::objectProtoFuncHasOwnProperty):
+        * runtime/ObjectPrototype.h:
+
 2020-05-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [ macOS iOS ] REGRESSION(r261600?): imported/w3c/web-platform-tests/html/dom/reflection-embedded.html & imported/w3c/web-platform-tests/html/dom/reflection-forms.html are flaky failures

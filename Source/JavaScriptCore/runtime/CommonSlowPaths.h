@@ -254,6 +254,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_to_property_key);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_enumerable_length);
 SLOW_PATH_HIDDEN_DECL(slow_path_has_generic_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_has_structure_property);
+SLOW_PATH_HIDDEN_DECL(slow_path_has_own_structure_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_in_structure_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_has_indexed_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_direct_pname);

@@ -2274,13 +2274,26 @@ EncodedJSValue JIT_OPERATION operationHasGenericProperty(JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty))));
 }
 
-EncodedJSValue JIT_OPERATION operationInStructureProperty(JSGlobalObject* globalObject, JSCell* base, JSCell* property)
+EncodedJSValue JIT_OPERATION operationInStructureProperty(JSGlobalObject* globalObject, JSCell* base, JSString* property)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, property)));
+}
+
+EncodedJSValue JIT_OPERATION operationHasOwnStructureProperty(JSGlobalObject* globalObject, JSCell* base, JSString* property)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto propertyName = property->toIdentifier(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    scope.release();
+    return JSValue::encode(jsBoolean(objectPrototypeHasOwnProperty(globalObject, base, propertyName)));
 }
 
 size_t JIT_OPERATION operationHasIndexedPropertyByInt(JSGlobalObject* globalObject, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)

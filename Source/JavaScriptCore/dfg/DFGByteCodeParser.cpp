@@ -7824,6 +7824,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_has_structure_property);
         }
 
+        case op_has_own_structure_property: {
+            auto bytecode = currentInstruction->as<OpHasOwnStructureProperty>();
+            set(bytecode.m_dst, addToGraph(HasOwnStructureProperty,
+                get(bytecode.m_base),
+                get(bytecode.m_property),
+                get(bytecode.m_enumerator)));
+            NEXT_OPCODE(op_has_own_structure_property);
+        }
+
         case op_in_structure_property: {
             auto bytecode = currentInstruction->as<OpInStructureProperty>();
             set(bytecode.m_dst, addToGraph(InStructureProperty,

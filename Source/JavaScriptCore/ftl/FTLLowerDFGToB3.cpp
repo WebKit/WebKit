@@ -1477,6 +1477,9 @@ private:
         case HasStructureProperty:
             compileHasStructureProperty();
             break;
+        case HasOwnStructureProperty:
+            compileHasOwnStructureProperty();
+            break;
         case InStructureProperty:
             compileInStructureProperty();
             break;
@@ -12284,6 +12287,11 @@ private:
     void compileHasStructureProperty()
     {
         compileHasStructurePropertyImpl(lowJSValue(m_node->child1()), operationHasGenericProperty);
+    }
+
+    void compileHasOwnStructureProperty()
+    {
+        compileHasStructurePropertyImpl(lowCell(m_node->child1()), operationHasOwnStructureProperty);
     }
 
     void compileInStructureProperty()

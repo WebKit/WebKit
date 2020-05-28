@@ -1206,6 +1206,7 @@ private:
         }
         case HasGenericProperty:
         case HasStructureProperty:
+        case HasOwnStructureProperty:
         case InStructureProperty:
         case HasIndexedProperty: {
             setPrediction(SpecBoolean);

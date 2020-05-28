@@ -1772,6 +1772,7 @@ slowPathOp(has_indexed_property)
 
 if not JSVALUE64
     slowPathOp(has_structure_property)
+    slowPathOp(has_own_structure_property)
     slowPathOp(in_structure_property)
 end
 

@@ -84,33 +84,42 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject* globalObject
     return JSValue::encode(valueObj);
 }
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globalObject, CallFrame* callFrame)
+bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSValue base, const Identifier& propertyName)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
-    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSValue thisValue = base.toThis(globalObject, ECMAMode::strict());
     JSObject* thisObject = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
-        return encodedJSValue();
+        return false;
 
     Structure* structure = thisObject->structure(vm);
     HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
     if (Optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
         ASSERT(*result == thisObject->hasOwnProperty(globalObject, propertyName));
         scope.assertNoException();
-        return JSValue::encode(jsBoolean(*result));
+        return *result;
     }
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool result = thisObject->hasOwnProperty(globalObject, propertyName, slot);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, false);
 
     hasOwnPropertyCache->tryAdd(vm, slot, thisObject, propertyName, result);
-    return JSValue::encode(jsBoolean(result));
+    return result;
+}
+
+EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue base = callFrame->thisValue();
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
+    return JSValue::encode(jsBoolean(objectPrototypeHasOwnProperty(globalObject, base, propertyName)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* globalObject, CallFrame* callFrame)

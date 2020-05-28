@@ -51,5 +51,6 @@ private:
 };
 
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject*, CallFrame*);
+bool objectPrototypeHasOwnProperty(JSGlobalObject*, JSValue base, const Identifier& property);
 
 } // namespace JSC

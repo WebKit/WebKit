@@ -239,18 +239,21 @@ namespace JSC {
     public:
         using GetInst = std::tuple<unsigned, int>;
         using InInst = GetInst;
+        using HasOwnPropertyJumpInst = std::tuple<unsigned, unsigned>;
 
-        StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, unsigned bodyBytecodeStartOffset)
+        StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, RegisterID* base, unsigned bodyBytecodeStartOffset)
             : ForInContext(localRegister, Type::StructureForIn, bodyBytecodeStartOffset)
             , m_indexRegister(indexRegister)
             , m_propertyRegister(propertyRegister)
             , m_enumeratorRegister(enumeratorRegister)
+            , m_base(base)
         {
         }
 
         RegisterID* index() const { return m_indexRegister.get(); }
         RegisterID* property() const { return m_propertyRegister.get(); }
         RegisterID* enumerator() const { return m_enumeratorRegister.get(); }
+        RegisterID* base() const { return m_base.get(); }
 
         void addGetInst(unsigned instIndex, int propertyRegIndex)
         {
@@ -262,14 +265,21 @@ namespace JSC {
             m_inInsts.append(InInst { instIndex, propertyRegIndex });
         }
 
+        void addHasOwnPropertyJump(unsigned branchInstIndex, unsigned genericPathTarget)
+        {
+            m_hasOwnPropertyJumpInsts.append(HasOwnPropertyJumpInst { branchInstIndex, genericPathTarget });
+        }
+
         void finalize(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, unsigned bodyBytecodeEndOffset);
 
     private:
         RefPtr<RegisterID> m_indexRegister;
         RefPtr<RegisterID> m_propertyRegister;
         RefPtr<RegisterID> m_enumeratorRegister;
+        RefPtr<RegisterID> m_base;
         Vector<GetInst> m_getInsts;
         Vector<InInst> m_inInsts;
+        Vector<HasOwnPropertyJumpInst> m_hasOwnPropertyJumpInsts;
     };
 
     class IndexedForInContext : public ForInContext {
@@ -665,6 +675,8 @@ namespace JSC {
 
         void hoistSloppyModeFunctionIfNecessary(const Identifier& functionName);
 
+        StructureForInContext* findStructureForInContext(RegisterID* property);
+
     private:
         void emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
     public:
@@ -870,6 +882,8 @@ namespace JSC {
         void emitJumpIfFalse(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionCall(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionApply(RegisterID* cond, Label& target);
+        unsigned emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target);
+        void recordHasOwnStructurePropertyInForInLoop(StructureForInContext&, unsigned branchOffset, Label& genericPath);
 
         template<typename BinOp, typename JmpOp>
         bool fuseCompareAndJump(RegisterID* cond, Label& target, bool swapOperands = false);
@@ -882,6 +896,7 @@ namespace JSC {
 
         RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
+        RegisterID* emitHasOwnStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
         RegisterID* emitHasGenericProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitGetPropertyEnumerator(RegisterID* dst, RegisterID* base);
         RegisterID* emitGetEnumerableLength(RegisterID* dst, RegisterID* base);
@@ -1010,7 +1025,7 @@ namespace JSC {
 
         void pushIndexedForInScope(RegisterID* local, RegisterID* index);
         void popIndexedForInScope(RegisterID* local);
-        void pushStructureForInScope(RegisterID* local, RegisterID* index, RegisterID* property, RegisterID* enumerator);
+        void pushStructureForInScope(RegisterID* local, RegisterID* index, RegisterID* property, RegisterID* enumerator, RegisterID* base);
         void popStructureForInScope(RegisterID* local);
 
         LabelScope* breakTarget(const Identifier&);
@@ -1074,6 +1089,9 @@ namespace JSC {
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
+    public:
+        void disablePeepholeOptimization() { m_lastOpcodeID = op_end; }
+    private:
         bool canDoPeepholeOptimization() const { return m_lastOpcodeID != op_end; }
 
     public:
@@ -1215,7 +1233,7 @@ namespace JSC {
             auto prevLastOpcodeID = m_lastOpcodeID;
             auto prevLastInstruction = m_lastInstruction;
             m_writer.swap(writer);
-            m_lastOpcodeID = op_end;
+            disablePeepholeOptimization();
             m_lastInstruction = m_writer.ref();
             fn();
             m_writer.swap(writer);

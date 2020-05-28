@@ -1,3 +1,13 @@
+2020-05-27  Saam Barati  <sbarati@apple.com>
+
+        hasOwnProperty inside structure property for-in loop should use an opcode like has_structure_property but for hasOwnProperty
+        https://bugs.webkit.org/show_bug.cgi?id=212248
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/has-own-property-for-in-loop.js: Added.
+        * stress/has-own-property-structure-for-in-loop-correctness.js: Added.
+
 2020-05-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [ macOS iOS ] REGRESSION(r261600?): imported/w3c/web-platform-tests/html/dom/reflection-embedded.html & imported/w3c/web-platform-tests/html/dom/reflection-forms.html are flaky failures

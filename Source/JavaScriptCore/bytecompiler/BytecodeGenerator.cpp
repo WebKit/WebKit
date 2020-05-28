@@ -1291,7 +1291,7 @@ void BytecodeGenerator::emitEnter()
         // to have somewhere to jump to if there is a recursive tail-call that points to this function.
         m_codeBlock->addJumpTarget(instructions().size());
         // This disables peephole optimizations when an instruction is a jump target
-        m_lastOpcodeID = op_end;
+        disablePeepholeOptimization();
     }
 }
 
@@ -1314,7 +1314,7 @@ void BytecodeGenerator::emitCheckTraps()
 void ALWAYS_INLINE BytecodeGenerator::rewind()
 {
     ASSERT(m_lastInstruction.isValid());
-    m_lastOpcodeID = op_end;
+    disablePeepholeOptimization();
     m_writer.rewind(m_lastInstruction);
 }
 
@@ -1456,6 +1456,19 @@ void BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond, Label& targe
 void BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label& target)
 {
     OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::applyFunction), target.bind(this));
+}
+
+unsigned BytecodeGenerator::emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target)
+{
+    OpJneqPtr::emit<OpcodeSize::Wide32>(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::hasOwnPropertyFunction), target.bind(this));
+    return m_lastInstruction.offset();
+}
+
+void BytecodeGenerator::recordHasOwnStructurePropertyInForInLoop(StructureForInContext& structureContext, unsigned branchOffset, Label& genericPath)
+{
+    RELEASE_ASSERT(genericPath.isBound());
+    RELEASE_ASSERT(!genericPath.isForward());
+    structureContext.addHasOwnPropertyJump(branchOffset, genericPath.location());
 }
 
 bool BytecodeGenerator::hasConstant(const Identifier& ident) const
@@ -4328,6 +4341,12 @@ RegisterID* BytecodeGenerator::emitHasStructureProperty(RegisterID* dst, Registe
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitHasOwnStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator)
+{
+    OpHasOwnStructureProperty::emit(this, dst, base, propertyName, enumerator);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitGetPropertyEnumerator(RegisterID* dst, RegisterID* base)
 {
     OpGetPropertyEnumerator::emit(this, dst, base);
@@ -4514,12 +4533,12 @@ void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
     }
 }
 
-void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
+void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, RegisterID* baseRegister)
 {
     if (!localRegister)
         return;
     unsigned bodyBytecodeStartOffset = instructions().size();
-    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister, bodyBytecodeStartOffset)));
+    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister, baseRegister, bodyBytecodeStartOffset)));
 }
 
 void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)
@@ -5185,8 +5204,7 @@ ALWAYS_INLINE void rewriteOp(BytecodeGenerator& generator, TupleType& instTuple)
 
     auto bytecode = instruction->as<OldOpType>();
 
-    // disable peephole optimizations
-    generator.m_lastOpcodeID = op_end;
+    generator.disablePeepholeOptimization();
 
     // Change the opcode to get_by_val.
     // 1. dst stays the same.
@@ -5221,6 +5239,26 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
 
     for (const auto& instTuple : m_inInsts)
         rewriteOp<OpInStructureProperty>(generator, instTuple);
+
+    for (const auto& hasOwnPropertyTuple : m_hasOwnPropertyJumpInsts) {
+        static_assert(sizeof(OpJmp) <= sizeof(OpJneqPtr));
+        unsigned branchInstIndex = std::get<0>(hasOwnPropertyTuple);
+        unsigned newBranchTarget = std::get<1>(hasOwnPropertyTuple);
+
+        auto instruction = generator.m_writer.ref(branchInstIndex);
+        RELEASE_ASSERT(instruction->is<OpJneqPtr>());
+        RELEASE_ASSERT(instruction->isWide32());
+        auto end = branchInstIndex + instruction->size();
+
+        generator.m_writer.seek(branchInstIndex);
+
+        generator.disablePeepholeOptimization();
+
+        OpJmp::emit(&generator, BoundLabel(static_cast<int>(newBranchTarget) - static_cast<int>(branchInstIndex)));
+
+        while (generator.m_writer.position() < end)
+            OpNop::emit<OpcodeSize::Narrow>(&generator);
+    }
 
     generator.m_writer.seek(generator.m_writer.size());
     if (generator.m_lastInstruction.offset() + generator.m_lastInstruction->size() != generator.m_writer.size()) {
@@ -5268,6 +5306,22 @@ void StaticPropertyAnalysis::record()
 void BytecodeGenerator::emitToThis()
 {
     OpToThis::emit(this, kill(&m_thisRegister), ecmaMode());
+}
+
+StructureForInContext* BytecodeGenerator::findStructureForInContext(RegisterID* property)
+{
+    for (size_t i = m_forInContextStack.size(); i--; ) {
+        ForInContext& context = m_forInContextStack[i].get();
+        if (context.local() != property)
+            continue;
+
+        if (!context.isStructureForInContext())
+            break;
+
+        return &context.asStructureForInContext();
+    }
+
+    return nullptr;
 }
 
 } // namespace JSC

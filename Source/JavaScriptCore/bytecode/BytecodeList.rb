@@ -1105,6 +1105,14 @@ op :has_structure_property,
         enumerator: VirtualRegister,
     }
 
+op :has_own_structure_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+        enumerator: VirtualRegister,
+    }
+
 op :in_structure_property,
     args: {
         dst: VirtualRegister,

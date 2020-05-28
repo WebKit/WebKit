@@ -2868,6 +2868,10 @@ llintOpWithReturn(op_has_structure_property, OpHasStructureProperty, macro (size
     hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_has_structure_property)
 end)
 
+llintOpWithReturn(op_has_own_structure_property, OpHasOwnStructureProperty, macro (size, get, dispatch, return)
+    hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_has_own_structure_property)
+end)
+
 llintOpWithReturn(op_in_structure_property, OpInStructureProperty, macro (size, get, dispatch, return)
     hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_in_structure_property)
 end)

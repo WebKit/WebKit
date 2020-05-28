@@ -12818,15 +12818,13 @@ void SpeculativeJIT::compileHasStructureProperty(Node* node)
         MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::cachedStructureIDOffset())));
 
     moveTrueTo(resultRegs.payloadGPR());
-    MacroAssembler::Jump done = m_jit.jump();
-
-    done.link(&m_jit);
 
     addSlowPathGenerator(slowPathCall(wrongStructure, this, operationHasGenericProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyGPR));
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
 
-void SpeculativeJIT::compileInStructureProperty(Node* node)
+template <typename Function>
+void SpeculativeJIT::compileHasOwnStructurePropertyImpl(Node* node, Function slowPath)
 {
     SpeculateCellOperand base(this, node->child1());
     SpeculateCellOperand property(this, node->child2());
@@ -12845,12 +12843,19 @@ void SpeculativeJIT::compileInStructureProperty(Node* node)
         MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::cachedStructureIDOffset())));
 
     moveTrueTo(resultRegs.payloadGPR());
-    MacroAssembler::Jump done = m_jit.jump();
 
-    done.link(&m_jit);
-
-    addSlowPathGenerator(slowPathCall(wrongStructure, this, operationInStructureProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR));
+    addSlowPathGenerator(slowPathCall(wrongStructure, this, slowPath, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyGPR));
     blessedBooleanResult(resultRegs.payloadGPR(), node);
+}
+
+void SpeculativeJIT::compileHasOwnStructureProperty(Node* node)
+{
+    compileHasOwnStructurePropertyImpl(node, operationHasOwnStructureProperty);
+}
+
+void SpeculativeJIT::compileInStructureProperty(Node* node)
+{
+    compileHasOwnStructurePropertyImpl(node, operationInStructureProperty);
 }
 
 void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)

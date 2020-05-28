@@ -99,7 +99,8 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject*, EncodedJ
 EncodedJSValue JIT_OPERATION operationGetPrototypeOf(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(JSGlobalObject*, EncodedJSValue, JSCell*);
-EncodedJSValue JIT_OPERATION operationInStructureProperty(JSGlobalObject*, JSCell*, JSCell*);
+EncodedJSValue JIT_OPERATION operationHasOwnStructureProperty(JSGlobalObject*, JSCell*, JSString*);
+EncodedJSValue JIT_OPERATION operationInStructureProperty(JSGlobalObject*, JSCell*, JSString*);
 size_t JIT_OPERATION operationHasIndexedPropertyByInt(JSGlobalObject*, JSCell*, int32_t, int32_t);
 JSCell* JIT_OPERATION operationGetPropertyEnumerator(JSGlobalObject*, EncodedJSValue);
 JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(JSGlobalObject*, JSCell*);
