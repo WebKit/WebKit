@@ -6766,3 +6766,62 @@ TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
 }
 
 #endif // PLATFORM(MAC)
+
+
+static const char* responsivePageBytes = R"PSONRESOURCE(
+<meta name="viewport" content="width=device-width, initial-scale=1">
+)PSONRESOURCE";
+
+TEST(ProcessSwap, ResizeWebViewDuringCrossSiteProvisionalNavigation)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:responsivePageBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:responsivePageBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView configuration].preferences.fraudulentWebsiteWarningEnabled = NO;
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    __block bool finishedRunningScript = false;
+    [webView evaluateJavaScript:@"window.innerWidth" completionHandler:^(id result, NSError *error) {
+        NSNumber *width = (NSNumber *)result;
+        EXPECT_EQ(800, [width intValue]);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+    finishedRunningScript = false;
+
+    delegate->didStartProvisionalNavigationHandler = ^{
+        EXPECT_NE(0, [webView _provisionalWebProcessIdentifier]);
+        [webView setFrame:CGRectMake(0, 0, 200, 200)];
+    };
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView evaluateJavaScript:@"window.innerWidth" completionHandler:^(id result, NSError *error) {
+            NSNumber *width = (NSNumber *)result;
+            EXPECT_EQ(200, [width intValue]);
+            finishedRunningScript = true;
+        }];
+        TestWebKitAPI::Util::run(&finishedRunningScript);
+    }];
+}

@@ -905,11 +905,12 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     if (m_logger)
         m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
 
+    m_hasRunningProcess = true;
+
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
     ASSERT(!m_mainFrame);
     m_mainFrame = provisionalPage->mainFrame();
-    m_hasRunningProcess = true;
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
@@ -1031,6 +1032,7 @@ void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingAre
         return;
 
     m_drawingArea->startReceivingMessages();
+    m_drawingArea->setSize(viewSize());
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree) {

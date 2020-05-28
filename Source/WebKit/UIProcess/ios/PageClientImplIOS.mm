@@ -119,10 +119,7 @@ WebCore::FloatPoint PageClientImpl::viewScrollPosition()
 
 IntSize PageClientImpl::viewSize()
 {
-    if (UIScrollView *scroller = [m_contentView _scroller])
-        return IntSize(scroller.bounds.size);
-
-    return IntSize([m_contentView bounds].size);
+    return IntSize([m_webView bounds].size);
 }
 
 bool PageClientImpl::isViewWindowActive()

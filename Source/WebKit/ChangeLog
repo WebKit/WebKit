@@ -1,3 +1,28 @@
+2020-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (PSON): Resizing WKWebView during cross-site navigation results in the page laying out at the wrong size
+        https://bugs.webkit.org/show_bug.cgi?id=212434
+        <rdar://problem/51621621>
+
+        Reviewed by Chris Dumez.
+
+        New API test: ProcessSwap.ResizeWebViewDuringCrossSiteProvisionalNavigation.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToProvisionalPage):
+        Set m_hasRunningProcess before calling setDrawingArea, instead of immediately after,
+        so that setDrawingArea can call methods that check m_hasRunningProcess.
+
+        (WebKit::WebPageProxy::setDrawingArea):
+        When swapping DrawingAreas, push the current view size down. DrawingArea
+        is initially created with a size, but the size can change while the DrawingArea
+        is still provisional.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::viewSize):
+        Simplify this implementation now that we don't ever need to support WKContentView
+        outside of WKWebView (since 2014 or so).
+
 2020-05-27  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r260318): [WPE][GTK] Uninitialized memory read in MemoryPressureMonitor

@@ -1,3 +1,15 @@
+2020-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (PSON): Resizing WKWebView during cross-site navigation results in the page laying out at the wrong size
+        https://bugs.webkit.org/show_bug.cgi?id=212434
+        <rdar://problem/51621621>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        Add a test ensuring that we correctly update the view size if it changes
+        during the provisional phase of the navigation.
+
 2020-05-27  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. A couple transformations missing from r262214.
