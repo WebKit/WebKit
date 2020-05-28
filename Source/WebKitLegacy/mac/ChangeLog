@@ -1,3 +1,40 @@
+2020-05-28  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up build fix: [Cocoa] Pass all defines from Platform.h to various scripts, not just the ones from .xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=212451
+
+        Fixes the following build error:
+
+            PhaseScriptExecution Migrate\ Headers BUILD_DIR/WebKitLegacy.build/Debug/WebKitLegacy.build/Script-1C6CB0510AA63EB000D23BFD.sh
+                cd SOURCE_DIR/Source/WebKitLegacy
+                /bin/sh -c BUILD_DIR/WebKitLegacy.build/Debug/WebKitLegacy.build/Script-1C6CB0510AA63EB000D23BFD.sh
+            clang: warning: no such sysroot directory: 'macosx.internal' [-Wmissing-sysroot]
+            In file included from <built-in>:1:
+            In file included from BUILD_DIR/Debug/usr/local/include/wtf/Platform.h:44:
+            BUILD_DIR/Debug/usr/local/include/wtf/PlatformOS.h:36:10: fatal error: 'Availability.h' file not found
+            #include <Availability.h>
+                     ^~~~~~~~~~~~~~~~
+            1 error generated.
+            sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/" BUILD_DIR/Debug/DerivedSources/WebKitLegacy/WebCorePrivateHeaders/WebKitAvailability.h > BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders/WebKitAvailability.h; touch BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders
+            sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/" BUILD_DIR/Debug/DerivedSources/WebKitLegacy/WebCorePrivateHeaders/WebScriptObject.h > BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders/WebScriptObject.h; touch BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders
+            sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/" BUILD_DIR/Debug/DerivedSources/WebKitLegacy/WebCorePrivateHeaders/npapi.h > BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders/npapi.h; touch BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders
+            sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/" BUILD_DIR/Debug/DerivedSources/WebKitLegacy/WebCorePrivateHeaders/npfunctions.h > BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders/npfunctions.h; touch BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders
+            sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/" BUILD_DIR/Debug/DerivedSources/WebKitLegacy/WebCorePrivateHeaders/npruntime.h > BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders/npruntime.h; touch BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders
+            sed -E -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/" BUILD_DIR/Debug/DerivedSources/WebKitLegacy/WebCorePrivateHeaders/nptypes.h > BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders/nptypes.h; touch BUILD_DIR/Debug/WebKitLegacy.framework/Versions/A/PrivateHeaders
+            clang: warning: no such sysroot directory: 'macosx.internal' [-Wmissing-sysroot]
+            In file included from <built-in>:1:
+            In file included from BUILD_DIR/Debug/usr/local/include/wtf/Platform.h:44:
+            BUILD_DIR/Debug/usr/local/include/wtf/PlatformOS.h:36:10: fatal error: 'Availability.h' file not found
+            #include <Availability.h>
+                     ^~~~~~~~~~~~~~~~
+            1 error generated.
+            make[4]: Nothing to be done for `reexport_headers'.
+            Command /bin/sh emitted errors but did not return a nonzero exit code to indicate failure
+
+        * migrate-headers.sh: Pass SDKROOT environment variable on the
+        command-line `make` invocations after r262245 added code to
+        MigrateHeaders.make to set -isysroot based on the SDKROOT value.
+
 2020-05-27  Darin Adler  <darin@apple.com>
 
         [Cocoa] Pass all defines from Platform.h to various scripts, not just the ones from .xcconfig
