@@ -131,8 +131,6 @@ using namespace PAL;
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaStreamAVFObjC
 
-static const double rendererLatency = 0.02;
-
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
     , m_clock(PAL::Clock::create())
@@ -229,15 +227,6 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 #pragma mark -
 #pragma mark AVSampleBuffer Methods
 
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::calculateTimelineOffset(const MediaSample& sample, double latency)
-{
-    MediaTime sampleTime = sample.presentationTime();
-    MediaTime timelineOffset = streamTime() - sampleTime + MediaTime::createWithDouble(latency);
-    if (timelineOffset.timeScale() != sampleTime.timeScale())
-        timelineOffset = PAL::toMediaTime(CMTimeConvertScale(PAL::toCMTime(timelineOffset), sampleTime.timeScale(), kCMTimeRoundingMethod_Default));
-    return timelineOffset;
-}
-
 CGAffineTransform MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatrix(MediaSample& sample, bool forceUpdate)
 {
     if (!forceUpdate && m_transformIsValid)
@@ -261,25 +250,18 @@ CGAffineTransform MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatri
     return m_videoTransform;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSample& sample)
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sample)
 {
-    if (m_sampleBufferDisplayLayer) {
-        if (m_sampleBufferDisplayLayer->didFail())
-            return;
+    if (!m_sampleBufferDisplayLayer || m_sampleBufferDisplayLayer->didFail())
+        return;
 
-        if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
-            m_videoRotation = sample.videoRotation();
-            m_videoMirrored = sample.videoMirrored();
-            m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(sample, true));
-            updateDisplayLayer();
-        }
-        m_sampleBufferDisplayLayer->enqueueSample(sample);
+    if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
+        m_videoRotation = sample.videoRotation();
+        m_videoMirrored = sample.videoMirrored();
+        m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(sample, true));
+        updateDisplayLayer();
     }
-
-    if (!m_hasEverEnqueuedVideoFrame) {
-        m_hasEverEnqueuedVideoFrame = true;
-        m_player->firstVideoFrameAvailable();
-    }
+    m_sampleBufferDisplayLayer->enqueueSample(sample);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample)
@@ -305,30 +287,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sam
     if (m_displayMode != LivePreview && !m_waitingForFirstImage)
         return;
 
-    MediaTime timelineOffset = m_activeVideoTrack->timelineOffset();
-    if (timelineOffset == MediaTime::invalidTime()) {
-        timelineOffset = calculateTimelineOffset(sample, rendererLatency);
-        m_activeVideoTrack->setTimelineOffset(timelineOffset);
+    enqueueVideoSample(sample);
 
-        INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", m_activeVideoTrack->streamTrack().id(), " set to ", timelineOffset);
+    if (!m_hasEverEnqueuedVideoFrame) {
+        m_hasEverEnqueuedVideoFrame = true;
+        m_player->firstVideoFrameAvailable();
     }
 
-    DEBUG_LOG(LOGIDENTIFIER, "original sample = ", sample);
-    sample.offsetTimestampsBy(timelineOffset);
-    DEBUG_LOG(LOGIDENTIFIER, "updated sample = ", sample);
-
-    if (WILL_LOG(WTFLogLevel::Debug)) {
-        MediaTime now = streamTime();
-        double delta = (sample.presentationTime() - now).toDouble();
-        if (delta < 0)
-            DEBUG_LOG(LOGIDENTIFIER, "*NOTE* sample at time is ", now, " is", -delta, " seconds late");
-        else if (delta < .01)
-            DEBUG_LOG(LOGIDENTIFIER, "*NOTE* audio sample at time ", now, " is only ", delta, " seconds early");
-        else if (delta > .3)
-            DEBUG_LOG(LOGIDENTIFIER, "*NOTE* audio sample at time ", now, " is ", delta, " seconds early!");
-    }
-
-    enqueueCorrectedVideoSample(sample);
     if (m_waitingForFirstImage) {
         m_waitingForFirstImage = false;
         updateDisplayMode();
@@ -341,12 +306,8 @@ AudioSourceProvider* MediaPlayerPrivateMediaStreamAVFObjC::audioSourceProvider()
     return nullptr;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer& layer)
+void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&)
 {
-    ASSERT(&layer == m_sampleBufferDisplayLayer.get());
-    UNUSED_PARAM(layer);
-    if (m_activeVideoTrack)
-        m_activeVideoTrack->setTimelineOffset(MediaTime::invalidTime());
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
@@ -354,7 +315,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
     if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer->didFail()) {
         flushRenderers();
         if (m_imagePainter.mediaSample)
-            enqueueCorrectedVideoSample(*m_imagePainter.mediaSample);
+            enqueueVideoSample(*m_imagePainter.mediaSample);
         updateDisplayMode();
     }
 }

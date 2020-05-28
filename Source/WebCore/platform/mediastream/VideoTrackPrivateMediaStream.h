@@ -44,15 +44,11 @@ public:
 
     MediaStreamTrackPrivate& streamTrack() { return m_streamTrack.get(); }
 
-    MediaTime timelineOffset() const { return m_timelineOffset; }
-    void setTimelineOffset(const MediaTime& offset) { m_timelineOffset = offset; }
-
 private:
     VideoTrackPrivateMediaStream(MediaStreamTrackPrivate& track)
         : m_streamTrack(track)
         , m_id(track.id())
         , m_label(track.label())
-        , m_timelineOffset(MediaTime::invalidTime())
     {
     }
 
@@ -66,7 +62,6 @@ private:
     AtomString m_id;
     AtomString m_label;
     int m_index { 0 };
-    MediaTime m_timelineOffset;
 };
 
 }

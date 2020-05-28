@@ -44,7 +44,6 @@ public:
     public:
         virtual ~Client() = default;
         virtual void sampleBufferDisplayLayerStatusDidChange(SampleBufferDisplayLayer&) = 0;
-        virtual WTF::MediaTime streamTime() const = 0;
     };
 
     WEBCORE_EXPORT static std::unique_ptr<SampleBufferDisplayLayer> create(Client&);

@@ -38,6 +38,7 @@
 #import <QuartzCore/CATransaction.h>
 
 #import <wtf/MainThread.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -288,6 +289,8 @@ void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
     [m_sampleBufferDisplayLayer flushAndRemoveImage];
 }
 
+static const double rendererLatency = 0.02;
+
 void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
     if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
@@ -297,11 +300,12 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
     }
 
     auto sampleToEnqueue = sample.platformSample().sample.cmSampleBuffer;
-    RetainPtr<CMSampleBufferRef> newSampleBuffer;
+    auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
 
     // If needed, we set the sample buffer to kCMSampleAttachmentKey_DisplayImmediately as a workaround to rdar://problem/49274083.
     // We clone the sample buffer as modifying the attachments of a sample buffer used elsewhere (encoding e.g.) may not be thread safe.
-    if (m_renderPolicy == RenderPolicy::Immediately) {
+    RetainPtr<CMSampleBufferRef> newSampleBuffer;
+    if (m_renderPolicy == RenderPolicy::Immediately || now >= sample.presentationTime()) {
         newSampleBuffer = MediaSampleAVFObjC::cloneSampleBufferAndSetAsDisplayImmediately(sampleToEnqueue);
         sampleToEnqueue = newSampleBuffer.get();
     }
@@ -311,7 +315,7 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 
 void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
 {
-    if (m_pendingVideoSampleQueue.isEmpty() || !m_client)
+    if (m_pendingVideoSampleQueue.isEmpty())
         return;
 
     if (m_renderPolicy == RenderPolicy::Immediately) {
@@ -319,17 +323,10 @@ void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
         return;
     }
 
-    auto decodeTime = m_pendingVideoSampleQueue.first()->decodeTime();
-    if (!decodeTime.isValid() || decodeTime < MediaTime::zeroTime()) {
-        while (m_pendingVideoSampleQueue.size() > 5)
-            m_pendingVideoSampleQueue.removeFirst();
-
-        return;
-    }
-
-    MediaTime now = m_client->streamTime();
+    auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value());
     while (!m_pendingVideoSampleQueue.isEmpty()) {
-        if (m_pendingVideoSampleQueue.first()->decodeTime() > now)
+        auto presentationTime = m_pendingVideoSampleQueue.first()->presentationTime();
+        if (presentationTime.isValid() && presentationTime > now)
             break;
         m_pendingVideoSampleQueue.removeFirst();
     }

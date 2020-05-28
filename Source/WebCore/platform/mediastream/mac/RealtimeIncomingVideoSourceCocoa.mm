@@ -142,10 +142,8 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
         return;
     }
 
-    // FIXME: Convert timing information from VideoFrame to CMSampleTimingInfo.
-    // For the moment, we will pretend that frames should be rendered asap.
     CMSampleTimingInfo timingInfo;
-    timingInfo.presentationTimeStamp = kCMTimeInvalid;
+    timingInfo.presentationTimeStamp = CMTimeMake(frame.timestamp_us(), 1000000);
     timingInfo.decodeTimeStamp = kCMTimeInvalid;
     timingInfo.duration = kCMTimeInvalid;
 
@@ -165,12 +163,6 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
     }
 
     auto sample = adoptCF(sampleBuffer);
-
-    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
-    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
-    }
 
     unsigned width = frame.width();
     unsigned height = frame.height();

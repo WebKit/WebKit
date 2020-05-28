@@ -1,3 +1,32 @@
+2020-05-28  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeIncomingVideoSourceCocoa::OnFrame should use video frame timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=212402
+
+        Reviewed by Eric Carlson.
+
+        Use timestamp provided from the libwebrtc backend instread of marking the frames as display immediately.
+        Update LocalSampleBufferDisplayLayer to mark the frame as display immediately if their presentation time is in the past since we guarantee the frames are in order.
+
+        Remove the offset correction in MediaPlayerPrivateMediaStreamAVFObjC.
+        This does not work well when the display layer is in GPU process and it is simpler to use the system clock which is what AVSampleBufferDisplayLayser is using if controlTimebase is not set.
+
+        Manually tested.
+
+        * platform/graphics/avfoundation/SampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        (WebCore::LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferDisplayLayerStatusDidChange):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive):
+        * platform/mediastream/VideoTrackPrivateMediaStream.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::OnFrame):
+
 2020-05-28  Antti Koivisto  <antti@apple.com>
 
         Incorrect clipping of absolute and fixed elements inside stacking-context composited overflow:hidden

@@ -137,9 +137,7 @@ private:
 
     void flushRenderers();
 
-    MediaTime calculateTimelineOffset(const MediaSample&, double);
-    
-    void enqueueCorrectedVideoSample(MediaSample&);
+    void enqueueVideoSample(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
 
     void paint(GraphicsContext&, const FloatRect&) override;
@@ -210,7 +208,7 @@ private:
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 
-    MediaTime streamTime() const final;
+    MediaTime streamTime() const;
 
     AudioSourceProvider* audioSourceProvider() final;
 

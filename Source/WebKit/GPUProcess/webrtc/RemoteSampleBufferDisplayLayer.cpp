@@ -98,8 +98,6 @@ void RemoteSampleBufferDisplayLayer::flushAndRemoveImage()
 
 void RemoteSampleBufferDisplayLayer::enqueueSample(WebCore::RemoteVideoSample&& remoteSample)
 {
-    m_mediaTime = remoteSample.time();
-
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
         m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
 
@@ -130,12 +128,6 @@ IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const
 void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidChange(WebCore::SampleBufferDisplayLayer&)
 {
     send(Messages::SampleBufferDisplayLayer::SetDidFail { m_sampleBufferDisplayLayer->didFail() });
-}
-
-WTF::MediaTime RemoteSampleBufferDisplayLayer::streamTime() const
-{
-    // This is only an approximation which will clear all samples enqueued in m_sampleBufferDisplayLayer except the one being pushed.
-    return m_mediaTime;
 }
 
 }

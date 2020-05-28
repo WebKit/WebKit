@@ -1,3 +1,14 @@
+2020-05-28  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeIncomingVideoSourceCocoa::OnFrame should use video frame timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=212402
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::enqueueSample):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+
 2020-05-27  Keith Rollin  <krollin@apple.com>
 
         Add output file specifications to "Copy Custom WebContent Resources to Framework Private Headers" build phase in WebKit/WebContent
