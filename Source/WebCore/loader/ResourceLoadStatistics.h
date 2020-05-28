@@ -58,7 +58,7 @@ struct ResourceLoadStatistics {
     WEBCORE_EXPORT static WallTime reduceTimeResolution(WallTime);
 
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;
-    WEBCORE_EXPORT WARN_UNUSED_RETURN bool decode(KeyedDecoder&, unsigned modelVersion);
+    WEBCORE_EXPORT bool decode(KeyedDecoder&, unsigned modelVersion);
 
     WEBCORE_EXPORT String toString() const;
 

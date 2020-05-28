@@ -1,3 +1,32 @@
+2020-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r260023): ITP sparse plist decoding.
+        <https://bugs.webkit.org/show_bug.cgi?id=212424>
+        <rdar://problem/63683055>
+
+        Reviewed by John Wilander.
+
+        Reverted changeset:
+
+        "KeyedDecoder functions in ResourceLoadStatistics.{cpp,h} should return bool and use WARN_UNUSED_RETURN"
+        https://bugs.webkit.org/show_bug.cgi?id=210414
+        https://trac.webkit.org/changeset/260023
+
+        The revert did not compile due to changes in the KeyedDecoder
+        class that require checking the return value of its methods, so
+        additional changes were made below.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::decodeHashCountedSet):
+        (WebCore::decodeHashSet):
+        - Use IGNORE_WARNINGS_BEGIN("unused-result")/IGNORE_WARNINGS_END
+          to suppress warning about ignoring the return value from
+          KeyeDecoder::decodeObjects() since decoding these objects is
+          optional.
+        (WebCore::decodeOptionSet):
+        - Check return value of KeyedDecoder::decodeUInt64() before
+          setting `optionSet` parameter.
+
 2020-05-27  Andres Gonzalez  <andresg_22@apple.com>
 
         Empty alt attribute does not ignore the image for accessibility clients in Safari.
