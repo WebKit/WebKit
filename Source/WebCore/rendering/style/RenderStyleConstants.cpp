@@ -462,6 +462,15 @@ TextStream& operator<<(TextStream& ts, EmptyCell emptyCell)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, EventListenerRegionType listenerType)
+{
+    switch (listenerType) {
+    case EventListenerRegionType::Wheel: ts << "wheel"; break;
+    case EventListenerRegionType::NonPassiveWheel: ts << "active wheel"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, FillAttachment attachment)
 {
     switch (attachment) {

@@ -1227,6 +1227,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, CursorVisibility);
 WTF::TextStream& operator<<(WTF::TextStream&, DisplayType);
 WTF::TextStream& operator<<(WTF::TextStream&, Edge);
 WTF::TextStream& operator<<(WTF::TextStream&, EmptyCell);
+WTF::TextStream& operator<<(WTF::TextStream&, EventListenerRegionType);
 WTF::TextStream& operator<<(WTF::TextStream&, FillAttachment);
 WTF::TextStream& operator<<(WTF::TextStream&, FillBox);
 WTF::TextStream& operator<<(WTF::TextStream&, FillRepeat);
