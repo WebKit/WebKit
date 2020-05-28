@@ -140,6 +140,7 @@ struct RenderLayerCompositor::CompositingState {
         childState.fullPaintOrderTraversalRequired = fullPaintOrderTraversalRequired;
         childState.descendantsRequireCompositingUpdate = descendantsRequireCompositingUpdate;
         childState.ancestorHasTransformAnimation = ancestorHasTransformAnimation;
+        childState.hasCompositedNonContainedDescendants = false;
 #if ENABLE(CSS_COMPOSITING)
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
 #endif
@@ -149,7 +150,7 @@ struct RenderLayerCompositor::CompositingState {
         return childState;
     }
 
-    void updateWithDescendantStateAndLayer(const CompositingState& childState, const RenderLayer& layer, const OverlapExtent& layerExtent, bool isUnchangedSubtree = false)
+    void updateWithDescendantStateAndLayer(const CompositingState& childState, const RenderLayer& layer, const RenderLayer* ancestorLayer, const OverlapExtent& layerExtent, bool isUnchangedSubtree = false)
     {
         // Subsequent layers in the parent stacking context also need to composite.
         subtreeIsCompositing |= childState.subtreeIsCompositing | layer.isComposited();
@@ -164,6 +165,22 @@ struct RenderLayerCompositor::CompositingState {
         };
         if ((!childState.testingOverlap && !canReenableOverlapTesting()) || layerExtent.knownToBeHaveExtentUncertainty())
             testingOverlap = false;
+
+        auto computeHasCompositedNonContainedDescendants = [&] {
+            if (hasCompositedNonContainedDescendants)
+                return true;
+            if (!ancestorLayer)
+                return false;
+            if (!layer.isComposited())
+                return false;
+            if (!layer.renderer().isOutOfFlowPositioned())
+                return false;
+            if (layer.ancestorLayerIsInContainingBlockChain(*ancestorLayer))
+                return false;
+            return true;
+        };
+
+        hasCompositedNonContainedDescendants = computeHasCompositedNonContainedDescendants();
 
 #if ENABLE(CSS_COMPOSITING)
         if ((layer.isComposited() && layer.hasBlendMode()) || (layer.hasNotIsolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
@@ -184,6 +201,7 @@ struct RenderLayerCompositor::CompositingState {
     bool fullPaintOrderTraversalRequired { false };
     bool descendantsRequireCompositingUpdate { false };
     bool ancestorHasTransformAnimation { false };
+    bool hasCompositedNonContainedDescendants { false };
 #if ENABLE(CSS_COMPOSITING)
     bool hasNotIsolatedCompositedBlendingDescendants { false };
 #endif
@@ -1035,6 +1053,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // Set the flag to say that this layer has compositing children.
     layer.setHasCompositingDescendant(currentState.subtreeIsCompositing);
+    layer.setHasCompositedNonContainedDescendants(currentState.hasCompositedNonContainedDescendants);
 
     // If we just entered compositing mode, the root will have become composited (as long as accelerated compositing is enabled).
     if (layer.isRenderViewLayer()) {
@@ -1104,7 +1123,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // Compute state passed to the caller.
     descendantHas3DTransform |= anyDescendantHas3DTransform || layer.has3DTransform();
-    compositingState.updateWithDescendantStateAndLayer(currentState, layer, layerExtent);
+    compositingState.updateWithDescendantStateAndLayer(currentState, layer, ancestorLayer, layerExtent);
     backingSharingState.updateAfterDescendantTraversal(layer, compositingState.stackingContextAncestor);
 
     bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
@@ -1203,7 +1222,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
     descendantHas3DTransform |= anyDescendantHas3DTransform || layer.has3DTransform();
 
     ASSERT(!currentState.fullPaintOrderTraversalRequired);
-    compositingState.updateWithDescendantStateAndLayer(currentState, layer, layerExtent, true);
+    compositingState.updateWithDescendantStateAndLayer(currentState, layer, ancestorLayer, layerExtent, true);
     backingSharingState.updateAfterDescendantTraversal(layer, compositingState.stackingContextAncestor);
 
     bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
@@ -2837,7 +2856,7 @@ bool RenderLayerCompositor::isCompositedSubframeRenderer(const RenderObject& ren
 // into the hierarchy between this layer and its children in the z-order hierarchy.
 bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer& layer)
 {
-    return layer.hasCompositingDescendant() && layer.renderer().hasClipOrOverflowClip() && !layer.isolatesCompositedBlending();
+    return layer.hasCompositingDescendant() && layer.renderer().hasClipOrOverflowClip() && !layer.isolatesCompositedBlending() && !layer.hasCompositedNonContainedDescendants();
 }
 
 bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObject& renderer) const

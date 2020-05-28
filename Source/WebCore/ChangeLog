@@ -1,3 +1,38 @@
+2020-05-28  Antti Koivisto  <antti@apple.com>
+
+        Incorrect clipping of absolute and fixed elements inside stacking-context composited overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=212419
+        <rdar://problem/55856170>
+
+        Reviewed by Simon Fraser.
+
+        We incorrectly clip descendants that are not in containing block chain.
+        There is already code to do the correct clipping, it just needs be enabled in this case.
+
+        Tests: compositing/overflow/non-contained-descendant-clipping-absolute.html
+               compositing/overflow/non-contained-descendant-clipping-fixed.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h:
+
+        Add hasCompositedNonContainedDescendants bit.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::CompositingState::stateForPaintOrderChildren const):
+        (WebCore::RenderLayerCompositor::CompositingState::updateWithDescendantStateAndLayer):
+
+        Check if the parent layer is for a containing block of this layer.
+
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
+        Update the bit.
+
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+        (WebCore::RenderLayerCompositor::clipsCompositingDescendants):
+
+        Pick the clipping path where descendants are not clipped.
+
 2020-05-27  Noam Rosenthal  <noam@webkit.org>
 
         Implement AccessKeyLabel attribute.

@@ -1,3 +1,16 @@
+2020-05-28  Antti Koivisto  <antti@apple.com>
+
+        Incorrect clipping of absolute and fixed elements inside stacking-context composited overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=212419
+        <rdar://problem/55856170>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/overflow/non-contained-descendant-clipping-absolute-expected.html: Added.
+        * compositing/overflow/non-contained-descendant-clipping-absolute.html: Added.
+        * compositing/overflow/non-contained-descendant-clipping-fixed-expected.html: Added.
+        * compositing/overflow/non-contained-descendant-clipping-fixed.html: Added.
+
 2020-05-27  Noam Rosenthal  <noam@webkit.org>
 
         Implement AccessKeyLabel attribute.

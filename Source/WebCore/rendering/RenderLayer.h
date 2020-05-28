@@ -845,6 +845,7 @@ public:
     bool isComposited() const { return m_backing != nullptr; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     bool hasCompositedMask() const;
+    bool hasCompositedNonContainedDescendants() const { return m_hasCompositedNonContainedDescendants; }
 
     // If non-null, a non-ancestor composited layer that this layer paints into (it is sharing its backing store with this layer).
     RenderLayer* backingProviderLayer() const { return m_backingProviderLayer.get(); }
@@ -1199,6 +1200,7 @@ private:
     void updatePagination();
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
+    void setHasCompositedNonContainedDescendants(bool value) { m_hasCompositedNonContainedDescendants = value; }
     
     void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = static_cast<unsigned>(reason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
@@ -1266,6 +1268,7 @@ private:
                                             // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
 
+    bool m_hasCompositedNonContainedDescendants : 1;
     bool m_hasCompositedScrollingAncestor : 1; // In the layer-order tree.
     bool m_hasCompositedScrollableOverflow : 1;
 
