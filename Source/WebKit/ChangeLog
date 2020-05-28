@@ -1,3 +1,22 @@
+2020-05-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Do not send a second sync request for positition information to the web process if we have not recieved information since the previous sync request.
+        https://bugs.webkit.org/show_bug.cgi?id=212289
+        <rdar://problem/58494578>
+
+        Reviewed by Tim Horton.
+
+        If we have sent a sync requests to the web process for position information, and timed out, and have not
+        received a message with position information in the interim, do not send another sync request. The web
+        process is likely still hung, and there is no reason to hang the UIProcess again if we suspect that it
+        is unlikely that we will receive a reply.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        (-[WKContentView _positionInformationDidChange:]):
+
 2020-05-28  Youenn Fablet  <youenn@apple.com>
 
         ReadableByteStream should be enabled/disabled in service workers as done in pages

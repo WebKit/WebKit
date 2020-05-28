@@ -920,6 +920,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
     _outstandingPositionInformationRequest = WTF::nullopt;
+    _isWaitingOnPositionInformation = NO;
 
     _focusRequiresStrongPasswordAssistance = NO;
     _additionalContextForStrongPasswordAssistance = nil;
@@ -2241,16 +2242,14 @@ static Class tapAndAHalfRecognizerClass()
     if (!connection)
         return NO;
 
-    if ([self _hasValidOutstandingPositionInformationRequest:request])
-        return connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
-
-    bool receivedResponse = _page->sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(_positionInformation), 1_s, IPC::SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply);
-    _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
+    if (_isWaitingOnPositionInformation)
+        return NO;
     
-    // FIXME: We need to clean up these handlers in the event that we are not able to collect data, or if the WebProcess crashes.
-    if (_hasValidPositionInformation)
-        [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
-
+    _isWaitingOnPositionInformation = YES;
+    if (![self _hasValidOutstandingPositionInformationRequest:request])
+        [self requestAsynchronousPositionInformationUpdate:request];
+    bool receivedResponse = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     return _hasValidPositionInformation;
 }
 
@@ -2283,6 +2282,7 @@ static Class tapAndAHalfRecognizerClass()
 {
     ASSERT(_hasValidPositionInformation);
 
+    // FIXME: We need to clean up these handlers in the event that we are not able to collect data, or if the WebProcess crashes.
     ++_positionInformationCallbackDepth;
     auto updatedPositionInformation = _positionInformation;
 
@@ -2865,6 +2865,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
 {
     _outstandingPositionInformationRequest = WTF::nullopt;
+    _isWaitingOnPositionInformation = NO;
 
     WebKit::InteractionInformationAtPosition newInfo = info;
     newInfo.mergeCompatibleOptionalInformation(_positionInformation);
