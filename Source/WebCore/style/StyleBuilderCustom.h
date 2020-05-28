@@ -1645,6 +1645,9 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 
 inline void BuilderCustom::applyInitialGridTemplateAreas(BuilderState& builderState)
 {
+    builderState.style().setImplicitNamedGridColumnLines(RenderStyle::initialNamedGridColumnLines());
+    builderState.style().setImplicitNamedGridRowLines(RenderStyle::initialNamedGridRowLines());
+
     builderState.style().setNamedGridArea(RenderStyle::initialNamedGridArea());
     builderState.style().setNamedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount());
     builderState.style().setNamedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount());
@@ -1652,6 +1655,9 @@ inline void BuilderCustom::applyInitialGridTemplateAreas(BuilderState& builderSt
 
 inline void BuilderCustom::applyInheritGridTemplateAreas(BuilderState& builderState)
 {
+    builderState.style().setImplicitNamedGridColumnLines(builderState.parentStyle().implicitNamedGridColumnLines());
+    builderState.style().setImplicitNamedGridRowLines(builderState.parentStyle().implicitNamedGridRowLines());
+
     builderState.style().setNamedGridArea(builderState.parentStyle().namedGridArea());
     builderState.style().setNamedGridAreaRowCount(builderState.parentStyle().namedGridAreaRowCount());
     builderState.style().setNamedGridAreaColumnCount(builderState.parentStyle().namedGridAreaColumnCount());
@@ -1661,18 +1667,19 @@ inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderStat
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
+        applyInitialGridTemplateAreas(builderState);
         return;
     }
 
     auto& gridTemplateAreasValue = downcast<CSSGridTemplateAreasValue>(value);
     const NamedGridAreaMap& newNamedGridAreas = gridTemplateAreasValue.gridAreaMap();
 
-    NamedGridLinesMap namedGridColumnLines = builderState.style().namedGridColumnLines();
-    NamedGridLinesMap namedGridRowLines = builderState.style().namedGridRowLines();
-    BuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, namedGridColumnLines, ForColumns);
-    BuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, namedGridRowLines, ForRows);
-    builderState.style().setNamedGridColumnLines(namedGridColumnLines);
-    builderState.style().setNamedGridRowLines(namedGridRowLines);
+    NamedGridLinesMap implicitNamedGridColumnLines;
+    NamedGridLinesMap implicitNamedGridRowLines;
+    BuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, implicitNamedGridColumnLines, ForColumns);
+    BuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, implicitNamedGridRowLines, ForRows);
+    builderState.style().setImplicitNamedGridColumnLines(implicitNamedGridColumnLines);
+    builderState.style().setImplicitNamedGridRowLines(implicitNamedGridRowLines);
 
     builderState.style().setNamedGridArea(gridTemplateAreasValue.gridAreaMap());
     builderState.style().setNamedGridAreaRowCount(gridTemplateAreasValue.rowCount());

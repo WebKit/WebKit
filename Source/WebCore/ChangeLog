@@ -1,3 +1,67 @@
+2020-05-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Fix referencing grid line names with auto repeat()
+        https://bugs.webkit.org/show_bug.cgi?id=209572
+
+        Reviewed by Darin Adler.
+
+        This patch fixes multiple problems when referencing named grid lines with the presence of
+        the auto repeat() syntax:
+
+          - If the 1st track was defined with auto repeat(), then the code used to assume that the
+            referenced line appeared after the repeated tracks. But it may actually precede them.
+
+          - If the referenced line appeared both inside and outside the auto repeat(), then it
+            could resolve to the outside raw index, without expanding the auto repeat().
+
+          - The logic for placing a placement property set to both an integer and an identifier
+            was wrong with auto repeat().
+            This patch fixes it by using the same proper logic that was already implemented in
+            OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex
+
+          - The indices of both implicit grid lines defined with grid-template-areas and explicit
+            ones defined with grid-template-rows/columns used to be stored together in
+            NamedGridColumnLines and NamedGridRowLines. This was problematic because the former
+            indices already refer to the final explicit grid so they don't have to be increased when
+            expanding an auto repeat(), but the latter ones should.
+            Therefore, this patch stores the indices in separate fields and uses the correct logic
+            for each one. This also fixes 'grid-template-areas: inherit'.
+
+        This patch is a port of these Chromium patches:
+          - https://crrev.com/744426
+          - https://crrev.com/745925
+          - https://crrev.com/747631
+          - https://crrev.com/747669
+          - https://crrev.com/771984
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-002.html
+               imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-004.html
+               imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-005.html
+               imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-008.html
+               imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-009.html
+
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::NamedLineCollection::NamedLineCollection):
+        (WebCore::NamedLineCollection::hasExplicitNamedLines const):
+        (WebCore::NamedLineCollection::hasNamedLines const):
+        (WebCore::NamedLineCollection::contains const):
+        (WebCore::NamedLineCollection::firstExplicitPosition const):
+        (WebCore::NamedLineCollection::firstPosition const):
+        * rendering/style/GridPositionsResolver.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::implicitNamedGridColumnLines const):
+        (WebCore::RenderStyle::implicitNamedGridRowLines const):
+        (WebCore::RenderStyle::setImplicitNamedGridColumnLines):
+        (WebCore::RenderStyle::setImplicitNamedGridRowLines):
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator== const):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateAreas):
+        (WebCore::Style::BuilderCustom::applyInheritGridTemplateAreas):
+        (WebCore::Style::BuilderCustom::applyValueGridTemplateAreas):
+
 2020-05-28  Andres Gonzalez  <andresg_22@apple.com>
 
         [ macOS Debug ] accessibility/roles-exposed.html is a flaky timeout

@@ -40,5 +40,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-008-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-009-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-placement-using-named-grid-lines-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-template-areas-must-keep-named-columns-order-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/placement/grid-template-areas-must-keep-named-columns-order-001.html

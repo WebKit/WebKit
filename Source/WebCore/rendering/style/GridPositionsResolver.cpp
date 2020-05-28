@@ -64,6 +64,7 @@ NamedLineCollection::NamedLineCollection(const RenderStyle& gridContainerStyle, 
     bool isRowAxis = direction == ForColumns;
     const NamedGridLinesMap& gridLineNames = isRowAxis ? gridContainerStyle.namedGridColumnLines() : gridContainerStyle.namedGridRowLines();
     const NamedGridLinesMap& autoRepeatGridLineNames = isRowAxis ? gridContainerStyle.autoRepeatNamedGridColumnLines() : gridContainerStyle.autoRepeatNamedGridRowLines();
+    const NamedGridLinesMap& implicitGridLineNames = isRowAxis ? gridContainerStyle.implicitNamedGridColumnLines() : gridContainerStyle.implicitNamedGridRowLines();
 
     auto linesIterator = gridLineNames.find(namedLine);
     m_namedLinesIndexes = linesIterator == gridLineNames.end() ? nullptr : &linesIterator->value;
@@ -71,68 +72,84 @@ NamedLineCollection::NamedLineCollection(const RenderStyle& gridContainerStyle, 
     auto autoRepeatLinesIterator = autoRepeatGridLineNames.find(namedLine);
     m_autoRepeatNamedLinesIndexes = autoRepeatLinesIterator == autoRepeatGridLineNames.end() ? nullptr : &autoRepeatLinesIterator->value;
 
+    auto implicitGridLinesIterator = implicitGridLineNames.find(namedLine);
+    m_implicitNamedLinesIndexes = implicitGridLinesIterator == implicitGridLineNames.end() ? nullptr : &implicitGridLinesIterator->value;
+
     m_insertionPoint = isRowAxis ? gridContainerStyle.gridAutoRepeatColumnsInsertionPoint() : gridContainerStyle.gridAutoRepeatRowsInsertionPoint();
 
     m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle.gridAutoRepeatColumns().size() : gridContainerStyle.gridAutoRepeatRows().size();
 }
 
-bool NamedLineCollection::hasNamedLines() const
+bool NamedLineCollection::hasExplicitNamedLines() const
 {
     return m_namedLinesIndexes || m_autoRepeatNamedLinesIndexes;
 }
 
-size_t NamedLineCollection::find(unsigned line) const
+bool NamedLineCollection::hasNamedLines() const
 {
-    if (line > m_lastLine)
-        return notFound;
-
-    if (!m_autoRepeatNamedLinesIndexes || line < m_insertionPoint)
-        return m_namedLinesIndexes ? m_namedLinesIndexes->find(line) : notFound;
-
-    if (line <= (m_insertionPoint + m_autoRepeatTotalTracks)) {
-        size_t localIndex = line - m_insertionPoint;
-
-        size_t indexInFirstRepetition = localIndex % m_autoRepeatTrackListLength;
-        if (indexInFirstRepetition)
-            return m_autoRepeatNamedLinesIndexes->find(indexInFirstRepetition);
-
-        // The line names defined in the last line are also present in the first line of the next
-        // repetition (if any). Same for the line names defined in the first line.
-        if (localIndex == m_autoRepeatTotalTracks)
-            return m_autoRepeatNamedLinesIndexes->find(m_autoRepeatTrackListLength);
-        size_t position = m_autoRepeatNamedLinesIndexes->find(0u);
-        if (position != notFound)
-            return position;
-        return localIndex ? m_autoRepeatNamedLinesIndexes->find(m_autoRepeatTrackListLength) : notFound;
-    }
-
-    return m_namedLinesIndexes ? m_namedLinesIndexes->find(line - (m_autoRepeatTotalTracks - 1)) : notFound;
+    return hasExplicitNamedLines() || m_implicitNamedLinesIndexes;
 }
 
 bool NamedLineCollection::contains(unsigned line) const
 {
     ASSERT(hasNamedLines());
-    return find(line) != notFound;
+
+    if (line > m_lastLine)
+        return false;
+
+    auto contains = [](const Vector<unsigned>* indexes, unsigned line) {
+        return indexes && indexes->find(line) != notFound;
+    };
+
+    if (contains(m_implicitNamedLinesIndexes, line))
+        return true;
+
+    if (!m_autoRepeatTrackListLength || line < m_insertionPoint)
+        return contains(m_namedLinesIndexes, line);
+
+    ASSERT(m_autoRepeatTotalTracks);
+
+    if (line > m_insertionPoint + m_autoRepeatTotalTracks)
+        return contains(m_namedLinesIndexes, line - (m_autoRepeatTotalTracks - 1));
+
+    if (line == m_insertionPoint)
+        return contains(m_namedLinesIndexes, line) || contains(m_autoRepeatNamedLinesIndexes, 0);
+
+    if (line == m_insertionPoint + m_autoRepeatTotalTracks)
+        return contains(m_autoRepeatNamedLinesIndexes, m_autoRepeatTrackListLength) || contains(m_namedLinesIndexes, m_insertionPoint + 1);
+
+    size_t autoRepeatIndexInFirstRepetition = (line - m_insertionPoint) % m_autoRepeatTrackListLength;
+    if (!autoRepeatIndexInFirstRepetition && contains(m_autoRepeatNamedLinesIndexes, m_autoRepeatTrackListLength))
+        return true;
+    return contains(m_autoRepeatNamedLinesIndexes, autoRepeatIndexInFirstRepetition);
+}
+
+unsigned NamedLineCollection::firstExplicitPosition() const
+{
+    ASSERT(hasExplicitNamedLines());
+    unsigned firstLine = 0;
+
+    // If there is no auto repeat(), there must be some named line outside, return the 1st one. Also return it if it precedes the auto-repeat().
+    if (!m_autoRepeatTrackListLength || (m_namedLinesIndexes && m_namedLinesIndexes->at(firstLine) <= m_insertionPoint))
+        return m_namedLinesIndexes->at(firstLine);
+
+    // Return the 1st named line inside the auto repeat(), if any.
+    if (m_autoRepeatNamedLinesIndexes)
+        return m_autoRepeatNamedLinesIndexes->at(firstLine) + m_insertionPoint;
+
+    // The 1st named line must be after the auto repeat().
+    return m_namedLinesIndexes->at(firstLine) + m_autoRepeatTotalTracks - 1;
 }
 
 unsigned NamedLineCollection::firstPosition() const
 {
     ASSERT(hasNamedLines());
     unsigned firstLine = 0;
-
-    if (!m_autoRepeatNamedLinesIndexes) {
-        if (!m_insertionPoint || m_insertionPoint < m_namedLinesIndexes->at(firstLine))
-            return m_namedLinesIndexes->at(firstLine) + (m_autoRepeatTotalTracks ? m_autoRepeatTotalTracks - 1 : 0);
-        return m_namedLinesIndexes->at(firstLine);
-    }
-
-    if (!m_namedLinesIndexes)
-        return m_autoRepeatNamedLinesIndexes->at(firstLine) + m_insertionPoint;
-
-    if (!m_insertionPoint)
-        return std::min(m_namedLinesIndexes->at(firstLine) + m_autoRepeatTotalTracks, m_autoRepeatNamedLinesIndexes->at(firstLine));
-
-    return std::min(m_namedLinesIndexes->at(firstLine), m_autoRepeatNamedLinesIndexes->at(firstLine) + m_insertionPoint);
+    if (!m_implicitNamedLinesIndexes)
+        return firstExplicitPosition();
+    if (!hasExplicitNamedLines())
+        return m_implicitNamedLinesIndexes->at(firstLine);
+    return std::min(firstExplicitPosition(), m_implicitNamedLinesIndexes->at(firstLine));
 }
 
 static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSizingDirection direction, GridPosition& initialPosition, GridPosition& finalPosition)
