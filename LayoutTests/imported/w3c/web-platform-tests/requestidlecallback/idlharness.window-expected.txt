@@ -22,10 +22,10 @@ PASS IdleDeadline must be primary interface of deadline
 PASS Stringification of deadline 
 PASS IdleDeadline interface: deadline must inherit property "timeRemaining()" with the proper type 
 PASS IdleDeadline interface: deadline must inherit property "didTimeout" with the proper type 
-PASS Window interface: operation requestIdleCallback(IdleRequestCallback, IdleRequestOptions) 
+PASS Window interface: operation requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions) 
 PASS Window interface: operation cancelIdleCallback(unsigned long) 
-PASS Window interface: window must inherit property "requestIdleCallback(IdleRequestCallback, IdleRequestOptions)" with the proper type 
-PASS Window interface: calling requestIdleCallback(IdleRequestCallback, IdleRequestOptions) on window with too few arguments must throw TypeError 
+PASS Window interface: window must inherit property "requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions)" with the proper type 
+PASS Window interface: calling requestIdleCallback(IdleRequestCallback, optional IdleRequestOptions) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "cancelIdleCallback(unsigned long)" with the proper type 
 PASS Window interface: calling cancelIdleCallback(unsigned long) on window with too few arguments must throw TypeError 
 

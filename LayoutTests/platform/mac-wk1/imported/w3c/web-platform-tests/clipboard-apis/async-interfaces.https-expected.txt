@@ -38,7 +38,7 @@ FAIL ClipboardItem interface object name assert_own_property: self does not have
 FAIL ClipboardItem interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
 FAIL ClipboardItem interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
 FAIL ClipboardItem interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
-FAIL ClipboardItem interface: operation createDelayed([object Object],[object Object], ClipboardItemOptions) assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
+FAIL ClipboardItem interface: operation createDelayed(record<DOMString, ClipboardItemDelayedCallback>, optional ClipboardItemOptions) assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
 FAIL ClipboardItem interface: attribute presentationStyle assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
 FAIL ClipboardItem interface: attribute lastModified assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing
 FAIL ClipboardItem interface: attribute delayed assert_own_property: self does not have own property "ClipboardItem" expected property "ClipboardItem" missing

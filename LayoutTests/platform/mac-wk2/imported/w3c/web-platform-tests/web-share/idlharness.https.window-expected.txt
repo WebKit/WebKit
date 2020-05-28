@@ -11,7 +11,7 @@ PASS Navigator includes NavigatorContentUtils: member names are unique
 PASS Navigator includes NavigatorCookies: member names are unique 
 PASS Navigator includes NavigatorPlugins: member names are unique 
 PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
-PASS Navigator interface: operation share(ShareData) 
-PASS Navigator interface: navigator must inherit property "share(ShareData)" with the proper type 
-PASS Navigator interface: calling share(ShareData) on navigator with too few arguments must throw TypeError 
+PASS Navigator interface: operation share(optional ShareData) 
+PASS Navigator interface: navigator must inherit property "share(optional ShareData)" with the proper type 
+PASS Navigator interface: calling share(optional ShareData) on navigator with too few arguments must throw TypeError 
 

@@ -8,22 +8,22 @@ FAIL response.formData() with input: ﻿test=﻿ promise_test: Unhandled rejecti
 PASS URLSearchParams constructed with: %EF%BB%BFtest=%EF%BB%BF 
 FAIL request.formData() with input: %EF%BB%BFtest=%EF%BB%BF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: %EF%BB%BFtest=%EF%BB%BF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL URLSearchParams constructed with: %FE%FF assert_array_equals: property 0, expected "\ufffd\ufffd" but got ""
+FAIL URLSearchParams constructed with: %FE%FF assert_array_equals: expected property 0 to be "\ufffd\ufffd" but got "" (expected array ["\ufffd\ufffd", ""] got ["", ""])
 FAIL request.formData() with input: %FE%FF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: %FE%FF promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL URLSearchParams constructed with: %FF%FE assert_array_equals: property 0, expected "\ufffd\ufffd" but got ""
+FAIL URLSearchParams constructed with: %FF%FE assert_array_equals: expected property 0 to be "\ufffd\ufffd" but got "" (expected array ["\ufffd\ufffd", ""] got ["", ""])
 FAIL request.formData() with input: %FF%FE promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: %FF%FE promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 PASS URLSearchParams constructed with: †&†=x 
 FAIL request.formData() with input: †&†=x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: †&†=x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL URLSearchParams constructed with: %C2 assert_array_equals: property 0, expected "\ufffd" but got ""
+FAIL URLSearchParams constructed with: %C2 assert_array_equals: expected property 0 to be "\ufffd" but got "" (expected array ["\ufffd", ""] got ["", ""])
 FAIL request.formData() with input: %C2 promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: %C2 promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL URLSearchParams constructed with: %C2x assert_array_equals: property 0, expected "\ufffdx" but got ""
+FAIL URLSearchParams constructed with: %C2x assert_array_equals: expected property 0 to be "\ufffdx" but got "" (expected array ["\ufffdx", ""] got ["", ""])
 FAIL request.formData() with input: %C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: %C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL URLSearchParams constructed with: _charset_=windows-1252&test=%C2x assert_array_equals: property 1, expected "\ufffdx" but got ""
+FAIL URLSearchParams constructed with: _charset_=windows-1252&test=%C2x assert_array_equals: expected property 1 to be "\ufffdx" but got "" (expected array ["test", "\ufffdx"] got ["test", ""])
 FAIL request.formData() with input: _charset_=windows-1252&test=%C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 FAIL response.formData() with input: _charset_=windows-1252&test=%C2x promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 PASS URLSearchParams constructed with:  

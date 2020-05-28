@@ -1,8 +1,8 @@
 
 PASS Fires cancel event before requestAnimationFrame 
 PASS Fires finish event before requestAnimationFrame 
-FAIL Sorts finish events by composite order assert_array_equals: finish events for various animation type should be sorted by composite order property 0, expected "CSSTransition:finish" but got "ScriptAnimation:finish"
-FAIL Sorts cancel events by composite order assert_array_equals: cancel events should be sorted by composite order property 0, expected "CSSTransition:cancel" but got "ScriptAnimation:cancel"
+FAIL Sorts finish events by composite order assert_array_equals: finish events for various animation type should be sorted by composite order expected property 0 to be "CSSTransition:finish" but got "ScriptAnimation:finish" (expected array ["CSSTransition:finish", "CSSAnimation:finish", "ScriptAnimation:finish"] got ["ScriptAnimation:finish", "CSSTransition:finish", "CSSAnimation:finish"])
+FAIL Sorts cancel events by composite order assert_array_equals: cancel events should be sorted by composite order expected property 0 to be "CSSTransition:cancel" but got "ScriptAnimation:cancel" (expected array ["CSSTransition:cancel", "CSSAnimation:cancel", "ScriptAnimation:cancel", "transitioncancel", "animationcancel"] got ["ScriptAnimation:cancel", "CSSAnimation:cancel", "animationcancel", "CSSTransition:cancel", "transitioncancel"])
 PASS Queues a cancel event in transitionstart event callback 
 PASS Sorts events for the same transition 
 PASS Playback events with the same timeline retain the order in which they arequeued 

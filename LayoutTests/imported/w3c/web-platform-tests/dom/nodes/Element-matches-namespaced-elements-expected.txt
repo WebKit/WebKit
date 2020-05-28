@@ -1,0 +1,8 @@
+
+PASS empty string namespace, matches 
+PASS has a namespace, matches 
+PASS has a namespace, *|, matches 
+PASS empty string namespace, webkitMatchesSelector 
+PASS has a namespace, webkitMatchesSelector 
+PASS has a namespace, *|, webkitMatchesSelector 
+

@@ -14,8 +14,8 @@ PASS ServiceWorker interface: existence and properties of interface prototype ob
 PASS ServiceWorker interface: existence and properties of interface prototype object's @@unscopables property 
 PASS ServiceWorker interface: attribute scriptURL 
 PASS ServiceWorker interface: attribute state 
-PASS ServiceWorker interface: operation postMessage(any, [object Object]) 
-PASS ServiceWorker interface: operation postMessage(any, PostMessageOptions) 
+PASS ServiceWorker interface: operation postMessage(any, sequence<object>) 
+PASS ServiceWorker interface: operation postMessage(any, optional PostMessageOptions) 
 PASS ServiceWorker interface: attribute onstatechange 
 PASS ServiceWorkerRegistration interface: existence and properties of interface object 
 PASS ServiceWorkerRegistration interface object length 
@@ -101,8 +101,8 @@ PASS Client interface: attribute url
 PASS Client interface: attribute frameType 
 PASS Client interface: attribute id 
 PASS Client interface: attribute type 
-PASS Client interface: operation postMessage(any, [object Object]) 
-PASS Client interface: operation postMessage(any, PostMessageOptions) 
+PASS Client interface: operation postMessage(any, sequence<object>) 
+PASS Client interface: operation postMessage(any, optional PostMessageOptions) 
 PASS WindowClient interface: existence and properties of interface object 
 PASS WindowClient interface object length 
 PASS WindowClient interface object name 
@@ -121,15 +121,15 @@ PASS Clients interface: existence and properties of interface prototype object
 PASS Clients interface: existence and properties of interface prototype object's "constructor" property 
 PASS Clients interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Clients interface: operation get(DOMString) 
-PASS Clients interface: operation matchAll(ClientQueryOptions) 
+PASS Clients interface: operation matchAll(optional ClientQueryOptions) 
 PASS Clients interface: operation openWindow(USVString) 
 PASS Clients interface: operation claim() 
 PASS Clients must be primary interface of self.clients 
 PASS Stringification of self.clients 
 PASS Clients interface: self.clients must inherit property "get(DOMString)" with the proper type 
 PASS Clients interface: calling get(DOMString) on self.clients with too few arguments must throw TypeError 
-PASS Clients interface: self.clients must inherit property "matchAll(ClientQueryOptions)" with the proper type 
-PASS Clients interface: calling matchAll(ClientQueryOptions) on self.clients with too few arguments must throw TypeError 
+PASS Clients interface: self.clients must inherit property "matchAll(optional ClientQueryOptions)" with the proper type 
+PASS Clients interface: calling matchAll(optional ClientQueryOptions) on self.clients with too few arguments must throw TypeError 
 PASS Clients interface: self.clients must inherit property "openWindow(USVString)" with the proper type 
 PASS Clients interface: calling openWindow(USVString) on self.clients with too few arguments must throw TypeError 
 PASS Clients interface: self.clients must inherit property "claim()" with the proper type 
@@ -139,44 +139,44 @@ PASS Cache interface object name
 PASS Cache interface: existence and properties of interface prototype object 
 PASS Cache interface: existence and properties of interface prototype object's "constructor" property 
 PASS Cache interface: existence and properties of interface prototype object's @@unscopables property 
-PASS Cache interface: operation match(RequestInfo, CacheQueryOptions) 
-PASS Cache interface: operation matchAll(RequestInfo, CacheQueryOptions) 
+PASS Cache interface: operation match(RequestInfo, optional CacheQueryOptions) 
+PASS Cache interface: operation matchAll(optional RequestInfo, optional CacheQueryOptions) 
 PASS Cache interface: operation add(RequestInfo) 
-PASS Cache interface: operation addAll([object Object]) 
+PASS Cache interface: operation addAll(sequence<RequestInfo>) 
 PASS Cache interface: operation put(RequestInfo, Response) 
-PASS Cache interface: operation delete(RequestInfo, CacheQueryOptions) 
-PASS Cache interface: operation keys(RequestInfo, CacheQueryOptions) 
+PASS Cache interface: operation delete(RequestInfo, optional CacheQueryOptions) 
+PASS Cache interface: operation keys(optional RequestInfo, optional CacheQueryOptions) 
 PASS Cache must be primary interface of self.cacheInstance 
 PASS Stringification of self.cacheInstance 
-PASS Cache interface: self.cacheInstance must inherit property "match(RequestInfo, CacheQueryOptions)" with the proper type 
-PASS Cache interface: calling match(RequestInfo, CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
-PASS Cache interface: self.cacheInstance must inherit property "matchAll(RequestInfo, CacheQueryOptions)" with the proper type 
-PASS Cache interface: calling matchAll(RequestInfo, CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
+PASS Cache interface: self.cacheInstance must inherit property "match(RequestInfo, optional CacheQueryOptions)" with the proper type 
+PASS Cache interface: calling match(RequestInfo, optional CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
+PASS Cache interface: self.cacheInstance must inherit property "matchAll(optional RequestInfo, optional CacheQueryOptions)" with the proper type 
+PASS Cache interface: calling matchAll(optional RequestInfo, optional CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
 PASS Cache interface: self.cacheInstance must inherit property "add(RequestInfo)" with the proper type 
 PASS Cache interface: calling add(RequestInfo) on self.cacheInstance with too few arguments must throw TypeError 
-PASS Cache interface: self.cacheInstance must inherit property "addAll([object Object])" with the proper type 
-PASS Cache interface: calling addAll([object Object]) on self.cacheInstance with too few arguments must throw TypeError 
+PASS Cache interface: self.cacheInstance must inherit property "addAll(sequence<RequestInfo>)" with the proper type 
+PASS Cache interface: calling addAll(sequence<RequestInfo>) on self.cacheInstance with too few arguments must throw TypeError 
 PASS Cache interface: self.cacheInstance must inherit property "put(RequestInfo, Response)" with the proper type 
 PASS Cache interface: calling put(RequestInfo, Response) on self.cacheInstance with too few arguments must throw TypeError 
-PASS Cache interface: self.cacheInstance must inherit property "delete(RequestInfo, CacheQueryOptions)" with the proper type 
-PASS Cache interface: calling delete(RequestInfo, CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
-PASS Cache interface: self.cacheInstance must inherit property "keys(RequestInfo, CacheQueryOptions)" with the proper type 
-PASS Cache interface: calling keys(RequestInfo, CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
+PASS Cache interface: self.cacheInstance must inherit property "delete(RequestInfo, optional CacheQueryOptions)" with the proper type 
+PASS Cache interface: calling delete(RequestInfo, optional CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
+PASS Cache interface: self.cacheInstance must inherit property "keys(optional RequestInfo, optional CacheQueryOptions)" with the proper type 
+PASS Cache interface: calling keys(optional RequestInfo, optional CacheQueryOptions) on self.cacheInstance with too few arguments must throw TypeError 
 PASS CacheStorage interface: existence and properties of interface object 
 PASS CacheStorage interface object length 
 PASS CacheStorage interface object name 
 PASS CacheStorage interface: existence and properties of interface prototype object 
 PASS CacheStorage interface: existence and properties of interface prototype object's "constructor" property 
 PASS CacheStorage interface: existence and properties of interface prototype object's @@unscopables property 
-PASS CacheStorage interface: operation match(RequestInfo, MultiCacheQueryOptions) 
+PASS CacheStorage interface: operation match(RequestInfo, optional MultiCacheQueryOptions) 
 PASS CacheStorage interface: operation has(DOMString) 
 PASS CacheStorage interface: operation open(DOMString) 
 PASS CacheStorage interface: operation delete(DOMString) 
 PASS CacheStorage interface: operation keys() 
 PASS CacheStorage must be primary interface of self.caches 
 PASS Stringification of self.caches 
-PASS CacheStorage interface: self.caches must inherit property "match(RequestInfo, MultiCacheQueryOptions)" with the proper type 
-PASS CacheStorage interface: calling match(RequestInfo, MultiCacheQueryOptions) on self.caches with too few arguments must throw TypeError 
+PASS CacheStorage interface: self.caches must inherit property "match(RequestInfo, optional MultiCacheQueryOptions)" with the proper type 
+PASS CacheStorage interface: calling match(RequestInfo, optional MultiCacheQueryOptions) on self.caches with too few arguments must throw TypeError 
 PASS CacheStorage interface: self.caches must inherit property "has(DOMString)" with the proper type 
 PASS CacheStorage interface: calling has(DOMString) on self.caches with too few arguments must throw TypeError 
 PASS CacheStorage interface: self.caches must inherit property "open(DOMString)" with the proper type 

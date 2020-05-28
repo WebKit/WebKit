@@ -1,3 +1,3 @@
 
-PASS First contentful paint fires due to transform-based intersection with document. 
+FAIL First contentful paint fires due to transform-based intersection with document. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

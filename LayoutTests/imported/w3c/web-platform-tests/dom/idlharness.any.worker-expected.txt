@@ -62,7 +62,7 @@ PASS Event interface: operation preventDefault()
 PASS Event interface: attribute defaultPrevented 
 PASS Event interface: attribute composed 
 PASS Event interface: attribute timeStamp 
-PASS Event interface: operation initEvent(DOMString, boolean, boolean) 
+PASS Event interface: operation initEvent(DOMString, optional boolean, optional boolean) 
 PASS Event must be primary interface of new Event("foo") 
 PASS Stringification of new Event("foo") 
 PASS Event interface: new Event("foo") must inherit property "type" with the proper type 
@@ -86,8 +86,8 @@ PASS Event interface: new Event("foo") must inherit property "defaultPrevented" 
 PASS Event interface: new Event("foo") must inherit property "composed" with the proper type 
 PASS Event interface: new Event("foo") must have own property "isTrusted" 
 PASS Event interface: new Event("foo") must inherit property "timeStamp" with the proper type 
-PASS Event interface: new Event("foo") must inherit property "initEvent(DOMString, boolean, boolean)" with the proper type 
-PASS Event interface: calling initEvent(DOMString, boolean, boolean) on new Event("foo") with too few arguments must throw TypeError 
+PASS Event interface: new Event("foo") must inherit property "initEvent(DOMString, optional boolean, optional boolean)" with the proper type 
+PASS Event interface: calling initEvent(DOMString, optional boolean, optional boolean) on new Event("foo") with too few arguments must throw TypeError 
 PASS CustomEvent interface: existence and properties of interface object 
 PASS CustomEvent interface object length 
 PASS CustomEvent interface object name 
@@ -95,12 +95,12 @@ PASS CustomEvent interface: existence and properties of interface prototype obje
 PASS CustomEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS CustomEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS CustomEvent interface: attribute detail 
-PASS CustomEvent interface: operation initCustomEvent(DOMString, boolean, boolean, any) 
+PASS CustomEvent interface: operation initCustomEvent(DOMString, optional boolean, optional boolean, optional any) 
 PASS CustomEvent must be primary interface of new CustomEvent("foo") 
 PASS Stringification of new CustomEvent("foo") 
 PASS CustomEvent interface: new CustomEvent("foo") must inherit property "detail" with the proper type 
-PASS CustomEvent interface: new CustomEvent("foo") must inherit property "initCustomEvent(DOMString, boolean, boolean, any)" with the proper type 
-PASS CustomEvent interface: calling initCustomEvent(DOMString, boolean, boolean, any) on new CustomEvent("foo") with too few arguments must throw TypeError 
+PASS CustomEvent interface: new CustomEvent("foo") must inherit property "initCustomEvent(DOMString, optional boolean, optional boolean, optional any)" with the proper type 
+PASS CustomEvent interface: calling initCustomEvent(DOMString, optional boolean, optional boolean, optional any) on new CustomEvent("foo") with too few arguments must throw TypeError 
 PASS Event interface: new CustomEvent("foo") must inherit property "type" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "target" with the proper type 
 PASS Event interface: new CustomEvent("foo") must inherit property "srcElement" with the proper type 
@@ -122,23 +122,23 @@ PASS Event interface: new CustomEvent("foo") must inherit property "defaultPreve
 PASS Event interface: new CustomEvent("foo") must inherit property "composed" with the proper type 
 PASS Event interface: new CustomEvent("foo") must have own property "isTrusted" 
 PASS Event interface: new CustomEvent("foo") must inherit property "timeStamp" with the proper type 
-PASS Event interface: new CustomEvent("foo") must inherit property "initEvent(DOMString, boolean, boolean)" with the proper type 
-PASS Event interface: calling initEvent(DOMString, boolean, boolean) on new CustomEvent("foo") with too few arguments must throw TypeError 
+PASS Event interface: new CustomEvent("foo") must inherit property "initEvent(DOMString, optional boolean, optional boolean)" with the proper type 
+PASS Event interface: calling initEvent(DOMString, optional boolean, optional boolean) on new CustomEvent("foo") with too few arguments must throw TypeError 
 PASS EventTarget interface: existence and properties of interface object 
 PASS EventTarget interface object length 
 PASS EventTarget interface object name 
 PASS EventTarget interface: existence and properties of interface prototype object 
 PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
 PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
-PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
+PASS EventTarget interface: operation addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) 
+PASS EventTarget interface: operation removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) 
 PASS EventTarget interface: operation dispatchEvent(Event) 
 PASS EventTarget must be primary interface of new EventTarget() 
 PASS Stringification of new EventTarget() 
-PASS EventTarget interface: new EventTarget() must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on new EventTarget() with too few arguments must throw TypeError 
-PASS EventTarget interface: new EventTarget() must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on new EventTarget() with too few arguments must throw TypeError 
+PASS EventTarget interface: new EventTarget() must inherit property "addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))" with the proper type 
+PASS EventTarget interface: calling addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) on new EventTarget() with too few arguments must throw TypeError 
+PASS EventTarget interface: new EventTarget() must inherit property "removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))" with the proper type 
+PASS EventTarget interface: calling removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) on new EventTarget() with too few arguments must throw TypeError 
 PASS EventTarget interface: new EventTarget() must inherit property "dispatchEvent(Event)" with the proper type 
 PASS EventTarget interface: calling dispatchEvent(Event) on new EventTarget() with too few arguments must throw TypeError 
 PASS EventListener interface: existence and properties of interface object 
@@ -166,10 +166,10 @@ PASS AbortSignal must be primary interface of new AbortController().signal
 PASS Stringification of new AbortController().signal 
 PASS AbortSignal interface: new AbortController().signal must inherit property "aborted" with the proper type 
 PASS AbortSignal interface: new AbortController().signal must inherit property "onabort" with the proper type 
-PASS EventTarget interface: new AbortController().signal must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on new AbortController().signal with too few arguments must throw TypeError 
-PASS EventTarget interface: new AbortController().signal must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on new AbortController().signal with too few arguments must throw TypeError 
+PASS EventTarget interface: new AbortController().signal must inherit property "addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))" with the proper type 
+PASS EventTarget interface: calling addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) on new AbortController().signal with too few arguments must throw TypeError 
+PASS EventTarget interface: new AbortController().signal must inherit property "removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))" with the proper type 
+PASS EventTarget interface: calling removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) on new AbortController().signal with too few arguments must throw TypeError 
 PASS EventTarget interface: new AbortController().signal must inherit property "dispatchEvent(Event)" with the proper type 
 PASS EventTarget interface: calling dispatchEvent(Event) on new AbortController().signal with too few arguments must throw TypeError 
 PASS NodeList interface: existence and properties of interface object 

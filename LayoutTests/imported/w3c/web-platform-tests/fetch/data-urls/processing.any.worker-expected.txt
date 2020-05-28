@@ -7,7 +7,7 @@ PASS "data:"
 PASS "data:text/html" 
 PASS "data:text/html    ;charset=x   " 
 PASS "data:," 
-FAIL "data:,X#X" assert_array_equals: lengths differ, expected 1 got 3
+FAIL "data:,X#X" assert_array_equals: lengths differ, expected array [88] length 1, got object "88,35,88" length 3
 PASS "data:,%FF" 
 PASS "data:text/plain,X" 
 PASS "data:text/plain ,X" 
@@ -52,12 +52,12 @@ PASS "data:;base64,W%0CA"
 PASS "data:x;base64x,WA" 
 PASS "data:x;base64;x,WA" 
 PASS "data:x;base64=x,WA" 
-FAIL "data:; base64,WA" assert_array_equals: lengths differ, expected 1 got 2
-FAIL "data:;  base64,WA" assert_array_equals: lengths differ, expected 1 got 2
-FAIL "data:  ;charset=x   ;  base64,WA" assert_array_equals: lengths differ, expected 1 got 2
+FAIL "data:; base64,WA" assert_array_equals: lengths differ, expected array [88] length 1, got object "87,65" length 2
+FAIL "data:;  base64,WA" assert_array_equals: lengths differ, expected array [88] length 1, got object "87,65" length 2
+FAIL "data:  ;charset=x   ;  base64,WA" assert_array_equals: lengths differ, expected array [88] length 1, got object "87,65" length 2
 PASS "data:;base64;,WA" 
-FAIL "data:;base64 ,WA" assert_array_equals: lengths differ, expected 1 got 2
-FAIL "data:;base64   ,WA" assert_array_equals: lengths differ, expected 1 got 2
+FAIL "data:;base64 ,WA" assert_array_equals: lengths differ, expected array [88] length 1, got object "87,65" length 2
+FAIL "data:;base64   ,WA" assert_array_equals: lengths differ, expected array [88] length 1, got object "87,65" length 2
 PASS "data:;base 64,WA" 
 PASS "data:;BASe64,WA" 
 PASS "data:;%62ase64,WA" 

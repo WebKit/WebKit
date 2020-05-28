@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-FAIL  scheduler: async script and slow-loading defer script assert_array_equals: property 0, expected "external script #2" but got "external script #1"
+FAIL  scheduler: async script and slow-loading defer script assert_array_equals: expected property 0 to be "external script #2" but got "external script #1" (expected array ["external script #2", "external script #1"] got ["external script #1", "external script #2"])
 

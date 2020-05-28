@@ -1,0 +1,4 @@
+Click me!
+
+PASS addEventListener with a platform object 
+

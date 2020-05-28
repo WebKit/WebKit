@@ -2,11 +2,11 @@
 PASS The :read-write pseudo-class must not match input elements to which the readonly attribute does not apply 
 PASS The :read-only pseudo-class must match input elements to which the readonly attribute does not apply 
 PASS The :read-write pseudo-class must match input elements to which the readonly attribute applies, and that are mutable 
-FAIL The :read-only pseudo-class must not match input elements to which the readonly attribute applies, and that are mutable assert_array_equals: lengths differ, expected 1 got 4
+FAIL The :read-only pseudo-class must not match input elements to which the readonly attribute applies, and that are mutable assert_array_equals: lengths differ, expected array [Element node <input id="input2" readonly=""></input>] length 1, got object "[object NodeList]" length 4
 PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been added 
-FAIL The :read-only pseudo-class must match input elements after the readonly attribute has been added assert_array_equals: lengths differ, expected 2 got 5
+FAIL The :read-only pseudo-class must match input elements after the readonly attribute has been added assert_array_equals: lengths differ, expected array [Element node <input id="input1" readonly="readonly"></input>, Element node <input id="input2" readonly=""></input>] length 2, got object "[object NodeList]" length 5
 PASS The :read-write pseudo-class must not match input elements after the readonly attribute has been removed 
-FAIL The :read-only pseudo-class must match input elements after the readonly attribute has been removed assert_array_equals: lengths differ, expected 1 got 4
+FAIL The :read-only pseudo-class must match input elements after the readonly attribute has been removed assert_array_equals: lengths differ, expected array [Element node <input id="input2" readonly=""></input>] length 1, got object "[object NodeList]" length 4
 PASS The :read-write pseudo-class must match textarea elements that do not have a readonly attribute, and that are not disabled 
 PASS The :read-only pseudo-class must match textarea elements that have a readonly attribute, or that are disabled 
 PASS The :read-write pseudo-class must match textarea elements after the readonly attribute has been added 

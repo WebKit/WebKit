@@ -108,233 +108,81 @@ FAIL [|baz='quux' s] with querySelector in standards mode The string did not mat
 FAIL [*|baz='quux' s] in standards mode assert_equals: valid rule didn't parse into CSSOM expected 1 but got 0
 FAIL [*|baz='quux' s] with querySelector in standards mode The string did not match the expected pattern.
 PASS [foo[ /* sanity check (invalid) */ in standards mode 
-FAIL [foo[ /* sanity check (invalid) */ with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo[ /* sanity check (invalid) */ with querySelector in standards mode 
 PASS [foo='bar' i i] in standards mode 
-FAIL [foo='bar' i i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i i] with querySelector in standards mode 
 PASS [foo i ='bar'] in standards mode 
-FAIL [foo i ='bar'] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo i ='bar'] with querySelector in standards mode 
 PASS [foo= i 'bar'] in standards mode 
-FAIL [foo= i 'bar'] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo= i 'bar'] with querySelector in standards mode 
 PASS [i foo='bar'] in standards mode 
-FAIL [i foo='bar'] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [i foo='bar'] with querySelector in standards mode 
 PASS [foo='bar' i\0] /* \0 */ in standards mode 
-FAIL [foo='bar' i\0] /* \0 */ with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i\0] /* \0 */ with querySelector in standards mode 
 PASS [foo='bar' İ] in standards mode 
-FAIL [foo='bar' İ] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' İ] with querySelector in standards mode 
 PASS [foo='bar' ı] in standards mode 
-FAIL [foo='bar' ı] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ı] with querySelector in standards mode 
 PASS [foo='bar' ii] in standards mode 
-FAIL [foo='bar' ii] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ii] with querySelector in standards mode 
 PASS [foo='bar' ij] in standards mode 
-FAIL [foo='bar' ij] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ij] with querySelector in standards mode 
 PASS [foo='bar' j] in standards mode 
-FAIL [foo='bar' j] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' j] with querySelector in standards mode 
 PASS [foo='bar' \\i] in standards mode 
-FAIL [foo='bar' \\i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \\i] with querySelector in standards mode 
 PASS [foo='bar' \\69] in standards mode 
-FAIL [foo='bar' \\69] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \\69] with querySelector in standards mode 
 PASS [foo='bar' i()] in standards mode 
-FAIL [foo='bar' i()] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i()] with querySelector in standards mode 
 PASS [foo='bar' i ()] in standards mode 
-FAIL [foo='bar' i ()] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i ()] with querySelector in standards mode 
 PASS [foo='bar' () i] in standards mode 
-FAIL [foo='bar' () i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' () i] with querySelector in standards mode 
 PASS [foo='bar' (i)] in standards mode 
-FAIL [foo='bar' (i)] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' (i)] with querySelector in standards mode 
 PASS [foo='bar' i []] in standards mode 
-FAIL [foo='bar' i []] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i []] with querySelector in standards mode 
 PASS [foo='bar' [] i] in standards mode 
-FAIL [foo='bar' [] i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' [] i] with querySelector in standards mode 
 PASS [foo='bar' [i]] in standards mode 
-FAIL [foo='bar' [i]] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' [i]] with querySelector in standards mode 
 PASS [foo='bar' i {}] in standards mode 
-FAIL [foo='bar' i {}] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i {}] with querySelector in standards mode 
 PASS [foo='bar' {} i] in standards mode 
-FAIL [foo='bar' {} i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' {} i] with querySelector in standards mode 
 PASS [foo='bar' {i}] in standards mode 
-FAIL [foo='bar' {i}] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' {i}] with querySelector in standards mode 
 PASS [foo='bar' 1i] in standards mode 
-FAIL [foo='bar' 1i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 1i] with querySelector in standards mode 
 PASS [foo='bar' 1] in standards mode 
-FAIL [foo='bar' 1] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 1] with querySelector in standards mode 
 PASS [foo='bar' 'i'] in standards mode 
-FAIL [foo='bar' 'i'] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 'i'] with querySelector in standards mode 
 PASS [foo='bar' url(i)] in standards mode 
-FAIL [foo='bar' url(i)] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' url(i)] with querySelector in standards mode 
 PASS [foo='bar' ,i] in standards mode 
-FAIL [foo='bar' ,i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ,i] with querySelector in standards mode 
 PASS [foo='bar' i,] in standards mode 
-FAIL [foo='bar' i,] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i,] with querySelector in standards mode 
 PASS [foo='bar']i in standards mode 
-FAIL [foo='bar']i with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar']i with querySelector in standards mode 
 PASS [foo='bar' |i] in standards mode 
-FAIL [foo='bar' |i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' |i] with querySelector in standards mode 
 PASS [foo='bar' \|i] in standards mode 
-FAIL [foo='bar' \|i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \|i] with querySelector in standards mode 
 PASS [foo='bar' *|i] in standards mode 
-FAIL [foo='bar' *|i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' *|i] with querySelector in standards mode 
 PASS [foo='bar' \*|i] in standards mode 
-FAIL [foo='bar' \*|i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \*|i] with querySelector in standards mode 
 PASS [foo='bar' *] in standards mode 
-FAIL [foo='bar' *] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' *] with querySelector in standards mode 
 PASS [foo='bar' \*] in standards mode 
-FAIL [foo='bar' \*] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \*] with querySelector in standards mode 
 PASS [foo i] in standards mode 
-FAIL [foo i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo i] with querySelector in standards mode 
 PASS [foo/**/i] in standards mode 
-FAIL [foo/**/i] with querySelector in standards mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo/**/i] with querySelector in standards mode 
 PASS [foo='BAR'] /* sanity check (valid) */ in quirks mode 
 PASS [foo='BAR'] /* sanity check (valid) */ with querySelector in quirks mode 
 PASS [baz='quux'] /* sanity check (valid) */ in quirks mode 
@@ -444,233 +292,81 @@ FAIL [|baz='quux' s] with querySelector in quirks mode The string did not match 
 FAIL [*|baz='quux' s] in quirks mode assert_equals: valid rule didn't parse into CSSOM expected 1 but got 0
 FAIL [*|baz='quux' s] with querySelector in quirks mode The string did not match the expected pattern.
 PASS [foo[ /* sanity check (invalid) */ in quirks mode 
-FAIL [foo[ /* sanity check (invalid) */ with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo[ /* sanity check (invalid) */ with querySelector in quirks mode 
 PASS [foo='bar' i i] in quirks mode 
-FAIL [foo='bar' i i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i i] with querySelector in quirks mode 
 PASS [foo i ='bar'] in quirks mode 
-FAIL [foo i ='bar'] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo i ='bar'] with querySelector in quirks mode 
 PASS [foo= i 'bar'] in quirks mode 
-FAIL [foo= i 'bar'] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo= i 'bar'] with querySelector in quirks mode 
 PASS [i foo='bar'] in quirks mode 
-FAIL [i foo='bar'] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [i foo='bar'] with querySelector in quirks mode 
 PASS [foo='bar' i\0] /* \0 */ in quirks mode 
-FAIL [foo='bar' i\0] /* \0 */ with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i\0] /* \0 */ with querySelector in quirks mode 
 PASS [foo='bar' İ] in quirks mode 
-FAIL [foo='bar' İ] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' İ] with querySelector in quirks mode 
 PASS [foo='bar' ı] in quirks mode 
-FAIL [foo='bar' ı] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ı] with querySelector in quirks mode 
 PASS [foo='bar' ii] in quirks mode 
-FAIL [foo='bar' ii] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ii] with querySelector in quirks mode 
 PASS [foo='bar' ij] in quirks mode 
-FAIL [foo='bar' ij] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ij] with querySelector in quirks mode 
 PASS [foo='bar' j] in quirks mode 
-FAIL [foo='bar' j] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' j] with querySelector in quirks mode 
 PASS [foo='bar' \\i] in quirks mode 
-FAIL [foo='bar' \\i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \\i] with querySelector in quirks mode 
 PASS [foo='bar' \\69] in quirks mode 
-FAIL [foo='bar' \\69] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \\69] with querySelector in quirks mode 
 PASS [foo='bar' i()] in quirks mode 
-FAIL [foo='bar' i()] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i()] with querySelector in quirks mode 
 PASS [foo='bar' i ()] in quirks mode 
-FAIL [foo='bar' i ()] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i ()] with querySelector in quirks mode 
 PASS [foo='bar' () i] in quirks mode 
-FAIL [foo='bar' () i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' () i] with querySelector in quirks mode 
 PASS [foo='bar' (i)] in quirks mode 
-FAIL [foo='bar' (i)] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' (i)] with querySelector in quirks mode 
 PASS [foo='bar' i []] in quirks mode 
-FAIL [foo='bar' i []] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i []] with querySelector in quirks mode 
 PASS [foo='bar' [] i] in quirks mode 
-FAIL [foo='bar' [] i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' [] i] with querySelector in quirks mode 
 PASS [foo='bar' [i]] in quirks mode 
-FAIL [foo='bar' [i]] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' [i]] with querySelector in quirks mode 
 PASS [foo='bar' i {}] in quirks mode 
-FAIL [foo='bar' i {}] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i {}] with querySelector in quirks mode 
 PASS [foo='bar' {} i] in quirks mode 
-FAIL [foo='bar' {} i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' {} i] with querySelector in quirks mode 
 PASS [foo='bar' {i}] in quirks mode 
-FAIL [foo='bar' {i}] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' {i}] with querySelector in quirks mode 
 PASS [foo='bar' 1i] in quirks mode 
-FAIL [foo='bar' 1i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 1i] with querySelector in quirks mode 
 PASS [foo='bar' 1] in quirks mode 
-FAIL [foo='bar' 1] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 1] with querySelector in quirks mode 
 PASS [foo='bar' 'i'] in quirks mode 
-FAIL [foo='bar' 'i'] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 'i'] with querySelector in quirks mode 
 PASS [foo='bar' url(i)] in quirks mode 
-FAIL [foo='bar' url(i)] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' url(i)] with querySelector in quirks mode 
 PASS [foo='bar' ,i] in quirks mode 
-FAIL [foo='bar' ,i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ,i] with querySelector in quirks mode 
 PASS [foo='bar' i,] in quirks mode 
-FAIL [foo='bar' i,] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i,] with querySelector in quirks mode 
 PASS [foo='bar']i in quirks mode 
-FAIL [foo='bar']i with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar']i with querySelector in quirks mode 
 PASS [foo='bar' |i] in quirks mode 
-FAIL [foo='bar' |i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' |i] with querySelector in quirks mode 
 PASS [foo='bar' \|i] in quirks mode 
-FAIL [foo='bar' \|i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \|i] with querySelector in quirks mode 
 PASS [foo='bar' *|i] in quirks mode 
-FAIL [foo='bar' *|i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' *|i] with querySelector in quirks mode 
 PASS [foo='bar' \*|i] in quirks mode 
-FAIL [foo='bar' \*|i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \*|i] with querySelector in quirks mode 
 PASS [foo='bar' *] in quirks mode 
-FAIL [foo='bar' *] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' *] with querySelector in quirks mode 
 PASS [foo='bar' \*] in quirks mode 
-FAIL [foo='bar' \*] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \*] with querySelector in quirks mode 
 PASS [foo i] in quirks mode 
-FAIL [foo i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo i] with querySelector in quirks mode 
 PASS [foo/**/i] in quirks mode 
-FAIL [foo/**/i] with querySelector in quirks mode assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo/**/i] with querySelector in quirks mode 
 PASS [foo='BAR'] /* sanity check (valid) */ in XML 
 PASS [foo='BAR'] /* sanity check (valid) */ with querySelector in XML 
 PASS [baz='quux'] /* sanity check (valid) */ in XML 
@@ -780,231 +476,79 @@ FAIL [|baz='quux' s] with querySelector in XML The string did not match the expe
 FAIL [*|baz='quux' s] in XML assert_equals: valid rule didn't parse into CSSOM expected 1 but got 0
 FAIL [*|baz='quux' s] with querySelector in XML The string did not match the expected pattern.
 PASS [foo[ /* sanity check (invalid) */ in XML 
-FAIL [foo[ /* sanity check (invalid) */ with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo[ /* sanity check (invalid) */ with querySelector in XML 
 PASS [foo='bar' i i] in XML 
-FAIL [foo='bar' i i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i i] with querySelector in XML 
 PASS [foo i ='bar'] in XML 
-FAIL [foo i ='bar'] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo i ='bar'] with querySelector in XML 
 PASS [foo= i 'bar'] in XML 
-FAIL [foo= i 'bar'] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo= i 'bar'] with querySelector in XML 
 PASS [i foo='bar'] in XML 
-FAIL [i foo='bar'] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [i foo='bar'] with querySelector in XML 
 PASS [foo='bar' i\0] /* \0 */ in XML 
-FAIL [foo='bar' i\0] /* \0 */ with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i\0] /* \0 */ with querySelector in XML 
 PASS [foo='bar' İ] in XML 
-FAIL [foo='bar' İ] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' İ] with querySelector in XML 
 PASS [foo='bar' ı] in XML 
-FAIL [foo='bar' ı] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ı] with querySelector in XML 
 PASS [foo='bar' ii] in XML 
-FAIL [foo='bar' ii] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ii] with querySelector in XML 
 PASS [foo='bar' ij] in XML 
-FAIL [foo='bar' ij] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ij] with querySelector in XML 
 PASS [foo='bar' j] in XML 
-FAIL [foo='bar' j] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' j] with querySelector in XML 
 PASS [foo='bar' \\i] in XML 
-FAIL [foo='bar' \\i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \\i] with querySelector in XML 
 PASS [foo='bar' \\69] in XML 
-FAIL [foo='bar' \\69] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \\69] with querySelector in XML 
 PASS [foo='bar' i()] in XML 
-FAIL [foo='bar' i()] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i()] with querySelector in XML 
 PASS [foo='bar' i ()] in XML 
-FAIL [foo='bar' i ()] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i ()] with querySelector in XML 
 PASS [foo='bar' () i] in XML 
-FAIL [foo='bar' () i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' () i] with querySelector in XML 
 PASS [foo='bar' (i)] in XML 
-FAIL [foo='bar' (i)] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' (i)] with querySelector in XML 
 PASS [foo='bar' i []] in XML 
-FAIL [foo='bar' i []] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i []] with querySelector in XML 
 PASS [foo='bar' [] i] in XML 
-FAIL [foo='bar' [] i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' [] i] with querySelector in XML 
 PASS [foo='bar' [i]] in XML 
-FAIL [foo='bar' [i]] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' [i]] with querySelector in XML 
 PASS [foo='bar' i {}] in XML 
-FAIL [foo='bar' i {}] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i {}] with querySelector in XML 
 PASS [foo='bar' {} i] in XML 
-FAIL [foo='bar' {} i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' {} i] with querySelector in XML 
 PASS [foo='bar' {i}] in XML 
-FAIL [foo='bar' {i}] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' {i}] with querySelector in XML 
 PASS [foo='bar' 1i] in XML 
-FAIL [foo='bar' 1i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 1i] with querySelector in XML 
 PASS [foo='bar' 1] in XML 
-FAIL [foo='bar' 1] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 1] with querySelector in XML 
 PASS [foo='bar' 'i'] in XML 
-FAIL [foo='bar' 'i'] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' 'i'] with querySelector in XML 
 PASS [foo='bar' url(i)] in XML 
-FAIL [foo='bar' url(i)] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' url(i)] with querySelector in XML 
 PASS [foo='bar' ,i] in XML 
-FAIL [foo='bar' ,i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' ,i] with querySelector in XML 
 PASS [foo='bar' i,] in XML 
-FAIL [foo='bar' i,] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' i,] with querySelector in XML 
 PASS [foo='bar']i in XML 
-FAIL [foo='bar']i with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar']i with querySelector in XML 
 PASS [foo='bar' |i] in XML 
-FAIL [foo='bar' |i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' |i] with querySelector in XML 
 PASS [foo='bar' \|i] in XML 
-FAIL [foo='bar' \|i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \|i] with querySelector in XML 
 PASS [foo='bar' *|i] in XML 
-FAIL [foo='bar' *|i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' *|i] with querySelector in XML 
 PASS [foo='bar' \*|i] in XML 
-FAIL [foo='bar' \*|i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \*|i] with querySelector in XML 
 PASS [foo='bar' *] in XML 
-FAIL [foo='bar' *] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' *] with querySelector in XML 
 PASS [foo='bar' \*] in XML 
-FAIL [foo='bar' \*] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo='bar' \*] with querySelector in XML 
 PASS [foo i] in XML 
-FAIL [foo i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo i] with querySelector in XML 
 PASS [foo/**/i] in XML 
-FAIL [foo/**/i] with querySelector in XML assert_throws_dom: function () {
-          global.document.querySelector(s);
-        } function "function DOMException() {
-    [native code]
-}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS [foo/**/i] with querySelector in XML 
  

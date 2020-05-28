@@ -1,5 +1,5 @@
 
-FAIL document.applets is always empty assert_array_equals: lengths differ, expected 0 got 1
+FAIL document.applets is always empty assert_array_equals: lengths differ, expected array [] length 0, got object "[object HTMLCollection]" length 1
 FAIL HTMLAppletElement is no more assert_equals: expected (undefined) undefined but got (function) function "function HTMLAppletElement() {
     [native code]
 }"

@@ -7,9 +7,9 @@ PASS Calling
 PASS Empty module without imports argument 
 PASS Empty module with undefined imports argument 
 PASS Empty module with empty imports argument 
-FAIL getter order for imports object assert_array_equals: property 1, expected "global1 getter" but got "memory getter"
+FAIL getter order for imports object assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
 PASS imports 
-FAIL No imports assert_array_equals: matching export keys property 2, expected "table" but got "global"
+FAIL No imports assert_array_equals: matching export keys expected property 2 to be "table" but got "global" (expected array ["fn", "fn2", "table", "global", "global2", "memory"] got ["fn", "fn2", "global", "global2", "memory", "table"])
 FAIL exports and imports assert_false: fn: writable expected false got true
 PASS stray argument 
 

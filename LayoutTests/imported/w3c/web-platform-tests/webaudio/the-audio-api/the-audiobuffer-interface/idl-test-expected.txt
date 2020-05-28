@@ -28,8 +28,8 @@ PASS AudioBuffer interface: attribute length
 PASS AudioBuffer interface: attribute duration 
 PASS AudioBuffer interface: attribute numberOfChannels 
 PASS AudioBuffer interface: operation getChannelData(unsigned long) 
-FAIL AudioBuffer interface: operation copyFromChannel(Float32Array, unsigned long, unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyFromChannel" missing
-FAIL AudioBuffer interface: operation copyToChannel(Float32Array, unsigned long, unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyToChannel" missing
+FAIL AudioBuffer interface: operation copyFromChannel(Float32Array, unsigned long, optional unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyFromChannel" missing
+FAIL AudioBuffer interface: operation copyToChannel(Float32Array, unsigned long, optional unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyToChannel" missing
 PASS AudioBuffer must be primary interface of audio_buffer 
 PASS Stringification of audio_buffer 
 PASS AudioBuffer interface: audio_buffer must inherit property "sampleRate" with the proper type 
@@ -38,8 +38,8 @@ PASS AudioBuffer interface: audio_buffer must inherit property "duration" with t
 PASS AudioBuffer interface: audio_buffer must inherit property "numberOfChannels" with the proper type 
 PASS AudioBuffer interface: audio_buffer must inherit property "getChannelData(unsigned long)" with the proper type 
 PASS AudioBuffer interface: calling getChannelData(unsigned long) on audio_buffer with too few arguments must throw TypeError 
-FAIL AudioBuffer interface: audio_buffer must inherit property "copyFromChannel(Float32Array, unsigned long, unsigned long)" with the proper type assert_inherits: property "copyFromChannel" not found in prototype chain
-FAIL AudioBuffer interface: calling copyFromChannel(Float32Array, unsigned long, unsigned long) on audio_buffer with too few arguments must throw TypeError assert_inherits: property "copyFromChannel" not found in prototype chain
-FAIL AudioBuffer interface: audio_buffer must inherit property "copyToChannel(Float32Array, unsigned long, unsigned long)" with the proper type assert_inherits: property "copyToChannel" not found in prototype chain
-FAIL AudioBuffer interface: calling copyToChannel(Float32Array, unsigned long, unsigned long) on audio_buffer with too few arguments must throw TypeError assert_inherits: property "copyToChannel" not found in prototype chain
+FAIL AudioBuffer interface: audio_buffer must inherit property "copyFromChannel(Float32Array, unsigned long, optional unsigned long)" with the proper type assert_inherits: property "copyFromChannel" not found in prototype chain
+FAIL AudioBuffer interface: calling copyFromChannel(Float32Array, unsigned long, optional unsigned long) on audio_buffer with too few arguments must throw TypeError assert_inherits: property "copyFromChannel" not found in prototype chain
+FAIL AudioBuffer interface: audio_buffer must inherit property "copyToChannel(Float32Array, unsigned long, optional unsigned long)" with the proper type assert_inherits: property "copyToChannel" not found in prototype chain
+FAIL AudioBuffer interface: calling copyToChannel(Float32Array, unsigned long, optional unsigned long) on audio_buffer with too few arguments must throw TypeError assert_inherits: property "copyToChannel" not found in prototype chain
 

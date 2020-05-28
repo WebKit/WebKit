@@ -1,3 +1,3 @@
 
-PASS First contentful paint fires due to pseudo-element image. 
+FAIL First contentful paint fires due to pseudo-element image. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

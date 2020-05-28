@@ -38,7 +38,7 @@ PASS ClipboardItem interface object name
 PASS ClipboardItem interface: existence and properties of interface prototype object 
 PASS ClipboardItem interface: existence and properties of interface prototype object's "constructor" property 
 PASS ClipboardItem interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL ClipboardItem interface: operation createDelayed([object Object],[object Object], ClipboardItemOptions) assert_own_property: interface object missing static operation expected property "createDelayed" missing
+FAIL ClipboardItem interface: operation createDelayed(record<DOMString, ClipboardItemDelayedCallback>, optional ClipboardItemOptions) assert_own_property: interface object missing static operation expected property "createDelayed" missing
 PASS ClipboardItem interface: attribute presentationStyle 
 FAIL ClipboardItem interface: attribute lastModified assert_true: The prototype object must have a property "lastModified" expected true got false
 FAIL ClipboardItem interface: attribute delayed assert_true: The prototype object must have a property "delayed" expected true got false

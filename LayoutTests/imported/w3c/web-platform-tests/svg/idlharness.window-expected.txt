@@ -59,7 +59,7 @@ PASS SVGGraphicsElement interface: existence and properties of interface prototy
 PASS SVGGraphicsElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS SVGGraphicsElement interface: existence and properties of interface prototype object's @@unscopables property 
 PASS SVGGraphicsElement interface: attribute transform 
-PASS SVGGraphicsElement interface: operation getBBox(SVGBoundingBoxOptions) 
+PASS SVGGraphicsElement interface: operation getBBox(optional SVGBoundingBoxOptions) 
 PASS SVGGraphicsElement interface: operation getCTM() 
 PASS SVGGraphicsElement interface: operation getScreenCTM() 
 PASS SVGGraphicsElement interface: attribute requiredExtensions 
@@ -71,8 +71,8 @@ PASS SVGGeometryElement interface: existence and properties of interface prototy
 PASS SVGGeometryElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS SVGGeometryElement interface: existence and properties of interface prototype object's @@unscopables property 
 PASS SVGGeometryElement interface: attribute pathLength 
-PASS SVGGeometryElement interface: operation isPointInFill(DOMPointInit) 
-PASS SVGGeometryElement interface: operation isPointInStroke(DOMPointInit) 
+PASS SVGGeometryElement interface: operation isPointInFill(optional DOMPointInit) 
+PASS SVGGeometryElement interface: operation isPointInStroke(optional DOMPointInit) 
 PASS SVGGeometryElement interface: operation getTotalLength() 
 PASS SVGGeometryElement interface: operation getPointAtLength(float) 
 PASS SVGNumber interface: existence and properties of interface object 
@@ -400,8 +400,8 @@ PASS SVGSVGElement interface: attribute width
 PASS SVGSVGElement interface: attribute height 
 PASS SVGSVGElement interface: attribute currentScale 
 PASS SVGSVGElement interface: attribute currentTranslate 
-PASS SVGSVGElement interface: operation getIntersectionList(DOMRectReadOnly, SVGElement) 
-PASS SVGSVGElement interface: operation getEnclosureList(DOMRectReadOnly, SVGElement) 
+PASS SVGSVGElement interface: operation getIntersectionList(DOMRectReadOnly, SVGElement?) 
+PASS SVGSVGElement interface: operation getEnclosureList(DOMRectReadOnly, SVGElement?) 
 PASS SVGSVGElement interface: operation checkIntersection(SVGElement, DOMRectReadOnly) 
 PASS SVGSVGElement interface: operation checkEnclosure(SVGElement, DOMRectReadOnly) 
 PASS SVGSVGElement interface: operation deselectAll() 
@@ -412,7 +412,7 @@ PASS SVGSVGElement interface: operation createSVGPoint()
 PASS SVGSVGElement interface: operation createSVGMatrix() 
 PASS SVGSVGElement interface: operation createSVGRect() 
 PASS SVGSVGElement interface: operation createSVGTransform() 
-PASS SVGSVGElement interface: operation createSVGTransformFromMatrix(DOMMatrix2DInit) 
+PASS SVGSVGElement interface: operation createSVGTransformFromMatrix(optional DOMMatrix2DInit) 
 PASS SVGSVGElement interface: operation getElementById(DOMString) 
 FAIL SVGSVGElement interface: operation suspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL SVGSVGElement interface: operation unsuspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
@@ -428,10 +428,10 @@ PASS SVGSVGElement interface: objects.svg must inherit property "width" with the
 PASS SVGSVGElement interface: objects.svg must inherit property "height" with the proper type 
 PASS SVGSVGElement interface: objects.svg must inherit property "currentScale" with the proper type 
 FAIL SVGSVGElement interface: objects.svg must inherit property "currentTranslate" with the proper type Unrecognized type DOMPointReadOnly
-PASS SVGSVGElement interface: objects.svg must inherit property "getIntersectionList(DOMRectReadOnly, SVGElement)" with the proper type 
-PASS SVGSVGElement interface: calling getIntersectionList(DOMRectReadOnly, SVGElement) on objects.svg with too few arguments must throw TypeError 
-PASS SVGSVGElement interface: objects.svg must inherit property "getEnclosureList(DOMRectReadOnly, SVGElement)" with the proper type 
-PASS SVGSVGElement interface: calling getEnclosureList(DOMRectReadOnly, SVGElement) on objects.svg with too few arguments must throw TypeError 
+PASS SVGSVGElement interface: objects.svg must inherit property "getIntersectionList(DOMRectReadOnly, SVGElement?)" with the proper type 
+PASS SVGSVGElement interface: calling getIntersectionList(DOMRectReadOnly, SVGElement?) on objects.svg with too few arguments must throw TypeError 
+PASS SVGSVGElement interface: objects.svg must inherit property "getEnclosureList(DOMRectReadOnly, SVGElement?)" with the proper type 
+PASS SVGSVGElement interface: calling getEnclosureList(DOMRectReadOnly, SVGElement?) on objects.svg with too few arguments must throw TypeError 
 PASS SVGSVGElement interface: objects.svg must inherit property "checkIntersection(SVGElement, DOMRectReadOnly)" with the proper type 
 PASS SVGSVGElement interface: calling checkIntersection(SVGElement, DOMRectReadOnly) on objects.svg with too few arguments must throw TypeError 
 PASS SVGSVGElement interface: objects.svg must inherit property "checkEnclosure(SVGElement, DOMRectReadOnly)" with the proper type 
@@ -444,16 +444,16 @@ PASS SVGSVGElement interface: objects.svg must inherit property "createSVGPoint(
 PASS SVGSVGElement interface: objects.svg must inherit property "createSVGMatrix()" with the proper type 
 PASS SVGSVGElement interface: objects.svg must inherit property "createSVGRect()" with the proper type 
 PASS SVGSVGElement interface: objects.svg must inherit property "createSVGTransform()" with the proper type 
-PASS SVGSVGElement interface: objects.svg must inherit property "createSVGTransformFromMatrix(DOMMatrix2DInit)" with the proper type 
-PASS SVGSVGElement interface: calling createSVGTransformFromMatrix(DOMMatrix2DInit) on objects.svg with too few arguments must throw TypeError 
+PASS SVGSVGElement interface: objects.svg must inherit property "createSVGTransformFromMatrix(optional DOMMatrix2DInit)" with the proper type 
+PASS SVGSVGElement interface: calling createSVGTransformFromMatrix(optional DOMMatrix2DInit) on objects.svg with too few arguments must throw TypeError 
 PASS SVGSVGElement interface: objects.svg must inherit property "getElementById(DOMString)" with the proper type 
 PASS SVGSVGElement interface: calling getElementById(DOMString) on objects.svg with too few arguments must throw TypeError 
 PASS SVGSVGElement interface: objects.svg must inherit property "suspendRedraw(unsigned long)" with the proper type 
-FAIL SVGSVGElement interface: calling suspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGSVGElement interface: calling suspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGSVGElement interface: objects.svg must inherit property "unsuspendRedraw(unsigned long)" with the proper type 
-FAIL SVGSVGElement interface: calling unsuspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGSVGElement interface: calling unsuspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGSVGElement interface: objects.svg must inherit property "unsuspendRedrawAll()" with the proper type 
@@ -461,8 +461,8 @@ PASS SVGSVGElement interface: objects.svg must inherit property "forceRedraw()" 
 PASS SVGSVGElement interface: objects.svg must inherit property "viewBox" with the proper type 
 PASS SVGSVGElement interface: objects.svg must inherit property "preserveAspectRatio" with the proper type 
 PASS SVGGraphicsElement interface: objects.svg must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.svg must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.svg with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.svg must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.svg with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.svg must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.svg must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.svg must inherit property "requiredExtensions" with the proper type 
@@ -481,8 +481,8 @@ PASS SVGGElement interface: existence and properties of interface prototype obje
 PASS SVGGElement must be primary interface of objects.g 
 PASS Stringification of objects.g 
 PASS SVGGraphicsElement interface: objects.g must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.g must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.g with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.g must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.g with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.g must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.g must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.g must inherit property "requiredExtensions" with the proper type 
@@ -501,8 +501,8 @@ PASS SVGDefsElement interface: existence and properties of interface prototype o
 PASS SVGDefsElement must be primary interface of objects.defs 
 PASS Stringification of objects.defs 
 PASS SVGGraphicsElement interface: objects.defs must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.defs must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.defs with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.defs must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.defs with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.defs must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.defs must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.defs must inherit property "requiredExtensions" with the proper type 
@@ -564,8 +564,8 @@ PASS Stringification of objects.symbol
 PASS SVGSymbolElement interface: objects.symbol must inherit property "viewBox" with the proper type 
 PASS SVGSymbolElement interface: objects.symbol must inherit property "preserveAspectRatio" with the proper type 
 PASS SVGGraphicsElement interface: objects.symbol must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.symbol must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.symbol with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.symbol with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.symbol must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.symbol must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.symbol must inherit property "requiredExtensions" with the proper type 
@@ -598,8 +598,8 @@ FAIL SVGUseElement interface: objects.use must inherit property "instanceRoot" w
 FAIL SVGUseElement interface: objects.use must inherit property "animatedInstanceRoot" with the proper type assert_inherits: property "animatedInstanceRoot" not found in prototype chain
 PASS SVGUseElement interface: objects.use must inherit property "href" with the proper type 
 PASS SVGGraphicsElement interface: objects.use must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.use must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.use with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.use must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.use with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.use must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.use must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.use must inherit property "requiredExtensions" with the proper type 
@@ -631,8 +631,8 @@ PASS SVGSwitchElement interface: existence and properties of interface prototype
 PASS SVGSwitchElement must be primary interface of objects.switch 
 PASS Stringification of objects.switch 
 PASS SVGGraphicsElement interface: objects.switch must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.switch must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.switch with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.switch must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.switch with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.switch must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.switch must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.switch must inherit property "requiredExtensions" with the proper type 
@@ -684,7 +684,7 @@ PASS SVGTransform interface: constant SVG_TRANSFORM_SKEWY on interface prototype
 PASS SVGTransform interface: attribute type 
 PASS SVGTransform interface: attribute matrix 
 PASS SVGTransform interface: attribute angle 
-PASS SVGTransform interface: operation setMatrix(DOMMatrix2DInit) 
+PASS SVGTransform interface: operation setMatrix(optional DOMMatrix2DInit) 
 PASS SVGTransform interface: operation setTranslate(float, float) 
 PASS SVGTransform interface: operation setScale(float, float) 
 PASS SVGTransform interface: operation setRotate(float, float, float) 
@@ -702,8 +702,8 @@ PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit prope
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "type" with the proper type 
 FAIL SVGTransform interface: objects.svg.createSVGTransform() must inherit property "matrix" with the proper type Unrecognized type DOMMatrix
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "angle" with the proper type 
-PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "setMatrix(DOMMatrix2DInit)" with the proper type 
-PASS SVGTransform interface: calling setMatrix(DOMMatrix2DInit) on objects.svg.createSVGTransform() with too few arguments must throw TypeError 
+PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "setMatrix(optional DOMMatrix2DInit)" with the proper type 
+PASS SVGTransform interface: calling setMatrix(optional DOMMatrix2DInit) on objects.svg.createSVGTransform() with too few arguments must throw TypeError 
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "setTranslate(float, float)" with the proper type 
 PASS SVGTransform interface: calling setTranslate(float, float) on objects.svg.createSVGTransform() with too few arguments must throw TypeError 
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "setScale(float, float)" with the proper type 
@@ -729,7 +729,7 @@ PASS SVGTransformList interface: operation insertItemBefore(SVGTransform, unsign
 PASS SVGTransformList interface: operation replaceItem(SVGTransform, unsigned long) 
 PASS SVGTransformList interface: operation removeItem(unsigned long) 
 PASS SVGTransformList interface: operation appendItem(SVGTransform) 
-PASS SVGTransformList interface: operation createSVGTransformFromMatrix(DOMMatrix2DInit) 
+PASS SVGTransformList interface: operation createSVGTransformFromMatrix(optional DOMMatrix2DInit) 
 PASS SVGTransformList interface: operation consolidate() 
 PASS SVGTransformList must be primary interface of objects.pattern.patternTransform.baseVal 
 PASS Stringification of objects.pattern.patternTransform.baseVal 
@@ -748,8 +748,8 @@ PASS SVGTransformList interface: objects.pattern.patternTransform.baseVal must i
 PASS SVGTransformList interface: calling removeItem(unsigned long) on objects.pattern.patternTransform.baseVal with too few arguments must throw TypeError 
 PASS SVGTransformList interface: objects.pattern.patternTransform.baseVal must inherit property "appendItem(SVGTransform)" with the proper type 
 PASS SVGTransformList interface: calling appendItem(SVGTransform) on objects.pattern.patternTransform.baseVal with too few arguments must throw TypeError 
-PASS SVGTransformList interface: objects.pattern.patternTransform.baseVal must inherit property "createSVGTransformFromMatrix(DOMMatrix2DInit)" with the proper type 
-PASS SVGTransformList interface: calling createSVGTransformFromMatrix(DOMMatrix2DInit) on objects.pattern.patternTransform.baseVal with too few arguments must throw TypeError 
+PASS SVGTransformList interface: objects.pattern.patternTransform.baseVal must inherit property "createSVGTransformFromMatrix(optional DOMMatrix2DInit)" with the proper type 
+PASS SVGTransformList interface: calling createSVGTransformFromMatrix(optional DOMMatrix2DInit) on objects.pattern.patternTransform.baseVal with too few arguments must throw TypeError 
 PASS SVGTransformList interface: objects.pattern.patternTransform.baseVal must inherit property "consolidate()" with the proper type 
 PASS SVGAnimatedTransformList interface: existence and properties of interface object 
 PASS SVGAnimatedTransformList interface object length 
@@ -838,16 +838,16 @@ PASS SVGPathElement interface: existence and properties of interface prototype o
 PASS SVGPathElement must be primary interface of objects.path 
 PASS Stringification of objects.path 
 PASS SVGGeometryElement interface: objects.path must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.path must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.path with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.path must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.path with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.path must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.path with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.path must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.path with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.path must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.path must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.path with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.path must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.path must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.path with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.path must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.path with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.path must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.path must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.path must inherit property "requiredExtensions" with the proper type 
@@ -878,16 +878,16 @@ PASS SVGRectElement interface: objects.rect must inherit property "height" with 
 PASS SVGRectElement interface: objects.rect must inherit property "rx" with the proper type 
 PASS SVGRectElement interface: objects.rect must inherit property "ry" with the proper type 
 PASS SVGGeometryElement interface: objects.rect must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.rect must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.rect with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.rect must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.rect with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.rect must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.rect with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.rect must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.rect with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.rect must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.rect must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.rect with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.rect must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.rect must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.rect with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.rect must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.rect with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.rect must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.rect must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.rect must inherit property "requiredExtensions" with the proper type 
@@ -912,16 +912,16 @@ PASS SVGCircleElement interface: objects.circle must inherit property "cx" with 
 PASS SVGCircleElement interface: objects.circle must inherit property "cy" with the proper type 
 PASS SVGCircleElement interface: objects.circle must inherit property "r" with the proper type 
 PASS SVGGeometryElement interface: objects.circle must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.circle must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.circle with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.circle must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.circle with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.circle must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.circle with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.circle must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.circle with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.circle must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.circle must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.circle with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.circle must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.circle must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.circle with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.circle must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.circle with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.circle must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.circle must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.circle must inherit property "requiredExtensions" with the proper type 
@@ -948,16 +948,16 @@ PASS SVGEllipseElement interface: objects.ellipse must inherit property "cy" wit
 PASS SVGEllipseElement interface: objects.ellipse must inherit property "rx" with the proper type 
 PASS SVGEllipseElement interface: objects.ellipse must inherit property "ry" with the proper type 
 PASS SVGGeometryElement interface: objects.ellipse must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.ellipse must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.ellipse with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.ellipse must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.ellipse with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.ellipse must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.ellipse with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.ellipse must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.ellipse with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.ellipse must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.ellipse must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.ellipse with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.ellipse must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.ellipse must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.ellipse with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.ellipse must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.ellipse with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.ellipse must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.ellipse must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.ellipse must inherit property "requiredExtensions" with the proper type 
@@ -984,16 +984,16 @@ PASS SVGLineElement interface: objects.line must inherit property "y1" with the 
 PASS SVGLineElement interface: objects.line must inherit property "x2" with the proper type 
 PASS SVGLineElement interface: objects.line must inherit property "y2" with the proper type 
 PASS SVGGeometryElement interface: objects.line must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.line must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.line with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.line must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.line with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.line must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.line with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.line must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.line with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.line must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.line must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.line with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.line must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.line must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.line with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.line must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.line with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.line must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.line must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.line must inherit property "requiredExtensions" with the proper type 
@@ -1048,16 +1048,16 @@ PASS Stringification of objects.polyline
 PASS SVGPolylineElement interface: objects.polyline must inherit property "points" with the proper type 
 PASS SVGPolylineElement interface: objects.polyline must inherit property "animatedPoints" with the proper type 
 PASS SVGGeometryElement interface: objects.polyline must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.polyline must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.polyline with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.polyline must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.polyline with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.polyline must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.polyline with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.polyline must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.polyline with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.polyline must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.polyline must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.polyline with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.polyline must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.polyline must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.polyline with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.polyline must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.polyline with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.polyline must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.polyline must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.polyline must inherit property "requiredExtensions" with the proper type 
@@ -1080,16 +1080,16 @@ PASS Stringification of objects.polygon
 PASS SVGPolygonElement interface: objects.polygon must inherit property "points" with the proper type 
 PASS SVGPolygonElement interface: objects.polygon must inherit property "animatedPoints" with the proper type 
 PASS SVGGeometryElement interface: objects.polygon must inherit property "pathLength" with the proper type 
-PASS SVGGeometryElement interface: objects.polygon must inherit property "isPointInFill(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInFill(DOMPointInit) on objects.polygon with too few arguments must throw TypeError 
-PASS SVGGeometryElement interface: objects.polygon must inherit property "isPointInStroke(DOMPointInit)" with the proper type 
-PASS SVGGeometryElement interface: calling isPointInStroke(DOMPointInit) on objects.polygon with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.polygon must inherit property "isPointInFill(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInFill(optional DOMPointInit) on objects.polygon with too few arguments must throw TypeError 
+PASS SVGGeometryElement interface: objects.polygon must inherit property "isPointInStroke(optional DOMPointInit)" with the proper type 
+PASS SVGGeometryElement interface: calling isPointInStroke(optional DOMPointInit) on objects.polygon with too few arguments must throw TypeError 
 PASS SVGGeometryElement interface: objects.polygon must inherit property "getTotalLength()" with the proper type 
 PASS SVGGeometryElement interface: objects.polygon must inherit property "getPointAtLength(float)" with the proper type 
 PASS SVGGeometryElement interface: calling getPointAtLength(float) on objects.polygon with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.polygon must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.polygon must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.polygon with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.polygon must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.polygon with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.polygon must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.polygon must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.polygon must inherit property "requiredExtensions" with the proper type 
@@ -1120,7 +1120,7 @@ FAIL SVGTextContentElement interface: operation getStartPositionOfChar(unsigned 
 FAIL SVGTextContentElement interface: operation getEndPositionOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL SVGTextContentElement interface: operation getExtentOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL SVGTextContentElement interface: operation getRotationOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGTextContentElement interface: operation getCharNumAtPosition(DOMPointInit) assert_equals: property has wrong .length expected 0 but got 1
+FAIL SVGTextContentElement interface: operation getCharNumAtPosition(optional DOMPointInit) assert_equals: property has wrong .length expected 0 but got 1
 FAIL SVGTextContentElement interface: operation selectSubString(unsigned long, unsigned long) assert_equals: property has wrong .length expected 2 but got 0
 PASS SVGTextPositioningElement interface: existence and properties of interface object 
 PASS SVGTextPositioningElement interface object length 
@@ -1154,34 +1154,38 @@ PASS SVGTextContentElement interface: objects.text must inherit property "length
 PASS SVGTextContentElement interface: objects.text must inherit property "getNumberOfChars()" with the proper type 
 PASS SVGTextContentElement interface: objects.text must inherit property "getComputedTextLength()" with the proper type 
 PASS SVGTextContentElement interface: objects.text must inherit property "getSubStringLength(unsigned long, unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS SVGTextContentElement interface: objects.text must inherit property "getStartPositionOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.text must inherit property "getEndPositionOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.text must inherit property "getExtentOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.text must inherit property "getRotationOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS SVGTextContentElement interface: objects.text must inherit property "getCharNumAtPosition(DOMPointInit)" with the proper type 
-PASS SVGTextContentElement interface: calling getCharNumAtPosition(DOMPointInit) on objects.text with too few arguments must throw TypeError 
+PASS SVGTextContentElement interface: objects.text must inherit property "getCharNumAtPosition(optional DOMPointInit)" with the proper type 
+PASS SVGTextContentElement interface: calling getCharNumAtPosition(optional DOMPointInit) on objects.text with too few arguments must throw TypeError 
 PASS SVGTextContentElement interface: objects.text must inherit property "selectSubString(unsigned long, unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS SVGGraphicsElement interface: objects.text must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.text must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.text with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.text must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.text with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.text must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.text must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.text must inherit property "requiredExtensions" with the proper type 
@@ -1212,34 +1216,38 @@ PASS SVGTextContentElement interface: objects.tspan must inherit property "lengt
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getNumberOfChars()" with the proper type 
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getComputedTextLength()" with the proper type 
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getSubStringLength(unsigned long, unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getStartPositionOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getEndPositionOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getExtentOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getRotationOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS SVGTextContentElement interface: objects.tspan must inherit property "getCharNumAtPosition(DOMPointInit)" with the proper type 
-PASS SVGTextContentElement interface: calling getCharNumAtPosition(DOMPointInit) on objects.tspan with too few arguments must throw TypeError 
+PASS SVGTextContentElement interface: objects.tspan must inherit property "getCharNumAtPosition(optional DOMPointInit)" with the proper type 
+PASS SVGTextContentElement interface: calling getCharNumAtPosition(optional DOMPointInit) on objects.tspan with too few arguments must throw TypeError 
 PASS SVGTextContentElement interface: objects.tspan must inherit property "selectSubString(unsigned long, unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS SVGGraphicsElement interface: objects.tspan must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.tspan must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.tspan with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.tspan must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.tspan with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.tspan must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.tspan must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.tspan must inherit property "requiredExtensions" with the proper type 
@@ -1291,34 +1299,38 @@ PASS SVGTextContentElement interface: objects.textPath must inherit property "le
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getNumberOfChars()" with the proper type 
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getComputedTextLength()" with the proper type 
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getSubStringLength(unsigned long, unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getStartPositionOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getEndPositionOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getExtentOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getRotationOfChar(unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
         }" did not throw
-PASS SVGTextContentElement interface: objects.textPath must inherit property "getCharNumAtPosition(DOMPointInit)" with the proper type 
-PASS SVGTextContentElement interface: calling getCharNumAtPosition(DOMPointInit) on objects.textPath with too few arguments must throw TypeError 
+PASS SVGTextContentElement interface: objects.textPath must inherit property "getCharNumAtPosition(optional DOMPointInit)" with the proper type 
+PASS SVGTextContentElement interface: calling getCharNumAtPosition(optional DOMPointInit) on objects.textPath with too few arguments must throw TypeError 
 PASS SVGTextContentElement interface: objects.textPath must inherit property "selectSubString(unsigned long, unsigned long)" with the proper type 
-FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected object "TypeError" ("TypeError")
+        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS SVGGraphicsElement interface: objects.textPath must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.textPath must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.textPath with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.textPath must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.textPath with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.textPath must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.textPath must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.textPath must inherit property "requiredExtensions" with the proper type 
@@ -1351,8 +1363,8 @@ PASS SVGImageElement interface: objects.image must inherit property "preserveAsp
 FAIL SVGImageElement interface: objects.image must inherit property "crossOrigin" with the proper type assert_inherits: property "crossOrigin" not found in prototype chain
 PASS SVGImageElement interface: objects.image must inherit property "href" with the proper type 
 PASS SVGGraphicsElement interface: objects.image must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.image must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.image with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.image must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.image with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.image must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.image must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.image must inherit property "requiredExtensions" with the proper type 
@@ -1379,8 +1391,8 @@ PASS SVGForeignObjectElement interface: objects.foreignObject must inherit prope
 PASS SVGForeignObjectElement interface: objects.foreignObject must inherit property "width" with the proper type 
 PASS SVGForeignObjectElement interface: objects.foreignObject must inherit property "height" with the proper type 
 PASS SVGGraphicsElement interface: objects.foreignObject must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.foreignObject must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.foreignObject with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.foreignObject must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.foreignObject with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.foreignObject must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.foreignObject must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.foreignObject must inherit property "requiredExtensions" with the proper type 
@@ -1622,8 +1634,8 @@ FAIL SVGAElement interface: objects.a must inherit property "text" with the prop
 FAIL SVGAElement interface: objects.a must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
 PASS SVGAElement interface: objects.a must inherit property "href" with the proper type 
 PASS SVGGraphicsElement interface: objects.a must inherit property "transform" with the proper type 
-PASS SVGGraphicsElement interface: objects.a must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
-PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.a with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.a must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.a with too few arguments must throw TypeError 
 PASS SVGGraphicsElement interface: objects.a must inherit property "getCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.a must inherit property "getScreenCTM()" with the proper type 
 PASS SVGGraphicsElement interface: objects.a must inherit property "requiredExtensions" with the proper type 

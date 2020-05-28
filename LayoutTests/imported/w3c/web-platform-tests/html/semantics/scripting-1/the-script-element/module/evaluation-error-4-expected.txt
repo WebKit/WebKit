@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: [object Object]
 
 FAIL Test that exceptions during evaluation lead to error events on window, and that exceptions are remembered.
- assert_array_equals: lengths differ, expected 6 got 2
+ assert_array_equals: lengths differ, expected array ["throw", object "[object Object]", [...], [...], [...], [...]] length 6, got ["throw", object "[object Object]"] length 2
 

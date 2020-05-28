@@ -1,0 +1,3 @@
+
+PASS querySelector/querySelectorAll should not include their thisArg 
+

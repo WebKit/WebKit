@@ -1,0 +1,3 @@
+
+PASS querySelectorAll should still work on DocumentFragments after they are modified 
+

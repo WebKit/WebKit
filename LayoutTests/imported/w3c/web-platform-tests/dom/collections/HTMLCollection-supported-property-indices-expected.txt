@@ -3,12 +3,12 @@ PASS Handling of property names that look like negative integers
 PASS Handling of property names that look like small nonnegative integers 
 PASS Handling of property names that look like integers around 2^31 
 PASS Handling of property names that look like integers around 2^32 
-FAIL Trying to set an expando that would shadow an already-existing indexed property assert_throws: function "function () {
+FAIL Trying to set an expando that would shadow an already-existing indexed property assert_throws_js: function "function () {
     "use strict";
     elements[0] = 5;
   }" did not throw
 FAIL Trying to set an expando with an indexed property name past the end of the list assert_equals: expected (undefined) undefined but got (number) 5
-FAIL Trying to delete an indexed property name should never work assert_throws: function "function () {
+FAIL Trying to delete an indexed property name should never work assert_throws_js: function "function () {
     "use strict";
     delete elements[0];
   }" did not throw

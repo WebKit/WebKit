@@ -1,0 +1,3 @@
+
+PASS wholeText returns text of all Text nodes logically adjacent to the node, in document order. 
+

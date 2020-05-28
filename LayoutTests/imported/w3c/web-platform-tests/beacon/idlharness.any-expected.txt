@@ -11,7 +11,7 @@ PASS Navigator includes NavigatorContentUtils: member names are unique
 PASS Navigator includes NavigatorCookies: member names are unique 
 PASS Navigator includes NavigatorPlugins: member names are unique 
 PASS Navigator includes NavigatorConcurrentHardware: member names are unique 
-PASS Navigator interface: operation sendBeacon(USVString, BodyInit) 
-PASS Navigator interface: navigator must inherit property "sendBeacon(USVString, BodyInit)" with the proper type 
-PASS Navigator interface: calling sendBeacon(USVString, BodyInit) on navigator with too few arguments must throw TypeError 
+PASS Navigator interface: operation sendBeacon(USVString, optional BodyInit?) 
+PASS Navigator interface: navigator must inherit property "sendBeacon(USVString, optional BodyInit?)" with the proper type 
+PASS Navigator interface: calling sendBeacon(USVString, optional BodyInit?) on navigator with too few arguments must throw TypeError 
 

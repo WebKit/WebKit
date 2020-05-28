@@ -2,8 +2,8 @@
 PASS wasm-js-api interfaces. 
 PASS WebAssembly namespace: operation validate(BufferSource) 
 PASS WebAssembly namespace: operation compile(BufferSource) 
-PASS WebAssembly namespace: operation instantiate(BufferSource, object) 
-PASS WebAssembly namespace: operation instantiate(Module, object) 
+PASS WebAssembly namespace: operation instantiate(BufferSource, optional object) 
+PASS WebAssembly namespace: operation instantiate(Module, optional object) 
 PASS Module interface: existence and properties of interface object 
 PASS Module interface object length 
 PASS Module interface object name 
@@ -52,7 +52,7 @@ PASS Table interface: existence and properties of interface prototype object's "
 PASS Table interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Table interface: operation grow(unsigned long) 
 PASS Table interface: operation get(unsigned long) 
-PASS Table interface: operation set(unsigned long, Function) 
+PASS Table interface: operation set(unsigned long, Function?) 
 PASS Table interface: attribute length 
 PASS Global interface: existence and properties of interface object 
 PASS Global interface object length 

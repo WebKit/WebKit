@@ -1,0 +1,6 @@
+test
+
+PASS Passing an empty string to getElementsByClassName should return an empty HTMLCollection 
+PASS Passing a space to getElementsByClassName should return an empty HTMLCollection 
+PASS Passing three spaces to getElementsByClassName should return an empty HTMLCollection 
+

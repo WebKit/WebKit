@@ -84,7 +84,7 @@ PASS MediaStreamTrack interface: operation stop()
 PASS MediaStreamTrack interface: operation getCapabilities() 
 PASS MediaStreamTrack interface: operation getConstraints() 
 PASS MediaStreamTrack interface: operation getSettings() 
-PASS MediaStreamTrack interface: operation applyConstraints(MediaTrackConstraints) 
+PASS MediaStreamTrack interface: operation applyConstraints(optional MediaTrackConstraints) 
 PASS MediaStreamTrack must be primary interface of track 
 PASS Stringification of track 
 PASS MediaStreamTrack interface: track must inherit property "kind" with the proper type 
@@ -101,8 +101,8 @@ PASS MediaStreamTrack interface: track must inherit property "stop()" with the p
 PASS MediaStreamTrack interface: track must inherit property "getCapabilities()" with the proper type 
 PASS MediaStreamTrack interface: track must inherit property "getConstraints()" with the proper type 
 PASS MediaStreamTrack interface: track must inherit property "getSettings()" with the proper type 
-PASS MediaStreamTrack interface: track must inherit property "applyConstraints(MediaTrackConstraints)" with the proper type 
-PASS MediaStreamTrack interface: calling applyConstraints(MediaTrackConstraints) on track with too few arguments must throw TypeError 
+PASS MediaStreamTrack interface: track must inherit property "applyConstraints(optional MediaTrackConstraints)" with the proper type 
+PASS MediaStreamTrack interface: calling applyConstraints(optional MediaTrackConstraints) on track with too few arguments must throw TypeError 
 PASS MediaStreamTrackEvent interface: existence and properties of interface object 
 PASS MediaStreamTrackEvent interface object length 
 PASS MediaStreamTrackEvent interface object name 
@@ -122,14 +122,14 @@ PASS MediaDevices interface: existence and properties of interface prototype obj
 PASS MediaDevices interface: attribute ondevicechange 
 PASS MediaDevices interface: operation enumerateDevices() 
 PASS MediaDevices interface: operation getSupportedConstraints() 
-PASS MediaDevices interface: operation getUserMedia(MediaStreamConstraints) 
+PASS MediaDevices interface: operation getUserMedia(optional MediaStreamConstraints) 
 PASS MediaDevices must be primary interface of navigator.mediaDevices 
 PASS Stringification of navigator.mediaDevices 
 PASS MediaDevices interface: navigator.mediaDevices must inherit property "ondevicechange" with the proper type 
 PASS MediaDevices interface: navigator.mediaDevices must inherit property "enumerateDevices()" with the proper type 
 PASS MediaDevices interface: navigator.mediaDevices must inherit property "getSupportedConstraints()" with the proper type 
-PASS MediaDevices interface: navigator.mediaDevices must inherit property "getUserMedia(MediaStreamConstraints)" with the proper type 
-PASS MediaDevices interface: calling getUserMedia(MediaStreamConstraints) on navigator.mediaDevices with too few arguments must throw TypeError 
+PASS MediaDevices interface: navigator.mediaDevices must inherit property "getUserMedia(optional MediaStreamConstraints)" with the proper type 
+PASS MediaDevices interface: calling getUserMedia(optional MediaStreamConstraints) on navigator.mediaDevices with too few arguments must throw TypeError 
 PASS MediaDeviceInfo interface: existence and properties of interface object 
 PASS MediaDeviceInfo interface object length 
 PASS MediaDeviceInfo interface object name 

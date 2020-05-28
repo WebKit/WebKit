@@ -4,5 +4,5 @@ main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 
-FAIL Multiple history traversals from the same task assert_array_equals: Pages opened during history navigation property 1, expected 2 but got 3
+FAIL Multiple history traversals from the same task assert_array_equals: Pages opened during history navigation expected property 1 to be 2 but got 3 (expected array [4, 2] got [4, 3])
 

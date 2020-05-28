@@ -13,14 +13,14 @@ PASS TextDecoder interface object name
 PASS TextDecoder interface: existence and properties of interface prototype object 
 PASS TextDecoder interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextDecoder interface: existence and properties of interface prototype object's @@unscopables property 
-PASS TextDecoder interface: operation decode(BufferSource, TextDecodeOptions) 
+PASS TextDecoder interface: operation decode(optional BufferSource, optional TextDecodeOptions) 
 PASS TextDecoder interface: attribute encoding 
 PASS TextDecoder interface: attribute fatal 
 PASS TextDecoder interface: attribute ignoreBOM 
 PASS TextDecoder must be primary interface of new TextDecoder() 
 PASS Stringification of new TextDecoder() 
-PASS TextDecoder interface: new TextDecoder() must inherit property "decode(BufferSource, TextDecodeOptions)" with the proper type 
-PASS TextDecoder interface: calling decode(BufferSource, TextDecodeOptions) on new TextDecoder() with too few arguments must throw TypeError 
+PASS TextDecoder interface: new TextDecoder() must inherit property "decode(optional BufferSource, optional TextDecodeOptions)" with the proper type 
+PASS TextDecoder interface: calling decode(optional BufferSource, optional TextDecodeOptions) on new TextDecoder() with too few arguments must throw TypeError 
 PASS TextDecoder interface: new TextDecoder() must inherit property "encoding" with the proper type 
 PASS TextDecoder interface: new TextDecoder() must inherit property "fatal" with the proper type 
 PASS TextDecoder interface: new TextDecoder() must inherit property "ignoreBOM" with the proper type 
@@ -30,13 +30,13 @@ PASS TextEncoder interface object name
 PASS TextEncoder interface: existence and properties of interface prototype object 
 PASS TextEncoder interface: existence and properties of interface prototype object's "constructor" property 
 PASS TextEncoder interface: existence and properties of interface prototype object's @@unscopables property 
-PASS TextEncoder interface: operation encode(USVString) 
+PASS TextEncoder interface: operation encode(optional USVString) 
 FAIL TextEncoder interface: operation encodeInto(USVString, Uint8Array) assert_own_property: interface prototype object missing non-static operation expected property "encodeInto" missing
 PASS TextEncoder interface: attribute encoding 
 PASS TextEncoder must be primary interface of new TextEncoder() 
 PASS Stringification of new TextEncoder() 
-PASS TextEncoder interface: new TextEncoder() must inherit property "encode(USVString)" with the proper type 
-PASS TextEncoder interface: calling encode(USVString) on new TextEncoder() with too few arguments must throw TypeError 
+PASS TextEncoder interface: new TextEncoder() must inherit property "encode(optional USVString)" with the proper type 
+PASS TextEncoder interface: calling encode(optional USVString) on new TextEncoder() with too few arguments must throw TypeError 
 FAIL TextEncoder interface: new TextEncoder() must inherit property "encodeInto(USVString, Uint8Array)" with the proper type assert_inherits: property "encodeInto" not found in prototype chain
 FAIL TextEncoder interface: calling encodeInto(USVString, Uint8Array) on new TextEncoder() with too few arguments must throw TypeError assert_inherits: property "encodeInto" not found in prototype chain
 PASS TextEncoder interface: new TextEncoder() must inherit property "encoding" with the proper type 

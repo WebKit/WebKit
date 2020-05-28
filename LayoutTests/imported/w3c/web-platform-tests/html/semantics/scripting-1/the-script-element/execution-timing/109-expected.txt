@@ -1,4 +1,4 @@
 Not tested
 
-FAIL  scheduler: javascript URL in iframe, src set via DOM assert_array_equals: property 2, expected "inline script #3" but got "iframe onload"
+FAIL  scheduler: javascript URL in iframe, src set via DOM assert_array_equals: expected property 2 to be "inline script #3" but got "iframe onload" (expected array ["inline script #1", "inline script #2", "inline script #3", "JS URL", "iframe onload"] got ["inline script #1", "inline script #2", "iframe onload", "inline script #3", "JS URL"])
 

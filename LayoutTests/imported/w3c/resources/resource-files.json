@@ -1259,6 +1259,7 @@
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-2.sub.html",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subsubframe.sub.html",
+        "web-platform-tests/dom/events/replace-event-listener-null-browsing-context-crash.html",
         "web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess-iframe.xml",
         "web-platform-tests/dom/nodes/Node-isEqualNode-iframe1.xml",
         "web-platform-tests/dom/nodes/Node-isEqualNode-iframe2.xml",

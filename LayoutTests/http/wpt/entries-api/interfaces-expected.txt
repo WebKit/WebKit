@@ -23,7 +23,7 @@ PASS FileSystemEntry interface: attribute isDirectory
 PASS FileSystemEntry interface: attribute name 
 PASS FileSystemEntry interface: attribute fullPath 
 PASS FileSystemEntry interface: attribute filesystem 
-PASS FileSystemEntry interface: operation getParent(FileSystemEntryCallback, ErrorCallback) 
+PASS FileSystemEntry interface: operation getParent(optional FileSystemEntryCallback, optional ErrorCallback) 
 PASS FileSystemDirectoryEntry interface: existence and properties of interface object 
 PASS FileSystemDirectoryEntry interface object length 
 PASS FileSystemDirectoryEntry interface object name 
@@ -31,8 +31,8 @@ PASS FileSystemDirectoryEntry interface: existence and properties of interface p
 PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object's "constructor" property 
 PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object's @@unscopables property 
 PASS FileSystemDirectoryEntry interface: operation createReader() 
-PASS FileSystemDirectoryEntry interface: operation getFile(USVString, FileSystemFlags, FileSystemEntryCallback, ErrorCallback) 
-PASS FileSystemDirectoryEntry interface: operation getDirectory(USVString, FileSystemFlags, FileSystemEntryCallback, ErrorCallback) 
+PASS FileSystemDirectoryEntry interface: operation getFile(optional USVString?, optional FileSystemFlags, optional FileSystemEntryCallback, optional ErrorCallback) 
+PASS FileSystemDirectoryEntry interface: operation getDirectory(optional USVString?, optional FileSystemFlags, optional FileSystemEntryCallback, optional ErrorCallback) 
 PASS FileSystemEntryCallback interface: existence and properties of interface object 
 PASS FileSystemEntryCallback interface: existence and properties of interface prototype object 
 PASS FileSystemEntryCallback interface: existence and properties of interface prototype object's "constructor" property 
@@ -44,19 +44,19 @@ PASS FileSystemDirectoryReader interface object name
 PASS FileSystemDirectoryReader interface: existence and properties of interface prototype object 
 PASS FileSystemDirectoryReader interface: existence and properties of interface prototype object's "constructor" property 
 PASS FileSystemDirectoryReader interface: existence and properties of interface prototype object's @@unscopables property 
-PASS FileSystemDirectoryReader interface: operation readEntries(FileSystemEntriesCallback, ErrorCallback) 
+PASS FileSystemDirectoryReader interface: operation readEntries(FileSystemEntriesCallback, optional ErrorCallback) 
 PASS FileSystemEntriesCallback interface: existence and properties of interface object 
 PASS FileSystemEntriesCallback interface: existence and properties of interface prototype object 
 PASS FileSystemEntriesCallback interface: existence and properties of interface prototype object's "constructor" property 
 PASS FileSystemEntriesCallback interface: existence and properties of interface prototype object's @@unscopables property 
-PASS FileSystemEntriesCallback interface: operation handleEvent([object Object]) 
+PASS FileSystemEntriesCallback interface: operation handleEvent(sequence<FileSystemEntry>) 
 PASS FileSystemFileEntry interface: existence and properties of interface object 
 PASS FileSystemFileEntry interface object length 
 PASS FileSystemFileEntry interface object name 
 PASS FileSystemFileEntry interface: existence and properties of interface prototype object 
 PASS FileSystemFileEntry interface: existence and properties of interface prototype object's "constructor" property 
 PASS FileSystemFileEntry interface: existence and properties of interface prototype object's @@unscopables property 
-PASS FileSystemFileEntry interface: operation file(FileCallback, ErrorCallback) 
+PASS FileSystemFileEntry interface: operation file(FileCallback, optional ErrorCallback) 
 PASS FileCallback interface: existence and properties of interface object 
 PASS FileCallback interface: existence and properties of interface prototype object 
 PASS FileCallback interface: existence and properties of interface prototype object's "constructor" property 

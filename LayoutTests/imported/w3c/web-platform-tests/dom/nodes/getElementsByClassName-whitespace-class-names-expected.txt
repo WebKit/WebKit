@@ -1,0 +1,29 @@
+LINE TABULATION NEXT LINE NO-BREAK SPACE OGHAM SPACE MARK EN QUAD EM QUAD EN SPACE EM SPACE THREE-PER-EM SPACE FOUR-PER-EM SPACE SIX-PER-EM SPACE FIGURE SPACE PUNCTUATION SPACE THIN SPACE HAIR SPACE LINE SEPARATOR PARAGRAPH SEPARATOR NARROW NO-BREAK SPACE MEDIUM MATHEMATICAL SPACE IDEOGRAPHIC SPACE MONGOLIAN VOWEL SEPARATOR ZERO WIDTH SPACE ZERO WIDTH NON-JOINER ZERO WIDTH JOINER WORD JOINER ZERO WIDTH NON-BREAKING SPACE
+
+PASS Passing a LINE TABULATION to getElementsByClassName still finds the span 
+PASS Passing a NEXT LINE to getElementsByClassName still finds the span 
+PASS Passing a NO-BREAK SPACE to getElementsByClassName still finds the span 
+PASS Passing a OGHAM SPACE MARK to getElementsByClassName still finds the span 
+PASS Passing a EN QUAD to getElementsByClassName still finds the span 
+PASS Passing a EM QUAD to getElementsByClassName still finds the span 
+PASS Passing a EN SPACE to getElementsByClassName still finds the span 
+PASS Passing a EM SPACE to getElementsByClassName still finds the span 
+PASS Passing a THREE-PER-EM SPACE to getElementsByClassName still finds the span 
+PASS Passing a FOUR-PER-EM SPACE to getElementsByClassName still finds the span 
+PASS Passing a SIX-PER-EM SPACE to getElementsByClassName still finds the span 
+PASS Passing a FIGURE SPACE to getElementsByClassName still finds the span 
+PASS Passing a PUNCTUATION SPACE to getElementsByClassName still finds the span 
+PASS Passing a THIN SPACE to getElementsByClassName still finds the span 
+PASS Passing a HAIR SPACE to getElementsByClassName still finds the span 
+PASS Passing a LINE SEPARATOR to getElementsByClassName still finds the span 
+PASS Passing a PARAGRAPH SEPARATOR to getElementsByClassName still finds the span 
+PASS Passing a NARROW NO-BREAK SPACE to getElementsByClassName still finds the span 
+PASS Passing a MEDIUM MATHEMATICAL SPACE to getElementsByClassName still finds the span 
+PASS Passing a IDEOGRAPHIC SPACE to getElementsByClassName still finds the span 
+PASS Passing a MONGOLIAN VOWEL SEPARATOR to getElementsByClassName still finds the span 
+PASS Passing a ZERO WIDTH SPACE to getElementsByClassName still finds the span 
+PASS Passing a ZERO WIDTH NON-JOINER to getElementsByClassName still finds the span 
+PASS Passing a ZERO WIDTH JOINER to getElementsByClassName still finds the span 
+PASS Passing a WORD JOINER to getElementsByClassName still finds the span 
+PASS Passing a ZERO WIDTH NON-BREAKING SPACE to getElementsByClassName still finds the span 
+

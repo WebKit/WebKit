@@ -147,11 +147,11 @@
   <script>
 
   test(function(t) {
-    assert_equals(passwordField.ariaDetailsElement, null);
-    passwordField.ariaDetailsElement = listItem1;
+    assert_equals(passwordField.ariaDetailsElements, null);
+    passwordField.ariaDetailsElements = [ listItem1 ];
     assert_equals(passwordField.getAttribute("aria-details"), "listItem1");
 
-    passwordField.ariaDetailsElement = listItem2;
+    passwordField.ariaDetailsElements = [ listItem2 ];
     assert_equals(passwordField.getAttribute("aria-details"), "listItem2");
   }, "aria-details");
   </script>
@@ -571,12 +571,3 @@
     </optgroup>
 
   <script>
-    test(function(t) {
-      input.ariaActiveDescendantElement = first;
-      first.parentElement.appendChild(first);
-
-      // This behaviour is currently under discussion by WHATWG.
-      // See: https://github.com/whatwg/html/pull/3917#issuecomment-527263562
-      assert_equals(input.ariaActiveDescendantElement, first);
-    }, "Reparenting.");
-</html>

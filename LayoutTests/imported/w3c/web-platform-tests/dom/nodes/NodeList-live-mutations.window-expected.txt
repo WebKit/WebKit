@@ -1,0 +1,6 @@
+
+PASS NodeList live mutations: NodeList.length 
+PASS NodeList live mutations: NodeList.item(index) 
+PASS NodeList live mutations: NodeList[index] 
+PASS NodeList live mutations: NodeList ownPropertyNames 
+

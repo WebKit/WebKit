@@ -65,8 +65,8 @@ PASS FontFaceSet interface: operation clear()
 PASS FontFaceSet interface: attribute onloading 
 PASS FontFaceSet interface: attribute onloadingdone 
 PASS FontFaceSet interface: attribute onloadingerror 
-PASS FontFaceSet interface: operation load(CSSOMString, CSSOMString) 
-PASS FontFaceSet interface: operation check(CSSOMString, CSSOMString) 
+PASS FontFaceSet interface: operation load(CSSOMString, optional CSSOMString) 
+PASS FontFaceSet interface: operation check(CSSOMString, optional CSSOMString) 
 PASS FontFaceSet interface: attribute ready 
 PASS FontFaceSet interface: attribute status 
 PASS FontFaceSet must be primary interface of document.fonts 
@@ -79,10 +79,10 @@ PASS FontFaceSet interface: document.fonts must inherit property "clear()" with 
 PASS FontFaceSet interface: document.fonts must inherit property "onloading" with the proper type 
 PASS FontFaceSet interface: document.fonts must inherit property "onloadingdone" with the proper type 
 PASS FontFaceSet interface: document.fonts must inherit property "onloadingerror" with the proper type 
-PASS FontFaceSet interface: document.fonts must inherit property "load(CSSOMString, CSSOMString)" with the proper type 
-PASS FontFaceSet interface: calling load(CSSOMString, CSSOMString) on document.fonts with too few arguments must throw TypeError 
-PASS FontFaceSet interface: document.fonts must inherit property "check(CSSOMString, CSSOMString)" with the proper type 
-PASS FontFaceSet interface: calling check(CSSOMString, CSSOMString) on document.fonts with too few arguments must throw TypeError 
+PASS FontFaceSet interface: document.fonts must inherit property "load(CSSOMString, optional CSSOMString)" with the proper type 
+PASS FontFaceSet interface: calling load(CSSOMString, optional CSSOMString) on document.fonts with too few arguments must throw TypeError 
+PASS FontFaceSet interface: document.fonts must inherit property "check(CSSOMString, optional CSSOMString)" with the proper type 
+PASS FontFaceSet interface: calling check(CSSOMString, optional CSSOMString) on document.fonts with too few arguments must throw TypeError 
 PASS FontFaceSet interface: document.fonts must inherit property "ready" with the proper type 
 PASS FontFaceSet interface: document.fonts must inherit property "status" with the proper type 
 PASS Document interface: attribute fonts 

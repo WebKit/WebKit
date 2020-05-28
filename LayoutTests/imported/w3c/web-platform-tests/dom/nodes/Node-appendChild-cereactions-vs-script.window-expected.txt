@@ -1,0 +1,3 @@
+
+FAIL Custom element reactions follow script execution The superclass is not a constructor.
+

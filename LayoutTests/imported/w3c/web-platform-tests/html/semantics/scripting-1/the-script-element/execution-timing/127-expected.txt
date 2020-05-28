@@ -2,5 +2,5 @@ CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 
 Harness Error (FAIL), message = SyntaxError: Unexpected end of script
 
-FAIL scheduler: appending non-text children to script  assert_array_equals: lengths differ, expected 4 got 2
+FAIL scheduler: appending non-text children to script  assert_array_equals: lengths differ, expected array ["inline script #1", "inline script #2", "end inline script #2", "end inline script #1"] length 4, got ["inline script #1", "end inline script #1"] length 2
 

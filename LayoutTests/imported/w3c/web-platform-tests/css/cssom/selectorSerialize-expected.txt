@@ -16,5 +16,5 @@ FAIL escaped character as code point in attribute name assert_equals: expected "
 FAIL escaped character (@) in attribute name assert_equals: expected "[\\@]" but got "[@]"
 FAIL escaped character in attribute name with any namespace assert_equals: expected "[*|ns\\:foo]" but got "[*|ns:foo]"
 FAIL escaped character in attribute prefix assert_equals: expected "[ns\\:odd|foo]" but got "[ns:odd|foo]"
-FAIL escaped character in both attribute prefix and name assert_equals: expected "[ns\\:odd|odd\:name]" but got "[ns:odd|odd:name]"
+FAIL escaped character in both attribute prefix and name assert_equals: expected "[ns\\:odd|odd\\:name]" but got "[ns:odd|odd:name]"
 

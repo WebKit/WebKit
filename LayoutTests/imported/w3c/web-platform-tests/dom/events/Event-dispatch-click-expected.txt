@@ -12,5 +12,7 @@ PASS disabled checkbox still has activation behavior
 PASS disabled checkbox still has activation behavior, part 2 
 PASS disconnected checkbox should be checked 
 PASS disconnected radio should be checked 
+PASS disconnected checkbox should be checked from dispatchEvent(new MouseEvent('click')) 
+PASS disconnected radio should be checked from dispatchEvent(new MouseEvent('click')) 
 PASS disconnected form should not submit 
 

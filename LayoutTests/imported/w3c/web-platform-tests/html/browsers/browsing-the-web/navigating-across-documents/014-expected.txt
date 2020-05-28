@@ -1,4 +1,4 @@
 
-FAIL  Link with javascript onclick form submission script order  assert_array_equals: property 0, expected "after script" but got "submit"
+FAIL  Link with javascript onclick form submission script order  assert_array_equals: expected property 0 to be "after script" but got "submit" (expected array ["after script", "submit"] got ["submit", "after script"])
 
 Test

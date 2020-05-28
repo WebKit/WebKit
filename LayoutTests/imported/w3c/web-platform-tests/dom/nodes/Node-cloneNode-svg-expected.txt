@@ -1,0 +1,6 @@
+
+PASS cloned <svg> should have the right properties 
+PASS cloned <svg>'s xmlns:xlink attribute should have the right properties 
+PASS cloned <use> should have the right properties 
+PASS cloned <use>'s xlink:href attribute should have the right properties 
+

@@ -3,5 +3,5 @@ FAILED (This TC requires JavaScript enabled)
 
 Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'top.log')
 
-FAIL  scheduler: event listener defined by script in a document in history assert_array_equals: lengths differ, expected 5 got 6
+FAIL  scheduler: event listener defined by script in a document in history assert_array_equals: lengths differ, expected array ["inline script #1", "IFRAME script", "end script #1", "event: foo", "inline script #2"] length 5, got ["inline script #1", "IFRAME script", "end script #1", "event: foo", "event: foo", "inline script #2"] length 6
 

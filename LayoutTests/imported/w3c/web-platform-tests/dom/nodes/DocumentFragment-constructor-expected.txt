@@ -1,0 +1,4 @@
+
+PASS Sets the owner document to the current global object associated document 
+PASS Create a valid document DocumentFragment 
+

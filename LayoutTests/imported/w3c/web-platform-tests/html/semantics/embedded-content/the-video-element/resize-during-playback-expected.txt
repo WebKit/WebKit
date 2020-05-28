@@ -1,4 +1,4 @@
 
-FAIL mp4 video assert_equals: Expected resize event, but got ended event instead expected "resize" but got "ended"
-NOTRUN webm video webm supported
+FAIL mp4 video promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
+FAIL webm video promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

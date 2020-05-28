@@ -1,4 +1,4 @@
 
 
-FAIL :focus selector should work with an autofocused element. assert_array_equals: lengths differ, expected 1 got 0
+FAIL :focus selector should work with an autofocused element. assert_array_equals: lengths differ, expected array [Element node <input autofocus=""></input>] length 1, got object "[object NodeList]" length 0
 

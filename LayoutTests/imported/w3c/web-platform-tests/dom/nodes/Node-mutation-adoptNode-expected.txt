@@ -1,0 +1,3 @@
+
+PASS simple append of foreign div with text 
+text

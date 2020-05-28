@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/resources/event-global-extra-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/resources/prefixed-animation-event-tests.js

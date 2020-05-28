@@ -6,7 +6,7 @@ PASS Notification interface: existence and properties of interface prototype obj
 PASS Notification interface: existence and properties of interface prototype object's "constructor" property 
 PASS Notification interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Notification interface: attribute permission 
-PASS Notification interface: operation requestPermission(NotificationPermissionCallback) 
+PASS Notification interface: operation requestPermission(optional NotificationPermissionCallback) 
 FAIL Notification interface: attribute maxActions assert_own_property: The interface object must have a property "maxActions" expected property "maxActions" missing
 PASS Notification interface: attribute onclick 
 PASS Notification interface: attribute onshow 
@@ -31,8 +31,8 @@ PASS Notification interface: operation close()
 PASS Notification must be primary interface of new Notification("Running idlharness.") 
 PASS Stringification of new Notification("Running idlharness.") 
 PASS Notification interface: new Notification("Running idlharness.") must inherit property "permission" with the proper type 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "requestPermission(NotificationPermissionCallback)" with the proper type 
-PASS Notification interface: calling requestPermission(NotificationPermissionCallback) on new Notification("Running idlharness.") with too few arguments must throw TypeError 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "requestPermission(optional NotificationPermissionCallback)" with the proper type 
+PASS Notification interface: calling requestPermission(optional NotificationPermissionCallback) on new Notification("Running idlharness.") with too few arguments must throw TypeError 
 PASS Notification interface: new Notification("Running idlharness.") must inherit property "maxActions" with the proper type 
 PASS Notification interface: new Notification("Running idlharness.") must inherit property "onclick" with the proper type 
 PASS Notification interface: new Notification("Running idlharness.") must inherit property "onshow" with the proper type 

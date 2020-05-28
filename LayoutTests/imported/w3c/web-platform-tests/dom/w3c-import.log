@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/dom/attributes-are-nodes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/common.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/constants.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/historical.html
@@ -22,3 +23,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/interface-objects.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/svg-insert-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/window-extends-event-target.html

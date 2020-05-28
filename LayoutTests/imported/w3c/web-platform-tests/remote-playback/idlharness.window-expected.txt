@@ -18,7 +18,7 @@ PASS RemotePlayback interface: existence and properties of interface prototype o
 PASS RemotePlayback interface: existence and properties of interface prototype object's "constructor" property 
 PASS RemotePlayback interface: existence and properties of interface prototype object's @@unscopables property 
 PASS RemotePlayback interface: operation watchAvailability(RemotePlaybackAvailabilityCallback) 
-PASS RemotePlayback interface: operation cancelWatchAvailability(long) 
+PASS RemotePlayback interface: operation cancelWatchAvailability(optional long) 
 PASS RemotePlayback interface: attribute state 
 PASS RemotePlayback interface: attribute onconnecting 
 PASS RemotePlayback interface: attribute onconnect 
@@ -28,8 +28,8 @@ PASS RemotePlayback must be primary interface of media.remote
 PASS Stringification of media.remote 
 PASS RemotePlayback interface: media.remote must inherit property "watchAvailability(RemotePlaybackAvailabilityCallback)" with the proper type 
 PASS RemotePlayback interface: calling watchAvailability(RemotePlaybackAvailabilityCallback) on media.remote with too few arguments must throw TypeError 
-PASS RemotePlayback interface: media.remote must inherit property "cancelWatchAvailability(long)" with the proper type 
-PASS RemotePlayback interface: calling cancelWatchAvailability(long) on media.remote with too few arguments must throw TypeError 
+PASS RemotePlayback interface: media.remote must inherit property "cancelWatchAvailability(optional long)" with the proper type 
+PASS RemotePlayback interface: calling cancelWatchAvailability(optional long) on media.remote with too few arguments must throw TypeError 
 PASS RemotePlayback interface: media.remote must inherit property "state" with the proper type 
 PASS RemotePlayback interface: media.remote must inherit property "onconnecting" with the proper type 
 PASS RemotePlayback interface: media.remote must inherit property "onconnect" with the proper type 

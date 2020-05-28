@@ -1,0 +1,4 @@
+
+PASS Node.isConnected in a closed shadow tree 
+PASS Node.isConnected in a open shadow tree 
+

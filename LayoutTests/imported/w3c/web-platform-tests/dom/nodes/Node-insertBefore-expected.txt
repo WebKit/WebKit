@@ -4,6 +4,15 @@ PASS Should check that 'node' is not an ancestor of 'parent' before checking whe
 PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent. 
 PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' is of a type that can have a parent of the type that 'parent' is. 
 PASS Should check whether 'child' is a child of 'parent' before checking whether 'node' can be inserted into the document given the kids the document has right now. 
+PASS If node is a host-including inclusive ancestor of parent, then throw a HierarchyRequestError DOMException. 
+PASS If node is not a DocumentFragment, DocumentType, Element, Text, ProcessingInstruction, or Comment node, then throw a HierarchyRequestError DOMException. 
+PASS If node is a Text node and parent is a document, then throw a HierarchyRequestError DOMException. 
+PASS If node is a doctype and parent is not a document, then throw a HierarchyRequestError DOMException. 
+PASS If node is a DocumentFragment with multiple elements and parent is a document, then throw a HierarchyRequestError DOMException. 
+PASS If node is a DocumentFragment with an element and parent is a document with another element, then throw a HierarchyRequestError DOMException. 
+PASS If node is an Element and parent is a document with another element, then throw a HierarchyRequestError DOMException. 
+PASS If node is a doctype and parent is a document with another doctype, then throw a HierarchyRequestError DOMException. 
+PASS If node is a doctype and parent is a document with an element, then throw a HierarchyRequestError DOMException. 
 PASS Calling insertBefore with a non-Node first argument must throw TypeError. 
 PASS Calling insertBefore with a non-Node first argument on a leaf node DocumentType must throw TypeError. 
 PASS Calling insertBefore an a leaf node DocumentType must throw HIERARCHY_REQUEST_ERR. 
@@ -16,7 +25,6 @@ PASS Calling insertBefore an a leaf node ProcessingInstruction must throw HIERAR
 PASS Calling insertBefore with an inclusive ancestor of the context object must throw HIERARCHY_REQUEST_ERR. 
 PASS Calling insertBefore with a reference child whose parent is not the context node must throw a NotFoundError. 
 PASS If the context node is a document, inserting a document or text node should throw a HierarchyRequestError. 
-PASS If the context node is a document, appending a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting a DocumentFragment that contains a text node or too many elements should throw a HierarchyRequestError. 
 PASS If the context node is a document, inserting a DocumentFragment with an element if there already is an element child should throw a HierarchyRequestError. 
 PASS If the context node is a document and a doctype is following the reference child, inserting a DocumentFragment with an element should throw a HierarchyRequestError. 

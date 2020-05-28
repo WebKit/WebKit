@@ -1,4 +1,4 @@
 Text
 
-PASS First contentful paint fires due to 3d rotation into view. 
+FAIL First contentful paint fires due to 3d rotation into view. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

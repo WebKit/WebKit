@@ -1,6 +1,6 @@
 FAILED (This TC requires JavaScript enabled)
 
-FAIL  scheduler: javascript: URL in HREF assert_array_equals: property 1, expected "end script #1" but got "JS URL"
+FAIL  scheduler: javascript: URL in HREF assert_array_equals: expected property 1 to be "end script #1" but got "JS URL" (expected array ["inline script #1", "end script #1", "beforeunload event", "inline script #2"] got ["inline script #1", "JS URL", "end script #1", "inline script #2"])
 
-assert_array_equals: property 1, expected "end script #1" but got "JS URL"
+assert_array_equals: expected property 1 to be "end script #1" but got "JS URL" (expected array ["inline script #1", "end script #1", "inline script #2", "beforeunload event"] got ["inline script #1", "JS URL", "end script #1", "inline script #2"])
 

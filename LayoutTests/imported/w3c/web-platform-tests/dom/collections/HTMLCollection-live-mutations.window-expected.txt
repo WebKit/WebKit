@@ -1,0 +1,7 @@
+
+PASS HTMLCollection live mutations: HTMLCollection.length 
+PASS HTMLCollection live mutations: HTMLCollection.item(index) 
+PASS HTMLCollection live mutations: HTMLCollection[index] 
+PASS HTMLCollection live mutations: HTMLCollection.namedItem(index) 
+PASS HTMLCollection live mutations: HTMLCollection ownPropertyNames 
+

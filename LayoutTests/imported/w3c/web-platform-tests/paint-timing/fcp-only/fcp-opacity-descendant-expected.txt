@@ -1,4 +1,4 @@
 Text
 
-PASS First contentful paint fires due to its ancestor getting positive opacity. 
+FAIL First contentful paint fires due to its ancestor getting positive opacity. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

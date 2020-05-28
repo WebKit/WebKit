@@ -1,4 +1,4 @@
 TEXT
 
-PASS First contentful paint fires when revealed during transition. 
+FAIL First contentful paint fires when revealed during transition. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

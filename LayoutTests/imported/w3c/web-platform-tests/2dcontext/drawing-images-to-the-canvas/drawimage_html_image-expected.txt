@@ -109,13 +109,13 @@ PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw 
 PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw = 800, dh = 800 --- Pixel outside canvas should be transparent black.
  
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,70 should be light purple. 
-FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,99 should be light purple. assert_array_equals: property 0, expected 253 but got 255
-FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,70 should be light purple. assert_array_equals: property 0, expected 253 but got 255
-FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,99 should be light purple. assert_array_equals: property 0, expected 253 but got 255
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,99 should be light purple. assert_array_equals: expected property 0 to be 253 but got 255 (expected array [253, 140, 245, 255] got object "255,0,0,255")
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,70 should be light purple. assert_array_equals: expected property 0 to be 253 but got 255 (expected array [253, 140, 245, 255] got object "255,0,0,255")
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,99 should be light purple. assert_array_equals: expected property 0 to be 253 but got 255 (expected array [253, 140, 245, 255] got object "255,0,0,255")
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 0,0 should be red. 
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 0,99 should be red. 
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,0 should be red. 
-FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 69,69 should be red. assert_array_equals: property 0, expected 255 but got 253
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 69,69 should be red. assert_array_equals: expected property 0 to be 255 but got 253 (expected array [255, 0, 0, 255] got object "253,140,245,255")
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 69,99 should be red. 
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,69 should be red. 
 PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel outside canvas should be transparent black.

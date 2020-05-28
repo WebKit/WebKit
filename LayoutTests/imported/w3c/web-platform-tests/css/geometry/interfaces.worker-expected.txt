@@ -6,23 +6,23 @@ PASS DOMPointReadOnly interface object name
 PASS DOMPointReadOnly interface: existence and properties of interface prototype object 
 PASS DOMPointReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMPointReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMPointReadOnly interface: operation fromPoint(DOMPointInit) 
+PASS DOMPointReadOnly interface: operation fromPoint(optional DOMPointInit) 
 PASS DOMPointReadOnly interface: attribute x 
 PASS DOMPointReadOnly interface: attribute y 
 PASS DOMPointReadOnly interface: attribute z 
 PASS DOMPointReadOnly interface: attribute w 
-PASS DOMPointReadOnly interface: operation matrixTransform(DOMMatrixInit) 
+PASS DOMPointReadOnly interface: operation matrixTransform(optional DOMMatrixInit) 
 PASS DOMPointReadOnly interface: operation toJSON() 
 PASS DOMPointReadOnly must be primary interface of new DOMPointReadOnly() 
 PASS Stringification of new DOMPointReadOnly() 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "fromPoint(DOMPointInit)" with the proper type 
-PASS DOMPointReadOnly interface: calling fromPoint(DOMPointInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "fromPoint(optional DOMPointInit)" with the proper type 
+PASS DOMPointReadOnly interface: calling fromPoint(optional DOMPointInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "x" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "y" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "z" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "w" with the proper type 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "matrixTransform(DOMMatrixInit)" with the proper type 
-PASS DOMPointReadOnly interface: calling matrixTransform(DOMMatrixInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "matrixTransform(optional DOMMatrixInit)" with the proper type 
+PASS DOMPointReadOnly interface: calling matrixTransform(optional DOMMatrixInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
 PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "toJSON()" with the proper type 
 PASS DOMPointReadOnly interface: default toJSON operation on new DOMPointReadOnly() 
 PASS DOMPoint interface: existence and properties of interface object 
@@ -32,27 +32,27 @@ PASS DOMPoint interface: legacy window alias
 PASS DOMPoint interface: existence and properties of interface prototype object 
 PASS DOMPoint interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMPoint interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMPoint interface: operation fromPoint(DOMPointInit) 
+PASS DOMPoint interface: operation fromPoint(optional DOMPointInit) 
 PASS DOMPoint interface: attribute x 
 PASS DOMPoint interface: attribute y 
 PASS DOMPoint interface: attribute z 
 PASS DOMPoint interface: attribute w 
 PASS DOMPoint must be primary interface of new DOMPoint() 
 PASS Stringification of new DOMPoint() 
-PASS DOMPoint interface: new DOMPoint() must inherit property "fromPoint(DOMPointInit)" with the proper type 
-PASS DOMPoint interface: calling fromPoint(DOMPointInit) on new DOMPoint() with too few arguments must throw TypeError 
+PASS DOMPoint interface: new DOMPoint() must inherit property "fromPoint(optional DOMPointInit)" with the proper type 
+PASS DOMPoint interface: calling fromPoint(optional DOMPointInit) on new DOMPoint() with too few arguments must throw TypeError 
 PASS DOMPoint interface: new DOMPoint() must inherit property "x" with the proper type 
 PASS DOMPoint interface: new DOMPoint() must inherit property "y" with the proper type 
 PASS DOMPoint interface: new DOMPoint() must inherit property "z" with the proper type 
 PASS DOMPoint interface: new DOMPoint() must inherit property "w" with the proper type 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "fromPoint(DOMPointInit)" with the proper type 
-PASS DOMPointReadOnly interface: calling fromPoint(DOMPointInit) on new DOMPoint() with too few arguments must throw TypeError 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "fromPoint(optional DOMPointInit)" with the proper type 
+PASS DOMPointReadOnly interface: calling fromPoint(optional DOMPointInit) on new DOMPoint() with too few arguments must throw TypeError 
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "x" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "y" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "z" with the proper type 
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "w" with the proper type 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "matrixTransform(DOMMatrixInit)" with the proper type 
-PASS DOMPointReadOnly interface: calling matrixTransform(DOMMatrixInit) on new DOMPoint() with too few arguments must throw TypeError 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "matrixTransform(optional DOMMatrixInit)" with the proper type 
+PASS DOMPointReadOnly interface: calling matrixTransform(optional DOMMatrixInit) on new DOMPoint() with too few arguments must throw TypeError 
 PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "toJSON()" with the proper type 
 PASS DOMPointReadOnly interface: default toJSON operation on new DOMPoint() 
 PASS DOMRectReadOnly interface: existence and properties of interface object 
@@ -61,7 +61,7 @@ PASS DOMRectReadOnly interface object name
 PASS DOMRectReadOnly interface: existence and properties of interface prototype object 
 PASS DOMRectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMRectReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMRectReadOnly interface: operation fromRect(DOMRectInit) 
+PASS DOMRectReadOnly interface: operation fromRect(optional DOMRectInit) 
 PASS DOMRectReadOnly interface: attribute x 
 PASS DOMRectReadOnly interface: attribute y 
 PASS DOMRectReadOnly interface: attribute width 
@@ -73,8 +73,8 @@ PASS DOMRectReadOnly interface: attribute left
 PASS DOMRectReadOnly interface: operation toJSON() 
 PASS DOMRectReadOnly must be primary interface of new DOMRectReadOnly() 
 PASS Stringification of new DOMRectReadOnly() 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "fromRect(DOMRectInit)" with the proper type 
-PASS DOMRectReadOnly interface: calling fromRect(DOMRectInit) on new DOMRectReadOnly() with too few arguments must throw TypeError 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "fromRect(optional DOMRectInit)" with the proper type 
+PASS DOMRectReadOnly interface: calling fromRect(optional DOMRectInit) on new DOMRectReadOnly() with too few arguments must throw TypeError 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "x" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "y" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "width" with the proper type 
@@ -92,21 +92,21 @@ PASS DOMRect interface: legacy window alias
 PASS DOMRect interface: existence and properties of interface prototype object 
 PASS DOMRect interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMRect interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMRect interface: operation fromRect(DOMRectInit) 
+PASS DOMRect interface: operation fromRect(optional DOMRectInit) 
 PASS DOMRect interface: attribute x 
 PASS DOMRect interface: attribute y 
 PASS DOMRect interface: attribute width 
 PASS DOMRect interface: attribute height 
 PASS DOMRect must be primary interface of new DOMRect() 
 PASS Stringification of new DOMRect() 
-PASS DOMRect interface: new DOMRect() must inherit property "fromRect(DOMRectInit)" with the proper type 
-PASS DOMRect interface: calling fromRect(DOMRectInit) on new DOMRect() with too few arguments must throw TypeError 
+PASS DOMRect interface: new DOMRect() must inherit property "fromRect(optional DOMRectInit)" with the proper type 
+PASS DOMRect interface: calling fromRect(optional DOMRectInit) on new DOMRect() with too few arguments must throw TypeError 
 PASS DOMRect interface: new DOMRect() must inherit property "x" with the proper type 
 PASS DOMRect interface: new DOMRect() must inherit property "y" with the proper type 
 PASS DOMRect interface: new DOMRect() must inherit property "width" with the proper type 
 PASS DOMRect interface: new DOMRect() must inherit property "height" with the proper type 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "fromRect(DOMRectInit)" with the proper type 
-PASS DOMRectReadOnly interface: calling fromRect(DOMRectInit) on new DOMRect() with too few arguments must throw TypeError 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "fromRect(optional DOMRectInit)" with the proper type 
+PASS DOMRectReadOnly interface: calling fromRect(optional DOMRectInit) on new DOMRect() with too few arguments must throw TypeError 
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "x" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "y" with the proper type 
 PASS DOMRectReadOnly interface: new DOMRect() must inherit property "width" with the proper type 
@@ -124,8 +124,8 @@ PASS DOMQuad interface object name
 PASS DOMQuad interface: existence and properties of interface prototype object 
 PASS DOMQuad interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMQuad interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMQuad interface: operation fromRect(DOMRectInit) 
-PASS DOMQuad interface: operation fromQuad(DOMQuadInit) 
+PASS DOMQuad interface: operation fromRect(optional DOMRectInit) 
+PASS DOMQuad interface: operation fromQuad(optional DOMQuadInit) 
 PASS DOMQuad interface: attribute p1 
 PASS DOMQuad interface: attribute p2 
 PASS DOMQuad interface: attribute p3 
@@ -134,10 +134,10 @@ PASS DOMQuad interface: operation getBounds()
 PASS DOMQuad interface: operation toJSON() 
 PASS DOMQuad must be primary interface of new DOMQuad() 
 PASS Stringification of new DOMQuad() 
-PASS DOMQuad interface: new DOMQuad() must inherit property "fromRect(DOMRectInit)" with the proper type 
-PASS DOMQuad interface: calling fromRect(DOMRectInit) on new DOMQuad() with too few arguments must throw TypeError 
-PASS DOMQuad interface: new DOMQuad() must inherit property "fromQuad(DOMQuadInit)" with the proper type 
-PASS DOMQuad interface: calling fromQuad(DOMQuadInit) on new DOMQuad() with too few arguments must throw TypeError 
+PASS DOMQuad interface: new DOMQuad() must inherit property "fromRect(optional DOMRectInit)" with the proper type 
+PASS DOMQuad interface: calling fromRect(optional DOMRectInit) on new DOMQuad() with too few arguments must throw TypeError 
+PASS DOMQuad interface: new DOMQuad() must inherit property "fromQuad(optional DOMQuadInit)" with the proper type 
+PASS DOMQuad interface: calling fromQuad(optional DOMQuadInit) on new DOMQuad() with too few arguments must throw TypeError 
 PASS DOMQuad interface: new DOMQuad() must inherit property "p1" with the proper type 
 PASS DOMQuad interface: new DOMQuad() must inherit property "p2" with the proper type 
 PASS DOMQuad interface: new DOMQuad() must inherit property "p3" with the proper type 
@@ -151,7 +151,7 @@ PASS DOMMatrixReadOnly interface object name
 PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object 
 PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMMatrixReadOnly interface: operation fromMatrix(DOMMatrixInit) 
+PASS DOMMatrixReadOnly interface: operation fromMatrix(optional DOMMatrixInit) 
 PASS DOMMatrixReadOnly interface: operation fromFloat32Array(Float32Array) 
 PASS DOMMatrixReadOnly interface: operation fromFloat64Array(Float64Array) 
 PASS DOMMatrixReadOnly interface: attribute a 
@@ -178,28 +178,28 @@ PASS DOMMatrixReadOnly interface: attribute m43
 PASS DOMMatrixReadOnly interface: attribute m44 
 PASS DOMMatrixReadOnly interface: attribute is2D 
 PASS DOMMatrixReadOnly interface: attribute isIdentity 
-PASS DOMMatrixReadOnly interface: operation translate(unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-FAIL DOMMatrixReadOnly interface: operation scaleNonUniform(unrestricted double, unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "scaleNonUniform" missing
-PASS DOMMatrixReadOnly interface: operation scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation rotate(unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double, unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation skewX(unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation skewY(unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation multiply(DOMMatrixInit) 
+PASS DOMMatrixReadOnly interface: operation translate(optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation scale(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+FAIL DOMMatrixReadOnly interface: operation scaleNonUniform(optional unrestricted double, optional unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "scaleNonUniform" missing
+PASS DOMMatrixReadOnly interface: operation scale3d(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotate(optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotateFromVector(optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotateAxisAngle(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation skewX(optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation skewY(optional unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation multiply(optional DOMMatrixInit) 
 PASS DOMMatrixReadOnly interface: operation flipX() 
 PASS DOMMatrixReadOnly interface: operation flipY() 
 PASS DOMMatrixReadOnly interface: operation inverse() 
-PASS DOMMatrixReadOnly interface: operation transformPoint(DOMPointInit) 
+PASS DOMMatrixReadOnly interface: operation transformPoint(optional DOMPointInit) 
 PASS DOMMatrixReadOnly interface: operation toFloat32Array() 
 PASS DOMMatrixReadOnly interface: operation toFloat64Array() 
 PASS DOMMatrixReadOnly interface: member  
 PASS DOMMatrixReadOnly interface: operation toJSON() 
 PASS DOMMatrixReadOnly must be primary interface of new DOMMatrixReadOnly() 
 PASS Stringification of new DOMMatrixReadOnly() 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix(optional DOMMatrixInit)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling fromMatrix(optional DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat64Array(Float64Array)" with the proper type 
@@ -228,31 +228,31 @@ PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m44" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "is2D" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "isIdentity" with the proper type 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "translate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling translate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scaleNonUniform(unrestricted double, unrestricted double)" with the proper type assert_inherits: property "scaleNonUniform" not found in prototype chain
-FAIL DOMMatrixReadOnly interface: calling scaleNonUniform(unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_inherits: property "scaleNonUniform" not found in prototype chain
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateFromVector(unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewX(unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewY(unrestricted double)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "multiply(DOMMatrixInit)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "translate(optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling translate(optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scaleNonUniform(optional unrestricted double, optional unrestricted double)" with the proper type assert_inherits: property "scaleNonUniform" not found in prototype chain
+FAIL DOMMatrixReadOnly interface: calling scaleNonUniform(optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_inherits: property "scaleNonUniform" not found in prototype chain
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale3d(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate(optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotate(optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateFromVector(optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateAxisAngle(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewX(optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling skewX(optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewY(optional unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling skewY(optional unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "multiply(optional DOMMatrixInit)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling multiply(optional DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipX()" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipY()" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "inverse()" with the proper type 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "transformPoint(DOMPointInit)" with the proper type 
-PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "transformPoint(optional DOMPointInit)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling transformPoint(optional DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array()" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array()" with the proper type 
 PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must not have property "" 
@@ -267,7 +267,7 @@ PASS DOMMatrix interface: legacy window alias
 PASS DOMMatrix interface: existence and properties of interface prototype object 
 PASS DOMMatrix interface: existence and properties of interface prototype object's "constructor" property 
 PASS DOMMatrix interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMMatrix interface: operation fromMatrix(DOMMatrixInit) 
+PASS DOMMatrix interface: operation fromMatrix(optional DOMMatrixInit) 
 PASS DOMMatrix interface: operation fromFloat32Array(Float32Array) 
 PASS DOMMatrix interface: operation fromFloat64Array(Float64Array) 
 PASS DOMMatrix interface: attribute a 
@@ -292,22 +292,22 @@ PASS DOMMatrix interface: attribute m41
 PASS DOMMatrix interface: attribute m42 
 PASS DOMMatrix interface: attribute m43 
 PASS DOMMatrix interface: attribute m44 
-PASS DOMMatrix interface: operation multiplySelf(DOMMatrixInit) 
-PASS DOMMatrix interface: operation preMultiplySelf(DOMMatrixInit) 
-PASS DOMMatrix interface: operation translateSelf(unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrix interface: operation scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrix interface: operation scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrix interface: operation rotateSelf(unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrix interface: operation rotateFromVectorSelf(unrestricted double, unrestricted double) 
-PASS DOMMatrix interface: operation rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS DOMMatrix interface: operation skewXSelf(unrestricted double) 
-PASS DOMMatrix interface: operation skewYSelf(unrestricted double) 
+PASS DOMMatrix interface: operation multiplySelf(optional DOMMatrixInit) 
+PASS DOMMatrix interface: operation preMultiplySelf(optional DOMMatrixInit) 
+PASS DOMMatrix interface: operation translateSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrix interface: operation scaleSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrix interface: operation scale3dSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrix interface: operation rotateSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrix interface: operation rotateFromVectorSelf(optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrix interface: operation rotateAxisAngleSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) 
+PASS DOMMatrix interface: operation skewXSelf(optional unrestricted double) 
+PASS DOMMatrix interface: operation skewYSelf(optional unrestricted double) 
 PASS DOMMatrix interface: operation invertSelf() 
 PASS DOMMatrix interface: member setMatrixValue 
 PASS DOMMatrix must be primary interface of new DOMMatrix() 
 PASS Stringification of new DOMMatrix() 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
-PASS DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix(optional DOMMatrixInit)" with the proper type 
+PASS DOMMatrix interface: calling fromMatrix(optional DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrix interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError 
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat64Array(Float64Array)" with the proper type 
@@ -334,26 +334,26 @@ PASS DOMMatrix interface: new DOMMatrix() must inherit property "m41" with the p
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "m42" with the proper type 
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "m43" with the proper type 
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "m44" with the proper type 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "multiplySelf(DOMMatrixInit)" with the proper type 
-PASS DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "preMultiplySelf(DOMMatrixInit)" with the proper type 
-PASS DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "translateSelf(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling translateSelf(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateSelf(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling rotateSelf(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateFromVectorSelf(unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewXSelf(unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling skewXSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf(unrestricted double)" with the proper type 
-PASS DOMMatrix interface: calling skewYSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "multiplySelf(optional DOMMatrixInit)" with the proper type 
+PASS DOMMatrix interface: calling multiplySelf(optional DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "preMultiplySelf(optional DOMMatrixInit)" with the proper type 
+PASS DOMMatrix interface: calling preMultiplySelf(optional DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "translateSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling translateSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "scaleSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling scaleSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "scale3dSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling scale3dSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateFromVectorSelf(optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateFromVectorSelf(optional unrestricted double, optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateAxisAngleSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateAxisAngleSelf(optional unrestricted double, optional unrestricted double, optional unrestricted double, optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewXSelf(optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling skewXSelf(optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf(optional unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling skewYSelf(optional unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
 PASS DOMMatrix interface: new DOMMatrix() must inherit property "invertSelf()" with the proper type 
 PASS DOMMatrix interface: new DOMMatrix() must not have property "setMatrixValue" 
 PASS DOMMatrix must be primary interface of DOMMatrix.fromMatrix({is2D: false}) 

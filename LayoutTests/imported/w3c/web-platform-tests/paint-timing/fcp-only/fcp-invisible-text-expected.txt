@@ -1,4 +1,3 @@
-INVISIBLE
 
-PASS First contentful paint fires due to pseudo-element becoming visible. 
+FAIL First contentful paint fires due to pseudo-element becoming visible. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

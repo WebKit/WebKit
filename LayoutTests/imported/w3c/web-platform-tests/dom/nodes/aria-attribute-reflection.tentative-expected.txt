@@ -9,6 +9,7 @@ PASS aria-colcount attribute reflects.
 PASS aria-colindex attribute reflects. 
 PASS aria-colspan attribute reflects. 
 PASS aria-current attribute reflects. 
+FAIL aria-description attribute reflects. assert_equals: expected (string) "cold as ice" but got (undefined) undefined
 PASS aria-disabled attribute reflects. 
 PASS aria-expanded attribute reflects. 
 PASS aria-haspopup attribute reflects. 
@@ -31,7 +32,8 @@ PASS aria-roledescription attribute reflects.
 PASS aria-rowcount attribute reflects. 
 PASS aria-rowindex attribute reflects. 
 PASS aria-rowspan attribute reflects. 
-FAIL aria-setsize attribute reflects. assert_equals: expected (string) "10" but got (object) null
+PASS aria-selected attribute reflects. 
+PASS aria-setsize attribute reflects. 
 PASS aria-sort attribute reflects. 
 PASS aria-valuemax attribute reflects. 
 PASS aria-valuemin attribute reflects. 

@@ -4,17 +4,17 @@ User Timing IDL tests
 PASS Partial interface Performance: original interface defined 
 PASS Partial interface Performance: member names are unique 
 PASS Performance interface: operation mark(DOMString) 
-PASS Performance interface: operation clearMarks(DOMString) 
-PASS Performance interface: operation measure(DOMString, DOMString, DOMString) 
-PASS Performance interface: operation clearMeasures(DOMString) 
+PASS Performance interface: operation clearMarks(optional DOMString) 
+PASS Performance interface: operation measure(DOMString, optional DOMString, optional DOMString) 
+PASS Performance interface: operation clearMeasures(optional DOMString) 
 PASS Performance interface: window.performance must inherit property "mark(DOMString)" with the proper type 
 PASS Performance interface: calling mark(DOMString) on window.performance with too few arguments must throw TypeError 
-PASS Performance interface: window.performance must inherit property "clearMarks(DOMString)" with the proper type 
-PASS Performance interface: calling clearMarks(DOMString) on window.performance with too few arguments must throw TypeError 
-PASS Performance interface: window.performance must inherit property "measure(DOMString, DOMString, DOMString)" with the proper type 
-PASS Performance interface: calling measure(DOMString, DOMString, DOMString) on window.performance with too few arguments must throw TypeError 
-PASS Performance interface: window.performance must inherit property "clearMeasures(DOMString)" with the proper type 
-PASS Performance interface: calling clearMeasures(DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "clearMarks(optional DOMString)" with the proper type 
+PASS Performance interface: calling clearMarks(optional DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "measure(DOMString, optional DOMString, optional DOMString)" with the proper type 
+PASS Performance interface: calling measure(DOMString, optional DOMString, optional DOMString) on window.performance with too few arguments must throw TypeError 
+PASS Performance interface: window.performance must inherit property "clearMeasures(optional DOMString)" with the proper type 
+PASS Performance interface: calling clearMeasures(optional DOMString) on window.performance with too few arguments must throw TypeError 
 PASS PerformanceMark interface: existence and properties of interface object 
 PASS PerformanceMark interface object length 
 PASS PerformanceMark interface object name 

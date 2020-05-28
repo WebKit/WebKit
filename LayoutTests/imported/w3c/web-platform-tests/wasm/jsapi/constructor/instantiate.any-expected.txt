@@ -9,18 +9,18 @@ PASS Empty module with undefined imports argument: BufferSource argument
 PASS Empty module with undefined imports argument: Module argument 
 PASS Empty module with empty imports argument: BufferSource argument 
 PASS Empty module with empty imports argument: Module argument 
-FAIL getter order for imports object: BufferSource argument assert_array_equals: property 1, expected "global1 getter" but got "memory getter"
-FAIL getter order for imports object: Module argument assert_array_equals: property 1, expected "global1 getter" but got "memory getter"
+FAIL getter order for imports object: BufferSource argument assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
+FAIL getter order for imports object: Module argument assert_array_equals: expected property 1 to be "global1 getter" but got "memory getter" (expected array ["module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "memory getter", "module getter", "global2 getter"] got ["module getter", "memory getter", "module getter", "global1 getter", "module2 getter", "global3 getter", "module getter", "global2 getter"])
 PASS imports: BufferSource argument 
 PASS imports: Module argument 
-FAIL No imports: BufferSource argument assert_array_equals: matching export keys property 2, expected "table" but got "global"
-FAIL No imports: Module argument assert_array_equals: matching export keys property 2, expected "table" but got "global"
+FAIL No imports: BufferSource argument assert_array_equals: matching export keys expected property 2 to be "table" but got "global" (expected array ["fn", "fn2", "table", "global", "global2", "memory"] got ["fn", "fn2", "global", "global2", "memory", "table"])
+FAIL No imports: Module argument assert_array_equals: matching export keys expected property 2 to be "table" but got "global" (expected array ["fn", "fn2", "table", "global", "global2", "memory"] got ["fn", "fn2", "global", "global2", "memory", "table"])
 FAIL exports and imports: BufferSource argument assert_false: fn: writable expected false got true
 FAIL exports and imports: Module argument assert_false: fn: writable expected false got true
 PASS stray argument: BufferSource argument 
 PASS stray argument: Module argument 
 PASS Synchronous options handling: Buffer argument 
-FAIL Synchronous options handling: Module argument assert_array_equals: lengths differ, expected 2 got 0
+FAIL Synchronous options handling: Module argument assert_array_equals: lengths differ, expected array ["module getter", "global getter"] length 2, got [] length 0
 PASS Empty buffer 
 PASS Invalid code 
 PASS Changing the buffer 

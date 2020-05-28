@@ -1,4 +1,4 @@
 A
 
-PASS First contentful paint fires only when some of the text is visible, considering ::first-letter. 
+FAIL First contentful paint fires only when some of the text is visible, considering ::first-letter. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

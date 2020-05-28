@@ -1,0 +1,8 @@
+
+PASS the this value inside the event listener callback should be the node 
+PASS the this value inside the event listener object handleEvent should be the object 
+PASS dispatchEvent should invoke the current handleEvent method of the object 
+PASS addEventListener should not require handleEvent to be defined on object listeners 
+PASS handleEvent properties added to a function before addEventListener are not reached 
+PASS handleEvent properties added to a function after addEventListener are not reached 
+

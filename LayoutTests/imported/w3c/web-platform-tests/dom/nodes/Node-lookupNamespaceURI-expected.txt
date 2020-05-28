@@ -9,7 +9,7 @@ PASS DocumentFragment is in default namespace, prefix null
 PASS DocumentFragment is in default namespace, prefix "" 
 PASS DocumentFragment is in default namespace, prefix "foo" 
 PASS DocumentFragment is in default namespace, prefix "xmlns" 
-PASS DocumentType should have null nemspace, prefix null 
+PASS DocumentType should have null namespace, prefix null 
 PASS DocumentType should have null namespace, prefix "" 
 PASS DocumentType should have null namespace, prefix "foo" 
 PASS DocumentType should have null namespace, prefix "xmlns" 

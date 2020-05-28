@@ -27,7 +27,7 @@ PASS MediaSource interface: attribute onsourceended
 PASS MediaSource interface: attribute onsourceclose 
 PASS MediaSource interface: operation addSourceBuffer(DOMString) 
 PASS MediaSource interface: operation removeSourceBuffer(SourceBuffer) 
-PASS MediaSource interface: operation endOfStream(EndOfStreamError) 
+PASS MediaSource interface: operation endOfStream(optional EndOfStreamError) 
 PASS MediaSource interface: operation setLiveSeekableRange(double, double) 
 PASS MediaSource interface: operation clearLiveSeekableRange() 
 PASS MediaSource interface: operation isTypeSupported(DOMString) 
@@ -44,8 +44,8 @@ PASS MediaSource interface: mediaSource must inherit property "addSourceBuffer(D
 PASS MediaSource interface: calling addSourceBuffer(DOMString) on mediaSource with too few arguments must throw TypeError 
 PASS MediaSource interface: mediaSource must inherit property "removeSourceBuffer(SourceBuffer)" with the proper type 
 PASS MediaSource interface: calling removeSourceBuffer(SourceBuffer) on mediaSource with too few arguments must throw TypeError 
-PASS MediaSource interface: mediaSource must inherit property "endOfStream(EndOfStreamError)" with the proper type 
-PASS MediaSource interface: calling endOfStream(EndOfStreamError) on mediaSource with too few arguments must throw TypeError 
+PASS MediaSource interface: mediaSource must inherit property "endOfStream(optional EndOfStreamError)" with the proper type 
+PASS MediaSource interface: calling endOfStream(optional EndOfStreamError) on mediaSource with too few arguments must throw TypeError 
 PASS MediaSource interface: mediaSource must inherit property "setLiveSeekableRange(double, double)" with the proper type 
 PASS MediaSource interface: calling setLiveSeekableRange(double, double) on mediaSource with too few arguments must throw TypeError 
 PASS MediaSource interface: mediaSource must inherit property "clearLiveSeekableRange()" with the proper type 

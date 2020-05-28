@@ -1,4 +1,4 @@
 
 
-PASS Video should become contentful when poster is loaded 
+FAIL Video should become contentful when poster is loaded promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

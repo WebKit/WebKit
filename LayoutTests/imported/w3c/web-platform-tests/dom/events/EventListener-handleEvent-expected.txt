@@ -3,9 +3,9 @@ CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be c
 CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
 
 PASS calls `handleEvent` method of `EventListener` 
-PASS rethrows errors when getting `handleEvent` 
 PASS performs `Get` every time event is dispatched 
 PASS doesn't call `handleEvent` method on callable `EventListener` 
+PASS rethrows errors when getting `handleEvent` 
 PASS throws if `handleEvent` is falsy and not callable 
 PASS throws if `handleEvent` is thruthy and not callable 
 

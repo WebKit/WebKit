@@ -1,4 +1,4 @@
 TEXT
 
-PASS FCP should fire when coordinates are negative, if within document scrollable area 
+FAIL FCP should fire when coordinates are negative, if within document scrollable area promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
 

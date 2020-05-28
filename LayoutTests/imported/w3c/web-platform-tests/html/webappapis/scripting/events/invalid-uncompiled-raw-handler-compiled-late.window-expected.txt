@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: SyntaxError: Parser error
 CONSOLE MESSAGE: SyntaxError: Parser error
 
-FAIL Invalid uncompiled raw handlers should only be compiled when about to call them assert_array_equals: lengths differ, expected 3 got 4
+FAIL Invalid uncompiled raw handlers should only be compiled when about to call them assert_array_equals: lengths differ, expected array ["click 1", "error", "click 2"] length 3, got ["click 1", "error", "click 2", "error"] length 4
 
