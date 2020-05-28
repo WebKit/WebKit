@@ -120,6 +120,8 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
             if len(event_lines):
                 lines.append(self.wrap_with_guard_for_condition(event.condition, '\n\n'.join(event_lines)))
 
+        if not len(lines):
+            return ''
         return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(lines))
 
     def _generate_anonymous_enum_conversion_for_declaration(self, domain, declaration):

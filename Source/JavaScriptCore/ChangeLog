@@ -1,3 +1,37 @@
+2020-05-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add missing condition guards when generating objc protocol files
+        https://bugs.webkit.org/show_bug.cgi?id=212494
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_forward_declarations):
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator._generate_properties_for_domain):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCConfigurationImplementationGenerator._generate_configuration_implementation_for_domains):
+        (ObjCConfigurationImplementationGenerator._generate_ivars):
+        (ObjCConfigurationImplementationGenerator._generate_dealloc):
+        (ObjCConfigurationImplementationGenerator._generate_event_dispatcher_getter_for_domain):
+        (ObjCConfigurationImplementationGenerator._variable_name_prefix_for_domain): Deleted.
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_dispatcher_implementations):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._generate_forward_declarations):
+        (ObjCHeaderGenerator._generate_enums):
+        (ObjCHeaderGenerator._generate_types):
+        (ObjCHeaderGenerator._generate_command_protocols):
+        (ObjCHeaderGenerator._generate_event_interfaces):
+        (ObjCHeaderGenerator._generate_single_event_interface):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator._generate_event_dispatcher_private_interfaces):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_conversion_functions):
+        * inspector/scripts/tests/definitions-with-mac-platform.json:
+        * inspector/scripts/tests/expected/definitions-with-mac-platform.json-result:
+
 2020-05-27  Keith Miller  <keith_miller@apple.com>
 
         for-of should check the iterable is a JSArray for FastArray in DFG iterator_open

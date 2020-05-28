@@ -99,10 +99,14 @@ class ObjCHeaderGenerator(ObjCGenerator):
 
     def _generate_forward_declarations(self, domain):
         lines = []
+
         for declaration in self.type_declarations_for_domain(domain):
             if (isinstance(declaration.type, ObjectType)):
                 objc_name = self.objc_name_for_type(declaration.type)
                 lines.append(self.wrap_with_guard_for_condition(declaration.condition, '@class %s;' % objc_name))
+
+        if not len(lines):
+            return ''
         return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_enums(self, domain):
@@ -146,15 +150,21 @@ class ObjCHeaderGenerator(ObjCGenerator):
             if len(event_lines):
                 lines.append(self.wrap_with_guard_for_condition(event.condition, '\n\n'.join(event_lines)))
 
+        if not len(lines):
+            return ''
         return self.wrap_with_guard_for_condition(domain.condition, '\n\n'.join(lines))
 
     def _generate_types(self, domain):
         lines = []
+
         # Type interfaces.
         for declaration in self.type_declarations_for_domain(domain):
             if isinstance(declaration.type, ObjectType):
                 add_newline(lines)
                 lines.append(self._generate_type_interface(domain, declaration))
+
+        if not len(lines):
+            return ''
         return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_anonymous_enum_for_declaration(self, domain, declaration):
@@ -215,6 +225,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
 
     def _generate_command_protocols(self, domain):
         lines = []
+
         if self.commands_for_domain(domain):
             objc_name = '%s%sDomainHandler' % (self.objc_prefix(), domain.domain_name)
             lines.append('@protocol %s <NSObject>' % objc_name)
@@ -222,6 +233,9 @@ class ObjCHeaderGenerator(ObjCGenerator):
             for command in self.commands_for_domain(domain):
                 lines.append(self._generate_single_command_protocol(domain, command))
             lines.append('@end')
+
+        if not len(lines):
+            return ''
         return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_single_command_protocol(self, domain, command):
@@ -244,6 +258,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
 
     def _generate_event_interfaces(self, domain):
         lines = []
+
         events = self.events_for_domain(domain)
         if len(events):
             objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
@@ -252,11 +267,15 @@ class ObjCHeaderGenerator(ObjCGenerator):
             for event in events:
                 lines.append(self._generate_single_event_interface(domain, event))
             lines.append('@end')
+
+        if not len(lines):
+            return ''
         return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_single_event_interface(self, domain, event):
         if not event.event_parameters:
-            return '- (void)%s;' % event.event_name
+            return self.wrap_with_guard_for_condition(event.condition, '- (void)%s;' % event.event_name)
+
         pairs = []
         for parameter in event.event_parameters:
             param_name = parameter.parameter_name

@@ -82,9 +82,10 @@ class ObjCConfigurationHeaderGenerator(ObjCGenerator):
         }
 
         lines = []
-
         if self.should_generate_commands_for_domain(domain):
             lines.append(Template(ObjCTemplates.ConfigurationCommandProperty).substitute(None, **property_args))
         if self.should_generate_events_for_domain(domain):
             lines.append(Template(ObjCTemplates.ConfigurationEventProperty).substitute(None, **property_args))
-        return lines
+        if not len(lines):
+            return []
+        return [self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))]

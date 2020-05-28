@@ -70,10 +70,11 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
         return '\n\n'.join(sections)
 
     def _generate_event_dispatcher_private_interfaces(self, domain):
+        if not len(self.events_for_domain(domain)):
+            return ''
+
         lines = []
-        if len(self.events_for_domain(domain)):
-            objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
-            lines.append('@interface %s (Private)' % objc_name)
-            lines.append('- (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;')
-            lines.append('@end')
-        return '\n'.join(lines)
+        lines.append('@interface %s%sDomainEventDispatcher (Private)' % (self.objc_prefix(), domain.domain_name))
+        lines.append('- (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;')
+        lines.append('@end')
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))

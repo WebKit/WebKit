@@ -97,7 +97,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             lines.append(self._generate_event(domain, event))
             lines.append('')
         lines.append('@end')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(domain.condition, '\n'.join(lines))
 
     def _generate_event(self, domain, event):
         lines = []
@@ -131,7 +131,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
             lines.extend(self._generate_event_out_parameters(domain, event))
         lines.append('    router.sendEvent(jsonMessage->toJSONString());')
         lines.append('}')
-        return '\n'.join(lines)
+        return self.wrap_with_guard_for_condition(event.condition, '\n'.join(lines))
 
     def _generate_event_signature(self, domain, event):
         if not event.event_parameters:
