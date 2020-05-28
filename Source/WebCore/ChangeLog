@@ -1,3 +1,18 @@
+2020-05-28  Andres Gonzalez  <andresg_22@apple.com>
+
+        [ macOS Debug ] accessibility/roles-exposed.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=212478
+        <rdar://problem/63411656>
+
+        Reviewed by Chris Fleizach.
+
+        Logging the backingObject in every call to accessibilityAttributeValue
+        seems to be causing this long test to take too long and timeout in slow
+        systems.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2020-05-27  Keith Miller  <keith_miller@apple.com>
 
         for-of should check the iterable is a JSArray for FastArray in DFG iterator_open

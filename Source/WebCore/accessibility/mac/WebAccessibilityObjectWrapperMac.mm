@@ -2290,8 +2290,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:", String(attributeName)));
     auto* backingObject = self.updateObjectBackingStore;
-    AXLOG("backingObject");
-    AXLOG(backingObject);
     if (!backingObject)
         return nil;
 
