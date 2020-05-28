@@ -21,6 +21,7 @@ import os
 import shlex
 import sys
 import tempfile
+import subprocess
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 
@@ -58,7 +59,8 @@ def main(args: list) -> int:
     for dst, src in try_bind_mounts.items():
         bwrap_args.extend(["--bind-try", src, dst])
 
-    return os.system(' '.join([shlex.quote(a) for a in bwrap_args + args]))
+    command_line = ' '.join(shlex.quote(a) for a in bwrap_args + args)
+    return subprocess.call(command_line, shell=True, close_fds=False)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

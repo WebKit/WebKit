@@ -1,3 +1,17 @@
+2020-05-28  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak] Use subprocess.call instead of os.system to forward the return code correctly.
+
+        os.system reports error codes from the child process like wait(),
+        which seems to not be playing well with flatpak/bwrap.
+
+        This was causing flatpak to return 0 to some failed commands (like
+        build-webkit), making failures show as successes in the bots.
+
+        Unreviewed build fix.
+
+        * flatpak/webkit-bwrap:
+
 2020-05-28  Tim Horton  <timothy_horton@apple.com>
 
         makeValueRefForValue should be robust against the type encoding of a NSNumber backed by a boolean
