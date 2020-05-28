@@ -121,8 +121,13 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 #endif
 
 #if ENABLE(SCROLLING_THREAD)
-    LockHolder locker(m_scrollingTreesMutex);
-    if (RefPtr<ThreadedScrollingTree> scrollingTree = m_scrollingTrees.get(pageID)) {
+    auto sentToScrollingThread = [&]() {
+        LockHolder locker(m_scrollingTreesMutex);
+
+        auto scrollingTree = m_scrollingTrees.get(pageID);
+        if (!scrollingTree)
+            return false;
+        
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the
         // scrolling tree can be notified.
@@ -130,28 +135,26 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
             scrollingTree->setMainFrameCanRubberBand({ canRubberBandAtTop, canRubberBandAtRight, canRubberBandAtBottom, canRubberBandAtLeft });
 
-        ScrollingEventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent, [protectedThis = makeRef(*this), wheelEvent, pageID](ScrollingEventResult result) {
-            ASSERT(ScrollingThread::isCurrentThread());
-            ASSERT(result != ScrollingEventResult::SendToScrollingThread);
-            
+        if (scrollingTree->shouldHandleWheelEventSynchronously(platformWheelEvent))
+            return false;
+
+        ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, pageID, protectedThis = makeRef(*this)] {
+            auto result = scrollingTree->handleWheelEvent(platformWheelEvent);
+
             if (result == ScrollingEventResult::SendToMainThread) {
-                RunLoop::main().dispatch([innerProtectedThis = protectedThis.copyRef(), pageID, wheelEvent]() mutable {
-                    innerProtectedThis->dispatchWheelEvent(pageID, wheelEvent);
-                });
+                protectedThis->dispatchWheelEventViaMainThread(pageID, wheelEvent);
                 return;
             }
-            
-            sendDidReceiveEvent(pageID, wheelEvent.type(), result == ScrollingEventResult::DidHandleEvent);
+
+            protectedThis->sendDidReceiveEvent(pageID, wheelEvent.type(), result == ScrollingEventResult::DidHandleEvent);
         });
 
-        if (result == ScrollingEventResult::SendToScrollingThread)
-            return;
+        return true;
+    }();
 
-        if (result == ScrollingEventResult::DidHandleEvent || result == ScrollingEventResult::DidNotHandleEvent) {
-            sendDidReceiveEvent(pageID, wheelEvent.type(), result == ScrollingEventResult::DidHandleEvent);
-            return;
-        }
-    }
+    if (sentToScrollingThread)
+        return;
+
 #else
     UNUSED_PARAM(canRubberBandAtLeft);
     UNUSED_PARAM(canRubberBandAtRight);
@@ -159,9 +162,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
     UNUSED_PARAM(canRubberBandAtBottom);
 #endif
 
-    RunLoop::main().dispatch([protectedThis = makeRef(*this), pageID, wheelEvent]() mutable {
-        protectedThis->dispatchWheelEvent(pageID, wheelEvent);
-    }); 
+    dispatchWheelEventViaMainThread(pageID, wheelEvent);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -230,6 +231,14 @@ void EventDispatcher::dispatchTouchEvents()
     }
 }
 #endif
+
+void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent)
+{
+    ASSERT(!RunLoop::isMain());
+    RunLoop::main().dispatch([protectedThis = makeRef(*this), pageID, wheelEvent]() mutable {
+        protectedThis->dispatchWheelEvent(pageID, wheelEvent);
+    });
+}
 
 void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent)
 {

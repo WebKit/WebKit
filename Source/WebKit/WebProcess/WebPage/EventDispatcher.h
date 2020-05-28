@@ -87,6 +87,8 @@ private:
 
     // This is called on the main thread.
     void dispatchWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&);
+    void dispatchWheelEventViaMainThread(WebCore::PageIdentifier, const WebWheelEvent&);
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchTouchEvents();
 #endif

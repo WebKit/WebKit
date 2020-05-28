@@ -176,10 +176,18 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
 
 #endif
 
-bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& event)
+bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    ScrollingEventResult result = m_scrollingTree->tryToHandleWheelEvent(event, nullptr);
-    return result == ScrollingEventResult::DidHandleEvent; // FIXME: handle other values.
+    if (!m_scrollingTree)
+        return false;
+
+    if (m_scrollingTree->shouldHandleWheelEventSynchronously(wheelEvent))
+        return false;
+
+    if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
+        return false;
+
+    return m_scrollingTree->handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent;
 }
 
 void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

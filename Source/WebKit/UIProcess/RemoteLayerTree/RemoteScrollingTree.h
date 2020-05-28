@@ -45,7 +45,6 @@ public:
     virtual ~RemoteScrollingTree();
 
     bool isRemoteScrollingTree() const override { return true; }
-    WebCore::ScrollingEventResult tryToHandleWheelEvent(const WebCore::PlatformWheelEvent&, CompletionFunction&&) override;
 
     void handleMouseEvent(const WebCore::PlatformMouseEvent&);
 

@@ -70,11 +70,9 @@ public:
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
     void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
-    using CompletionFunction = WTF::Function<void (ScrollingEventResult)>;
-    // Note that CompletionFunction may get called on a different thread.
-    virtual ScrollingEventResult tryToHandleWheelEvent(const PlatformWheelEvent&, CompletionFunction&& = nullptr) = 0;
     WEBCORE_EXPORT bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
-    
+    WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
+
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();
     void setMainFrameIsScrollSnapping(bool);
@@ -187,8 +185,6 @@ public:
 protected:
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);
-
-    WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
     Optional<unsigned> nominalFramesPerSecond();
 
