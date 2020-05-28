@@ -128,7 +128,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
         let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
         if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D)
+            if (isCanvas2D && WI.ImageUtilities.supportsCanvasPathDebugging())
                 this._updateCanvasPath();
             this._updateImageGrid();
         }
