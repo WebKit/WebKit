@@ -1,5 +1,18 @@
 2020-05-28  Youenn Fablet  <youenn@apple.com>
 
+        RemoteAudio::audioSamplesAvailable should check for m_buffer to be null
+        https://bugs.webkit.org/show_bug.cgi?id=212462
+        <rdar://problem/63627642>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable):
+        m_buffer is initialized by a StorageChanged IPC message which might not always be successful, for instance if the shared memory mapping fails.
+        Return early if m_buffer is not yet initialized properly.
+
+2020-05-28  Youenn Fablet  <youenn@apple.com>
+
         RealtimeIncomingVideoSourceCocoa::OnFrame should use video frame timestamp
         https://bugs.webkit.org/show_bug.cgi?id=212402
 

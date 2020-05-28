@@ -143,6 +143,9 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
 
 void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 {
+    if (!m_buffer)
+        return;
+
     m_buffer->setSampleCount(numberOfFrames);
 
     m_ringBuffer->setCurrentFrameBounds(startFrame, endFrame);
