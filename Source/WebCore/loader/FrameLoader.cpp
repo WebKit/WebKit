@@ -674,6 +674,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     }
 
     m_frame.selection().prepareForDestruction();
+    m_frame.editor().clearUIUpdateTimer();
     m_frame.eventHandler().clear();
 
     if (clearFrameView && m_frame.view())
