@@ -2058,6 +2058,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             });
         }
 
+        this._updateStatistics();
+
         this._updateEmptyFilterResultsMessage();
     }
 
@@ -2066,7 +2068,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (!this.didInitialLayout)
             return;
 
-        let entries = this._activeCollection.entries.filter((entry) => entry.currentSession);
+        let entries = this._activeCollection.filteredEntries.filter((entry) => entry.currentSession);
 
         let domains = new Set;
         let resourceSize = 0;
@@ -2094,7 +2096,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateStatistic("redirect-count", redirectCount === 1 ? WI.UIString("%d redirect") : WI.UIString("%d redirects"), redirectCount);
 
         let loadTimeStatistic = this._statistics["load-time"];
-        if (loadTimeStatistic.format && this._isShowingMainCollection()) {
+        if (loadTimeStatistic.format && this._isShowingMainCollection() && !this._hasActiveFilter()) {
             this._updateStatistic("load-time");
             loadTimeStatistic.container.hidden = false;
         } else
@@ -2174,7 +2176,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let mainFrameLoadEventTime = mainFrame.loadEventTimestamp;
 
         if (loadTimeStatistic.container)
-            loadTimeStatistic.container.hidden = !this._isShowingMainCollection();
+            loadTimeStatistic.container.hidden = !this._isShowingMainCollection() || this._hasActiveFilter();
 
         if (isNaN(mainFrameStartTime) || isNaN(mainFrameLoadEventTime)) {
             this._updateStatistic("load-time", WI.UIString("Loading for %s"), Number.secondsToString(duration / 1_000));

@@ -1,3 +1,18 @@
+2020-05-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: statistics don't update when filtering
+        https://bugs.webkit.org/show_bug.cgi?id=212394
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._updateStatistics):
+        (WI.NetworkTableContentView.prototype._updateLoadTimeStatistic):
+        If the URL/type filter is active, hide the load time statistic, similar to how it's hidden
+        when viewing imported HARs. Additionally, update the other statistics to show info based on
+        the entries that are still shown.
+
 2020-05-27  Yoshiaki JITSUKAWA  <yoshiaki.jitsukawa@sony.com>
 
         [WebInspectorUI] Inconsistent check for WI.ImageUtilities.supportsCanvasPathDebugging
