@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include <glib.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace IPC {
@@ -59,10 +60,9 @@ Optional<GRefPtr<GVariant>> decode(Decoder& decoder)
     if (!decoder.decode(data))
         return WTF::nullopt;
 
-    auto* variantType = g_variant_type_new(variantTypeString.data());
-    GRefPtr<GVariant> variant = g_variant_new_from_data(variantType, data.data(), data.size(), FALSE, nullptr, nullptr);
-    g_variant_type_free(variantType);
-    return variant;
+    GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString.data()));
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
+    return g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE);
 }
 
 } // namespace IPC

@@ -1,3 +1,20 @@
+2020-05-28  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] GVariant decoding must copy the serialized data
+        https://bugs.webkit.org/show_bug.cgi?id=212441
+
+        Reviewed by Carlos Garcia Campos.
+
+        I tracked this down to ArgumentCodersGLib.cpp. The problem is that we construct a GVariant
+        using g_variant_new_from_data(), which does not copy or take ownership of the data, so here
+        we accidentally create the GVariant using data we don't own. (Here, the data is owned by the
+        Decoder itself in its internal m_buffer.) Anyway, this is fixable by manually copying and
+        freeing it with the GDestroyNotify parameter, but it's easier to switch to
+        g_variant_new_from_bytes() because GBytes takes ownership when constructed.
+
+        * Shared/glib/ArgumentCodersGLib.cpp:
+        (IPC::decode):
+
 2020-05-28  Youenn Fablet  <youenn@apple.com>
 
         RemoteAudio::audioSamplesAvailable should check for m_buffer to be null
