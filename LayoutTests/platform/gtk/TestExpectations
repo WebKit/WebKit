@@ -168,6 +168,7 @@ webarchive [ WontFix ]
 http/tests/webarchive [ WontFix ]
 svg/webarchive [ WontFix ]
 svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
+inspector/page/archive.html [ WontFix ]
 
 # This test is specific to QuickTime media engine.
 media/video-does-not-loop.html [ WontFix Timeout Crash ]

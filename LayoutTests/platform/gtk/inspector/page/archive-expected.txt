@@ -1,2 +1,0 @@
-FAIL: Page.archive returned error: 'Not supported'.
-

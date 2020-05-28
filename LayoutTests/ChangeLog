@@ -1,3 +1,14 @@
+2020-05-27  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Skip inspector/page/archive.html
+
+        Unreviewed test gardening.
+
+        It is a feature not supported by the GTK port.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/inspector/page/archive-expected.txt: Removed.
+
 2020-05-27  Andres Gonzalez  <andresg_22@apple.com>
 
         Empty alt attribute does not ignore the image for accessibility clients in Safari.
