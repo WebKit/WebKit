@@ -407,7 +407,7 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module((new Builder
 
 function tableInsanity(num, b) {
     b = b.Import()
-    for (let i=0; i<100000-1; ++i)
+    for (let i=0; i < ($vm.isMemoryLimited() ? 1000 : 100000) - 1; ++i)
         b = b.Function("imp", "ref", { params: [], ret: "void" })
     b = b.End().Function().End().Table()
     for (let i=0; i<num; ++i)
@@ -425,9 +425,11 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module(tableInsanit
               .GetLocal(0)
               .TableSet(1)
             .End()
-          .End().WebAssembly().get())), Error, "WebAssembly.Module doesn't parse at byte 5000027: Table count of 1000000 is too big, maximum 1000000 (evaluating 'new WebAssembly.Module')")
+          .End().WebAssembly().get())), Error, "Table count of 1000000 is too big, maximum 1000000");
+
 {
-    const $1 = new WebAssembly.Instance(new WebAssembly.Module(tableInsanity(1000000-2, (new Builder())
+    const largeNumber = $vm.isMemoryLimited() ? 10000 : 1000000;
+    const $1 = new WebAssembly.Instance(new WebAssembly.Module(tableInsanity(largeNumber-2, (new Builder())
           .Type().End())
                 .Table({initial: 3, maximum: 3, element: "funcref"})
                 .Table({initial: 3, maximum: 3, element: "anyref"})
@@ -438,21 +440,21 @@ assert.throws(() => new WebAssembly.Instance(new WebAssembly.Module(tableInsanit
                 .Function("call")
           .End()
           .Element()
-                .Element({tableIndex: 1000000-2, offset: 0, functionIndices: [0]})
+                .Element({tableIndex: largeNumber-2, offset: 0, functionIndices: [0]})
           .End()
           .Code()
             .Function("set_tbl", { params: ["anyref"], ret: "void" })
               .I32Const(0)
               .GetLocal(0)
-              .TableSet(1000000-1)
+              .TableSet(largeNumber-1)
             .End()
             .Function("get_tbl", { params: [], ret: "anyref" })
               .I32Const(0)
-              .TableGet(1000000-1)
+              .TableGet(largeNumber-1)
             .End()
             .Function("call", { params: [], ret: "void" })
               .I32Const(0)
-              .CallIndirect(0, 1000000-2)
+              .CallIndirect(0, largeNumber-2)
             .End()
           .End().WebAssembly().get()), { imp: { ref: function () {} } })
     $1.exports.set_tbl("hi")

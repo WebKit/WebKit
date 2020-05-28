@@ -124,19 +124,8 @@ const _throws = (func, type, message, ...args) => {
     try {
         func(...args);
     } catch (e) {
-        if (e instanceof type) {
-            if (e.message === message)
-                return e;
-            // Ignore source information at the end of the error message if the
-            // expected message didn't specify that information. Sometimes it
-            // changes, or it's tricky to get just right.
-            const evaluatingIndex = e.message.indexOf(" (evaluating '");
-            if (evaluatingIndex !== -1) {
-                const cleanMessage = e.message.substring(0, evaluatingIndex);
-                if (cleanMessage === message)
-                    return e;
-            }
-        }
+        if (e instanceof type && e.message.indexOf(message) >= 0)
+            return e;
         _fail(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
     }
     _fail(`Expected to throw a ${type.name} with message "${message}"`);

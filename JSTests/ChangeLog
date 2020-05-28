@@ -1,3 +1,18 @@
+2020-05-27  Saam Barati  <sbarati@apple.com>
+
+        Limit memory used by wasm/references/multitable.js on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=212437
+
+        Reviewed by Keith Miller.
+
+        wasm/references/multitable.js was using around ~700MB of memory.
+        This looks like it's causing jetsams on some of our iOS test runners.
+        This patch makes this test use less memory on memory limited devices.
+
+        * wasm/assert.js:
+        * wasm/references/multitable.js:
+        (string_appeared_here.tableInsanity):
+
 2020-05-27  Keith Miller  <keith_miller@apple.com>
 
         Unreviwed, catch expected exception in new test.

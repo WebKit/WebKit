@@ -2979,6 +2979,15 @@ static EncodedJSValue JSC_HOST_CALL functionAssertEnabled(JSGlobalObject*, CallF
     return JSValue::encode(jsBoolean(ASSERT_ENABLED));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionIsMemoryLimited(JSGlobalObject*, CallFrame*)
+{
+#if PLATFORM(IOS) || PLATFORM(TVOS) || PLATFORM(WATCHOS)
+    return JSValue::encode(jsBoolean(true));
+#else
+    return JSValue::encode(jsBoolean(false));
+#endif
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -3117,6 +3126,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "icuVersion", functionICUVersion, 0);
 
     addFunction(vm, "assertEnabled", functionAssertEnabled, 0);
+
+    addFunction(vm, "isMemoryLimited", functionIsMemoryLimited, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

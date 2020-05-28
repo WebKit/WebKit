@@ -1,3 +1,14 @@
+2020-05-27  Saam Barati  <sbarati@apple.com>
+
+        Limit memory used by wasm/references/multitable.js on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=212437
+
+        Reviewed by Keith Miller.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionIsMemoryLimited):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-05-27  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION: Build errors during JavaScriptCore "Generate Derived Sources" about missing Availability.h header and invalid SDKROOT [-Wmissing-sysroot]
