@@ -150,9 +150,9 @@ bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& w
     return eventCanScrollContents(wheelEvent);
 }
 
-ScrollingEventResult ScrollingTreeScrollingNode::handleWheelEvent(const PlatformWheelEvent&)
+WheelEventHandlingResult ScrollingTreeScrollingNode::handleWheelEvent(const PlatformWheelEvent&)
 {
-    return ScrollingEventResult::DidNotHandleEvent;
+    return WheelEventHandlingResult::unhandled();
 }
 
 FloatPoint ScrollingTreeScrollingNode::clampScrollPosition(const FloatPoint& scrollPosition) const

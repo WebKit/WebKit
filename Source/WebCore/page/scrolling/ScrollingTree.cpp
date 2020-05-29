@@ -63,17 +63,17 @@ ScrollingTree::ScrollingTree()
 
 ScrollingTree::~ScrollingTree() = default;
 
-bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
+OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessing(const PlatformWheelEvent& wheelEvent)
 {
     // This method is invoked by the event handling thread
     LockHolder lock(m_treeStateMutex);
 
     LOG_WITH_STREAM(ScrollLatching, stream << "ScrollingTree::shouldHandleWheelEventSynchronously " << wheelEvent << " have latched node " << m_latchingController.latchedNodeForEvent(wheelEvent, m_allowLatching));
     if (m_latchingController.latchedNodeForEvent(wheelEvent, m_allowLatching))
-        return false;
+        return { WheelEventProcessingSteps::ScrollingThread };
 
     m_latchingController.receivedWheelEvent(wheelEvent, m_allowLatching);
-    
+
     if (!m_treeState.eventTrackingRegions.isEmpty() && m_rootNode) {
         FloatPoint position = wheelEvent.position();
         position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
@@ -87,12 +87,12 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
         LOG_WITH_STREAM(Scrolling, stream << "\n\nScrollingTree::shouldHandleWheelEventSynchronously: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
         if (isSynchronousDispatchRegion)
-            return true;
+            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch };
     }
-    return false;
+    return { WheelEventProcessingSteps::ScrollingThread };
 }
 
-ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree " << this << " handleWheelEvent " << wheelEvent);
 
@@ -105,13 +105,13 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
     auto result = [&] {
         if (!m_rootNode)
-            return ScrollingEventResult::DidNotHandleEvent;
+            return WheelEventHandlingResult::unhandled();
 
         if (!asyncFrameOrOverflowScrollingEnabled())
             return m_rootNode->handleWheelEvent(wheelEvent);
 
         if (m_gestureState.handleGestureCancel(wheelEvent))
-            return ScrollingEventResult::DidHandleEvent;
+            return WheelEventHandlingResult::handled();
 
         m_gestureState.receivedWheelEvent(wheelEvent);
 
@@ -120,12 +120,12 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
             auto* node = nodeForID(*latchedNodeID);
             if (is<ScrollingTreeScrollingNode>(node)) {
                 auto result = downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
-                if (result == ScrollingEventResult::DidHandleEvent)
+                if (result.wasHandled)
                     m_gestureState.nodeDidHandleEvent(*latchedNodeID, wheelEvent);
                 return result;
             }
         }
-        
+
         FloatPoint position = wheelEvent.position();
         position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
         auto node = scrollingNodeForPoint(position);
@@ -137,12 +137,13 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
                 auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
                 auto result = scrollingNode.handleWheelEvent(wheelEvent);
 
-                if (result == ScrollingEventResult::DidHandleEvent) {
+                if (result.wasHandled) {
                     m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent, m_allowLatching);
                     m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
+                    return result;
                 }
 
-                if (result != ScrollingEventResult::DidNotHandleEvent)
+                if (result.needsMainThreadProcessing())
                     return result;
             }
 
@@ -155,7 +156,7 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
 
             node = node->parent();
         }
-        return ScrollingEventResult::DidNotHandleEvent;
+        return WheelEventHandlingResult::unhandled();
     }();
 
     return result;

@@ -49,7 +49,7 @@ private:
 
     void repositionScrollingLayers() override;
 
-    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
+    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
 
     void stopScrollAnimations() override;
 

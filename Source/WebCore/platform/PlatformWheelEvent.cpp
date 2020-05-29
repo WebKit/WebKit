@@ -59,4 +59,14 @@ TextStream& operator<<(TextStream& ts, const PlatformWheelEvent& event)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
+{
+    switch (steps) {
+    case WheelEventProcessingSteps::ScrollingThread: ts << "scrolling thread"; break;
+    case WheelEventProcessingSteps::MainThreadForScrolling: ts << "main thread scrolling"; break;
+    case WheelEventProcessingSteps::MainThreadForDOMEventDispatch: ts << "main thread DOM evnet dispatch"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

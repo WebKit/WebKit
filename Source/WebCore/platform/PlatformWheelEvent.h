@@ -40,6 +40,12 @@ class TextStream;
 
 namespace WebCore {
 
+enum class WheelEventProcessingSteps : uint8_t {
+    ScrollingThread                 = 1 << 0,
+    MainThreadForScrolling          = 1 << 1,
+    MainThreadForDOMEventDispatch   = 1 << 2,
+};
+
 // The ScrollByPixelWheelEvent is a fine-grained event that specifies the precise number of pixels to scroll.
 // It is sent directly by touch pads on macOS, or synthesized when platforms generate line-by-line scrolling events.
 //
@@ -254,5 +260,6 @@ inline FloatPoint PlatformWheelEvent::swipeVelocity() const
 #endif // ENABLE(KINETIC_SCROLLING)
 
 WTF::TextStream& operator<<(WTF::TextStream&, const PlatformWheelEvent&);
+WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 
 } // namespace WebCore

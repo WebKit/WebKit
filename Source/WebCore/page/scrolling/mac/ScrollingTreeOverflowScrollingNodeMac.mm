@@ -72,18 +72,17 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const Scrol
     }
 }
 
-ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
 #if ENABLE(SCROLLING_THREAD)
     if (hasSynchronousScrollingReasons())
-        return ScrollingEventResult::SendToMainThread;
+        return { { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch }, false };
 #endif
 
     if (!canHandleWheelEvent(wheelEvent))
-        return ScrollingEventResult::DidNotHandleEvent;
+        return WheelEventHandlingResult::unhandled();
 
-    bool handled = m_delegate.handleWheelEvent(wheelEvent);
-    return handled ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;
+    return WheelEventHandlingResult::result(m_delegate.handleWheelEvent(wheelEvent));
 }
 
 FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamp) const

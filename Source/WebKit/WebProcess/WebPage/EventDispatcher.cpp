@@ -135,18 +135,19 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
             scrollingTree->setMainFrameCanRubberBand({ canRubberBandAtTop, canRubberBandAtRight, canRubberBandAtBottom, canRubberBandAtLeft });
 
-        if (scrollingTree->shouldHandleWheelEventSynchronously(platformWheelEvent))
+        auto processingSteps = scrollingTree->determineWheelEventProcessing(platformWheelEvent);
+        if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
             return false;
 
         ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, pageID, protectedThis = makeRef(*this)] {
             auto result = scrollingTree->handleWheelEvent(platformWheelEvent);
 
-            if (result == ScrollingEventResult::SendToMainThread) {
+            if (result.needsMainThreadProcessing()) {
                 protectedThis->dispatchWheelEventViaMainThread(pageID, wheelEvent);
                 return;
             }
 
-            protectedThis->sendDidReceiveEvent(pageID, wheelEvent.type(), result == ScrollingEventResult::DidHandleEvent);
+            protectedThis->sendDidReceiveEvent(pageID, wheelEvent.type(), result.wasHandled);
         });
 
         return true;

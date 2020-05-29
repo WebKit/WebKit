@@ -1,3 +1,57 @@
+2020-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Prepare for async scrolling in passive wheel event handler regions
+        https://bugs.webkit.org/show_bug.cgi?id=212455
+
+        Reviewed by Tim Horton.
+
+        Clarify the processing for wheel events by adding OptionSet<WheelEventProcessingSteps>,
+        which will, in future, allow us to describe the processing for an event in the passive
+        event handler region which does scrolling on the scrolling thread, and is then sent
+        to the main thread for DOM event dispatch.
+        
+        Removed ScrollingEventResult, which conflated "handled" with "send to another thread".
+        The thread sending behavior is now encoded in the WheelEventProcessingSteps, and we can just
+        use a bool for handled.
+        
+        Scrolling tree and node handleWheelEvent() functions return a WheelEventHandlingResult, which
+        is a tuple of OptionSet<WheelEventProcessingSteps> and 'handled', allowing for a node with
+        background-attachment:fixed to add the "send to main thread" processing step.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::wheelEvent):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        * page/scrolling/ScrollingCoordinatorTypes.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::determineWheelEventProcessing):
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::WheelEventHandlingResult::needsMainThreadProcessing const):
+        (WebCore::WheelEventHandlingResult::handled):
+        (WebCore::WheelEventHandlingResult::unhandled):
+        (WebCore::WheelEventHandlingResult::result):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::handleWheelEvent):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::handleWheelEvent):
+        (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent):
+        * platform/PlatformWheelEvent.cpp:
+        (WebCore::operator<<):
+        * platform/PlatformWheelEvent.h:
+
 2020-05-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] ActiveDOMObjects must call suspendIfNeeded() upon creation

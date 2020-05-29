@@ -72,11 +72,11 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers()
         m_scrollerPair->updateValues();
 }
 
-ScrollingEventResult ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(wheelEvent);
 
-    return m_scrollerPair->handleWheelEvent(wheelEvent) ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;
+    return WheelEventHandlingResult::result(m_scrollerPair->handleWheelEvent(wheelEvent));
 }
 
 bool ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)

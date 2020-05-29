@@ -45,9 +45,9 @@ class ThreadedScrollingTree : public ScrollingTree {
 public:
     virtual ~ThreadedScrollingTree();
 
-    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
+    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&) override;
 
-    ScrollingEventResult handleWheelEventAfterMainThread(const PlatformWheelEvent&);
+    bool handleWheelEventAfterMainThread(const PlatformWheelEvent&);
 
     void invalidate() override;
 

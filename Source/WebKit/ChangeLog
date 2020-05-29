@@ -1,3 +1,34 @@
+2020-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Prepare for async scrolling in passive wheel event handler regions
+        https://bugs.webkit.org/show_bug.cgi?id=212455
+
+        Reviewed by Tim Horton.
+
+        Clarify the processing for wheel events by adding OptionSet<WheelEventProcessingSteps>,
+        which will, in future, allow us to describe the processing for an event in the passive
+        event handler region which does scrolling on the scrolling thread, and is then sent
+        to the main thread for DOM event dispatch.
+        
+        Removed ScrollingEventResult, which conflated "handled" with "send to another thread".
+        The thread sending behavior is now encoded in the WheelEventProcessingSteps, and we can just
+        use a bool for handled.
+        
+        Scrolling tree and node handleWheelEvent() functions return a WheelEventHandlingResult, which
+        is a tuple of OptionSet<WheelEventProcessingSteps> and 'handled', allowing for a node with
+        background-attachment:fixed to add the "send to main thread" processing step.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::handleWheelEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.h:
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2020-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Implement HTTP auth dialog

@@ -114,10 +114,10 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateAfterChildren(const Scro
     }
 }
 
-ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (!canHandleWheelEvent(wheelEvent))
-        return ScrollingEventResult::DidNotHandleEvent;
+        return WheelEventHandlingResult::unhandled();
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
         auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
@@ -145,7 +145,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(co
 #endif
 
     // FIXME: This needs to return whether the event was handled.
-    return ScrollingEventResult::DidHandleEvent;
+    return WheelEventHandlingResult::handled();
 }
 
 void ScrollingTreeFrameScrollingNodeNicosia::stopScrollAnimations()

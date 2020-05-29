@@ -39,6 +39,7 @@ namespace WebCore {
 
 class ScrollingTree;
 class ScrollingStateScrollingNode;
+struct WheelEventHandlingResult;
 
 class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
     friend class ScrollingTreeScrollingNodeDelegate;
@@ -55,7 +56,7 @@ public:
     void didCompleteCommitForNode() final;
 
     virtual bool canHandleWheelEvent(const PlatformWheelEvent&) const;
-    virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
+    virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&);
 
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
     FloatPoint currentScrollOffset() const { return ScrollableArea::scrollOffsetFromPosition(m_currentScrollPosition, toFloatSize(m_scrollOrigin)); }

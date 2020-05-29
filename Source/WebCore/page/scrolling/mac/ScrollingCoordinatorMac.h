@@ -41,7 +41,7 @@ public:
     void commitTreeStateIfNeeded() final;
 
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    ScrollingEventResult handleWheelEvent(FrameView&, const PlatformWheelEvent&) override;
+    bool handleWheelEvent(FrameView&, const PlatformWheelEvent&) override;
 
 private:
     void scheduleTreeStateCommit() final;

@@ -99,10 +99,10 @@ void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
         });
 }
 
-ScrollingEventResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (!canHandleWheelEvent(wheelEvent))
-        return ScrollingEventResult::DidNotHandleEvent;
+        return WheelEventHandlingResult::unhandled();
 
     if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
         auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
@@ -129,7 +129,7 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeNicosia::handleWheelEvent
     }
 #endif
 
-    return ScrollingEventResult::DidHandleEvent;
+    return WheelEventHandlingResult::handled();
 }
 
 void ScrollingTreeOverflowScrollingNodeNicosia::stopScrollAnimations()

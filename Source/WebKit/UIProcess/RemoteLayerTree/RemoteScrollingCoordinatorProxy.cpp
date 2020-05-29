@@ -181,13 +181,15 @@ bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent&
     if (!m_scrollingTree)
         return false;
 
-    if (m_scrollingTree->shouldHandleWheelEventSynchronously(wheelEvent))
+    auto processingSteps = m_scrollingTree->determineWheelEventProcessing(wheelEvent);
+    if (processingSteps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForDOMEventDispatch }))
         return false;
 
     if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    return m_scrollingTree->handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent;
+    auto result = m_scrollingTree->handleWheelEvent(wheelEvent);
+    return result.wasHandled;
 }
 
 void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

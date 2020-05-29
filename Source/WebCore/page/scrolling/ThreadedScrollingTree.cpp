@@ -55,16 +55,17 @@ ThreadedScrollingTree::~ThreadedScrollingTree()
     ASSERT(!m_scrollingCoordinator);
 }
 
-ScrollingEventResult ThreadedScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult ThreadedScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     ASSERT(ScrollingThread::isCurrentThread());
     return ScrollingTree::handleWheelEvent(wheelEvent);
 }
 
-ScrollingEventResult ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent)
+bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelEvent& wheelEvent)
 {
     SetForScope<bool> disallowLatchingScope(m_allowLatching, false);
-    return handleWheelEvent(wheelEvent);
+    auto result = handleWheelEvent(wheelEvent);
+    return result.wasHandled;
 }
 
 void ThreadedScrollingTree::invalidate()

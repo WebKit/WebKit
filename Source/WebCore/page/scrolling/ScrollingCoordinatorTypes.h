@@ -95,13 +95,6 @@ struct ScrollableAreaParameters {
     }
 };
 
-enum class ScrollingEventResult {
-    DidNotHandleEvent,
-    DidHandleEvent,
-    SendToScrollingThread,
-    SendToMainThread,
-};
-
 enum class ViewportRectStability {
     Stable,
     Unstable,
