@@ -31,13 +31,14 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer> {
+class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<LocalSampleBufferDisplayLayer> create(Client&);
@@ -78,13 +79,17 @@ private:
     void removeOldSamplesFromPendingQueue();
     void addSampleToPendingQueue(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
+    void enqueueSampleBuffer(MediaSample&);
 
 private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     RetainPtr<PlatformLayer> m_rootLayer;
     RenderPolicy m_renderPolicy { RenderPolicy::TimingInfo };
+    
+    RefPtr<WorkQueue> m_processingQueue;
 
+    // Only accessed through m_processingQueue or if m_processingQueue is null.
     using PendingSampleQueue = Deque<Ref<MediaSample>>;
     PendingSampleQueue m_pendingVideoSampleQueue;
 };
