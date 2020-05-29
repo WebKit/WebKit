@@ -63,6 +63,7 @@ WebXRSystem::WebXRSystem(ScriptExecutionContext& scriptExecutionContext)
     : ActiveDOMObject(&scriptExecutionContext)
 {
     m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
+    suspendIfNeeded();
 }
 
 WebXRSystem::~WebXRSystem() = default;

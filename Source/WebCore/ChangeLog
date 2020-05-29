@@ -1,5 +1,22 @@
 2020-05-29  Sergio Villar Senin  <svillar@igalia.com>
 
+        [WebXR] ActiveDOMObjects must call suspendIfNeeded() upon creation
+        https://bugs.webkit.org/show_bug.cgi?id=212517
+
+        Reviewed by Žan Doberšek.
+
+        We weren't calling suspendIfNeeded() upon ActiveDOMObjects creation (XRSession and XRSystem)
+        and that was triggering ASSERTION FAILED: m_suspendIfNeededWasCalled.
+
+        No new tests required as this was already detected by existing tests.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::WebXRSession): Call suspendIfNeeded().
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::WebXRSystem): Call suspendIfNeeded().
+
+2020-05-29  Sergio Villar Senin  <svillar@igalia.com>
+
         [WebXR] WebXRSystem::unregisterSimulatedXRDeviceForTesting() ASSERTs in m_immersiveDevices.contains(device)
         https://bugs.webkit.org/show_bug.cgi?id=212516
 

@@ -54,6 +54,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     // perform the necessary platform-specific steps to initialize the device's
     // tracking and rendering capabilities, including showing any necessary
     // instructions to the user.
+    suspendIfNeeded();
 }
 
 WebXRSession::~WebXRSession() = default;
