@@ -102,6 +102,8 @@ public:
 
     bool needsCanPlayAfterSeekedQuirk() const;
 
+    bool shouldAvoidPastingImagesAsWebContent() const;
+
 private:
     bool needsQuirks() const;
 
@@ -119,6 +121,7 @@ private:
     mutable Optional<bool> m_needsYouTubeOverflowScrollQuirk;
     mutable Optional<bool> m_needsPreloadAutoQuirk;
     mutable Optional<bool> m_needsFullscreenDisplayNoneQuirk;
+    mutable Optional<bool> m_shouldAvoidPastingImagesAsWebContent;
 #endif
     mutable Optional<bool> m_shouldDisableElementFullscreenQuirk;
 #if ENABLE(TOUCH_EVENTS)

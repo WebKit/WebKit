@@ -53,6 +53,7 @@
 #import "MIMETypeRegistry.h"
 #import "Page.h"
 #import "PublicURLManager.h"
+#import "Quirks.h"
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
 #import "SerializedAttachmentData.h"
@@ -678,6 +679,9 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type,
 {
     ASSERT(frame.document());
     auto& document = *frame.document();
+    if (document.quirks().shouldAvoidPastingImagesAsWebContent())
+        return false;
+
     if (shouldReplaceRichContentWithAttachments())
         addFragment(createFragmentForImageAttachment(frame, document, WTFMove(buffer), type, preferredPresentationSize));
     else

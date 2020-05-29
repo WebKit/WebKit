@@ -815,4 +815,20 @@ bool Quirks::shouldIgnoreContentObservationForSyntheticClick(bool isFirstSynthet
     return isFirstSyntheticClickOnPage && (equalLettersIgnoringASCIICase(host, "shutterstock.com") || host.endsWithIgnoringASCIICase(".shutterstock.com"));
 }
 
+bool Quirks::shouldAvoidPastingImagesAsWebContent() const
+{
+    if (!needsQuirks())
+        return false;
+
+#if PLATFORM(IOS_FAMILY)
+    if (!m_shouldAvoidPastingImagesAsWebContent) {
+        auto host = m_document->topDocument().url().host().toString();
+        m_shouldAvoidPastingImagesAsWebContent = host.startsWithIgnoringASCIICase("mail.") && topPrivatelyControlledDomain(host).startsWith("yahoo.");
+    }
+    return *m_shouldAvoidPastingImagesAsWebContent;
+#else
+    return false;
+#endif
+}
+
 }

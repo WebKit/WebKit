@@ -1,3 +1,29 @@
+2020-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to paste images when composing mail at yahoo.com
+        https://bugs.webkit.org/show_bug.cgi?id=212544
+        <rdar://problem/63511613>
+
+        Reviewed by Megan Gardner and Andy Estes.
+
+        When pasting images in the mobile version of the mail compose editor on mail.yahoo.com, mail.yahoo.com's script
+        handles the paste by allowing images to be inserted into the DOM (i.e. by not preventing the "paste" event), and
+        then stripping away the `src` attribute of the pasted image afterwards. This leaves behind a blank space in the
+        email.
+
+        Work around this by avoiding images when converting the contents of the pasteboard into web content on iOS.
+        Instead, we fall back to inserting (sanitized) text, or nothing at all if there is no other representation
+        suitable for converting into web content.
+
+        Unfortunately, the mobile version of the website is loaded on iPad as well, even when the desktop website has
+        been requested (through sending the macOS user agent and "MacIntel" navigator platform).
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readImage):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldAvoidPastingImagesAsWebContent const):
+        * page/Quirks.h:
+
 2020-05-29  Darin Adler  <darin@apple.com>
 
         Remove things from FeatureDefines.xcconfig that are covered by PlatformEnableCocoa.h
