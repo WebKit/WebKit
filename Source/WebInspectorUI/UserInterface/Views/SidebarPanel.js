@@ -109,11 +109,6 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
         // Implemented by subclasses.
     }
 
-    visibilityDidChange()
-    {
-        // Implemented by subclasses.
-    }
-
     // Protected
 
     get scrollElement()

@@ -138,6 +138,14 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
             codeMirror.refresh();
     }
 
+    shown()
+    {
+        super.shown();
+
+        for (let codeMirror of this._codeMirrorSectionMap.values())
+            codeMirror.refresh();
+    }
+
     // Private
 
     _refreshIdentitySection()

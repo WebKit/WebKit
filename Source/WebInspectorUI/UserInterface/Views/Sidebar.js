@@ -91,10 +91,8 @@ WI.Sidebar = class Sidebar extends WI.View
         if (!sidebarPanel)
             return;
 
-        if (sidebarPanel.visible) {
+        if (sidebarPanel.visible)
             sidebarPanel.hidden();
-            sidebarPanel.visibilityDidChange();
-        }
 
         sidebarPanel.selected = false;
 
@@ -124,7 +122,6 @@ WI.Sidebar = class Sidebar extends WI.View
 
         if (this._selectedSidebarPanel) {
             this._selectedSidebarPanel.hidden();
-            this._selectedSidebarPanel.visibilityDidChange();
             this._selectedSidebarPanel.selected = false;
             this.removeSubview(this._selectedSidebarPanel);
         }
@@ -137,10 +134,8 @@ WI.Sidebar = class Sidebar extends WI.View
         if (this._selectedSidebarPanel) {
             this.addSubview(this._selectedSidebarPanel);
             this._selectedSidebarPanel.selected = true;
-            if (!this.collapsed) {
+            if (!this.collapsed)
                 this._selectedSidebarPanel.shown();
-                this._selectedSidebarPanel.visibilityDidChange();
-            }
         }
 
         this.dispatchEventToListeners(WI.Sidebar.Event.SidebarPanelSelected);
@@ -195,8 +190,6 @@ WI.Sidebar = class Sidebar extends WI.View
                 this._selectedSidebarPanel.shown();
             else
                 this._selectedSidebarPanel.hidden();
-
-            this._selectedSidebarPanel.visibilityDidChange();
         }
 
         this.dispatchEventToListeners(WI.Sidebar.Event.CollapsedStateDidChange);
