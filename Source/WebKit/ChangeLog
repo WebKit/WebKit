@@ -1,3 +1,10 @@
+2020-05-28  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the macOS build
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Can't have this file in both the Xcode target and SourcesCocoa.txt...
+
 2020-05-28  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Buildfix after r262242
