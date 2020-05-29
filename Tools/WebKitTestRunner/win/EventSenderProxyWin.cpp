@@ -312,4 +312,50 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
         SetKeyboardState(keyState);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void EventSenderProxy::addTouchPoint(int, int)
+{
+}
+
+void EventSenderProxy::updateTouchPoint(int, int, int)
+{
+}
+
+void EventSenderProxy::setTouchModifier(WKEventModifiers, bool)
+{
+}
+
+void EventSenderProxy::setTouchPointRadius(int, int)
+{
+}
+
+void EventSenderProxy::touchStart()
+{
+}
+
+void EventSenderProxy::touchMove()
+{
+}
+
+void EventSenderProxy::touchEnd()
+{
+}
+
+void EventSenderProxy::touchCancel()
+{
+}
+
+void EventSenderProxy::clearTouchPoints()
+{
+}
+
+void EventSenderProxy::releaseTouchPoint(int)
+{
+}
+
+void EventSenderProxy::cancelTouchPoint(int)
+{
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
 } // namespace WTR

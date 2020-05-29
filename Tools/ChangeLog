@@ -1,3 +1,27 @@
+2020-05-29  Pavel  <pavel.feldman@gmail.com>
+
+        [Win] Allow compiling with the TOUCH_EVENTS enabled
+        https://bugs.webkit.org/show_bug.cgi?id=212528
+
+        Reviewed by Fujii Hironori.
+
+        Aligning Win with GTK, adding missing EventSenderProxy stubs.
+        This allows compiling Win with TOUCH_EVENTS and unlocks event
+        injection / processing by the automation drivers
+
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp:
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::setTouchModifier):
+        (WTR::EventSenderProxy::setTouchPointRadius):
+        (WTR::EventSenderProxy::touchStart):
+        (WTR::EventSenderProxy::touchMove):
+        (WTR::EventSenderProxy::touchEnd):
+        (WTR::EventSenderProxy::touchCancel):
+        (WTR::EventSenderProxy::clearTouchPoints):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+        (WTR::EventSenderProxy::cancelTouchPoint):
+
 2020-05-27  Darin Adler  <darin@apple.com>
 
         Remove things from FeatureDefines.xcconfig that are covered by PlatformEnableCocoa.h
