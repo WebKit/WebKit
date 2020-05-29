@@ -1,3 +1,26 @@
+2020-05-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Gardening, update test expectations after r262254
+        https://bugs.webkit.org/show_bug.cgi?id=212514
+
+        Unreviewed gardening.
+
+        r262254 re-synced many dom web-platform tests and expected files. Emit
+        new baselines for GTK and WPE for affected test and try to merge results 
+        into a common glib expectations when possible.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Removed.
+
 2020-05-29  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Import tests for the grid as flexbox item case

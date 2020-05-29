@@ -127,6 +127,8 @@ PASS createElement with attributes
 PASS createElementNS HTML 
 PASS createElementNS non-HTML 
 PASS createProcessingInstruction 
+PASS createAttribute 
+PASS createAttributeNS 
 PASS implementation.createDocumentType 
 PASS implementation.createDocument 
 PASS implementation.createHTMLDocument 

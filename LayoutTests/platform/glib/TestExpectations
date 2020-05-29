@@ -210,6 +210,8 @@ fast/scrolling/rtl-scrollbars.html [ Pass ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
+imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ DumpJSConsoleLogInStdErr ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
 PASS Setup 
 PASS background-color (type: color) has testInterpolation function 
@@ -152,7 +151,7 @@ PASS font-style uses discrete animation when animating between "italic" and "obl
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function 
 PASS font-variation-settings supports animation as float 
 PASS font-variation-settings supports animation as float with multiple tags 
-FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms lengths differ, expected 2 got 1
+FAIL font-variation-settings supports animation as float with multiple duplicate tags assert_array_equals: The computed values should be "wdth" 2,"wght" 1.2 at 250ms lengths differ, expected array ["\"wdth\" 2", "\"wght\" 1.2"] length 2, got ["normal"] length 1
 PASS font-variation-settings (type: discrete) has testInterpolation function 
 FAIL font-variation-settings uses discrete animation when animating between ""wght" 1.1, "wdth" 1" and ""wdth" 5" with linear easing assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "normal"
 FAIL font-variation-settings uses discrete animation when animating between ""wght" 1.1, "wdth" 1" and ""wdth" 5" with effect easing assert_equals: The value should be "wght" 1.1, "wdth" 1 at 0ms expected "\"wght\" 1.1, \"wdth\" 1" but got "normal"
