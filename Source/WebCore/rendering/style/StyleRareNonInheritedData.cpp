@@ -71,9 +71,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , shapeOutside(RenderStyle::initialShapeOutside())
     , shapeMargin(RenderStyle::initialShapeMargin())
     , shapeImageThreshold(RenderStyle::initialShapeImageThreshold())
+    , order(RenderStyle::initialOrder())
     , clipPath(RenderStyle::initialClipPath())
     , visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
-    , order(RenderStyle::initialOrder())
     , alignContent(RenderStyle::initialContentAlignment())
     , alignItems(RenderStyle::initialDefaultAlignment())
     , alignSelf(RenderStyle::initialSelfAlignment())
@@ -155,6 +155,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , shapeOutside(o.shapeOutside)
     , shapeMargin(o.shapeMargin)
     , shapeImageThreshold(o.shapeImageThreshold)
+    , order(o.order)
     , clipPath(o.clipPath)
     , textDecorationColor(o.textDecorationColor)
     , visitedLinkTextDecorationColor(o.visitedLinkTextDecorationColor)
@@ -164,7 +165,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , visitedLinkBorderRightColor(o.visitedLinkBorderRightColor)
     , visitedLinkBorderTopColor(o.visitedLinkBorderTopColor)
     , visitedLinkBorderBottomColor(o.visitedLinkBorderBottomColor)
-    , order(o.order)
     , alignContent(o.alignContent)
     , alignItems(o.alignItems)
     , alignSelf(o.alignSelf)
@@ -254,6 +254,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && arePointingToEqualData(shapeOutside, o.shapeOutside)
         && shapeMargin == o.shapeMargin
         && shapeImageThreshold == o.shapeImageThreshold
+        && order == o.order
         && arePointingToEqualData(clipPath, o.clipPath)
         && textDecorationColor == o.textDecorationColor
         && visitedLinkTextDecorationColor == o.visitedLinkTextDecorationColor
@@ -263,7 +264,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && visitedLinkBorderRightColor == o.visitedLinkBorderRightColor
         && visitedLinkBorderTopColor == o.visitedLinkBorderTopColor
         && visitedLinkBorderBottomColor == o.visitedLinkBorderBottomColor
-        && order == o.order
         && alignContent == o.alignContent
         && alignItems == o.alignItems
         && alignSelf == o.alignSelf

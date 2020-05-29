@@ -154,6 +154,8 @@ public:
     Length shapeMargin;
     float shapeImageThreshold;
 
+    int order;
+
     RefPtr<ClipPathOperation> clipPath;
 
     Color textDecorationColor;
@@ -164,8 +166,6 @@ public:
     Color visitedLinkBorderRightColor;
     Color visitedLinkBorderTopColor;
     Color visitedLinkBorderBottomColor;
-
-    int order;
 
     StyleContentAlignmentData alignContent;
     StyleSelfAlignmentData alignItems;
