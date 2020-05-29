@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBXR)
 
+#include "JSWebXRReferenceSpace.h"
+#include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"
 #include "WebXRSystem.h"
 #include "XRFrameRequestCallback.h"
@@ -83,8 +85,75 @@ void WebXRSession::updateRenderState(const XRRenderStateInit&)
 {
 }
 
-void WebXRSession::requestReferenceSpace(const XRReferenceSpaceType&, RequestReferenceSpacePromise&&)
+// https://immersive-web.github.io/webxr/#reference-space-is-supported
+bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
 {
+    // 1. If type is not contained in session’s XR device's list of enabled features for mode return false.
+    if (!m_device->enabledFeatures(m_mode).contains(type))
+        return false;
+
+    // 2. If type is viewer, return true.
+    if (type == XRReferenceSpaceType::Viewer)
+        return true;
+
+    bool isImmersiveSession = m_mode == XRSessionMode::ImmersiveAr || m_mode == XRSessionMode::ImmersiveVr;
+    if (type == XRReferenceSpaceType::Local || type == XRReferenceSpaceType::LocalFloor) {
+        // 3. If type is local or local-floor, and session is an immersive session, return true.
+        if (isImmersiveSession)
+            return true;
+
+        // 4. If type is local or local-floor, and the XR device supports reporting orientation data, return true.
+        // TODO: add API to PlatformXR::Device
+        return true;
+    }
+
+
+    // 5. If type is bounded-floor and session is an immersive session, return the result of whether bounded
+    //    reference spaces are supported by the XR device.
+    // https://immersive-web.github.io/webxr/#bounded-reference-spaces-are-supported
+    // TODO: add API to PlatformXR::Device
+    if (type == XRReferenceSpaceType::BoundedFloor && isImmersiveSession)
+        return true;
+
+    // 6. If type is unbounded, session is an immersive session, and the XR device supports stable tracking
+    //    near the user over an unlimited distance, return true.
+    // TODO: add API to PlatformXR::Device to check stable tracking over unlimited distance.
+    if (type == XRReferenceSpaceType::Unbounded && isImmersiveSession)
+        return true;
+
+    // 7. Return false.
+    return false;
+}
+
+// https://immersive-web.github.io/webxr/#dom-xrsession-requestreferencespace
+void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestReferenceSpacePromise&& promise)
+{
+    if (!scriptExecutionContext()) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+    // 1. Let promise be a new Promise.
+    // 2. Run the following steps in parallel:
+    scriptExecutionContext()->postTask([this, promise = WTFMove(promise), type] (auto& context) mutable {
+        //  2.1. Create a reference space, referenceSpace, with the XRReferenceSpaceType type.
+        //  2.2. If referenceSpace is null, reject promise with a NotSupportedError and abort these steps.
+        if (!referenceSpaceIsSupported(type)) {
+            promise.reject(Exception { NotSupportedError });
+            return;
+        }
+
+        // https://immersive-web.github.io/webxr/#create-a-reference-space
+        RefPtr<WebXRReferenceSpace> referenceSpace;
+        ASSERT(is<Document>(context));
+        if (type == XRReferenceSpaceType::BoundedFloor)
+            referenceSpace = WebXRBoundedReferenceSpace::create(downcast<Document>(context), makeRef(*this), type);
+        else
+            referenceSpace = WebXRReferenceSpace::create(downcast<Document>(context), makeRef(*this), type);
+
+        //  2.3. Resolve promise with referenceSpace.
+        // 3. Return promise.
+        promise.resolve(referenceSpace.releaseNonNull());
+    });
 }
 
 void WebXRSession::animationTimerFired()

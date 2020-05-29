@@ -28,7 +28,24 @@
 
 #if ENABLE(WEBXR)
 
+#include "DOMPointReadOnly.h"
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRBoundedReferenceSpace);
+
+Ref<WebXRBoundedReferenceSpace> WebXRBoundedReferenceSpace::create(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
+{
+    return adoptRef(*new WebXRBoundedReferenceSpace(document, WTFMove(session), type));
+}
+
+WebXRBoundedReferenceSpace::WebXRBoundedReferenceSpace(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
+    : WebXRReferenceSpace(document, WTFMove(session), type)
+{
+}
+
+WebXRBoundedReferenceSpace::~WebXRBoundedReferenceSpace() = default;
 
 const Vector<Ref<DOMPointReadOnly>>& WebXRBoundedReferenceSpace::boundsGeometry() const
 {

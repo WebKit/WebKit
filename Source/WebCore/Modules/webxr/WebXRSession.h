@@ -69,7 +69,7 @@ public:
     const WebXRInputSourceArray& inputSources() const;
 
     void updateRenderState(const XRRenderStateInit&);
-    void requestReferenceSpace(const XRReferenceSpaceType&, RequestReferenceSpacePromise&&);
+    void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
 
     XRFrameRequestCallback::Id requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
     void cancelAnimationFrame(int handle);
@@ -95,6 +95,8 @@ private:
 
     void animationTimerFired();
     void scheduleAnimation();
+
+    bool referenceSpaceIsSupported(XRReferenceSpaceType) const;
 
     XREnvironmentBlendMode m_environmentBlendMode;
     XRVisibilityState m_visibilityState;

@@ -1,3 +1,12 @@
+2020-05-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement XRSession::requestReferenceSpace()
+        https://bugs.webkit.org/show_bug.cgi?id=212407
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wpe/TestExpectations: Unskipped 3 more tests that are working now.
+
 2020-05-29  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Gardening, update test expectations after r262254

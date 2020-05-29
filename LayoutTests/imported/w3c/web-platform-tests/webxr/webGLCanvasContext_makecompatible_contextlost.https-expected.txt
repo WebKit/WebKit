@@ -1,0 +1,3 @@
+
+PASS A lost webglCanvasContext should not be able to set xr compatibility 
+

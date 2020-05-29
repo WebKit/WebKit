@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebXRReferenceSpace.h"
+#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
@@ -36,12 +37,17 @@ namespace WebCore {
 class DOMPointReadOnly;
 
 class WebXRBoundedReferenceSpace : public WebXRReferenceSpace {
+    WTF_MAKE_ISO_ALLOCATED(WebXRBoundedReferenceSpace);
 public:
+    static Ref<WebXRBoundedReferenceSpace> create(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
+
     virtual ~WebXRBoundedReferenceSpace();
 
     const Vector<Ref<DOMPointReadOnly>>& boundsGeometry() const;
 
 private:
+    WebXRBoundedReferenceSpace(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
+
     Vector<Ref<DOMPointReadOnly>> m_boundsGeometry;
 };
 

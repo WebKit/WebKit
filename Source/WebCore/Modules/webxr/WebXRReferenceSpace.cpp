@@ -28,18 +28,33 @@
 
 #if ENABLE(WEBXR)
 
+#include "Document.h"
+#include "WebXRSession.h"
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
 
-WebXRReferenceSpace::WebXRReferenceSpace(ScriptExecutionContext& context)
-    : WebXRSpace(context)
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
+
+Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
+{
+    return adoptRef(*new WebXRReferenceSpace(document, WTFMove(session), type));
+}
+
+WebXRReferenceSpace::WebXRReferenceSpace(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
+    : WebXRSpace(document, WTFMove(session))
+    , m_type(type)
 {
 }
 
 WebXRReferenceSpace::~WebXRReferenceSpace() = default;
 
-Ref<WebXRReferenceSpace> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform&)
+RefPtr<WebXRReferenceSpace> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform&)
 {
-    return adoptRef(*new WebXRReferenceSpace(*scriptExecutionContext()));
+    if (!scriptExecutionContext())
+        return nullptr;
+    ASSERT(is<Document>(scriptExecutionContext()));
+    return create(downcast<Document>(*scriptExecutionContext()), m_session.copyRef(), m_type);
 }
 
 } // namespace WebCore

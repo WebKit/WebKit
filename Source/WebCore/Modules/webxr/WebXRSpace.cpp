@@ -28,15 +28,19 @@
 
 #if ENABLE(WEBXR)
 
+#include "Document.h"
+#include "WebXRSession.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSpace);
 
-WebXRSpace::WebXRSpace(ScriptExecutionContext& context)
-    : ContextDestructionObserver(&context)
+WebXRSpace::WebXRSpace(Document& document, Ref<WebXRSession>&& session)
+    : ContextDestructionObserver(&document)
+    , m_session(WTFMove(session))
 {
+    ASSERT(context);
 }
 
 WebXRSpace::~WebXRSpace() = default;

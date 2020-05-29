@@ -33,7 +33,9 @@
 
 namespace WebCore {
 
+class Document;
 class ScriptExecutionContext;
+class WebXRSession;
 
 class WebXRSpace : public RefCounted<WebXRSpace>, public EventTargetWithInlineData, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRSpace);
@@ -44,10 +46,12 @@ public:
     using RefCounted<WebXRSpace>::deref;
 
 protected:
-    WebXRSpace(ScriptExecutionContext&);
+    WebXRSpace(Document&, Ref<WebXRSession>&&);
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
+
+    Ref<WebXRSession> m_session;
 
 private:
     // EventTarget

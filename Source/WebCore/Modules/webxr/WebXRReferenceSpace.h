@@ -28,21 +28,28 @@
 #if ENABLE(WEBXR)
 
 #include "WebXRSpace.h"
-
+#include "XRReferenceSpaceType.h"
+#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class WebXRRigidTransform;
+class WebXRSession;
 
 class WebXRReferenceSpace : public WebXRSpace {
+    WTF_MAKE_ISO_ALLOCATED(WebXRReferenceSpace);
 public:
+    static Ref<WebXRReferenceSpace> create(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
+
     virtual ~WebXRReferenceSpace();
 
-    Ref<WebXRReferenceSpace> getOffsetReferenceSpace(const WebXRRigidTransform&);
+    RefPtr<WebXRReferenceSpace> getOffsetReferenceSpace(const WebXRRigidTransform&);
 
-private:
-    WebXRReferenceSpace(ScriptExecutionContext&);
+protected:
+    WebXRReferenceSpace(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);
+
+    XRReferenceSpaceType m_type;
 };
 
 } // namespace WebCore
