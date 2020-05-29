@@ -1,5 +1,28 @@
 2020-05-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Update debug overlays at rendering update time
+        https://bugs.webkit.org/show_bug.cgi?id=212510
+
+        Reviewed by Antoine Quint.
+
+        Don't eagerly update the regions in debug overlays when things change; this triggers
+        assertions for touch event overlays.
+
+        Instead, just mark them dirty and update the regions at "update the rendering" time.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::RegionOverlay::setRegionChanged):
+        (WebCore::RegionOverlay::didMoveToPage):
+        (WebCore::RegionOverlay::recomputeRegion):
+        (WebCore::DebugPageOverlays::regionChanged):
+        (WebCore::DebugPageOverlays::updateRegionIfNecessary):
+        * page/DebugPageOverlays.h:
+        (WebCore::DebugPageOverlays::doAfterUpdateRendering):
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+
+2020-05-29  Simon Fraser  <simon.fraser@apple.com>
+
         Prepare for async scrolling in passive wheel event handler regions
         https://bugs.webkit.org/show_bug.cgi?id=212455
 

@@ -49,6 +49,8 @@ public:
     void recomputeRegion();
     PageOverlay& overlay() { return *m_overlay; }
 
+    void setRegionChanged() { m_regionChanged = true; }
+
 protected:
     RegionOverlay(Page&, Color);
 
@@ -68,6 +70,7 @@ protected:
     RefPtr<PageOverlay> m_overlay;
     std::unique_ptr<Region> m_region;
     Color m_color;
+    bool m_regionChanged { true };
 };
 
 class MouseWheelRegionOverlay final : public RegionOverlay {
@@ -287,7 +290,7 @@ void RegionOverlay::willMoveToPage(PageOverlay&, Page* page)
 void RegionOverlay::didMoveToPage(PageOverlay&, Page* page)
 {
     if (page)
-        recomputeRegion();
+        setRegionChanged();
 }
 
 void RegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRect& dirtyRect)
@@ -321,8 +324,13 @@ void RegionOverlay::didScrollFrame(PageOverlay&, Frame&)
 
 void RegionOverlay::recomputeRegion()
 {
+    if (!m_regionChanged)
+        return;
+
     if (updateRegion())
         m_overlay->setNeedsDisplay();
+
+    m_regionChanged = false;
 }
 
 DebugPageOverlays& DebugPageOverlays::singleton()
@@ -380,6 +388,12 @@ void DebugPageOverlays::regionChanged(Frame& frame, RegionType regionType)
         return;
 
     if (auto* visualizer = regionOverlayForPage(*page, regionType))
+        visualizer->setRegionChanged();
+}
+
+void DebugPageOverlays::updateRegionIfNecessary(Page& page, RegionType regionType)
+{
+    if (auto* visualizer = regionOverlayForPage(page, regionType))
         visualizer->recomputeRegion();
 }
 

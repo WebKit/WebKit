@@ -41,6 +41,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DatabaseProvider.h"
+#include "DebugPageOverlays.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
@@ -1456,6 +1457,8 @@ void Page::doAfterUpdateRendering()
     if (RefPtr<Document> document = mainFrame().document())
         document->updateTouchEventRegions();
 #endif
+
+    DebugPageOverlays::doAfterUpdateRendering(*this);
 
     if (UNLIKELY(isMonitoringWheelEvents()))
         wheelEventTestMonitor()->checkShouldFireCallbacks();
