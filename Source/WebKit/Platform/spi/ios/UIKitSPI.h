@@ -1312,6 +1312,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 - (BOOL)handleKeyAppCommandForCurrentEvent;
 - (BOOL)handleKeyInputMethodCommandForCurrentEvent;
 - (BOOL)isCallingInputDelegate;
+- (BOOL)delegateSupportsImagePaste;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 

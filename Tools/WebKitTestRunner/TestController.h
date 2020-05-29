@@ -554,6 +554,9 @@ private:
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
+#if !HAVE(NONDESTRUCTIVE_IMAGE_PASTE_SUPPORT_QUERY)
+    std::unique_ptr<InstanceMethodSwizzler> m_keyboardDelegateSupportsImagePasteSwizzler;
+#endif
 #endif
 
     enum State {
