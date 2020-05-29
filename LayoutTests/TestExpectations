@@ -1069,6 +1069,10 @@ webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]
 webkit.org/b/191507 fast/css-grid-layout/positioned-grid-container-percentage-tracks.html [ Failure ]
 webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-001.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-003.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-007.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-008.html [ Failure ]
 
 # Flaky tests at import time
 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
