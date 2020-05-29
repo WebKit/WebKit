@@ -1,3 +1,15 @@
+2020-05-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Add watchlist comment for patches touching imported WPT tests.
+        https://bugs.webkit.org/show_bug.cgi?id=212362
+
+        Reviewed by Youenn Fablet.
+
+        Add a watchlist trigger to comment on patches touching imported WPT tests
+        with a link to documentation about the export process.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2020-05-29  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak] Fix os.system return code for better signal handling.
