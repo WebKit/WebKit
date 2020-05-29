@@ -1013,6 +1013,17 @@ webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Crash ]
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Crash ]
 
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Crash ]
+webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

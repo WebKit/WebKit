@@ -1,3 +1,9 @@
+2020-05-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Adding debug crash expectations for WebXR tests.
+
 2020-05-28  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Buttons render with a corner radius of PKApplePayButtonDefaultCornerRadius even when explicitly specifying "border-radius: 0px"
