@@ -1,3 +1,15 @@
+2020-05-29  Youenn Fablet  <youenn@apple.com>
+
+        Enable VTB required low latency code path
+        https://bugs.webkit.org/show_bug.cgi?id=210609
+        <rdar://problem/61890332>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        Declare the new key since it is now in a private header.
+
 2020-05-26  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds
