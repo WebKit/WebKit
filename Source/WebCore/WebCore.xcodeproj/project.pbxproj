@@ -29968,6 +29968,7 @@
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
 				F48D2AA52159740D00C6752B /* ColorCocoa.h in Headers */,
+				7CAC6AF0247F411000E61D59 /* ColorComponents.h in Headers */,
 				3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */,
 				F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */,
 				CE5169E721F1B84700EA4F78 /* ColorIOS.h in Headers */,
@@ -32798,7 +32799,6 @@
 				A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */,
 				418938B22429F9B4007FDC41 /* RetrieveRecordsOptions.h in Headers */,
 				FD3160A512B026F700C1A359 /* Reverb.h in Headers */,
-				7CAC6AF0247F411000E61D59 /* ColorComponents.h in Headers */,
 				FD3160A712B026F700C1A359 /* ReverbAccumulationBuffer.h in Headers */,
 				FD3160A912B026F700C1A359 /* ReverbConvolver.h in Headers */,
 				FD3160AB12B026F700C1A359 /* ReverbConvolverStage.h in Headers */,
@@ -33961,6 +33961,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1140;
 				TargetAttributes = {

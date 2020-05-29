@@ -1,3 +1,17 @@
+2020-05-29  Keith Rollin  <krollin@apple.com>
+
+        Revert switch to XCBuild
+        https://bugs.webkit.org/show_bug.cgi?id=212530
+        <rdar://problem/63764632>
+
+        Unreviewed build fix.
+
+        Bug 209890 enabled the use of XCBuild by default. Since then, some
+        build issues have shown up. While addressing them, temporarily turn
+        off the use of XCBuild by default.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2020-05-27  Keith Rollin  <krollin@apple.com>
 
         Enable the use of XCBuild by default in Apple builds

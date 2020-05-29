@@ -47,8 +47,11 @@ endif
 ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
 	CAN_USE_XCBUILD = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print canUseXCBuild()')
 	ifeq ($(CAN_USE_XCBUILD),1)
-		XCODE_OPTIONS += -UseNewBuildSystem=YES
-		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=YES
+		# Temporarily disable default use of XCBuild until issues with it are ironed out.
+		#XCODE_OPTIONS += -UseNewBuildSystem=YES
+		#XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=YES
+		XCODE_OPTIONS += -UseNewBuildSystem=NO
+		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=NO
 	else
 		XCODE_OPTIONS += -UseNewBuildSystem=NO
 		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=NO
