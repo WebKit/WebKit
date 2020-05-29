@@ -1,3 +1,19 @@
+2020-05-28  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up WebKit.xcodeproj/project.pbxproj
+        https://bugs.webkit.org/show_bug.cgi?id=212491
+
+        Reviewed by Tim Horton.
+
+        A follow-up patch to add AudioSessionRoutingArbitratorProxyCocoa.mm to the unified build.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add AudioSessionRoutingArbitratorProxyCocoa.mm to the unified build.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        Fix a unified build failure.
+
 2020-05-28  Megan Gardner  <megan_gardner@apple.com>
 
         Avoid unnecessary sync IPC messages when togging the callout bar for selections.

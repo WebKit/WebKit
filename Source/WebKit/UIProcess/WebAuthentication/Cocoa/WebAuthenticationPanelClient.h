@@ -32,6 +32,7 @@
 #import "APIWebAuthenticationPanelClient.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 @class _WKWebAuthenticationPanel;
 @protocol _WKWebAuthenticationPanelDelegate;
