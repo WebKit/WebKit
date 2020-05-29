@@ -1,3 +1,16 @@
+2020-05-29  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Pass all defines from Platform.h to various scripts, not just the ones from .xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=212451
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make: Run the preprocessor on Platform.h and parse the output into
+        FEATURE_AND_PLATFORM_DEFINES. Use that and FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES
+        whenever we need a list of defines. Also took out some Windows-specific stuff since
+        this is now only used on Mac platforms. Use ":=" when calling $(shell) to make sure
+        the same shell command is not invoked over and over again.
+
 2020-05-29  Keith Rollin  <krollin@apple.com>
 
         Revert switch to XCBuild
