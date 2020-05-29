@@ -45,7 +45,7 @@ class CachedResourceLoader;
 class CachedSVGDocumentReference;
 class FilterEffect;
 struct ResourceLoaderOptions;
-template<typename T> struct ColorComponents;
+template<typename> struct ColorComponents;
 
 class FilterOperation : public ThreadSafeRefCounted<FilterOperation> {
 public:

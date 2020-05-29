@@ -34,77 +34,90 @@ namespace WebCore {
 
 template<typename T>
 struct ColorComponents {
-    ColorComponents(T a = 0, T b = 0, T c = 0, T d = 0)
+    constexpr static size_t Size = 4;
+
+    constexpr ColorComponents(T a = 0, T b = 0, T c = 0, T d = 0)
         : components { a, b, c, d }
     {
     }
 
-    ColorComponents(const std::array<T, 4>& values)
-        : components { values }
-    {
-    }
+    constexpr ColorComponents& operator+=(const ColorComponents&);
 
-    ColorComponents& operator+=(const ColorComponents& rhs)
-    {
-        components[0] += rhs.components[0];
-        components[1] += rhs.components[1];
-        components[2] += rhs.components[2];
-        components[3] += rhs.components[3];
-        return *this;
-    }
+    constexpr ColorComponents operator+(T) const;
+    constexpr ColorComponents operator/(T) const;
+    constexpr ColorComponents operator*(T) const;
 
-    ColorComponents operator+(T rhs) const
-    {
-        return {
-            components[0] + rhs,
-            components[1] + rhs,
-            components[2] + rhs,
-            components[3] + rhs
-        };
-    }
-
-    ColorComponents operator/(T denominator) const
-    {
-        return {
-            components[0] / denominator,
-            components[1] / denominator,
-            components[2] / denominator,
-            components[3] / denominator
-        };
-    }
-
-    ColorComponents operator*(T factor) const
-    {
-        return {
-            components[0] * factor,
-            components[1] * factor,
-            components[2] * factor,
-            components[3] * factor
-        };
-    }
-
-    ColorComponents abs() const
-    {
-        return {
-            std::abs(components[0]),
-            std::abs(components[1]),
-            std::abs(components[2]),
-            std::abs(components[3])
-        };
-    }
+    constexpr ColorComponents abs() const;
 
     template<std::size_t N>
-    T get() const
-    {
-        return components[N];
-    }
+    constexpr T get() const;
 
-    std::array<T, 4> components;
+    std::array<T, Size> components;
 };
 
+template<typename T>
+constexpr ColorComponents<T>& ColorComponents<T>::operator+=(const ColorComponents& rhs)
+{
+    components[0] += rhs.components[0];
+    components[1] += rhs.components[1];
+    components[2] += rhs.components[2];
+    components[3] += rhs.components[3];
+    return *this;
+}
 
 template<typename T>
-inline ColorComponents<T> perComponentMax(const ColorComponents<T>& a, const ColorComponents<T>& b)
+constexpr ColorComponents<T> ColorComponents<T>::operator+(T rhs) const
+{
+    return {
+        components[0] + rhs,
+        components[1] + rhs,
+        components[2] + rhs,
+        components[3] + rhs
+    };
+}
+
+template<typename T>
+constexpr ColorComponents<T> ColorComponents<T>::operator/(T denominator) const
+{
+    return {
+        components[0] / denominator,
+        components[1] / denominator,
+        components[2] / denominator,
+        components[3] / denominator
+    };
+}
+
+template<typename T>
+constexpr ColorComponents<T> ColorComponents<T>::operator*(T factor) const
+{
+    return {
+        components[0] * factor,
+        components[1] * factor,
+        components[2] * factor,
+        components[3] * factor
+    };
+}
+
+template<typename T>
+constexpr ColorComponents<T> ColorComponents<T>::abs() const
+{
+    return {
+        std::abs(components[0]),
+        std::abs(components[1]),
+        std::abs(components[2]),
+        std::abs(components[3])
+    };
+}
+
+template<typename T>
+template<std::size_t N>
+constexpr T ColorComponents<T>::get() const
+{
+    return components[N];
+}
+
+template<typename T>
+constexpr ColorComponents<T> perComponentMax(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
     return {
         std::max(a.components[0], b.components[0]),
@@ -115,7 +128,7 @@ inline ColorComponents<T> perComponentMax(const ColorComponents<T>& a, const Col
 }
 
 template<typename T>
-inline ColorComponents<T> perComponentMin(const ColorComponents<T>& a, const ColorComponents<T>& b)
+constexpr ColorComponents<T> perComponentMin(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
     return {
         std::min(a.components[0], b.components[0]),
@@ -126,13 +139,13 @@ inline ColorComponents<T> perComponentMin(const ColorComponents<T>& a, const Col
 }
 
 template<typename T>
-inline bool operator==(const ColorComponents<T>& a, const ColorComponents<T>& b)
+constexpr bool operator==(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
     return a.components == b.components;
 }
 
 template<typename T>
-inline bool operator!=(const ColorComponents<T>& a, const ColorComponents<T>& b)
+constexpr bool operator!=(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
     return !(a == b);
 }
@@ -142,7 +155,7 @@ inline bool operator!=(const ColorComponents<T>& a, const ColorComponents<T>& b)
 namespace std {
 
 template<typename T>
-class tuple_size<WebCore::ColorComponents<T>> : public std::integral_constant<std::size_t, 4> {
+class tuple_size<WebCore::ColorComponents<T>> : public std::integral_constant<std::size_t, WebCore::ColorComponents<T>::Size> {
 };
 
 template<std::size_t N, typename T>

@@ -80,13 +80,11 @@ static ColorComponents<float> xyzToLinearSRGB(const ColorComponents<float>& XYZC
 {
     // https://en.wikipedia.org/wiki/SRGB
     // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-    const float values[] = {
-         3.2404542f, -1.5371385f, -0.4985314f, 0.0f, 0.0f,
-        -0.9692660f,  1.8760108f,  0.0415560f, 0.0f, 0.0f,
-         0.0556434f, -0.2040259f,  1.0572252f, 0.0f, 0.0f,
-         0.0f,        0.0f,        0.0f,       1.0f, 0.0f,
+    constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
+         3.2404542f, -1.5371385f, -0.4985314f,
+        -0.9692660f,  1.8760108f,  0.0415560f,
+         0.0556434f, -0.2040259f,  1.0572252f
     };
-    ColorMatrix xyzToLinearSRGBMatrix(values);
     return xyzToLinearSRGBMatrix.transformedColorComponents(XYZComponents);
 }
 
@@ -94,39 +92,33 @@ static ColorComponents<float> linearSRGBToXYZ(const ColorComponents<float>& XYZC
 {
     // https://en.wikipedia.org/wiki/SRGB
     // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-    const float values[] = {
-        0.4124564f,  0.3575761f,  0.1804375f, 0.0f, 0.0f,
-        0.2126729f,  0.7151522f,  0.0721750f, 0.0f, 0.0f,
-        0.0193339f,  0.1191920f,  0.9503041f, 0.0f, 0.0f,
-        0.0f,        0.0f,        0.0f,       1.0f, 0.0f,
+    constexpr ColorMatrix<3, 3> linearSRGBToXYZMatrix {
+        0.4124564f,  0.3575761f,  0.1804375f,
+        0.2126729f,  0.7151522f,  0.0721750f,
+        0.0193339f,  0.1191920f,  0.9503041f
     };
-    ColorMatrix linearSRGBToXYZMatrix(values);
     return linearSRGBToXYZMatrix.transformedColorComponents(XYZComponents);
 }
 
 static ColorComponents<float> XYZToLinearP3(const ColorComponents<float>& XYZComponents)
 {
     // https://drafts.csswg.org/css-color/#color-conversion-code
-    const float values[] = {
-         2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f, 0.0f, 0.0f,
-        -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f, 0.0f, 0.0f,
-         0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f, 0.0f, 0.0f,
-         0.0f,                 0.0f,                 0.0f,                1.0f, 0.0f,
+    constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
+         2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
+        -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
+         0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
     };
-    ColorMatrix xyzToLinearSRGBMatrix(values);
     return xyzToLinearSRGBMatrix.transformedColorComponents(XYZComponents);
 }
 
 static ColorComponents<float> linearP3ToXYZ(const ColorComponents<float>& XYZComponents)
 {
     // https://drafts.csswg.org/css-color/#color-conversion-code
-    const float values[] = {
-        0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f, 0.0f, 0.0f,
-        0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f, 0.0f, 0.0f,
-        0.0f,                0.0451133818589026f, 1.043944368900976f, 0.0f, 0.0f,
-        0.0f,                0.0f,                0.0f,               1.0f, 0.0f,
+    constexpr ColorMatrix<3, 3> linearP3ToXYZMatrix {
+        0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
+        0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
+        0.0f,                0.0451133818589026f, 1.043944368900976f
     };
-    ColorMatrix linearP3ToXYZMatrix(values);
     return linearP3ToXYZMatrix.transformedColorComponents(XYZComponents);
 }
 

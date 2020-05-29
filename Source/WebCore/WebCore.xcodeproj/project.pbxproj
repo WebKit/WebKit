@@ -10164,7 +10164,6 @@
 		7C9DBFEA1A9C489F000D6B25 /* HTMLAttachmentElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLAttachmentElement.idl; sourceTree = "<group>"; };
 		7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAttachmentElement.cpp; sourceTree = "<group>"; };
 		7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAttachmentElement.h; sourceTree = "<group>"; };
-		7CAC6AE6247F081F00E61D59 /* ColorMatrix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorMatrix.cpp; sourceTree = "<group>"; };
 		7CAC6AE8247F082000E61D59 /* ColorMatrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorMatrix.h; sourceTree = "<group>"; };
 		7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorComponents.h; sourceTree = "<group>"; };
 		7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExpression.cpp; sourceTree = "<group>"; };
@@ -25426,7 +25425,6 @@
 				B27535390B053814002CE64F /* Color.h */,
 				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
-				7CAC6AE6247F081F00E61D59 /* ColorMatrix.cpp */,
 				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
 				0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */,

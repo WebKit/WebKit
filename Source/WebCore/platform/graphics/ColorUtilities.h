@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-template<typename T> struct ColorComponents;
+template<typename> struct ColorComponents;
 
 // 0-1 components, result is clamped.
 float linearToRGBColorComponent(float);
@@ -63,12 +63,12 @@ inline uint8_t roundAndClampColorChannel(float value)
     return std::clamp(std::round(value), 0.f, 255.f);
 }
 
-inline uint16_t fastMultiplyBy255(uint16_t value)
+constexpr uint16_t fastMultiplyBy255(uint16_t value)
 {
     return (value << 8) - value;
 }
 
-inline uint16_t fastDivideBy255(uint16_t value)
+constexpr uint16_t fastDivideBy255(uint16_t value)
 {
     // While this is an approximate algorithm for division by 255, it gives perfectly accurate results for 16-bit values.
     // FIXME: Since this gives accurate results for 16-bit values, we should get this optimization into compilers like clang.

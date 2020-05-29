@@ -89,22 +89,22 @@ bool BasicColorMatrixFilterOperation::transformColor(ColorComponents<float>& col
 {
     switch (m_type) {
     case GRAYSCALE: {
-        ColorMatrix matrix = ColorMatrix::grayscaleMatrix(m_amount);
+        auto matrix = grayscaleColorMatrix(m_amount);
         matrix.transformColorComponents(colorComponents);
         return true;
     }
     case SEPIA: {
-        ColorMatrix matrix = ColorMatrix::sepiaMatrix(m_amount);
+        auto matrix = sepiaColorMatrix(m_amount);
         matrix.transformColorComponents(colorComponents);
         return true;
     }
     case HUE_ROTATE: {
-        ColorMatrix matrix = ColorMatrix::hueRotateMatrix(m_amount);
+        auto matrix = hueRotateColorMatrix(m_amount);
         matrix.transformColorComponents(colorComponents);
         return true;
     }
     case SATURATE: {
-        ColorMatrix matrix = ColorMatrix::saturationMatrix(m_amount);
+        auto matrix = saturationColorMatrix(m_amount);
         matrix.transformColorComponents(colorComponents);
         return true;
     }
@@ -237,14 +237,11 @@ bool InvertLightnessFilterOperation::transformColor(ColorComponents<float>& sRGB
     sRGBColorComponents = hslToSRGB(hslComponents);
     
     // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
-    const float matrixValues[20] = {
-       -0.770,  0.059, -0.089, 0, 1,
-        0.030, -0.741, -0.089, 0, 1,
-        0.030,  0.059, -0.890, 0, 1,
-        0,      0,      0,     1, 0
+    constexpr ColorMatrix<5, 3> toDarkModeMatrix {
+       -0.770f,  0.059f, -0.089f, 0.0f, 1.0f,
+        0.030f, -0.741f, -0.089f, 0.0f, 1.0f,
+        0.030f,  0.059f, -0.890f, 0.0f, 1.0f
     };
-
-    ColorMatrix toDarkModeMatrix(matrixValues);
     toDarkModeMatrix.transformColorComponents(sRGBColorComponents);
     return true;
 }
@@ -254,13 +251,11 @@ bool InvertLightnessFilterOperation::inverseTransformColor(ColorComponents<float
     auto rgbComponents = sRGBColorComponents;
 
     // Apply the matrix.
-    const float matrixValues[20] = {
-        -1.300, -0.097,  0.147, 0, 1.25,
-        -0.049, -1.347,  0.146, 0, 1.25,
-        -0.049, -0.097, -1.104, 0, 1.25,
-         0,      0,      0,     1, 0
+    constexpr ColorMatrix<5, 3> toLightModeMatrix {
+        -1.300f, -0.097f,  0.147f, 0.0f, 1.25f,
+        -0.049f, -1.347f,  0.146f, 0.0f, 1.25f,
+        -0.049f, -0.097f, -1.104f, 0.0f, 1.25f
     };
-    ColorMatrix toLightModeMatrix(matrixValues);
     toLightModeMatrix.transformColorComponents(rgbComponents);
 
     // Convert to HSL.

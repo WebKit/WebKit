@@ -1,3 +1,87 @@
+2020-05-29  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: ColorMatrix should support smaller matrices and be constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=212477
+
+        Reviewed by Simon Fraser.
+
+        - Adds the ability to specify a ColorMatrix with any number of rows or columns,
+          useful as most of the uses ColorMatrix did not need the full 5x4. Transformation
+          act as-if the the ColorMatrix is the identify matrix for any rows or columns
+          not present. For example, when transforming a ColorComponents, which is 4x1, a 
+          3x3 ColorMatrix of the form:
+
+              [ a, b, c ]
+              [ d, e, f ]
+              [ g, h, i ]
+              
+          will behave as-if it looks like:
+          
+              [ a, b, c, 0 ]
+              [ d, e, f, 0 ]
+              [ g, h, i, 0 ]
+              [ 0, 0, 0, 1 ]
+        
+          In practice, this means that the last component of the input vector is left
+          unmodified.
+
+        - Adds ability to use ColorMatrix in constexpr statements, which will be useful
+          for compile time concatenation of colorspace conversion matrices in a future
+          change but is also useful for improved space efficiency of constant matrices
+          already used.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove ColorMatrix.cpp
+
+        * platform/graphics/ColorComponents.h:
+        (WebCore::ColorComponents::ColorComponents):
+        (WebCore::ColorComponents::operator+=):
+        (WebCore::ColorComponents::operator+ const):
+        (WebCore::ColorComponents::operator/ const):
+        (WebCore::ColorComponents::operator* const):
+        (WebCore::ColorComponents::abs const):
+        (WebCore::ColorComponents::get const):
+        (WebCore::perComponentMax):
+        (WebCore::perComponentMin):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        Make everything constexpr and move implementations out of the declarations for clarity.
+
+        * platform/graphics/ColorMatrix.cpp: Removed.
+        * platform/graphics/ColorMatrix.h:
+        (WebCore::ColorMatrix::ColorMatrix):
+        (WebCore::ColorMatrix::at const):
+        (WebCore::grayscaleColorMatrix):
+        (WebCore::sepiaColorMatrix):
+        (WebCore::saturationColorMatrix):
+        (WebCore::hueRotateColorMatrix):
+        (WebCore::ColorMatrix::transformColorComponents):
+        (WebCore::ColorMatrix::transformedColorComponents):
+        Re-write as a class templatized on the number of rows and columns. Moves factory functions
+        out of the class to avoid awkwardness of having to specify a dummy size when calling them 
+        (e.g. we wouldn't want you to have to write ColorMatrix<3, 3>::grayscaleMatrix(), instead
+        just grayscaleColorMatrix() is much nicer).
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::xyzToLinearSRGB):
+        (WebCore::linearSRGBToXYZ):
+        (WebCore::XYZToLinearP3):
+        (WebCore::linearP3ToXYZ):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicColorMatrixFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+        Adopt new ColorMatrix interface.
+
+        * platform/graphics/filters/FilterOperation.h:
+        Remove unnecessary T in forward declaration.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::fastMultiplyBy255):
+        (WebCore::fastDivideBy255):
+        Add some missing constexprs.
+
 2020-05-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r262245.
