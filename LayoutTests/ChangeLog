@@ -1,3 +1,12 @@
+2020-05-29  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ iOS ] http/wpt/service-workers/service-worker-different-process.https.html & http/wpt/service-workers/service-worker-crashing-while-fetching.https.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=212532
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-05-29  Truitt Savell  <tsavell@apple.com>
 
         Fix expectations after r262284
