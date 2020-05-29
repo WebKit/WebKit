@@ -1,3 +1,20 @@
+2020-05-28  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Buttons render with a corner radius of PKApplePayButtonDefaultCornerRadius even when explicitly specifying "border-radius: 0px"
+        https://bugs.webkit.org/show_bug.cgi?id=212476
+        <rdar://problem/63401433>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * fast/css/appearance-apple-pay-button-border-radius-expected.html: Added.
+        * fast/css/appearance-apple-pay-button-border-radius.html: Added.
+        * fast/css/appearance-apple-pay-button-expected.html:
+        * fast/css/appearance-apple-pay-button.html:
+        * fast/css/getComputedStyle/computed-style-apple-pay-button-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-apple-pay-button.html: Added.
+        * platform/mac/TestExpectations:
+
 2020-05-28  Chris Dumez  <cdumez@apple.com>
 
         Update web-platform-tests/interfaces from upstream

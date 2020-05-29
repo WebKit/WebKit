@@ -1,5 +1,57 @@
 2020-05-28  Andy Estes  <aestes@apple.com>
 
+        [Apple Pay] Buttons render with a corner radius of PKApplePayButtonDefaultCornerRadius even when explicitly specifying "border-radius: 0px"
+        https://bugs.webkit.org/show_bug.cgi?id=212476
+        <rdar://problem/63401433>
+
+        Reviewed by Antti Koivisto.
+
+        r256648 added support for customizing the corner radius of Apple Pay buttons using the
+        border-radius CSS property. PassKit buttons have a default corner radius of 4, but
+        border-radius has an initial value of 0, so to maintain web compatibility with existing
+        buttons we only want to customize the corner radius when a border-radius value has been
+        explicitly specified (otherwise, previously rounded buttons would all become squared off due
+        to border-radius's initial value).
+
+        r256648 checked for a non-initial border-radius by calling RenderStyle::hasBorderRadius, but
+        this check does not distinguish between an initial value and an explicit declaration of
+        "border-radius: 0px". As a result, authors are unable to create Apple Pay buttons with
+        square corners.
+
+        This patch adds a flag to RenderStyle::NonInheritedFlags that tracks whether any
+        border-radius longhand has been explicitly set (or has explicitly inherited an explicitly set
+        value), and uses that flag to adjust the computed border radius for Apple Pay buttons.
+
+        The addition of RenderStyle::NonInheritedFlags::hasExplicitlySetBorderRadius did not change
+        the size of RenderStyle.
+
+        Tests: fast/css/appearance-apple-pay-button-border-radius.html
+               fast/css/getComputedStyle/computed-style-apple-pay-button.html
+
+        * css/CSSProperties.json:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::adjustApplePayButtonStyle const):
+        (WebCore::RenderThemeCocoa::paintApplePayButton):
+        (WebCore::largestCornerRadius): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasExplicitlySetBorderRadius const):
+        (WebCore::RenderStyle::setHasExplicitlySetBorderRadius):
+        (WebCore::RenderStyle::NonInheritedFlags::operator== const):
+        (WebCore::RenderStyle::NonInheritedFlags::copyNonInheritedFrom):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInheritBorderBottomLeftRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderBottomLeftRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderBottomRightRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderBottomRightRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderTopLeftRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderTopLeftRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderTopRightRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderTopRightRadius):
+
+2020-05-28  Andy Estes  <aestes@apple.com>
+
         Shrink StyleRareNonInheritedData by 8 bytes (on 64-bit platforms)
         https://bugs.webkit.org/show_bug.cgi?id=212484
 

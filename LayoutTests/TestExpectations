@@ -203,6 +203,9 @@ http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private
 media/deactivate-audio-session.html [ Skip ]
 
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
+fast/css/appearance-apple-pay-button.html [ Skip ]
+fast/css/appearance-apple-pay-button-border-radius.html [ Skip ]
+fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Skip ]
 http/tests/ssl/applepay/ [ Skip ]
 
 # Only WK2 allows unconstrained scrolling
@@ -1953,7 +1956,6 @@ fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
 # integral hittest vs. subpixel table
 fast/table/hittest-tablecell-with-borders-right-edge.html [ Pass Failure ]
 fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
-fast/css/appearance-apple-pay-button.html [ ImageOnlyFailure ]
 
 webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Pass Failure ]
 webkit.org/b/154687 streams/pipe-to.html [ Slow ]
