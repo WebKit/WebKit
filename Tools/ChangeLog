@@ -1,3 +1,15 @@
+2020-05-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/user-installed-fonts/extended-character.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=212487
+        <rdar://problem/63235370>
+
+        Unreviewed.
+
+        Update the font to use the new character.
+
+        * WebKitTestRunner/fonts/FakeHelvetica-SingleExtendedCharacter.ttf:
+
 2020-05-28  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak] Use subprocess.call instead of os.system to forward the return code correctly.

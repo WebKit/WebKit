@@ -1,3 +1,21 @@
+2020-05-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/user-installed-fonts/extended-character.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=212487
+        <rdar://problem/63235370>
+
+        Unreviewed.
+
+        The test tries to make sure that, even if a user-installed font is the only font that supports
+        a certain character, it still isn't used if user-installed fonts are disallowed. This patch
+        updates the test to make the character less likely to be used by preinstalled fonts.
+
+        * TestExpectations: Run the test everywhere, but it might not pass, rather than skipping it.
+        * fast/text/user-installed-fonts/extended-character-expected.html:
+        * fast/text/user-installed-fonts/extended-character-with-user-font-expected-mismatch.html:
+        * fast/text/user-installed-fonts/extended-character-with-user-font.html:
+        * fast/text/user-installed-fonts/extended-character.html:
+
 2020-05-28  Chris Dumez  <cdumez@apple.com>
 
         http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html is slow

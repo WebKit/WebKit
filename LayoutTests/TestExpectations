@@ -1929,8 +1929,8 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-heig
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
 # Tests require WTR and disabling of user installed fonts. Reenabling them in supported platforms
-fast/text/user-installed-fonts/extended-character.html [ Skip ]
-fast/text/user-installed-fonts/extended-character-with-user-font.html [ Skip ]
+fast/text/user-installed-fonts/extended-character.html [ Pass ImageOnlyFailure ]
+fast/text/user-installed-fonts/extended-character-with-user-font.html [ Pass ImageOnlyFailure ]
 
 # Does timeout
 imported/w3c/web-platform-tests/webaudio/idlharness.https.html [ Skip ]
