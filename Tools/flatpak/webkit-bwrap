@@ -21,7 +21,6 @@ import os
 import shlex
 import sys
 import tempfile
-import subprocess
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 
@@ -60,7 +59,10 @@ def main(args: list) -> int:
         bwrap_args.extend(["--bind-try", src, dst])
 
     command_line = ' '.join(shlex.quote(a) for a in bwrap_args + args)
-    return subprocess.call(command_line, shell=True, close_fds=False)
+    # os.system return code behaves like os.wait. A 16 bit number with the
+    # signal in the lower byte and, if the signal is zero, the exit code in
+    # the high byte.
+    return os.system(command_line) >> 8
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

@@ -1,3 +1,18 @@
+2020-05-29  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak] Fix os.system return code for better signal handling.
+
+        Rubber-stamped by Philippe Normand.
+
+        The previous fix in r262270 correctly fixed the return code issue
+        but made signal handling pass through python. For example, when you
+        ctlr+C running MiniBrowser, you'd get a python stacktrace deep inside
+        subprocess.call.
+
+        So, revert back to os.system but fixing the return code.
+
+        * flatpak/webkit-bwrap:
+
 2020-05-29  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update OpenXR
