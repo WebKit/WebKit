@@ -9,21 +9,10 @@ PASS Element includes InnerHTML: member names are unique
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS ShadowRoot includes InnerHTML: member names are unique 
 PASS DocumentFragment includes NonElementParentNode: member names are unique 
 PASS DocumentFragment includes ParentNode: member names are unique 
-PASS DOMParser interface: existence and properties of interface object 
-PASS DOMParser interface object length 
-PASS DOMParser interface object name 
-PASS DOMParser interface: existence and properties of interface prototype object 
-PASS DOMParser interface: existence and properties of interface prototype object's "constructor" property 
-PASS DOMParser interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DOMParser interface: operation parseFromString(DOMString, SupportedType) 
-PASS DOMParser must be primary interface of new DOMParser() 
-PASS Stringification of new DOMParser() 
-PASS DOMParser interface: new DOMParser() must inherit property "parseFromString(DOMString, SupportedType)" with the proper type 
-PASS DOMParser interface: calling parseFromString(DOMString, SupportedType) on new DOMParser() with too few arguments must throw TypeError 
 PASS XMLSerializer interface: existence and properties of interface object 
 PASS XMLSerializer interface object length 
 PASS XMLSerializer interface object name 

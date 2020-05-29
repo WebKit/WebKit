@@ -16,11 +16,11 @@ PASS DocumentFragment includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS CharacterData includes NonDocumentTypeChildNode: member names are unique 
 PASS CharacterData includes ChildNode: member names are unique 
 PASS DocumentType includes ChildNode: member names are unique 
-PASS Text includes Slotable: member names are unique 
+PASS Text includes Slottable: member names are unique 
 PASS XPathEvaluator includes XPathEvaluatorBase: member names are unique 
 PASS HTMLElement includes GlobalEventHandlers: member names are unique 
 PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 

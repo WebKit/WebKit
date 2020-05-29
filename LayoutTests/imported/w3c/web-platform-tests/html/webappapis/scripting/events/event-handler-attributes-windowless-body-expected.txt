@@ -81,7 +81,6 @@ PASS mousemove is unaffected on a windowless body
 PASS mouseout is unaffected on a windowless body 
 PASS mouseover is unaffected on a windowless body 
 PASS mouseup is unaffected on a windowless body 
-PASS wheel is unaffected on a windowless body 
 PASS pause is unaffected on a windowless body 
 PASS play is unaffected on a windowless body 
 PASS playing is unaffected on a windowless body 
@@ -100,6 +99,11 @@ PASS timeupdate is unaffected on a windowless body
 PASS toggle is unaffected on a windowless body 
 PASS volumechange is unaffected on a windowless body 
 PASS waiting is unaffected on a windowless body 
+PASS webkitanimationend is unaffected on a windowless body 
+PASS webkitanimationiteration is unaffected on a windowless body 
+PASS webkitanimationstart is unaffected on a windowless body 
+PASS webkittransitionend is unaffected on a windowless body 
+PASS wheel is unaffected on a windowless body 
 PASS copy is unaffected on a windowless body 
 PASS cut is unaffected on a windowless body 
 PASS paste is unaffected on a windowless body 
@@ -185,7 +189,6 @@ PASS mousemove is unaffected on a windowless frameset
 PASS mouseout is unaffected on a windowless frameset 
 PASS mouseover is unaffected on a windowless frameset 
 PASS mouseup is unaffected on a windowless frameset 
-PASS wheel is unaffected on a windowless frameset 
 PASS pause is unaffected on a windowless frameset 
 PASS play is unaffected on a windowless frameset 
 PASS playing is unaffected on a windowless frameset 
@@ -204,6 +207,11 @@ PASS timeupdate is unaffected on a windowless frameset
 PASS toggle is unaffected on a windowless frameset 
 PASS volumechange is unaffected on a windowless frameset 
 PASS waiting is unaffected on a windowless frameset 
+PASS webkitanimationend is unaffected on a windowless frameset 
+PASS webkitanimationiteration is unaffected on a windowless frameset 
+PASS webkitanimationstart is unaffected on a windowless frameset 
+PASS webkittransitionend is unaffected on a windowless frameset 
+PASS wheel is unaffected on a windowless frameset 
 PASS copy is unaffected on a windowless frameset 
 PASS cut is unaffected on a windowless frameset 
 PASS paste is unaffected on a windowless frameset 

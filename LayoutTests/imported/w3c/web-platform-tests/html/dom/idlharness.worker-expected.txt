@@ -152,7 +152,7 @@ PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS HTMLAllCollection interface: existence and properties of interface object 
 PASS HTMLFormControlsCollection interface: existence and properties of interface object 
 PASS RadioNodeList interface: existence and properties of interface object 
@@ -435,6 +435,7 @@ PASS PromiseRejectionEvent interface: existence and properties of interface prot
 PASS PromiseRejectionEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS PromiseRejectionEvent interface: attribute promise 
 PASS PromiseRejectionEvent interface: attribute reason 
+PASS DOMParser interface: existence and properties of interface object 
 PASS Navigator interface: existence and properties of interface object 
 PASS PluginArray interface: existence and properties of interface object 
 PASS MimeTypeArray interface: existence and properties of interface object 

@@ -11,9 +11,9 @@ dictionary ResizeObserverOptions {
     ResizeObserverBoxOptions box = "content-box";
 };
 
-[Exposed=(Window),
- Constructor(ResizeObserverCallback callback)]
+[Exposed=(Window)]
 interface ResizeObserver {
+    constructor(ResizeObserverCallback callback);
     void observe(Element target, optional ResizeObserverOptions options);
     void unobserve(Element target);
     void disconnect();
@@ -25,9 +25,9 @@ callback ResizeObserverCallback = void (sequence<ResizeObserverEntry> entries, R
 interface ResizeObserverEntry {
     readonly attribute Element target;
     readonly attribute DOMRectReadOnly contentRect;
-    readonly attribute sequence<ResizeObserverSize> borderBoxSize;
-    readonly attribute sequence<ResizeObserverSize> contentBoxSize;
-    readonly attribute sequence<ResizeObserverSize> devicePixelContentBoxSize;
+    readonly attribute FrozenArray<ResizeObserverSize> borderBoxSize;
+    readonly attribute FrozenArray<ResizeObserverSize> contentBoxSize;
+    readonly attribute FrozenArray<ResizeObserverSize> devicePixelContentBoxSize;
 };
 
 interface ResizeObserverSize {
@@ -35,10 +35,9 @@ interface ResizeObserverSize {
     readonly attribute unrestricted double blockSize;
 };
 
-[Constructor(Element target)
-]
 interface ResizeObservation {
+    constructor(Element target);
     readonly attribute Element target;
     readonly attribute ResizeObserverBoxOptions observedBox;
-    readonly attribute sequence<ResizeObserverSize> lastReportedSizes;
+    readonly attribute FrozenArray<ResizeObserverSize> lastReportedSizes;
 };

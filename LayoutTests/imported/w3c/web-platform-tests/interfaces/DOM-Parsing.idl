@@ -4,34 +4,20 @@
 // Source: DOM Parsing and Serialization (https://w3c.github.io/DOM-Parsing/)
 
 [Exposed=Window]
-interface DOMParser {
-  constructor();
-  [NewObject] Document parseFromString(DOMString str, SupportedType type);
-};
-
-enum SupportedType {
-  "text/html",
-  "text/xml",
-  "application/xml",
-  "application/xhtml+xml",
-  "image/svg+xml"
-};
-
-[Exposed=Window]
 interface XMLSerializer {
   constructor();
   DOMString serializeToString(Node root);
 };
 
 interface mixin InnerHTML {
-  [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
+  [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerHTML;
 };
 
 Element includes InnerHTML;
 ShadowRoot includes InnerHTML;
 
 partial interface Element {
-  [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerHTML;
+  [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerHTML;
   [CEReactions] void insertAdjacentHTML(DOMString position, DOMString text);
 };
 

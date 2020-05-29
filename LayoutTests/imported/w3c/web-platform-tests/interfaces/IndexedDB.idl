@@ -67,7 +67,8 @@ interface IDBDatabase : EventTarget {
   readonly attribute DOMStringList objectStoreNames;
 
   [NewObject] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames,
-                                         optional IDBTransactionMode mode = "readonly");
+                                         optional IDBTransactionMode mode = "readonly",
+                                         optional IDBTransactionOptions options = {});
   void close();
 
   [NewObject] IDBObjectStore createObjectStore(
@@ -80,6 +81,12 @@ interface IDBDatabase : EventTarget {
   attribute EventHandler onclose;
   attribute EventHandler onerror;
   attribute EventHandler onversionchange;
+};
+
+enum IDBTransactionDurability { "default", "strict", "relaxed" };
+
+dictionary IDBTransactionOptions {
+  IDBTransactionDurability durability = "default";
 };
 
 dictionary IDBObjectStoreParameters {
@@ -198,6 +205,7 @@ interface IDBCursorWithValue : IDBCursor {
 interface IDBTransaction : EventTarget {
   readonly attribute DOMStringList objectStoreNames;
   readonly attribute IDBTransactionMode mode;
+  readonly attribute IDBTransactionDurability durability;
   [SameObject] readonly attribute IDBDatabase db;
   readonly attribute DOMException? error;
 

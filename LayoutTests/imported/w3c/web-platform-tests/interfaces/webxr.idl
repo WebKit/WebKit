@@ -4,10 +4,10 @@
 // Source: WebXR Device API (https://immersive-web.github.io/webxr/)
 
 partial interface Navigator {
-  [SecureContext, SameObject] readonly attribute XR xr;
+  [SecureContext, SameObject] readonly attribute XRSystem xr;
 };
 
-[SecureContext, Exposed=Window] interface XR : EventTarget {
+[SecureContext, Exposed=Window] interface XRSystem : EventTarget {
   // Methods
   Promise<boolean> isSessionSupported(XRSessionMode mode);
   [NewObject] Promise<XRSession> requestSession(XRSessionMode mode, optional XRSessionInit options = {});
@@ -43,7 +43,7 @@ enum XRVisibilityState {
   void updateRenderState(optional XRRenderStateInit state = {});
   [NewObject] Promise<XRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
 
-  long requestAnimationFrame(XRFrameRequestCallback callback);
+  unsigned long requestAnimationFrame(XRFrameRequestCallback callback);
   void cancelAnimationFrame(long handle);
 
   Promise<void> end();
@@ -65,6 +65,7 @@ dictionary XRRenderStateInit {
   double depthFar;
   double inlineVerticalFieldOfView;
   XRWebGLLayer? baseLayer;
+  sequence<XRLayer>? layers;
 };
 
 [SecureContext, Exposed=Window] interface XRRenderState {
@@ -172,6 +173,9 @@ interface XRInputSourceArray {
   getter XRInputSource(unsigned long index);
 };
 
+[SecureContext, Exposed=Window]
+interface XRLayer : EventTarget {};
+
 typedef (WebGLRenderingContext or
          WebGL2RenderingContext) XRWebGLRenderingContext;
 
@@ -185,7 +189,7 @@ dictionary XRWebGLLayerInit {
 };
 
 [SecureContext, Exposed=Window]
-interface XRWebGLLayer {
+interface XRWebGLLayer: XRLayer {
   constructor(XRSession session,
              XRWebGLRenderingContext context,
              optional XRWebGLLayerInit layerInit = {});
@@ -258,5 +262,16 @@ interface XRReferenceSpaceEvent : Event {
 
 dictionary XRReferenceSpaceEventInit : EventInit {
   required XRReferenceSpace referenceSpace;
-  XRRigidTransform transform;
+  XRRigidTransform? transform = null;
+};
+
+dictionary XRPermissionDescriptor: PermissionDescriptor {
+  XRSessionMode mode;
+  sequence<any> requiredFeatures;
+  sequence<any> optionalFeatures;
+};
+
+[Exposed=Window]
+interface XRPermissionStatus: PermissionStatus {
+  attribute FrozenArray<any> granted;
 };

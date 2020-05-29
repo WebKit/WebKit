@@ -6,6 +6,7 @@
 [Exposed=Window]
 interface AnimationTimeline {
     readonly attribute double? currentTime;
+    readonly attribute TimelinePhase phase;
 };
 
 dictionary DocumentTimelineOptions {
@@ -48,6 +49,8 @@ interface Animation : EventTarget {
 enum AnimationPlayState { "idle", "running", "paused", "finished" };
 
 enum AnimationReplaceState { "active", "removed", "persisted" };
+
+enum TimelinePhase { "inactive", "before", "active", "after" };
 
 [Exposed=Window]
 interface AnimationEffect {
@@ -96,9 +99,9 @@ interface KeyframeEffect : AnimationEffect {
                 object? keyframes,
                 optional (unrestricted double or KeyframeEffectOptions) options = {});
     constructor(KeyframeEffect source);
-    attribute Element? target;
-    attribute CSSOMString? pseudoElement;
-    attribute CompositeOperation             composite;
+    attribute Element?           target;
+    attribute CSSOMString?       pseudoElement;
+    attribute CompositeOperation composite;
     sequence<object> getKeyframes();
     void             setKeyframes(object? keyframes);
 };
@@ -139,6 +142,7 @@ interface mixin Animatable {
 
 dictionary KeyframeAnimationOptions : KeyframeEffectOptions {
     DOMString id = "";
+    AnimationTimeline? timeline;
 };
 
 dictionary GetAnimationsOptions {

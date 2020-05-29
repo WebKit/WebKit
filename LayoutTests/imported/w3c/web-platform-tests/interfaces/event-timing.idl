@@ -8,6 +8,7 @@ interface PerformanceEventTiming : PerformanceEntry {
     readonly attribute DOMHighResTimeStamp processingStart;
     readonly attribute DOMHighResTimeStamp processingEnd;
     readonly attribute boolean cancelable;
+    readonly attribute Node? target;
     [Default] object toJSON();
 };
 
@@ -19,4 +20,8 @@ interface EventCounts {
 [Exposed=Window]
 partial interface Performance {
     [SameObject] readonly attribute EventCounts eventCounts;
+};
+
+partial dictionary PerformanceObserverInit {
+    DOMHighResTimeStamp durationThreshold;
 };

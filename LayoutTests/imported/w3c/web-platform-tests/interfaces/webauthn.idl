@@ -31,6 +31,9 @@ interface AuthenticatorResponse {
 interface AuthenticatorAttestationResponse : AuthenticatorResponse {
     [SameObject] readonly attribute ArrayBuffer      attestationObject;
     sequence<DOMString>                              getTransports();
+    ArrayBuffer                                      getAuthenticatorData();
+    ArrayBuffer?                                     getPublicKey();
+    COSEAlgorithmIdentifier                          getPublicKeyAlgorithm();
 };
 
 [SecureContext, Exposed=Window]
@@ -55,7 +58,7 @@ dictionary PublicKeyCredentialCreationOptions {
     unsigned long                                timeout;
     sequence<PublicKeyCredentialDescriptor>      excludeCredentials = [];
     AuthenticatorSelectionCriteria               authenticatorSelection;
-    AttestationConveyancePreference              attestation = "none";
+    DOMString                                    attestation = "none";
     AuthenticationExtensionsClientInputs         extensions;
 };
 
@@ -93,7 +96,8 @@ enum ResidentKeyRequirement {
 enum AttestationConveyancePreference {
     "none",
     "indirect",
-    "direct"
+    "direct",
+    "enterprise"
 };
 
 dictionary PublicKeyCredentialRequestOptions {
@@ -142,8 +146,7 @@ enum AuthenticatorTransport {
     "usb",
     "nfc",
     "ble",
-    "internal",
-    "lightning"
+    "internal"
 };
 
 typedef long COSEAlgorithmIdentifier;
@@ -167,65 +170,6 @@ partial dictionary AuthenticationExtensionsClientInputs {
 };
 
 partial dictionary AuthenticationExtensionsClientInputs {
-  USVString txAuthSimple;
-};
-
-partial dictionary AuthenticationExtensionsClientOutputs {
-  USVString txAuthSimple;
-};
-
-dictionary txAuthGenericArg {
-    required USVString contentType;    // MIME-Type of the content, e.g., "image/png"
-    required ArrayBuffer content;
-};
-
-partial dictionary AuthenticationExtensionsClientInputs {
-  txAuthGenericArg txAuthGeneric;
-};
-
-partial dictionary AuthenticationExtensionsClientOutputs {
-  ArrayBuffer txAuthGeneric;
-};
-
-typedef sequence<AAGUID> AuthenticatorSelectionList;
-
-partial dictionary AuthenticationExtensionsClientInputs {
-  AuthenticatorSelectionList authnSel;
-};
-
-typedef BufferSource      AAGUID;
-
-partial dictionary AuthenticationExtensionsClientOutputs {
-  boolean authnSel;
-};
-
-partial dictionary AuthenticationExtensionsClientInputs {
-  boolean exts;
-};
-
-typedef sequence<USVString> AuthenticationExtensionsSupported;
-
-partial dictionary AuthenticationExtensionsClientOutputs {
-  AuthenticationExtensionsSupported exts;
-};
-
-partial dictionary AuthenticationExtensionsClientInputs {
-  boolean uvi;
-};
-
-partial dictionary AuthenticationExtensionsClientOutputs {
-  ArrayBuffer uvi;
-};
-
-partial dictionary AuthenticationExtensionsClientInputs {
-  boolean loc;
-};
-
-partial dictionary AuthenticationExtensionsClientOutputs {
-  GeolocationCoordinates loc;
-};
-
-partial dictionary AuthenticationExtensionsClientInputs {
   boolean uvm;
 };
 
@@ -235,11 +179,6 @@ typedef sequence<UvmEntry> UvmEntries;
 partial dictionary AuthenticationExtensionsClientOutputs {
   UvmEntries uvm;
 };
-
-dictionary authenticatorBiometricPerfBounds{
-    float FAR;
-    float FRR;
-    };
 
 partial dictionary AuthenticationExtensionsClientInputs {
     boolean credProps;

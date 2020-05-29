@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into reffy-reports
 // (https://github.com/tidoust/reffy-reports)
-// Source: Accessible Rich Internet Applications (WAI-ARIA) 1.2 (https://rawgit.com/w3c/aria/master/)
+// Source: Accessible Rich Internet Applications (WAI-ARIA) 1.2 (https://w3c.github.io/aria/)
 
 interface mixin AccessibilityRole {
   attribute DOMString? role;
@@ -9,7 +9,7 @@ interface mixin AccessibilityRole {
 Element includes AccessibilityRole;
 
 interface mixin AriaAttributes {
-  attribute Element? ariaActiveDescendantElement;
+
   attribute DOMString? ariaAtomic;
   attribute DOMString? ariaAutoComplete;
   attribute DOMString? ariaBusy;
@@ -18,27 +18,28 @@ interface mixin AriaAttributes {
   attribute DOMString? ariaColIndex;
   attribute DOMString? ariaColIndexText;
   attribute DOMString? ariaColSpan;
-  attribute FrozenArray<Element>? ariaControlsElements;
+
   attribute DOMString? ariaCurrent;
-  attribute FrozenArray<Element>? ariaDescribedByElements;
-  attribute Element? ariaDetailsElement;
+
+  attribute DOMString? ariaDescription;
+
   attribute DOMString? ariaDisabled;
-  attribute Element? ariaErrorMessageElement;
+
   attribute DOMString? ariaExpanded;
-  attribute FrozenArray<Element>? ariaFlowToElements;
+
   attribute DOMString? ariaHasPopup;
   attribute DOMString? ariaHidden;
   attribute DOMString? ariaInvalid;
   attribute DOMString? ariaKeyShortcuts;
   attribute DOMString? ariaLabel;
-  attribute FrozenArray<Element>? ariaLabelledByElements;
+
   attribute DOMString? ariaLevel;
   attribute DOMString? ariaLive;
   attribute DOMString? ariaModal;
   attribute DOMString? ariaMultiLine;
   attribute DOMString? ariaMultiSelectable;
   attribute DOMString? ariaOrientation;
-  attribute FrozenArray<Element>? ariaOwnsElements;
+
   attribute DOMString? ariaPlaceholder;
   attribute DOMString? ariaPosInSet;
   attribute DOMString? ariaPressed;

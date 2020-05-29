@@ -29,12 +29,12 @@ PASS Partial interface HTMLImageElement[2]: member names are unique
 PASS Partial interface Document[4]: member names are unique 
 PASS Partial interface Window[3]: member names are unique 
 PASS Text includes GeometryUtils: member names are unique 
-PASS Text includes Slotable: member names are unique 
+PASS Text includes Slottable: member names are unique 
 PASS Element includes GeometryUtils: member names are unique 
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS CSSPseudoElement includes GeometryUtils: member names are unique 
 PASS Document includes GeometryUtils: member names are unique 
 PASS Document includes GlobalEventHandlers: member names are unique 

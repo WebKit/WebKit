@@ -72,7 +72,7 @@ PASS IDBDatabase interface: existence and properties of interface prototype obje
 PASS IDBDatabase interface: attribute name 
 PASS IDBDatabase interface: attribute version 
 PASS IDBDatabase interface: attribute objectStoreNames 
-PASS IDBDatabase interface: operation transaction((DOMString or sequence<DOMString>), optional IDBTransactionMode) 
+PASS IDBDatabase interface: operation transaction((DOMString or sequence<DOMString>), optional IDBTransactionMode, optional IDBTransactionOptions) 
 PASS IDBDatabase interface: operation close() 
 PASS IDBDatabase interface: operation createObjectStore(DOMString, optional IDBObjectStoreParameters) 
 PASS IDBDatabase interface: operation deleteObjectStore(DOMString) 
@@ -185,6 +185,7 @@ PASS IDBTransaction interface: existence and properties of interface prototype o
 PASS IDBTransaction interface: existence and properties of interface prototype object's @@unscopables property 
 PASS IDBTransaction interface: attribute objectStoreNames 
 PASS IDBTransaction interface: attribute mode 
+FAIL IDBTransaction interface: attribute durability assert_true: The prototype object must have a property "durability" expected true got false
 PASS IDBTransaction interface: attribute db 
 PASS IDBTransaction interface: attribute error 
 PASS IDBTransaction interface: operation objectStore(DOMString) 

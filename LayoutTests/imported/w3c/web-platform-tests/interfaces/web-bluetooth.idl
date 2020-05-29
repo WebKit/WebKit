@@ -7,6 +7,7 @@ dictionary BluetoothDataFilterInit {
   BufferSource dataPrefix;
   BufferSource mask;
 };
+
 dictionary BluetoothLEScanFilterInit {
   sequence<BluetoothServiceUUID> services;
   DOMString name;
@@ -29,8 +30,10 @@ interface Bluetooth : EventTarget {
   attribute EventHandler onavailabilitychanged;
   [SameObject]
   readonly attribute BluetoothDevice? referringDevice;
+  Promise<sequence<BluetoothDevice>> getDevices();
   Promise<BluetoothDevice> requestDevice(optional RequestDeviceOptions options = {});
 };
+
 Bluetooth includes BluetoothDeviceEventHandlers;
 Bluetooth includes CharacteristicEventHandlers;
 Bluetooth includes ServiceEventHandlers;
@@ -49,7 +52,7 @@ dictionary AllowedBluetoothDevice {
   // An allowedServices of "all" means all services are allowed.
   required (DOMString or sequence<UUID>) allowedServices;
 };
-dictionary BluetoothPermissionData {
+dictionary BluetoothPermissionStorage {
   required sequence<AllowedBluetoothDevice> allowedDevices;
 };
 
@@ -77,13 +80,17 @@ interface BluetoothDevice : EventTarget {
   readonly attribute DOMString? name;
   readonly attribute BluetoothRemoteGATTServer? gatt;
 
-  Promise<void> watchAdvertisements();
-  void unwatchAdvertisements();
+  Promise<void> watchAdvertisements(
+      optional WatchAdvertisementsOptions options = {});
   readonly attribute boolean watchingAdvertisements;
 };
 BluetoothDevice includes BluetoothDeviceEventHandlers;
 BluetoothDevice includes CharacteristicEventHandlers;
 BluetoothDevice includes ServiceEventHandlers;
+
+dictionary WatchAdvertisementsOptions {
+  AbortSignal signal;
+};
 
 [Exposed=Window, SecureContext]
 interface BluetoothManufacturerDataMap {
@@ -213,6 +220,7 @@ interface mixin ServiceEventHandlers {
 };
 
 typedef DOMString UUID;
+
 [Exposed=Window]
 interface BluetoothUUID {
   static UUID getService((DOMString or unsigned long) name);

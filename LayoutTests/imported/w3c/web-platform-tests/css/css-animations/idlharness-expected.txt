@@ -27,7 +27,7 @@ PASS Window includes WindowLocalStorage: member names are unique
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS AnimationEvent interface: existence and properties of interface object 
 PASS AnimationEvent interface object length 
 PASS AnimationEvent interface object name 

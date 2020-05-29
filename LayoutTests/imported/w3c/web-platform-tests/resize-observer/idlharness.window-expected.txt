@@ -5,7 +5,7 @@ PASS ResizeObserverEntry creator
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS ResizeObserver interface: existence and properties of interface object 
 PASS ResizeObserver interface object length 
 PASS ResizeObserver interface object name 

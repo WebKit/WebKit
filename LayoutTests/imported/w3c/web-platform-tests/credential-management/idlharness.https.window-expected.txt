@@ -28,7 +28,7 @@ PASS Navigator includes NavigatorConcurrentHardware: member names are unique
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS Credential interface: existence and properties of interface object 
 PASS Credential interface object length 
 PASS Credential interface object name 

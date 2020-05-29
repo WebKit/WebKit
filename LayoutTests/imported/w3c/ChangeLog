@@ -1,3 +1,114 @@
+2020-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests/interfaces from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=212501
+
+        Reviewed by Alex Christensen.
+
+        Unreviewed, rebaseline web-platform-tests/interfaces from upstream 6a76a185f913e3c027e369a.
+
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+        * web-platform-tests/credential-management/idlharness.https.window-expected.txt:
+        * web-platform-tests/css/css-animations/idlharness-expected.txt:
+        * web-platform-tests/css/css-transitions/idlharness-expected.txt:
+        * web-platform-tests/css/cssom-view/idlharness-expected.txt:
+        * web-platform-tests/css/cssom/interfaces-expected.txt:
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt:
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/domparsing/idlharness.window-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-windowless-body-expected.txt:
+        * web-platform-tests/interfaces/DOM-Parsing.idl:
+        * web-platform-tests/interfaces/IndexedDB.idl:
+        * web-platform-tests/interfaces/WebCryptoAPI.idl:
+        * web-platform-tests/interfaces/appmanifest.idl:
+        * web-platform-tests/interfaces/badging.idl: Added.
+        * web-platform-tests/interfaces/clipboard-apis.idl:
+        * web-platform-tests/interfaces/construct-stylesheets.idl: Added.
+        * web-platform-tests/interfaces/cookie-store.idl:
+        * web-platform-tests/interfaces/css-font-loading.idl:
+        * web-platform-tests/interfaces/css-regions.idl: Removed.
+        * web-platform-tests/interfaces/css-shadow-parts.idl:
+        * web-platform-tests/interfaces/css-typed-om.idl:
+        * web-platform-tests/interfaces/cssom-view.idl:
+        * web-platform-tests/interfaces/cssom.idl:
+        * web-platform-tests/interfaces/device-memory.idl: Added.
+        * web-platform-tests/interfaces/dom.idl:
+        * web-platform-tests/interfaces/encrypted-media.idl:
+        * web-platform-tests/interfaces/event-timing.idl:
+        * web-platform-tests/interfaces/fullscreen.idl:
+        * web-platform-tests/interfaces/geolocation-sensor.idl:
+        * web-platform-tests/interfaces/hit-test.idl: Added.
+        * web-platform-tests/interfaces/html.idl:
+        * web-platform-tests/interfaces/image-capture.idl:
+        * web-platform-tests/interfaces/intersection-observer.idl:
+        * web-platform-tests/interfaces/js-self-profiling.idl: Added.
+        * web-platform-tests/interfaces/layout-instability.idl:
+        * web-platform-tests/interfaces/media-capabilities.idl:
+        * web-platform-tests/interfaces/media-playback-quality.idl:
+        * web-platform-tests/interfaces/media-source.idl:
+        * web-platform-tests/interfaces/mediasession.idl:
+        * web-platform-tests/interfaces/mediastream-recording.idl:
+        * web-platform-tests/interfaces/mst-content-hint.idl:
+        * web-platform-tests/interfaces/native-file-system.idl: Added.
+        * web-platform-tests/interfaces/netinfo.idl:
+        * web-platform-tests/interfaces/origin-policy.idl: Added.
+        * web-platform-tests/interfaces/page-lifecycle.idl: Added.
+        * web-platform-tests/interfaces/payment-method-basic-card.idl:
+        * web-platform-tests/interfaces/payment-request.idl:
+        * web-platform-tests/interfaces/periodic-background-sync.idl: Added.
+        * web-platform-tests/interfaces/permissions-request.idl: Added.
+        * web-platform-tests/interfaces/permissions-revoke.idl: Added.
+        * web-platform-tests/interfaces/permissions.idl:
+        * web-platform-tests/interfaces/pointerevents.idl:
+        * web-platform-tests/interfaces/reporting.idl:
+        * web-platform-tests/interfaces/requestidlecallback.idl:
+        * web-platform-tests/interfaces/resize-observer.idl:
+        * web-platform-tests/interfaces/scroll-animations.idl:
+        * web-platform-tests/interfaces/shape-detection-api.idl:
+        * web-platform-tests/interfaces/storage-access-api.tentative.idl: Added.
+        * web-platform-tests/interfaces/text-detection-api.tentative.idl: Added.
+        * web-platform-tests/interfaces/trusted-types.tentative.idl:
+        * web-platform-tests/interfaces/video-rvfc.idl: Added.
+        * web-platform-tests/interfaces/visual-viewport.idl: Added.
+        * web-platform-tests/interfaces/w3c-import.log:
+        * web-platform-tests/interfaces/wai-aria.idl:
+        * web-platform-tests/interfaces/wake-lock.idl:
+        * web-platform-tests/interfaces/web-animations.idl:
+        * web-platform-tests/interfaces/web-bluetooth.idl:
+        * web-platform-tests/interfaces/web-locks.idl: Added.
+        * web-platform-tests/interfaces/web-nfc.idl:
+        * web-platform-tests/interfaces/web-share.idl:
+        * web-platform-tests/interfaces/webaudio.idl:
+        * web-platform-tests/interfaces/webauthn.idl:
+        * web-platform-tests/interfaces/webmidi.idl:
+        * web-platform-tests/interfaces/webrtc-dscp.idl: Removed.
+        * web-platform-tests/interfaces/webrtc-identity.idl:
+        * web-platform-tests/interfaces/webrtc-stats.idl:
+        * web-platform-tests/interfaces/webrtc-svc.idl: Added.
+        * web-platform-tests/interfaces/webrtc.idl:
+        * web-platform-tests/interfaces/webxr-ar-module.idl:
+        * web-platform-tests/interfaces/webxr.idl:
+        * web-platform-tests/interfaces/worklets.idl:
+        * web-platform-tests/intersection-observer/idlharness.window-expected.txt:
+        * web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * web-platform-tests/mediacapture-record/idlharness.window-expected.txt:
+        * web-platform-tests/mst-content-hint/idlharness.window-expected.txt:
+        * web-platform-tests/remote-playback/idlharness.window-expected.txt:
+        * web-platform-tests/resize-observer/idlharness.window-expected.txt:
+        * web-platform-tests/svg/idlharness.window-expected.txt:
+        * web-platform-tests/web-animations/idlharness.window-expected.txt:
+        * web-platform-tests/websockets/basic-auth.any.js:
+        * web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.js:
+        * web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.worker-expected.txt:
+        * web-platform-tests/xhr/idlharness.any-expected.txt:
+        * web-platform-tests/xhr/idlharness.any.worker-expected.txt:
+        * web-platform-tests/xhr/sync-no-timeout.any-expected.txt:
+        * web-platform-tests/xhr/sync-no-timeout.any.worker-expected.txt:
+
 2020-05-28  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Fix referencing grid line names with auto repeat()

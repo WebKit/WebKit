@@ -11,7 +11,7 @@ PASS Element includes Animatable: member names are unique
 PASS Element includes ParentNode: member names are unique 
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
-PASS Element includes Slotable: member names are unique 
+PASS Element includes Slottable: member names are unique 
 PASS Document includes NonElementParentNode: member names are unique 
 PASS Document includes DocumentOrShadowRoot: member names are unique 
 PASS Document includes ParentNode: member names are unique 
@@ -28,6 +28,7 @@ PASS AnimationTimeline interface: existence and properties of interface prototyp
 PASS AnimationTimeline interface: existence and properties of interface prototype object's "constructor" property 
 PASS AnimationTimeline interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AnimationTimeline interface: attribute currentTime 
+FAIL AnimationTimeline interface: attribute phase assert_true: The prototype object must have a property "phase" expected true got false
 PASS DocumentTimeline interface: existence and properties of interface object 
 PASS DocumentTimeline interface object length 
 PASS DocumentTimeline interface object name 
@@ -37,6 +38,7 @@ PASS DocumentTimeline interface: existence and properties of interface prototype
 PASS DocumentTimeline must be primary interface of document.timeline 
 PASS Stringification of document.timeline 
 PASS AnimationTimeline interface: document.timeline must inherit property "currentTime" with the proper type 
+FAIL AnimationTimeline interface: document.timeline must inherit property "phase" with the proper type assert_inherits: property "phase" not found in prototype chain
 PASS Animation interface: existence and properties of interface object 
 PASS Animation interface object length 
 PASS Animation interface object name 
