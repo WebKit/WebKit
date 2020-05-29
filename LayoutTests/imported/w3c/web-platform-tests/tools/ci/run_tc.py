@@ -36,11 +36,15 @@ the serialization of a GitHub event payload.
 """
 
 import argparse
+import fnmatch
 import json
 import os
 import subprocess
 import sys
+import tarfile
 import tempfile
+import time
+import zipfile
 from socket import error as SocketError  # NOQA: N812
 import errno
 try:
@@ -147,12 +151,13 @@ def install_chrome(channel):
         raise ValueError("Unrecognized release channel: %s" % channel)
 
     dest = os.path.join("/tmp", deb_archive)
-    resp = urlopen("https://dl.google.com/linux/direct/%s" % deb_archive)
+    deb_url = "https://dl.google.com/linux/direct/%s" % deb_archive
     with open(dest, "w") as f:
-        f.write(resp.read())
+        download_url_to_descriptor(f, deb_url)
 
     run(["sudo", "apt-get", "-qqy", "update"])
     run(["sudo", "gdebi", "-qn", "/tmp/%s" % deb_archive])
+
 
 def install_webkitgtk_from_apt_repository(channel):
     # Configure webkitgtk.org/debian repository for $channel and pin it with maximum priority
@@ -169,15 +174,16 @@ def install_webkitgtk_from_apt_repository(channel):
     run(["sudo", "apt-get", "-qqy", "-t", "bionic-wpt-webkit-updates", "install", "webkit2gtk-driver"])
 
 
-# Download an URL in chunks and saves it to a file descriptor (truncating it)
-# It doesn't close the descriptor, but flushes it on success.
-# It retries the download in case of ECONNRESET up to max_retries.
-def download_url_to_descriptor(fd, url, max_retries=3):
-    download_succeed = False
-    if max_retries < 0:
-        max_retries = 0
-    for current_retry in range(max_retries+1):
+def download_url_to_descriptor(fd, url, max_retries=5):
+    """Download an URL in chunks and saves it to a file descriptor (truncating it)
+    It doesn't close the descriptor, but flushes it on success.
+    It retries the download in case of ECONNRESET up to max_retries."""
+    if max_retries < 1:
+        max_retries = 1
+    wait = 2
+    for current_retry in range(1, max_retries+1):
         try:
+            print("INFO: Downloading %s Try %d/%d" % (url, current_retry, max_retries))
             resp = urlopen(url)
             # We may come here in a retry, ensure to truncate fd before start writing.
             fd.seek(0)
@@ -188,22 +194,23 @@ def download_url_to_descriptor(fd, url, max_retries=3):
                     break  # Download finished
                 fd.write(chunk)
             fd.flush()
-            download_succeed = True
-            break  # Sucess
+            # Success
+            return
         except SocketError as e:
-            if e.errno != errno.ECONNRESET:
-                raise  # Unknown error
-            if current_retry < max_retries:
-                print("ERROR: Connection reset by peer. Retrying ...")
-                continue  # Retry
-    return download_succeed
+            if current_retry < max_retries and e.errno == errno.ECONNRESET:
+                # Retry
+                print("ERROR: Connection reset by peer. Retrying after %ds..." % wait)
+                time.sleep(wait)
+                wait *= 2
+            else:
+                # Maximum retries or unknown error
+                raise
 
 
 def install_webkitgtk_from_tarball_bundle(channel):
     with tempfile.NamedTemporaryFile(suffix=".tar.xz") as temp_tarball:
         download_url = "https://webkitgtk.org/built-products/nightly/webkitgtk-nightly-build-last.tar.xz"
-        if not download_url_to_descriptor(temp_tarball, download_url):
-            raise RuntimeError("Can't download %s. Aborting" % download_url)
+        download_url_to_descriptor(temp_tarball, download_url)
         run(["sudo", "tar", "xfa", temp_tarball.name, "-C", "/"])
     # Install dependencies
     run(["sudo", "apt-get", "-qqy", "update"])
@@ -217,6 +224,7 @@ def install_webkitgtk(channel):
         install_webkitgtk_from_apt_repository(channel)
     else:
         raise ValueError("Unrecognized release channel: %s" % channel)
+
 
 def start_xvfb():
     start(["sudo", "Xvfb", os.environ["DISPLAY"], "-screen", "0",
@@ -246,7 +254,67 @@ def set_variables(event):
         os.environ["GITHUB_BRANCH"] = branch
 
 
+def task_url(task_id):
+    root_url = os.environ['TASKCLUSTER_ROOT_URL']
+    if root_url == 'https://taskcluster.net':
+        queue_base = "https://queue.taskcluster.net/v1/task"
+    else:
+        queue_base = root_url + "/api/queue/v1/task"
+
+    return "%s/%s" % (queue_base, task_id)
+
+
+def download_artifacts(artifacts):
+    artifact_list_by_task = {}
+    for artifact in artifacts:
+        base_url = task_url(artifact["task"])
+        if artifact["task"] not in artifact_list_by_task:
+            with tempfile.TemporaryFile() as f:
+                download_url_to_descriptor(f, base_url + "/artifacts")
+                f.seek(0)
+                artifacts_data = json.load(f)
+            artifact_list_by_task[artifact["task"]] = artifacts_data
+
+        artifacts_data = artifact_list_by_task[artifact["task"]]
+        print("DEBUG: Got artifacts %s" % artifacts_data)
+        found = False
+        for candidate in artifacts_data["artifacts"]:
+            print("DEBUG: candidate: %s glob: %s" % (candidate["name"], artifact["glob"]))
+            if fnmatch.fnmatch(candidate["name"], artifact["glob"]):
+                found = True
+                print("INFO: Fetching aritfact %s from task %s" % (candidate["name"], artifact["task"]))
+                file_name = candidate["name"].rsplit("/", 1)[1]
+                url = base_url + "/artifacts/" + candidate["name"]
+                dest_path = os.path.expanduser(os.path.join("~", artifact["dest"], file_name))
+                dest_dir = os.path.dirname(dest_path)
+                if not os.path.exists(dest_dir):
+                    os.makedirs(dest_dir)
+                with open(dest_path, "wb") as f:
+                    download_url_to_descriptor(f, url)
+
+                if artifact.get("extract"):
+                    unpack(dest_path)
+        if not found:
+            print("WARNING: No artifact found matching %s in task %s" % (artifact["glob"], artifact["task"]))
+
+
+def unpack(path):
+    dest = os.path.dirname(path)
+    if tarfile.is_tarfile(path):
+        run(["tar", "-xf", path], cwd=os.path.dirname(path))
+    elif zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path) as archive:
+            archive.extractall(dest)
+    else:
+        print("ERROR: Don't know how to extract %s" % path)
+        raise Exception
+
+
 def setup_environment(args):
+    if "TASK_ARTIFACTS" in os.environ:
+        artifacts = json.loads(os.environ["TASK_ARTIFACTS"])
+        download_artifacts(artifacts)
+
     if args.hosts_file:
         make_hosts_file()
 
@@ -364,16 +432,10 @@ def fetch_event_data():
         # For example under local testing
         return None
 
-    root_url = os.environ['TASKCLUSTER_ROOT_URL']
-    if root_url == 'https://taskcluster.net':
-        queue_base = "https://queue.taskcluster.net/v1/task"
-    else:
-        queue_base = root_url + "/api/queue/v1/task"
-
-
-    resp = urlopen("%s/%s" % (queue_base, task_id))
-
-    task_data = json.load(resp)
+    with tempfile.TemporaryFile() as f:
+        download_url_to_descriptor(f, task_url(task_id))
+        f.seek(0)
+        task_data = json.load(f)
     event_data = task_data.get("extra", {}).get("github_event")
     if event_data is not None:
         return json.loads(event_data)

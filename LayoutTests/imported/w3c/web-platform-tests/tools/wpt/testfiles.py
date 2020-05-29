@@ -247,7 +247,7 @@ def affected_testfiles(files_changed,  # type: Iterable[Text]
     nontests_changed = set(files_changed)
     wpt_manifest = load_manifest(manifest_path, manifest_update)
 
-    test_types = ["testharness", "reftest", "wdspec"]
+    test_types = ["crashtest", "testharness", "reftest", "wdspec"]
     support_files = {os.path.join(wpt_root, path)
                      for _, path, _ in wpt_manifest.itertypes("support")}
     wdspec_test_files = {os.path.join(wpt_root, path)
@@ -278,8 +278,8 @@ def affected_testfiles(files_changed,  # type: Iterable[Text]
             full_path = os.path.join(wpt_root, repo_path[1:].replace("/", os.path.sep))
         nontest_changed_paths.add((full_path, repo_path))
 
-    interface_name = lambda x: os.path.splitext(os.path.basename(x))[0]
-    interfaces_changed_names = map(interface_name, interfaces_changed)
+    interfaces_changed_names = [os.path.splitext(os.path.basename(interface))[0]
+                                for interface in interfaces_changed]
 
     def affected_by_wdspec(test):
         # type: (str) -> bool
@@ -324,9 +324,9 @@ def affected_testfiles(files_changed,  # type: Iterable[Text]
 
             with open(test_full_path, "rb") as fh:
                 raw_file_contents = fh.read()  # type: bytes
-                if raw_file_contents.startswith("\xfe\xff"):
+                if raw_file_contents.startswith(b"\xfe\xff"):
                     file_contents = raw_file_contents.decode("utf-16be", "replace")  # type: Text
-                elif raw_file_contents.startswith("\xff\xfe"):
+                elif raw_file_contents.startswith(b"\xff\xfe"):
                     file_contents = raw_file_contents.decode("utf-16le", "replace")
                 else:
                     file_contents = raw_file_contents.decode("utf8", "replace")
@@ -396,7 +396,7 @@ def run_changed_files(**kwargs):
     separator = "\0" if kwargs["null"] else "\n"
 
     for item in sorted(changed):
-        sys.stdout.write(os.path.relpath(item.encode("utf8"), wpt_root) + separator)
+        sys.stdout.write(os.path.relpath(six.ensure_str(item), wpt_root) + separator)
 
 
 def run_tests_affected(**kwargs):

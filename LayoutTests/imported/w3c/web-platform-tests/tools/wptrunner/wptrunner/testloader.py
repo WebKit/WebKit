@@ -5,6 +5,8 @@ from abc import ABCMeta, abstractmethod
 from six.moves.queue import Empty
 from collections import defaultdict, deque
 from multiprocessing import Queue
+from six import ensure_binary, iteritems
+from six.moves import range
 
 from . import manifestinclude
 from . import manifestexpected
@@ -15,6 +17,7 @@ manifest = None
 manifest_update = None
 download_from_github = None
 
+
 def do_delayed_imports():
     # This relies on an already loaded module having set the sys.path correctly :(
     global manifest, manifest_update, download_from_github
@@ -24,12 +27,13 @@ def do_delayed_imports():
 
 
 class TestChunker(object):
-    def __init__(self, total_chunks, chunk_number):
+    def __init__(self, total_chunks, chunk_number, **kwargs):
         self.total_chunks = total_chunks
         self.chunk_number = chunk_number
         assert self.chunk_number <= self.total_chunks
         self.logger = structured.get_default_logger()
         assert self.logger
+        self.kwargs = kwargs
 
     def __call__(self, manifest):
         raise NotImplementedError
@@ -40,7 +44,7 @@ class Unchunked(TestChunker):
         TestChunker.__init__(self, *args, **kwargs)
         assert self.total_chunks == 1
 
-    def __call__(self, manifest):
+    def __call__(self, manifest, **kwargs):
         for item in manifest:
             yield item
 
@@ -49,7 +53,7 @@ class HashChunker(TestChunker):
     def __call__(self, manifest):
         chunk_index = self.chunk_number - 1
         for test_type, test_path, tests in manifest:
-            h = int(hashlib.md5(test_path).hexdigest(), 16)
+            h = int(hashlib.md5(ensure_binary(test_path)).hexdigest(), 16)
             if h % self.total_chunks == chunk_index:
                 yield test_type, test_path, tests
 
@@ -62,8 +66,13 @@ class DirectoryHashChunker(TestChunker):
     """
     def __call__(self, manifest):
         chunk_index = self.chunk_number - 1
+        depth = self.kwargs.get("depth")
         for test_type, test_path, tests in manifest:
-            h = int(hashlib.md5(os.path.dirname(test_path)).hexdigest(), 16)
+            if depth:
+                hash_path = os.path.sep.join(os.path.dirname(test_path).split(os.path.sep, depth)[:depth])
+            else:
+                hash_path = os.path.dirname(test_path)
+            h = int(hashlib.md5(ensure_binary(hash_path)).hexdigest(), 16)
             if h % self.total_chunks == chunk_index:
                 yield test_type, test_path, tests
 
@@ -124,7 +133,7 @@ class ManifestLoader(object):
 
     def load(self):
         rv = {}
-        for url_base, paths in self.test_paths.iteritems():
+        for url_base, paths in iteritems(self.test_paths):
             manifest_file = self.load_manifest(url_base=url_base,
                                                **paths)
             path_data = {"url_base": url_base}
@@ -159,7 +168,10 @@ class TestLoader(object):
                  total_chunks=1,
                  chunk_number=1,
                  include_https=True,
-                 skip_timeout=False):
+                 include_quic=False,
+                 skip_timeout=False,
+                 skip_implementation_status=None,
+                 chunker_kwargs=None):
 
         self.test_types = test_types
         self.run_info = run_info
@@ -170,16 +182,21 @@ class TestLoader(object):
         self.tests = None
         self.disabled_tests = None
         self.include_https = include_https
+        self.include_quic = include_quic
         self.skip_timeout = skip_timeout
+        self.skip_implementation_status = skip_implementation_status
 
         self.chunk_type = chunk_type
         self.total_chunks = total_chunks
         self.chunk_number = chunk_number
 
+        if chunker_kwargs is None:
+            chunker_kwargs = {}
         self.chunker = {"none": Unchunked,
                         "hash": HashChunker,
                         "dir_hash": DirectoryHashChunker}[chunk_type](total_chunks,
-                                                                      chunk_number)
+                                                                      chunk_number,
+                                                                      **chunker_kwargs)
 
         self._test_ids = None
 
@@ -206,7 +223,7 @@ class TestLoader(object):
     def load_dir_metadata(self, test_manifest, metadata_path, test_path):
         rv = []
         path_parts = os.path.dirname(test_path).split(os.path.sep)
-        for i in xrange(len(path_parts) + 1):
+        for i in range(len(path_parts) + 1):
             path = os.path.join(metadata_path, os.path.sep.join(path_parts[:i]), "__dir__.ini")
             if path not in self.directory_manifests:
                 self.directory_manifests[path] = manifestexpected.get_dir_manifest(path,
@@ -236,7 +253,7 @@ class TestLoader(object):
             manifest_items = self.chunker(manifest_items)
 
         for test_type, test_path, tests in manifest_items:
-            manifest_file = manifests_by_url_base[iter(tests).next().url_base]
+            manifest_file = manifests_by_url_base[next(iter(tests)).url_base]
             metadata_path = self.manifests[manifest_file]["metadata_path"]
 
             inherit_metadata, test_metadata = self.load_metadata(manifest_file, metadata_path, test_path)
@@ -252,7 +269,11 @@ class TestLoader(object):
             enabled = not test.disabled()
             if not self.include_https and test.environment["protocol"] == "https":
                 enabled = False
+            if not self.include_quic and test.environment["quic"]:
+                enabled = False
             if self.skip_timeout and test.expected() == "TIMEOUT":
+                enabled = False
+            if self.skip_implementation_status and test.implementation_status() in self.skip_implementation_status:
                 enabled = False
             key = "enabled" if enabled else "disabled"
             tests[key][test_type].append(test)
@@ -282,6 +303,10 @@ class TestSource(object):
     @abstractmethod
     #@classmethod (doesn't compose with @abstractmethod in < 3.3)
     def make_queue(cls, tests, **kwargs):  # noqa: N805
+        pass
+
+    @abstractmethod
+    def tests_by_group(cls, tests, **kwargs):  # noqa: N805
         pass
 
     @classmethod
@@ -322,14 +347,25 @@ class GroupedSource(TestSource):
             test_queue.put(item)
         return test_queue
 
+    @classmethod
+    def tests_by_group(cls, tests, **kwargs):
+        groups = defaultdict(list)
+        state = {}
+        current = None
+        for test in tests:
+            if cls.new_group(state, test, **kwargs):
+                current = cls.group_metadata(state)['scope']
+            groups[current].append(test.id)
+        return groups
+
 
 class SingleTestSource(TestSource):
     @classmethod
     def make_queue(cls, tests, **kwargs):
         test_queue = Queue()
         processes = kwargs["processes"]
-        queues = [deque([]) for _ in xrange(processes)]
-        metadatas = [cls.group_metadata(None) for _ in xrange(processes)]
+        queues = [deque([]) for _ in range(processes)]
+        metadatas = [cls.group_metadata(None) for _ in range(processes)]
         for test in tests:
             idx = hash(test.id) % processes
             group = queues[idx]
@@ -341,6 +377,10 @@ class SingleTestSource(TestSource):
             test_queue.put(item)
 
         return test_queue
+
+    @classmethod
+    def tests_by_group(cls, tests, **kwargs):
+        return {cls.group_metadata(None)['scope']: [t.id for t in tests]}
 
 
 class PathGroupedSource(GroupedSource):

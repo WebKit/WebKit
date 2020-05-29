@@ -1,12 +1,18 @@
 import errno
 import os
+import platform
 import shutil
 import socket
 import subprocess
 import sys
 import tempfile
 import time
-import urllib2
+
+try:
+    from urllib.request import urlopen
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import urlopen, URLError
 
 import pytest
 
@@ -38,6 +44,9 @@ def get_persistent_manifest_path():
 
 @pytest.fixture(scope="module", autouse=True)
 def init_manifest():
+    # See https://github.com/pypa/virtualenv/issues/1710
+    if sys.version_info[0] >= 3 and platform.system() == "Windows":
+        pytest.xfail(reason="virtualenv activation fails in Windows for python3")
     with pytest.raises(SystemExit) as excinfo:
         wpt.main(argv=["manifest", "--no-download",
                        "--path", get_persistent_manifest_path()])
@@ -233,9 +242,9 @@ def test_run_verify_unstable(temp_test):
 @pytest.mark.remote_network
 def test_install_chromedriver():
     if sys.platform == "win32":
-        chromedriver_path = os.path.join(wpt.localpaths.repo_root, "_venv", "Scripts", "chromedriver.exe")
+        chromedriver_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "Scripts", "chromedriver.exe")
     else:
-        chromedriver_path = os.path.join(wpt.localpaths.repo_root, "_venv", "bin", "chromedriver")
+        chromedriver_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "bin", "chromedriver")
     if os.path.exists(chromedriver_path):
         os.unlink(chromedriver_path)
     with pytest.raises(SystemExit) as excinfo:
@@ -251,9 +260,9 @@ def test_install_chromedriver():
                    reason="https://github.com/web-platform-tests/wpt/issues/17074")
 def test_install_firefox():
     if sys.platform == "darwin":
-        fx_path = os.path.join(wpt.localpaths.repo_root, "_venv", "browsers", "nightly", "Firefox Nightly.app")
+        fx_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "browsers", "nightly", "Firefox Nightly.app")
     else:
-        fx_path = os.path.join(wpt.localpaths.repo_root, "_venv", "browsers", "nightly", "firefox")
+        fx_path = os.path.join(wpt.localpaths.repo_root, wpt.venv_dir(), "browsers", "nightly", "firefox")
     if os.path.exists(fx_path):
         shutil.rmtree(fx_path)
     with pytest.raises(SystemExit) as excinfo:
@@ -388,9 +397,9 @@ def test_serve():
             if time.time() - start > 60:
                 assert False, "server did not start responding within 60s"
             try:
-                resp = urllib2.urlopen("http://web-platform.test:8000")
+                resp = urlopen("http://web-platform.test:8000")
                 print(resp)
-            except urllib2.URLError:
+            except URLError:
                 print("URLError")
                 time.sleep(1)
             else:

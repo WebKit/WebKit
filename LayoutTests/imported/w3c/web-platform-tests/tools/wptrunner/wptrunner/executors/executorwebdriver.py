@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 import json
 import os
 import socket
 import threading
 import time
 import traceback
-import urlparse
 import uuid
+from six.moves.urllib.parse import urljoin
 
 from .base import (CallbackHandler,
                    CrashtestExecutor,
@@ -66,13 +67,20 @@ class WebDriverBaseProtocolPart(BaseProtocolPart):
         while True:
             try:
                 self.webdriver.execute_async_script("")
-            except (client.TimeoutException, client.ScriptTimeoutException):
+            except (client.TimeoutException,
+                    client.ScriptTimeoutException,
+                    client.JavascriptErrorException):
+                # A JavascriptErrorException will happen when we navigate;
+                # by ignoring it it's possible to reload the test whilst the
+                # harness remains paused
                 pass
-            except (socket.timeout, client.NoSuchWindowException,
-                    client.UnknownErrorException, IOError):
+            except (socket.timeout,
+                    client.NoSuchWindowException,
+                    client.UnknownErrorException,
+                    IOError):
                 break
-            except Exception as e:
-                self.logger.error(traceback.format_exc(e))
+            except Exception:
+                self.logger.error(traceback.format_exc())
                 break
 
 
@@ -86,8 +94,8 @@ class WebDriverTestharnessProtocolPart(TestharnessProtocolPart):
     def load_runner(self, url_protocol):
         if self.runner_handle:
             self.webdriver.window_handle = self.runner_handle
-        url = urlparse.urljoin(self.parent.executor.server_url(url_protocol),
-                               "/testharness_runner.html")
+        url = urljoin(self.parent.executor.server_url(url_protocol),
+                      "/testharness_runner.html")
         self.logger.debug("Loading %s" % url)
 
         self.webdriver.url = url
@@ -288,15 +296,19 @@ class WebDriverProtocol(Protocol):
             message = str(getattr(e, "message", ""))
             if message:
                 message += "\n"
-            message += traceback.format_exc(e)
+            message += traceback.format_exc()
             self.logger.debug(message)
         self.webdriver = None
 
     def is_alive(self):
         try:
-            # Get a simple property over the connection
-            self.webdriver.window_handle
-        except (socket.timeout, client.UnknownErrorException):
+            # Get a simple property over the connection, with 2 seconds of timeout
+            # that should be more than enough to check if the WebDriver its
+            # still alive, and allows to complete the check within the testrunner
+            # 5 seconds of extra_timeout we have as maximum to end the test before
+            # the external timeout from testrunner triggers.
+            self.webdriver.send_session_command("GET", "window", timeout=2)
+        except (socket.timeout, client.UnknownErrorException, client.InvalidSessionIdException):
             return False
         return True
 
@@ -329,7 +341,7 @@ class WebDriverRun(TimedRunner):
                 message = str(getattr(e, "message", ""))
                 if message:
                     message += "\n"
-                message += traceback.format_exc(e)
+                message += traceback.format_exc()
                 self.result = False, ("INTERNAL-ERROR", message)
         finally:
             self.result_flag.set()
@@ -338,11 +350,11 @@ class WebDriverRun(TimedRunner):
 class WebDriverTestharnessExecutor(TestharnessExecutor):
     supports_testdriver = True
 
-    def __init__(self, browser, server_config, timeout_multiplier=1,
+    def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  close_after_done=True, capabilities=None, debug_info=None,
                  supports_eager_pageload=True, **kwargs):
         """WebDriver-based executor for testharness.js tests"""
-        TestharnessExecutor.__init__(self, browser, server_config,
+        TestharnessExecutor.__init__(self, logger, browser, server_config,
                                      timeout_multiplier=timeout_multiplier,
                                      debug_info=debug_info)
         self.protocol = WebDriverProtocol(self, browser, capabilities)
@@ -437,11 +449,12 @@ if (location.href === "about:blank") {
 
 
 class WebDriverRefTestExecutor(RefTestExecutor):
-    def __init__(self, browser, server_config, timeout_multiplier=1,
+    def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  screenshot_cache=None, close_after_done=True,
                  debug_info=None, capabilities=None, **kwargs):
         """WebDriver-based executor for reftests"""
         RefTestExecutor.__init__(self,
+                                 logger,
                                  browser,
                                  server_config,
                                  screenshot_cache=screenshot_cache,
@@ -505,11 +518,12 @@ class WebDriverRefTestExecutor(RefTestExecutor):
 
 
 class WebDriverCrashtestExecutor(CrashtestExecutor):
-    def __init__(self, browser, server_config, timeout_multiplier=1,
+    def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  screenshot_cache=None, close_after_done=True,
                  debug_info=None, capabilities=None, **kwargs):
         """WebDriver-based executor for reftests"""
         CrashtestExecutor.__init__(self,
+                                   logger,
                                    browser,
                                    server_config,
                                    screenshot_cache=screenshot_cache,
@@ -535,7 +549,7 @@ class WebDriverCrashtestExecutor(CrashtestExecutor):
         if success:
             return self.convert_result(test, data)
 
-        return (test.result_cls(**data), [])
+        return (test.result_cls(*data), [])
 
     def do_crashtest(self, protocol, url, timeout):
         protocol.base.load(url)

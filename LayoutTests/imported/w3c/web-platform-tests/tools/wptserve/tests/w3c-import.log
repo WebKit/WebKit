@@ -16,4 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/test_config.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/test_replacement_tokenizer.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/test_request.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/test_stash.py

@@ -6,20 +6,19 @@ import stat
 import errno
 import subprocess
 import tempfile
-import urlparse
 from abc import ABCMeta, abstractmethod
 from datetime import datetime, timedelta
 from distutils.spawn import find_executable
 
+from six.moves.urllib.parse import urlsplit
 import requests
 
-from utils import call, get, untar, unzip
+from .utils import call, get, untar, unzip
 
 uname = platform.uname()
 
 # the rootUrl for the firefox-ci deployment of Taskcluster
-# (after November 9, https://firefox-ci-tc.services.mozilla.com/)
-FIREFOX_CI_ROOT_URL = 'https://taskcluster.net'
+FIREFOX_CI_ROOT_URL = 'https://firefox-ci-tc.services.mozilla.com'
 
 
 def _get_fileversion(binary, logger=None):
@@ -41,6 +40,23 @@ def handle_remove_readonly(func, path, exc):
         raise
 
 
+def get_ext(filename):
+    """Get the extension from a filename with special handling for .tar.foo"""
+    name, ext = os.path.splitext(filename)
+    if name.endswith(".tar"):
+        ext = ".tar%s" % ext
+    return ext
+
+
+def get_taskcluster_artifact(index, path):
+    TC_INDEX_BASE = FIREFOX_CI_ROOT_URL + "/api/index/v1/"
+
+    resp = get(TC_INDEX_BASE + "task/%s/artifacts/%s" % (index, path))
+    resp.raise_for_status()
+
+    return resp
+
+
 class Browser(object):
     __metaclass__ = ABCMeta
 
@@ -48,8 +64,13 @@ class Browser(object):
         self.logger = logger
 
     @abstractmethod
-    def download(self, dest=None, channel=None):
-        """Download a package or installer for the browser"""
+    def download(self, dest=None, channel=None, rename=None):
+        """Download a package or installer for the browser
+        :param dest: Directory in which to put the dowloaded package
+        :param channel: Browser channel to download
+        :param rename: Optional name for the downloaded package; the original
+                       extension is preserved.
+        """
         return NotImplemented
 
     @abstractmethod
@@ -133,7 +154,7 @@ class Firefox(Browser):
 
         return dest
 
-    def download(self, dest=None, channel="nightly"):
+    def download(self, dest=None, channel="nightly", rename=None):
         product = {
             "nightly": "firefox-nightly-latest-ssl",
             "beta": "firefox-beta-latest-ssl",
@@ -161,7 +182,7 @@ class Firefox(Browser):
         url = "https://download.mozilla.org/?product=%s&os=%s&lang=en-US" % (product[channel],
                                                                              os_builds[os_key])
         self.logger.info("Downloading Firefox from %s" % url)
-        resp = requests.get(url)
+        resp = get(url)
 
         filename = None
 
@@ -172,10 +193,13 @@ class Firefox(Browser):
                 filename = filenames[0]
 
         if not filename:
-            filename = urlparse.urlsplit(resp.url).path.rsplit("/", 1)[1]
+            filename = urlsplit(resp.url).path.rsplit("/", 1)[1]
 
         if not filename:
             filename = "firefox.tar.bz2"
+
+        if rename:
+            filename = "%s%s" % (rename, get_ext(filename))
 
         installer_path = os.path.join(dest, filename)
 
@@ -363,14 +387,14 @@ class Firefox(Browser):
         tags = call("git", "ls-remote", "--tags", "--refs",
                     "https://github.com/mozilla/geckodriver.git")
         release_re = re.compile(r".*refs/tags/v(\d+)\.(\d+)\.(\d+)")
-        latest_release = 0
+        latest_release = (0,0,0)
         for item in tags.split("\n"):
             m = release_re.match(item)
             if m:
-                version = [int(item) for item in m.groups()]
+                version = tuple(int(item) for item in m.groups())
                 if version > latest_release:
                     latest_release = version
-        assert latest_release != 0
+        assert latest_release != (0,0,0)
         return "v%s.%s.%s" % tuple(str(item) for item in latest_release)
 
     def install_webdriver(self, dest=None, channel=None, browser_binary=None):
@@ -397,32 +421,32 @@ class Firefox(Browser):
         return find_executable(os.path.join(dest, "geckodriver"))
 
     def install_geckodriver_nightly(self, dest):
-        import tarfile
-        import mozdownload
         self.logger.info("Attempting to install webdriver from nightly")
-        try:
-            s = mozdownload.DailyScraper(branch="mozilla-central",
-                                         extension="common.tests.tar.gz",
-                                         destination=dest)
-            package_path = s.download()
-        except mozdownload.errors.NotFoundError:
-            return
+
+        platform_bits = ("64" if uname[4] == "x86_64" else
+                         ("32" if self.platform == "win" else ""))
+        tc_platform = "%s%s" % (self.platform, platform_bits)
+
+        archive_ext = ".zip" if uname[0] == "Windows" else ".tar.gz"
+        archive_name = "public/geckodriver%s" % archive_ext
 
         try:
-            exe_suffix = ".exe" if uname[0] == "Windows" else ""
-            with tarfile.open(package_path, "r") as f:
-                try:
-                    member = f.getmember("bin%sgeckodriver%s" % (os.path.sep,
-                                                                 exe_suffix))
-                except KeyError:
-                    return
-                # Remove bin/ from the path.
-                member.name = os.path.basename(member.name)
-                f.extractall(members=[member], path=dest)
-                path = os.path.join(dest, member.name)
-            self.logger.info("Extracted geckodriver to %s" % path)
-        finally:
-            os.unlink(package_path)
+            resp = get_taskcluster_artifact(
+                "gecko.v2.mozilla-central.latest.geckodriver.%s" % tc_platform,
+                archive_name)
+        except Exception:
+            self.logger.info("Geckodriver download failed")
+            return
+
+        if archive_ext == ".zip":
+            unzip(resp.raw, dest)
+        else:
+            untar(resp.raw, dest)
+
+        exe_ext = ".exe" if uname[0] == "Windows" else ""
+        path = os.path.join(dest, "geckodriver%s" % exe_ext)
+
+        self.logger.info("Extracted geckodriver to %s" % path)
 
         return path
 
@@ -441,30 +465,19 @@ class FirefoxAndroid(Browser):
     product = "firefox_android"
     requirements = "requirements_firefox.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         if dest is None:
             dest = os.pwd
 
-        if FIREFOX_CI_ROOT_URL == 'https://taskcluster.net':
-            # NOTE: this condition can be removed after November 9, 2019
-            TC_QUEUE_BASE = "https://queue.taskcluster.net/v1/"
-            TC_INDEX_BASE = "https://index.taskcluster.net/v1/"
-        else:
-            TC_QUEUE_BASE = FIREFOX_CI_ROOT_URL + "/api/queue/v1/"
-            TC_INDEX_BASE = FIREFOX_CI_ROOT_URL + "/api/index/v1/"
 
+        resp = get_taskcluster_artifact(
+            "gecko.v2.mozilla-central.latest.mobile.android-x86_64-opt",
+            "public/build/geckoview-androidTest.apk")
 
-        resp = requests.get(TC_INDEX_BASE +
-                            "task/gecko.v2.mozilla-central.latest.mobile.android-x86_64-opt")
-        resp.raise_for_status()
-        index = resp.json()
-        task_id = index["taskId"]
-
-        resp = requests.get(TC_QUEUE_BASE + "task/%s/artifacts/%s" %
-                            (task_id, "public/build/geckoview-androidTest.apk"))
-        resp.raise_for_status()
-
-        apk_path = os.path.join(dest, "geckoview-androidTest.apk")
+        filename = "geckoview-androidTest.apk"
+        if rename:
+            filename = "%s%s" % (rename, get_ext(filename)[1])
+        apk_path = os.path.join(dest, filename)
 
         with open(apk_path, "wb") as f:
             f.write(resp.content)
@@ -500,7 +513,7 @@ class Chrome(Browser):
     product = "chrome"
     requirements = "requirements_chrome.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -658,7 +671,7 @@ class ChromeAndroidBase(Browser):
         super(ChromeAndroidBase, self).__init__(logger)
         self.device_serial = None
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -766,7 +779,7 @@ class ChromeiOS(Browser):
     product = "chrome_ios"
     requirements = "requirements_chrome_ios.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -802,7 +815,7 @@ class Opera(Browser):
         self.logger.warning("Unable to find the browser binary.")
         return None
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -874,7 +887,7 @@ class EdgeChromium(Browser):
     edgedriver_name = "msedgedriver"
     requirements = "requirements_edge_chromium.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -888,11 +901,13 @@ class EdgeChromium(Browser):
             if not binary:
                 # Use paths from different Edge channels starting with Release\Beta\Dev\Canary
                 winpaths = [os.path.expanduser("~\\AppData\\Local\\Microsoft\\Edge\\Application"),
+                            os.path.expandvars("$SYSTEMDRIVE\\Program Files\\Microsoft\\Edge\\Application"),
                             os.path.expandvars("$SYSTEMDRIVE\\Program Files\\Microsoft\\Edge Beta\\Application"),
                             os.path.expandvars("$SYSTEMDRIVE\\Program Files\\Microsoft\\Edge Dev\\Application"),
+                            os.path.expandvars("$SYSTEMDRIVE\\Program Files (x86)\\Microsoft\\Edge\\Application"),
                             os.path.expandvars("$SYSTEMDRIVE\\Program Files (x86)\\Microsoft\\Edge Beta\\Application"),
                             os.path.expandvars("$SYSTEMDRIVE\\Program Files (x86)\\Microsoft\\Edge Dev\\Application"),
-                            os.path.expanduser("~\\AppData\Local\\Microsoft\\Edge SxS\\Application")]
+                            os.path.expanduser("~\\AppData\\Local\\Microsoft\\Edge SxS\\Application")]
                 return find_executable(binaryname, os.pathsep.join(winpaths))
         if self.platform == "macos":
             binaryname = "Microsoft Edge Canary"
@@ -973,7 +988,7 @@ class Edge(Browser):
     product = "edge"
     requirements = "requirements_edge.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -1007,7 +1022,7 @@ class InternetExplorer(Browser):
     product = "ie"
     requirements = "requirements_ie.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -1035,7 +1050,7 @@ class Safari(Browser):
     product = "safari"
     requirements = "requirements_safari.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -1105,14 +1120,15 @@ class Servo(Browser):
         url = "https://download.servo.org/nightly/%s/servo-latest%s" % (platform, extension)
         return get(url)
 
-    def download(self, dest=None, channel="nightly"):
+    def download(self, dest=None, channel="nightly", rename=None):
         if dest is None:
             dest = os.pwd
 
         resp = self._get(dest, channel)
         _, extension, _ = self.platform_components()
 
-        with open(os.path.join(dest, "servo-latest%s" % (extension,)), "w") as f:
+        filename = rename if rename is not None else "servo-latest"
+        with open(os.path.join(dest, "%s%s" % (filename, extension,)), "w") as f:
             f.write(resp.content)
 
     def install(self, dest=None, channel="nightly"):
@@ -1159,7 +1175,7 @@ class Sauce(Browser):
     product = "sauce"
     requirements = "requirements_sauce.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -1184,7 +1200,7 @@ class WebKit(Browser):
     product = "webkit"
     requirements = "requirements_webkit.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -1250,7 +1266,7 @@ class Epiphany(Browser):
     product = "epiphany"
     requirements = "requirements_epiphany.txt"
 
-    def download(self, dest=None, channel=None):
+    def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):

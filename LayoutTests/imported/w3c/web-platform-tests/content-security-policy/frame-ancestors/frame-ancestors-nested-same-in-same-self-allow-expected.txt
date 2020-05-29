@@ -1,4 +1,4 @@
 
 
-PASS A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames. 
+FAIL A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames. assert_unreached: Inner IFrame msg: The IFrame should not have been blocked. It was. Reached unreachable code
 

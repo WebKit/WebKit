@@ -322,6 +322,15 @@ class TestharnessInOtherType(Rule):
     description = "testharness.js included in a %s test"
 
 
+class DuplicateBasenamePath(Rule):
+    name = "DUPLICATE-BASENAME-PATH"
+    description = collapse("""
+            File has identical basename path (path excluding extension) as
+            other file(s) (found extensions: %s)
+    """)
+    to_fix = "rename files so they have unique basename paths"
+
+
 class Regexp(six.with_metaclass(abc.ABCMeta)):
     @abc.abstractproperty
     def pattern(self):
@@ -462,3 +471,27 @@ class TrailingWhitespaceRegexp(Regexp):
     description = "Whitespace at EOL"
     pattern = b"[ \t\f\v]$"
     to_fix = """Remove trailing whitespace from all lines in the file."""
+
+
+class AssertThrowsRegexp(Regexp):
+    pattern = br"[^.]assert_throws\("
+    name = "ASSERT_THROWS"
+    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    description = "Test-file line has an `assert_throws(...)` call"
+    to_fix = """Replace with `assert_throws_dom` or `assert_throws_js` or `assert_throws_exactly`"""
+
+
+class PromiseRejectsRegexp(Regexp):
+    pattern = br"promise_rejects\("
+    name = "PROMISE_REJECTS"
+    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    description = "Test-file line has a `promise_rejects(...)` call"
+    to_fix = """Replace with promise_rejects_dom or promise_rejects_js or `promise_rejects_exactly`"""
+
+
+class AssertPreconditionRegexp(Regexp):
+    pattern = br"[^.]assert_precondition\("
+    name = "ASSERT-PRECONDITION"
+    file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
+    description = "Test-file line has an `assert_precondition(...)` call"
+    to_fix = """Replace with `assert_implements` or `assert_implements_optional`"""

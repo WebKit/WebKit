@@ -33,15 +33,16 @@ job_path_map = {
     "wptrunner_unittest": ["tools/"],
     "build_css": ["css/"],
     "update_built": ["update-built-tests\\.sh",
-                     "2dcontext/",
                      "infrastructure/",
                      "html/",
-                     "offscreen-canvas/",
                      "mimesniff/",
                      "css/css-ui/",
                      "WebIDL"],
     "wpt_integration": ["tools/"],
-    "wptrunner_infrastructure": ["infrastructure/", "tools/", "resources/"],
+    "wptrunner_infrastructure": ["infrastructure/",
+                                 "tools/",
+                                 "resources/",
+                                 "webdriver/tests/support"],
 }
 
 

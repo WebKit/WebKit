@@ -18,7 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/affected_tests.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/checkout.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/cleanup_win10.yml
-/LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/com.apple.Safari.plist
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/fyi_hook.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/install_certs.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/install_chrome.yml
@@ -28,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/install_python.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/install_safari.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/pip_install.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/publish_logs.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/safari-technology-preview.rb
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/system_info.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/ci/azure/tox_pytest.yml

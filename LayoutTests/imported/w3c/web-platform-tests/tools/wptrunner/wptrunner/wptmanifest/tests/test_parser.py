@@ -18,9 +18,9 @@ class TestExpression(unittest.TestCase):
         self.match(expected, actual)
 
     def match(self, expected_node, actual_node):
-        self.assertEquals(expected_node[0], actual_node.__class__.__name__)
-        self.assertEquals(expected_node[1], actual_node.data)
-        self.assertEquals(len(expected_node[2]), len(actual_node.children))
+        self.assertEqual(expected_node[0], actual_node.__class__.__name__)
+        self.assertEqual(expected_node[1], actual_node.data)
+        self.assertEqual(len(expected_node[2]), len(actual_node.children))
         for expected_child, actual_child in zip(expected_node[2], actual_node.children):
             self.match(expected_child, actual_child)
 
@@ -104,6 +104,45 @@ key:
     def test_atom_1(self):
         with self.assertRaises(parser.ParseError):
             self.parse(b"key: @true")
+
+    def test_list_expr(self):
+        self.compare(
+            b"""
+key:
+  if x == 1: [a]
+  [b]""",
+            ["DataNode", None,
+             [["KeyValueNode", "key",
+               [["ConditionalNode", None,
+                 [["BinaryExpressionNode", None,
+                   [["BinaryOperatorNode", "==", []],
+                    ["VariableNode", "x", []],
+                       ["NumberNode", "1", []]
+                    ]],
+                     ["ListNode", None,
+                      [["ValueNode", "a", []]]],
+                  ]],
+                ["ListNode", None,
+                 [["ValueNode", "b", []]]]]]]])
+
+    def test_list_heading(self):
+        self.compare(
+            b"""
+key:
+  if x == 1: [a]
+[b]""",
+            ["DataNode", None,
+             [["KeyValueNode", "key",
+               [["ConditionalNode", None,
+                 [["BinaryExpressionNode", None,
+                   [["BinaryOperatorNode", "==", []],
+                    ["VariableNode", "x", []],
+                       ["NumberNode", "1", []]
+                    ]],
+                     ["ListNode", None,
+                      [["ValueNode", "a", []]]],
+                  ]]]],
+              ["DataNode", "b", []]]])
 
     def test_if_1(self):
         with self.assertRaises(parser.ParseError):

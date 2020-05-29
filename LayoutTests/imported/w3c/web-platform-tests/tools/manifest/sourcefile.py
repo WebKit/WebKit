@@ -2,7 +2,7 @@ import hashlib
 import re
 import os
 from collections import deque
-from six import binary_type, PY3
+from six import binary_type, ensure_text, iteritems, text_type
 from six.moves.urllib.parse import urljoin
 from fnmatch import fnmatch
 
@@ -33,7 +33,7 @@ except ImportError:
 import html5lib
 
 from . import XMLParser
-from .item import (ManifestItem, ManualTest, WebDriverSpecTest, RefTestNode, TestharnessTest,
+from .item import (ManifestItem, ManualTest, WebDriverSpecTest, RefTest, TestharnessTest,
                    SupportFile, CrashTest, ConformanceCheckerTest, VisualTest)
 from .utils import ContextManagerBytesIO, cached_property
 
@@ -56,9 +56,9 @@ def replace_end(s, old, new):
 
 
 def read_script_metadata(f, regexp):
-    # type: (BinaryIO, Pattern[bytes]) -> Iterable[Tuple[bytes, bytes]]
+    # type: (BinaryIO, Pattern[bytes]) -> Iterable[Tuple[Text, Text]]
     """
-    Yields any metadata (pairs of bytestrings) from the file-like object `f`,
+    Yields any metadata (pairs of strings) from the file-like object `f`,
     as specified according to a supplied regexp.
 
     `regexp` - Regexp containing two groups containing the metadata name and
@@ -70,27 +70,25 @@ def read_script_metadata(f, regexp):
         if not m:
             break
 
-        yield (m.groups()[0], m.groups()[1])
+        yield (m.groups()[0].decode("utf8"), m.groups()[1].decode("utf8"))
 
 
 _any_variants = {
-    b"default": {"longhand": {b"window", b"dedicatedworker"}},
-    b"window": {"suffix": ".any.html"},
-    b"serviceworker": {"force_https": True},
-    b"sharedworker": {},
-    b"dedicatedworker": {"suffix": ".any.worker.html"},
-    b"worker": {"longhand": {b"dedicatedworker", b"sharedworker", b"serviceworker"}},
-    b"jsshell": {"suffix": ".any.js"},
-}  # type: Dict[bytes, Dict[str, Any]]
+    "window": {"suffix": ".any.html"},
+    "serviceworker": {"force_https": True},
+    "sharedworker": {},
+    "dedicatedworker": {"suffix": ".any.worker.html"},
+    "worker": {"longhand": {"dedicatedworker", "sharedworker", "serviceworker"}},
+    "jsshell": {"suffix": ".any.js"},
+}  # type: Dict[Text, Dict[Text, Any]]
 
 
 def get_any_variants(item):
-    # type: (bytes) -> Set[bytes]
+    # type: (Text) -> Set[Text]
     """
-    Returns a set of variants (bytestrings) defined by the given keyword.
+    Returns a set of variants (strings) defined by the given keyword.
     """
-    assert isinstance(item, binary_type), item
-    assert not item.startswith(b"!"), item
+    assert isinstance(item, text_type), item
 
     variant = _any_variants.get(item, None)
     if variant is None:
@@ -100,48 +98,46 @@ def get_any_variants(item):
 
 
 def get_default_any_variants():
-    # type: () -> Set[bytes]
+    # type: () -> Set[Text]
     """
-    Returns a set of variants (bytestrings) that will be used by default.
+    Returns a set of variants (strings) that will be used by default.
     """
-    return set(_any_variants[b"default"]["longhand"])
+    return set({"window", "dedicatedworker"})
 
 
 def parse_variants(value):
-    # type: (bytes) -> Set[bytes]
+    # type: (Text) -> Set[Text]
     """
-    Returns a set of variants (bytestrings) defined by a comma-separated value.
+    Returns a set of variants (strings) defined by a comma-separated value.
     """
-    assert isinstance(value, binary_type), value
+    assert isinstance(value, text_type), value
 
-    globals = get_default_any_variants()
+    if value == "":
+        return get_default_any_variants()
 
-    for item in value.split(b","):
+    globals = set()
+    for item in value.split(","):
         item = item.strip()
-        if item.startswith(b"!"):
-            globals -= get_any_variants(item[1:])
-        else:
-            globals |= get_any_variants(item)
-
+        globals |= get_any_variants(item)
     return globals
 
 
 def global_suffixes(value):
-    # type: (bytes) -> Set[Tuple[bytes, bool]]
+    # type: (Text) -> Set[Tuple[Text, bool]]
     """
     Yields tuples of the relevant filename suffix (a string) and whether the
     variant is intended to run in a JS shell, for the variants defined by the
     given comma-separated value.
     """
-    assert isinstance(value, binary_type), value
+    assert isinstance(value, text_type), value
 
     rv = set()
 
     global_types = parse_variants(value)
     for global_type in global_types:
         variant = _any_variants[global_type]
-        suffix = variant.get("suffix", ".any.%s.html" % global_type.decode("utf-8"))
-        rv.add((suffix, global_type == b"jsshell"))
+        suffix = variant.get("suffix", ".any.%s.html" % global_type)
+        rv.add((suffix, global_type == "jsshell"))
 
     return rv
 
@@ -156,6 +152,8 @@ def global_variant_url(url, suffix):
     # the form .https.any.js
     if ".https." in url and suffix.startswith(".https."):
         url = url.replace(".https.", ".")
+    elif ".h2." in url and suffix.startswith(".h2."):
+        url = url.replace(".h2.", ".")
     return replace_end(url, ".js", suffix)
 
 
@@ -192,24 +190,21 @@ class SourceFile(object):
                          ("css", "CSS2", "archive"),
                          ("css", "common")}  # type: Set[Tuple[bytes, ...]]
 
-    def __init__(self, tests_root, rel_path, url_base, hash=None, contents=None):
-        # type: (AnyStr, AnyStr, Text, Optional[bytes], Optional[bytes]) -> None
+    def __init__(self, tests_root, rel_path_str, url_base, hash=None, contents=None):
+        # type: (AnyStr, AnyStr, Text, Optional[Text], Optional[bytes]) -> None
         """Object representing a file in a source tree.
 
         :param tests_root: Path to the root of the source tree
-        :param rel_path: File path relative to tests_root
+        :param rel_path_str: File path relative to tests_root
         :param url_base: Base URL used when converting file paths to urls
         :param contents: Byte array of the contents of the file or ``None``.
         """
 
+        rel_path = ensure_text(rel_path_str)
         assert not os.path.isabs(rel_path), rel_path
-
         if os.name == "nt":
             # do slash normalization on Windows
-            if isinstance(rel_path, binary_type):
-                rel_path = rel_path.replace(b"/", b"\\")
-            else:
-                rel_path = rel_path.replace(u"/", u"\\")
+            rel_path = rel_path.replace(u"/", u"\\")
 
         dir_path, filename = os.path.split(rel_path)
         name, ext = os.path.splitext(filename)
@@ -220,13 +215,13 @@ class SourceFile(object):
 
         meta_flags = name.split(".")[1:]
 
-        self.tests_root = tests_root  # type: Union[bytes, Text]
-        self.rel_path = rel_path  # type: Union[bytes, Text]
-        self.dir_path = dir_path  # type: Union[bytes, Text]
-        self.filename = filename  # type: Union[bytes, Text]
-        self.name = name  # type: Union[bytes, Text]
-        self.ext = ext  # type: Union[bytes, Text]
-        self.type_flag = type_flag  # type: Optional[Union[bytes, Text]]
+        self.tests_root = ensure_text(tests_root)  # type: Text
+        self.rel_path = rel_path  # type: Text
+        self.dir_path = dir_path  # type: Text
+        self.filename = filename  # type: Text
+        self.name = name  # type: Text
+        self.ext = ext  # type: Text
+        self.type_flag = type_flag  # type: Optional[Text]
         self.meta_flags = meta_flags  # type: Union[List[bytes], List[Text]]
         self.url_base = url_base
         self.contents = contents
@@ -240,9 +235,7 @@ class SourceFile(object):
 
         if "__cached_properties__" in rv:
             cached_properties = rv["__cached_properties__"]
-            for key in rv.keys():
-                if key in cached_properties:
-                    del rv[key]
+            rv = {key:value for key, value in iteritems(rv) if key not in cached_properties}
             del rv["__cached_properties__"]
         return rv
 
@@ -280,8 +273,13 @@ class SourceFile(object):
         return file_obj
 
     @cached_property
+    def rel_path_parts(self):
+        # type: () -> Tuple[Text, ...]
+        return tuple(self.rel_path.split(os.path.sep))
+
+    @cached_property
     def path(self):
-        # type: () -> Union[bytes, Text]
+        # type: () -> Text
         return os.path.join(self.tests_root, self.rel_path)
 
     @cached_property
@@ -297,17 +295,13 @@ class SourceFile(object):
 
     @cached_property
     def hash(self):
-        # type: () -> bytes
+        # type: () -> Text
         if not self._hash:
             with self.open() as f:
                 content = f.read()
 
             data = b"".join((b"blob ", b"%d" % len(content), b"\0", content))
-            hash_str = hashlib.sha1(data).hexdigest()  # type: str
-            if PY3:
-                self._hash = hash_str.encode("ascii")
-            else:
-                self._hash = hash_str
+            self._hash = text_type(hashlib.sha1(data).hexdigest())
 
         return self._hash
 
@@ -316,18 +310,17 @@ class SourceFile(object):
         if self.dir_path == "":
             return True
 
-        parts = self.dir_path.split(os.path.sep)
+        parts = self.rel_path_parts
 
         if (parts[0] in self.root_dir_non_test or
             any(item in self.dir_non_test for item in parts) or
-            any(parts[:len(path)] == list(path) for path in self.dir_path_non_test)):
+            any(parts[:len(path)] == path for path in self.dir_path_non_test)):
             return True
         return False
 
     def in_conformance_checker_dir(self):
         # type: () -> bool
-        return (self.dir_path == "conformance-checkers" or
-                self.dir_path.startswith("conformance-checkers" + os.path.sep))
+        return self.rel_path_parts[0] == "conformance-checkers"
 
     @property
     def name_is_non_test(self):
@@ -339,6 +332,7 @@ class SourceFile(object):
                 self.filename == "META.yml" or
                 self.filename.startswith(".") or
                 self.filename.endswith(".headers") or
+                self.filename.endswith(".ini") or
                 self.in_non_test_dir())
 
     @property
@@ -394,10 +388,10 @@ class SourceFile(object):
         be a webdriver spec test file"""
         # wdspec tests are in subdirectories of /webdriver excluding __init__.py
         # files.
-        rel_dir_tree = self.rel_path.split(os.path.sep)
-        return (((rel_dir_tree[0] == "webdriver" and len(rel_dir_tree) > 1) or
-                 (rel_dir_tree[:2] == ["infrastructure", "webdriver"] and
-                  len(rel_dir_tree) > 2)) and
+        rel_path_parts = self.rel_path_parts
+        return (((rel_path_parts[0] == "webdriver" and len(rel_path_parts) > 1) or
+                 (rel_path_parts[:2] == ("infrastructure", "webdriver") and
+                  len(rel_path_parts) > 2)) and
                 self.filename not in ("__init__.py", "conftest.py") and
                 fnmatch(self.filename, wd_pattern))
 
@@ -412,6 +406,15 @@ class SourceFile(object):
     def name_is_crashtest(self):
         # type: () -> bool
         return self.type_flag == "crash" or "crashtests" in self.dir_path.split(os.path.sep)
+
+    @property
+    def name_is_tentative(self):
+        # type: () -> bool
+        """Check if the file name matches the conditions for the file to be a
+        tentative file.
+
+        See https://web-platform-tests.org/writing-tests/file-names.html#test-features"""
+        return "tentative" in self.meta_flags
 
     @property
     def markup_type(self):
@@ -465,7 +468,7 @@ class SourceFile(object):
 
     @cached_property
     def script_metadata(self):
-        # type: () -> Optional[List[Tuple[bytes, bytes]]]
+        # type: () -> Optional[List[Tuple[Text, Text]]]
         if self.name_is_worker or self.name_is_multi_global or self.name_is_window:
             regexp = js_meta_re
         elif self.name_is_webdriver:
@@ -482,7 +485,7 @@ class SourceFile(object):
         """The timeout of a test or reference file. "long" if the file has an extended timeout
         or None otherwise"""
         if self.script_metadata:
-            if any(m == (b"timeout", b"long") for m in self.script_metadata):
+            if any(m == ("timeout", "long") for m in self.script_metadata):
                 return "long"
 
         if self.root is None:
@@ -644,8 +647,8 @@ class SourceFile(object):
             script_metadata = self.script_metadata
             assert script_metadata is not None
             for (key, value) in script_metadata:
-                if key == b"variant":
-                    rv.append(value.decode("utf-8"))
+                if key == "variant":
+                    rv.append(value)
         else:
             for element in self.variant_nodes:
                 if "content" in element.attrib:
@@ -676,6 +679,36 @@ class SourceFile(object):
         if self.root is None:
             return None
         return bool(self.testdriver_nodes)
+
+    @cached_property
+    def quic_nodes(self):
+        # type: () -> List[ElementTree.Element]
+        """List of ElementTree Elements corresponding to nodes in a test that
+        specify whether it needs QUIC server."""
+        assert self.root is not None
+        return self.root.findall(".//{http://www.w3.org/1999/xhtml}meta[@name='quic']")
+
+    @cached_property
+    def quic(self):
+        # type: () -> Optional[bool]
+        """Boolean indicating whether a test requires QUIC server
+
+        Determined by <meta> elements (`quic_nodes()`) and "// META" comments
+        (`script_metadata()`).
+        """
+        if self.script_metadata:
+            if any(m == ("quic", "true") for m in self.script_metadata):
+                return True
+
+        if self.root is None:
+            return None
+
+        if self.quic_nodes:
+            quic_str = self.quic_nodes[0].attrib.get("content", "false")  # type: Text
+            if quic_str.lower() == "true":
+                return True
+
+        return None
 
     @cached_property
     def reftest_nodes(self):
@@ -784,6 +817,8 @@ class SourceFile(object):
         if self.items_cache:
             return self.items_cache
 
+        drop_cached = "root" not in self.__dict__
+
         if self.name_is_non_test:
             rv = "support", [
                 SupportFile(
@@ -835,11 +870,11 @@ class SourceFile(object):
                 )]
 
         elif self.name_is_multi_global:
-            globals = b""
+            globals = u""
             script_metadata = self.script_metadata
             assert script_metadata is not None
             for (key, value) in script_metadata:
-                if key == b"global":
+                if key == "global":
                     globals = value
                     break
 
@@ -851,6 +886,7 @@ class SourceFile(object):
                     global_variant_url(self.rel_url, suffix) + variant,
                     timeout=self.timeout,
                     jsshell=jsshell,
+                    quic=self.quic,
                     script_metadata=self.script_metadata
                 )
                 for (suffix, jsshell) in sorted(global_suffixes(globals))
@@ -867,6 +903,7 @@ class SourceFile(object):
                     self.url_base,
                     test_url + variant,
                     timeout=self.timeout,
+                    quic=self.quic,
                     script_metadata=self.script_metadata
                 )
                 for variant in self.test_variants
@@ -882,6 +919,7 @@ class SourceFile(object):
                     self.url_base,
                     test_url + variant,
                     timeout=self.timeout,
+                    quic=self.quic,
                     script_metadata=self.script_metadata
                 )
                 for variant in self.test_variants
@@ -918,19 +956,21 @@ class SourceFile(object):
                     self.url_base,
                     url,
                     timeout=self.timeout,
+                    quic=self.quic,
                     testdriver=testdriver,
                     script_metadata=self.script_metadata
                 ))
 
         elif self.content_is_ref_node:
-            rv = RefTestNode.item_type, [
-                RefTestNode(
+            rv = RefTest.item_type, [
+                RefTest(
                     self.tests_root,
                     self.rel_path,
                     self.url_base,
                     self.rel_url,
                     references=self.references,
                     timeout=self.timeout,
+                    quic=self.quic,
                     viewport_size=self.viewport_size,
                     dpi=self.dpi,
                     fuzzy=self.fuzzy
@@ -955,5 +995,12 @@ class SourceFile(object):
         assert len(rv[1]) == len(set(rv[1]))
 
         self.items_cache = rv
+
+        if drop_cached and "__cached_properties__" in self.__dict__:
+            cached_properties = self.__dict__["__cached_properties__"]
+            for prop in cached_properties:
+                if prop in self.__dict__:
+                    del self.__dict__[prop]
+            del self.__dict__["__cached_properties__"]
 
         return rv

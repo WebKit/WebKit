@@ -1,5 +1,4 @@
 from __future__ import print_function
-import ConfigParser
 import argparse
 import os
 import sys
@@ -7,6 +6,8 @@ import sys
 from mozlog import structuredlog
 from mozlog.handlers import BaseHandler, StreamHandler
 from mozlog.formatters import MachFormatter
+from six import iteritems
+from six.moves.configparser import ConfigParser
 from wptrunner import wptcommandline, wptrunner
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -58,7 +59,7 @@ def test_settings():
     }
 
 def read_config():
-    parser = ConfigParser.ConfigParser()
+    parser = ConfigParser()
     parser.read("test.cfg")
 
     rv = {"general":{},
@@ -83,7 +84,7 @@ def run_tests(product, kwargs):
 
 def settings_to_argv(settings):
     rv = []
-    for name, value in settings.iteritems():
+    for name, value in iteritems(settings):
         key = "--%s" % name
         if not value:
             rv.append(key)
@@ -109,7 +110,7 @@ def run(config, args):
 
     logger.suite_start(tests=[])
 
-    for product, product_settings in config["products"].iteritems():
+    for product, product_settings in iteritems(config["products"]):
         if args.product and product not in args.product:
             continue
 

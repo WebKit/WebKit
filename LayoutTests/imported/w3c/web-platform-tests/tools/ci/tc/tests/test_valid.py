@@ -6,7 +6,6 @@ import jsone
 import mock
 import pytest
 import requests
-import sys
 import yaml
 from jsonschema import validate
 
@@ -20,9 +19,6 @@ def data_path(filename):
     return os.path.join(here, "..", "testdata", filename)
 
 
-@pytest.mark.xfail(sys.version_info.major == 2,
-                   reason="taskcluster library has an encoding bug "
-                   "https://github.com/taskcluster/json-e/issues/338")
 def test_verify_taskcluster_yml():
     """Verify that the json-e in the .taskcluster.yml is valid"""
     with open(os.path.join(root, ".taskcluster.yml"), encoding="utf8") as f:
@@ -46,11 +42,17 @@ def test_verify_payload():
     """Verify that the decision task produces tasks with a valid payload"""
     from tools.ci.tc.decision import decide
 
-    create_task_schema = requests.get(
-        "https://raw.githubusercontent.com/taskcluster/taskcluster/blob/master/services/queue/schemas/v1/create-task-request.yml")
-    create_task_schema = yaml.safe_load(create_task_schema.content)
+    r = requests.get("https://community-tc.services.mozilla.com/schemas/queue/v1/create-task-request.json")
+    r.raise_for_status()
+    create_task_schema = r.json()
 
-    payload_schema = requests.get("https://raw.githubusercontent.com/taskcluster/docker-worker/master/schemas/v1/payload.json").json()
+    # TODO(Hexcles): Change it to https://community-tc.services.mozilla.com/references/schemas/docker-worker/v1/payload.json
+    # after the next Community-TC release (see https://bugzilla.mozilla.org/show_bug.cgi?id=1639732)..
+    r = requests.get(
+        "https://raw.githubusercontent.com/taskcluster/taskcluster/"
+        "3ed511ef9119da54fc093e976b7b5955874c9b54/workers/docker-worker/schemas/v1/payload.json")
+    r.raise_for_status()
+    payload_schema = r.json()
 
     jobs = ["lint",
             "manifest_upload",
@@ -127,12 +129,17 @@ def test_verify_payload():
       'wpt-chrome-dev-crashtest-1',
       'lint'}),
     ("pr_event.json", True, {".taskcluster.yml",".travis.yml","tools/ci/start.sh"},
-     {'lint',
+     {'download-firefox-nightly',
+      'lint',
       'tools/ unittests (Python 2)',
-      'tools/ unittests (Python 3)',
-      'tools/wpt/ tests',
+      'tools/ unittests (Python 3.6)',
+      'tools/ unittests (Python 3.8)',
+      'tools/wpt/ tests (Python 2)',
+      'tools/wpt/ tests (Python 3.6)',
+      'tools/wpt/ tests (Python 3.8)',
       'resources/ tests',
-      'infrastructure/ tests'}),
+      'infrastructure/ tests',
+      'infrastructure/ tests (Python 3)'}),
     # More tests are affected in the actual PR but it shouldn't affect the scheduled tasks
     ("pr_event_tests_affected.json", True, {"layout-instability/clip-negative-bottom-margin.html",
                                             "layout-instability/composited-element-movement.html"},

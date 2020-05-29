@@ -1,7 +1,9 @@
 import os
 import subprocess
+import sys
 from six.moves.urllib.parse import urljoin
 from collections import defaultdict
+from six import iteritems, string_types
 
 from .wptmanifest.parser import atoms
 
@@ -92,7 +94,7 @@ class RunInfo(dict):
         self._update_mozinfo(metadata_root)
         self.update(mozinfo.info)
 
-        from update.tree import GitTree
+        from .update.tree import GitTree
         try:
             # GitTree.__init__ throws if we are not in a git tree.
             rev = GitTree(log_error=False).rev
@@ -101,6 +103,7 @@ class RunInfo(dict):
         if rev:
             self["revision"] = rev
 
+        self["python_version"] = sys.version_info.major
         self["product"] = product
         if debug is not None:
             self["debug"] = debug
@@ -118,21 +121,8 @@ class RunInfo(dict):
         if extras is not None:
             self.update(extras)
 
-        # Until the test harness can understand default pref values,
-        # (https://bugzilla.mozilla.org/show_bug.cgi?id=1577912) this value
-        # should by synchronized with the default pref value indicated in
-        # StaticPrefList.yaml.
-        #
-        # Currently for automation, the pref (and `sw-e10s`) defaults to true in
-        # nightly builds and false otherwise but can be overridden with
-        # `--setpref`. If overridden, the value would be initialized in
-        # `run_info_extras` and be supplied in the `extras` parameter.
-        if "sw-e10s" not in self:
-            self["sw-e10s"] = self.get("nightly_build", False)
-
         self["headless"] = extras.get("headless", False)
         self["webrender"] = enable_webrender
-
 
     def _update_mozinfo(self, metadata_root):
         """Add extra build information from a mozinfo.json file in a parent
@@ -150,6 +140,14 @@ class RunInfo(dict):
         mozinfo.find_and_update_from_json(*dirs)
 
 
+def server_protocol(manifest_item):
+    if hasattr(manifest_item, "h2") and manifest_item.h2:
+        return "h2"
+    if hasattr(manifest_item, "https") and manifest_item.https:
+        return "https"
+    return "http"
+
+
 class Test(object):
 
     result_cls = None
@@ -160,14 +158,14 @@ class Test(object):
     long_timeout = 60  # seconds
 
     def __init__(self, tests_root, url, inherit_metadata, test_metadata,
-                 timeout=None, path=None, protocol="http"):
+                 timeout=None, path=None, protocol="http", quic=False):
         self.tests_root = tests_root
         self.url = url
         self._inherit_metadata = inherit_metadata
         self._test_metadata = test_metadata
         self.timeout = timeout if timeout is not None else self.default_timeout
         self.path = path
-        self.environment = {"protocol": protocol, "prefs": self.prefs}
+        self.environment = {"protocol": protocol, "prefs": self.prefs, "quic": quic}
 
     def __eq__(self, other):
         if not isinstance(other, Test):
@@ -186,14 +184,13 @@ class Test(object):
     @classmethod
     def from_manifest(cls, manifest_file, manifest_item, inherit_metadata, test_metadata):
         timeout = cls.long_timeout if manifest_item.timeout == "long" else cls.default_timeout
-        protocol = "https" if hasattr(manifest_item, "https") and manifest_item.https else "http"
         return cls(manifest_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
                    test_metadata,
                    timeout=timeout,
                    path=os.path.join(manifest_file.tests_root, manifest_item.path),
-                   protocol=protocol)
+                   protocol=server_protocol(manifest_item))
 
     @property
     def id(self):
@@ -263,6 +260,13 @@ class Test(object):
         return 0
 
     @property
+    def lsan_disabled(self):
+        for meta in self.itermeta():
+            if meta.lsan_disabled is not None:
+                return meta.lsan_disabled
+        return False
+
+    @property
     def lsan_allowed(self):
         lsan_allowed = set()
         for meta in self.itermeta():
@@ -295,7 +299,7 @@ class Test(object):
         rv = {}
         for meta in self.itermeta(None):
             threshold = meta.leak_threshold
-            for key, value in threshold.iteritems():
+            for key, value in iteritems(threshold):
                 if key not in rv:
                     rv[key] = value
         return rv
@@ -337,7 +341,7 @@ class Test(object):
 
         try:
             expected = metadata.get("expected")
-            if isinstance(expected, (basestring)):
+            if isinstance(expected, string_types):
                 return expected
             elif isinstance(expected, list):
                 return expected[0]
@@ -345,6 +349,16 @@ class Test(object):
                 return default
         except KeyError:
             return default
+
+    def implementation_status(self):
+        implementation_status = None
+        for meta in self.itermeta():
+            implementation_status = meta.implementation_status
+            if implementation_status:
+                return implementation_status
+
+        # assuming no specific case, we are implementing it
+        return "implementing"
 
     def known_intermittent(self, subtest=None):
         metadata = self._get_metadata(subtest)
@@ -381,9 +395,9 @@ class TestharnessTest(Test):
 
     def __init__(self, tests_root, url, inherit_metadata, test_metadata,
                  timeout=None, path=None, protocol="http", testdriver=False,
-                 jsshell=False, scripts=None):
+                 jsshell=False, scripts=None, quic=False):
         Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
-                      path, protocol)
+                      path, protocol, quic)
 
         self.testdriver = testdriver
         self.jsshell = jsshell
@@ -392,22 +406,23 @@ class TestharnessTest(Test):
     @classmethod
     def from_manifest(cls, manifest_file, manifest_item, inherit_metadata, test_metadata):
         timeout = cls.long_timeout if manifest_item.timeout == "long" else cls.default_timeout
-        protocol = "https" if hasattr(manifest_item, "https") and manifest_item.https else "http"
         testdriver = manifest_item.testdriver if hasattr(manifest_item, "testdriver") else False
         jsshell = manifest_item.jsshell if hasattr(manifest_item, "jsshell") else False
+        quic = manifest_item.quic if hasattr(manifest_item, "quic") else False
         script_metadata = manifest_item.script_metadata or []
-        scripts = [v for (k, v) in script_metadata if k == b"script"]
+        scripts = [v for (k, v) in script_metadata
+                   if k == "script"]
         return cls(manifest_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
                    test_metadata,
                    timeout=timeout,
                    path=os.path.join(manifest_file.tests_root, manifest_item.path),
-                   protocol=protocol,
+                   protocol=server_protocol(manifest_item),
                    testdriver=testdriver,
                    jsshell=jsshell,
-                   scripts=scripts
-                   )
+                   scripts=scripts,
+                   quic=quic)
 
     @property
     def id(self):
@@ -423,13 +438,24 @@ class ManualTest(Test):
 
 
 class ReftestTest(Test):
+    """A reftest
+
+    A reftest should be considered to pass if one of its references matches (see below) *and* the
+    reference passes if it has any references recursively.
+
+    Attributes:
+        references (List[Tuple[str, str]]): a list of alternate references, where one must match for the test to pass
+        viewport_size (Optional[Tuple[int, int]]): size of the viewport for this test, if not default
+        dpi (Optional[int]): dpi to use when rendering this test, if not default
+
+    """
     result_cls = ReftestResult
     test_type = "reftest"
 
     def __init__(self, tests_root, url, inherit_metadata, test_metadata, references,
-                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None, protocol="http"):
+                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None, protocol="http", quic=False):
         Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
-                      path, protocol)
+                      path, protocol, quic)
 
         for _, ref_type in references:
             if ref_type not in ("==", "!="):
@@ -445,16 +471,10 @@ class ReftestTest(Test):
                       manifest_file,
                       manifest_test,
                       inherit_metadata,
-                      test_metadata,
-                      nodes=None,
-                      references_seen=None):
+                      test_metadata):
 
         timeout = cls.long_timeout if manifest_test.timeout == "long" else cls.default_timeout
-
-        if nodes is None:
-            nodes = {}
-        if references_seen is None:
-            references_seen = set()
+        quic = manifest_test.quic if hasattr(manifest_test, "quic") else False
 
         url = manifest_test.url
 
@@ -467,41 +487,60 @@ class ReftestTest(Test):
                    path=manifest_test.path,
                    viewport_size=manifest_test.viewport_size,
                    dpi=manifest_test.dpi,
-                   protocol="https" if hasattr(manifest_test, "https") and manifest_test.https else "http",
-                   fuzzy=manifest_test.fuzzy)
+                   protocol=server_protocol(manifest_test),
+                   fuzzy=manifest_test.fuzzy,
+                   quic=quic)
 
-        nodes[url] = node
+        refs_by_type = defaultdict(list)
 
         for ref_url, ref_type in manifest_test.references:
-            comparison_key = (ref_type,) + tuple(sorted([url, ref_url]))
-            if ref_url in nodes:
-                manifest_node = ref_url
-                if comparison_key in references_seen:
-                    # We have reached a cycle so stop here
-                    # Note that just seeing a node for the second time is not
-                    # enough to detect a cycle because
-                    # A != B != C != A must include C != A
-                    # but A == B == A should not include the redundant B == A.
-                    continue
+            refs_by_type[ref_type].append(ref_url)
 
-            references_seen.add(comparison_key)
-
-            manifest_node = manifest_file.get_reference(ref_url)
-            if manifest_node:
-                reference = ReftestTest.from_manifest(manifest_file,
-                                                      manifest_node,
-                                                      [],
-                                                      None,
-                                                      nodes,
-                                                      references_seen)
-            else:
-                reference = ReftestTest(manifest_file.tests_root,
-                                        ref_url,
+        # Construct a list of all the mismatches, where we end up with mismatch_1 != url !=
+        # mismatch_2 != url != mismatch_3 etc.
+        #
+        # Per the logic documented above, this means that none of the mismatches provided match,
+        mismatch_walk = None
+        if refs_by_type["!="]:
+            mismatch_walk = ReftestTest(manifest_file.tests_root,
+                                        refs_by_type["!="][0],
                                         [],
                                         None,
                                         [])
+            cmp_ref = mismatch_walk
+            for ref_url in refs_by_type["!="][1:]:
+                cmp_self = ReftestTest(manifest_file.tests_root,
+                                       url,
+                                       [],
+                                       None,
+                                       [])
+                cmp_ref.references.append((cmp_self, "!="))
+                cmp_ref = ReftestTest(manifest_file.tests_root,
+                                      ref_url,
+                                      [],
+                                      None,
+                                      [])
+                cmp_self.references.append((cmp_ref, "!="))
 
-            node.references.append((reference, ref_type))
+        if mismatch_walk is None:
+            mismatch_refs = []
+        else:
+            mismatch_refs = [(mismatch_walk, "!=")]
+
+        if refs_by_type["=="]:
+            # For each == ref, add a reference to this node whose tail is the mismatch list.
+            # Per the logic documented above, this means any one of the matches must pass plus all the mismatches.
+            for ref_url in refs_by_type["=="]:
+                ref = ReftestTest(manifest_file.tests_root,
+                                  ref_url,
+                                  [],
+                                  None,
+                                  mismatch_refs)
+                node.references.append((ref, "=="))
+        else:
+            # Otherwise, we just add the mismatches directly as we are immediately into the
+            # mismatch chain with no alternates.
+            node.references.extend(mismatch_refs)
 
         return node
 

@@ -20,7 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/localpaths.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/mypy.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/py27-flake8.ini
-/LayoutTests/imported/w3c/web-platform-tests/tools/py36-flake8.ini
+/LayoutTests/imported/w3c/web-platform-tests/tools/py3-flake8.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/pytest.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/requirements_flake8.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/requirements_mypy.txt

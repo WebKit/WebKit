@@ -20,10 +20,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/expected.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/expectedtree.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/font.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/instruments.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestexpected.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestinclude.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestupdate.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/metadata.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/process.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/products.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/stability.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-extra.js

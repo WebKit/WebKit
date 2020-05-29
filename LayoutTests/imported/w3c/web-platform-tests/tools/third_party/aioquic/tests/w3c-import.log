@@ -1,0 +1,57 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/initial_client.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/initial_server.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/pycacert.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/retry.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/short_header.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/ssl_cert.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/ssl_cert_with_chain.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/ssl_key.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_asyncio.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_asyncio_compat.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_buffer.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_connection.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_crypto.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_h0.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_h3.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_logger.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_packet.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_packet_builder.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_rangeset.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_recovery.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_retry.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/test_tls.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_certificate.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_certificate_verify.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_client_hello.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_client_hello_with_alpn.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_client_hello_with_psk.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_client_hello_with_sni.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_encrypted_extensions.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_encrypted_extensions_with_alpn.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_encrypted_extensions_with_alpn_and_early_data.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_finished.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_new_session_ticket.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_new_session_ticket_with_unknown_extension.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_server_hello.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_server_hello_with_psk.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/tls_server_hello_with_unknown_extension.bin
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/utils.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/aioquic/tests/version_negotiation.bin

@@ -1,3 +1,5 @@
 
-PASS WebSockets: proper first line 
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT WebSockets: proper first line Test timed out
 

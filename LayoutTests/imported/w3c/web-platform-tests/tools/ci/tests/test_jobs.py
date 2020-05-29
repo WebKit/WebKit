@@ -114,11 +114,11 @@ def test_build_css():
 
 
 def test_update_built():
-    assert jobs.get_jobs(["2dcontext/foo.html"],
+    assert jobs.get_jobs(["html/canvas/element/foo.html"],
                          includes=["update_built"]) == {"update_built"}
     assert jobs.get_jobs(["html/foo.html"],
                          includes=["update_built"]) == {"update_built"}
-    assert jobs.get_jobs(["offscreen-canvas/foo.html"],
+    assert jobs.get_jobs(["html/canvas/offscreen/foo.html"],
                          includes=["update_built"]) == {"update_built"}
 
 
@@ -133,4 +133,8 @@ def test_wpt_infrastructure():
     assert jobs.get_jobs(["tools/hammer.html"],
                          includes=["wptrunner_infrastructure"]) == {"wptrunner_infrastructure"}
     assert jobs.get_jobs(["infrastructure/assumptions/ahem.html"],
+                         includes=["wptrunner_infrastructure"]) == {"wptrunner_infrastructure"}
+
+def test_wdspec_support():
+    assert jobs.get_jobs(["webdriver/tests/support/__init__.py"],
                          includes=["wptrunner_infrastructure"]) == {"wptrunner_infrastructure"}

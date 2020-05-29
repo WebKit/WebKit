@@ -20,7 +20,7 @@ from ..gitignore.gitignore import PathFilter
 from ..wpt import testfiles
 from ..manifest.vcs import walk
 
-from ..manifest.sourcefile import SourceFile, js_meta_re, python_meta_re, space_chars, get_any_variants, get_default_any_variants
+from ..manifest.sourcefile import SourceFile, js_meta_re, python_meta_re, space_chars, get_any_variants
 from six import binary_type, iteritems, itervalues, with_metaclass
 from six.moves import range
 from six.moves.urllib.parse import urlsplit, urljoin
@@ -41,7 +41,12 @@ if MYPY:
     from typing import Type
     from typing import Union
 
-    Whitelist = Dict[Text, Dict[Text, Set[Optional[int]]]]
+    # The Ignorelist is a two level dictionary. The top level is indexed by
+    # error names (e.g. 'TRAILING WHITESPACE'). Each of those then has a map of
+    # file patterns (e.g. 'foo/*') to a set of specific line numbers for the
+    # exception. The line numbers are optional; if missing the entire file
+    # ignores the error.
+    Ignorelist = Dict[Text, Dict[Text, Set[Optional[int]]]]
 
 
 logger = None  # type: Optional[logging.Logger]
@@ -75,12 +80,12 @@ ERROR_MSG = """You must fix all errors; for details on how to fix them, see
 https://web-platform-tests.org/writing-tests/lint-tool.html
 
 However, instead of fixing a particular error, it's sometimes
-OK to add a line to the lint.whitelist file in the root of the
+OK to add a line to the lint.ignore file in the root of the
 web-platform-tests directory to make the lint tool ignore it.
 
 For example, to make the lint tool ignore all '%s'
 errors in the %s file,
-you could add the following line to the lint.whitelist file.
+you could add the following line to the lint.ignore file.
 
 %s: %s"""
 
@@ -318,14 +323,52 @@ def check_css_globally_unique(repo_root, paths):
     return errors
 
 
-def parse_whitelist(f):
-    # type: (IO[bytes]) -> Tuple[Whitelist, Set[Text]]
+def check_unique_testharness_basenames(repo_root, paths):
+    # type: (str, List[str]) -> List[rules.Error]
     """
-    Parse the whitelist file given by `f`, and return the parsed structure.
+    Checks that all testharness files have unique basename paths.
+
+    The 'basename path' refers to the entire path excluding the extension. For
+    example, 'foo/bar/baz.html' and 'foo/bar/baz.xhtml' have the same basename
+    path, but 'foo/bar/baz.html' and 'foo/qux/baz.html' do not.
+
+    Testharness files with identical basenames have caused issues in downstream
+    infrastructure (see https://github.com/web-platform-tests/wpt/issues/7570),
+    and may cause confusion in general.
+
+    :param repo_root: the repository root
+    :param paths: list of all paths
+    :returns: a list of errors found in ``paths``
     """
 
-    data = defaultdict(lambda:defaultdict(set))  # type: Whitelist
-    ignored_files = set()  # type: Set[Text]
+    errors = []
+    file_dict = defaultdict(list)
+    for path in paths:
+        source_file = SourceFile(repo_root, path, "/")
+        if source_file.type != "testharness":
+            continue
+        file_name, file_extension = os.path.splitext(path)
+        file_dict[file_name].append(file_extension)
+    for k, v in file_dict.items():
+        if len(v) == 1:
+            continue
+        context = (', '.join(v),)
+        for extension in v:
+            errors.append(rules.DuplicateBasenamePath.error(k + extension, context))
+    return errors
+
+
+def parse_ignorelist(f):
+    # type: (IO[bytes]) -> Tuple[Ignorelist, Set[Text]]
+    """
+    Parse the ignorelist file given by `f`, and return the parsed structure.
+
+    :returns: a tuple of an Ignorelist and a set of files that are completely
+              skipped by the linter (i.e. have a '*' entry).
+    """
+
+    data = defaultdict(lambda:defaultdict(set))  # type: Ignorelist
+    skipped_files = set()  # type: Set[Text]
 
     for line in f:
         line = line.strip()
@@ -344,37 +387,37 @@ def parse_whitelist(f):
         file_match = os.path.normcase(file_match)
 
         if "*" in error_types:
-            ignored_files.add(file_match)
+            skipped_files.add(file_match)
         else:
             for error_type in error_types:
                 data[error_type][file_match].add(line_number)
 
-    return data, ignored_files
+    return data, skipped_files
 
 
-def filter_whitelist_errors(data, errors):
-    # type: (Whitelist, Sequence[rules.Error]) -> List[rules.Error]
+def filter_ignorelist_errors(data, errors):
+    # type: (Ignorelist, Sequence[rules.Error]) -> List[rules.Error]
     """
-    Filter out those errors that are whitelisted in `data`.
+    Filter out those errors that are ignored in `data`.
     """
 
     if not errors:
         return []
 
-    whitelisted = [False for item in range(len(errors))]
+    skipped = [False for item in range(len(errors))]
 
     for i, (error_type, msg, path, line) in enumerate(errors):
         normpath = os.path.normcase(path)
-        # Allow whitelisting all lint errors except the IGNORED PATH lint,
-        # which explains how to fix it correctly and shouldn't be ignored.
+        # Allow skipping all lint errors except the IGNORED PATH lint,
+        # which explains how to fix it correctly and shouldn't be skipped.
         if error_type in data and error_type != "IGNORED PATH":
             wl_files = data[error_type]
             for file_match, allowed_lines in iteritems(wl_files):
                 if None in allowed_lines or line in allowed_lines:
                     if fnmatch.fnmatchcase(normpath, file_match):
-                        whitelisted[i] = True
+                        skipped[i] = True
 
-    return [item for i, item in enumerate(errors) if not whitelisted[i]]
+    return [item for i, item in enumerate(errors) if not skipped[i]]
 
 
 regexps = [item() for item in  # type: ignore
@@ -390,7 +433,10 @@ regexps = [item() for item in  # type: ignore
             rules.PrintRegexp,
             rules.LayoutTestsRegexp,
             rules.MissingDepsRegexp,
-            rules.SpecialPowersRegexp]]
+            rules.SpecialPowersRegexp,
+            rules.AssertThrowsRegexp,
+            rules.PromiseRejectsRegexp,
+            rules.AssertPreconditionRegexp]]
 
 
 def check_regexp_line(repo_root, path, f):
@@ -421,6 +467,7 @@ def check_parsed(repo_root, path, f):
 
         if (source_file.type != "support" and
             not source_file.name_is_reference and
+            not source_file.name_is_tentative and
             not source_file.spec_links):
             return [rules.MissingLink.error(path)]
 
@@ -584,7 +631,8 @@ ast_checkers = [item() for item in [OpenModeCheck]]
 
 def check_python_ast(repo_root, path, f):
     # type: (str, str, IO[bytes]) -> List[rules.Error]
-    if not path.endswith(".py"):
+    # *.quic.py are Python 3 only and cannot be parsed by Python 2.
+    if not path.endswith(".py") or path.endswith(".quic.py"):
         return []
 
     try:
@@ -605,30 +653,12 @@ broken_python_metadata = re.compile(br"#\s*META:")
 
 def check_global_metadata(value):
     # type: (str) -> Iterable[Tuple[Type[rules.Rule], Tuple[Any, ...]]]
-    global_values = {item.strip() for item in value.split(b",") if item.strip()}
+    global_values = {item.strip().decode("utf8") for item in value.split(b",") if item.strip()}
 
-    included_variants = set.union(get_default_any_variants(),
-                                  *(get_any_variants(v) for v in global_values if not v.startswith(b"!")))
-
+    # TODO: this could check for duplicates and such
     for global_value in global_values:
-        if global_value.startswith(b"!"):
-            excluded_value = global_value[1:]
-            if not get_any_variants(excluded_value):
-                yield (rules.UnknownGlobalMetadata, ())
-
-            elif excluded_value in global_values:
-                yield (rules.BrokenGlobalMetadata,
-                       (("Cannot specify both %s and %s" % (global_value, excluded_value)),))
-
-            else:
-                excluded_variants = get_any_variants(excluded_value)
-                if not (excluded_variants & included_variants):
-                    yield (rules.BrokenGlobalMetadata,
-                           (("Cannot exclude %s if it is not included" % (excluded_value,)),))
-
-        else:
-            if not get_any_variants(global_value):
-                yield (rules.UnknownGlobalMetadata, ())
+        if not get_any_variants(global_value):
+            yield (rules.UnknownGlobalMetadata, ())
 
 
 def check_script_metadata(repo_root, path, f):
@@ -657,13 +687,7 @@ def check_script_metadata(repo_root, path, f):
                 if value != b"long":
                     errors.append(rules.UnknownTimeoutMetadata.error(path,
                                                                      line_no=idx + 1))
-            elif key == b"title":
-                pass
-            elif key == b"script":
-                pass
-            elif key == b"variant":
-                pass
-            else:
+            elif key not in (b"title", b"script", b"variant", b"quic"):
                 errors.append(rules.UnknownMetadata.error(path,
                                                           line_no=idx + 1))
         else:
@@ -825,7 +849,7 @@ def lint_paths(kwargs, wpt_root):
         force_all = False
         for path in changed_paths:
             path = path.replace(os.path.sep, "/")
-            if path == "lint.whitelist" or path.startswith("tools/lint/"):
+            if path == "lint.ignore" or path.startswith("tools/lint/"):
                 force_all = True
                 break
         paths = (list(changed_paths) if not force_all  # type: ignore
@@ -843,7 +867,7 @@ def create_parser():
                         help="Output machine-readable JSON format")
     parser.add_argument("--markdown", action="store_true",
                         help="Output markdown")
-    parser.add_argument("--repo-root", help="The WPT directory. Use this"
+    parser.add_argument("--repo-root", help="The WPT directory. Use this "
                         "option if the lint script exists outside the repository")
     parser.add_argument("--ignore-glob", help="Additional file glob to ignore.")
     parser.add_argument("--all", action="store_true", help="If no paths are passed, try to lint the whole "
@@ -879,11 +903,11 @@ def lint(repo_root, paths, output_format, ignore_glob=str()):
     error_count = defaultdict(int)  # type: Dict[Text, int]
     last = None
 
-    with open(os.path.join(repo_root, "lint.whitelist")) as f:
-        whitelist, ignored_files = parse_whitelist(f)
+    with open(os.path.join(repo_root, "lint.ignore")) as f:
+        ignorelist, skipped_files = parse_ignorelist(f)
 
     if ignore_glob:
-        ignored_files.add(ignore_glob)
+        skipped_files.add(ignore_glob)
 
     output_errors = {"json": output_errors_json,
                      "markdown": output_errors_markdown,
@@ -899,7 +923,7 @@ def lint(repo_root, paths, output_format, ignore_glob=str()):
                   a tuple of the error type and the path otherwise
         """
 
-        errors = filter_whitelist_errors(whitelist, errors)
+        errors = filter_ignorelist_errors(ignorelist, errors)
 
         if not errors:
             return None
@@ -916,7 +940,7 @@ def lint(repo_root, paths, output_format, ignore_glob=str()):
             paths.remove(path)
             continue
 
-        if any(fnmatch.fnmatch(path, file_match) for file_match in ignored_files):
+        if any(fnmatch.fnmatch(path, file_match) for file_match in skipped_files):
             paths.remove(path)
             continue
 
@@ -942,7 +966,7 @@ def lint(repo_root, paths, output_format, ignore_glob=str()):
 
 path_lints = [check_file_type, check_path_length, check_worker_collision, check_ahem_copy,
               check_gitignore_file]
-all_paths_lints = [check_css_globally_unique]
+all_paths_lints = [check_css_globally_unique, check_unique_testharness_basenames]
 file_lints = [check_regexp_line, check_parsed, check_python_ast, check_script_metadata,
               check_ahem_system_font]
 

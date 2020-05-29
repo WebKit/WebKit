@@ -4,7 +4,7 @@ components:
     workerType: ci
     schedulerId: taskcluster-github
     deadline: "24 hours"
-    image: harjgam/web-platform-tests:0.34
+    image: webplatformtests/wpt:0.37
     maxRunTime: 7200
     artifacts:
       public/results:
@@ -82,6 +82,11 @@ components:
   browser-firefox:
     depends-on:
       - download-firefox-${vars.channel}
+    download-artifacts:
+      - task: download-firefox-${vars.channel}
+        glob: public/results/firefox-${vars.channel}.*
+        dest: build/
+        extract: true
 
   browser-webkitgtk_minibrowser: {}
 
@@ -98,8 +103,15 @@ components:
     env:
       TOXENV: py36
       PY_COLORS: 0
+
+  tox-python38:
+    env:
+      TOXENV: py38
+      PY_COLORS: 0
     install:
-      - python3-pip
+      - python3.8
+      - python3.8-distutils
+      - python3.8-dev
 
   tests-affected:
     options:
@@ -218,6 +230,7 @@ tasks:
               --
               --channel=${vars.channel}
               --verify
+              --verify-no-chaos-mode
 
         - wpt-${vars.browser}-${vars.channel}-results:
             use:
@@ -272,7 +285,7 @@ tasks:
         download-firefox-${vars.channel}:
           use:
             - wpt-base
-          command: "./wpt install --download-only --destination /home/test/artifacts/ --channel=${vars.channel} firefox browser"
+          command: "./wpt install --download-only --destination /home/test/artifacts/ --channel=${vars.channel}  --rename=firefox-${vars.channel} firefox browser"
 
   - lint:
       use:
@@ -306,9 +319,9 @@ tasks:
         run-job:
           - tools_unittest
 
-  - tools/ unittests (Python 3):
+  - tools/ unittests (Python 3.6):
       description: >-
-        Unit tests for tools running under Python 3, excluding wptrunner
+        Unit tests for tools running under Python 3.6, excluding wptrunner
       use:
         - wpt-base
         - trigger-pr
@@ -320,13 +333,71 @@ tasks:
         run-job:
           - tools_unittest
 
-  - tools/wpt/ tests:
+  - tools/ unittests (Python 3.8):
+      description: >-
+        Unit tests for tools running under Python 3.8, excluding wptrunner
+      use:
+        - wpt-base
+        - trigger-pr
+        - tox-python38
+      command: ./tools/ci/ci_tools_unittest.sh
+      env:
+        HYPOTHESIS_PROFILE: ci
+      schedule-if:
+        run-job:
+          - tools_unittest
+
+  - tools/wpt/ tests (Python 2):
       description: >-
         Integration tests for wpt commands
       use:
         - wpt-base
         - trigger-pr
         - tox-python2
+      command: ./tools/ci/ci_wpt.sh
+      install:
+        - libnss3-tools
+      options:
+        oom-killer: true
+        browser:
+          - firefox
+          - chrome
+        channel: experimental
+        xvfb: true
+        hosts: true
+      schedule-if:
+        run-job:
+          - wpt_integration
+
+  - tools/wpt/ tests (Python 3.6):
+      description: >-
+        Integration tests for wpt commands
+      use:
+        - wpt-base
+        - trigger-pr
+        - tox-python3
+      command: ./tools/ci/ci_wpt.sh
+      install:
+        - libnss3-tools
+      options:
+        oom-killer: true
+        browser:
+          - firefox
+          - chrome
+        channel: experimental
+        xvfb: true
+        hosts: true
+      schedule-if:
+        run-job:
+          - wpt_integration
+
+  - tools/wpt/ tests (Python 3.8):
+      description: >-
+        Integration tests for wpt commands
+      use:
+        - wpt-base
+        - trigger-pr
+        - tox-python38
       command: ./tools/ci/ci_wpt.sh
       install:
         - libnss3-tools
@@ -362,10 +433,12 @@ tasks:
   - infrastructure/ tests:
       description: >-
         Smoketests for wptrunner
+      vars:
+        channel: nightly
       use:
         - wpt-base
         - trigger-pr
-        - tox-python2
+        - browser-firefox
       command: ./tools/ci/ci_wptrunner_infrastructure.sh
       install:
         - libnss3-tools
@@ -375,6 +448,31 @@ tasks:
         oom-killer: true
         browser:
           - firefox
+          - chrome
+        channel: experimental
+        xvfb: true
+        hosts: false
+      schedule-if:
+        run-job:
+          - wptrunner_infrastructure
+
+  - infrastructure/ tests (Python 3):
+      description: >-
+        Smoketests for wptrunner
+      vars:
+        channel: nightly
+      use:
+        - wpt-base
+        - trigger-pr
+      command: ./tools/ci/ci_wptrunner_infrastructure.sh --py3
+      install:
+        - python3-pip
+        - libnss3-tools
+        - libappindicator1
+        - fonts-liberation
+      options:
+        oom-killer: true
+        browser:
           - chrome
         channel: experimental
         xvfb: true

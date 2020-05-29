@@ -4,7 +4,9 @@ import os
 import uuid
 import threading
 from multiprocessing.managers import AcquirerProxy, BaseManager, DictProxy
-from six import text_type
+from six import text_type, binary_type
+
+from .utils import isomorphic_encode
 
 
 class ServerDictManager(BaseManager):
@@ -145,9 +147,12 @@ class Stash(object):
         if path is None:
             path = self.default_path
         # This key format is required to support using the path. Since the data
-        # passed into the stash can be a DictProxy which wouldn't detect changes
-        # when writing to a subdict.
-        return (str(path), str(uuid.UUID(key)))
+        # passed into the stash can be a DictProxy which wouldn't detect
+        # changes when writing to a subdict.
+        if isinstance(key, binary_type):
+            # UUIDs are within the ASCII charset.
+            key = key.decode('ascii')
+        return (isomorphic_encode(path), uuid.UUID(key).bytes)
 
     def put(self, key, value, path=None):
         """Place a value in the shared stash.
@@ -162,7 +167,7 @@ class Stash(object):
         if internal_key in self.data:
             raise StashError("Tried to overwrite existing shared stash value "
                              "for key %s (old value was %s, new value is %s)" %
-                             (internal_key, self.data[str(internal_key)], value))
+                             (internal_key, self.data[internal_key], value))
         else:
             self.data[internal_key] = value
 

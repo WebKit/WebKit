@@ -1,8 +1,9 @@
 import sys
-from os.path import join, dirname
 
 import mock
 import pytest
+
+from os.path import join, dirname
 
 sys.path.insert(0, join(dirname(__file__), "..", "..", ".."))
 
@@ -94,7 +95,6 @@ def test_sauceconnect_cleanup():
                 sleep.assert_not_called()
 
         sleep.assert_called()
-
 
 def test_sauceconnect_failure_never_ready():
     with mock.patch.object(sauce.SauceConnect, "upload_prerun_exec"),\
