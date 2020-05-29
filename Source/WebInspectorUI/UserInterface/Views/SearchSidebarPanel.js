@@ -318,7 +318,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
         WI.domManager.ensureDocument();
 
-        if (target.hasDomain("Page"))
+        if (target.hasCommand("Page.searchInResources"))
             countPromise(target.PageAgent.searchInResources(searchQuery, isCaseSensitive, isRegex), resourcesCallback);
 
         setTimeout(searchScripts.bind(this, WI.debuggerManager.searchableScripts), 0);

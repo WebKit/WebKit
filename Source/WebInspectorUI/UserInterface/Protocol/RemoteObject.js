@@ -412,7 +412,7 @@ WI.RemoteObject = class RemoteObject
 
     pushNodeToFrontend(callback)
     {
-        if (this._objectId)
+        if (this._objectId && InspectorBackend.hasCommand("DOM.requestNode"))
             WI.domManager.pushNodeToFrontend(this._objectId, callback);
         else
             callback(0);

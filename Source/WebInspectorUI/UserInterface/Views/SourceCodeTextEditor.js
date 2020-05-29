@@ -261,14 +261,21 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this._sourceCode instanceof WI.LocalScript)
             return false;
 
+        let target = this._sourceCode.target;
         let caseSensitive = WI.SearchUtilities.defaultSettings.caseSensitive.value;
         let isRegex = WI.SearchUtilities.defaultSettings.regularExpression.value;
 
-        if (this._sourceCode instanceof WI.Resource)
-            this._sourceCode.target.PageAgent.searchInResource(this._sourceCode.parentFrame.id, this._sourceCode.url, query, caseSensitive, isRegex, searchResultCallback.bind(this));
-        else if (this._sourceCode instanceof WI.Script)
-            this._sourceCode.target.DebuggerAgent.searchInContent(this._sourceCode.id, query, caseSensitive, isRegex, searchResultCallback.bind(this));
-        return true;
+        if (this._sourceCode instanceof WI.Resource && target.hasCommand("Page.searchInResource")) {
+            target.PageAgent.searchInResource(this._sourceCode.parentFrame.id, this._sourceCode.url, query, caseSensitive, isRegex, searchResultCallback.bind(this));
+            return true;
+        }
+
+        if (this._sourceCode instanceof WI.Script) {
+            target.DebuggerAgent.searchInContent(this._sourceCode.id, query, caseSensitive, isRegex, searchResultCallback.bind(this));
+            return true;
+        }
+
+        return false;
     }
 
     showGoToLineDialog()

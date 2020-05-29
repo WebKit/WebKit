@@ -102,7 +102,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     static defaultTimelineTypes()
     {
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript) {
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ITML) {
             return [
                 WI.TimelineRecord.Type.Script,
                 WI.TimelineRecord.Type.HeapAllocations,
@@ -133,7 +133,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     static availableTimelineTypes()
     {
         let types = WI.TimelineManager.defaultTimelineTypes();
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker || WI.sharedApp.debuggableType === WI.DebuggableType.ITML)
             return types;
 
         types.push(WI.TimelineRecord.Type.Memory);
@@ -206,8 +206,10 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         this._autoCaptureOnPageLoad = autoCapture;
 
-        for (let target of WI.targets)
-            target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
+        for (let target of WI.targets) {
+            if (target.hasCommand("Timeline.setAutoCaptureEnabled"))
+                target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
+        }
     }
 
     get enabledTimelineTypes()
@@ -678,7 +680,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             // Associate the ScriptProfiler created records with Web Timeline records.
             // Filter out the already added ScriptProfiler events which should not have been wrapped.
-            if (WI.sharedApp.debuggableType !== WI.DebuggableType.JavaScript) {
+            if (WI.sharedApp.debuggableType !== WI.DebuggableType.JavaScript && WI.sharedApp.debuggableType !== WI.DebuggableType.ITML) {
                 this._scriptProfilerRecords = this._scriptProfilerRecords.filter((x) => x.__scriptProfilerType === InspectorBackend.Enum.ScriptProfiler.EventType.Other);
                 this._mergeScriptProfileRecords();
             }

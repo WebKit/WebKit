@@ -1058,7 +1058,8 @@ WI.DOMNode = class DOMNode extends WI.Object
         return (...args) => {
             if (!args[0]) { // error
                 let target = WI.assumingMainTarget();
-                target.DOMAgent.markUndoableState();
+                if (target.hasCommand("DOM.markUndoableState"))
+                    target.DOMAgent.markUndoableState();
             }
 
             if (callback)

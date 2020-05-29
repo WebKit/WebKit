@@ -45,7 +45,6 @@ WI.AppControllerBase = class AppControllerBase
 
     // Public
 
-    get hasExtraDomains() { throw WI.NotImplementedError.subclassMustOverride(); }
     get debuggableType() { throw WI.NotImplementedError.subclassMustOverride(); }
 
     // Since various members of the app controller depend on the global singleton to exist,

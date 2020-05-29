@@ -1,8 +1,8 @@
 {
     "domain": "Page",
     "description": "Actions and events related to the inspected page belong to the page domain.",
-    "debuggableTypes": ["page", "web-page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page", "web-page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "Setting",
@@ -134,6 +134,7 @@
         {
             "name": "navigate",
             "description": "Navigates current page to the given URL.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "url", "type": "string", "description": "URL to navigate the page to." }
             ]
@@ -141,6 +142,7 @@
         {
             "name": "overrideUserAgent",
             "description": "Override's the user agent of the inspected page",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "value", "type": "string", "optional": true, "description": "Value to override the user agent with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
             ]
@@ -148,6 +150,7 @@
         {
             "name": "overrideSetting",
             "description": "Allows the frontend to override the inspected page's settings.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "setting", "$ref": "Setting" },
                 { "name": "value", "type": "boolean", "optional": true, "description": "Value to override the setting with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
@@ -156,6 +159,7 @@
         {
             "name": "getCookies",
             "description": "Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the <code>cookies</code> field.",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." }
             ]
@@ -163,6 +167,7 @@
         {
             "name": "setCookie",
             "description": "Sets a new browser cookie with the given name, domain, and path.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "cookie", "$ref": "Cookie" }
             ]
@@ -170,6 +175,7 @@
         {
             "name": "deleteCookie",
             "description": "Deletes browser cookie with given name, domain, and path.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
                 { "name": "url", "type": "string", "description": "URL to match cookie domain and path." }
@@ -196,6 +202,7 @@
         },
         {
             "name": "setBootstrapScript",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future global objects as soon as they're created. Omitting `source` will stop this from happening." }
             ]
@@ -203,6 +210,7 @@
         {
             "name": "searchInResource",
             "description": "Searches for given string in resource content.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id for resource to search in." },
                 { "name": "url", "type": "string", "description": "URL of the resource to search in." },
@@ -218,6 +226,7 @@
         {
             "name": "searchInResources",
             "description": "Searches for given string in frame / resource tree structure.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "text", "type": "string", "description": "String to search for." },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
@@ -231,6 +240,7 @@
             "name": "setShowRulers",
             "description": "Requests that backend draw rulers in the inspector overlay",
             "condition": "!(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "result", "type": "boolean", "description": "True for showing rulers" }
             ]
@@ -238,6 +248,7 @@
         {
             "name": "setShowPaintRects",
             "description": "Requests that backend shows paint rectangles",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
             ]
@@ -245,6 +256,7 @@
         {
             "name": "setEmulatedMedia",
             "description": "Emulates the given media for CSS media queries.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
             ]
@@ -253,6 +265,7 @@
             "name": "setForcedAppearance",
             "description": "Forces the given appearance for the page.",
             "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Appearance name to force. Empty string disables the override." }
             ]
@@ -260,6 +273,7 @@
         {
             "name": "snapshotNode",
             "description": "Capture a snapshot of the specified node that does not include unrelated layers.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Id of the node to snapshot." }
             ],
@@ -270,6 +284,7 @@
         {
             "name": "snapshotRect",
             "description": "Capture a snapshot of the page within the specified rectangle and coordinate system.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
@@ -285,6 +300,7 @@
             "name": "archive",
             "description": "Grab an archive of the page.",
             "condition": "(defined(ENABLE_WEB_ARCHIVE) && ENABLE_WEB_ARCHIVE) && (defined(USE_CF) && USE_CF)",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "data", "type": "string", "description": "Base64-encoded web archive." }
             ]
@@ -293,12 +309,14 @@
     "events": [
         {
             "name": "domContentEventFired",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" }
             ]
         },
         {
             "name": "loadEventFired",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" }
             ]
@@ -313,6 +331,7 @@
         {
             "name": "frameDetached",
             "description": "Fired when frame has been detached from its parent.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
             ]
@@ -334,6 +353,7 @@
         {
             "name": "frameScheduledNavigation",
             "description": "Fired when frame schedules a potential navigation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has scheduled a navigation." },
                 { "name": "delay", "type": "number", "description": "Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start." }
@@ -342,6 +362,7 @@
         {
             "name": "frameClearedScheduledNavigation",
             "description": "Fired when frame no longer has a scheduled navigation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
             ]
@@ -350,6 +371,7 @@
             "name": "defaultAppearanceDidChange",
             "description": "Fired when page's default appearance changes, even if there is a forced appearance.",
             "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
             ]

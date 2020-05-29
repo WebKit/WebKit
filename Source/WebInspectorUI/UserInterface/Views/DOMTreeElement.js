@@ -817,7 +817,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 }, WI.isBeingEdited(attributeNode));
             }
 
-            if (!DOMTreeElement.EditTagBlacklist.has(this.representedObject.nodeNameInCorrectCase())) {
+            if (InspectorBackend.hasCommand("DOM.setNodeName") && !DOMTreeElement.EditTagBlacklist.has(this.representedObject.nodeNameInCorrectCase())) {
                 let tagNameNode = event.target.closest(".html-tag-name");
 
                 subMenus.edit.appendItem(WI.UIString("Tag", "A submenu item of 'Edit' to change DOM element's tag name"), () => {
@@ -996,6 +996,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     _startEditingTagName(tagNameElement)
     {
+        if (!InspectorBackend.hasCommand("DOM.setNodeName"))
+            return false;
+
         if (!tagNameElement) {
             tagNameElement = this.listItemElement.getElementsByClassName("html-tag-name")[0];
             if (!tagNameElement)

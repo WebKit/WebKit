@@ -1,3 +1,113 @@
+2020-05-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add ITML debuggable/target type
+        https://bugs.webkit.org/show_bug.cgi?id=203300
+        <rdar://problem/56545896>
+
+        Reviewed by Joseph Pecoraro and Brian Burg.
+
+        * UserInterface/Base/DebuggableType.js:
+        (WI.DebuggableType.fromString):
+        (WI.DebuggableType.supportedTargetTypes): Added.
+        * UserInterface/Base/TargetType.js:
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomain):
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager.prototype.createDirectBackendTarget):
+        (WI.TargetManager.prototype._initializePageTarget):
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.pushNodeToFrontend):
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.supportsInspectorStyleSheet): Added.
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.setInspectedNode):
+        * UserInterface/Controllers/LayerTreeManager.js:
+        (WI.LayerTreeManager.supportsVisibleCompositingBorders):
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype._loadAndParseSourceMap):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.NetworkManager.defaultTimelineTypes):
+        (WI.NetworkManager.availableTimelineTypes):
+        (WI.NetworkManager.prototype.set autoCaptureOnPageLoad):
+        (WI.NetworkManager.prototype.scriptProfilerTrackingCompleted):
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.initializeCSSCompletions):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.get selectorEditable):
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WI.CSSStyleSheet.prototype.handleCurrentRevisionContentChange):
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype._makeUndoableCallback):
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource.prototype.requestContentFromBackend):
+        * UserInterface/Base/Main.js:
+        (WI._updateDownloadToolbarButton):
+        (WI.undo):
+        (WI.redo):
+        (WI.canArchiveMainFrame):
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.refresh):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView):
+        (WI.CookieStorageContentView.prototype.get navigationItems):
+        (WI.CookieStorageContentView.prototype.tableCellContextMenuClicked):
+        (WI.CookieStorageContentView.prototype._reloadCookies):
+        (WI.CookieStorageContentView.prototype._handleTableKeyDown):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.initialLayout):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype._restoreSelectedNodeAfterUpdate):
+        (WI.DOMTreeContentView.prototype._showPrintStylesChanged):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+        (WI.DOMTreeElement.prototype._startEditingTagName):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateResourceContextMenu):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._populateIconElementContextMenu):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.get supportsNewRule):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+
+        * UserInterface/Controllers/AppControllerBase.js:
+        (WI.AppControllerBase.prototype.get hasExtraDomains): Deleted.
+        * UserInterface/Controllers/AppController.js:
+        (WI.AppController):
+        (WI.AppController.prototype.activateExtraDomains):
+        (WI.AppController.prototype.get hasExtraDomains): Deleted.
+        * UserInterface/Test/TestAppController.js:
+        (WI.TestAppController.prototype.get hasExtraDomains): Deleted.
+
+        * UserInterface/Protocol/Legacy/11.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/12.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/12.2/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/13.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/13.4/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-11.0.json:
+        * Versions/Inspector-iOS-11.3.json:
+        * Versions/Inspector-iOS-12.0.json:
+        * Versions/Inspector-iOS-12.2.json:
+        * Versions/Inspector-iOS-13.0.json:
+        * Versions/Inspector-iOS-13.4.json:
+        Update protocol files for older versions of iOS.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2020-05-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: statistics don't update when filtering

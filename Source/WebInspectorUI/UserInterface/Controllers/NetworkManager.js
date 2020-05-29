@@ -1292,7 +1292,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
         }
 
-        if (!InspectorBackend.hasDomain("Network")) {
+        let target = WI.assumingMainTarget();
+        if (!target.hasCommand("Network.loadResource")) {
             this._sourceMapLoadAndParseFailed(sourceMapURL);
             return;
         }
@@ -1304,7 +1305,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!frameIdentifier)
             frameIdentifier = WI.networkManager.mainFrame ? WI.networkManager.mainFrame.id : "";
 
-        let target = WI.assumingMainTarget();
         target.NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded);
     }
 

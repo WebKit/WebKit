@@ -1,3 +1,56 @@
+2020-05-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add ITML debuggable/target type
+        https://bugs.webkit.org/show_bug.cgi?id=203300
+        <rdar://problem/56545896>
+
+        Reviewed by Joseph Pecoraro and Brian Burg.
+
+        * API/JSContextPrivate.h:
+        * API/JSContext.mm:
+        (-[JSContext _setITMLDebuggableType]): Added.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setIsITML): Added.
+        Create an SPI for marking a `JSContext` as an ITML context for Web Inspector.
+
+        * runtime/JSGlobalObjectDebuggable.h:
+        (isType):
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspectionTarget.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        Don't dispatch `Inspector.activateExtraDomains` unless we're a basic `JavaScript` debuggable.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+
+        * inspector/scripts/codegen/models.py:
+        (validate_target_types):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator):
+        * inspector/scripts/tests/expected/fail-on-command-targetTypes-value.json-error:
+        * inspector/scripts/tests/expected/fail-on-domain-debuggableTypes-value.json-error:
+        * inspector/scripts/tests/expected/fail-on-domain-targetTypes-value.json-error:
+        * inspector/scripts/tests/expected/fail-on-event-targetTypes-value.json-error:
+
+        * inspector/protocol/Audit.json:
+        * inspector/protocol/CSS.json:
+        * inspector/protocol/Console.json:
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/DOMStorage.json:
+        * inspector/protocol/Database.json:
+        * inspector/protocol/Debugger.json:
+        * inspector/protocol/Heap.json:
+        * inspector/protocol/Inspector.json:
+        * inspector/protocol/Network.json:
+        * inspector/protocol/Page.json:
+        * inspector/protocol/Runtime.json:
+        * inspector/protocol/Security.json:
+        Add support for `itml` debuggables and targets, marking non-ITML commands/events with `page`.
+
 2020-05-29  Mark Lam  <mark.lam@apple.com>
 
         Add a check for errors when computing a utf string in jsc shell's runInteractive().

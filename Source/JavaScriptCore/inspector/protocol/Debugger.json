@@ -1,7 +1,8 @@
 {
     "domain": "Debugger",
     "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
-    "targetTypes": ["javascript", "page", "service-worker", "worker"],
+    "debuggableTypes": ["itml", "javascript", "page", "service-worker", "web-page"],
+    "targetTypes": ["itml", "javascript", "page", "service-worker", "worker"],
     "types": [
         {
             "id": "BreakpointId",

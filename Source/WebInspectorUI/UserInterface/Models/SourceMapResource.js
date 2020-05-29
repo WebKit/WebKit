@@ -143,7 +143,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
             });
         }
 
-        if (!InspectorBackend.hasDomain("Network"))
+        if (!this._target.hasCommand("Network.loadResource"))
             return sourceMapResourceLoadError.call(this);
 
         var frameIdentifier = null;

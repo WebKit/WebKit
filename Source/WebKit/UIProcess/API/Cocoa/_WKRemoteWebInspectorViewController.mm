@@ -99,6 +99,8 @@ private:
 static _WKInspectorDebuggableType legacyDebuggableTypeToModernDebuggableType(WKRemoteWebInspectorDebuggableType debuggableType)
 {
     switch (debuggableType) {
+    case WKRemoteWebInspectorDebuggableTypeITML:
+        return _WKInspectorDebuggableTypeITML;
     case WKRemoteWebInspectorDebuggableTypeJavaScript:
         return _WKInspectorDebuggableTypeJavaScript;
     case WKRemoteWebInspectorDebuggableTypePage:

@@ -426,7 +426,7 @@ WI.contentLoaded = function()
         }
 
         let reloadToolTip;
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ITML)
             reloadToolTip = WI.UIString("Restart (%s)").format(WI._reloadPageKeyboardShortcut.displayName);
         else
             reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(WI._reloadPageKeyboardShortcut.displayName, WI._reloadPageFromOriginKeyboardShortcut.displayName);
@@ -3173,13 +3173,15 @@ WI._redoKeyboardShortcut = function(event)
 WI.undo = function()
 {
     let target = WI.assumingMainTarget();
-    target.DOMAgent.undo();
+    if (target.hasCommand("DOM.undo"))
+        target.DOMAgent.undo();
 };
 
 WI.redo = function()
 {
     let target = WI.assumingMainTarget();
-    target.DOMAgent.redo();
+    if (target.hasCommand("DOM.redo"))
+        target.DOMAgent.redo();
 };
 
 WI.highlightRangesWithStyleClass = function(element, resultRanges, styleClass, changes)
@@ -3299,7 +3301,7 @@ WI.archiveMainFrame = function()
 
 WI.canArchiveMainFrame = function()
 {
-    if (!WI.sharedApp.isWebDebuggable())
+    if (!InspectorBackend.hasCommand("Page.archive"))
         return false;
 
     if (!WI.networkManager.mainFrame || !WI.networkManager.mainFrame.mainResource)

@@ -50,7 +50,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
     get supportsNewRule()
     {
-        return this.nodeStyles && !this.nodeStyles.node.isInUserAgentShadowTree();
+        return this.nodeStyles && !this.nodeStyles.node.isInUserAgentShadowTree() && InspectorBackend.hasCommand("CSS.addRule");
     }
 
     refresh(significantChange)

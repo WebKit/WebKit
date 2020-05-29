@@ -41,7 +41,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force print media styles"), WI.UIString("Use default media styles"), "Images/Printer.svg", 16, 16);
         this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
-        this._showPrintStylesButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
+        this._showPrintStylesButtonNavigationItem.enabled = InspectorBackend.hasCommand("Page.setEmulatedMedia");
         this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showPrintStylesChanged();
 
@@ -479,7 +479,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             selectNode.call(this, WI.domManager.nodeForId(nodeId));
         }
 
-        if (documentURL && this._lastSelectedNodePathSetting.value && this._lastSelectedNodePathSetting.value.path && this._lastSelectedNodePathSetting.value.url === documentURL.hash)
+        if (InspectorBackend.hasCommand("DOM.pushNodeByPathToFrontend") && documentURL && this._lastSelectedNodePathSetting.value && this._lastSelectedNodePathSetting.value.path && this._lastSelectedNodePathSetting.value.url === documentURL.hash)
             WI.domManager.pushNodeByPathToFrontend(this._lastSelectedNodePathSetting.value.path, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
@@ -621,7 +621,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         let mediaType = WI.printStylesEnabled ? "print" : "";
         for (let target of WI.targets) {
-            if (target.hasDomain("Page"))
+            if (target.hasCommand("Page.setEmulatedMedia"))
                 target.PageAgent.setEmulatedMedia(mediaType);
         }
 

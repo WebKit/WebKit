@@ -1,8 +1,8 @@
 {
     "domain": "Network",
     "description": "Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.",
-    "debuggableTypes": ["page", "service-worker", "web-page"],
-    "targetTypes": ["page", "service-worker"],
+    "debuggableTypes": ["itml", "page", "service-worker", "web-page"],
+    "targetTypes": ["itml", "page", "service-worker"],
     "types": [
         {
             "id": "LoaderId",
@@ -170,6 +170,7 @@
         {
             "name": "setExtraHTTPHeaders",
             "description": "Specifies whether to always send extra HTTP headers with the requests from this page.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "headers", "$ref": "Headers", "description": "Map with extra HTTP headers." }
             ]
@@ -195,6 +196,7 @@
         {
             "name": "loadResource",
             "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks.",
+            "targetTypes": ["page"],
             "async": true,
             "parameters": [
                 { "name": "frameId", "$ref": "FrameId", "description": "Frame to load the resource from." },
@@ -209,6 +211,7 @@
         {
             "name": "getSerializedCertificate",
             "description": "Fetches a serialized secure certificate for the given requestId to be displayed via InspectorFrontendHost.showCertificate.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId" }
             ],
@@ -219,6 +222,7 @@
         {
             "name": "resolveWebSocket",
             "description": "Resolves JavaScript WebSocket object for given request id.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier of the WebSocket resource to resolve." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
@@ -230,6 +234,7 @@
         {
             "name": "setInterceptionEnabled",
             "description": "Enable interception of network requests.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "enabled", "type": "boolean" }
             ]
@@ -237,6 +242,7 @@
         {
             "name": "addInterception",
             "description": "Add an interception.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "url", "type": "string" },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If false, ignores letter casing of `url` parameter." },
@@ -247,6 +253,7 @@
         {
             "name": "removeInterception",
             "description": "Remove an interception.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "url", "type": "string" },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If false, ignores letter casing of `url` parameter." },
@@ -257,6 +264,7 @@
         {
             "name": "interceptContinue",
             "description": "Continue an interception with no modifications.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." }
             ]
@@ -264,6 +272,7 @@
         {
             "name": "interceptWithResponse",
             "description": "Provide response content for an intercepted response.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to modify." },
                 { "name": "content", "type": "string" },
@@ -351,6 +360,7 @@
         {
             "name": "responseIntercepted",
             "description": "Fired when HTTP response has been intercepted. The frontend must response with <code>Network.interceptContinue</code> or <code>Network.interceptWithRespons</code>` to continue this response.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },
                 { "name": "response", "$ref": "Response", "description": "Original response content that would proceed if this is continued." }
@@ -359,6 +369,7 @@
         {
             "name": "webSocketWillSendHandshakeRequest",
             "description": "Fired when WebSocket is about to initiate handshake.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp" },
@@ -369,6 +380,7 @@
         {
             "name": "webSocketHandshakeResponseReceived",
             "description": "Fired when WebSocket handshake response becomes available.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp" },
@@ -378,6 +390,7 @@
         {
             "name": "webSocketCreated",
             "description": "Fired upon WebSocket creation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "url", "type": "string", "description": "WebSocket request URL." }
@@ -386,6 +399,7 @@
         {
             "name": "webSocketClosed",
             "description": "Fired when WebSocket is closed.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
@@ -394,6 +408,7 @@
         {
             "name": "webSocketFrameReceived",
             "description": "Fired when WebSocket frame is received.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -403,6 +418,7 @@
         {
             "name": "webSocketFrameError",
             "description": "Fired when WebSocket frame error occurs.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -412,6 +428,7 @@
         {
             "name": "webSocketFrameSent",
             "description": "Fired when WebSocket frame is sent.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },

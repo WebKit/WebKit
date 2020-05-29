@@ -60,6 +60,11 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     // Static
 
+    static supportsInspectorStyleSheet()
+    {
+        return InspectorBackend.hasCommand("CSS.createStyleSheet");
+    }
+
     static protocolStyleSheetOriginToEnum(origin)
     {
         switch (origin) {

@@ -345,7 +345,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             });
         }
 
-        if (InspectorBackend.hasDomain("Page") && attached) {
+        if (InspectorBackend.hasCommand("Page.snapshotNode") && attached) {
             contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
                 let target = WI.assumingMainTarget();
                 target.PageAgent.snapshotNode(domNode.id, (error, dataURL) => {

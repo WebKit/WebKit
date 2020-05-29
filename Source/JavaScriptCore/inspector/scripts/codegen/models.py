@@ -41,17 +41,20 @@ def find_duplicates(l):
 def validate_target_types(debuggable_types, target_types):
     for target_type in target_types:
         required_debuggable_types = set()
-        if target_type == 'javascript':
-            if not 'javascript' in debuggable_types:
+        if target_type == 'itml':
+            if 'itml' not in debuggable_types:
+                return False
+        elif target_type == 'javascript':
+            if 'javascript' not in debuggable_types:
                 return False
         elif target_type == 'page' or target_type == 'worker':
-            if not 'page' in debuggable_types:
+            if 'page' not in debuggable_types:
                 return False
         elif target_type == 'service-worker':
-            if not 'service-worker' in debuggable_types:
+            if 'service-worker' not in debuggable_types:
                 return False
         elif target_type == 'web-page':
-            if not 'web-page' in debuggable_types:
+            if 'web-page' not in debuggable_types:
                 return False
     return True
 
@@ -84,8 +87,8 @@ _FRAMEWORK_CONFIG_MAP = {
     }
 }
 
-_ALLOWED_DEBUGGABLE_TYPE_STRINGS = frozenset(['javascript', 'page', 'service-worker', 'web-page'])
-_ALLOWED_TARGET_TYPE_STRINGS = frozenset(['javascript', 'page', 'service-worker', 'web-page', 'worker'])
+_ALLOWED_DEBUGGABLE_TYPE_STRINGS = frozenset(['itml', 'javascript', 'page', 'service-worker', 'web-page'])
+_ALLOWED_TARGET_TYPE_STRINGS = frozenset(['itml', 'javascript', 'page', 'service-worker', 'web-page', 'worker'])
 
 
 class ParseException(Exception):

@@ -24,6 +24,7 @@
  */
 
 WI.DebuggableType = {
+    ITML: "itml",
     JavaScript: "javascript",
     Page: "page",
     ServiceWorker: "service-worker",
@@ -32,6 +33,8 @@ WI.DebuggableType = {
 
 WI.DebuggableType.fromString = function(type) {
     switch (type) {
+    case "itml":
+        return WI.DebuggableType.ITML;
     case "javascript":
         return WI.DebuggableType.JavaScript;
     case "page":
@@ -44,4 +47,36 @@ WI.DebuggableType.fromString = function(type) {
 
     console.assert(false, "Unknown debuggable type", type);
     return null;
+};
+
+WI.DebuggableType.supportedTargetTypes = function(debuggableType) {
+    let targetTypes = new Set;
+
+    switch (debuggableType) {
+    case WI.DebuggableType.ITML:
+        targetTypes.add(WI.TargetType.ITML);
+        break;
+
+    case WI.DebuggableType.JavaScript:
+        targetTypes.add(WI.TargetType.JavaScript);
+        break;
+
+    case WI.DebuggableType.Page:
+        targetTypes.add(WI.TargetType.Page);
+        targetTypes.add(WI.TargetType.Worker);
+        break;
+
+    case WI.DebuggableType.ServiceWorker:
+        targetTypes.add(WI.TargetType.ServiceWorker);
+        break;
+
+    case WI.DebuggableType.WebPage:
+        targetTypes.add(WI.TargetType.Page);
+        targetTypes.add(WI.TargetType.WebPage);
+        targetTypes.add(WI.TargetType.Worker);
+        break;
+    }
+
+    console.assert(targetTypes.size, "Unknown debuggable type", debuggableType);
+    return targetTypes;
 };

@@ -121,8 +121,6 @@ WI.Target = class Target extends WI.Object
 
     activateExtraDomain(domainName)
     {
-        // FIXME: <https://webkit.org/b/201150> Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
-
         this._agents[domainName] = InspectorBackend._makeAgent(domainName, this);
     }
 

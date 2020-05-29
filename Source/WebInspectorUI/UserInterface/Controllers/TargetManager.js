@@ -121,7 +121,7 @@ WI.TargetManager = class TargetManager extends WI.Object
 
         this._initializeBackendTarget(target);
 
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.Page)
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.ITML || WI.sharedApp.debuggableType === WI.DebuggableType.Page)
             this._initializePageTarget(target);
 
         this.addTarget(target);
@@ -255,7 +255,7 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     _initializePageTarget(target)
     {
-        console.assert(WI.sharedApp.isWebDebuggable());
+        console.assert(WI.sharedApp.isWebDebuggable() || WI.sharedApp.debuggableType === WI.DebuggableType.ITML);
         console.assert(target.type === WI.TargetType.Page || target instanceof WI.DirectBackendTarget);
 
         WI.pageTarget = target;

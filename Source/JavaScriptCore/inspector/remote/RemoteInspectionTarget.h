@@ -46,8 +46,8 @@ public:
     void setTargetRunLoop(CFRunLoopRef runLoop) { m_runLoop = runLoop; }
 #endif
 
-    virtual String name() const { return String(); } // JavaScript and Web
-    virtual String url() const { return String(); } // Web
+    virtual String name() const { return String(); } // ITML JavaScript Page ServiceWorker WebPage
+    virtual String url() const { return String(); } // Page ServiceWorker WebPage
     virtual bool hasLocalDebugger() const = 0;
 
     virtual void setIndicating(bool) { } // Default is to do nothing.

@@ -620,7 +620,8 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         // COMPATIBILITY (iOS 11): DOM.setInspectedNode did not exist.
         if (!target.hasCommand("DOM.setInspectedNode")) {
-            target.ConsoleAgent.addInspectedNode(node.id, callback);
+            if (target.hasCommand("Console.addInspectedNode"))
+                target.ConsoleAgent.addInspectedNode(node.id, callback);
             return;
         }
 

@@ -379,6 +379,10 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
 
     switch (target.type()) {
+    case RemoteInspectionTarget::Type::ITML:
+        [listing setObject:target.name() forKey:WIRTypeKey];
+        [listing setObject:WIRTypeITML forKey:WIRTypeKey];
+        break;
     case RemoteInspectionTarget::Type::JavaScript:
         [listing setObject:target.name() forKey:WIRTitleKey];
         [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];

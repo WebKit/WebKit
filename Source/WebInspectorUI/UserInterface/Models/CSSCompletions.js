@@ -165,7 +165,8 @@ WI.CSSCompletions = class CSSCompletions
         }
 
         target.CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
-        target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
+        if (target.hasCommand("CSS.getSupportedSystemFontFamilyNames"))
+            target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
     }
 
     static completeUnbalancedValue(value)

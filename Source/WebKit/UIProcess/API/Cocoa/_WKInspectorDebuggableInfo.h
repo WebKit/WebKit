@@ -33,6 +33,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, _WKInspectorDebuggableType) {
+    _WKInspectorDebuggableTypeITML,
     _WKInspectorDebuggableTypeJavaScript,
     _WKInspectorDebuggableTypeServiceWorker,
     _WKInspectorDebuggableTypePage,

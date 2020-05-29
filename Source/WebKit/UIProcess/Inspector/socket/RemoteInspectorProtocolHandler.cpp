@@ -92,6 +92,8 @@ private:
 
 static Optional<Inspector::DebuggableType> parseDebuggableTypeFromString(const String& debuggableTypeString)
 {
+    if (debuggableTypeString == "itml"_s)
+        return Inspector::DebuggableType::ITML;
     if (debuggableTypeString == "javascript"_s)
         return Inspector::DebuggableType::JavaScript;
     if (debuggableTypeString == "page"_s)

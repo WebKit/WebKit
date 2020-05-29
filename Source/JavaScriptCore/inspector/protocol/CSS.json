@@ -1,8 +1,8 @@
 {
     "domain": "CSS",
     "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
-    "debuggableTypes": ["page", "web-page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page", "web-page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "StyleSheetId",
@@ -326,6 +326,7 @@
         {
             "name": "setRuleSelector",
             "description": "Modifies the rule selector.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "ruleId", "$ref": "CSSRuleId" },
                 { "name": "selector", "type": "string" }
@@ -337,6 +338,7 @@
         {
             "name": "createStyleSheet",
             "description": "Creates a new special \"inspector\" stylesheet in the frame with given <code>frameId</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame where the new \"inspector\" stylesheet should be created." }
             ],
@@ -347,6 +349,7 @@
         {
             "name": "addRule",
             "description": "Creates a new empty rule with the given <code>selector</code> in a stylesheet with given <code>styleSheetId</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "styleSheetId", "$ref": "StyleSheetId" },
                 { "name": "selector", "type": "string" }
@@ -365,6 +368,7 @@
         {
             "name": "getSupportedSystemFontFamilyNames",
             "description": "Returns all supported system font family names.",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "fontFamilyNames", "type": "array", "items": { "type": "string" }, "description": "Supported system font families." }
             ]
@@ -372,6 +376,7 @@
         {
             "name": "forcePseudoState",
             "description": "Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The element id for which to force the pseudo state." },
                 { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "description": "Element pseudo classes to force when computing the element's style." }
@@ -393,6 +398,7 @@
         {
             "name": "styleSheetAdded",
             "description": "Fired whenever an active document stylesheet is added.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "header", "$ref": "CSSStyleSheetHeader", "description": "Added stylesheet metainfo." }
             ]
@@ -400,6 +406,7 @@
         {
             "name": "styleSheetRemoved",
             "description": "Fired whenever an active document stylesheet is removed.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Identifier of the removed stylesheet." }
             ]

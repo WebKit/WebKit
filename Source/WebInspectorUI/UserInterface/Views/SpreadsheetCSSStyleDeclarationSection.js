@@ -487,7 +487,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             });
         }
 
-        if (!this._style.inherited) {
+        if (!this._style.inherited && InspectorBackend.hasCommand("CSS.addRule")) {
             let generateSelector = () => {
                 if (this._style.type === WI.CSSStyleDeclaration.Type.Attribute)
                     return this._style.node.displayName;
@@ -526,7 +526,9 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
                         let pseudoClassSelector = ":" + pseudoClass;
                         contextMenu.appendItem(WI.UIString("Add %s Rule").format(pseudoClassSelector), () => {
-                            this._style.node.setPseudoClassEnabled(pseudoClass, true);
+                            if (WI.cssManager.canForcePseudoClasses())
+                                this._style.node.setPseudoClassEnabled(pseudoClass, true);
+
                             addPseudoRule(pseudoClassSelector);
                         });
                     }

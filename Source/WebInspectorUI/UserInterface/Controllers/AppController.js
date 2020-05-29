@@ -29,8 +29,6 @@ WI.AppController = class AppController extends WI.AppControllerBase
     {
         super();
 
-        this._hasExtraDomains = false;
-
         this._debuggableType = WI.DebuggableType.fromString(InspectorFrontendHost.debuggableInfo.debuggableType);
         console.assert(this._debuggableType);
         if (!this._debuggableType)
@@ -39,24 +37,24 @@ WI.AppController = class AppController extends WI.AppControllerBase
 
     // Properties.
 
-    get hasExtraDomains() { return this._hasExtraDomains; }
     get debuggableType() { return this._debuggableType; }
 
     // API.
 
     activateExtraDomains(domains)
     {
-        if (this._hasExtraDomains)
-            throw new Error("Extra domains have already been activated, cannot activate again.");
-
-        this._hasExtraDomains = true;
-
-        console.assert(WI.mainTarget instanceof WI.DirectBackendTarget);
-        console.assert(WI.mainTarget.type === WI.TargetType.JavaScript);
-        console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript);
+        console.assert(this._debuggableType === WI.DebuggableType.JavaScript);
         console.assert(WI.targets.length === 1);
 
         let target = WI.mainTarget;
+        console.assert(target instanceof WI.DirectBackendTarget);
+        console.assert(target.type === WI.TargetType.JavaScript);
+
+        if (this._debuggableType === WI.DebuggableType.ITML || target.type === WI.TargetType.ITML)
+            throw new Error("Extra domains have already been activated, cannot activate again.");
+
+        this._debuggableType = WI.DebuggableType.ITML;
+        target._type = WI.TargetType.ITML;
 
         for (let domain of domains) {
             InspectorBackend.activateDomain(domain);

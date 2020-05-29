@@ -1,8 +1,8 @@
 {
     "domain": "Security",
     "description": "Security domain allows the frontend to query for information relating to the security of the page (e.g. HTTPS info, TLS info, user activity, etc.).",
-    "debuggableTypes": ["page", "service-worker", "web-page"],
-    "targetTypes": ["page", "service-worker"],
+    "debuggableTypes": ["itml", "page", "service-worker", "web-page"],
+    "targetTypes": ["itml", "page", "service-worker"],
     "types": [
         {
             "id": "Connection",

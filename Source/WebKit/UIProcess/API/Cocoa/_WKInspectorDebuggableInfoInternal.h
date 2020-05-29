@@ -45,6 +45,8 @@ template<> struct WrapperTraits<API::DebuggableInfo> {
 inline Inspector::DebuggableType fromWKInspectorDebuggableType(_WKInspectorDebuggableType debuggableType)
 {
     switch (debuggableType) {
+    case _WKInspectorDebuggableTypeITML:
+        return Inspector::DebuggableType::ITML;
     case _WKInspectorDebuggableTypeJavaScript:
         return Inspector::DebuggableType::JavaScript;
     case _WKInspectorDebuggableTypePage:
@@ -62,6 +64,8 @@ inline Inspector::DebuggableType fromWKInspectorDebuggableType(_WKInspectorDebug
 inline _WKInspectorDebuggableType toWKInspectorDebuggableType(Inspector::DebuggableType debuggableType)
 {
     switch (debuggableType) {
+    case Inspector::DebuggableType::ITML:
+        return _WKInspectorDebuggableTypeITML;
     case Inspector::DebuggableType::JavaScript:
         return _WKInspectorDebuggableTypeJavaScript;
     case Inspector::DebuggableType::Page:

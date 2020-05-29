@@ -35,6 +35,5 @@ WI.TestAppController = class TestAppController extends WI.AppControllerBase
 
     // Public
 
-    get hasExtraDomains() { return false; }
     get debuggableType() { return this._debuggableType; }
 };

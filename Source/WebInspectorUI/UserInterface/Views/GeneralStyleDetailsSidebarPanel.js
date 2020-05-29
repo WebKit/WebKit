@@ -160,18 +160,20 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
         this._showPanel(this._panel);
 
-        this._classListContainer = this.element.createChild("div", "class-list-container");
-        this._classListContainer.hidden = true;
+        if (InspectorBackend.hasCommand("DOM.resolveNode")) {
+            this._classListContainer = this.element.createChild("div", "class-list-container");
+            this._classListContainer.hidden = true;
 
-        this._addClassContainer = this._classListContainer.createChild("div", "new-class");
-        this._addClassContainer.title = WI.UIString("Add a Class");
-        this._addClassContainer.addEventListener("click", this._addClassContainerClicked.bind(this));
+            this._addClassContainer = this._classListContainer.createChild("div", "new-class");
+            this._addClassContainer.title = WI.UIString("Add a Class");
+            this._addClassContainer.addEventListener("click", this._addClassContainerClicked.bind(this));
 
-        this._addClassInput = this._addClassContainer.createChild("input", "class-name-input");
-        this._addClassInput.spellcheck = false;
-        this._addClassInput.setAttribute("placeholder", WI.UIString("Add New Class"));
-        this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bind(this));
-        this._addClassInput.addEventListener("blur", this._addClassInputBlur.bind(this));
+            this._addClassInput = this._addClassContainer.createChild("input", "class-name-input");
+            this._addClassInput.spellcheck = false;
+            this._addClassInput.setAttribute("placeholder", WI.UIString("Add New Class"));
+            this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bind(this));
+            this._addClassInput.addEventListener("blur", this._addClassInputBlur.bind(this));
+        }
 
         let optionsContainer = this.element.createChild("div", "options-container");
 
@@ -185,16 +187,19 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bind(this));
         optionsContainer.appendChild(this._filterBar.element);
 
-        this._classToggleButton = optionsContainer.createChild("button", "toggle-class-toggle");
-        this._classToggleButton.textContent = WI.UIString("Classes");
-        this._classToggleButton.title = WI.UIString("Toggle Classes");
-        this._classToggleButton.addEventListener("click", this._classToggleButtonClicked.bind(this));
+        if (this._classListContainer) {
+            this._classToggleButton = optionsContainer.createChild("button", "toggle-class-toggle");
+            this._classToggleButton.textContent = WI.UIString("Classes");
+            this._classToggleButton.title = WI.UIString("Toggle Classes");
+            this._classToggleButton.addEventListener("click", this._classToggleButtonClicked.bind(this));
+
+            if (this._classListContainerToggledSetting.value)
+                this._classToggleButtonClicked();
+        }
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAddedOrRemoved, this);
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._styleSheetAddedOrRemoved, this);
 
-        if (this._classListContainerToggledSetting.value)
-            this._classToggleButtonClicked();
     }
 
     sizeDidChange()

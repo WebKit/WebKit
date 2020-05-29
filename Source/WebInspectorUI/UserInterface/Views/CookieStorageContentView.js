@@ -47,12 +47,16 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             this._setCookieButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleSetCookieButtonClick, this);
         }
 
-        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+        if (InspectorBackend.hasCommand("Page.getCookies")) {
+            this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+            this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+        }
 
-        this._clearButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-clear", WI.UIString("Clear Cookies"), "Images/NavigationItemTrash.svg", 15, 15);
-        this._clearButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleClearNavigationItemClicked, this);
+        if (InspectorBackend.hasCommand("Page.deleteCookie")) {
+            this._clearButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-clear", WI.UIString("Clear Cookies"), "Images/NavigationItemTrash.svg", 15, 15);
+            this._clearButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleClearNavigationItemClicked, this);
+        }
     }
 
     // Public
@@ -64,8 +68,10 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         navigationItems.push(new WI.DividerNavigationItem);
         if (this._setCookieButtonNavigationItem)
             navigationItems.push(this._setCookieButtonNavigationItem);
-        navigationItems.push(this._refreshButtonNavigationItem);
-        navigationItems.push(this._clearButtonNavigationItem);
+        if (this._refreshButtonNavigationItem)
+            navigationItems.push(this._refreshButtonNavigationItem);
+        if (this._clearButtonNavigationItem)
+            navigationItems.push(this._clearButtonNavigationItem);
         return navigationItems;
     }
 
@@ -164,12 +170,14 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             InspectorFrontendHost.copyText(this._formatCookiesAsText(cookies));
         });
 
-        contextMenu.appendItem(WI.UIString("Delete"), () => {
-            if (table.isRowSelected(rowIndex))
-                table.removeSelectedRows();
-            else
-                table.removeRow(rowIndex);
-        });
+        if (InspectorBackend.hasCommand("Page.deleteCookie")) {
+            contextMenu.appendItem(WI.UIString("Delete"), () => {
+                if (table.isRowSelected(rowIndex))
+                    table.removeSelectedRows();
+                else
+                    table.removeRow(rowIndex);
+            });
+        }
 
         contextMenu.appendSeparator();
     }
@@ -485,7 +493,10 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     _reloadCookies()
     {
         let target = WI.assumingMainTarget();
-        return target.PageAgent.getCookies().then((payload) => {
+        if (!target.hasCommand("Page.getCookies"))
+            return;
+
+        target.PageAgent.getCookies().then((payload) => {
             this._cookies = this._getCookiesForHost(payload.cookies.map(WI.Cookie.fromPayload), this.representedObject.host);
             this._updateSort();
             this._updateFilteredCookies();
@@ -555,8 +566,12 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _handleTableKeyDown(event)
     {
-        if (event.keyCode === WI.KeyboardShortcut.Key.Backspace.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Delete.keyCode)
-            this._table.removeSelectedRows();
+        if (event.keyCode === WI.KeyboardShortcut.Key.Backspace.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Delete.keyCode) {
+            if (InspectorBackend.hasCommand("Page.deleteCookie"))
+                this._table.removeSelectedRows();
+            else
+                InspectorFrontendHost.beep();
+        }
     }
 
     _cookiesAtIndexes(indexes)

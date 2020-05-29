@@ -172,6 +172,15 @@
     return [JSValue valueWithJSValueRef:toRef(vm, result) inContext:self];
 }
 
+- (void)_setITMLDebuggableType
+{
+    JSC::JSGlobalObject* globalObject = toJS(m_context);
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+
+    globalObject->setIsITML();
+}
+
 - (void)setException:(JSValue *)value
 {
     JSC::JSGlobalObject* globalObject = toJS(m_context);

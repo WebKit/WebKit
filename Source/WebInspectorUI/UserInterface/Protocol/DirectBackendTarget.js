@@ -44,6 +44,11 @@ WI.DirectBackendTarget = class DirectBackendTarget extends WI.Target
     static connectionInfoForDebuggable()
     {
         switch (WI.sharedApp.debuggableType) {
+        case WI.DebuggableType.ITML:
+            return {
+                type: WI.TargetType.ITML,
+                displayName: WI.UIString("ITML Context"),
+            };
         case WI.DebuggableType.JavaScript:
             return {
                 type: WI.TargetType.JavaScript,

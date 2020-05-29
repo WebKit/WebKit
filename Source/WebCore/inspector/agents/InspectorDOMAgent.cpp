@@ -885,6 +885,7 @@ void InspectorDOMAgent::getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayO
 #undef DOM_EVENT_NAMES_ADD
 }
 
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 void InspectorDOMAgent::getDataBindingsForNode(ErrorString& errorString, int /* nodeId */, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& /* dataBindings */)
 {
     errorString = "Not supported"_s;
@@ -894,6 +895,7 @@ void InspectorDOMAgent::getAssociatedDataForNode(ErrorString& errorString, int /
 {
     errorString = "Not supported"_s;
 }
+#endif
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray)
 {

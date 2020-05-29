@@ -40,7 +40,7 @@ InspectorBackend.registerApplicationCacheDispatcher = InspectorBackend.registerD
 InspectorBackend.activateDomain("ApplicationCache", ["page"]);
 
 // CSS
-InspectorBackend.registerDomain("CSS", ["page"]);
+InspectorBackend.registerDomain("CSS", ["itml", "page"]);
 InspectorBackend.registerEnum("CSS.StyleSheetOrigin", {User: "user", UserAgent: "user-agent", Inspector: "inspector", Regular: "regular"});
 InspectorBackend.registerEnum("CSS.CSSPropertyStatus", {Active: "active", Inactive: "inactive", Disabled: "disabled", Style: "style"});
 InspectorBackend.registerEnum("CSS.CSSMediaSource", {MediaRule: "mediaRule", ImportRule: "importRule", LinkedSheet: "linkedSheet", InlineSheet: "inlineSheet"});
@@ -55,44 +55,44 @@ InspectorBackend.registerCommand("CSS.getStyleSheet", null, [{"name": "styleShee
 InspectorBackend.registerCommand("CSS.getStyleSheetText", null, [{"name": "styleSheetId", "type": "string"}], ["text"]);
 InspectorBackend.registerCommand("CSS.setStyleSheetText", null, [{"name": "styleSheetId", "type": "string"}, {"name": "text", "type": "string"}], []);
 InspectorBackend.registerCommand("CSS.setStyleText", null, [{"name": "styleId", "type": "object"}, {"name": "text", "type": "string"}], ["style"]);
-InspectorBackend.registerCommand("CSS.setRuleSelector", null, [{"name": "ruleId", "type": "object"}, {"name": "selector", "type": "string"}], ["rule"]);
-InspectorBackend.registerCommand("CSS.createStyleSheet", null, [{"name": "frameId", "type": "string"}], ["styleSheetId"]);
-InspectorBackend.registerCommand("CSS.addRule", null, [{"name": "styleSheetId", "type": "string"}, {"name": "selector", "type": "string"}], ["rule"]);
+InspectorBackend.registerCommand("CSS.setRuleSelector", ["page"], [{"name": "ruleId", "type": "object"}, {"name": "selector", "type": "string"}], ["rule"]);
+InspectorBackend.registerCommand("CSS.createStyleSheet", ["page"], [{"name": "frameId", "type": "string"}], ["styleSheetId"]);
+InspectorBackend.registerCommand("CSS.addRule", ["page"], [{"name": "styleSheetId", "type": "string"}, {"name": "selector", "type": "string"}], ["rule"]);
 InspectorBackend.registerCommand("CSS.getSupportedCSSProperties", null, [], ["cssProperties"]);
-InspectorBackend.registerCommand("CSS.getSupportedSystemFontFamilyNames", null, [], ["fontFamilyNames"]);
-InspectorBackend.registerCommand("CSS.forcePseudoState", null, [{"name": "nodeId", "type": "number"}, {"name": "forcedPseudoClasses", "type": "object"}], []);
-InspectorBackend.registerCommand("CSS.getNamedFlowCollection", null, [{"name": "documentNodeId", "type": "number"}], ["namedFlows"]);
+InspectorBackend.registerCommand("CSS.getSupportedSystemFontFamilyNames", ["page"], [], ["fontFamilyNames"]);
+InspectorBackend.registerCommand("CSS.forcePseudoState", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "forcedPseudoClasses", "type": "object"}], []);
+InspectorBackend.registerCommand("CSS.getNamedFlowCollection", ["page"], [{"name": "documentNodeId", "type": "number"}], ["namedFlows"]);
 InspectorBackend.registerEvent("CSS.mediaQueryResultChanged", null, []);
 InspectorBackend.registerEvent("CSS.styleSheetChanged", null, ["styleSheetId"]);
-InspectorBackend.registerEvent("CSS.styleSheetAdded", null, ["header"]);
-InspectorBackend.registerEvent("CSS.styleSheetRemoved", null, ["styleSheetId"]);
-InspectorBackend.registerEvent("CSS.namedFlowCreated", null, ["namedFlow"]);
-InspectorBackend.registerEvent("CSS.namedFlowRemoved", null, ["documentNodeId", "flowName"]);
-InspectorBackend.registerEvent("CSS.regionOversetChanged", null, ["namedFlow"]);
-InspectorBackend.registerEvent("CSS.registeredNamedFlowContentElement", null, ["documentNodeId", "flowName", "contentNodeId", "nextContentNodeId"]);
-InspectorBackend.registerEvent("CSS.unregisteredNamedFlowContentElement", null, ["documentNodeId", "flowName", "contentNodeId"]);
+InspectorBackend.registerEvent("CSS.styleSheetAdded", ["page"], ["header"]);
+InspectorBackend.registerEvent("CSS.styleSheetRemoved", ["page"], ["styleSheetId"]);
+InspectorBackend.registerEvent("CSS.namedFlowCreated", ["page"], ["namedFlow"]);
+InspectorBackend.registerEvent("CSS.namedFlowRemoved", ["page"], ["documentNodeId", "flowName"]);
+InspectorBackend.registerEvent("CSS.regionOversetChanged", ["page"], ["namedFlow"]);
+InspectorBackend.registerEvent("CSS.registeredNamedFlowContentElement", ["page"], ["documentNodeId", "flowName", "contentNodeId", "nextContentNodeId"]);
+InspectorBackend.registerEvent("CSS.unregisteredNamedFlowContentElement", ["page"], ["documentNodeId", "flowName", "contentNodeId"]);
 InspectorBackend.registerCSSDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "CSS");
-InspectorBackend.activateDomain("CSS", ["page"]);
+InspectorBackend.activateDomain("CSS", ["itml", "page"]);
 
 // Console
-InspectorBackend.registerDomain("Console", ["javascript", "page", "worker"]);
+InspectorBackend.registerDomain("Console", ["itml", "javascript", "page", "worker"]);
 InspectorBackend.registerEnum("Console.ConsoleMessageSource", {XML: "xml", JavaScript: "javascript", Network: "network", ConsoleAPI: "console-api", Storage: "storage", Appcache: "appcache", Rendering: "rendering", CSS: "css", Security: "security", ContentBlocker: "content-blocker", Other: "other"});
 InspectorBackend.registerEnum("Console.ConsoleMessageLevel", {Log: "log", Info: "info", Warning: "warning", Error: "error", Debug: "debug"});
 InspectorBackend.registerEnum("Console.ConsoleMessageType", {Log: "log", Dir: "dir", DirXML: "dirxml", Table: "table", Trace: "trace", Clear: "clear", StartGroup: "startGroup", StartGroupCollapsed: "startGroupCollapsed", EndGroup: "endGroup", Assert: "assert", Timing: "timing", Profile: "profile", ProfileEnd: "profileEnd"});
 InspectorBackend.registerCommand("Console.enable", null, [], []);
 InspectorBackend.registerCommand("Console.disable", null, [], []);
 InspectorBackend.registerCommand("Console.clearMessages", null, [], []);
-InspectorBackend.registerCommand("Console.setMonitoringXHREnabled", null, [{"name": "enabled", "type": "boolean"}], []);
-InspectorBackend.registerCommand("Console.addInspectedNode", null, [{"name": "nodeId", "type": "number"}], []);
+InspectorBackend.registerCommand("Console.setMonitoringXHREnabled", ["page"], [{"name": "enabled", "type": "boolean"}], []);
+InspectorBackend.registerCommand("Console.addInspectedNode", ["page"], [{"name": "nodeId", "type": "number"}], []);
 InspectorBackend.registerEvent("Console.messageAdded", null, ["message"]);
 InspectorBackend.registerEvent("Console.messageRepeatCountUpdated", null, ["count"]);
 InspectorBackend.registerEvent("Console.messagesCleared", null, []);
 InspectorBackend.registerEvent("Console.heapSnapshot", null, ["timestamp", "snapshotData", "title"]);
 InspectorBackend.registerConsoleDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Console");
-InspectorBackend.activateDomain("Console", ["javascript", "page"]);
+InspectorBackend.activateDomain("Console", ["itml", "javascript", "page"]);
 
 // DOM
-InspectorBackend.registerDomain("DOM", ["page"]);
+InspectorBackend.registerDomain("DOM", ["itml", "page"]);
 InspectorBackend.registerEnum("DOM.PseudoType", {Before: "before", After: "after"});
 InspectorBackend.registerEnum("DOM.ShadowRootType", {UserAgent: "user-agent", Open: "open", Closed: "closed"});
 InspectorBackend.registerEnum("DOM.CustomElementState", {Builtin: "builtin", Custom: "custom", Waiting: "waiting", Failed: "failed"});
@@ -103,9 +103,9 @@ InspectorBackend.registerEnum("DOM.AccessibilityPropertiesInvalid", {True: "true
 InspectorBackend.registerEnum("DOM.AccessibilityPropertiesLiveRegionStatus", {Assertive: "assertive", Polite: "polite", Off: "off"});
 InspectorBackend.registerCommand("DOM.getDocument", null, [], ["root"]);
 InspectorBackend.registerCommand("DOM.requestChildNodes", null, [{"name": "nodeId", "type": "number"}, {"name": "depth", "type": "number", "optional": true}], []);
-InspectorBackend.registerCommand("DOM.querySelector", null, [{"name": "nodeId", "type": "number"}, {"name": "selector", "type": "string"}], ["nodeId"]);
-InspectorBackend.registerCommand("DOM.querySelectorAll", null, [{"name": "nodeId", "type": "number"}, {"name": "selector", "type": "string"}], ["nodeIds"]);
-InspectorBackend.registerCommand("DOM.setNodeName", null, [{"name": "nodeId", "type": "number"}, {"name": "name", "type": "string"}], ["nodeId"]);
+InspectorBackend.registerCommand("DOM.querySelector", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "selector", "type": "string"}], ["nodeId"]);
+InspectorBackend.registerCommand("DOM.querySelectorAll", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "selector", "type": "string"}], ["nodeIds"]);
+InspectorBackend.registerCommand("DOM.setNodeName", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "name", "type": "string"}], ["nodeId"]);
 InspectorBackend.registerCommand("DOM.setNodeValue", null, [{"name": "nodeId", "type": "number"}, {"name": "value", "type": "string"}], []);
 InspectorBackend.registerCommand("DOM.removeNode", null, [{"name": "nodeId", "type": "number"}], []);
 InspectorBackend.registerCommand("DOM.setAttributeValue", null, [{"name": "nodeId", "type": "number"}, {"name": "name", "type": "string"}, {"name": "value", "type": "string"}], []);
@@ -118,22 +118,22 @@ InspectorBackend.registerCommand("DOM.setOuterHTML", null, [{"name": "nodeId", "
 InspectorBackend.registerCommand("DOM.performSearch", null, [{"name": "query", "type": "string"}, {"name": "nodeIds", "type": "object", "optional": true}], ["searchId", "resultCount"]);
 InspectorBackend.registerCommand("DOM.getSearchResults", null, [{"name": "searchId", "type": "string"}, {"name": "fromIndex", "type": "number"}, {"name": "toIndex", "type": "number"}], ["nodeIds"]);
 InspectorBackend.registerCommand("DOM.discardSearchResults", null, [{"name": "searchId", "type": "string"}], []);
-InspectorBackend.registerCommand("DOM.requestNode", null, [{"name": "objectId", "type": "string"}], ["nodeId"]);
+InspectorBackend.registerCommand("DOM.requestNode", ["page"], [{"name": "objectId", "type": "string"}], ["nodeId"]);
 InspectorBackend.registerCommand("DOM.setInspectModeEnabled", null, [{"name": "enabled", "type": "boolean"}, {"name": "highlightConfig", "type": "object", "optional": true}], []);
-InspectorBackend.registerCommand("DOM.highlightRect", null, [{"name": "x", "type": "number"}, {"name": "y", "type": "number"}, {"name": "width", "type": "number"}, {"name": "height", "type": "number"}, {"name": "color", "type": "object", "optional": true}, {"name": "outlineColor", "type": "object", "optional": true}, {"name": "usePageCoordinates", "type": "boolean", "optional": true}], []);
-InspectorBackend.registerCommand("DOM.highlightQuad", null, [{"name": "quad", "type": "object"}, {"name": "color", "type": "object", "optional": true}, {"name": "outlineColor", "type": "object", "optional": true}, {"name": "usePageCoordinates", "type": "boolean", "optional": true}], []);
-InspectorBackend.registerCommand("DOM.highlightSelector", null, [{"name": "highlightConfig", "type": "object"}, {"name": "selectorString", "type": "string"}, {"name": "frameId", "type": "string", "optional": true}], []);
+InspectorBackend.registerCommand("DOM.highlightRect", ["page"], [{"name": "x", "type": "number"}, {"name": "y", "type": "number"}, {"name": "width", "type": "number"}, {"name": "height", "type": "number"}, {"name": "color", "type": "object", "optional": true}, {"name": "outlineColor", "type": "object", "optional": true}, {"name": "usePageCoordinates", "type": "boolean", "optional": true}], []);
+InspectorBackend.registerCommand("DOM.highlightQuad", ["page"], [{"name": "quad", "type": "object"}, {"name": "color", "type": "object", "optional": true}, {"name": "outlineColor", "type": "object", "optional": true}, {"name": "usePageCoordinates", "type": "boolean", "optional": true}], []);
+InspectorBackend.registerCommand("DOM.highlightSelector", ["page"], [{"name": "highlightConfig", "type": "object"}, {"name": "selectorString", "type": "string"}, {"name": "frameId", "type": "string", "optional": true}], []);
 InspectorBackend.registerCommand("DOM.highlightNode", null, [{"name": "highlightConfig", "type": "object"}, {"name": "nodeId", "type": "number", "optional": true}, {"name": "objectId", "type": "string", "optional": true}], []);
 InspectorBackend.registerCommand("DOM.hideHighlight", null, [], []);
-InspectorBackend.registerCommand("DOM.highlightFrame", null, [{"name": "frameId", "type": "string"}, {"name": "contentColor", "type": "object", "optional": true}, {"name": "contentOutlineColor", "type": "object", "optional": true}], []);
-InspectorBackend.registerCommand("DOM.pushNodeByPathToFrontend", null, [{"name": "path", "type": "string"}], ["nodeId"]);
-InspectorBackend.registerCommand("DOM.resolveNode", null, [{"name": "nodeId", "type": "number"}, {"name": "objectGroup", "type": "string", "optional": true}], ["object"]);
+InspectorBackend.registerCommand("DOM.highlightFrame", ["page"], [{"name": "frameId", "type": "string"}, {"name": "contentColor", "type": "object", "optional": true}, {"name": "contentOutlineColor", "type": "object", "optional": true}], []);
+InspectorBackend.registerCommand("DOM.pushNodeByPathToFrontend", ["page"], [{"name": "path", "type": "string"}], ["nodeId"]);
+InspectorBackend.registerCommand("DOM.resolveNode", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "objectGroup", "type": "string", "optional": true}], ["object"]);
 InspectorBackend.registerCommand("DOM.getAttributes", null, [{"name": "nodeId", "type": "number"}], ["attributes"]);
 InspectorBackend.registerCommand("DOM.moveTo", null, [{"name": "nodeId", "type": "number"}, {"name": "targetNodeId", "type": "number"}, {"name": "insertBeforeNodeId", "type": "number", "optional": true}], ["nodeId"]);
-InspectorBackend.registerCommand("DOM.undo", null, [], []);
-InspectorBackend.registerCommand("DOM.redo", null, [], []);
-InspectorBackend.registerCommand("DOM.markUndoableState", null, [], []);
-InspectorBackend.registerCommand("DOM.focus", null, [{"name": "nodeId", "type": "number"}], []);
+InspectorBackend.registerCommand("DOM.undo", ["page"], [], []);
+InspectorBackend.registerCommand("DOM.redo", ["page"], [], []);
+InspectorBackend.registerCommand("DOM.markUndoableState", ["page"], [], []);
+InspectorBackend.registerCommand("DOM.focus", ["page"], [{"name": "nodeId", "type": "number"}], []);
 InspectorBackend.registerEvent("DOM.documentUpdated", null, []);
 InspectorBackend.registerEvent("DOM.setChildNodes", null, ["parentId", "nodes"]);
 InspectorBackend.registerEvent("DOM.attributeModified", null, ["nodeId", "name", "value"]);
@@ -143,13 +143,13 @@ InspectorBackend.registerEvent("DOM.characterDataModified", null, ["nodeId", "ch
 InspectorBackend.registerEvent("DOM.childNodeCountUpdated", null, ["nodeId", "childNodeCount"]);
 InspectorBackend.registerEvent("DOM.childNodeInserted", null, ["parentNodeId", "previousNodeId", "node"]);
 InspectorBackend.registerEvent("DOM.childNodeRemoved", null, ["parentNodeId", "nodeId"]);
-InspectorBackend.registerEvent("DOM.shadowRootPushed", null, ["hostId", "root"]);
-InspectorBackend.registerEvent("DOM.shadowRootPopped", null, ["hostId", "rootId"]);
-InspectorBackend.registerEvent("DOM.customElementStateChanged", null, ["nodeId", "customElementState"]);
-InspectorBackend.registerEvent("DOM.pseudoElementAdded", null, ["parentId", "pseudoElement"]);
-InspectorBackend.registerEvent("DOM.pseudoElementRemoved", null, ["parentId", "pseudoElementId"]);
+InspectorBackend.registerEvent("DOM.shadowRootPushed", ["page"], ["hostId", "root"]);
+InspectorBackend.registerEvent("DOM.shadowRootPopped", ["page"], ["hostId", "rootId"]);
+InspectorBackend.registerEvent("DOM.customElementStateChanged", ["page"], ["nodeId", "customElementState"]);
+InspectorBackend.registerEvent("DOM.pseudoElementAdded", ["page"], ["parentId", "pseudoElement"]);
+InspectorBackend.registerEvent("DOM.pseudoElementRemoved", ["page"], ["parentId", "pseudoElementId"]);
 InspectorBackend.registerDOMDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "DOM");
-InspectorBackend.activateDomain("DOM", ["page"]);
+InspectorBackend.activateDomain("DOM", ["itml", "page"]);
 
 // DOMDebugger
 InspectorBackend.registerDomain("DOMDebugger", ["page"]);
@@ -165,7 +165,7 @@ InspectorBackend.registerCommand("DOMDebugger.removeXHRBreakpoint", null, [{"nam
 InspectorBackend.activateDomain("DOMDebugger", ["page"]);
 
 // DOMStorage
-InspectorBackend.registerDomain("DOMStorage", ["page"]);
+InspectorBackend.registerDomain("DOMStorage", ["itml", "page"]);
 InspectorBackend.registerCommand("DOMStorage.enable", null, [], []);
 InspectorBackend.registerCommand("DOMStorage.disable", null, [], []);
 InspectorBackend.registerCommand("DOMStorage.getDOMStorageItems", null, [{"name": "storageId", "type": "object"}], ["entries"]);
@@ -176,7 +176,7 @@ InspectorBackend.registerEvent("DOMStorage.domStorageItemRemoved", null, ["stora
 InspectorBackend.registerEvent("DOMStorage.domStorageItemAdded", null, ["storageId", "key", "newValue"]);
 InspectorBackend.registerEvent("DOMStorage.domStorageItemUpdated", null, ["storageId", "key", "oldValue", "newValue"]);
 InspectorBackend.registerDOMStorageDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "DOMStorage");
-InspectorBackend.activateDomain("DOMStorage", ["page"]);
+InspectorBackend.activateDomain("DOMStorage", ["itml", "page"]);
 
 // Database
 InspectorBackend.registerDomain("Database", ["page"]);
@@ -189,7 +189,7 @@ InspectorBackend.registerDatabaseDispatcher = InspectorBackend.registerDispatche
 InspectorBackend.activateDomain("Database", ["page"]);
 
 // Debugger
-InspectorBackend.registerDomain("Debugger", ["javascript", "page", "worker"]);
+InspectorBackend.registerDomain("Debugger", ["itml", "javascript", "page", "worker"]);
 InspectorBackend.registerEnum("Debugger.BreakpointActionType", {Log: "log", Evaluate: "evaluate", Sound: "sound", Probe: "probe"});
 InspectorBackend.registerEnum("Debugger.ScopeType", {Global: "global", With: "with", Closure: "closure", Catch: "catch", FunctionName: "functionName", GlobalLexicalEnvironment: "globalLexicalEnvironment", NestedLexical: "nestedLexical"});
 InspectorBackend.registerCommand("Debugger.enable", null, [], []);
@@ -222,10 +222,10 @@ InspectorBackend.registerEvent("Debugger.resumed", null, []);
 InspectorBackend.registerEvent("Debugger.didSampleProbe", null, ["sample"]);
 InspectorBackend.registerEvent("Debugger.playBreakpointActionSound", null, ["breakpointActionId"]);
 InspectorBackend.registerDebuggerDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Debugger");
-InspectorBackend.activateDomain("Debugger", ["javascript", "page"]);
+InspectorBackend.activateDomain("Debugger", ["itml", "javascript", "page"]);
 
 // Heap
-InspectorBackend.registerDomain("Heap", ["javascript", "page", "worker"]);
+InspectorBackend.registerDomain("Heap", ["itml", "javascript", "page", "worker"]);
 InspectorBackend.registerEnum("Heap.GarbageCollectionType", {Full: "full", Partial: "partial"});
 InspectorBackend.registerCommand("Heap.enable", null, [], []);
 InspectorBackend.registerCommand("Heap.disable", null, [], []);
@@ -239,7 +239,7 @@ InspectorBackend.registerEvent("Heap.garbageCollected", null, ["collection"]);
 InspectorBackend.registerEvent("Heap.trackingStart", null, ["timestamp", "snapshotData"]);
 InspectorBackend.registerEvent("Heap.trackingComplete", null, ["timestamp", "snapshotData"]);
 InspectorBackend.registerHeapDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Heap");
-InspectorBackend.activateDomain("Heap", ["javascript", "page"]);
+InspectorBackend.activateDomain("Heap", ["itml", "javascript", "page"]);
 
 // IndexedDB
 InspectorBackend.registerDomain("IndexedDB", ["page"]);
@@ -255,7 +255,7 @@ InspectorBackend.registerIndexedDBDispatcher = InspectorBackend.registerDispatch
 InspectorBackend.activateDomain("IndexedDB", ["page"]);
 
 // Inspector
-InspectorBackend.registerDomain("Inspector", ["javascript", "page"]);
+InspectorBackend.registerDomain("Inspector", ["itml", "javascript", "page"]);
 InspectorBackend.registerCommand("Inspector.enable", null, [], []);
 InspectorBackend.registerCommand("Inspector.disable", null, [], []);
 InspectorBackend.registerCommand("Inspector.initialized", null, [], []);
@@ -263,7 +263,7 @@ InspectorBackend.registerEvent("Inspector.evaluateForTestInFrontend", null, ["sc
 InspectorBackend.registerEvent("Inspector.inspect", null, ["object", "hints"]);
 InspectorBackend.registerEvent("Inspector.activateExtraDomains", null, ["domains"]);
 InspectorBackend.registerInspectorDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Inspector");
-InspectorBackend.activateDomain("Inspector", ["javascript", "page"]);
+InspectorBackend.activateDomain("Inspector", ["itml", "javascript", "page"]);
 
 // LayerTree
 InspectorBackend.registerDomain("LayerTree", ["page"]);
@@ -291,67 +291,67 @@ InspectorBackend.registerMemoryDispatcher = InspectorBackend.registerDispatcher.
 InspectorBackend.activateDomain("Memory", ["page"]);
 
 // Network
-InspectorBackend.registerDomain("Network", ["page"]);
+InspectorBackend.registerDomain("Network", ["itml", "page"]);
 InspectorBackend.registerEnum("Network.ResponseSource", {Unknown: "unknown", Network: "network", MemoryCache: "memory-cache", DiskCache: "disk-cache"});
 InspectorBackend.registerEnum("Network.MetricsPriority", {Low: "low", Medium: "medium", High: "high"});
 InspectorBackend.registerEnum("Network.InitiatorType", {Parser: "parser", Script: "script", Other: "other"});
 InspectorBackend.registerCommand("Network.enable", null, [], []);
 InspectorBackend.registerCommand("Network.disable", null, [], []);
-InspectorBackend.registerCommand("Network.setExtraHTTPHeaders", null, [{"name": "headers", "type": "object"}], []);
+InspectorBackend.registerCommand("Network.setExtraHTTPHeaders", ["page"], [{"name": "headers", "type": "object"}], []);
 InspectorBackend.registerCommand("Network.getResponseBody", null, [{"name": "requestId", "type": "string"}], ["body", "base64Encoded"]);
 InspectorBackend.registerCommand("Network.setResourceCachingDisabled", null, [{"name": "disabled", "type": "boolean"}], []);
-InspectorBackend.registerCommand("Network.loadResource", null, [{"name": "frameId", "type": "string"}, {"name": "url", "type": "string"}], ["content", "mimeType", "status"]);
-InspectorBackend.registerCommand("Network.resolveWebSocket", null, [{"name": "requestId", "type": "string"}, {"name": "objectGroup", "type": "string", "optional": true}], ["object"]);
+InspectorBackend.registerCommand("Network.loadResource", ["page"], [{"name": "frameId", "type": "string"}, {"name": "url", "type": "string"}], ["content", "mimeType", "status"]);
+InspectorBackend.registerCommand("Network.resolveWebSocket", ["page"], [{"name": "requestId", "type": "string"}, {"name": "objectGroup", "type": "string", "optional": true}], ["object"]);
 InspectorBackend.registerEvent("Network.requestWillBeSent", null, ["requestId", "frameId", "loaderId", "documentURL", "request", "timestamp", "initiator", "redirectResponse", "type", "targetId"]);
 InspectorBackend.registerEvent("Network.responseReceived", null, ["requestId", "frameId", "loaderId", "timestamp", "type", "response"]);
 InspectorBackend.registerEvent("Network.dataReceived", null, ["requestId", "timestamp", "dataLength", "encodedDataLength"]);
 InspectorBackend.registerEvent("Network.loadingFinished", null, ["requestId", "timestamp", "sourceMapURL", "metrics"]);
 InspectorBackend.registerEvent("Network.loadingFailed", null, ["requestId", "timestamp", "errorText", "canceled"]);
 InspectorBackend.registerEvent("Network.requestServedFromMemoryCache", null, ["requestId", "frameId", "loaderId", "documentURL", "timestamp", "initiator", "resource"]);
-InspectorBackend.registerEvent("Network.webSocketWillSendHandshakeRequest", null, ["requestId", "timestamp", "walltime", "request"]);
-InspectorBackend.registerEvent("Network.webSocketHandshakeResponseReceived", null, ["requestId", "timestamp", "response"]);
-InspectorBackend.registerEvent("Network.webSocketCreated", null, ["requestId", "url"]);
-InspectorBackend.registerEvent("Network.webSocketClosed", null, ["requestId", "timestamp"]);
-InspectorBackend.registerEvent("Network.webSocketFrameReceived", null, ["requestId", "timestamp", "response"]);
-InspectorBackend.registerEvent("Network.webSocketFrameError", null, ["requestId", "timestamp", "errorMessage"]);
-InspectorBackend.registerEvent("Network.webSocketFrameSent", null, ["requestId", "timestamp", "response"]);
+InspectorBackend.registerEvent("Network.webSocketWillSendHandshakeRequest", ["page"], ["requestId", "timestamp", "walltime", "request"]);
+InspectorBackend.registerEvent("Network.webSocketHandshakeResponseReceived", ["page"], ["requestId", "timestamp", "response"]);
+InspectorBackend.registerEvent("Network.webSocketCreated", ["page"], ["requestId", "url"]);
+InspectorBackend.registerEvent("Network.webSocketClosed", ["page"], ["requestId", "timestamp"]);
+InspectorBackend.registerEvent("Network.webSocketFrameReceived", ["page"], ["requestId", "timestamp", "response"]);
+InspectorBackend.registerEvent("Network.webSocketFrameError", ["page"], ["requestId", "timestamp", "errorMessage"]);
+InspectorBackend.registerEvent("Network.webSocketFrameSent", ["page"], ["requestId", "timestamp", "response"]);
 InspectorBackend.registerNetworkDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Network");
-InspectorBackend.activateDomain("Network", ["page"]);
+InspectorBackend.activateDomain("Network", ["itml", "page"]);
 
 // Page
-InspectorBackend.registerDomain("Page", ["page"]);
+InspectorBackend.registerDomain("Page", ["itml", "page"]);
 InspectorBackend.registerEnum("Page.ResourceType", {Document: "Document", Stylesheet: "Stylesheet", Image: "Image", Font: "Font", Script: "Script", XHR: "XHR", Fetch: "Fetch", WebSocket: "WebSocket", Other: "Other"});
 InspectorBackend.registerEnum("Page.CoordinateSystem", {Viewport: "Viewport", Page: "Page"});
 InspectorBackend.registerCommand("Page.enable", null, [], []);
 InspectorBackend.registerCommand("Page.disable", null, [], []);
 InspectorBackend.registerCommand("Page.reload", null, [{"name": "ignoreCache", "type": "boolean", "optional": true}, {"name": "revalidateAllResources", "type": "boolean", "optional": true}, {"name": "scriptToEvaluateOnLoad", "type": "string", "optional": true}], []);
-InspectorBackend.registerCommand("Page.navigate", null, [{"name": "url", "type": "string"}], []);
-InspectorBackend.registerCommand("Page.getCookies", null, [], ["cookies"]);
-InspectorBackend.registerCommand("Page.deleteCookie", null, [{"name": "cookieName", "type": "string"}, {"name": "url", "type": "string"}], []);
+InspectorBackend.registerCommand("Page.navigate", ["page"], [{"name": "url", "type": "string"}], []);
+InspectorBackend.registerCommand("Page.getCookies", ["page"], [], ["cookies"]);
+InspectorBackend.registerCommand("Page.deleteCookie", ["page"], [{"name": "cookieName", "type": "string"}, {"name": "url", "type": "string"}], []);
 InspectorBackend.registerCommand("Page.getResourceTree", null, [], ["frameTree"]);
 InspectorBackend.registerCommand("Page.getResourceContent", null, [{"name": "frameId", "type": "string"}, {"name": "url", "type": "string"}], ["content", "base64Encoded"]);
-InspectorBackend.registerCommand("Page.searchInResource", null, [{"name": "frameId", "type": "string"}, {"name": "url", "type": "string"}, {"name": "query", "type": "string"}, {"name": "caseSensitive", "type": "boolean", "optional": true}, {"name": "isRegex", "type": "boolean", "optional": true}, {"name": "requestId", "type": "string", "optional": true}], ["result"]);
-InspectorBackend.registerCommand("Page.searchInResources", null, [{"name": "text", "type": "string"}, {"name": "caseSensitive", "type": "boolean", "optional": true}, {"name": "isRegex", "type": "boolean", "optional": true}], ["result"]);
-InspectorBackend.registerCommand("Page.setShowPaintRects", null, [{"name": "result", "type": "boolean"}], []);
-InspectorBackend.registerCommand("Page.setEmulatedMedia", null, [{"name": "media", "type": "string"}], []);
-InspectorBackend.registerCommand("Page.getCompositingBordersVisible", null, [], ["result"]);
-InspectorBackend.registerCommand("Page.setCompositingBordersVisible", null, [{"name": "visible", "type": "boolean"}], []);
-InspectorBackend.registerCommand("Page.snapshotNode", null, [{"name": "nodeId", "type": "number"}], ["dataURL"]);
-InspectorBackend.registerCommand("Page.snapshotRect", null, [{"name": "x", "type": "number"}, {"name": "y", "type": "number"}, {"name": "width", "type": "number"}, {"name": "height", "type": "number"}, {"name": "coordinateSystem", "type": "string"}], ["dataURL"]);
-InspectorBackend.registerCommand("Page.archive", null, [], ["data"]);
-InspectorBackend.registerEvent("Page.domContentEventFired", null, ["timestamp"]);
-InspectorBackend.registerEvent("Page.loadEventFired", null, ["timestamp"]);
+InspectorBackend.registerCommand("Page.searchInResource", ["page"], [{"name": "frameId", "type": "string"}, {"name": "url", "type": "string"}, {"name": "query", "type": "string"}, {"name": "caseSensitive", "type": "boolean", "optional": true}, {"name": "isRegex", "type": "boolean", "optional": true}, {"name": "requestId", "type": "string", "optional": true}], ["result"]);
+InspectorBackend.registerCommand("Page.searchInResources", ["page"], [{"name": "text", "type": "string"}, {"name": "caseSensitive", "type": "boolean", "optional": true}, {"name": "isRegex", "type": "boolean", "optional": true}], ["result"]);
+InspectorBackend.registerCommand("Page.setShowPaintRects", ["page"], [{"name": "result", "type": "boolean"}], []);
+InspectorBackend.registerCommand("Page.setEmulatedMedia", ["page"], [{"name": "media", "type": "string"}], []);
+InspectorBackend.registerCommand("Page.getCompositingBordersVisible", ["page"], [], ["result"]);
+InspectorBackend.registerCommand("Page.setCompositingBordersVisible", ["page"], [{"name": "visible", "type": "boolean"}], []);
+InspectorBackend.registerCommand("Page.snapshotNode", ["page"], [{"name": "nodeId", "type": "number"}], ["dataURL"]);
+InspectorBackend.registerCommand("Page.snapshotRect", ["page"], [{"name": "x", "type": "number"}, {"name": "y", "type": "number"}, {"name": "width", "type": "number"}, {"name": "height", "type": "number"}, {"name": "coordinateSystem", "type": "string"}], ["dataURL"]);
+InspectorBackend.registerCommand("Page.archive", ["page"], [], ["data"]);
+InspectorBackend.registerEvent("Page.domContentEventFired", ["page"], ["timestamp"]);
+InspectorBackend.registerEvent("Page.loadEventFired", ["page"], ["timestamp"]);
 InspectorBackend.registerEvent("Page.frameNavigated", null, ["frame"]);
-InspectorBackend.registerEvent("Page.frameDetached", null, ["frameId"]);
+InspectorBackend.registerEvent("Page.frameDetached", ["page"], ["frameId"]);
 InspectorBackend.registerEvent("Page.frameStartedLoading", null, ["frameId"]);
 InspectorBackend.registerEvent("Page.frameStoppedLoading", null, ["frameId"]);
-InspectorBackend.registerEvent("Page.frameScheduledNavigation", null, ["frameId", "delay"]);
-InspectorBackend.registerEvent("Page.frameClearedScheduledNavigation", null, ["frameId"]);
+InspectorBackend.registerEvent("Page.frameScheduledNavigation", ["page"], ["frameId", "delay"]);
+InspectorBackend.registerEvent("Page.frameClearedScheduledNavigation", ["page"], ["frameId"]);
 InspectorBackend.registerPageDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Page");
-InspectorBackend.activateDomain("Page", ["page"]);
+InspectorBackend.activateDomain("Page", ["itml", "page"]);
 
 // Runtime
-InspectorBackend.registerDomain("Runtime", ["javascript", "page", "worker"]);
+InspectorBackend.registerDomain("Runtime", ["itml", "javascript", "page", "worker"]);
 InspectorBackend.registerEnum("Runtime.RemoteObjectType", {Object: "object", Function: "function", Undefined: "undefined", String: "string", Number: "number", Boolean: "boolean", Symbol: "symbol"});
 InspectorBackend.registerEnum("Runtime.RemoteObjectSubtype", {Array: "array", Null: "null", Node: "node", Regexp: "regexp", Date: "date", Error: "error", Map: "map", Set: "set", Weakmap: "weakmap", Weakset: "weakset", Iterator: "iterator", Class: "class", Proxy: "proxy"});
 InspectorBackend.registerEnum("Runtime.ObjectPreviewType", {Object: "object", Function: "function", Undefined: "undefined", String: "string", Number: "number", Boolean: "boolean", Symbol: "symbol"});
@@ -379,10 +379,10 @@ InspectorBackend.registerCommand("Runtime.disableControlFlowProfiler", null, [],
 InspectorBackend.registerCommand("Runtime.getBasicBlocks", null, [{"name": "sourceID", "type": "string"}], ["basicBlocks"]);
 InspectorBackend.registerEvent("Runtime.executionContextCreated", null, ["context"]);
 InspectorBackend.registerRuntimeDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Runtime");
-InspectorBackend.activateDomain("Runtime", ["javascript", "page"]);
+InspectorBackend.activateDomain("Runtime", ["itml", "javascript", "page"]);
 
 // ScriptProfiler
-InspectorBackend.registerDomain("ScriptProfiler", ["javascript", "page"]);
+InspectorBackend.registerDomain("ScriptProfiler", ["itml", "javascript", "page"]);
 InspectorBackend.registerEnum("ScriptProfiler.EventType", {API: "API", Microtask: "Microtask", Other: "Other"});
 InspectorBackend.registerCommand("ScriptProfiler.startTracking", null, [{"name": "includeSamples", "type": "boolean", "optional": true}], []);
 InspectorBackend.registerCommand("ScriptProfiler.stopTracking", null, [], []);
@@ -392,7 +392,7 @@ InspectorBackend.registerEvent("ScriptProfiler.trackingComplete", null, ["sample
 InspectorBackend.registerEvent("ScriptProfiler.programmaticCaptureStarted", null, []);
 InspectorBackend.registerEvent("ScriptProfiler.programmaticCaptureStopped", null, []);
 InspectorBackend.registerScriptProfilerDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "ScriptProfiler");
-InspectorBackend.activateDomain("ScriptProfiler", ["javascript", "page"]);
+InspectorBackend.activateDomain("ScriptProfiler", ["itml", "javascript", "page"]);
 
 // Timeline
 InspectorBackend.registerDomain("Timeline", ["page"]);

@@ -24,9 +24,12 @@
  */
 
 WI.TargetType = {
+    ITML: "itml",
     JavaScript: "javascript",
     Page: "page",
     ServiceWorker: "service-worker",
     WebPage: "web-page",
     Worker: "worker",
 };
+
+WI.TargetType.all = Object.values(WI.TargetType);

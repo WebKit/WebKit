@@ -119,8 +119,10 @@ public:
     void insertAdjacentHTML(ErrorString&, int nodeId, const String& position, const String& html) override;
     void setNodeValue(ErrorString&, int nodeId, const String& value) override;
     void getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames) override;
+#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     void getDataBindingsForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& dataArray) override;
     void getAssociatedDataForNode(ErrorString&, int nodeId, Optional<String>& associatedData) override;
+#endif
     void getEventListenersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
     void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;

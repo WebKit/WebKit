@@ -2144,6 +2144,13 @@ bool JSGlobalObject::remoteDebuggingEnabled() const
 #endif
 }
 
+void JSGlobalObject::setIsITML()
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable->setIsITML();
+#endif
+}
+
 void JSGlobalObject::setName(const String& name)
 {
     m_name = name;

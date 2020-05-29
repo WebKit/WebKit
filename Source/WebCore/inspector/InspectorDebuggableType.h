@@ -28,6 +28,7 @@
 namespace Inspector {
 
 enum class DebuggableType : uint8_t {
+    ITML,          // -[JSContext _setITMLDebuggableType]
     JavaScript,    // JSC::JSGlobalObject
     Page,          // WebCore::Page
     ServiceWorker, // WebCore::ServiceWorkerThreadProxy
@@ -41,6 +42,7 @@ namespace WTF {
 template<> struct EnumTraits<Inspector::DebuggableType> {
     using values = EnumValues<
     Inspector::DebuggableType,
+    Inspector::DebuggableType::ITML,
     Inspector::DebuggableType::JavaScript,
     Inspector::DebuggableType::Page,
     Inspector::DebuggableType::ServiceWorker,

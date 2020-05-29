@@ -91,8 +91,8 @@
 {
     "domain": "CSS",
     "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
-    "debuggableTypes": ["page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "StyleSheetId",
@@ -415,6 +415,7 @@
         {
             "name": "setRuleSelector",
             "description": "Modifies the rule selector.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "ruleId", "$ref": "CSSRuleId" },
                 { "name": "selector", "type": "string" }
@@ -426,6 +427,7 @@
         {
             "name": "createStyleSheet",
             "description": "Creates a new special \"inspector\" stylesheet in the frame with given <code>frameId</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame where the new \"inspector\" stylesheet should be created." }
             ],
@@ -436,6 +438,7 @@
         {
             "name": "addRule",
             "description": "Creates a new empty rule with the given <code>selector</code> in a stylesheet with given <code>styleSheetId</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "styleSheetId", "$ref": "StyleSheetId" },
                 { "name": "selector", "type": "string" }
@@ -454,6 +457,7 @@
         {
             "name": "getSupportedSystemFontFamilyNames",
             "description": "Returns all supported system font family names.",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "fontFamilyNames", "type": "array", "items": { "type": "string" }, "description": "Supported system font families." }
             ]
@@ -461,6 +465,7 @@
         {
             "name": "forcePseudoState",
             "description": "Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The element id for which to force the pseudo state." },
                 { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "description": "Element pseudo classes to force when computing the element's style." }
@@ -469,6 +474,7 @@
         {
             "name": "getNamedFlowCollection",
             "description": "Returns the Named Flows from the document.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id for which to get the Named Flow Collection." }
             ],
@@ -492,6 +498,7 @@
         {
             "name": "styleSheetAdded",
             "description": "Fired whenever an active document stylesheet is added.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "header", "$ref": "CSSStyleSheetHeader", "description": "Added stylesheet metainfo." }
             ]
@@ -499,6 +506,7 @@
         {
             "name": "styleSheetRemoved",
             "description": "Fired whenever an active document stylesheet is removed.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Identifier of the removed stylesheet." }
             ]
@@ -506,6 +514,7 @@
         {
             "name": "namedFlowCreated",
             "description": "Fires when a Named Flow is created.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "namedFlow", "$ref": "NamedFlow", "description": "The new Named Flow." }
             ]
@@ -513,6 +522,7 @@
         {
             "name": "namedFlowRemoved",
             "description": "Fires when a Named Flow is removed: has no associated content nodes and regions.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                 { "name": "flowName", "type": "string", "description": "Identifier of the removed Named Flow." }
@@ -521,6 +531,7 @@
         {
             "name": "regionOversetChanged",
             "description": "Fires if any of the regionOverset values changed in a Named Flow's region chain.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow containing the regions whose regionOverset values changed." }
             ]
@@ -528,6 +539,7 @@
         {
             "name": "registeredNamedFlowContentElement",
             "description": "Fires when a Named Flow's has been registered with a new content node.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                 { "name": "flowName", "type": "string", "description": "Named Flow identifier for which the new content element was registered." },
@@ -538,6 +550,7 @@
         {
             "name": "unregisteredNamedFlowContentElement",
             "description": "Fires when a Named Flow's has been registered with a new content node.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                 { "name": "flowName", "type": "string", "description": "Named Flow identifier for which the new content element was unregistered." },
@@ -550,8 +563,8 @@
 {
     "domain": "Console",
     "description": "Console domain defines methods and events for interaction with the JavaScript console. Console collects messages created by means of the <a href='http://getfirebug.com/wiki/index.php/Console_API'>JavaScript Console API</a>. One needs to enable this domain using <code>enable</code> command in order to start receiving the console messages. Browser collects messages issued while console domain is not enabled as well and reports them using <code>messageAdded</code> notification upon enabling.",
-    "debuggableTypes": ["javascript", "page"],
-    "targetTypes": ["javascript", "page", "worker"],
+    "debuggableTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page", "worker"],
     "types": [
         {
             "id": "ConsoleMessage",
@@ -611,6 +624,7 @@
         {
             "name": "setMonitoringXHREnabled",
             "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "Monitoring enabled state." }
             ]
@@ -618,6 +632,7 @@
         {
             "name": "addInspectedNode",
             "description": "Enables console to refer to the node with given id via $0 (see Command Line API for more details).",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "DOM node id to be accessible by means of $0 command line API." }
             ]
@@ -657,8 +672,8 @@
 {
     "domain": "DOM",
     "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, resolve it into the JavaScript object wrapper, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.<p>Note that <code>iframe</code> owner elements will return corresponding document elements as their child nodes.</p>",
-    "debuggableTypes": ["page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "NodeId",
@@ -828,6 +843,7 @@
         {
             "name": "querySelector",
             "description": "Executes <code>querySelector</code> on a given node.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to query upon." },
                 { "name": "selector", "type": "string", "description": "Selector string." }
@@ -839,6 +855,7 @@
         {
             "name": "querySelectorAll",
             "description": "Executes <code>querySelectorAll</code> on a given node.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to query upon." },
                 { "name": "selector", "type": "string", "description": "Selector string." }
@@ -850,6 +867,7 @@
         {
             "name": "setNodeName",
             "description": "Sets node name for a node with given id.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set name for." },
                 { "name": "name", "type": "string", "description": "New node's name." }
@@ -972,6 +990,7 @@
         {
             "name": "requestNode",
             "description": "Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of <code>setChildNodes</code> notifications.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id to convert into node." }
             ],
@@ -990,6 +1009,7 @@
         {
             "name": "highlightRect",
             "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
@@ -1003,6 +1023,7 @@
         {
             "name": "highlightQuad",
             "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "quad", "$ref": "Quad", "description": "Quad to highlight" },
                 { "name": "color", "$ref": "RGBAColor", "optional": true, "description": "The highlight fill color (default: transparent)." },
@@ -1013,6 +1034,7 @@
         {
             "name": "highlightSelector",
             "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "selectorString", "type": "string", "description": "A CSS selector for finding matching nodes to highlight." },
@@ -1034,6 +1056,7 @@
         },
         {
             "name": "highlightFrame",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame to highlight." },
                 { "name": "contentColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
@@ -1044,6 +1067,7 @@
         {
             "name": "pushNodeByPathToFrontend",
             "description": "Requests that the node is sent to the caller given its path.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "path", "type": "string", "description": "Path to node in the proprietary format." }
             ],
@@ -1054,6 +1078,7 @@
         {
             "name": "resolveNode",
             "description": "Resolves JavaScript node object for given node id.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to resolve." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
@@ -1086,19 +1111,23 @@
         },
         {
             "name": "undo",
-            "description": "Undoes the last performed action."
+            "description": "Undoes the last performed action.",
+            "targetTypes": ["page"]
         },
         {
             "name": "redo",
-            "description": "Re-does the last undone action."
+            "description": "Re-does the last undone action.",
+            "targetTypes": ["page"]
         },
         {
             "name": "markUndoableState",
-            "description": "Marks last undoable state."
+            "description": "Marks last undoable state.",
+            "targetTypes": ["page"]
         },
         {
             "name": "focus",
             "description": "Focuses the given element.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to focus." }
             ]
@@ -1177,6 +1206,7 @@
         {
             "name": "shadowRootPushed",
             "description": "Called when shadow root is pushed into the element.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                 { "name": "root", "$ref": "Node", "description": "Shadow root." }
@@ -1185,6 +1215,7 @@
         {
             "name": "shadowRootPopped",
             "description": "Called when shadow root is popped from the element.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                 { "name": "rootId", "$ref": "NodeId", "description": "Shadow root id." }
@@ -1193,6 +1224,7 @@
         {
             "name": "customElementStateChanged",
             "description": "Called when the custom element state is changed.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Element id." },
                 { "name": "customElementState", "$ref": "CustomElementState", "description": "Custom element state." }
@@ -1201,6 +1233,7 @@
         {
             "name": "pseudoElementAdded",
             "description": "Called when a pseudo element is added to an element.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElement", "$ref": "Node", "description": "The added pseudo element." }
@@ -1209,6 +1242,7 @@
         {
             "name": "pseudoElementRemoved",
             "description": "Called when a pseudo element is removed from an element.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElementId", "$ref": "NodeId", "description": "The removed pseudo element id." }
@@ -1296,8 +1330,8 @@
 {
     "domain": "DOMStorage",
     "description": "Query and modify DOM storage.",
-    "debuggableTypes": ["page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "StorageId",
@@ -1459,8 +1493,8 @@
 {
     "domain": "Debugger",
     "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
-    "debuggableTypes": ["javascript", "page"],
-    "targetTypes": ["javascript", "page", "worker"],
+    "debuggableTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page", "worker"],
     "types": [
         {
             "id": "BreakpointId",
@@ -1831,8 +1865,8 @@
 {
     "domain": "Heap",
     "description": "Heap domain exposes JavaScript heap attributes and capabilities.",
-    "debuggableTypes": ["javascript", "page"],
-    "targetTypes": ["javascript", "page", "worker"],
+    "debuggableTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page", "worker"],
     "types": [
         {
             "id": "GarbageCollection",
@@ -2077,8 +2111,8 @@
 ,
 {
     "domain": "Inspector",
-    "debuggableTypes": ["javascript", "page"],
-    "targetTypes": ["javascript", "page"],
+    "debuggableTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page"],
     "types": [],
     "commands": [
         {
@@ -2310,8 +2344,8 @@
 {
     "domain": "Network",
     "description": "Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.",
-    "debuggableTypes": ["page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "LoaderId",
@@ -2468,6 +2502,7 @@
         {
             "name": "setExtraHTTPHeaders",
             "description": "Specifies whether to always send extra HTTP headers with the requests from this page.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "headers", "$ref": "Headers", "description": "Map with extra HTTP headers." }
             ]
@@ -2493,6 +2528,7 @@
         {
             "name": "loadResource",
             "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks.",
+            "targetTypes": ["page"],
             "async": true,
             "parameters": [
                 { "name": "frameId", "$ref": "FrameId", "description": "Frame to load the resource from." },
@@ -2507,6 +2543,7 @@
         {
             "name": "resolveWebSocket",
             "description": "Resolves JavaScript WebSocket object for given request id.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier of the WebSocket resource to resolve." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
@@ -2591,6 +2628,7 @@
         {
             "name": "webSocketWillSendHandshakeRequest",
             "description": "Fired when WebSocket is about to initiate handshake.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp" },
@@ -2601,6 +2639,7 @@
         {
             "name": "webSocketHandshakeResponseReceived",
             "description": "Fired when WebSocket handshake response becomes available.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp" },
@@ -2610,6 +2649,7 @@
         {
             "name": "webSocketCreated",
             "description": "Fired upon WebSocket creation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "url", "type": "string", "description": "WebSocket request URL." }
@@ -2618,6 +2658,7 @@
         {
             "name": "webSocketClosed",
             "description": "Fired when WebSocket is closed.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
@@ -2626,6 +2667,7 @@
         {
             "name": "webSocketFrameReceived",
             "description": "Fired when WebSocket frame is received.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -2635,6 +2677,7 @@
         {
             "name": "webSocketFrameError",
             "description": "Fired when WebSocket frame error occurs.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -2644,6 +2687,7 @@
         {
             "name": "webSocketFrameSent",
             "description": "Fired when WebSocket frame is sent.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                 { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
@@ -2787,8 +2831,8 @@
 {
     "domain": "Page",
     "description": "Actions and events related to the inspected page belong to the page domain.",
-    "debuggableTypes": ["page"],
-    "targetTypes": ["page"],
+    "debuggableTypes": ["itml", "page"],
+    "targetTypes": ["itml", "page"],
     "types": [
         {
             "id": "ResourceType",
@@ -2888,6 +2932,7 @@
         {
             "name": "navigate",
             "description": "Navigates current page to the given URL.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "url", "type": "string", "description": "URL to navigate the page to." }
             ]
@@ -2895,6 +2940,7 @@
         {
             "name": "getCookies",
             "description": "Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the <code>cookies</code> field.",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." }
             ]
@@ -2902,6 +2948,7 @@
         {
             "name": "deleteCookie",
             "description": "Deletes browser cookie with given name, domain and path.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
                 { "name": "url", "type": "string", "description": "URL to match cookie domain and path." }
@@ -2929,6 +2976,7 @@
         {
             "name": "searchInResource",
             "description": "Searches for given string in resource content.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id for resource to search in." },
                 { "name": "url", "type": "string", "description": "URL of the resource to search in." },
@@ -2944,6 +2992,7 @@
         {
             "name": "searchInResources",
             "description": "Searches for given string in frame / resource tree structure.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "text", "type": "string", "description": "String to search for." },
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
@@ -2956,6 +3005,7 @@
         {
             "name": "setShowPaintRects",
             "description": "Requests that backend shows paint rectangles",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
             ]
@@ -2963,6 +3013,7 @@
         {
             "name": "setEmulatedMedia",
             "description": "Emulates the given media for CSS media queries.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
             ]
@@ -2970,6 +3021,7 @@
         {
             "name": "getCompositingBordersVisible",
             "description": "Indicates the visibility of compositing borders.",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "result", "type": "boolean", "description": "If true, compositing borders are visible." }
             ]
@@ -2977,6 +3029,7 @@
         {
             "name": "setCompositingBordersVisible",
             "description": "Controls the visibility of compositing borders.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "visible", "type": "boolean", "description": "True for showing compositing borders." }
             ]
@@ -2984,6 +3037,7 @@
         {
             "name": "snapshotNode",
             "description": "Capture a snapshot of the specified node that does not include unrelated layers.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Id of the node to snapshot." }
             ],
@@ -2994,6 +3048,7 @@
         {
             "name": "snapshotRect",
             "description": "Capture a snapshot of the page within the specified rectangle and coordinate system.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
@@ -3008,6 +3063,7 @@
         {
             "name": "archive",
             "description": "Grab an archive of the page.",
+            "targetTypes": ["page"],
             "returns": [
                 { "name": "data", "type": "string", "description": "Base64-encoded web archive." }
             ]
@@ -3016,12 +3072,14 @@
     "events": [
         {
             "name": "domContentEventFired",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" }
             ]
         },
         {
             "name": "loadEventFired",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "timestamp", "type": "number" }
             ]
@@ -3036,6 +3094,7 @@
         {
             "name": "frameDetached",
             "description": "Fired when frame has been detached from its parent.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
             ]
@@ -3057,6 +3116,7 @@
         {
             "name": "frameScheduledNavigation",
             "description": "Fired when frame schedules a potential navigation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has scheduled a navigation." },
                 { "name": "delay", "type": "number", "description": "Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start." }
@@ -3065,6 +3125,7 @@
         {
             "name": "frameClearedScheduledNavigation",
             "description": "Fired when frame no longer has a scheduled navigation.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
             ]
@@ -3075,8 +3136,8 @@
 {
     "domain": "Runtime",
     "description": "Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose object type, string representation and unique identifier that can be used for further object reference. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.",
-    "debuggableTypes": ["javascript", "page"],
-    "targetTypes": ["javascript", "page", "worker"],
+    "debuggableTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page", "worker"],
     "types": [
         {
             "id": "RemoteObjectId",
@@ -3449,8 +3510,8 @@
 {
     "domain": "ScriptProfiler",
     "description": "Profiler domain exposes JavaScript evaluation timing and profiling.",
-    "debuggableTypes": ["javascript", "page"],
-    "targetTypes": ["javascript", "page"],
+    "debuggableTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page"],
     "types": [
         {
             "id": "EventType",

@@ -142,7 +142,7 @@ InspectorBackendClass = class InspectorBackendClass
 
     registerDomain(domainName, targetTypes)
     {
-        targetTypes = targetTypes || Object.values(WI.TargetType);
+        targetTypes = targetTypes || WI.TargetType.all;
         for (let targetType of targetTypes)
             this._supportedDomainsForTargetType.add(targetType, domainName);
 
@@ -186,7 +186,11 @@ InspectorBackendClass = class InspectorBackendClass
     {
         // FIXME: <https://webkit.org/b/201150> Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
 
-        if (debuggableTypes && !debuggableTypes.includes(InspectorFrontendHost.debuggableInfo.debuggableType))
+        // Ask `WI.sharedApp` (if it exists) as it may have a different debuggable type if extra
+        // domains were activated, which is the only other time this will be called.
+        let currentDebuggableType = WI.sharedApp?.debuggableType || InspectorFrontendHost.debuggableInfo.debuggableType;
+
+        if (debuggableTypes && !debuggableTypes.includes(currentDebuggableType))
             return;
 
         console.assert(domainName in this._registeredDomains);
@@ -195,7 +199,12 @@ InspectorBackendClass = class InspectorBackendClass
         let domain = this._registeredDomains[domainName];
         this._activeDomains[domainName] = domain;
 
-        for (let command of domain._supportedCommandsForTargetType.values()) {
+        let supportedTargetTypes = WI.DebuggableType.supportedTargetTypes(currentDebuggableType);
+
+        for (let [targetType, command] of domain._supportedCommandsForTargetType) {
+            if (!supportedTargetTypes.has(targetType))
+                continue;
+
             let parameters = this._supportedCommandParameters.get(command._qualifiedName);
             if (!parameters) {
                 parameters = new Set;
@@ -204,7 +213,10 @@ InspectorBackendClass = class InspectorBackendClass
             parameters.addAll(command._callSignature.map((item) => item.name));
         }
 
-        for (let event of domain._supportedEventsForTargetType.values()) {
+        for (let [targetType, event] of domain._supportedEventsForTargetType) {
+            if (!supportedTargetTypes.has(targetType))
+                continue;
+
             let parameters = this._supportedEventParameters.get(event._qualifiedName);
             if (!parameters) {
                 parameters = new Set;
@@ -232,7 +244,7 @@ InspectorBackendClass = class InspectorBackendClass
 
     supportedDomainsForTargetType(type)
     {
-        console.assert(Object.values(WI.TargetType).includes(type), "Unknown target type", type);
+        console.assert(WI.TargetType.all.includes(type), "Unknown target type", type);
 
         return this._supportedDomainsForTargetType.get(type) || new Set;
     }
@@ -328,14 +340,14 @@ InspectorBackend.Domain = class InspectorBackendDomain
 
     _addCommand(targetTypes, command)
     {
-        targetTypes = targetTypes || Object.values(WI.TargetType);
+        targetTypes = targetTypes || WI.TargetType.all;
         for (let type of targetTypes)
             this._supportedCommandsForTargetType.add(type, command);
     }
 
     _addEvent(targetTypes, event)
     {
-        targetTypes = targetTypes || Object.values(WI.TargetType);
+        targetTypes = targetTypes || WI.TargetType.all;
         for (let type of targetTypes)
             this._supportedEventsForTargetType.add(type, event);
     }

@@ -180,7 +180,8 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
             if (error)
                 return;
 
-            target.DOMAgent.markUndoableState();
+            if (target.hasCommand("DOM.markUndoableState"))
+                target.DOMAgent.markUndoableState();
 
             this.dispatchEventToListeners(WI.CSSStyleSheet.Event.ContentDidChange);
         }

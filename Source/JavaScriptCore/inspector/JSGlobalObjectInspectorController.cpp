@@ -115,7 +115,8 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& fronten
     m_agents.didCreateFrontendAndBackend(nullptr, nullptr);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    ensureInspectorAgent().activateExtraDomains(m_agents.extraDomains());
+    if (m_globalObject.inspectorDebuggable().type() == Inspector::RemoteControllableTarget::Type::JavaScript)
+        ensureInspectorAgent().activateExtraDomains(m_agents.extraDomains());
 
     if (m_augmentingClient)
         m_augmentingClient->inspectorConnected();
@@ -269,7 +270,8 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
 
     m_agents.appendExtraAgent(WTFMove(agent));
 
-    ensureInspectorAgent().activateExtraDomain(domainName);
+    if (m_globalObject.inspectorDebuggable().type() == Inspector::RemoteControllableTarget::Type::JavaScript)
+        ensureInspectorAgent().activateExtraDomain(domainName);
 }
 #endif
 

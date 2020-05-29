@@ -1,3 +1,22 @@
+2020-05-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add ITML debuggable/target type
+        https://bugs.webkit.org/show_bug.cgi?id=203300
+        <rdar://problem/56545896>
+
+        Reviewed by Joseph Pecoraro and Brian Burg.
+
+        * UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.h:
+        * UIProcess/API/Cocoa/_WKInspectorDebuggableInfoInternal.h:
+        (fromWKInspectorDebuggableType):
+        (toWKInspectorDebuggableType):
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (legacyDebuggableTypeToModernDebuggableType):
+
+        * UIProcess/socket/RemoteInspectorProtocolHandler.cpp:
+        (WebKit::parseDebuggableTypeFromString):
+
 2020-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Prepare for async scrolling in passive wheel event handler regions

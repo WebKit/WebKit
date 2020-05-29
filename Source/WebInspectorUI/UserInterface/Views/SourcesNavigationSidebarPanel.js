@@ -261,7 +261,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
-        if (WI.NetworkManager.supportsLocalResourceOverrides() || WI.NetworkManager.supportsBootstrapScript() || InspectorBackend.hasDomain("CSS")) {
+        if (WI.NetworkManager.supportsLocalResourceOverrides() || WI.NetworkManager.supportsBootstrapScript() || WI.CSSManager.supportsInspectorStyleSheet()) {
             let createResourceNavigationBar = new WI.NavigationBar;
 
             let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
@@ -432,7 +432,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     static shouldPlaceResourcesAtTopLevel()
     {
-        return WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript
+        return WI.sharedApp.debuggableType === WI.DebuggableType.ITML
+            || WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript
             || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker;
     }
 
@@ -1098,7 +1099,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
 
         // Target main resource.
-        if (WI.sharedApp.debuggableType !== WI.DebuggableType.JavaScript) {
+        if (WI.sharedApp.debuggableType !== WI.DebuggableType.JavaScript && WI.sharedApp.debuggableType !== WI.DebuggableType.ITML) {
             if (script.target !== WI.pageTarget) {
                 if (script.isMainResource()) {
                     this._addWorkerTargetWithMainResource(script.target);
@@ -2122,7 +2123,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             });
         }
 
-        if (InspectorBackend.hasDomain("CSS")) {
+        if (WI.CSSManager.supportsInspectorStyleSheet()) {
             let addInspectorStyleSheetItem = (menu, frame) => {
                 menu.appendItem(WI.UIString("Inspector Style Sheet"), () => {
                     if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {

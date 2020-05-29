@@ -1,1 +1,1 @@
-ERROR: Malformed domain specification: targetTypes for event PageOnly is an unsupported string. Was: "[u'pagee']", Allowed values: service-worker, javascript, worker, page, web-page
+ERROR: Malformed domain specification: targetTypes for event PageOnly is an unsupported string. Was: "[u'pagee']", Allowed values: service-worker, itml, javascript, worker, page, web-page

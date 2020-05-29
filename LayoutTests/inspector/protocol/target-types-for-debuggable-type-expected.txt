@@ -1,0 +1,9 @@
+Tests to validate the relationship between debuggable types and target types.
+
+
+== Running test suite: WI.DebuggableType.supportedTargetTypes
+-- Running test case: WI.DebuggableType.supportedTargetTypes.WebPage
+PASS: Should have a 'DOM' domain.
+PASS: Should have a 'DOM.requestNode' command.
+PASS: Should not have a 'DOM.getDataBindingsForNode' command.
+

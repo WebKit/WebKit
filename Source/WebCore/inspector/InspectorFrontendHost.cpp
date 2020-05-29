@@ -336,6 +336,8 @@ String InspectorFrontendHost::backendCommandsURL() const
 static String debuggableTypeToString(DebuggableType debuggableType)
 {
     switch (debuggableType) {
+    case DebuggableType::ITML:
+        return "itml"_s;
     case DebuggableType::JavaScript:
         return "javascript"_s;
     case DebuggableType::Page:

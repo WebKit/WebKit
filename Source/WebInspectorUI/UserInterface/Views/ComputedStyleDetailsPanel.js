@@ -53,6 +53,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this._computedStyleSection.styleTraces = this._computePropertyTraces(this.nodeStyles.uniqueOrderedStyles);
         this._computedStyleSection.style = this.nodeStyles.computedStyle;
+        this._propertiesSection.element.classList.toggle("hidden", !this._computedStyleSection.propertiesToRender.length);
 
         this._variablesTextEditor.style = this.nodeStyles.computedStyle;
         this._variablesSection.element.classList.toggle("hidden", !this._variablesTextEditor.propertiesToRender.length);
