@@ -2858,12 +2858,20 @@ static void runInteractive(GlobalObject* globalObject)
         NakedPtr<Exception> evaluationException;
         JSValue returnValue = evaluate(globalObject, jscSource(line, sourceOrigin, sourceOrigin.string()), JSValue(), evaluationException);
 #endif
-        CString result;
+        Expected<CString, UTF8ConversionError> utf8;
         if (evaluationException) {
             fputs("Exception: ", stdout);
-            result = evaluationException->value().toWTFString(globalObject).utf8();
+            utf8 = evaluationException->value().toWTFString(globalObject).tryGetUtf8();
         } else
-            result = returnValue.toWTFString(globalObject).utf8();
+            utf8 = returnValue.toWTFString(globalObject).tryGetUtf8();
+
+        CString result;
+        if (utf8)
+            result = utf8.value();
+        else if (utf8.error() == UTF8ConversionError::OutOfMemory)
+            result = "OutOfMemory while processing string";
+        else
+            result = "Error while processing string";
         fwrite(result.data(), sizeof(char), result.length(), stdout);
         putchar('\n');
 
