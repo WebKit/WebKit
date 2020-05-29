@@ -1,3 +1,23 @@
+2020-05-29  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak][GStreamer] all commands, except webkit-build, fails if GST_BUILD_PATH is set
+        https://bugs.webkit.org/show_bug.cgi?id=212408
+
+        Reviewed by Žan Doberšek.
+
+        Don't run gst-env.py in the sandbox because that can lead to command-line options clashing
+        with build-webkit and other WebKit scripts. So instead we now parse the output of the
+        environment variables gst-build requires and we forward those to the sandbox.
+
+        * flatpak/flatpakutils.py:
+        (run_sanitized):
+        (check_flatpak):
+        (FlatpakObject.flatpak):
+        (WebkitFlatpak.execute_command):
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.run_in_sandbox):
+        (flatpak_run_sanitized): Deleted.
+
 2020-05-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Add watchlist comment for patches touching imported WPT tests.

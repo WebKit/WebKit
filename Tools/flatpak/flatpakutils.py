@@ -121,7 +121,7 @@ class Console:
         cls.colored_message_if_supported(Colors.WARNING, str_format, *args)
 
 
-def flatpak_run_sanitized(command, gather_output=False):
+def run_sanitized(command, gather_output=False):
     """ Runs a command in a santized environment and optionally returns decoded output or raises
         subprocess.CalledProcessError
     """
@@ -146,7 +146,7 @@ def check_flatpak(verbose=True):
 
     for app, required_version in FLATPAK_REQ:
         try:
-            output = flatpak_run_sanitized([app, "--version"], gather_output=True)
+            output = run_sanitized([app, "--version"], gather_output=True)
         except (subprocess.CalledProcessError, OSError):
             if verbose:
                 Console.error_message("You need to install %s >= %s"
@@ -184,7 +184,7 @@ class FlatpakObject:
             Console.message(comment)
 
         command = ["flatpak", command]
-        help_output = flatpak_run_sanitized(command + ["--help"], gather_output=True)
+        help_output = run_sanitized(command + ["--help"], gather_output=True)
         if self.user and "--user" in help_output:
             command.append("--user")
         if "--assumeyes" in help_output:
@@ -195,7 +195,7 @@ class FlatpakObject:
         command.extend(args)
 
         _log.debug("Executing %s" % ' '.join(command))
-        output = flatpak_run_sanitized(command, gather_output=gather_output or show_output)
+        output = run_sanitized(command, gather_output=gather_output or show_output)
         if show_output:
             print(output.encode('utf-8'))
 
@@ -488,7 +488,7 @@ class WebkitFlatpak:
         self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
     def execute_command(self, args, stdout=None, stderr=None, env=None):
-        _log.debug('Running in sandbox: %s\n' % ' '.join(args))
+        _log.debug('Running: %s\n' % ' '.join(args))
         result = 0
         try:
             result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
@@ -579,7 +579,7 @@ class WebkitFlatpak:
         if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
             raise RuntimeError('GST_BUILD_PATH set to %s but it doesn\'t seem to be a valid `gst-build` checkout.' % gst_dir)
 
-        gst_builddir = os.path.join(self.sandbox_source_root, "WebKitBuild", 'gst-build')
+        gst_builddir = os.path.join(self.source_root, "WebKitBuild", 'gst-build')
         if not os.path.exists(os.path.join(self.build_root, 'gst-build', 'build.ninja')):
             if not building:
                 raise RuntimeError('Trying to enter gst-build env from %s but it is not built, make sure to rebuild webkit.' % gst_dir)
@@ -590,14 +590,23 @@ class WebkitFlatpak:
             Console.message("Running %s ", ' '.join(args))
             self.run_in_sandbox(*args, building_gst=True)
 
-        if not building:
-            return [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir]
+        if building:
+            Console.message("Building `gst-build` %s ", gst_dir)
+            if self.run_in_sandbox('ninja', '-C', gst_builddir, building_gst=True) != 0:
+                raise RuntimeError('Error while building gst-build.')
 
-        Console.message("Building `gst-build` %s ", gst_dir)
-        if self.run_in_sandbox('ninja', '-C', gst_builddir, building_gst=True) != 0:
-            raise RuntimeError('Error while building gst-build.')
-
-        return [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir]
+        command = [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir, "--only-environment"]
+        gst_env = run_sanitized(command, gather_output=True)
+        whitelist = ("LD_LIBRARY_PATH", "PATH", "PKG_CONFIG_PATH")
+        env = []
+        for line in [line for line in gst_env.splitlines() if not line.startswith("export")]:
+            tokens = line.split("=")
+            var_name, contents = tokens[0], "=".join(tokens[1:])
+            if not var_name.startswith("GST_") and var_name not in whitelist:
+                continue
+            new_contents = ':'.join([self.host_path_to_sandbox_path(p) for p in contents.split(":")])
+            env.append("--env=%s=%s" % (var_name, new_contents))
+        return env
 
     def is_branch_build(self):
         try:
@@ -649,7 +658,7 @@ class WebkitFlatpak:
 
             if args[0] == "bash":
                 args.extend(['--noprofile', '--norc', '-i'])
-                sandbox_environment["PS1"] = "[📦🌐🐱 $FLATPAK_ID \\W]\\$ "
+                sandbox_environment["PS1"] = "[📦🌐🐱 $FLATPAK_ID \\W]\\$ ".decode("utf-8")
             building = os.path.basename(args[0]).startswith("build")
         else:
             building = False
@@ -782,11 +791,10 @@ class WebkitFlatpak:
         for envvar, value in sandbox_environment.items():
             flatpak_command.append("--env=%s=%s" % (envvar, value))
 
-        gst_env = []
         if not kwargs.get('building_gst'):
-            gst_env = self.setup_gstbuild(building)
+            extra_flatpak_args.extend(self.setup_gstbuild(building))
 
-        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + gst_env + args[1:]
+        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 
         flatpak_env = os.environ
         flatpak_env.update({
