@@ -1,3 +1,14 @@
+2020-05-29  Darin Adler  <darin@apple.com>
+
+        Make generate-unified-sources.sh not depend on features being listed in FEATURE_DEFINES environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=212420
+
+        Reviewed by Andy Estes.
+
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        (WebCoreGenerator._get_generate_derived_sources_script): Removed the code
+        to generate UnifiedSources-output.xcfilelist.
+
 2020-05-29  Keith Rollin  <krollin@apple.com>
 
         Revert switch to XCBuild

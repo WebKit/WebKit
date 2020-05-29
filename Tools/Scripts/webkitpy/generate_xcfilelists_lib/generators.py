@@ -676,10 +676,6 @@ class WebCoreGenerator(BaseGenerator):
     def _get_generate_derived_sources_script(self):
         return os.path.join(self._get_project_dir(), "Scripts", "generate-derived-sources.sh")
 
-    @util.LogEntryExit
-    def _get_generate_unified_sources_script(self):
-        return os.path.join(self._get_project_dir(), "Scripts", "generate-unified-sources.sh")
-
 
 class WebKitGenerator(BaseGenerator):
     VALID_PLATFORMS = ("macosx", "iphoneos", "iphonesimulator", "watchos", "watchsimulator", "appletvos", "appletvsimulator")

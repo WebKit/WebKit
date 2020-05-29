@@ -1220,6 +1220,14 @@ endif
 
 vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
 
+.PHONY : all
+
+all : UnifiedSourceBundlesTimeStamp.txt
+
+UnifiedSourceBundlesTimeStamp.txt : $(WebCore)/Scripts/generate-unified-sources.sh Sources.txt SourcesCocoa.txt $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	$< --feature-flags "$(FEATURE_AND_PLATFORM_DEFINES)"
+	echo "time stamp" > $@
+
 ADDITIONAL_EVENT_NAMES =
 ADDITIONAL_EVENT_TARGET_FACTORY =
 
@@ -1241,8 +1249,6 @@ JS_BINDING_IDLS += \
     $(WebCore)/dom/TouchEvent.idl \
     $(WebCore)/dom/TouchList.idl
 endif
-
-.PHONY : all
 
 JS_DOM_CLASSES=$(basename $(notdir $(JS_BINDING_IDLS)))
 
