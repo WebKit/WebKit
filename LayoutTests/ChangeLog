@@ -1,3 +1,14 @@
+2020-05-29  Jer Noble  <jer.noble@apple.com>
+
+        [EME] navigator.requestMediaKeySystemAccess() should reject PUR sessionTypes in private browsing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=212540
+        <rdar://problem/61125757>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/encrypted-media/fps-ephemeral-requestMediaKeySystemAccess-expected.txt: Added.
+        * platform/mac/media/encrypted-media/fps-ephemeral-requestMediaKeySystemAccess.html: Added.
+
 2020-05-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add test for protocol "condition" logic

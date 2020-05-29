@@ -1,3 +1,20 @@
+2020-05-29  Jer Noble  <jer.noble@apple.com>
+
+        [EME] navigator.requestMediaKeySystemAccess() should reject PUR sessionTypes in private browsing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=212540
+        <rdar://problem/61125757>
+
+        Reviewed by Eric Carlson.
+
+        A MediaKeySystemAccess with a PUR session type will never be able to create media keys when created in
+        private browsing mode. Allow clients to fail over to non-PUR session by rejecting the promise returned by
+        requestMediaKeySystemAccess() when in private browsing mode.
+
+        Test: platform/mac/media/encrypted-media/fps-ephemeral-requestMediaKeySystemAccess.html
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedConfiguration):
+
 2020-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unable to paste images when composing mail at yahoo.com
