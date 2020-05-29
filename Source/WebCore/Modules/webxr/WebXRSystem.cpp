@@ -439,11 +439,11 @@ void WebXRSystem::registerSimulatedXRDeviceForTesting(PlatformXR::Device& device
     if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
         return;
     m_testingDevices++;
-    if (device.supports(PlatformXR::SessionMode::ImmersiveVr) || device.supports(PlatformXR::SessionMode::ImmersiveAr)) {
+    if (device.supports(XRSessionMode::ImmersiveVr) || device.supports(XRSessionMode::ImmersiveAr)) {
         m_immersiveDevices.add(device);
         m_activeImmersiveDevice = makeWeakPtr(device);
     }
-    if (device.supports(PlatformXR::SessionMode::Inline))
+    if (device.supports(XRSessionMode::Inline))
         m_inlineXRDevice = makeWeakPtr(device);
 }
 
@@ -451,9 +451,9 @@ void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device& devi
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
         return;
-    ASSERT(m_immersiveDevices.contains(device));
     ASSERT(m_testingDevices);
-    m_immersiveDevices.remove(device);
+    bool removed = m_immersiveDevices.remove(device);
+    ASSERT_UNUSED(removed, removed || m_inlineXRDevice == &device);
     if (m_activeImmersiveDevice == &device)
         m_activeImmersiveDevice = nullptr;
     if (m_inlineXRDevice == &device)

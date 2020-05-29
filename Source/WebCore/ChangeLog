@@ -1,3 +1,25 @@
+2020-05-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] WebXRSystem::unregisterSimulatedXRDeviceForTesting() ASSERTs in m_immersiveDevices.contains(device)
+        https://bugs.webkit.org/show_bug.cgi?id=212516
+
+        Reviewed by Žan Doberšek.
+
+        The ASSERT that was failing was wrong. It was assuming that every simulated device should be part of the list
+        of immersive devices. That's wrong, as devices only supporting inline sessions are not in that list.
+
+        Apart from that, fake devices were not removed from the list of available devices in WebXRTest after
+        disconnecting them all. That could potentially cause flakiness in the tests.
+
+        No new test required as the current tests were properly detecting the issue.
+
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::registerSimulatedXRDeviceForTesting): Use XRSessionMode directly.
+        (WebCore::WebXRSystem::unregisterSimulatedXRDeviceForTesting): Fixed the ASSERT. A simulated device
+        might not be in the list of immersive devices if only supports inline sessions.
+        * testing/WebXRTest.cpp:
+        (WebCore::WebXRTest::disconnectAllDevices): Clear the list of devices after disconnecting.
+
 2020-05-29  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerPrivateMediaStreamAVFObjC should enqueue samples in a background thread

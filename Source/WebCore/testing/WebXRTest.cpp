@@ -111,6 +111,7 @@ void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&& promise)
 {
     for (auto& device : m_devices)
         m_context->unregisterSimulatedXRDeviceForTesting(device->simulatedXRDevice());
+    m_devices.clear();
     promise.resolve();
 }
 
