@@ -1,3 +1,13 @@
+2020-05-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add test for protocol "condition" logic
+        https://bugs.webkit.org/show_bug.cgi?id=212497
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/condition.html: Added.
+        * inspector/protocol/condition-expected.txt: Added.
+
 2020-05-29  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ iOS ] http/wpt/service-workers/service-worker-different-process.https.html & http/wpt/service-workers/service-worker-crashing-while-fetching.https.html are flaky failures

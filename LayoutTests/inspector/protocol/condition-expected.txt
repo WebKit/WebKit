@@ -1,0 +1,11 @@
+Tests to validate the condition property of protocol domains/events/commands.
+
+
+== Running test suite: Protocol.Condition
+-- Running test case: Protocol.Condition.Platform
+PASS: Should have a 'showRulers' parameter for the 'DOM.setInspectModeEnabled' command if not iOS.
+
+-- Running test case: Protocol.Condition.Enable
+PASS: Should not have a 'DOM.getDataBindingsForNode' command.
+PASS: Should have the 'Canvas.requestShaderSource' command if WebGL is enabled.
+
