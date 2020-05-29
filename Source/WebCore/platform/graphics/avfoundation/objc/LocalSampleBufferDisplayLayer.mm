@@ -105,24 +105,33 @@ using namespace WebCore;
     UNUSED_PARAM(context);
     UNUSED_PARAM(keyPath);
     UNUSED_PARAM(change);
+    ASSERT(_parent);
 
-    if (![object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()])
+    if (!_parent)
         return;
 
-    if ([keyPath isEqualToString:@"status"]) {
-        callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
-            if (protectedSelf->_parent)
+    if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
+        ASSERT(object == _parent->displayLayer());
+
+        if ([keyPath isEqualToString:@"status"]) {
+            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
+                if (!protectedSelf->_parent)
+                    return;
+
                 protectedSelf->_parent->layerStatusDidChange();
-        });
-        return;
-    }
+            });
+            return;
+        }
 
-    if ([keyPath isEqualToString:@"error"]) {
-        callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
-            if (protectedSelf->_parent)
+        if ([keyPath isEqualToString:@"error"]) {
+            callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
+                if (!protectedSelf->_parent)
+                    return;
+
                 protectedSelf->_parent->layerErrorDidChange();
-        });
-        return;
+            });
+            return;
+        }
     }
 }
 @end
@@ -151,7 +160,6 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
     : SampleBufferDisplayLayer(client)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_sampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer))
-    , m_processingQueue(WorkQueue::create("LocalSampleBufferDisplayLayer queue"))
 {
 }
 
@@ -183,8 +191,6 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 {
-    m_processingQueue = nullptr;
-
     [m_statusChangeListener stop];
 
     m_pendingVideoSampleQueue.clear();
@@ -275,35 +281,23 @@ void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect boun
 
 void LocalSampleBufferDisplayLayer::flush()
 {
-    m_processingQueue->dispatch([this] {
-        [m_sampleBufferDisplayLayer flush];
-    });
+    [m_sampleBufferDisplayLayer flush];
 }
 
 void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
 {
-    m_processingQueue->dispatch([this] {
-        [m_sampleBufferDisplayLayer flushAndRemoveImage];
-    });
+    [m_sampleBufferDisplayLayer flushAndRemoveImage];
 }
 
 static const double rendererLatency = 0.02;
 
 void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
-    m_processingQueue->dispatch([this, sample = makeRef(sample)] {
-        if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
-            addSampleToPendingQueue(sample);
-            requestNotificationWhenReadyForVideoData();
-            return;
-        }
-        enqueueSampleBuffer(sample);
-    });
-}
-
-void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
-{
-    ASSERT(!isMainThread());
+    if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
+        addSampleToPendingQueue(sample);
+        requestNotificationWhenReadyForVideoData();
+        return;
+    }
 
     auto sampleToEnqueue = sample.platformSample().sample.cmSampleBuffer;
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
@@ -321,8 +315,6 @@ void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
 
 void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
 {
-    ASSERT(!isMainThread());
-
     if (m_pendingVideoSampleQueue.isEmpty())
         return;
 
@@ -342,23 +334,19 @@ void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
 
 void LocalSampleBufferDisplayLayer::addSampleToPendingQueue(MediaSample& sample)
 {
-    ASSERT(!isMainThread());
-
     removeOldSamplesFromPendingQueue();
     m_pendingVideoSampleQueue.append(sample);
 }
 
 void LocalSampleBufferDisplayLayer::clearEnqueuedSamples()
 {
-    m_processingQueue->dispatch([this] {
-        m_pendingVideoSampleQueue.clear();
-    });
+    m_pendingVideoSampleQueue.clear();
 }
 
 void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
 {
     auto weakThis = makeWeakPtr(*this);
-    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:m_processingQueue->dispatchQueue() usingBlock:^{
+    [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         if (!weakThis)
             return;
 
@@ -370,7 +358,8 @@ void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
                 return;
             }
 
-            enqueueSampleBuffer(m_pendingVideoSampleQueue.takeFirst().get());
+            auto sample = m_pendingVideoSampleQueue.takeFirst();
+            enqueueSample(sample.get());
         }
     }];
 }

@@ -137,7 +137,6 @@ private:
 
     void flushRenderers();
 
-    void processNewVideoSample(MediaSample&, bool hasChangedOrientation);
     void enqueueVideoSample(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
 
@@ -213,6 +212,8 @@ private:
 
     AudioSourceProvider* audioSourceProvider() final;
 
+    CGAffineTransform videoTransformationMatrix(MediaSample&, bool forceUpdate = false);
+
     void applicationDidBecomeActive() final;
 
     bool hideRootLayer() const { return (!activeVideoTrack() || m_waitingForFirstImage) && m_displayMode != PaintItBlack; }
@@ -245,17 +246,9 @@ private:
     float m_volume { 1 };
     DisplayMode m_displayMode { None };
     PlaybackState m_playbackState { PlaybackState::None };
-    Optional<CGAffineTransform> m_videoTransform;
-
-    // Used on both main thread and sample thread.
-    std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    Lock m_sampleBufferDisplayLayerLock;
-    bool m_shouldUpdateDisplayLayer { true };
-    // Written on main thread, read on sample thread.
-    bool m_canEnqueueDisplayLayer { false };
-    // Used on sample thread.
     MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
-    bool m_videoMirrored { false };
+    CGAffineTransform m_videoTransform;
+    std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
 
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
@@ -266,11 +259,13 @@ private:
 
     RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
+    bool m_videoMirrored { false };
     bool m_playing { false };
     bool m_muted { false };
     bool m_ended { false };
     bool m_hasEverEnqueuedVideoFrame { false };
     bool m_pendingSelectedTrackCheck { false };
+    bool m_transformIsValid { false };
     bool m_visible { false };
     bool m_haveSeenMetadata { false };
     bool m_waitingForFirstImage { false };
