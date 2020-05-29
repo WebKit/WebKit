@@ -350,6 +350,13 @@ webkit_web_view_is_loading                           (WebKitWebView             
 WEBKIT_API gboolean
 webkit_web_view_is_playing_audio                     (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_set_is_muted                         (WebKitWebView             *web_view,
+                                                      gboolean                   muted);
+
+WEBKIT_API gboolean
+webkit_web_view_get_is_muted                         (WebKitWebView             *web_view);
+
 WEBKIT_API guint64
 webkit_web_view_get_page_id                          (WebKitWebView             *web_view);
 

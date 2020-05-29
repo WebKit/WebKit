@@ -57,6 +57,7 @@ struct _BrowserTab {
     GtkWidget *titleBox;
     GtkWidget *titleLabel;
     GtkWidget *titleSpinner;
+    GtkWidget *titleAudioButton;
     GtkWidget *titleCloseButton;
 };
 
@@ -365,6 +366,23 @@ static gboolean inspectorClosed(WebKitWebInspector *inspector, BrowserTab *tab)
     return FALSE;
 }
 
+static void audioClicked(GtkButton *button, gpointer userData)
+{
+    BrowserTab *tab = BROWSER_TAB(userData);
+    gboolean muted = webkit_web_view_get_is_muted(tab->webView);
+
+    webkit_web_view_set_is_muted(tab->webView, !muted);
+}
+
+static void audioMutedChanged(WebKitWebView *webView, GParamSpec *pspec, gpointer userData)
+{
+    BrowserTab *tab = BROWSER_TAB(userData);
+    gboolean muted = webkit_web_view_get_is_muted(tab->webView);
+    GtkWidget *image = gtk_image_new_from_icon_name(muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic", GTK_ICON_SIZE_MENU);
+
+    gtk_button_set_image(GTK_BUTTON(tab->titleAudioButton), image);
+}
+
 static void browserTabSetProperty(GObject *object, guint propId, const GValue *value, GParamSpec *pspec)
 {
     BrowserTab *tab = BROWSER_TAB(object);
@@ -467,12 +485,23 @@ static void browserTabConstructed(GObject *gObject)
     gtk_box_pack_start(GTK_BOX(tab->titleBox), hbox, TRUE, TRUE, 0);
     gtk_widget_show(hbox);
 
+    tab->titleAudioButton = gtk_button_new();
+    g_signal_connect(tab->titleAudioButton, "clicked", G_CALLBACK(audioClicked), tab);
+    gtk_button_set_relief(GTK_BUTTON(tab->titleAudioButton), GTK_RELIEF_NONE);
+    gtk_widget_set_focus_on_click(tab->titleAudioButton, FALSE);
+
+    GtkWidget *image = gtk_image_new_from_icon_name("audio-volume-high-symbolic", GTK_ICON_SIZE_MENU);
+    gtk_button_set_image(GTK_BUTTON(tab->titleAudioButton), image);
+    gtk_widget_show(image);
+
+    gtk_box_pack_start(GTK_BOX(tab->titleBox), tab->titleAudioButton, FALSE, FALSE, 0);
+
     tab->titleCloseButton = gtk_button_new();
     g_signal_connect_swapped(tab->titleCloseButton, "clicked", G_CALLBACK(gtk_widget_destroy), tab);
     gtk_button_set_relief(GTK_BUTTON(tab->titleCloseButton), GTK_RELIEF_NONE);
     gtk_widget_set_focus_on_click(tab->titleCloseButton, FALSE);
 
-    GtkWidget *image = gtk_image_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_MENU);
+    image = gtk_image_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_MENU);
     gtk_container_add(GTK_CONTAINER(tab->titleCloseButton), image);
     gtk_widget_show(image);
 
@@ -486,6 +515,9 @@ static void browserTabConstructed(GObject *gObject)
     g_signal_connect(tab->webView, "load-failed-with-tls-errors", G_CALLBACK(loadFailedWithTLSerrors), tab);
     g_signal_connect(tab->webView, "permission-request", G_CALLBACK(decidePermissionRequest), tab);
     g_signal_connect(tab->webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), tab);
+
+    g_object_bind_property(tab->webView, "is-playing-audio", tab->titleAudioButton, "visible", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
+    g_signal_connect(tab->webView, "notify::is-muted", G_CALLBACK(audioMutedChanged), tab);
 #endif
 
     WebKitWebInspector *inspector = webkit_web_view_get_inspector(tab->webView);

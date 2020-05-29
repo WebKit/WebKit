@@ -1308,6 +1308,7 @@ public:
 
     void setMediaVolume(float);
     void setMuted(WebCore::MediaProducer::MutedStateFlags);
+    bool isAudioMuted() const { return m_mutedState & WebCore::MediaProducer::AudioIsMuted; };
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
     void setMediaCaptureEnabled(bool);

@@ -1,3 +1,18 @@
+2020-05-29  Jan-Michael Brummer  <jan.brummer@tabos.org>
+
+        [GTK][WPE] API for WebView audio mute support
+        https://bugs.webkit.org/show_bug.cgi?id=176119
+
+        Reviewed by Michael Catanzaro.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (audioClicked):
+        (audioMutedChanged):
+        (browserTabConstructed):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewIsAudioMuted):
+        (beforeAll):
+
 2020-05-29  Darin Adler  <darin@apple.com>
 
         Remove things from FeatureDefines.xcconfig that are covered by PlatformEnableCocoa.h

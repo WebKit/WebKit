@@ -199,7 +199,8 @@ enum {
     PROP_IS_CONTROLLED_BY_AUTOMATION,
     PROP_AUTOMATION_PRESENTATION_TYPE,
     PROP_EDITABLE,
-    PROP_PAGE_ID
+    PROP_PAGE_ID,
+    PROP_IS_MUTED
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -834,6 +835,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_EDITABLE:
         webkit_web_view_set_editable(webView, g_value_get_boolean(value));
         break;
+    case PROP_IS_MUTED:
+        webkit_web_view_set_is_muted(webView, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -895,6 +899,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_PAGE_ID:
         g_value_set_uint64(value, webkit_web_view_get_page_id(webView));
+        break;
+    case PROP_IS_MUTED:
+        g_value_set_boolean(value, webkit_web_view_get_is_muted(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1264,6 +1271,24 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("The page identifier."),
             0, G_MAXUINT64, 0,
             WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView:is-muted:
+     *
+     * Whether the #WebKitWebView audio is muted. When %TRUE, audio is silenced.
+     * It may still be playing, i.e. #WebKitWebView:is-playing-audio may be %TRUE.
+     *
+     * Since: 2.30
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_IS_MUTED,
+        g_param_spec_boolean(
+            "is-muted",
+            "Is Muted",
+            _("Whether the view audio is muted"),
+            FALSE,
+            WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitWebView::load-changed:
@@ -3164,6 +3189,43 @@ gboolean webkit_web_view_is_playing_audio(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return getPage(webView).isPlayingAudio();
+}
+
+/**
+ * webkit_web_view_set_is_muted:
+ * @web_view: a #WebKitWebView
+ * @muted: mute flag
+ *
+ * Sets the mute state of @web_view.
+ *
+ * Since: 2.30
+ */
+void webkit_web_view_set_is_muted(WebKitWebView* webView, gboolean muted)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (webkit_web_view_get_is_muted (webView) == muted)
+        return;
+
+    getPage(webView).setMuted(muted ? WebCore::MediaProducer::AudioIsMuted : WebCore::MediaProducer::NoneMuted);
+    g_object_notify(G_OBJECT(webView), "is-muted");
+}
+
+/**
+ * webkit_web_view_get_is_muted:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the mute state of @web_view.
+ *
+ * Returns: %TRUE if @web_view audio is muted or %FALSE is audio is not muted.
+ *
+ * Since: 2.30
+ */
+gboolean webkit_web_view_get_is_muted(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return getPage(webView).isAudioMuted();
 }
 
 /**
