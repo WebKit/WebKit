@@ -1744,3 +1744,5 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 webkit.org/b/211928 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Pass Timeout ]
 
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
+
+webkit.org/b/186045 [ Release ] imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ Pass Failure ]
