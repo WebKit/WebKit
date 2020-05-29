@@ -40,7 +40,6 @@ WebXRSpace::WebXRSpace(Document& document, Ref<WebXRSession>&& session)
     : ContextDestructionObserver(&document)
     , m_session(WTFMove(session))
 {
-    ASSERT(context);
 }
 
 WebXRSpace::~WebXRSpace() = default;
