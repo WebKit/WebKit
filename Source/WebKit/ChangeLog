@@ -1,3 +1,25 @@
+2020-05-29  Jer Noble  <jer.noble@apple.com>
+
+        [Mac,WK2] Fullscreen animation missing a few frames at beginning
+        https://bugs.webkit.org/show_bug.cgi?id=212156
+        <rdar://problem/54799415>
+
+        Reviewed by Eric Carlson.
+
+        When starting the enter fullscreen animation, ensure that the fullscreen window is ordered front, and on top
+        of the content, as well as having all the animations configured so that their starting state is in place before
+        calling -[NSWindow enterFullscreenMode:]. Move all the window creation code into
+        -beganEnterFullScreenWithInitialFrame:finalFrame: from _startEnterFullScreenAnimationWithDuration:. Re-use the
+        existing zoomAnimation() and maskAnimation() utility methods, but give the animations a very long duration
+        (since there is no explicit way to start and stop a CAAnimation). This initial animation will be replaced with
+        the final one inside -_startEnterFullScreenAnimationWithDuration:. Separately, explictly disable implicit
+        animations of the fullscreen window during -orderIn: and -orderOut:.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:impl:]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+
 2020-05-29  Jan-Michael Brummer  <jan.brummer@tabos.org>
 
         [GTK][WPE] API for WebView audio mute support
