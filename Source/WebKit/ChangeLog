@@ -1,3 +1,19 @@
+2020-05-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Avoid unnecessary sync IPC messages when togging the callout bar for selections.
+        https://bugs.webkit.org/show_bug.cgi?id=212508
+
+        The loupe gesture only needs to be activated and evaluated if the tap is inside
+        an existing selectionView. We can do that test in the UIProcess without resorting to a sync IPC message.
+        Doing that evaluation locally will eliminate unnecessary hangs in the UIProcess.
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _pointIsInsideSelectionRect:outBoundingRect:]):
+        (-[WKContentView _shouldToggleSelectionCommandsAfterTapAt:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
 2020-05-28  Tim Horton  <timothy_horton@apple.com>
 
         Fix the macOS build
