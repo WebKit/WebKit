@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2017 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,28 +24,6 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-PERL = perl
-
-FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | $(PERL) -e 'print "-F " . join(" -F ", split(" ", <>));')
-HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | $(PERL) -e 'print "-I" . join(" -I", split(" ", <>));')
-FEATURE_DEFINE_FLAGS = $(shell echo $(FEATURE_DEFINES) | $(PERL) -e 'print "-D" . join(" -D", split(" ", <>));')
-
-ifneq ($(SDKROOT),)
-    SDK_FLAGS=-isysroot $(SDKROOT)
-endif
-
-ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
-    WK_CURRENT_ARCH=$(word 1, $(ARCHS))
-    TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
-endif
-
-FEATURE_AND_PLATFORM_DEFINES = $(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(FEATURE_DEFINE_FLAGS) -include "wtf/Platform.h" /dev/null | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
-
-# FIXME: Should generate the list of everything included by Platform.h as a side effect of the above command.
-FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = Configurations/FeatureDefines.xcconfig DerivedSources.make
-
-# --------
 
 VPATH = DOM $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebCorePrivateHeaders
 
@@ -84,7 +62,7 @@ HEADERS += \
 #
 endif
 
-ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS, $(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
+ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS, $(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 HEADERS += \
     $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
 endif
@@ -94,6 +72,9 @@ migrate_headers : $(HEADERS)
 
 WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/"
 WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@; touch $(PRIVATE_HEADERS_DIR)
+
+FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
+HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
 
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)

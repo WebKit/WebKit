@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2018 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -25,31 +25,6 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-PYTHON = python
-PERL = perl
-RUBY = ruby
-DELETE = rm -f
-
-FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
-HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
-FEATURE_DEFINE_FLAGS = $(shell echo $(FEATURE_DEFINES) | perl -e 'print "-D" . join(" -D", split(" ", <>));')
-
-ifneq ($(SDKROOT),)
-    SDK_FLAGS=-isysroot $(SDKROOT)
-endif
-
-ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
-    WK_CURRENT_ARCH=$(word 1, $(ARCHS))
-    TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
-endif
-
-FEATURE_AND_PLATFORM_DEFINES = $(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(FEATURE_DEFINE_FLAGS) -include "wtf/Platform.h" /dev/null | perl -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
-
-# FIXME: Should generate the list of everything included by Platform.h as a side effect of the above command.
-FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = Configurations/FeatureDefines.xcconfig DerivedSources.make
-
-# --------
 
 VPATH = \
     $(WebCore) \
@@ -1199,25 +1174,101 @@ JS_BINDING_IDLS = \
     InternalSettingsGenerated.idl \
 #
 
+PYTHON = python
+PERL = perl
+RUBY = ruby
+
+ifeq ($(OS),Windows_NT)
+    DELETE = cmd //C del
+else
+    DELETE = rm -f
+endif
 # --------
 
-ADDITIONAL_BINDING_IDLS =
+ifeq ($(OS),MACOS)
 
-ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
+FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
+HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
+
+ifneq ($(SDKROOT),)
+    SDK_FLAGS=-isysroot $(SDKROOT)
+endif
+
+ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
+    WK_CURRENT_ARCH=$(word 1, $(ARCHS))
+    TARGET_TRIPLE_FLAGS=-target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS_FAMILY ' | cut -d' ' -f3), 1)
+    WTF_PLATFORM_IOS_FAMILY = 1
+else
+    WTF_PLATFORM_IOS_FAMILY = 0
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_MAC ' | cut -d' ' -f3), 1)
+    WTF_PLATFORM_MAC = 1
+else
+    WTF_PLATFORM_MAC = 0
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
+    USE_APPLE_INTERNAL_SDK = 1
+else
+    USE_APPLE_INTERNAL_SDK = 0
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep HAVE_OS_DARK_MODE_SUPPORT | cut -d' ' -f3), 1)
+    HAVE_OS_DARK_MODE_SUPPORT = 1
+else
+    HAVE_OS_DARK_MODE_SUPPORT = 0
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
+    ENABLE_ORIENTATION_EVENTS = 1
+endif
+
+ifeq ($(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_MEDIA_SOURCE | cut -d' ' -f3), 1)
+	ENABLE_MEDIA_SOURCE = 1
+endif
+
+ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_IOS_FAMILY
+else ifeq ($(WTF_PLATFORM_MAC), 1)
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES) WTF_PLATFORM_MAC
+else
+FEATURE_AND_PLATFORM_DEFINES = $(FEATURE_DEFINES)
+endif
+
+ifeq ($(HAVE_OS_DARK_MODE_SUPPORT), 1)
+FEATURE_AND_PLATFORM_DEFINES += HAVE_OS_DARK_MODE_SUPPORT
+endif
+
+ifeq ($(PLATFORM_FEATURE_DEFINES),)
+ifeq ($(OS), Windows_NT)
+PLATFORM_FEATURE_DEFINES = $(WEBKIT_LIBRARIES)/tools/vsprops/FeatureDefines.props
+else
+PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
+endif
+endif
+
+ADDITIONAL_BINDING_IDLS =
+ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_MAC_GESTURE_EVENTS)
 ADDITIONAL_BINDING_IDLS += GestureEvent.idl
 endif
 
-ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
+ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
+ADDITIONAL_BINDING_IDLS += GestureEvent.idl
+endif
+
+ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
+ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 ADDITIONAL_BINDING_IDLS += \
     DocumentTouch.idl \
     Touch.idl \
     TouchEvent.idl \
     TouchList.idl
 endif
-
-ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_MAC_GESTURE_EVENTS)
-ADDITIONAL_BINDING_IDLS += GestureEvent.idl
-endif
+endif # IOS
 
 vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
 
@@ -1235,7 +1286,9 @@ vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
 $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 	cp $< .
 
-ifneq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
+endif # MACOS
+
+ifneq ($(WTF_PLATFORM_IOS_FAMILY), 1)
 JS_BINDING_IDLS += \
     $(WebCore)/dom/DocumentTouch.idl \
     $(WebCore)/dom/Touch.idl \
@@ -1303,6 +1356,28 @@ all : \
 
 # --------
 
+ADDITIONAL_IDL_DEFINES :=
+
+ifndef ENABLE_ORIENTATION_EVENTS
+    ENABLE_ORIENTATION_EVENTS = 0
+endif
+
+ifndef ENABLE_MEDIA_SOURCE
+	ENABLE_MEDIA_SOURCE = 0
+endif
+
+ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) ENABLE_ORIENTATION_EVENTS
+endif
+
+ifeq ($(USE_APPLE_INTERNAL_SDK), 1)
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) USE_APPLE_INTERNAL_SDK
+endif
+
+ifeq ($(ENABLE_MEDIA_SOURCE), 1)
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) ENABLE_MEDIA_SOURCE
+endif
+
 # CSS property names and value keywords
 
 WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSProperties.json
@@ -1319,7 +1394,7 @@ CSS_PROPERTY_NAME_FILES = \
 CSS_PROPERTY_NAME_FILES_PATTERNS = $(subst .,%,$(CSS_PROPERTY_NAME_FILES))
 
 all : $(CSS_PROPERTY_NAME_FILES)
-$(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSProperties.json
 	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
 
@@ -1330,7 +1405,7 @@ CSS_VALUE_KEYWORD_FILES = \
 CSS_VALUE_KEYWORD_FILES_PATTERNS = $(subst .,%,$(CSS_VALUE_KEYWORD_FILES))
 
 all : $(CSS_VALUE_KEYWORD_FILES)
-$(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	$(PERL) "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
 
@@ -1338,11 +1413,11 @@ $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalu
 
 # CSS Selector pseudo type name to value map.
 
-SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in gperf "$(FEATURE_AND_PLATFORM_DEFINES)"
+SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in gperf "$(FEATURE_DEFINES)"
 
-SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementTypeMap.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in gperf "$(FEATURE_AND_PLATFORM_DEFINES)"
+SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementTypeMap.in
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in gperf "$(FEATURE_DEFINES)"
 
 # --------
 
@@ -1410,37 +1485,48 @@ ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 
 USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html.css $(WebCore)/css/dialog.css $(WebCore)/css/quirks.css $(WebCore)/css/plugIns.css $(WebCore)/css/svg.css
 
-ifeq ($(findstring ENABLE_MATHML,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_MATHML)
+ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/mathml.css
 endif
 
-ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_VIDEO)
+ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/mediaControls.css
 endif
 
-ifeq ($(findstring ENABLE_FULLSCREEN_API,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_FULLSCREEN_API)
+ifeq ($(findstring ENABLE_FULLSCREEN_API,$(FEATURE_DEFINES)), ENABLE_FULLSCREEN_API)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/css/fullscreen.css
 endif
 
-ifeq ($(findstring ENABLE_SERVICE_CONTROLS,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_SERVICE_CONTROLS)
+ifeq ($(findstring ENABLE_SERVICE_CONTROLS,$(FEATURE_DEFINES)), ENABLE_SERVICE_CONTROLS)
     USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/mac/imageControlsMac.css
 endif
 
-USER_AGENT_STYLE_SHEETS += $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
+ifeq ($(OS),MACOS)
+    USER_AGENT_STYLE_SHEETS += $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
+endif
 
-ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_AND_PLATFORM_DEFINES)), ENABLE_METER_ELEMENT)
+ifeq ($(OS), Windows_NT)
+    USER_AGENT_STYLE_SHEETS += $(WebCore)/css/themeWin.css $(WebCore)/css/themeWinQuirks.css
+endif
+
+ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
 	USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
 endif
 
-UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # --------
 
 # user agent scripts
 
-USER_AGENT_SCRIPTS = $(WebCore)/Modules/plugins/QuickTimePluginReplacement.js
+USER_AGENT_SCRIPTS =
 
+ifeq ($(OS),MACOS)
+    USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.js
+endif
+
+ifdef USER_AGENT_SCRIPTS
 USER_AGENT_SCRIPTS_FILES = \
     UserAgentScripts.h \
     UserAgentScriptsData.cpp \
@@ -1451,14 +1537,15 @@ all : $(USER_AGENT_SCRIPTS_FILES)
 
 $(USER_AGENT_SCRIPTS_FILES_PATTERNS) : $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py -n WebCore $(USER_AGENT_SCRIPTS_FILES) $(USER_AGENT_SCRIPTS)
+endif
 
 # --------
 
-# plug-ins resources
+# plugIns resources
 
 PLUG_INS_RESOURCES = $(WebCore)/Resources/plugIns.js
 
-PlugInsResources.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+PlugInsResources.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ PlugInsResourcesData.cpp $(PLUG_INS_RESOURCES)
 
 # --------
@@ -1475,6 +1562,38 @@ $(WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS): dom/make_names.pl bindings/scripts/Ha
 
 # HTML tag and attribute names
 
+ifeq ($(findstring ENABLE_DATALIST_ELEMENT,$(FEATURE_DEFINES)), ENABLE_DATALIST_ELEMENT)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATALIST_ELEMENT=1
+endif
+
+ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_METER_ELEMENT=1
+endif
+
+ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO=1
+endif
+
+ifeq ($(findstring ENABLE_VIDEO_TRACK,$(FEATURE_DEFINES)), ENABLE_VIDEO_TRACK)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO_TRACK=0
+endif
+
+ifeq ($(findstring ENABLE_DATACUE_VALUE,$(FEATURE_DEFINES)), ENABLE_DATACUE_VALUE)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATACUE_VALUE=0
+endif
+
+ifeq ($(findstring ENABLE_MEDIA_STREAM,$(FEATURE_DEFINES)), ENABLE_MEDIA_STREAM)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_MEDIA_STREAM=1
+endif
+
+ifeq ($(findstring ENABLE_LEGACY_ENCRYPTED_MEDIA,$(FEATURE_DEFINES)), ENABLE_LEGACY_ENCRYPTED_MEDIA)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_LEGACY_ENCRYPTED_MEDIA=1
+endif
+
+ifeq ($(findstring ENABLE_ENCRYPTED_MEDIA,$(FEATURE_DEFINES)), ENABLE_ENCRYPTED_MEDIA)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_ENCRYPTED_MEDIA=1
+endif
+
 HTML_TAG_FILES = \
     JSHTMLElementWrapperFactory.cpp \
     JSHTMLElementWrapperFactory.h \
@@ -1488,8 +1607,8 @@ HTML_TAG_FILES_PATTERNS = $(subst .,%,$(HTML_TAG_FILES))
 
 all : $(HTML_TAG_FILES)
 
-$(HTML_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --extraDefines "$(FEATURE_AND_PLATFORM_DEFINES)"
+$(HTML_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory $(if $(HTML_FLAGS), --extraDefines "$(HTML_FLAGS)")
 
 XMLNSNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlnsattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
@@ -1500,6 +1619,12 @@ XMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/Sta
 # --------
 
 # SVG tag and attribute names, and element factory
+
+ifeq ($(findstring ENABLE_SVG_FONTS,$(FEATURE_DEFINES)), ENABLE_SVG_FONTS)
+    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FONTS=1
+endif
+
+# SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 
 SVG_TAG_FILES = \
     JSSVGElementWrapperFactory.cpp \
@@ -1514,8 +1639,8 @@ SVG_TAG_FILES_PATTERNS = $(subst .,%,$(SVG_TAG_FILES))
 
 all : $(SVG_TAG_FILES)
 
-$(SVG_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory --extraDefines "$(FEATURE_AND_PLATFORM_DEFINES)"
+$(SVG_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
+	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory $(if $(SVG_FLAGS), --extraDefines "$(SVG_FLAGS)")
 
 XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/xlinkattrs.in
 	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in
@@ -1676,13 +1801,13 @@ IDL_INTERMEDIATE_FILES = \
 #
 IDL_INTERMEDIATE_PATTERNS = $(subst .,%,$(IDL_INTERMEDIATE_FILES))
 
-$(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES) DerivedSources.make $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+$(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
 	$(foreach f,$(JS_BINDING_IDLS),@echo $(f)>>$(IDL_FILES_TMP)$(NL))
-	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --isoSubspacesHeaderFile $(ISO_SUBSPACES_HEADER_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $(SUPPLEMENTAL_MAKEFILE_DEPS)
+	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --isoSubspacesHeaderFile $(ISO_SUBSPACES_HEADER_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $(SUPPLEMENTAL_MAKEFILE_DEPS)
 	$(DELETE) $(IDL_FILES_TMP)
 
-JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_INTERMEDIATE_FILES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_AND_PLATFORM_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_INTERMEDIATE_FILES) $(PLATFORM_FEATURE_DEFINES)
+	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_AND_PLATFORM_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
 ifneq ($(NO_SUPPLEMENTAL_FILES),1)
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)
