@@ -473,8 +473,8 @@ textAutosizingUsesIdempotentMode:
   conditional: TEXT_AUTOSIZING
 idempotentModeAutosizingOnlyHonorsPercentages:
   initial: false
-  onChange: setNeedsRecalcStyleInAllFrames
   conditional: TEXT_AUTOSIZING
+  # This is only set before the main frame load, so there's no need to specify setNeedsRecalcStyleInAllFrames.
 
 subpixelAntialiasedLayerTextEnabled:
   initial: false
