@@ -1,3 +1,15 @@
+2020-05-29  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update OpenXR
+        https://bugs.webkit.org/show_bug.cgi?id=212518
+
+        Reviewed by Žan Doberšek.
+
+        Upstream now builds fine with GCC 9.3.0. Removing downstream patch.
+        
+        * buildstream/elements/sdk/openxr.bst:
+        * buildstream/patches/openxr-0001-cmake-Check-for-C-17-and-conditionally-enable-it.patch: Removed.
+
 2020-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r261812): editing/async-clipboard/clipboard-item-get-type-basic.html is flaky
