@@ -572,6 +572,9 @@ void webkitWebViewBaseAddDialog(WebKitWebViewBase* webViewBase, GtkWidget* dialo
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->dialog = dialog;
+#if USE(GTK4)
+    g_object_add_weak_pointer(G_OBJECT(dialog), reinterpret_cast<void**>(&priv->dialog));
+#endif
     gtk_widget_set_parent(dialog, GTK_WIDGET(webViewBase));
     gtk_widget_show(dialog);
 
@@ -590,19 +593,14 @@ static void webkitWebViewBaseRemoveChild(WebKitWebViewBase* webViewBase, GtkWidg
         priv->inspectorView = nullptr;
         priv->inspectorViewSize = 0;
     } else if (priv->dialog == widget) {
+        g_object_remove_weak_pointer(G_OBJECT(widget), reinterpret_cast<void**>(&priv->dialog));
         priv->dialog = nullptr;
-        if (gtk_widget_get_visible(GTK_WIDGET(webViewBase)))
-            gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
     } else if (priv->keyBindingTranslator.widget() == widget)
         priv->keyBindingTranslator.invalidate();
     else
         RELEASE_ASSERT_NOT_REACHED();
 
-    gboolean wasVisible = gtk_widget_get_visible(widget);
     gtk_widget_unparent(widget);
-
-    if (wasVisible && gtk_widget_get_visible(GTK_WIDGET(webViewBase)))
-        gtk_widget_queue_resize(GTK_WIDGET(webViewBase));
 }
 #else
 static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget* widget)
@@ -742,6 +740,9 @@ static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 
     ASSERT(drawingArea->isInAcceleratedCompositingMode());
     webViewBase->priv->acceleratedBackingStore->snapshot(snapshot);
+
+    if (webViewBase->priv->dialog)
+        gtk_widget_snapshot_child(widget, webViewBase->priv->dialog, snapshot);
 }
 #else
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)

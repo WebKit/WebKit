@@ -1,3 +1,38 @@
+2020-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Implement script dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=212318
+
+        Reviewed by Adrian Perez de Castro.
+
+        Adapt to the GTK4 API and theme changes.
+
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:
+        (webkitScriptDialogImplClose):
+        (webkitScriptDialogImplKeyPressed):
+        (webkitScriptDialogImplMap):
+        (webkitScriptDialogImplConstructed):
+        (webkitScriptDialogImplDispose):
+        (webkit_script_dialog_impl_class_init):
+        (webkitScriptDialogImplAddButton):
+        (webkitScriptDialogImplNew):
+        (webkitScriptDialogImplSetEntryText):
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseAddDialog):
+        (webkitWebViewBaseRemoveChild):
+        (webkitWebViewBaseSnapshot):
+        * UIProcess/API/gtk/WebKitWebViewDialog.cpp:
+        (webkitWebViewDialogSnapshot):
+        (webkitWebViewDialogSizeAllocate):
+        (webkitWebViewDialogConstructed):
+        (webkit_web_view_dialog_class_init):
+        (webkitWebViewDialogSetChild):
+        (webkitWebViewDialogGetChild):
+        * UIProcess/API/gtk/WebKitWebViewDialog.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewScriptDialog):
+
 2020-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r261812): editing/async-clipboard/clipboard-item-get-type-basic.html is flaky

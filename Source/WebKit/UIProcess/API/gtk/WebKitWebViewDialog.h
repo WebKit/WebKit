@@ -19,8 +19,6 @@
 
 #pragma once
 
-#if !USE(GTK4)
-
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
@@ -37,17 +35,27 @@ typedef struct _WebKitWebViewDialogClass   WebKitWebViewDialogClass;
 typedef struct _WebKitWebViewDialogPrivate WebKitWebViewDialogPrivate;
 
 struct _WebKitWebViewDialog {
+#if USE(GTK4)
+    GtkWidget parent;
+#else
     GtkEventBox parent;
+#endif
 
     WebKitWebViewDialogPrivate* priv;
 };
 
 struct _WebKitWebViewDialogClass {
+#if USE(GTK4)
+    GtkWidgetClass parentClass;
+#else
     GtkEventBoxClass parentClass;
+#endif
 };
 
 GType webkit_web_view_dialog_get_type();
+#if USE(GTK4)
+void webkitWebViewDialogSetChild(WebKitWebViewDialog*, GtkWidget*);
+GtkWidget* webkitWebViewDialogGetChild(WebKitWebViewDialog*);
+#endif
 
 G_END_DECLS
-
-#endif

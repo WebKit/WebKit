@@ -20,9 +20,9 @@
 #include "config.h"
 #include "WebKitScriptDialogImpl.h"
 
-#if !USE(GTK4)
-
 #include "WebKitScriptDialogPrivate.h"
+#include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -43,9 +43,24 @@ WEBKIT_DEFINE_TYPE(WebKitScriptDialogImpl, webkit_script_dialog_impl, WEBKIT_TYP
 static void webkitScriptDialogImplClose(WebKitScriptDialogImpl* dialog)
 {
     webkit_script_dialog_close(dialog->priv->dialog);
+#if USE(GTK4)
+    gtk_widget_unparent(GTK_WIDGET(dialog));
+#else
     gtk_widget_destroy(GTK_WIDGET(dialog));
+#endif
 }
 
+#if USE(GTK4)
+static gboolean webkitScriptDialogImplKeyPressed(WebKitScriptDialogImpl* dialog, unsigned keyval, unsigned, GdkModifierType, GtkEventController*)
+{
+    if (keyval == GDK_KEY_Escape) {
+        webkitScriptDialogImplClose(dialog);
+        return GDK_EVENT_STOP;
+    }
+
+    return GDK_EVENT_PROPAGATE;
+}
+#else
 static gboolean webkitScriptDialogImplKeyPressEvent(GtkWidget* widget, GdkEventKey* keyEvent)
 {
     guint keyval;
@@ -57,11 +72,14 @@ static gboolean webkitScriptDialogImplKeyPressEvent(GtkWidget* widget, GdkEventK
 
     return GDK_EVENT_PROPAGATE;
 }
+#endif
 
 static void webkitScriptDialogImplMap(GtkWidget* widget)
 {
     WebKitScriptDialogImplPrivate* priv = WEBKIT_SCRIPT_DIALOG_IMPL(widget)->priv;
-    gtk_widget_grab_default(priv->defaultButton);
+    auto* toplevel = gtk_widget_get_toplevel(widget);
+    if (WebCore::widgetIsOnscreenToplevelWindow(toplevel))
+        gtk_window_set_default(GTK_WINDOW(toplevel), priv->defaultButton);
 
     switch (priv->dialog->type) {
     case WEBKIT_SCRIPT_DIALOG_ALERT:
@@ -85,57 +103,109 @@ static void webkitScriptDialogImplConstructed(GObject* object)
     WebKitScriptDialogImplPrivate* priv = dialog->priv;
 
     priv->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 20);
+#if USE(GTK4)
+    webkitWebViewDialogSetChild(WEBKIT_WEB_VIEW_DIALOG(object), priv->vbox);
+    gtk_widget_add_css_class(priv->vbox, "dialog-vbox");
+#else
     gtk_container_set_border_width(GTK_CONTAINER(priv->vbox), 0);
     gtk_container_add(GTK_CONTAINER(dialog), priv->vbox);
     gtk_widget_show(priv->vbox);
+#endif
 
     GtkWidget* box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_style_context_add_class(gtk_widget_get_style_context(box), GTK_STYLE_CLASS_TITLEBAR);
+    gtk_widget_add_css_class(box, GTK_STYLE_CLASS_TITLEBAR);
     gtk_widget_set_size_request(box, -1, 16);
     priv->title = gtk_label_new(nullptr);
     gtk_label_set_ellipsize(GTK_LABEL(priv->title), PANGO_ELLIPSIZE_END);
     gtk_widget_set_margin_top(priv->title, 6);
     gtk_widget_set_margin_bottom(priv->title, 6);
-    gtk_style_context_add_class(gtk_widget_get_style_context(priv->title), GTK_STYLE_CLASS_TITLE);
+    gtk_widget_add_css_class(priv->title, GTK_STYLE_CLASS_TITLE);
+#if USE(GTK4)
+    gtk_widget_set_hexpand(priv->title, TRUE);
+    gtk_widget_set_halign(priv->title, GTK_ALIGN_CENTER);
+    gtk_box_append(GTK_BOX(box), priv->title);
+#else
     gtk_box_set_center_widget(GTK_BOX(box), priv->title);
     gtk_widget_show(priv->title);
+#endif
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(priv->vbox), box);
+#else
     gtk_box_pack_start(GTK_BOX(priv->vbox), box, TRUE, FALSE, 0);
     gtk_widget_show(box);
+#endif
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 30);
     gtk_widget_set_margin_start(box, 30);
     gtk_widget_set_margin_end(box, 30);
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(priv->vbox), box);
+#else
     gtk_box_pack_start(GTK_BOX(priv->vbox), box, TRUE, FALSE, 0);
     gtk_widget_show(box);
+#endif
 
     GtkWidget* messageArea = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(box), messageArea);
+#else
     gtk_box_pack_start(GTK_BOX(box), messageArea, TRUE, TRUE, 0);
     gtk_widget_show(messageArea);
+#endif
 
     priv->swindow = gtk_scrolled_window_new(nullptr, nullptr);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(priv->swindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(messageArea), priv->swindow);
+#else
     gtk_box_pack_start(GTK_BOX(messageArea), priv->swindow, TRUE, TRUE, 0);
     gtk_widget_show(priv->swindow);
+#endif
 
     priv->label = gtk_label_new(nullptr);
     gtk_widget_set_halign(priv->label, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(priv->label, GTK_ALIGN_START);
     gtk_label_set_line_wrap(GTK_LABEL(priv->label), TRUE);
     gtk_label_set_max_width_chars(GTK_LABEL(priv->label), 60);
+#if USE(GTK4)
+    gtk_widget_set_hexpand(priv->label, TRUE);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(priv->swindow), priv->label);
+#else
     gtk_container_add(GTK_CONTAINER(priv->swindow), priv->label);
     gtk_widget_show(priv->label);
+#endif
 
     GtkWidget* actionBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_style_context_add_class(gtk_widget_get_style_context(actionBox), "dialog-action-box");
+    gtk_widget_add_css_class(actionBox, "dialog-action-box");
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(priv->vbox), actionBox);
+#else
     gtk_box_pack_end(GTK_BOX(priv->vbox), actionBox, FALSE, TRUE, 0);
     gtk_widget_show(actionBox);
+#endif
 
+#if USE(GTK4)
+    priv->actionArea = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_set_homogeneous(GTK_BOX(priv->actionArea), TRUE);
+    gtk_widget_set_halign(priv->actionArea, GTK_ALIGN_FILL);
+#else
     priv->actionArea = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(priv->actionArea), GTK_BUTTONBOX_EXPAND);
+#endif
     gtk_widget_set_hexpand(priv->actionArea, TRUE);
-    gtk_style_context_add_class(gtk_widget_get_style_context(priv->actionArea), "dialog-action-area");
+    gtk_widget_add_css_class(priv->actionArea, "dialog-action-area");
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(actionBox), priv->actionArea);
+#else
     gtk_box_pack_end(GTK_BOX(actionBox), priv->actionArea, FALSE, TRUE, 0);
     gtk_widget_show(priv->actionArea);
+#endif
+
+#if USE(GTK4)
+    auto* controller = gtk_event_controller_key_new();
+    g_signal_connect_object(controller, "key-pressed", G_CALLBACK(webkitScriptDialogImplKeyPressed), dialog, G_CONNECT_SWAPPED);
+    gtk_widget_add_controller(GTK_WIDGET(dialog), controller);
+#endif
 }
 
 static void webkitScriptDialogImplDispose(GObject* object)
@@ -147,6 +217,10 @@ static void webkitScriptDialogImplDispose(GObject* object)
         dialog->priv->dialog = nullptr;
     }
 
+#if USE(GTK4)
+    webkitWebViewDialogSetChild(WEBKIT_WEB_VIEW_DIALOG(object), nullptr);
+#endif
+
     G_OBJECT_CLASS(webkit_script_dialog_impl_parent_class)->dispose(object);
 }
 
@@ -157,7 +231,9 @@ static void webkit_script_dialog_impl_class_init(WebKitScriptDialogImplClass* kl
     objectClass->dispose = webkitScriptDialogImplDispose;
 
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(klass);
+#if !USE(GTK4)
     widgetClass->key_press_event = webkitScriptDialogImplKeyPressEvent;
+#endif
     widgetClass->map = webkitScriptDialogImplMap;
     gtk_widget_class_set_accessible_role(widgetClass, ATK_ROLE_ALERT);
 }
@@ -176,12 +252,18 @@ static GtkWidget* webkitScriptDialogImplAddButton(WebKitScriptDialogImpl* dialog
     WebKitScriptDialogImplPrivate* priv = dialog->priv;
     GtkWidget* button = gtk_button_new_with_label(text);
     gtk_button_set_use_underline(GTK_BUTTON(button), TRUE);
-    gtk_style_context_add_class(gtk_widget_get_style_context(button), "text-button");
+    gtk_widget_add_css_class(button, "text-button");
+#if !USE(GTK4)
     gtk_widget_set_can_default(button, TRUE);
+#endif
 
     gtk_widget_set_valign(button, GTK_ALIGN_BASELINE);
+#if USE(GTK4)
+    gtk_box_append(GTK_BOX(priv->actionArea), button);
+#else
     gtk_container_add(GTK_CONTAINER(priv->actionArea), button);
     gtk_widget_show(button);
+#endif
 
     return button;
 }
@@ -205,7 +287,12 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
         dialog->priv->entry = gtk_entry_new();
         gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), scriptDialog->defaultText.data());
+#if USE(GTK4)
+        gtk_box_insert_child_after(GTK_BOX(dialog->priv->vbox), dialog->priv->entry,
+            gtk_widget_get_parent(gtk_widget_get_parent(dialog->priv->swindow)));
+#else
         gtk_container_add(GTK_CONTAINER(dialog->priv->vbox), dialog->priv->entry);
+#endif
         gtk_entry_set_activates_default(GTK_ENTRY(dialog->priv->entry), TRUE);
         gtk_widget_show(dialog->priv->entry);
 
@@ -274,5 +361,3 @@ void webkitScriptDialogImplSetEntryText(WebKitScriptDialogImpl* dialog, const St
 
     gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), text.utf8().data());
 }
-
-#endif

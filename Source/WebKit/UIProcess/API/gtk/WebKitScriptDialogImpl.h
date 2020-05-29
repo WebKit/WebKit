@@ -19,8 +19,6 @@
 
 #pragma once
 
-#if !USE(GTK4)
-
 #include "WebKitScriptDialog.h"
 #include "WebKitWebViewDialog.h"
 #include <wtf/text/WTFString.h>
@@ -55,5 +53,3 @@ void webkitScriptDialogImplConfirm(WebKitScriptDialogImpl*);
 void webkitScriptDialogImplSetEntryText(WebKitScriptDialogImpl*, const String&);
 
 G_END_DECLS
-
-#endif
