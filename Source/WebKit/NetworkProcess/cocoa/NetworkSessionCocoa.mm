@@ -1037,7 +1037,9 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 #if HAVE(ALLOWS_SENSITIVE_LOGGING)
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     configuration._allowsSensitiveLogging = NO;
+IGNORE_WARNINGS_END
 #endif
     return configuration;
 }

@@ -1,3 +1,10 @@
+2020-05-29  Dean Jackson  <dino@apple.com>
+
+        iOS build fix.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+
 2020-05-29  Jer Noble  <jer.noble@apple.com>
 
         [Mac,WK2] Fullscreen animation missing a few frames at beginning
