@@ -1,3 +1,13 @@
+2020-05-29  Saam Barati  <sbarati@apple.com>
+
+        Skip a few more JSC tests when $memoryLimited
+        https://bugs.webkit.org/show_bug.cgi?id=212552
+
+        Reviewed by Mark Lam.
+
+        * stress/call-varargs-inlining-should-not-clobber-previous-to-free-register.js:
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+
 2020-05-27  Keith Miller  <keith_miller@apple.com>
 
         for-of should check the iterable is a JSArray for FastArray in DFG iterator_open

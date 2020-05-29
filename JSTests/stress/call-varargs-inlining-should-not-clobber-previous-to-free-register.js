@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ runDefault("--useConcurrentJIT=0", "--watchdog=4000", "--watchdog-exception-ok")
 (function __v0() {
     try {

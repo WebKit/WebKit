@@ -1,3 +1,12 @@
+2020-05-29  Saam Barati  <sbarati@apple.com>
+
+        Skip a few more JSC tests when $memoryLimited
+        https://bugs.webkit.org/show_bug.cgi?id=212552
+
+        Reviewed by Mark Lam.
+
+        * js/script-tests/stack-overflow-regexp.js:
+
 2020-05-29  Jer Noble  <jer.noble@apple.com>
 
         [EME] navigator.requestMediaKeySystemAccess() should reject PUR sessionTypes in private browsing mode.
