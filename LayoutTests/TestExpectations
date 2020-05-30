@@ -1055,7 +1055,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Ima
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
 
 # grid layout tests
-webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
 webkit.org/b/191465 imported/w3c/web-platform-tests/css/css-grid/abspos/absolute-positioning-changing-containing-block-001.html [ ImageOnlyFailure ]
 webkit.org/b/191465 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-item-absolute-positioning-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010.html [ Pass Failure ]

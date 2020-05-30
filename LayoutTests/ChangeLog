@@ -1,3 +1,15 @@
+2020-05-29  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Update WPT grid-items-sizing-alignment-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=169271
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Expect the test to pass, except on iOS (bug 212493).
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-05-29  Saam Barati  <sbarati@apple.com>
 
         Skip a few more JSC tests when $memoryLimited

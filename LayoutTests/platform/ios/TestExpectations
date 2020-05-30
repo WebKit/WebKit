@@ -3527,3 +3527,5 @@ webkit.org/b/212218 webrtc/datachannel/gather-candidates-networkprocess-crash.ht
 
 webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-008.html [ ImageOnlyFailure ]
 webkit.org/b/212227 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/212493 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
