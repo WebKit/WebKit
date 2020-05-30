@@ -1,3 +1,14 @@
+2020-05-30  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed gardening, update baseline after r262169
+        https://bugs.webkit.org/show_bug.cgi?id=212566
+
+        r262169 modifies Objective-C code and the general expected file. The
+        change only affected Mac ports. GTK and WPE ports keep expecting the former
+        result, so a new baseline is emitted for these ports.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-negative-time-expected.txt: Added.
+
 2020-05-29  Alex Christensen  <achristensen@webkit.org>
 
         Add debug alerts to xhr tests
