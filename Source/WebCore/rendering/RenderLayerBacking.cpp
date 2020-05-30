@@ -68,6 +68,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
+#include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -1726,6 +1727,8 @@ void RenderLayerBacking::updateEventRegion()
     if (!maintainsEventRegion())
         return;
 
+    TraceScope scope(ComputeEventRegionsStart, ComputeEventRegionsEnd);
+
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
         GraphicsContext nullContext(nullptr);
         EventRegion eventRegion;
@@ -1734,7 +1737,7 @@ void RenderLayerBacking::updateEventRegion()
 
         if (renderer().visibleToHitTesting()) {
             if (&graphicsLayer == m_scrollContainerLayer) {
-                eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer.size())), RenderStyle::defaultStyle());
+                eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer.size())), renderer().style());
                 graphicsLayer.setEventRegion(WTFMove(eventRegion));
                 return;
             }
@@ -1742,7 +1745,7 @@ void RenderLayerBacking::updateEventRegion()
             if (&graphicsLayer == m_scrolledContentsLayer) {
                 // Initialize scrolled contents layer with layer-sized event region as it can all used for scrolling.
                 // This avoids generating unnecessarily complex event regions. We still need to to do the paint to capture touch-action regions.
-                eventRegionContext.unite(enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size())), RenderStyle::defaultStyle());
+                eventRegionContext.unite(enclosingIntRect(FloatRect(-layerOffset, graphicsLayer.size())), renderer().style());
             }
         }
 

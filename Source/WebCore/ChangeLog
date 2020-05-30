@@ -1,3 +1,19 @@
+2020-05-30  Simon Fraser  <simon.fraser@apple.com>
+
+        For scroll container and scrolled contents layers, use the renderer style to set up the event regions
+        https://bugs.webkit.org/show_bug.cgi?id=212570
+
+        Reviewed by Antti Koivisto.
+
+        RenderLayerBacking::updateEventRegion() sets up event regions on the scroll container and scrolled contents
+        layer using the default style, in order to fill up the m_region part of EventRegion, but we might as well
+        pass the renderer style so that it fills up the touch-action and wheel event regions as well.
+
+        Also re-use the existing event region trace points for region building.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+
 2020-05-30  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Support percentage border-radius values in -apple-pay-button
