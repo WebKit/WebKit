@@ -1,7 +1,7 @@
 
-FAIL Header value: hello world\0 assert_throws: function "() => client.send()" did not throw
-FAIL Header value: \0hello world assert_throws: function "() => client.send()" did not throw
-FAIL Header value: hello\0world assert_throws: function "() => client.send()" did not throw
+PASS Header value: hello world\0 
+PASS Header value: \0hello world 
+PASS Header value: hello\0world 
 PASS Header value: __hello_world 
 PASS Header value: hello_world__ 
 PASS Header value: __hello_world__ 
@@ -10,7 +10,7 @@ PASS Header value: hello_world[tab]
 PASS Header value: [tab]hello_world[tab] 
 PASS Header value: hello______world 
 PASS Header value: hello[tab]world 
-FAIL Header value: \0 assert_throws: function "() => client.send()" did not throw
+PASS Header value: \0 
 PASS Header value: ___ 
 PASS Header value: [tab] 
 PASS Header value:  
