@@ -1,5 +1,27 @@
 2020-05-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Event region painting should use the same paint flags as normal painting
+        https://bugs.webkit.org/show_bug.cgi?id=212547
+
+        Reviewed by Sam Weinig.
+
+        There are cases (see r260118) where we need to send down the correct paint flags when
+        painting the scrolled contents layer to avoid unwanted clipping. We need to send down
+        the one paint flag relevant for event region paints, CompositedOverflowScrollContent,
+        for the same reasons.
+
+        I could not make a testcase that shows a behavior change, but I did copy the testcase
+        from r260118 and adapt it for event-region generation to detect future behavior changes.
+
+        Test: fast/scrolling/mac/wheel-event-listener-region-inside-overflow-scroll-clipped-out.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::collectEventRegionForFragments):
+        * rendering/RenderLayer.h:
+
+2020-05-29  Simon Fraser  <simon.fraser@apple.com>
+
         Elements with wheel event handlers inside overflow:scroll are missing from the event region
         https://bugs.webkit.org/show_bug.cgi?id=212545
 

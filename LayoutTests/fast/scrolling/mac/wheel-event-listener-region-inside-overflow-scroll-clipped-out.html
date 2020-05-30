@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .flex {
+            display: flex;
+            width: 500px;
+            border: 1px solid black;
+        }
+        .clipped {
+            overflow: hidden;
+            width: 100%;
+        }
+        .relative {
+            position: relative;
+        }
+        .scroller {
+            overflow-y: scroll;
+            width: 100%;
+            height: 500px;
+        }
+        .contents {
+            height: 3000px;
+            width: 100%;
+        }
+        .handler {
+            background-color: silver;
+            margin: 510px 20px;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    
+        window.addEventListener('load', () => {
+            if (window.internals)
+                results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="flex">
+        <div class="clipped">
+            <div class="relative">
+                <div class="scroller">
+                    <div class="contents">&nbsp;
+                        <div class="handler" onmousewheel="(void)0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<pre id="results"></pre>
+</body>
+</html>

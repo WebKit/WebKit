@@ -1,0 +1,65 @@
+ 
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 9.00 9.00)
+          (bounds 500.00 500.00)
+          (children 1
+            (GraphicsLayer
+              (bounds 500.00 500.00)
+              (event region
+                (rect (0,0) width=500 height=500)
+                (rect (0,500) width=485 height=2500)
+              )
+              (children 2
+                (GraphicsLayer
+                  (bounds 485.00 500.00)
+                  (event region
+                    (rect (0,0) width=485 height=500)
+                  )
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (bounds 485.00 3000.00)
+                      (drawsContent 1)
+                      (event region
+                        (rect (0,0) width=500 height=500)
+                        (rect (0,500) width=485 height=2500)
+                      (wheel event listener region
+                        (rect (20,528) width=100 height=100)
+                        (non-passive
+                          (rect (20,528) width=100 height=100)
+                        )
+                      )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (bounds 500.00 500.00)
+                  (children 1
+                    (GraphicsLayer
+                      (position 485.00 0.00)
+                      (bounds 15.00 500.00)
+                      (drawsContent 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
