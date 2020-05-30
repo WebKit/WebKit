@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+    .scroller {
+        margin: 10px;
+        width: 200px;
+        height: 200px;
+        border: 2px solid gray;
+        overflow: scroll;
+    }
+    .contents {
+        height: 200%;
+    }
+    .handler {
+        background-color: silver;
+        margin: 20px;
+        width: 100px;
+        height: 400px;
+    }
+    </style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    
+    window.addEventListener('load', () => {
+        if (window.internals)
+            results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+    }, false);
+</script>
+<body>
+    <div class="scroller">
+        <div class="contents">
+            <div class="handler" onmousewheel="(void)0">
+            </div>
+        </div>
+    </div>
+<pre id="results"></pre>
+</body>
+</html>

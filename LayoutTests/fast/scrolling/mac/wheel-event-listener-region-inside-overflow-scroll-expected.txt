@@ -1,0 +1,81 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 204.00 204.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=204 height=204)
+            (rect (2,204) width=185 height=188)
+            (rect (22,392) width=100 height=30)
+          (wheel event listener region
+            (rect (22,22) width=100 height=400)
+            (non-passive
+              (rect (22,22) width=100 height=400)
+            )
+          )
+          )
+          (children 2
+            (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
+              (position 2.00 2.00)
+              (bounds 185.00 185.00)
+              (event region
+                (rect (0,0) width=185 height=185)
+              )
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=2 height=2)
+                  (anchor 0.00 0.00)
+                  (bounds 185.00 420.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (-2,-2) width=204 height=204)
+                    (rect (0,202) width=185 height=218)
+                  (wheel event listener region
+                    (rect (22,22) width=100 height=400)
+                    (non-passive
+                      (rect (22,22) width=100 height=400)
+                    )
+                  )
+                  )
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 200.00 200.00)
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 185.00)
+                  (bounds 185.00 15.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 185.00 0.00)
+                  (bounds 15.00 185.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 185.00 185.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

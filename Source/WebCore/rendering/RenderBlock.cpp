@@ -1256,6 +1256,9 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 #if PLATFORM(IOS_FAMILY)
         needsTraverseDescendants |= document().mayHaveElementsWithNonAutoTouchAction();
 #endif
+#if !PLATFORM(IOS_FAMILY)
+        needsTraverseDescendants |= document().hasWheelEventHandlers();
+#endif
 #if ENABLE(EDITABLE_REGION)
         // We treat the entire text control as editable to match users' expectation even
         // though it's actually the inner text element of the control that is editable.
