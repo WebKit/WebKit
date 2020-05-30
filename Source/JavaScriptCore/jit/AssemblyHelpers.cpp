@@ -251,8 +251,8 @@ void AssemblyHelpers::callExceptionFuzz(VM& vm)
     }
 
     // Set up one argument.
-    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    move(TrustedImmPtr(tagCFunction<OperationPtrTag>(operationExceptionFuzz)), GPRInfo::nonPreservedNonReturnGPR);
+    move(TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
+    move(TrustedImmPtr(tagCFunction<OperationPtrTag>(operationExceptionFuzzWithCallFrame)), GPRInfo::nonPreservedNonReturnGPR);
     prepareCallOperation(vm);
     call(GPRInfo::nonPreservedNonReturnGPR, OperationPtrTag);
 

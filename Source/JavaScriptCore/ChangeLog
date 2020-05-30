@@ -1,3 +1,33 @@
+2020-05-30  Mark Lam  <mark.lam@apple.com>
+
+        AssemblyHelpers::callExceptionFuzz() is passing a wrong argument to operationExceptionFuzz().
+        https://bugs.webkit.org/show_bug.cgi?id=212561
+
+        Reviewed by Yusuke Suzuki.
+
+        There's 2 possible solution to this issue:
+        1. Thread the globalObject from all the way up the clients calling into
+           callExceptionFuzz(), or
+        2. Introduce a operationExceptionFuzzWithCallFrame() wrapper take receives a VM*
+           and CallFrame*, and use these to get the lexicalGlobalObject.
+
+        This patch applies solution 2.
+
+        Solution 1 is too unwieldy because it will cause the threading of the globalObject
+        argument to fan out to many clients, and almost all of those clients currently
+        do not need the globalObject.  Hence, implementing this solution may incur some
+        performance penalty in normal code, for the sole benefit of this one fuzzing tool.
+
+        Secondly, the exception fuzzer doesn't really care which globalObject is used.
+        It only cares that an exception is thrown, and we need a globalObject in order to
+        throw that exception.  Hence, there is no benefit to threading the globalObject
+        down from all the clients.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2020-05-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSBigInt allocation should be graceful for OOM

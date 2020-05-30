@@ -2639,6 +2639,19 @@ void JIT_OPERATION operationExceptionFuzz(JSGlobalObject* globalObject)
 #endif // COMPILER(GCC_COMPATIBLE)
 }
 
+void JIT_OPERATION operationExceptionFuzzWithCallFrame(VM* vmPointer)
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(scope);
+#if COMPILER(GCC_COMPATIBLE)
+    void* returnPC = __builtin_return_address(0);
+    doExceptionFuzzing(callFrame->lexicalGlobalObject(vm), scope, "JITOperations", returnPC);
+#endif // COMPILER(GCC_COMPATIBLE)
+}
+
 EncodedJSValue JIT_OPERATION operationValueAdd(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     VM& vm = globalObject->vm();
