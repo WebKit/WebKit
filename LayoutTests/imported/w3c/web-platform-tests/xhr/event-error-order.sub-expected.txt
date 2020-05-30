@@ -1,4 +1,8 @@
+ALERT: test started
+ALERT: test stepped
 Blocked access to external URL http://nonexistent.localhost:8800/
+ALERT: load ended
+ALERT: finishing test
 
 PASS XMLHttpRequest: event - error (order of events) 
 

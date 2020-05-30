@@ -1,3 +1,7 @@
+ALERT: test started
+ALERT: test stepped
+ALERT: ready state changed to 4
+ALERT: finishing test
 
 PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure) 
 

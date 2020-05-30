@@ -1,4 +1,8 @@
+ALERT: test started
+ALERT: test stepped
 Blocked access to external URL http://www1.localhost:8800/xhr/resources/auth1/corsenabled.py
+ALERT: ready state changed to 4
+ALERT: finishing test
 
 PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure) 
 

@@ -16,20 +16,24 @@
 
     <script type="text/javascript">
         var test = async_test();
+        alert("test started");
 
         test.step(function(){
+            alert("test stepped");
             var xhr = new XMLHttpRequest();
             var expect =  ["loadstart", "upload.loadstart", 4, "upload.error", "upload.loadend", "error", "loadend"];
             var actual = [];
 
             xhr.onreadystatechange = test.step_func(() => {
                 if (xhr.readyState == 4) {
+                    alert("ready state is 4");
                     actual.push(xhr.readyState);
                 }
             });
 
             xhr.onloadstart        = test.step_func(e => { actual.push(e.type); })
             xhr.onloadend          = test.step_func_done(e => {
+                alert("load ended");
                 actual.push(e.type);
                 assert_array_equals(actual, expect);
             })

@@ -11,7 +11,9 @@
     <div id="log"></div>
     <script>
       var test = async_test()
+      alert("test started");
       test.step(function() {
+        alert("test stepped");
         var client = new XMLHttpRequest(),
           urlstart = 'www1.'+location.host + location.pathname.replace(/\/[^\/]*$/, '/')
         client.withCredentials = true
@@ -20,10 +22,12 @@
         client.setRequestHeader("x-pass", 'pass')
         client.onreadystatechange = function(){
           if (client.readyState === 4) {
+            alert("ready state changed to 4");
             test.step(function(){
               assert_equals(client.responseText, '')
               assert_equals(client.status, 0)
               assert_equals(client.getResponseHeader('x-challenge'), null)
+              alert("finishing test");
               test.done()
             })
           }
