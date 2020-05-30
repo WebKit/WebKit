@@ -113,27 +113,27 @@ String Color::serialized() const
 {
     if (isExtended())
         return asExtended().cssText();
-    return asSimpleColor().serializationForHTML();
+    return asSimple().serializationForHTML();
 }
 
 String Color::cssText() const
 {
     if (isExtended())
         return asExtended().cssText();
-    return asSimpleColor().serializationForCSS();
+    return asSimple().serializationForCSS();
 }
 
 String Color::nameForRenderTreeAsText() const
 {
     if (isExtended())
         return asExtended().cssText();
-    return asSimpleColor().serializationForRenderTreeAsText();
+    return asSimple().serializationForRenderTreeAsText();
 }
 
 Color Color::light() const
 {
     // Hardcode this common case for speed.
-    if (!isExtended() && asSimpleColor() == black)
+    if (!isExtended() && asSimple() == black)
         return lightenedBlack;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -158,7 +158,7 @@ Color Color::light() const
 Color Color::dark() const
 {
     // Hardcode this common case for speed.
-    if (!isExtended() && asSimpleColor() == white)
+    if (!isExtended() && asSimple() == white)
         return darkenedWhite;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -269,7 +269,7 @@ Color Color::colorWithAlpha(float alpha) const
     // FIXME: This is where this function differs from colorWithAlphaUsingAlternativeRounding.
     uint8_t newAlpha = alpha * 0xFF;
 
-    Color result = asSimpleColor().colorWithAlpha(newAlpha);
+    Color result = asSimple().colorWithAlpha(newAlpha);
     if (isSemantic())
         result.setIsSemantic();
     return result;
@@ -281,9 +281,9 @@ Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
         return asExtended().colorWithAlpha(alpha);
 
     // FIXME: This is where this function differs from colorWithAlphaUsing.
-    uint8_t newAlpha = colorFloatToSimpleColorByte(alpha);
+    uint8_t newAlpha = scaleRoundAndClampColorChannel(alpha);
 
-    Color result = asSimpleColor().colorWithAlpha(newAlpha);
+    Color result = asSimple().colorWithAlpha(newAlpha);
     if (isSemantic())
         result.setIsSemantic();
     return result;
@@ -292,10 +292,8 @@ Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
 Color Color::invertedColorWithAlpha(float alpha) const
 {
     if (isExtended())
-        return Color { asExtended().invertedColorWithAlpha(alpha) };
-
-    auto [r, g, b, existingAlpha] = asSimpleColor();
-    return { 0xFF - r, 0xFF - g, 0xFF - b, colorFloatToSimpleColorByte(alpha) };
+        return asExtended().invertedColorWithAlpha(alpha);
+    return asSimple().invertedColorWithAlpha(scaleRoundAndClampColorChannel(alpha));
 }
 
 Color Color::semanticColor() const
@@ -308,38 +306,23 @@ Color Color::semanticColor() const
 
 std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const
 {
-    if (isExtended()) {
-        auto& extendedColor = asExtended();
-        return { extendedColor.colorSpace(), extendedColor.channels() };
-    }
-
-    auto [r, g, b, a] = asSimpleColor();
-    return { ColorSpace::SRGB, ColorComponents<float> { r / 255.0f, g / 255.0f, b / 255.0f,  a / 255.0f } };
+    if (isExtended())
+        return { asExtended().colorSpace(), asExtended().components() };
+    return { ColorSpace::SRGB, asSimple().asSRGBFloatComponents() };
 }
 
 SimpleColor Color::toSRGBASimpleColorLossy() const
 {
-    if (isExtended()) {
-        auto [r, g, b, a] = toSRGBAComponentsLossy();
-        return makeSimpleColorFromFloats(r, g, b, a);
-    }
-
-    return asSimpleColor();
+    if (isExtended())
+        return makeSimpleColor(toSRGBAComponentsLossy());
+    return asSimple();
 }
 
 ColorComponents<float> Color::toSRGBAComponentsLossy() const
 {
-    auto [colorSpace, components] = colorSpaceAndComponents();
-    switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return components;
-    case ColorSpace::LinearRGB:
-        return linearToRGBComponents(components);
-    case ColorSpace::DisplayP3:
-        return p3ToSRGB(components);
-    }
-    ASSERT_NOT_REACHED();
-    return { };
+    if (isExtended())
+        return asExtended().toSRGBAComponentsLossy();
+    return asSimple().asSRGBFloatComponents();
 }
 
 bool extendedColorsEqual(const Color& a, const Color& b)

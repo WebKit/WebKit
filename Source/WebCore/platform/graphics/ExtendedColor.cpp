@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ExtendedColor.h"
 
+#include "ColorUtilities.h"
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -39,7 +40,7 @@ Ref<ExtendedColor> ExtendedColor::create(float c1, float c2, float c3, float alp
 
 unsigned ExtendedColor::hash() const
 {
-    auto [c1, c2, c3, alpha] = channels();
+    auto [c1, c2, c3, alpha] = components();
     return computeHash(c1, c2, c3, alpha, m_colorSpace);
 }
 
@@ -58,7 +59,7 @@ String ExtendedColor::cssText() const
         return WTF::emptyString();
     }
 
-    auto [c1, c2, c3, existingAlpha] = channels();
+    auto [c1, c2, c3, existingAlpha] = components();
 
     if (WTF::areEssentiallyEqual(alpha(), 1.0f))
         return makeString("color(", colorSpace, ' ', c1, ' ', c2, ' ', c3, ')');
@@ -68,25 +69,39 @@ String ExtendedColor::cssText() const
 
 Ref<ExtendedColor> ExtendedColor::colorWithAlpha(float overrideAlpha) const
 {
-    auto [c1, c2, c3, existingAlpha] = channels();
+    auto [c1, c2, c3, existingAlpha] = components();
     return ExtendedColor::create(c1, c2, c3, overrideAlpha, colorSpace());
 }
 
 Ref<ExtendedColor> ExtendedColor::invertedColorWithAlpha(float overrideAlpha) const
 {
-    auto [c1, c2, c3, existingAlpha] = channels();
+    auto [c1, c2, c3, existingAlpha] = components();
     return ExtendedColor::create(1.0f - c1, 1.0f - c2, 1.0f - c3, overrideAlpha, colorSpace());
+}
+
+ColorComponents<float> ExtendedColor::toSRGBAComponentsLossy() const
+{
+    switch (m_colorSpace) {
+    case ColorSpace::SRGB:
+        return m_components;
+    case ColorSpace::LinearRGB:
+        return linearToRGBComponents(m_components);
+    case ColorSpace::DisplayP3:
+        return p3ToSRGB(m_components);
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 bool ExtendedColor::isWhite() const
 {
-    auto [c1, c2, c3, alpha] = channels();
+    auto [c1, c2, c3, alpha] = components();
     return c1 == 1 && c2 == 1 && c3 == 1 && alpha == 1;
 }
 
 bool ExtendedColor::isBlack() const
 {
-    auto [c1, c2, c3, alpha] = channels();
+    auto [c1, c2, c3, alpha] = components();
     return !c1 && !c2 && !c3 && alpha == 1;
 }
 

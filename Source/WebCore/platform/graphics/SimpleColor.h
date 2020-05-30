@@ -31,11 +31,12 @@ namespace WebCore {
 
 // Color value with 8-bit components for red, green, blue, and alpha.
 // For historical reasons, stored as a 32-bit integer, with alpha in the high bits: ARGB.
-// FIXME: This class should be consolidated with ColorComponents.
 class SimpleColor {
 public:
     constexpr SimpleColor(uint32_t value = 0) : m_value { value } { }
+    constexpr SimpleColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_value { static_cast<unsigned>(a << 24 | r << 16 | g << 8 | b) } { }
 
+    constexpr uint32_t valueAsARGB() const { return m_value; }
     constexpr uint32_t value() const { return m_value; }
 
     constexpr uint8_t redComponent() const { return m_value >> 16; }
@@ -52,7 +53,20 @@ public:
     String serializationForCSS() const;
     String serializationForRenderTreeAsText() const;
 
-    constexpr SimpleColor colorWithAlpha(uint8_t alpha) const { return { (m_value & 0x00FFFFFF) | alpha << 24 }; }
+    constexpr SimpleColor colorWithAlpha(uint8_t alpha) const
+    {
+        return { (m_value & 0x00FFFFFF) | alpha << 24 };
+    }
+
+    constexpr SimpleColor invertedColorWithAlpha(uint8_t alpha) const
+    {
+        return { static_cast<uint8_t>(0xFF - redComponent()), static_cast<uint8_t>(0xFF - greenComponent()), static_cast<uint8_t>(0xFF - blueComponent()), alpha };
+    }
+
+    constexpr ColorComponents<float> asSRGBFloatComponents() const
+    {
+        return { redComponent() / 255.0f, greenComponent() / 255.0f, blueComponent() / 255.0f,  alphaComponent() / 255.0f };
+    }
 
     template<std::size_t N>
     constexpr uint8_t get() const
@@ -78,6 +92,8 @@ bool operator!=(SimpleColor, SimpleColor);
 constexpr SimpleColor makeSimpleColor(int r, int g, int b);
 constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a);
 
+SimpleColor makeSimpleColor(const ColorComponents<float>& sRGBComponents);
+
 SimpleColor makePremultipliedSimpleColor(int r, int g, int b, int a, bool ceiling = true);
 SimpleColor makePremultipliedSimpleColor(SimpleColor);
 SimpleColor makeUnpremultipliedSimpleColor(int r, int g, int b, int a);
@@ -86,7 +102,6 @@ SimpleColor makeUnpremultipliedSimpleColor(SimpleColor);
 WEBCORE_EXPORT SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a);
 WEBCORE_EXPORT SimpleColor makeSimpleColorFromHSLA(float h, float s, float l, float a);
 SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a);
-
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
@@ -105,7 +120,18 @@ constexpr SimpleColor makeSimpleColor(int r, int g, int b)
 
 constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
 {
-    return { static_cast<unsigned>(std::clamp(a, 0, 0xFF) << 24 | std::clamp(r, 0, 0xFF) << 16 | std::clamp(g, 0, 0xFF) << 8 | std::clamp(b, 0, 0xFF)) };
+    return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), static_cast<uint8_t>(std::clamp(a, 0, 0xFF)) };
+}
+
+inline SimpleColor makeSimpleColor(const ColorComponents<float>& sRGBComponents)
+{
+    auto [r, g, b, a] = sRGBComponents;
+    return makeSimpleColor(
+        scaleRoundAndClampColorChannel(r),
+        scaleRoundAndClampColorChannel(g),
+        scaleRoundAndClampColorChannel(b),
+        scaleRoundAndClampColorChannel(a)
+    );
 }
 
 } // namespace WebCore

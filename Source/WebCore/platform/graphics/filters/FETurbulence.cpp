@@ -325,10 +325,10 @@ ColorComponents<float> FETurbulence::noise2D(const PaintingData& paintingData, c
 static inline ColorComponents<uint8_t> toIntBasedColorComponents(const ColorComponents<float>& floatComponents)
 {
     return {
-        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[0] * 255), 0, 255),
-        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[1] * 255), 0, 255),
-        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[2] * 255), 0, 255),
-        std::clamp<uint8_t>(static_cast<int>(floatComponents.components[3] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents[0] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents[1] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents[2] * 255), 0, 255),
+        std::clamp<uint8_t>(static_cast<int>(floatComponents[3] * 255), 0, 255),
     };
 }
 

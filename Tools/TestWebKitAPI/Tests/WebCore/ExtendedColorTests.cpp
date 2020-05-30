@@ -39,7 +39,7 @@ TEST(ExtendedColor, Constructor)
     Color c1(1.0, 0.5, 0.25, 1.0, ColorSpace::DisplayP3);
     EXPECT_TRUE(c1.isExtended());
 
-    auto [r, g, b, alpha] = c1.asExtended().channels();
+    auto [r, g, b, alpha] = c1.asExtended().components();
 
     EXPECT_FLOAT_EQ(1.0, r);
     EXPECT_FLOAT_EQ(0.5, g);
@@ -56,7 +56,7 @@ TEST(ExtendedColor, CopyConstructor)
 
     Color c2(c1);
 
-    auto [r, g, b, alpha] = c2.asExtended().channels();
+    auto [r, g, b, alpha] = c2.asExtended().components();
 
     EXPECT_FLOAT_EQ(1.0, r);
     EXPECT_FLOAT_EQ(0.5, g);
@@ -74,7 +74,7 @@ TEST(ExtendedColor, Assignment)
 
     Color c2 = c1;
 
-    auto [r, g, b, alpha] = c2.asExtended().channels();
+    auto [r, g, b, alpha] = c2.asExtended().components();
 
     EXPECT_FLOAT_EQ(1.0, r);
     EXPECT_FLOAT_EQ(0.5, g);
@@ -159,7 +159,7 @@ TEST(ExtendedColor, MoveConstructor)
     EXPECT_FALSE(c1.isExtended());
     EXPECT_FALSE(c1.isValid());
 
-    auto [r, g, b, alpha] = c2.asExtended().channels();
+    auto [r, g, b, alpha] = c2.asExtended().components();
 
     EXPECT_FLOAT_EQ(1.0, r);
     EXPECT_FLOAT_EQ(0.5, g);
@@ -181,7 +181,7 @@ TEST(ExtendedColor, MoveAssignment)
     EXPECT_FALSE(c1.isExtended());
     EXPECT_FALSE(c1.isValid());
 
-    auto [r, g, b, alpha] = c2.asExtended().channels();
+    auto [r, g, b, alpha] = c2.asExtended().components();
 
     EXPECT_FLOAT_EQ(1.0, r);
     EXPECT_FLOAT_EQ(0.5, g);
@@ -199,7 +199,7 @@ TEST(ExtendedColor, BasicReferenceCounting)
     Color* c2 = new Color(*c1);
     Color* c3 = new Color(*c2);
 
-    auto [r, g, b, alpha] = c2->asExtended().channels();
+    auto [r, g, b, alpha] = c2->asExtended().components();
 
     EXPECT_FLOAT_EQ(1.0, r);
     EXPECT_FLOAT_EQ(0.5, g);

@@ -156,26 +156,26 @@ bool BasicComponentTransferFilterOperation::transformColor(ColorComponents<float
 {
     switch (m_type) {
     case OPACITY:
-        colorComponents.components[3] *= m_amount;
+        colorComponents[3] *= m_amount;
         return true;
     case INVERT: {
         float oneMinusAmount = 1.f - m_amount;
-        colorComponents.components[0] = 1 - (oneMinusAmount + colorComponents.components[0] * (m_amount - oneMinusAmount));
-        colorComponents.components[1] = 1 - (oneMinusAmount + colorComponents.components[1] * (m_amount - oneMinusAmount));
-        colorComponents.components[2] = 1 - (oneMinusAmount + colorComponents.components[2] * (m_amount - oneMinusAmount));
+        colorComponents[0] = 1 - (oneMinusAmount + colorComponents[0] * (m_amount - oneMinusAmount));
+        colorComponents[1] = 1 - (oneMinusAmount + colorComponents[1] * (m_amount - oneMinusAmount));
+        colorComponents[2] = 1 - (oneMinusAmount + colorComponents[2] * (m_amount - oneMinusAmount));
         return true;
     }
     case CONTRAST: {
         float intercept = -(0.5f * m_amount) + 0.5f;
-        colorComponents.components[0] = clampTo<float>(intercept + m_amount * colorComponents.components[0], 0, 1);
-        colorComponents.components[1] = clampTo<float>(intercept + m_amount * colorComponents.components[1], 0, 1);
-        colorComponents.components[2] = clampTo<float>(intercept + m_amount * colorComponents.components[2], 0, 1);
+        colorComponents[0] = clampTo<float>(intercept + m_amount * colorComponents[0], 0, 1);
+        colorComponents[1] = clampTo<float>(intercept + m_amount * colorComponents[1], 0, 1);
+        colorComponents[2] = clampTo<float>(intercept + m_amount * colorComponents[2], 0, 1);
         return true;
     }
     case BRIGHTNESS:
-        colorComponents.components[0] = std::max<float>(m_amount * colorComponents.components[0], 0);
-        colorComponents.components[1] = std::max<float>(m_amount * colorComponents.components[1], 0);
-        colorComponents.components[2] = std::max<float>(m_amount * colorComponents.components[2], 0);
+        colorComponents[0] = std::max<float>(m_amount * colorComponents[0], 0);
+        colorComponents[1] = std::max<float>(m_amount * colorComponents[1], 0);
+        colorComponents[2] = std::max<float>(m_amount * colorComponents[2], 0);
         return true;
     default:
         ASSERT_NOT_REACHED();
@@ -231,7 +231,7 @@ bool InvertLightnessFilterOperation::transformColor(ColorComponents<float>& sRGB
     auto hslComponents = sRGBToHSL(sRGBColorComponents);
     
     // Rotate the hue 180deg.
-    hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
+    hslComponents[0] = fmod(hslComponents[0] + 0.5f, 1.0f);
     
     // Convert back to RGB.
     sRGBColorComponents = hslToSRGB(hslComponents);
@@ -261,7 +261,7 @@ bool InvertLightnessFilterOperation::inverseTransformColor(ColorComponents<float
     // Convert to HSL.
     auto hslComponents = sRGBToHSL(rgbComponents);
     // Hue rotate by 180deg.
-    hslComponents.components[0] = fmod(hslComponents.components[0] + 0.5f, 1.0f);
+    hslComponents[0] = fmod(hslComponents[0] + 0.5f, 1.0f);
     // And return RGB.
     sRGBColorComponents = hslToSRGB(hslComponents);
     return true;

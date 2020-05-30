@@ -49,6 +49,9 @@ struct ColorComponents {
 
     constexpr ColorComponents abs() const;
 
+    constexpr T& operator[](size_t i) { return components[i]; }
+    constexpr const T& operator[](size_t i) const { return components[i]; }
+
     template<std::size_t N>
     constexpr T get() const;
 
@@ -58,10 +61,10 @@ struct ColorComponents {
 template<typename T>
 constexpr ColorComponents<T>& ColorComponents<T>::operator+=(const ColorComponents& rhs)
 {
-    components[0] += rhs.components[0];
-    components[1] += rhs.components[1];
-    components[2] += rhs.components[2];
-    components[3] += rhs.components[3];
+    components[0] += rhs[0];
+    components[1] += rhs[1];
+    components[2] += rhs[2];
+    components[3] += rhs[3];
     return *this;
 }
 
@@ -120,10 +123,10 @@ template<typename T>
 constexpr ColorComponents<T> perComponentMax(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
     return {
-        std::max(a.components[0], b.components[0]),
-        std::max(a.components[1], b.components[1]),
-        std::max(a.components[2], b.components[2]),
-        std::max(a.components[3], b.components[3])
+        std::max(a[0], b[0]),
+        std::max(a[1], b[1]),
+        std::max(a[2], b[2]),
+        std::max(a[3], b[3])
     };
 }
 
@@ -131,10 +134,10 @@ template<typename T>
 constexpr ColorComponents<T> perComponentMin(const ColorComponents<T>& a, const ColorComponents<T>& b)
 {
     return {
-        std::min(a.components[0], b.components[0]),
-        std::min(a.components[1], b.components[1]),
-        std::min(a.components[2], b.components[2]),
-        std::min(a.components[3], b.components[3])
+        std::min(a[0], b[0]),
+        std::min(a[1], b[1]),
+        std::min(a[2], b[2]),
+        std::min(a[3], b[3])
     };
 }
 

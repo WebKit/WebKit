@@ -140,11 +140,11 @@ public:
 
     bool isValid() const { return isExtended() || (m_colorData.simpleColorAndFlags & validSimpleColorBit); }
 
-    bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asSimpleColor().isOpaque(); }
-    bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asSimpleColor().isVisible(); }
+    bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asSimple().isOpaque(); }
+    bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asSimple().isVisible(); }
 
-    int alpha() const { return isExtended() ? asExtended().alpha() * 255 : asSimpleColor().alphaComponent(); }
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : asSimpleColor().alphaComponentAsFloat(); }
+    int alpha() const { return isExtended() ? asExtended().alpha() * 255 : asSimple().alphaComponent(); }
+    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : asSimple().alphaComponentAsFloat(); }
 
     unsigned hash() const;
 
@@ -232,7 +232,7 @@ public:
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
-    const SimpleColor asSimpleColor() const;
+    const SimpleColor asSimple() const;
 
     void setSimpleColor(SimpleColor);
     void setIsSemantic() { m_colorData.simpleColorAndFlags |= isSemanticSimpleColorBit; }
@@ -318,7 +318,7 @@ inline const ExtendedColor& Color::asExtended() const
     return *m_colorData.extendedColor;
 }
 
-inline const SimpleColor Color::asSimpleColor() const
+inline const SimpleColor Color::asSimple() const
 {
     ASSERT(!isExtended());
     return { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) };
@@ -334,14 +334,14 @@ inline bool Color::isBlackColor(const Color& color)
 {
     if (color.isExtended())
         return color.asExtended().isBlack();
-    return color.asSimpleColor() == Color::black;
+    return color.asSimple() == Color::black;
 }
 
 inline bool Color::isWhiteColor(const Color& color)
 {
     if (color.isExtended())
         return color.asExtended().isWhite();
-    return color.asSimpleColor() == Color::white;
+    return color.asSimple() == Color::white;
 }
 
 template<class Encoder>
@@ -351,7 +351,7 @@ void Color::encode(Encoder& encoder) const
         encoder << true;
 
         auto& extendedColor = asExtended();
-        auto [c1, c2, c3, alpha] = extendedColor.channels();
+        auto [c1, c2, c3, alpha] = extendedColor.components();
         encoder << c1;
         encoder << c2;
         encoder << c3;
@@ -370,7 +370,7 @@ void Color::encode(Encoder& encoder) const
     // FIXME: This should encode whether the color is semantic.
 
     encoder << true;
-    encoder << asSimpleColor().value();
+    encoder << asSimple().value();
 }
 
 template<class Decoder>

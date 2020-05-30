@@ -115,17 +115,17 @@ constexpr ColorComponents<float> ColorMatrix<Columns, Rows>::transformedColorCom
     for (size_t row = 0; row < Rows; ++row) {
         if constexpr (Columns <= ColorComponents<float>::Size) {
             for (size_t column = 0; column < Columns; ++column)
-                result.components[row] += at(row, column) * inputVector.components[column];
+                result[row] += at(row, column) * inputVector[column];
         } else if constexpr (Columns > ColorComponents<float>::Size) {
             for (size_t column = 0; column < ColorComponents<float>::Size; ++column)
-                result.components[row] += at(row, column) * inputVector.components[column];
+                result[row] += at(row, column) * inputVector[column];
             for (size_t additionalColumn = ColorComponents<float>::Size; additionalColumn < Columns; ++additionalColumn)
-                result.components[row] += at(row, additionalColumn);
+                result[row] += at(row, additionalColumn);
         }
     }
     if constexpr (ColorComponents<float>::Size > Rows) {
         for (size_t additionalRow = Rows; additionalRow < ColorComponents<float>::Size; ++additionalRow)
-            result.components[additionalRow] = inputVector.components[additionalRow];
+            result[additionalRow] = inputVector[additionalRow];
     }
 
     return result;

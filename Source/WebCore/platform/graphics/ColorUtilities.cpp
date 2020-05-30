@@ -33,10 +33,10 @@ namespace WebCore {
 
 bool areEssentiallyEqual(const ColorComponents<float>& a, const ColorComponents<float>& b)
 {
-    return WTF::areEssentiallyEqual(a.components[0], b.components[0])
-        && WTF::areEssentiallyEqual(a.components[1], b.components[1])
-        && WTF::areEssentiallyEqual(a.components[2], b.components[2])
-        && WTF::areEssentiallyEqual(a.components[3], b.components[3]);
+    return WTF::areEssentiallyEqual(a[0], b[0])
+        && WTF::areEssentiallyEqual(a[1], b[1])
+        && WTF::areEssentiallyEqual(a[2], b[2])
+        && WTF::areEssentiallyEqual(a[3], b[3]);
 }
 
 // These are the standard sRGB <-> linearRGB conversion functions (https://en.wikipedia.org/wiki/SRGB).
@@ -59,20 +59,20 @@ float rgbToLinearColorComponent(float c)
 ColorComponents<float> rgbToLinearComponents(const ColorComponents<float>& RGBColor)
 {
     return {
-        rgbToLinearColorComponent(RGBColor.components[0]),
-        rgbToLinearColorComponent(RGBColor.components[1]),
-        rgbToLinearColorComponent(RGBColor.components[2]),
-        RGBColor.components[3]
+        rgbToLinearColorComponent(RGBColor[0]),
+        rgbToLinearColorComponent(RGBColor[1]),
+        rgbToLinearColorComponent(RGBColor[2]),
+        RGBColor[3]
     };
 }
 
 ColorComponents<float> linearToRGBComponents(const ColorComponents<float>& linearRGB)
 {
     return {
-        linearToRGBColorComponent(linearRGB.components[0]),
-        linearToRGBColorComponent(linearRGB.components[1]),
-        linearToRGBColorComponent(linearRGB.components[2]),
-        linearRGB.components[3]
+        linearToRGBColorComponent(linearRGB[0]),
+        linearToRGBColorComponent(linearRGB[1]),
+        linearToRGBColorComponent(linearRGB[2]),
+        linearRGB[3]
     };
 }
 
@@ -142,8 +142,7 @@ float lightness(const ColorComponents<float>& sRGBCompontents)
 {
     auto [r, g, b, a] = sRGBCompontents;
 
-    float max = std::max({ r, g, b });
-    float min = std::min({ r, g, b });
+    auto [min, max] = std::minmax({ r, g, b });
 
     return 0.5f * (max + min);
 }
@@ -162,9 +161,9 @@ static float sRGBToLinearColorComponentForLuminance(float c)
 float luminance(const ColorComponents<float>& sRGBComponents)
 {
     // Values from https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-    return 0.2126f * sRGBToLinearColorComponentForLuminance(sRGBComponents.components[0])
-        + 0.7152f * sRGBToLinearColorComponentForLuminance(sRGBComponents.components[1])
-        + 0.0722f * sRGBToLinearColorComponentForLuminance(sRGBComponents.components[2]);
+    return 0.2126f * sRGBToLinearColorComponentForLuminance(sRGBComponents[0])
+        + 0.7152f * sRGBToLinearColorComponentForLuminance(sRGBComponents[1])
+        + 0.0722f * sRGBToLinearColorComponentForLuminance(sRGBComponents[2]);
 }
 
 float contrastRatio(const ColorComponents<float>& componentsA, const ColorComponents<float>& componentsB)
@@ -185,8 +184,7 @@ ColorComponents<float> sRGBToHSL(const ColorComponents<float>& sRGBCompontents)
     // http://en.wikipedia.org/wiki/HSL_color_space.
     auto [r, g, b, alpha] = sRGBCompontents;
 
-    float max = std::max({ r, g, b });
-    float min = std::min({ r, g, b });
+    auto [min, max] = std::minmax({ r, g, b });
     float chroma = max - min;
 
     float hue;
@@ -242,9 +240,7 @@ static float calcHue(float temp1, float temp2, float hueVal)
 // further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
 ColorComponents<float> hslToSRGB(const ColorComponents<float>& hslColor)
 {
-    float hue = hslColor.components[0];
-    float saturation = hslColor.components[1];
-    float lightness = hslColor.components[2];
+    auto [hue, saturation, lightness, alpha] = hslColor;
 
     // Convert back to RGB.
     if (!saturation) {
@@ -252,7 +248,7 @@ ColorComponents<float> hslToSRGB(const ColorComponents<float>& hslColor)
             lightness,
             lightness,
             lightness,
-            hslColor.components[3]
+            alpha
         };
     }
     
@@ -264,7 +260,7 @@ ColorComponents<float> hslToSRGB(const ColorComponents<float>& hslColor)
         calcHue(temp1, temp2, hue + 2.0f),
         calcHue(temp1, temp2, hue),
         calcHue(temp1, temp2, hue - 2.0f),
-        hslColor.components[3]
+        alpha
     };
 }
 

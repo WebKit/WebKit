@@ -1,3 +1,101 @@
+2020-05-30  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Additional color cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=212567
+
+        Reviewed by Simon Fraser.
+
+        A few unrelated quality-of-life cleanups to Color and related classes:
+        - Rename Color::asSimpleColor() to Color::asSimple() for parity with Color::asExtended().
+        - Move SimpleColor implementations of invertedColorWithAlpha() and asSRGBFloatComponents()
+          to SimpleColor for parity with ExtenedColor.
+        - Rename ExtendedColor::channels() to ExtendedColor::components() to consistency.
+        - Adds operator[] to ColorComponents to allow direct access to components rather than
+          requiring and additional .components[]
+        - Using std::minmax() where possible.
+        - Renaming colorFloatToSimpleColorByte to scaleRoundAndClampColorChannel to have a consistent 
+          naming and location of conversion to 8-bit color channels.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::serialized const):
+        (WebCore::Color::cssText const):
+        (WebCore::Color::nameForRenderTreeAsText const):
+        (WebCore::Color::light const):
+        (WebCore::Color::dark const):
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const):
+        (WebCore::Color::invertedColorWithAlpha const):
+        (WebCore::Color::colorSpaceAndComponents const):
+        (WebCore::Color::toSRGBASimpleColorLossy const):
+        (WebCore::Color::toSRGBAComponentsLossy const):
+        * platform/graphics/Color.h:
+        (WebCore::Color::isOpaque const):
+        (WebCore::Color::isVisible const):
+        (WebCore::Color::alpha const):
+        (WebCore::Color::alphaAsFloat const):
+        (WebCore::Color::asSimple const):
+        (WebCore::Color::isBlackColor):
+        (WebCore::Color::isWhiteColor):
+        (WebCore::Color::encode const):
+        (WebCore::Color::asSimpleColor const): Deleted.
+        * platform/graphics/ColorComponents.h:
+        (WebCore::ColorComponents::operator[]):
+        (WebCore::ColorComponents::operator[] const):
+        (WebCore::=):
+        (WebCore::perComponentMax):
+        (WebCore::perComponentMin):
+        * platform/graphics/ColorMatrix.h:
+        (WebCore::Rows>::transformedColorComponents const):
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::areEssentiallyEqual):
+        (WebCore::rgbToLinearComponents):
+        (WebCore::linearToRGBComponents):
+        (WebCore::lightness):
+        (WebCore::luminance):
+        (WebCore::sRGBToHSL):
+        (WebCore::hslToSRGB):
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::scaleRoundAndClampColorChannel):
+        (WebCore::scaleRoundAndClampColorChannelUsingAlternativeRounding):
+        (WebCore::colorFloatToSimpleColorByte): Deleted.
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::hash const):
+        (WebCore::ExtendedColor::cssText const):
+        (WebCore::ExtendedColor::colorWithAlpha const):
+        (WebCore::ExtendedColor::invertedColorWithAlpha const):
+        (WebCore::ExtendedColor::toSRGBAComponentsLossy const):
+        (WebCore::ExtendedColor::isWhite const):
+        (WebCore::ExtendedColor::isBlack const):
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::alpha const):
+        (WebCore::ExtendedColor::components const):
+        (WebCore::ExtendedColor::ExtendedColor):
+        (WebCore::operator==):
+        (WebCore::ExtendedColor::channels const): Deleted.
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::makeSimpleColorFromFloats):
+        (WebCore::makeSimpleColorFromHSLA):
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::SimpleColor):
+        (WebCore::SimpleColor::valueAsARGB const):
+        (WebCore::SimpleColor::colorWithAlpha const):
+        (WebCore::SimpleColor::invertedColorWithAlpha const):
+        (WebCore::SimpleColor::asSRGBFloatComponents const):
+        (WebCore::makeSimpleColor):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::cachedCGColor):
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::toIntBasedColorComponents):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicComponentTransferFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+
 2020-05-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r262335.

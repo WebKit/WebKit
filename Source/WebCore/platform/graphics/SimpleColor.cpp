@@ -69,18 +69,23 @@ SimpleColor makeUnpremultipliedSimpleColor(SimpleColor pixelColor)
 
 SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a)
 {
-    return makeSimpleColor(colorFloatToSimpleColorByte(r), colorFloatToSimpleColorByte(g), colorFloatToSimpleColorByte(b), colorFloatToSimpleColorByte(a));
+    return makeSimpleColor(
+        scaleRoundAndClampColorChannel(r),
+        scaleRoundAndClampColorChannel(g),
+        scaleRoundAndClampColorChannel(b),
+        scaleRoundAndClampColorChannel(a)
+    );
 }
 
 SimpleColor makeSimpleColorFromHSLA(float hue, float saturation, float lightness, float alpha)
 {
-    const float scaleFactor = 255.0;
-    auto floatResult = hslToSRGB({ hue, saturation, lightness, alpha });
+    auto [r, g, b, a] = hslToSRGB({ hue, saturation, lightness, alpha });
     return makeSimpleColor(
-        round(floatResult.components[0] * scaleFactor),
-        round(floatResult.components[1] * scaleFactor),
-        round(floatResult.components[2] * scaleFactor),
-        round(floatResult.components[3] * scaleFactor));
+        round(r * 255.0f),
+        round(g * 255.0f),
+        round(b * 255.0f),
+        round(a * 255.0f)
+    );
 }
 
 SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a)

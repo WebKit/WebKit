@@ -63,6 +63,11 @@ inline uint8_t roundAndClampColorChannel(float value)
     return std::clamp(std::round(value), 0.f, 255.f);
 }
 
+inline uint8_t scaleRoundAndClampColorChannel(float f)
+{
+    return std::clamp(static_cast<int>(lroundf(255.0f * f)), 0, 255);
+}
+
 constexpr uint16_t fastMultiplyBy255(uint16_t value)
 {
     return (value << 8) - value;
@@ -77,9 +82,5 @@ constexpr uint16_t fastDivideBy255(uint16_t value)
     return approximation + (remainder >> 8);
 }
 
-inline uint8_t colorFloatToSimpleColorByte(float f)
-{
-    return std::clamp(static_cast<int>(lroundf(255.0f * f)), 0, 255);
-}
 
 } // namespace WebCore
