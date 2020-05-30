@@ -122,7 +122,7 @@ public:
     IndexedAbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset, size_t elementSize);
     ~IndexedAbstractHeap();
     
-    const AbstractHeap& atAnyIndex() const { return m_heapForAnyIndex; }
+    AbstractHeap& atAnyIndex() { return m_heapForAnyIndex; }
     
     const AbstractHeap& at(ptrdiff_t index)
     {
@@ -135,7 +135,7 @@ public:
     
     TypedPointer baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0, LValue mask = nullptr);
     
-    void dump(PrintStream&) const;
+    void dump(PrintStream&);
 
 private:
     const AbstractHeap& returnInitialized(AbstractHeap& field, ptrdiff_t index)
@@ -174,12 +174,12 @@ public:
     NumberedAbstractHeap(AbstractHeap* parent, const char* heapName);
     ~NumberedAbstractHeap();
     
-    const AbstractHeap& atAnyNumber() const { return m_indexedHeap.atAnyIndex(); }
+    AbstractHeap& atAnyNumber() { return m_indexedHeap.atAnyIndex(); }
     
     const AbstractHeap& at(unsigned number) { return m_indexedHeap.at(number); }
     const AbstractHeap& operator[](unsigned number) { return at(number); }
 
-    void dump(PrintStream&) const;
+    void dump(PrintStream&);
 
 private:
     
@@ -193,7 +193,7 @@ public:
     AbsoluteAbstractHeap(AbstractHeap* parent, const char* heapName);
     ~AbsoluteAbstractHeap();
     
-    const AbstractHeap& atAnyAddress() const { return m_indexedHeap.atAnyIndex(); }
+    const AbstractHeap& atAnyAddress() { return m_indexedHeap.atAnyIndex(); }
     
     const AbstractHeap& at(const void* address)
     {
@@ -202,7 +202,7 @@ public:
     
     const AbstractHeap& operator[](const void* address) { return at(address); }
 
-    void dump(PrintStream&) const;
+    void dump(PrintStream&);
 
 private:
     // The trick here is that the indexed heap is "indexed" by a pointer-width

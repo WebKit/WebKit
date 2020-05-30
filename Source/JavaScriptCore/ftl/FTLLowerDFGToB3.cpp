@@ -3791,9 +3791,12 @@ private:
         ASSERT(oldStructure->typeInfo().type() == newStructure->typeInfo().type());
 
         LValue cell = lowCell(m_node->child1()); 
+
+        auto& heap = m_node->transition()->next->isPropertyDeletionTransition() ? m_heaps.JSCellHeaderAndNamedProperties : m_heaps.JSCell_structureID;
+        TypedPointer pointer { heap, m_out.addPtr(cell, m_heaps.JSCell_structureID.offset()) };
+
         m_out.store32(
-            weakStructureID(newStructure),
-            cell, m_heaps.JSCell_structureID);
+            weakStructureID(newStructure), pointer);
     }
     
     void compileGetById(AccessType type)
@@ -8509,6 +8512,12 @@ private:
 
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(Int32, results));
+
+        if (data.writesStructures()) {
+            PatchpointValue* patchpoint = m_out.patchpoint(Void);
+            patchpoint->setGenerator([] (CCallHelpers&, const StackmapGenerationParams&) { });
+            m_heaps.decoratePatchpointWrite(&m_heaps.JSCellHeaderAndNamedProperties, patchpoint);
+        }
     }
     
     void compileMatchStructure()

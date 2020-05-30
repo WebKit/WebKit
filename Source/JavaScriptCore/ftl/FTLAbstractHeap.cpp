@@ -231,7 +231,7 @@ void IndexedAbstractHeap::initialize(AbstractHeap& field, ptrdiff_t signedIndex)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void IndexedAbstractHeap::dump(PrintStream& out) const
+void IndexedAbstractHeap::dump(PrintStream& out)
 {
     out.print("Indexed:", atAnyIndex());
 }
@@ -245,7 +245,7 @@ NumberedAbstractHeap::~NumberedAbstractHeap()
 {
 }
 
-void NumberedAbstractHeap::dump(PrintStream& out) const
+void NumberedAbstractHeap::dump(PrintStream& out)
 {
     out.print("Numbered: ", atAnyNumber());
 }
@@ -259,7 +259,7 @@ AbsoluteAbstractHeap::~AbsoluteAbstractHeap()
 {
 }
 
-void AbsoluteAbstractHeap::dump(PrintStream& out) const
+void AbsoluteAbstractHeap::dump(PrintStream& out)
 {
     out.print("Absolute:", atAnyAddress());
 }

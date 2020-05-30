@@ -1,3 +1,81 @@
+2020-05-29  Saam Barati  <sbarati@apple.com>
+
+        We need to properly model heap ranges of Delete in DFG/B3
+        https://bugs.webkit.org/show_bug.cgi?id=212538
+        <rdar://problem/63670964>
+
+        Reviewed by Filip Pizlo.
+
+        We need to properly model the aliasing dependencies of an inlined delete 
+        operation. 
+        
+        We had a bug in the B3 IR we generated from code like this for a delete
+        followed by a property addition:
+        ```
+        const o = { y: 0 };
+        delete o.y;
+        o.z = 0;
+        ```
+        
+        generated:
+        
+        ```
+        note: bb#5 dominates bb#10, bb#10 dominates bb#15
+        
+        bb#5
+        Void b@125 = Store($-562949953421312(b@282), b@112, offset = 16, ControlDependent|Writes:129, D@30)
+        bb#10
+        Void b@171 = Store($0(b@2), b@112, offset = 16, ControlDependent|Writes:129, D@37)
+        bb#15
+        Void b@217 = Store($-562949953421312(b@282), b@112, offset = 16, ControlDependent|Writes:130, D@44)
+        ```
+        
+        Notice that "y" and "z" ended up at the same property offset.
+        
+        In the above program, B3 proves the pointer we're storing to is the same value
+        in all three stores (b@112). However, because of how it does store forwarding,
+        it determined it could eliminate b@217 because b@125 already stored the same
+        value to the same pointer. It didn't know that b@171 was a write because its
+        heap range is different than @217. Generally, when using two heap ranges, it's
+        telling B3 that two pointers don't alias.
+        ```
+        @A, Heap_H
+        @B, Heap_H
+        ```
+        In the above program, 
+        - If @B reads H and @A writes H, then @B is dependent on @A.
+        - If @B writes H, then @B is dependent on @A if @A reads or writes H.
+        
+        So for delete, we need to model the deletion of a property as actually
+        writing to all named properties that may exist at that slot given a
+        series of structure transitions. We model this by saying the PutStructure
+        for an inlined delete, or MultiDeleteByOffset, writes to all named properties
+        (which is a superset of all named properties that may exist at that slot
+        through a series of transitions).
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::dump):
+        (JSC::FTL::NumberedAbstractHeap::dump):
+        (JSC::FTL::AbsoluteAbstractHeap::dump):
+        (JSC::FTL::IndexedAbstractHeap::dump const): Deleted.
+        (JSC::FTL::NumberedAbstractHeap::dump const): Deleted.
+        (JSC::FTL::AbsoluteAbstractHeap::dump const): Deleted.
+        * ftl/FTLAbstractHeap.h:
+        (JSC::FTL::IndexedAbstractHeap::atAnyIndex):
+        (JSC::FTL::NumberedAbstractHeap::atAnyNumber):
+        (JSC::FTL::AbsoluteAbstractHeap::atAnyAddress):
+        (JSC::FTL::IndexedAbstractHeap::atAnyIndex const): Deleted.
+        (JSC::FTL::NumberedAbstractHeap::atAnyNumber const): Deleted.
+        (JSC::FTL::AbsoluteAbstractHeap::atAnyAddress const): Deleted.
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiDeleteByOffset):
+
 2020-05-29  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove conditionals for ENABLE_APPLE_PAY_SESSION_V(3|4)
