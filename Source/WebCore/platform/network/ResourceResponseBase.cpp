@@ -839,13 +839,4 @@ bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResp
     return ResourceResponse::platformCompare(a, b);
 }
 
-bool ResourceResponseBase::containsInvalidHTTPHeaders() const
-{
-    for (auto& header : httpHeaderFields()) {
-        if (!isValidHTTPHeaderValue(stripLeadingAndTrailingHTTPSpaces(header.value)))
-            return true;
-    }
-    return false;
-}
-
 }

@@ -208,8 +208,6 @@ public:
     bool isRangeRequested() const { return m_isRangeRequested; }
     void setAsRangeRequested() { m_isRangeRequested = true; }
 
-    bool containsInvalidHTTPHeaders() const;
-
 protected:
     enum InitLevel {
         Uninitialized,
