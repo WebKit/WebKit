@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,7 +75,7 @@ WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClientBase* client)
 WK_EXPORT void WKBundleSetServiceWorkerProxyCreationCallback(WKBundleRef bundle, void (*)(uint64_t));
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody);
-WK_EXPORT void WKBundlePostSynchronousMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnRetainedData);
+WK_EXPORT void WKBundlePostSynchronousMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnRetainedData) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundle);
 
