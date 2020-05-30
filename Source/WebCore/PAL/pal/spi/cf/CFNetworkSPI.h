@@ -42,7 +42,6 @@
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <CFNetwork/CFURLStorageSession.h>
-#include <nw/private.h>
 
 #if PLATFORM(WIN)
 
@@ -56,8 +55,9 @@ extern const CFStringRef _kCFWindowsSSLPeerCert;
 
 WTF_EXTERN_C_END
 
-#else // PLATFORM(WIN)
+#else // !PLATFORM(WIN)
 #include <CFNetwork/CFSocketStreamPriv.h>
+#include <nw/private.h>
 #endif // PLATFORM(WIN)
 
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
@@ -78,8 +78,7 @@ typedef enum {
 #ifndef NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT
 #define NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT    1
 #endif
-
-#endif
+#endif // HAVE(LOGGING_PRIVACY_LEVEL)
 
 typedef CF_ENUM(int64_t, _TimingDataOptions)
 {
@@ -297,7 +296,7 @@ extern NSString * const NSURLAuthenticationMethodOAuth;
 
 #endif // defined(__OBJC__)
 
-#endif // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
+#endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
 
