@@ -52,6 +52,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/NakedRef.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
@@ -1029,14 +1030,25 @@ static bool sessionsCreated = false;
 
 static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID& session)
 {
+#if HAVE(LOGGING_PRIVACY_LEVEL)
+    auto loggingPrivacyLevel = nw_context_privacy_level_sensitive;
+#endif
+
     NSURLSessionConfiguration *configuration;
     if (session.isEphemeral()) {
         configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
         configuration._shouldSkipPreferredClientCertificateLookup = YES;
+#if HAVE(LOGGING_PRIVACY_LEVEL) && defined(NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT)
+        loggingPrivacyLevel = nw_context_privacy_level_silent;
+#endif
     } else
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
 
-#if HAVE(ALLOWS_SENSITIVE_LOGGING)
+#if HAVE(LOGGING_PRIVACY_LEVEL)
+    auto setLoggingPrivacyLevel = NSSelectorFromString(@"_setLoggingPrivacyLevel:");
+    if ([configuration respondsToSelector:setLoggingPrivacyLevel])
+        wtfObjCMsgSend<void>(configuration, setLoggingPrivacyLevel, loggingPrivacyLevel);
+#elif HAVE(ALLOWS_SENSITIVE_LOGGING)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration._allowsSensitiveLogging = NO;
 ALLOW_DEPRECATED_DECLARATIONS_END

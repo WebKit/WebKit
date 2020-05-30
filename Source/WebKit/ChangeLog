@@ -1,3 +1,19 @@
+2020-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Improve logging quality for non-ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=212551
+        <rdar://problem/62461099>
+
+        Reviewed by David Kilzer.
+
+        In Bug 209522 I switched normal mode logging to use the same privacy-protecting mode we use for ephemeral sessions.
+        This had the unintended consequence of removing network load data used to investigate networking issues.
+
+        This patch adopts the more fine-grained logging provided by the low-level 'nw_context_privacy_level' setting.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID): Adopt 'nw_context_privacy_level' setting.
+
 2020-05-29  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove conditionals for ENABLE_APPLE_PAY_SESSION_V(3|4)

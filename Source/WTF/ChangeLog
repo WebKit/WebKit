@@ -1,3 +1,13 @@
+2020-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Improve logging quality for non-ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=212551
+        <rdar://problem/62461099>
+
+        Reviewed by David Kilzer.
+
+        * wtf/PlatformHave.h: Add new feature check for CFNetwork convenience setter.
+
 2020-05-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r261812): editing/async-clipboard/clipboard-item-get-type-basic.html is flaky

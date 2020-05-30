@@ -42,6 +42,7 @@
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <CFNetwork/CFURLStorageSession.h>
+#include <nw/private.h>
 
 #if PLATFORM(WIN)
 
@@ -65,6 +66,20 @@ WTF_EXTERN_C_END
 #endif
 
 #else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(LOGGING_PRIVACY_LEVEL)
+typedef enum {
+    nw_context_privacy_level_public = 1,
+    nw_context_privacy_level_private = 2,
+    nw_context_privacy_level_sensitive = 3,
+    nw_context_privacy_level_silent = 4,
+} nw_context_privacy_level_t;
+
+#ifndef NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT
+#define NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT    1
+#endif
+
+#endif
 
 typedef CF_ENUM(int64_t, _TimingDataOptions)
 {
@@ -208,6 +223,9 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #endif
 #if HAVE(ALLOWS_SENSITIVE_LOGGING)
 @property BOOL _allowsSensitiveLogging;
+#endif
+#if HAVE(LOGGING_PRIVACY_LEVEL)
+@property nw_context_privacy_level_t _loggingPrivacyLevel;
 #endif
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
 @property (nullable, retain) _NSHTTPAlternativeServicesStorage *_alternativeServicesStorage;

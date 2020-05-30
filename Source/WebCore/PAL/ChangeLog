@@ -1,3 +1,15 @@
+2020-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Improve logging quality for non-ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=212551
+        <rdar://problem/62461099>
+
+        Reviewed by David Kilzer.
+
+        Add support for the 'nw_context_privacy_level' setting.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2020-05-29  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove conditionals for ENABLE_APPLE_PAY_SESSION_V(3|4)
