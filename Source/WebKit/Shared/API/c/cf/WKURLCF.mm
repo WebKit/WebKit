@@ -65,5 +65,5 @@ CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
     // UTF-8 which uses less memory and is what WebKit clients might expect.
 
     CString buffer = WebKit::toImpl(URLRef)->string().utf8();
-    return WTF::createCFURLFromBuffer(buffer.data(), buffer.length(), 0).leakRef();
+    return CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(buffer.data()), buffer.length(), kCFStringEncodingUTF8, nullptr, true);
 }

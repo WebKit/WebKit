@@ -1,3 +1,15 @@
+2020-05-29  Alex Christensen  <achristensen@webkit.org>
+
+        Use correct encoding when converting a WTF::URL to CFURLRef
+        https://bugs.webkit.org/show_bug.cgi?id=212486
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCopyCFURL):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+
 2020-05-29  Peng Liu  <peng.liu6@apple.com>
 
         Replace callOnMainThread() with callOnMainRunLoop() in AudioSessionRoutingArbitratorProxyCocoa.mm

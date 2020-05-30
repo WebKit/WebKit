@@ -70,10 +70,10 @@ RetainPtr<CFURLRef> URL::createCFURL() const
 
     RetainPtr<CFURLRef> cfURL;
     if (LIKELY(m_string.is8Bit()))
-        cfURL = WTF::createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
+        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(m_string.characters8()), m_string.length(), kCFStringEncodingISOLatin1, nullptr, true));
     else {
         CString utf8 = m_string.utf8();
-        cfURL = WTF::createCFURLFromBuffer(utf8.data(), utf8.length());
+        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(utf8.data()), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
     }
 
     if (protocolIsInHTTPFamily() && !WTF::isCFURLSameOrigin(cfURL.get(), *this))

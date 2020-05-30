@@ -34,7 +34,6 @@ namespace WTF {
 class URL;
 typedef Vector<char, 512> URLCharBuffer;
 
-WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> createCFURLFromBuffer(const char*, size_t, CFURLRef baseURL = nullptr);
 WTF_EXPORT_PRIVATE void getURLBytes(CFURLRef, URLCharBuffer&);
 WTF_EXPORT_PRIVATE void getURLBytes(CFURLRef, CString&);
 

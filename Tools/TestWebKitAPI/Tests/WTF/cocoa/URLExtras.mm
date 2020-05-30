@@ -207,6 +207,24 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
 
     WTF::URL url2(URL(), utf16String(u"http://\u2267\u222E\uFE63"));
     EXPECT_STREQ([[url2 absoluteString] UTF8String], "http://%E2%89%A7%E2%88%AE%EF%B9%A3");
+
+    std::array<UChar, 3> utf16 { 0xC2, 0xB6, 0x00 };
+    WTF::URL url3(URL(), String(utf16.data()));
+    EXPECT_FALSE(url3.string().is8Bit());
+    EXPECT_FALSE(url3.isValid());
+    EXPECT_STREQ([[url3 absoluteString] UTF8String], "%C3%82%C2%B6");
+    
+    std::array<LChar, 3> latin1 { 0xC2, 0xB6, 0x00 };
+    WTF::URL url4(URL(), String(latin1.data()));
+    EXPECT_FALSE(url4.isValid());
+    EXPECT_TRUE(url4.string().is8Bit());
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101500
+    // CFURLCreateAbsoluteURLWithBytes has incorrect behavior on Mojave
+    // See https://bugs.webkit.org/show_bug.cgi?id=212486#c6
+    EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C2%B6");
+#else
+    EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C3%82%C2%B6");
+#endif
 }
 
 TEST(WTF_URLExtras, URLExtras_Nil)

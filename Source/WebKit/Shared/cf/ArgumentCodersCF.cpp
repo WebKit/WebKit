@@ -639,7 +639,7 @@ bool decode(Decoder& decoder, RetainPtr<CFURLRef>& result)
     }
 #endif
 
-    result = WTF::createCFURLFromBuffer(reinterpret_cast<const char*>(urlBytes.data()), urlBytes.size(), baseURL.get());
+    result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes.data()), urlBytes.size(), kCFStringEncodingASCII, baseURL.get(), true));
     return result;
 }
 
