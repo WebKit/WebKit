@@ -37,7 +37,7 @@
     ApplePayPaymentContact shippingContact;
 
     DOMString applicationData;
-    [Conditional=APPLE_PAY_SESSION_V3] sequence<DOMString> supportedCountries;
+    sequence<DOMString> supportedCountries;
 
     [Conditional=APPLE_PAY_INSTALLMENTS] ApplePayInstallmentConfiguration installmentConfiguration;
 };
