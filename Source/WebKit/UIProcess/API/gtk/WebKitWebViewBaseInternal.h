@@ -30,7 +30,9 @@ typedef struct _WebKitWebViewBase WebKitWebViewBase;
 enum class MouseEventType { Press, Release, Motion };
 void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount);
 
-void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, unsigned keyVal, unsigned modifiers);
+enum class KeyEventType { Press, Release, Insert };
+enum class ShouldTranslateKeyboardState { No, Yes };
+void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, KeyEventType, unsigned keyVal, unsigned modifiers, ShouldTranslateKeyboardState);
 
 enum class WheelEventPhase { NoPhase, Began, Changed, Ended, Cancelled, MayBegin };
 void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase);

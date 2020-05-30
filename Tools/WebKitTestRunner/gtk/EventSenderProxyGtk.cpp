@@ -235,7 +235,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 {
     guint modifiers = webkitModifiersToGDKModifiers(wkModifiers);
     int gdkKeySym = getGDKKeySymForKeyRef(keyRef, location, &modifiers);
-    webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), gdkKeySym, modifiers);
+    webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), KeyEventType::Insert, gdkKeySym, modifiers, ShouldTranslateKeyboardState::No);
 }
 
 void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)

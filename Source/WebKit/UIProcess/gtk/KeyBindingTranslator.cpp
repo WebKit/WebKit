@@ -320,7 +320,18 @@ static const KeyCombinationEntry predefinedKeyBindings[] = {
     { GDK_KEY_Delete,       GDK_CONTROL_MASK,                  "DeleteWordForward" },
     { GDK_KEY_KP_Delete,    GDK_CONTROL_MASK,                  "DeleteWordForward" },
     { GDK_KEY_BackSpace,    0,                                 "DeleteBackward" },
-    { GDK_KEY_BackSpace,    GDK_CONTROL_MASK,                  "DeleteWordBackward" }
+    { GDK_KEY_BackSpace,    GDK_SHIFT_MASK,                    "DeleteBackward" },
+    { GDK_KEY_BackSpace,    GDK_CONTROL_MASK,                  "DeleteWordBackward" },
+    { GDK_KEY_a,            GDK_CONTROL_MASK,                  "SelectAll" },
+    { GDK_KEY_a,            GDK_CONTROL_MASK | GDK_SHIFT_MASK, "Unselect" },
+    { GDK_KEY_slash,        GDK_CONTROL_MASK,                  "SelectAll" },
+    { GDK_KEY_backslash,    GDK_CONTROL_MASK,                  "Unselect" },
+    { GDK_KEY_x,            GDK_CONTROL_MASK,                  "Cut" },
+    { GDK_KEY_c,            GDK_CONTROL_MASK,                  "Copy" },
+    { GDK_KEY_v,            GDK_CONTROL_MASK,                  "Paste" },
+    { GDK_KEY_KP_Delete,    GDK_SHIFT_MASK,                    "Cut" },
+    { GDK_KEY_KP_Insert,    GDK_CONTROL_MASK,                  "Copy" },
+    { GDK_KEY_KP_Insert,    GDK_SHIFT_MASK,                    "Paste" }
 };
 
 Vector<String> KeyBindingTranslator::commandsForKeyval(unsigned keyval, unsigned modifiers)

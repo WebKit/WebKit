@@ -779,6 +779,10 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame)
             m_loadTimer.stop();
             callback->sendSuccess(JSON::Object::create());
         }
+
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+        resetClickCount();
+#endif
     } else {
         if (auto callback = m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
             m_loadTimer.stop();
@@ -1511,6 +1515,27 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
 }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+void WebAutomationSession::updateClickCount(MouseButton button, const WebCore::IntPoint& position, Seconds maxTime, int maxDistance)
+{
+    auto now = MonotonicTime::now();
+    if (now - m_lastClickTime < maxTime && button == m_lastClickButton && m_lastClickPosition.distanceSquaredToPoint(position) < maxDistance) {
+        m_clickCount++;
+        m_lastClickTime = now;
+        return;
+    }
+
+    m_clickCount = 1;
+    m_lastClickTime = now;
+    m_lastClickButton = button;
+    m_lastClickPosition = position;
+}
+
+void WebAutomationSession::resetClickCount()
+{
+    m_clickCount = 1;
+    m_lastClickButton = MouseButton::None;
+    m_lastClickPosition = { };
+}
 
 void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, CompletionHandler<void(Optional<AutomationCommandError>)>&& completionHandler)
 {

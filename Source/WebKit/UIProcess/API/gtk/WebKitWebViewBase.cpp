@@ -2416,72 +2416,84 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers), movementDelta));
 }
 
-void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, unsigned keyval, unsigned modifiers)
+void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEventType type, unsigned keyval, unsigned modifiers, ShouldTranslateKeyboardState shouldTranslate)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
         return;
 
+    if (type != KeyEventType::Release) {
 #if !USE(GTK4)
-    if (auto* popupMenu = priv->pageProxy->activePopupMenu()) {
-        auto* gtkPopupMenu = static_cast<WebPopupMenuProxyGtk*>(popupMenu);
-        if (gtkPopupMenu->handleKeyPress(keyval, GDK_CURRENT_TIME))
-            return;
+        if (auto* popupMenu = priv->pageProxy->activePopupMenu()) {
+            auto* gtkPopupMenu = static_cast<WebPopupMenuProxyGtk*>(popupMenu);
+            if (gtkPopupMenu->handleKeyPress(keyval, GDK_CURRENT_TIME))
+                return;
 
-        if (keyval == GDK_KEY_Return) {
-            gtkPopupMenu->activateSelectedItem();
-            return;
+            if (keyval == GDK_KEY_Return) {
+                gtkPopupMenu->activateSelectedItem();
+                return;
+            }
         }
-    }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (priv->fullScreenModeActive) {
-        switch (keyval) {
-        case GDK_KEY_Escape:
-        case GDK_KEY_f:
-        case GDK_KEY_F:
-            priv->pageProxy->fullScreenManager()->requestExitFullScreen();
-            return;
-        default:
-            break;
+        if (priv->fullScreenModeActive) {
+            switch (keyval) {
+            case GDK_KEY_Escape:
+            case GDK_KEY_f:
+            case GDK_KEY_F:
+                priv->pageProxy->fullScreenManager()->requestExitFullScreen();
+                return;
+            default:
+                break;
+            }
         }
-    }
 #endif
 
 #if !USE(GTK4)
-    if (keyval == GDK_KEY_Menu) {
-        webkitWebViewBasePopupMenu(GTK_WIDGET(webViewBase));
-        return;
-    }
+        if (keyval == GDK_KEY_Menu) {
+            webkitWebViewBasePopupMenu(GTK_WIDGET(webViewBase));
+            return;
+        }
 #endif
+    }
 
     auto keycode = widgetKeyvalToKeycode(GTK_WIDGET(webViewBase), keyval);
+    if (modifiers && shouldTranslate == ShouldTranslateKeyboardState::Yes) {
+        auto* display = gtk_widget_get_display(GTK_WIDGET(webViewBase));
+#if !USE(GTK4)
+        gdk_keymap_translate_keyboard_state(gdk_keymap_get_for_display(display), keycode, static_cast<GdkModifierType>(modifiers), 0, &keyval, nullptr, nullptr, nullptr);
+#endif
+    }
     auto webEventModifiers = toWebKitModifiers(modifiers);
 
-    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
-        WebEvent::KeyDown,
-        PlatformKeyboardEvent::singleCharacterString(keyval),
-        PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
-        PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
-        PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
-        PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
-        static_cast<int>(keyval),
-        priv->keyBindingTranslator.commandsForKeyval(keyval, modifiers),
-        keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9,
-        webEventModifiers));
+    if (type != KeyEventType::Release) {
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
+            WebEvent::KeyDown,
+            PlatformKeyboardEvent::singleCharacterString(keyval),
+            PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
+            PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
+            PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
+            PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
+            static_cast<int>(keyval),
+            priv->keyBindingTranslator.commandsForKeyval(keyval, modifiers),
+            keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9,
+            webEventModifiers));
+    }
 
-    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
-        WebEvent::KeyUp,
-        PlatformKeyboardEvent::singleCharacterString(keyval),
-        PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
-        PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
-        PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
-        PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
-        static_cast<int>(keyval),
-        { },
-        keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9,
-        webEventModifiers));
+    if (type != KeyEventType::Press) {
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
+            WebEvent::KeyUp,
+            PlatformKeyboardEvent::singleCharacterString(keyval),
+            PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
+            PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
+            PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
+            PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
+            static_cast<int>(keyval),
+            { },
+            keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9,
+            webEventModifiers));
+    }
 }
 
 static inline WebWheelEvent::Phase toWebKitWheelEventPhase(WheelEventPhase phase)
