@@ -1,3 +1,18 @@
+2020-05-29  Peng Liu  <peng.liu6@apple.com>
+
+        Replace callOnMainThread() with callOnMainRunLoop() in AudioSessionRoutingArbitratorProxyCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=212553
+
+        Reviewed by Chris Dumez.
+
+        Use callOnMainRunLoop() instead of callOnMainThread() in the UIProcess. Also move
+        m_setupArbitrationOngoing flag to the end of the completion handler.
+
+        No new tests, no functional change.
+
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator):
+
 2020-05-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Improve logging quality for non-ephemeral sessions

@@ -113,8 +113,7 @@ void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingA
     m_enqueuedCallbacks.append(WTFMove(callback));
 
     [[PAL::getAVAudioRoutingArbiterClass() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this](BOOL defaultDeviceChanged, NSError * _Nullable error) {
-        callOnMainThread([this, defaultDeviceChanged, error = retainPtr(error)] {
-            m_setupArbitrationOngoing = false;
+        callOnMainRunLoop([this, defaultDeviceChanged, error = retainPtr(error)] {
             if (error)
                 RELEASE_LOG_ERROR(Media, "SharedArbitrator::beginRoutingArbitrationForArbitrator: %s failed with error %s:%s", convertEnumerationToString(*m_currentCategory).ascii().data(), [[error domain] UTF8String], [[error localizedDescription] UTF8String]);
 
@@ -125,6 +124,8 @@ void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingA
             Vector<ArbitrationCallback> callbacks = WTFMove(m_enqueuedCallbacks);
             for (auto& callback : callbacks)
                 callback(error ? RoutingArbitrationError::Failed : RoutingArbitrationError::None, defaultDeviceChanged ? DefaultRouteChanged::Yes : DefaultRouteChanged::No);
+
+            m_setupArbitrationOngoing = false;
         });
     }];
 }
