@@ -1279,7 +1279,8 @@ public:
 
     JSBigInt* decode(Decoder& decoder) const
     {
-        JSBigInt* bigInt = JSBigInt::createWithLengthUnchecked(decoder.vm(), m_length);
+        JSBigInt* bigInt = JSBigInt::tryCreateWithLength(decoder.vm(), m_length);
+        RELEASE_ASSERT(bigInt);
         bigInt->setSign(m_sign);
         if (m_length)
             memcpy(bigInt->dataStorage(), this->buffer(), sizeof(JSBigInt::Digit) * m_length);

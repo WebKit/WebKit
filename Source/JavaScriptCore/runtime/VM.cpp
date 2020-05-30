@@ -472,7 +472,11 @@ VM::VM(VMType vmType, HeapType heapType)
         sentinelMapBucket();
         sentinelSetBucket();
     }
-    heapBigIntConstantOne.set(*this, JSBigInt::createFrom(*this, 1));
+    {
+        auto* bigInt = JSBigInt::tryCreateFrom(*this, 1);
+        RELEASE_ASSERT(bigInt);
+        heapBigIntConstantOne.set(*this, bigInt);
+    }
 
     Thread::current().setCurrentAtomStringTable(existingEntryAtomStringTable);
     

@@ -1,5 +1,19 @@
 2020-05-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSBigInt allocation should be graceful for OOM
+        https://bugs.webkit.org/show_bug.cgi?id=212512
+
+        Reviewed by Mark Lam.
+
+        * stress/bigint-can-throw-oom.js: Copied from JSTests/stress/get-function-realm-not-doing-recursion.js.
+        (canThrow):
+        (foo):
+        (get foo):
+        * stress/get-function-realm-not-doing-recursion.js:
+        (canThrow):
+
+2020-05-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Split some of JSC tests / reduce iteration count to make it not timed-out in Debug build
         https://bugs.webkit.org/show_bug.cgi?id=212557
 

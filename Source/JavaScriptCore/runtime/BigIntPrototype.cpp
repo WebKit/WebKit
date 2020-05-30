@@ -74,12 +74,15 @@ void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
 
 // ------------------------------ Functions ---------------------------
 
-static ALWAYS_INLINE JSBigInt* toThisBigIntValue(VM& vm, JSValue thisValue)
+static ALWAYS_INLINE JSBigInt* toThisBigIntValue(JSGlobalObject* globalObject, JSValue thisValue)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
 #if USE(BIGINT32)
     // FIXME: heap-allocating all big ints is inneficient, but re-implementing toString for small BigInts is enough work that I'm deferring it to a later patch.
     if (thisValue.isBigInt32())
-        return JSBigInt::createFrom(vm, thisValue.bigInt32AsInt32());
+        RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, thisValue.bigInt32AsInt32()));
 #endif
 
     if (thisValue.isCell()) {
@@ -90,12 +93,13 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(VM& vm, JSValue thisValue)
             JSValue bigInt = bigIntObject->internalValue();
 #if USE(BIGINT32)
             if (bigInt.isBigInt32())
-                return JSBigInt::createFrom(vm, bigInt.bigInt32AsInt32());
+                RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, bigInt.bigInt32AsInt32()));
 #endif
             return bigInt.asHeapBigInt();
         }
     }
 
+    throwTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
     return nullptr;
 }
 
@@ -104,9 +108,8 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
-    if (!value)
-        return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+    JSBigInt* value = toThisBigIntValue(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     ASSERT(value);
 
@@ -129,9 +132,8 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToLocaleString(JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
-    if (!value)
-        return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+    JSBigInt* value = toThisBigIntValue(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
     numberFormat->initializeNumberFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
@@ -144,9 +146,8 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
-    if (!value)
-        return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
+    JSBigInt* value = toThisBigIntValue(globalObject, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     Integrity::auditStructureID(vm, value->structureID());
     return JSValue::encode(value);

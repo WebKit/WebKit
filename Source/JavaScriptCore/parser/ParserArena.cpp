@@ -96,9 +96,10 @@ const Identifier& IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
     // https://bugs.webkit.org/show_bug.cgi?id=207627
     JSBigInt* heapBigInt;
 #if USE(BIGINT32)
-    if (bigInt.isBigInt32())
-        heapBigInt = JSBigInt::createFrom(vm, bigInt.bigInt32AsInt32());
-    else
+    if (bigInt.isBigInt32()) {
+        heapBigInt = JSBigInt::tryCreateFrom(vm, bigInt.bigInt32AsInt32());
+        RELEASE_ASSERT(heapBigInt);
+    } else
 #endif
         heapBigInt = bigInt.asHeapBigInt();
 

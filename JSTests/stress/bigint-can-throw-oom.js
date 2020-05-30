@@ -1,4 +1,4 @@
-//@ skip if $buildType != "debug"
+//@ skip if $memoryLimited
 //@ runDefault("--useConcurrentJIT=0")
 
 function canThrow(func, errorMessage) {
@@ -15,16 +15,25 @@ function canThrow(func, errorMessage) {
     return false;
 }
 
-const emptyFunction = function() {};
+const a0 = [];
+a0.__proto__ = {};
+a0.length = 2**23
+Object.defineProperty(a0, 0, { get: foo });
 
-function makeLongProxyChain() {
-  let p = new Proxy(emptyFunction, {});
-  for (let i = 0; i < 200000; i++)
-    p = new Proxy(p, {});
-  return p;
+function foo() {
+    new Int16Array(a0);
 }
 
-let p = makeLongProxyChain();
+new Promise(foo);
+
+try {
+    for (let i = 0; i < 10000; i++) {
+        new Uint8Array(100000);
+    }
+} catch {}
+
 canThrow(() => {
-    Reflect.construct(Object, [], p);
-}, `RangeError: Maximum call stack size exceeded.`);
+    for (let i=0n; i<10000n; i++) {
+        2n**i;
+    }
+}, `RangeError: Out of memory`);

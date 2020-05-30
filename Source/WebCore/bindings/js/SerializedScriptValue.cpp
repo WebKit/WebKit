@@ -3007,7 +3007,11 @@ private:
 #if USE(BIGINT32)
             return jsBigInt32(0);
 #else
-            JSBigInt* bigInt = JSBigInt::createZero(m_lexicalGlobalObject->vm());
+            JSBigInt* bigInt = JSBigInt::tryCreateZero(m_lexicalGlobalObject->vm());
+            if (UNLIKELY(!bigInt)) {
+                fail();
+                return JSValue();
+            }
             m_gcBuffer.appendWithCrashOnOverflow(bigInt);
             return bigInt;
 #endif
@@ -3028,21 +3032,25 @@ private:
                     return jsBigInt32(static_cast<int32_t>(digit64));
             }
             ASSERT(digit64 != 0);
-            JSBigInt* bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject, 1);
+            JSBigInt* bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), 1);
             if (!bigInt) {
                 fail();
                 return JSValue();
             }
             bigInt->setDigit(0, digit64);
             bigInt->setSign(sign);
-            bigInt = bigInt->rightTrim(m_lexicalGlobalObject->vm());
+            bigInt = bigInt->tryRightTrim(m_lexicalGlobalObject->vm());
+            if (!bigInt) {
+                fail();
+                return JSValue();
+            }
             m_gcBuffer.appendWithCrashOnOverflow(bigInt);
             return bigInt;
         }
 #endif
         JSBigInt* bigInt = nullptr;
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
-            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject, lengthInUint64);
+            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), lengthInUint64);
             if (!bigInt) {
                 fail();
                 return JSValue();
@@ -3056,7 +3064,7 @@ private:
             }
         } else {
             ASSERT(sizeof(JSBigInt::Digit) == sizeof(uint32_t));
-            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject, lengthInUint64 * 2);
+            bigInt = JSBigInt::tryCreateWithLength(m_lexicalGlobalObject->vm(), lengthInUint64 * 2);
             if (!bigInt) {
                 fail();
                 return JSValue();
@@ -3071,7 +3079,11 @@ private:
             }
         }
         bigInt->setSign(sign);
-        bigInt = bigInt->rightTrim(m_lexicalGlobalObject->vm());
+        bigInt = bigInt->tryRightTrim(m_lexicalGlobalObject->vm());
+        if (!bigInt) {
+            fail();
+            return JSValue();
+        }
         m_gcBuffer.appendWithCrashOnOverflow(bigInt);
         return bigInt;
     }

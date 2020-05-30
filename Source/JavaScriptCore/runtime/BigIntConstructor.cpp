@@ -87,7 +87,7 @@ JSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
 #if USE(BIGINT32)
         return jsBigInt32(primitive.asBoolean());
 #else
-        return JSBigInt::createFrom(vm, primitive.asBoolean());
+        RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, primitive.asBoolean()));
 #endif
     }
 
@@ -116,7 +116,7 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
 #if USE(BIGINT32)
         return JSValue::encode(jsBigInt32(primitive.asInt32()));
 #else
-        return JSValue::encode(JSBigInt::createFrom(vm, primitive.asInt32()));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, primitive.asInt32())));
 #endif
     }
 
@@ -124,7 +124,7 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
         double number = primitive.asDouble();
         if (!isInteger(number))
             return throwVMError(globalObject, scope, createRangeError(globalObject, "Not an integer"_s));
-        return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(vm, primitive.asDouble()));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, primitive.asDouble())));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(toBigInt(globalObject, primitive)));

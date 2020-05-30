@@ -1,3 +1,13 @@
+2020-05-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSBigInt allocation should be graceful for OOM
+        https://bugs.webkit.org/show_bug.cgi?id=212512
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readBigInt):
+
 2020-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Event region painting should use the same paint flags as normal painting

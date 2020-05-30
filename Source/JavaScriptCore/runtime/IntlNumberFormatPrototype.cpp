@@ -96,8 +96,9 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormat(JSGlobalObject* g
 
 #if USE(BIGINT32)
     if (bigIntOrNumber.isBigInt32()) {
-        JSBigInt* value = JSBigInt::createFrom(vm, bigIntOrNumber.bigInt32AsInt32());
-        return JSValue::encode(numberFormat->format(globalObject, value));
+        JSBigInt* value = JSBigInt::createFrom(globalObject, bigIntOrNumber.bigInt32AsInt32());
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, value)));
     }
 #endif
 

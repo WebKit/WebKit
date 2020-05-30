@@ -530,7 +530,8 @@ SLOW_PATH_DECL(slow_path_negate)
 
 #if USE(BIGINT32)
     if (primValue.isBigInt32()) {
-        JSValue result = JSBigInt::unaryMinus(vm, primValue.bigInt32AsInt32());
+        JSValue result = JSBigInt::unaryMinus(globalObject, primValue.bigInt32AsInt32());
+        CHECK_EXCEPTION();
         RETURN_WITH_PROFILING(result, {
             updateArithProfileForUnaryArithOp(metadata, result, operand);
         });
@@ -538,7 +539,8 @@ SLOW_PATH_DECL(slow_path_negate)
 #endif
 
     if (primValue.isHeapBigInt()) {
-        JSValue result = JSBigInt::unaryMinus(vm, primValue.asHeapBigInt());
+        JSValue result = JSBigInt::unaryMinus(globalObject, primValue.asHeapBigInt());
+        CHECK_EXCEPTION();
         RETURN_WITH_PROFILING(result, {
             updateArithProfileForUnaryArithOp(metadata, result, operand);
         });

@@ -2252,7 +2252,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateHeapBigInt(JSGlobalObject* globalObje
         return JSValue::encode(bigInt);
     ASSERT(bigInt.isBigInt32());
     int32_t value = bigInt.bigInt32AsInt32();
-    return JSValue::encode(JSBigInt::createFrom(vm, value));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(globalObject, value)));
 #else
     return JSValue::encode(bigInt);
 #endif

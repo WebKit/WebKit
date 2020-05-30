@@ -1,3 +1,91 @@
+2020-05-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSBigInt allocation should be graceful for OOM
+        https://bugs.webkit.org/show_bug.cgi?id=212512
+
+        Reviewed by Mark Lam.
+
+        This patch allows JSBigInt's storage allocation to fail gracefully if OOM condition happens.
+        We thread JSGlobalObject* instead of VM& and throw OOM error if storage allocation failed.
+        We also rename `JSGlobalObject* globalObject` parameter to `JSGlobalObject* nullOrGlobalObjectForOOM`
+        if it can be nullptr.
+
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (functionCreateHeapBigInt):
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makeBigIntDecimalIdentifier):
+        * runtime/BigIntConstructor.cpp:
+        (JSC::toBigInt):
+        (JSC::callBigIntConstructor):
+        * runtime/BigIntPrototype.cpp:
+        (JSC::toThisBigIntValue):
+        (JSC::bigIntProtoFuncToString):
+        (JSC::bigIntProtoFuncToLocaleString):
+        (JSC::bigIntProtoFuncValueOf):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedBigInt::decode const):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatFuncFormat):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createZero):
+        (JSC::JSBigInt::tryCreateZero):
+        (JSC::JSBigInt::createWithLength):
+        (JSC::JSBigInt::tryCreateWithLength):
+        (JSC::JSBigInt::createFrom):
+        (JSC::JSBigInt::tryCreateFrom):
+        (JSC::JSBigInt::createFromImpl):
+        (JSC::JSBigInt::parseInt):
+        (JSC::HeapBigIntImpl::toHeapBigInt):
+        (JSC::Int32BigIntImpl::toHeapBigInt):
+        (JSC::zeroImpl):
+        (JSC::JSBigInt::exponentiateImpl):
+        (JSC::JSBigInt::multiplyImpl):
+        (JSC::JSBigInt::divideImpl):
+        (JSC::JSBigInt::copy):
+        (JSC::JSBigInt::unaryMinusImpl):
+        (JSC::JSBigInt::unaryMinus):
+        (JSC::JSBigInt::remainderImpl):
+        (JSC::JSBigInt::incImpl):
+        (JSC::JSBigInt::decImpl):
+        (JSC::JSBigInt::addImpl):
+        (JSC::JSBigInt::subImpl):
+        (JSC::JSBigInt::bitwiseAndImpl):
+        (JSC::JSBigInt::bitwiseOrImpl):
+        (JSC::JSBigInt::bitwiseXorImpl):
+        (JSC::JSBigInt::absoluteAdd):
+        (JSC::JSBigInt::absoluteSub):
+        (JSC::JSBigInt::absoluteDivWithDigitDivisor):
+        (JSC::JSBigInt::absoluteDivWithBigIntDivisor):
+        (JSC::JSBigInt::absoluteLeftShiftAlwaysCopy):
+        (JSC::JSBigInt::absoluteBitwiseOp):
+        (JSC::JSBigInt::absoluteAnd):
+        (JSC::JSBigInt::absoluteOr):
+        (JSC::JSBigInt::absoluteAndNot):
+        (JSC::JSBigInt::absoluteXor):
+        (JSC::JSBigInt::absoluteAddOne):
+        (JSC::JSBigInt::absoluteSubOne):
+        (JSC::JSBigInt::leftShiftByAbsolute):
+        (JSC::JSBigInt::rightShiftByAbsolute):
+        (JSC::JSBigInt::rightShiftByMaximum):
+        (JSC::JSBigInt::toStringBasePowerOfTwo):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::rightTrim):
+        (JSC::JSBigInt::tryRightTrim):
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::asIntNImpl):
+        (JSC::JSBigInt::asUintNImpl):
+        (JSC::JSBigInt::truncateToNBits):
+        (JSC::JSBigInt::truncateAndSubFromPowerOfTwo):
+        (JSC::JSBigInt::createWithLengthUnchecked): Deleted.
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toThisSlowCase const):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2020-05-29  Saam Barati  <sbarati@apple.com>
 
         We need to properly model heap ranges of Delete in DFG/B3
