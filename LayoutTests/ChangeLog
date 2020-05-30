@@ -1,3 +1,14 @@
+2020-05-30  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Support percentage border-radius values in -apple-pay-button
+        https://bugs.webkit.org/show_bug.cgi?id=212559
+        <rdar://problem/63781881>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/appearance-apple-pay-button-border-radius-expected.html:
+        * fast/css/appearance-apple-pay-button-border-radius.html:
+
 2020-05-30  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed gardening, update baseline after r262169

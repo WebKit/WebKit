@@ -109,14 +109,14 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
 
     auto& style = renderer.style();
     auto largestCornerRadius = std::max<CGFloat>({
-        style.borderTopLeftRadius().height.value(),
-        style.borderTopLeftRadius().width.value(),
-        style.borderTopRightRadius().height.value(),
-        style.borderTopRightRadius().width.value(),
-        style.borderBottomLeftRadius().height.value(),
-        style.borderBottomLeftRadius().width.value(),
-        style.borderBottomRightRadius().height.value(),
-        style.borderBottomRightRadius().width.value()
+        floatValueForLength(style.borderTopLeftRadius().height, paintRect.height()),
+        floatValueForLength(style.borderTopLeftRadius().width, paintRect.width()),
+        floatValueForLength(style.borderTopRightRadius().height, paintRect.height()),
+        floatValueForLength(style.borderTopRightRadius().width, paintRect.width()),
+        floatValueForLength(style.borderBottomLeftRadius().height, paintRect.height()),
+        floatValueForLength(style.borderBottomLeftRadius().width, paintRect.width()),
+        floatValueForLength(style.borderBottomRightRadius().height, paintRect.height()),
+        floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
     });
 
     PKDrawApplePayButtonWithCornerRadius(paintInfo.context().platformContext(), CGRectMake(paintRect.x(), -paintRect.maxY(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius, toPKPaymentButtonType(style.applePayButtonType()), toPKPaymentButtonStyle(style.applePayButtonStyle()), style.locale());
