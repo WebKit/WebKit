@@ -1,3 +1,49 @@
+2020-05-31  Michael Saboff  <msaboff@apple.com>
+
+        Consider a Thread Specific Cache for AssemblerBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=212562
+
+        Reviewed by Filip Pizlo.
+
+        This patch creates a thread local cache of AssemblerData in the hopes that it will reduce
+        memory allocation churn.  The cache is cleared when a thread is destroyed.
+        If an AssemblerData is destroyed in another thread, its storage is cached by the
+        destroying thread.
+
+        Made a few changes described below to facilite the swap as well as returning a
+        clear()'ed AssemblerData back to its original state.
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/AssemblerBuffer.cpp:
+        (JSC::threadSpecificAssemblerData):
+        (JSC::clearAssembleDataThreadSpecificCache):
+        * assembler/AssemblerBuffer.h:
+
+        (JSC::AssemblerData::AssemblerData):
+        (JSC::AssemblerData::operator=):
+        The copy constructor and assignment operator now perform complete AssemblerBuffer swaps.
+
+        (JSC::AssemblerData::takeBufferIfLarger):
+        A new method that will conditionally copy the enclosed buffer of the argument to "this"
+        if the argument's buffer is larger than the current buffer of "this".
+
+        (JSC::AssemblerData::~AssemblerData):
+        (JSC::AssemblerData::clear):
+        The destructor now calls clear which has been changed to reset the buffer to one with
+        inline capacity.
+
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        Take the cached out of line buffer if there is one.
+
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        Cache the enclosed out of line buffer if it is larger than the currently cached one.
+
+        (JSC::AssemblerBuffer::getThreadSpecificAssemblerData):
+        * dfg/DFGWorklist.cpp:
+        * jit/JITWorklist.cpp:
+        * wasm/WasmWorklist.cpp:
+
 2020-05-31  Mark Lam  <mark.lam@apple.com>
 
         Change JSC::Config to use storage in WTF::Config instead of its own.

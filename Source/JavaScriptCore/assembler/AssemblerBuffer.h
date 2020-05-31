@@ -37,9 +37,16 @@
 #include <wtf/PtrTag.h>
 #endif
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC {
+    class AssemblerData;
+
+    typedef ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True> ThreadSpecificAssemblerData;
+
+    JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerData();
+    void clearAssembleDataThreadSpecificCache();
 
     class LinkBuffer;
 
@@ -99,8 +106,8 @@ namespace JSC {
                 m_buffer = other.m_buffer;
             m_capacity = other.m_capacity;
 
-            other.m_buffer = nullptr;
-            other.m_capacity = 0;
+            other.m_buffer = other.m_inlineBuffer;
+            other.m_capacity = InlineCapacity;
         }
 
         AssemblerData& operator=(AssemblerData&& other)
@@ -116,15 +123,41 @@ namespace JSC {
                 m_buffer = other.m_buffer;
             m_capacity = other.m_capacity;
 
-            other.m_buffer = nullptr;
-            other.m_capacity = 0;
+            other.m_buffer = other.m_inlineBuffer;
+            other.m_capacity = InlineCapacity;
             return *this;
+        }
+
+        void takeBufferIfLarger(AssemblerData&& other)
+        {
+            if (other.isInlineBuffer())
+                return;
+
+            if (m_capacity >= other.m_capacity)
+                return;
+
+            if (m_buffer && !isInlineBuffer())
+                AssemblerDataMalloc::free(m_buffer);
+
+            m_buffer = other.m_buffer;
+            m_capacity = other.m_capacity;
+
+            other.m_buffer = other.m_inlineBuffer;
+            other.m_capacity = InlineCapacity;
         }
 
         ~AssemblerData()
         {
-            if (m_buffer && !isInlineBuffer())
+            clear();
+        }
+
+        void clear()
+        {
+            if (m_buffer && !isInlineBuffer()) {
                 AssemblerDataMalloc::free(m_buffer);
+                m_capacity = InlineCapacity;
+                m_buffer = m_inlineBuffer;
+            }
         }
 
         char* buffer() const { return m_buffer; }
@@ -177,6 +210,14 @@ namespace JSC {
             : m_storage()
             , m_index(0)
         {
+            auto& threadSpecific = getThreadSpecificAssemblerData();
+            m_storage.takeBufferIfLarger(WTFMove(*threadSpecific));
+        }
+
+        ~AssemblerBuffer()
+        {
+            auto& threadSpecific = getThreadSpecificAssemblerData();
+            threadSpecific->takeBufferIfLarger(WTFMove(m_storage));
         }
 
         bool isAvailable(unsigned space)
@@ -293,6 +334,18 @@ namespace JSC {
 
 
     protected:
+        ThreadSpecificAssemblerData& getThreadSpecificAssemblerData()
+        {
+            auto& threadSpecific = threadSpecificAssemblerData();
+
+            if (!threadSpecific.isSet()) {
+                void* ptr = static_cast<AssemblerData*>(threadSpecific);
+                new (ptr) AssemblerData();
+            }
+
+            return threadSpecific;
+        }
+        
         template<typename IntegralType>
         void putIntegral(IntegralType value)
         {

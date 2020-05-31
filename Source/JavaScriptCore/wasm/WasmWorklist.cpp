@@ -120,6 +120,7 @@ private:
     void threadIsStopping(const AbstractLocker&) final
     {
         clearLLIntThreadSpecificCache();
+        clearAssembleDataThreadSpecificCache();
     }
 
     const char* name() const final
