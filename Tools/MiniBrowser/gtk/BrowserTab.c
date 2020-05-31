@@ -378,9 +378,12 @@ static void audioMutedChanged(WebKitWebView *webView, GParamSpec *pspec, gpointe
 {
     BrowserTab *tab = BROWSER_TAB(userData);
     gboolean muted = webkit_web_view_get_is_muted(tab->webView);
-    GtkWidget *image = gtk_image_new_from_icon_name(muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic", GTK_ICON_SIZE_MENU);
 
-    gtk_button_set_image(GTK_BUTTON(tab->titleAudioButton), image);
+#if GTK_CHECK_VERSION(3, 98, 4)
+    gtk_button_set_icon_name(GTK_BUTTON(tab->titleAudioButton), muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic");
+#else
+    gtk_button_set_image(GTK_BUTTON(tab->titleAudioButton), gtk_image_new_from_icon_name(muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic", GTK_ICON_SIZE_MENU));
+#endif
 }
 
 static void browserTabSetProperty(GObject *object, guint propId, const GValue *value, GParamSpec *pspec)

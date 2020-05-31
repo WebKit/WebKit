@@ -1,3 +1,10 @@
+2020-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build with current GTK
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (audioMutedChanged):
+
 2020-05-30  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Additional color cleanups
