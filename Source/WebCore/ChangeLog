@@ -1,3 +1,18 @@
+2020-05-31  Rob Buis  <rbuis@igalia.com>
+
+        <area> needs to be connected in order to navigate
+        https://bugs.webkit.org/show_bug.cgi?id=177357
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement second step of cannot navigate algorithm:
+        https://html.spec.whatwg.org/#cannot-navigate
+
+        Test: web-platform-tests/html/semantics/links/following-hyperlinks/activation-behavior.window.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2020-05-30  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Additional color cleanups

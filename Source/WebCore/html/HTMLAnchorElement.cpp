@@ -467,6 +467,9 @@ void HTMLAnchorElement::handleClick(Event& event)
     if (!frame)
         return;
 
+    if (!hasTagName(aTag) && !isConnected())
+        return;
+
     StringBuilder url;
     url.append(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
     appendServerMapMousePosition(url, event);
