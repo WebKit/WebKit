@@ -1852,7 +1852,24 @@ RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& g
         structureContext = generator.findStructureForInContext(property);
     }
 
-    if (structureContext && structureContext->base() == base.get()) {
+    auto canUseFastHasOwnProperty = [&] {
+        if (!structureContext)
+            return false;
+        if (!structureContext->baseVariable())
+            return false;
+        if (m_base->isResolveNode())
+            return generator.variable(static_cast<ResolveNode*>(m_base)->identifier()) == structureContext->baseVariable().value();
+        if (m_base->isThisNode()) {
+            // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
+            ASSERT(base);
+            return generator.variable(generator.propertyNames().thisIdentifier, ThisResolutionType::Local) == structureContext->baseVariable().value();
+        }
+        return false;
+    };
+
+    if (canUseFastHasOwnProperty()) {
+        // It is possible that base register is variable and each for-in body replaces JS object in the base register with a different one.
+        // Even though, this is OK since HasOwnStructureProperty will reject the replaced JS object.
         Ref<Label> realCall = generator.newLabel();
         Ref<Label> end = generator.newLabel();
 
@@ -3747,12 +3764,22 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (m_lexpr->isAssignResolveNode())
         generator.emitNode(generator.ignoredResult(), m_lexpr);
 
+    RefPtr<RegisterID> base = generator.newTemporary();
     RefPtr<RegisterID> length;
     RefPtr<RegisterID> enumerator;
 
-    RefPtr<RegisterID> base = generator.emitNode(m_expr);
+    generator.emitNode(base.get(), m_expr);
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
     RefPtr<RegisterID> enumeratorIndex;
+
+    Optional<Variable> baseVariable;
+    if (m_expr->isResolveNode())
+        baseVariable = generator.variable(static_cast<ResolveNode*>(m_expr)->identifier());
+    else if (m_expr->isThisNode()) {
+        // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
+        ASSERT(base);
+        baseVariable = generator.variable(generator.propertyNames().thisIdentifier, ThisResolutionType::Local);
+    }
 
     // Pause at the assignment expression for each for..in iteration.
     generator.emitDebugHook(m_lexpr);
@@ -3828,7 +3855,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         generator.emitProfileControlFlow(profilerStartOffset);
 
-        generator.pushStructureForInScope(local.get(), enumeratorIndex.get(), propertyName.get(), enumerator.get(), base.get());
+        generator.pushStructureForInScope(local.get(), enumeratorIndex.get(), propertyName.get(), enumerator.get(), baseVariable);
         generator.emitNode(dst, m_statement);
         generator.popStructureForInScope(local.get());
 

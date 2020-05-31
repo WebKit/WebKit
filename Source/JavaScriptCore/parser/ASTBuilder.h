@@ -1442,7 +1442,7 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
     else if (!previousBaseWasSuper && (dot->identifier() == m_vm.propertyNames->builtinNames().applyPublicName() || dot->identifier() == m_vm.propertyNames->builtinNames().applyPrivateName())) {
         // FIXME: This check is only needed because we haven't taught the bytecode generator to inline
         // Reflect.apply yet. See https://bugs.webkit.org/show_bug.cgi?id=190668.
-        if (!dot->base()->isResolveNode() || static_cast<ResolveNode*>(dot->base())->identifier() != "Reflect")
+        if (!dot->base()->isResolveNode() || static_cast<ResolveNode*>(dot->base())->identifier() != m_vm.propertyNames->Reflect)
             node = new (m_parserArena) ApplyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd, callOrApplyChildDepth);
     } else if (!previousBaseWasSuper 
         && dot->identifier() == m_vm.propertyNames->hasOwnProperty
@@ -1450,10 +1450,9 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
         && args->m_listNode->m_expr
         && args->m_listNode->m_expr->isResolveNode()
         && !args->m_listNode->m_next
-        && dot->base()->isResolveNode()
-        && static_cast<ResolveNode*>(dot->base())->identifier() != "Reflect") {
+        && ((dot->base()->isResolveNode() && static_cast<ResolveNode*>(dot->base())->identifier() != m_vm.propertyNames->Reflect) || dot->base()->isThisNode())) {
         // We match the AST pattern:
-        // <resolveNode>.hasOwnProperty(<resolveNode>)
+        // <resolveNode|thisNode>.hasOwnProperty(<resolveNode>)
         // i.e:
         // o.hasOwnProperty(p)
         node = new (m_parserArena) HasOwnPropertyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);

@@ -4533,12 +4533,12 @@ void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
     }
 }
 
-void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, RegisterID* baseRegister)
+void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, Optional<Variable> baseVariable)
 {
     if (!localRegister)
         return;
     unsigned bodyBytecodeStartOffset = instructions().size();
-    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister, baseRegister, bodyBytecodeStartOffset)));
+    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister, baseVariable, bodyBytecodeStartOffset)));
 }
 
 void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)

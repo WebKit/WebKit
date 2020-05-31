@@ -200,6 +200,7 @@ namespace JSC {
         virtual bool isAdd() const { return false; }
         virtual bool isSubtract() const { return false; }
         virtual bool isBoolean() const { return false; }
+        virtual bool isThisNode() const { return false; }
         virtual bool isSpreadExpression() const { return false; }
         virtual bool isSuperNode() const { return false; }
         virtual bool isImportNode() const { return false; }
@@ -612,6 +613,7 @@ namespace JSC {
         ThisNode(const JSTokenLocation&);
 
     private:
+        bool isThisNode() const final { return true; }
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
     };
 

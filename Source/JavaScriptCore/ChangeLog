@@ -1,5 +1,45 @@
 2020-05-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] for-in should allocate new temporary register for base
+        https://bugs.webkit.org/show_bug.cgi?id=212519
+        <rdar://problem/63722044>
+
+        Reviewed by Saam Barati.
+
+        While r262233 keeps for-in's enumerated object in variable register if possible to use this register for heuristics driving an optimization,
+        for-in body can replace the content of this register during enumeration and confuse enumerator.
+
+        Instead, we record Variable information in StructureForInContext. This allows us to detect patterns using heap-variables too.
+        Further, this patch extends pattern-matching code to support ThisNode too.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::Variable):
+        (JSC::Variable::isResolved const):
+        (JSC::Variable::symbolTableConstantIndex const):
+        (JSC::Variable::ident const):
+        (JSC::Variable::offset const):
+        (JSC::Variable::isLocal const):
+        (JSC::Variable::local const):
+        (JSC::Variable::isReadOnly const):
+        (JSC::Variable::isSpecial const):
+        (JSC::Variable::isConst const):
+        (JSC::Variable::setIsReadOnly):
+        (JSC::Variable::operator== const):
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::StructureForInContext::baseVariable const):
+        (JSC::StructureForInContext::base const): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::HasOwnPropertyFunctionCallDotNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isThisNode const):
+
+2020-05-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, fix JSC debug tests' exception checking
         https://bugs.webkit.org/show_bug.cgi?id=212512
 
