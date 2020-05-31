@@ -125,7 +125,7 @@ void startMachExceptionHandlerThread()
 static Signal fromMachException(exception_type_t type)
 {
     switch (type) {
-    case EXC_BAD_ACCESS: return Signal::BadAccess;
+    case EXC_BAD_ACCESS: return Signal::AccessFault;
     case EXC_BAD_INSTRUCTION: return Signal::Ill;
     default: break;
     }
@@ -135,7 +135,7 @@ static Signal fromMachException(exception_type_t type)
 static exception_mask_t toMachMask(Signal signal)
 {
     switch (signal) {
-    case Signal::BadAccess: return EXC_MASK_BAD_ACCESS;
+    case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
     case Signal::Ill: return EXC_MASK_BAD_INSTRUCTION;
     default: break;
     }
@@ -199,7 +199,7 @@ kern_return_t catch_mach_exception_raise_state(
 #endif
 
     SigInfo info;
-    if (signal == Signal::BadAccess) {
+    if (signal == Signal::AccessFault) {
         ASSERT_UNUSED(dataCount, dataCount == 2);
         info.faultingAddress = reinterpret_cast<void*>(exceptionData[1]);
 #if CPU(ADDRESS64)
@@ -344,7 +344,7 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
     }
 
     SigInfo sigInfo;
-    if (signal == Signal::BadAccess)
+    if (signal == Signal::AccessFault)
         sigInfo.faultingAddress = info->si_addr;
 
     PlatformRegisters& registers = registersFromUContext(reinterpret_cast<ucontext_t*>(ucontext));

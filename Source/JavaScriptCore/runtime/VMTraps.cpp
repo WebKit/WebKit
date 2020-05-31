@@ -199,7 +199,7 @@ public:
     {
         static std::once_flag once;
         std::call_once(once, [] {
-            installSignalHandler(Signal::BadAccess, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
+            installSignalHandler(Signal::AccessFault, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
                 auto signalContext = SignalContext::tryCreate(registers);
                 if (!signalContext)
                     return SignalAction::NotHandled;

@@ -1,3 +1,14 @@
+2020-05-30  Mark Lam  <mark.lam@apple.com>
+
+        Rename Signal::BadAccess to Signal::AccessFault.
+        https://bugs.webkit.org/show_bug.cgi?id=212577
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/VMTraps.cpp:
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::enableFastMemory):
+
 2020-05-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] for-in should allocate new temporary register for base

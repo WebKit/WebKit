@@ -1,3 +1,32 @@
+2020-05-30  Mark Lam  <mark.lam@apple.com>
+
+        Rename Signal::BadAccess to Signal::AccessFault.
+        https://bugs.webkit.org/show_bug.cgi?id=212577
+
+        Reviewed by Yusuke Suzuki.
+
+        This is needed because GTK port's X11 has a #define for BadAccess (in include/X11/X.h):
+
+            #define BadAccess     10    /* depending on context:
+                                         - key/button already grabbed
+                                         - attempt to free an illegal 
+                                           cmap entry 
+                                         - attempt to store into a read-only 
+                                           color map entry.
+                                         - attempt to modify the access control
+                                           list from other than the local host.
+                                         */
+
+        As a result, this would break the GTK build when wtf/Signals.h is #include'd.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::fromMachException):
+        (WTF::toMachMask):
+        (WTF::jscSignalHandler):
+        * wtf/threads/Signals.h:
+        (WTF::toSystemSignal):
+        (WTF::fromSystemSignal):
+
 2020-05-29  Alex Christensen  <achristensen@webkit.org>
 
         Use correct encoding when converting a WTF::URL to CFURLRef

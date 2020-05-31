@@ -49,15 +49,15 @@ enum class Signal {
     // These signals will only chain if we don't have a handler that can process them. If there is nothing
     // to chain to we restore the default handler and crash.
     Ill,
-    BadAccess, // For posix this is both SIGSEGV and SIGBUS
-    NumberOfSignals = BadAccess + 2, // BadAccess is really two signals.
+    AccessFault, // For posix this is both SIGSEGV and SIGBUS
+    NumberOfSignals = AccessFault + 2, // AccessFault is really two signals.
     Unknown = NumberOfSignals
 };
 
 inline std::tuple<int, Optional<int>> toSystemSignal(Signal signal)
 {
     switch (signal) {
-    case Signal::BadAccess: return std::make_tuple(SIGSEGV, SIGBUS);
+    case Signal::AccessFault: return std::make_tuple(SIGSEGV, SIGBUS);
     case Signal::Ill: return std::make_tuple(SIGILL, WTF::nullopt);
     case Signal::Usr: return std::make_tuple(SIGILL, WTF::nullopt);
     default: break;
@@ -68,8 +68,8 @@ inline std::tuple<int, Optional<int>> toSystemSignal(Signal signal)
 inline Signal fromSystemSignal(int signal)
 {
     switch (signal) {
-    case SIGSEGV: return Signal::BadAccess;
-    case SIGBUS: return Signal::BadAccess;
+    case SIGSEGV: return Signal::AccessFault;
+    case SIGBUS: return Signal::AccessFault;
     case SIGILL: return Signal::Ill;
     case SIGUSR2: return Signal::Usr;
     default: return Signal::Unknown;
