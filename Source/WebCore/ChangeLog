@@ -1,5 +1,27 @@
 2020-05-31  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa] EME should return more helpful error code during key exchange
+        https://bugs.webkit.org/show_bug.cgi?id=212535
+        <rdar://problem/60439979>
+
+        Reviewed by Eric Carlson.
+
+        Clients have requested that the EME API provide more helpful information when the FairPlay CDM is unable
+        to provide the requested level of key security. Currently, we reject the update() promise with a generic
+        "failed" error code. Instead, resolve the promise, but mark the key as "output-restricted" in the key
+        status map, indicating that the key cannot be used with required level of security.
+
+        Drive-by fix: We currently ASSERT() that the callback from removeSessionData() isn't called if the session
+        is not a PUR session. When calling removeSessionData() on a non-PUR session, call the callback with a generic
+        "failed" error.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+
+2020-05-31  Jer Noble  <jer.noble@apple.com>
+
         [Cocoa] Transition between encrypted and clear codecs throws error from SourceBuffer.appendBuffer()
         https://bugs.webkit.org/show_bug.cgi?id=212550
         <rdar://problem/62207260>

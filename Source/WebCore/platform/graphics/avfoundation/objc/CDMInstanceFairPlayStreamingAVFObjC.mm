@@ -52,6 +52,7 @@
 static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
 static NSString * const InitializationDataTypeKey = @"InitializationDataType";
 static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
+static const NSInteger SecurityLevelError = -42811;
 
 @interface WebCoreFPSContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
     WebCore::AVContentKeySessionDelegateClient* _parent;
@@ -969,7 +970,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
 
         DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, " Succeeded");
         callback(WTFMove(changedKeys), SharedBuffer::create(expiredSessionsData.get()), Succeeded);
+        return;
     }
+
+    callback({ }, WTF::nullopt, Failed);
 }
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::storeRecordOfKeyUsage(const String&)
@@ -1182,7 +1186,16 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvidePersistableRequest(AV
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVContentKeyRequest *request, NSError *error)
 {
     UNUSED_PARAM(request);
-    UNUSED_PARAM(error);
+
+    // Rather than reject the update() promise when the CDM indicates that
+    // the key requires a higher level of security than it is currently able
+    // to provide, signal this state by "succeeding", but set the key status
+    // to "output-restricted".
+
+    if (error.code == SecurityLevelError) {
+        requestDidSucceed(request);
+        return;
+    }
 
     if (m_updateResponseCollector) {
         m_updateResponseCollector->addErrorResponse(request, error);
@@ -1312,7 +1325,7 @@ CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::
         for (auto& oneRequest : request.requests) {
             auto keyIDs = keyIDsForRequest(oneRequest.get());
             auto status = requestStatusToCDMStatus(oneRequest.get().status);
-            if (m_outputObscured)
+            if (m_outputObscured || oneRequest.get().error.code == SecurityLevelError)
                 status = CDMKeyStatus::OutputRestricted;
 
             for (auto& keyID : keyIDs)
