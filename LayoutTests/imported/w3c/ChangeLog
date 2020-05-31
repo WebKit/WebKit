@@ -1,3 +1,15 @@
+2020-05-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/encoding/single-byte-decoder.html
+        https://bugs.webkit.org/show_bug.cgi?id=212565
+        <rdar://problem/63682561>
+
+        Unreviewed.
+
+        Rebaseline the expected result.
+
+        * web-platform-tests/encoding/single-byte-decoder-expected.txt:
+
 2020-05-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r262335.

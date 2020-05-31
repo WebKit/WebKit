@@ -461,14 +461,14 @@ PASS windows-1254: windows-1254 (document.characterSet and document.inputEncodin
 PASS windows-1254: x-cp1254 (XMLHttpRequest) 
 PASS windows-1254: x-cp1254 (TextDecoder) 
 PASS windows-1254: x-cp1254 (document.characterSet and document.inputEncoding) 
-FAIL windows-1255: cp1255 (XMLHttpRequest) assert_equals: windows-1255:202 expected 1466 but got 65533
-FAIL windows-1255: cp1255 (TextDecoder) assert_equals: windows-1255:202 expected 1466 but got 65533
+PASS windows-1255: cp1255 (XMLHttpRequest) 
+PASS windows-1255: cp1255 (TextDecoder) 
 PASS windows-1255: cp1255 (document.characterSet and document.inputEncoding) 
-FAIL windows-1255: windows-1255 (XMLHttpRequest) assert_equals: windows-1255:202 expected 1466 but got 65533
-FAIL windows-1255: windows-1255 (TextDecoder) assert_equals: windows-1255:202 expected 1466 but got 65533
+PASS windows-1255: windows-1255 (XMLHttpRequest) 
+PASS windows-1255: windows-1255 (TextDecoder) 
 PASS windows-1255: windows-1255 (document.characterSet and document.inputEncoding) 
-FAIL windows-1255: x-cp1255 (XMLHttpRequest) assert_equals: windows-1255:202 expected 1466 but got 65533
-FAIL windows-1255: x-cp1255 (TextDecoder) assert_equals: windows-1255:202 expected 1466 but got 65533
+PASS windows-1255: x-cp1255 (XMLHttpRequest) 
+PASS windows-1255: x-cp1255 (TextDecoder) 
 PASS windows-1255: x-cp1255 (document.characterSet and document.inputEncoding) 
 PASS windows-1256: cp1256 (XMLHttpRequest) 
 PASS windows-1256: cp1256 (TextDecoder) 
