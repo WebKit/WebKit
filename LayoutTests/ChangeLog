@@ -1,3 +1,16 @@
+2020-05-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iPad] REGRESSION(r261940): fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212564
+        <rdar://problem/63729887>
+
+        Unreviewed.
+
+        Setting width=device-width was causing us to clamp the initial-scale to 1, thereby disabling autosizing.
+
+        * fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html:
+        * platform/ipad/TestExpectations:
+
 2020-05-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r262335.

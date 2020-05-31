@@ -1,7 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true contentMode=desktop ] -->
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="initial-scale=1">
 <style>
 body, html {
     margin: 0;
@@ -83,16 +83,16 @@ addEventListener("load", async () => {
     const metaViewport = document.querySelector("meta");
     await dumpTextSizes("At initial scale 1");
 
-    metaViewport.content = "width=device-width, initial-scale=0.5";
+    metaViewport.content = "initial-scale=0.5";
     await dumpTextSizes("After changing initial scale to 0.5");
 
-    metaViewport.content = "width=device-width, initial-scale=0.75";
+    metaViewport.content = "initial-scale=0.75";
     await dumpTextSizes("After changing initial scale to 0.75");
 
-    metaViewport.content = "width=device-width, initial-scale=1.0";
+    metaViewport.content = "initial-scale=1.0";
     await dumpTextSizes("After changing initial scale back to 1");
 
-    metaViewport.content = "width=device-width, initial-scale=1.25";
+    metaViewport.content = "initial-scale=1.25";
     await dumpTextSizes("After changing initial scale to 1.25");
 
     document.querySelector(".text-containers").remove();
