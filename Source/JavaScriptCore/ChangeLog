@@ -1,3 +1,29 @@
+2020-05-31  Mark Lam  <mark.lam@apple.com>
+
+        Change JSC::Config to use storage in WTF::Config instead of its own.
+        https://bugs.webkit.org/show_bug.cgi?id=212575
+        <rdar://problem/63796584>
+
+        Reviewed by Yusuke Suzuki.
+
+        Since Configs must be rounded up to CeilingOnPageSize, this will save us some
+        memory since the contents of both Configs do not add up to CeilingOnPageSize.
+
+        g_jscConfig is now located at g_wtfConfig.spaceForExtensions.
+
+        * runtime/JSCConfig.cpp:
+        (JSC::Config::disableFreezingForTesting):
+        (JSC::Config::enableRestrictedOptions):
+        (JSC::Config::permanentlyFreeze): Deleted.
+        * runtime/JSCConfig.h:
+        (JSC::Config::permanentlyFreeze):
+        (JSC::Config::isPermanentlyFrozen):
+        (): Deleted.
+        * runtime/Options.cpp:
+        (JSC::Options::setOptions):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCallWithStackSize):
+
 2020-05-30  Mark Lam  <mark.lam@apple.com>
 
         Rename Signal::BadAccess to Signal::AccessFault.

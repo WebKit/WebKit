@@ -26,9 +26,7 @@
 #pragma once
 
 #include "OptionsList.h"
-#include <wtf/PageBlock.h>
-#include <wtf/PtrTag.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/WTFConfig.h>
 
 namespace JSC {
 
@@ -45,7 +43,7 @@ using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
 struct Config {
     JS_EXPORT_PRIVATE static void disableFreezingForTesting();
     JS_EXPORT_PRIVATE static void enableRestrictedOptions();
-    JS_EXPORT_PRIVATE static void permanentlyFreeze();
+    static void permanentlyFreeze() { WTF::Config::permanentlyFreeze(); }
 
     static void configureForTesting()
     {
@@ -53,43 +51,43 @@ struct Config {
         enableRestrictedOptions();
     }
 
-    union {
-        struct {
-            // All the fields in this struct should be chosen such that their
-            // initial value is 0 / null / falsy because Config is instantiated
-            // as a global singleton.
+    bool isPermanentlyFrozen() { return WTF::g_wtfConfig.isPermanentlyFrozen; }
 
-            bool isPermanentlyFrozen;
-            bool disabledFreezingForTesting;
-            bool restrictedOptionsEnabled;
-            bool jitDisabled;
+    // All the fields in this struct should be chosen such that their
+    // initial value is 0 / null / falsy because Config is instantiated
+    // as a global singleton.
 
-            // The following HasBeenCalled flags are for auditing call_once initialization functions.
-            bool initializeThreadingHasBeenCalled;
+    bool disabledFreezingForTesting;
+    bool restrictedOptionsEnabled;
+    bool jitDisabled;
 
-            ExecutableAllocator* executableAllocator;
-            FixedVMPoolExecutableAllocator* fixedVMPoolExecutableAllocator;
-            void* startExecutableMemory;
-            void* endExecutableMemory;
-            uintptr_t startOfFixedWritableMemoryPool;
+    // The following HasBeenCalled flags are for auditing call_once initialization functions.
+    bool initializeThreadingHasBeenCalled;
+
+    ExecutableAllocator* executableAllocator;
+    FixedVMPoolExecutableAllocator* fixedVMPoolExecutableAllocator;
+    void* startExecutableMemory;
+    void* endExecutableMemory;
+    uintptr_t startOfFixedWritableMemoryPool;
 
 #if ENABLE(SEPARATED_WX_HEAP)
-            JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
-            bool useFastPermisionsJITCopy;
+    JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
+    bool useFastPermisionsJITCopy;
 #endif
 
-            OptionsStorage options;
+    OptionsStorage options;
 
-            void (*shellTimeoutCheckCallback)(VM&);
+    void (*shellTimeoutCheckCallback)(VM&);
 
-            WTF::PtrTagLookup ptrTagLookupRecord;
-        };
-        char ensureSize[ConfigSizeToProtect];
-    };
+    WTF::PtrTagLookup ptrTagLookupRecord;
 };
 
-extern "C" alignas(ConfigSizeToProtect) JS_EXPORT_PRIVATE Config g_jscConfig;
+constexpr size_t offsetOfWTFConfigExtension = offsetof(WTF::Config, spaceForExtensions);
+constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
 
-static_assert(sizeof(Config) == ConfigSizeToProtect, "");
+static_assert(sizeof(JSC::Config) <= (sizeof(WTF::Config) - offsetOfWTFConfigExtension));
+static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(offsetOfWTFConfigExtension) == offsetOfWTFConfigExtension);
+
+#define g_jscConfig (*bitwise_cast<Config*>(&WTF::g_wtfConfig.spaceForExtensions))
 
 } // namespace JSC
