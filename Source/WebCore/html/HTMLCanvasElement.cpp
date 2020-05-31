@@ -124,6 +124,7 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     , ActiveDOMObject(document)
 {
     ASSERT(hasTagName(canvasTag));
+    addObserver(document);
 }
 
 Ref<HTMLCanvasElement> HTMLCanvasElement::create(Document& document)
@@ -145,6 +146,7 @@ HTMLCanvasElement::~HTMLCanvasElement()
     // FIXME: This has to be called here because CSSCanvasValue::CanvasObserverProxy::canvasDestroyed()
     // downcasts the CanvasBase object to HTMLCanvasElement. That invokes virtual methods, which should be
     // avoided in destructors, but works as long as it's done before HTMLCanvasElement destructs completely.
+    // This will also cause the document to remove itself as an observer.
     notifyObserversCanvasDestroyed();
 
     m_context = nullptr; // Ensure this goes away before the ImageBuffer.
@@ -995,6 +997,35 @@ void HTMLCanvasElement::eventListenersDidChange()
         || hasEventListeners(eventNames().webglcontextlostEvent)
         || hasEventListeners(eventNames().webglcontextrestoredEvent);
 #endif
+}
+
+void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+{
+    removeObserver(oldDocument);
+    addObserver(newDocument);
+
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
+}
+
+void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    if (removalType.disconnectedFromDocument)
+        removeObserver(oldParentOfRemovedTree.document());
+
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+}
+
+bool HTMLCanvasElement::needsPreparationForDisplay()
+{
+    return is<WebGLRenderingContextBase>(m_context.get());
+}
+
+void HTMLCanvasElement::prepareForDisplay()
+{
+    ASSERT(needsPreparationForDisplay());
+
+    if (is<WebGLRenderingContextBase>(m_context.get()))
+        downcast<WebGLRenderingContextBase>(m_context.get())->prepareForDisplay();
 }
 
 }

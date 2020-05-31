@@ -129,6 +129,9 @@ public:
 
     WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(size_t);
 
+    bool needsPreparationForDisplay();
+    void prepareForDisplay();
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
@@ -164,6 +167,9 @@ private:
     void derefCanvasBase() final { HTMLElement::deref(); }
 
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
+
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+    void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
 
     FloatRect m_dirtyRect;
 

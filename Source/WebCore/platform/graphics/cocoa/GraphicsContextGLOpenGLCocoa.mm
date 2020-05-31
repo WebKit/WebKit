@@ -867,6 +867,11 @@ void GraphicsContextGLOpenGL::screenDidChange(PlatformDisplayID displayID)
 }
 #endif // !PLATFORM(MAC)
 
+void GraphicsContextGLOpenGL::prepareForDisplay()
+{
+    [m_webGLLayer prepareForDisplay];
+}
+
 }
 
 #endif // ENABLE(GRAPHICS_CONTEXT_GL)

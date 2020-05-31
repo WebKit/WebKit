@@ -163,21 +163,21 @@ static void freeData(void *, const void *data, size_t /* size */)
 #endif
 }
 
-- (void)display
+- (void)prepareForDisplay
 {
     if (!_context)
         return;
+
+    // To avoid running any OpenGL code in `display`, this method should be called
+    // at the end of the rendering task. We will flush all painting commands
+    // leaving the buffers ready to composite.
 
 #if USE(OPENGL)
     _context->prepareTexture();
     if (_drawingBuffer) {
         std::swap(_contentsBuffer, _drawingBuffer);
-        self.contents = _contentsBuffer->asLayerContents();
-        [self reloadValueForKeyPath:@"contents"];
         [self bindFramebufferToNextAvailableSurface];
     }
-#elif USE(OPENGL_ES)
-    _context->presentRenderbuffer();
 #elif USE(ANGLE)
     if (!_context->makeContextCurrent()) {
         // Context is likely being torn down.
@@ -198,18 +198,40 @@ static void freeData(void *, const void *data, size_t /* size */)
             }
             _latchedPbuffer = nullptr;
         }
+
         std::swap(_contentsBuffer, _drawingBuffer);
         std::swap(_contentsPbuffer, _drawingPbuffer);
-        self.contents = _contentsBuffer->asLayerContents();
-        [self reloadValueForKeyPath:@"contents"];
         [self bindFramebufferToNextAvailableSurface];
     }
+#endif
+
+    _prepared = YES;
+}
+
+- (void)display
+{
+    if (!_context)
+        return;
+
+    // At this point we've painted into the _drawingBuffer and swapped it with the old _contentsBuffer,
+    // so all we need to do here is tickle the CALayer to let it know it has new contents.
+    // This avoids running any OpenGL code in this method.
+
+#if USE(OPENGL) || USE(ANGLE)
+    if (_contentsBuffer && _prepared) {
+        self.contents = _contentsBuffer->asLayerContents();
+        [self reloadValueForKeyPath:@"contents"];
+    }
+#elif USE(OPENGL_ES)
+    _context->presentRenderbuffer();
 #endif
 
     _context->markLayerComposited();
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(layer.get());
+
+    _prepared = NO;
 }
 
 #if USE(ANGLE)

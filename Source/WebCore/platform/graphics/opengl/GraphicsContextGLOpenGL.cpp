@@ -782,6 +782,10 @@ void GraphicsContextGLOpenGL::setContextVisibility(bool)
 void GraphicsContextGLOpenGL::simulateContextChanged()
 {
 }
+
+void GraphicsContextGLOpenGL::prepareForDisplay()
+{
+}
 #endif
 
 } // namespace WebCore

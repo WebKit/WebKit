@@ -1,3 +1,82 @@
+2020-05-31  Dean Jackson  <dino@apple.com>
+
+        AutoTrader crashed while browsing search results
+        https://bugs.webkit.org/show_bug.cgi?id=212461
+        rdar://60733185
+
+        Reviewed by Sam Weinig.
+
+        On iOS, when using WebKit1 (UIWebView), CoreAnimation would
+        call WebGLLayer's display method from a thread that is not
+        the Web Thread. That method was performing some GL work using
+        ANGLE, causing a crash.
+
+        Since all the WebGLLayer's display method really needs to do
+        is swap buffers for compositing, the fix is to separate all
+        the GL operations into a method that can be called after
+        painting but before compositing. This should also have the added
+        benefit that by the time CoreAnimation comes to call display
+        on all the dirty layers, we will have already executed our
+        expensive GPU work. The total amount of work done on the GPU
+        is the same, but hopefully it is now all done in WebKit's
+        paint cycle, rather than when the Window Server is trying
+        to get CA to composite things.
+
+        Covered by a new API test: WebGLPrepareDisplayOnWebThread
+
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::didMoveToNewDocument):
+        (WebCore::HTMLCanvasElement::removedFromAncestor):
+            Add or remove the document as a CanvasObserver.
+        (WebCore::HTMLCanvasElement::needsPreparationForDisplay):
+            Signals whether this element is the type that needs preparation.
+        (WebCore::HTMLCanvasElement::prepareForDisplay):
+            Tell the WebGLRenderingContext it must prepare.
+
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::prepareForDisplay):
+            The WebGLRenderingContext must forward the call
+            to prepare down to the GraphicsContextGLOpenGL.
+
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+            And the GraphicsContextGLOpenGL forwards the call
+            into the WebGLLayer.
+
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer prepareForDisplay]):
+        (-[WebGLLayer display]):
+            Split the parts of the `display` method that deal
+            with flushing the GL commands, preparing the framebuffer texture,
+            and swapping the IOSurfaces into a new `prepareForDisplay`. This
+            method is invoked at the end of the rendering/layout tasks, leaving
+            the `display` method to only tell CoreAnimation about a new buffer
+            to composite.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        (WebCore::Document::prepareCanvasesForDisplayIfNeeded):
+        (WebCore::Document::canvasChanged):
+        (WebCore::Document::canvasDestroyed):
+            Keep a set of HTMLCanvasElements that need to
+            be prepared so we can tell them when they need to prepare.
+            Do this by becoming a CanvasObserver, thus getting
+            notified when a canvas has done something that
+            would cause painting.
+
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+            Add a new task that asks the Document to notify
+            all relevant canvas objects that they should prepare
+            for display.
+
 2020-05-31  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] EME should return more helpful error code during key exchange

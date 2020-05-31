@@ -1,3 +1,18 @@
+2020-05-31  Dean Jackson  <dino@apple.com>
+
+        AutoTrader crashed while browsing search results
+        https://bugs.webkit.org/show_bug.cgi?id=212461
+        rdar://60733185
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLPrepareDisplayOnWebThread.mm: Added.
+        (-[WebGLPrepareDisplayOnWebThreadDelegate webViewDidFinishLoad:]):
+        (-[WebGLPrepareDisplayOnWebThreadDelegate webView:shouldStartLoadWithRequest:navigationType:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/webgl.html: Added.
+
 2020-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build with current GTK

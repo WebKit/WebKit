@@ -1463,6 +1463,10 @@ void Page::doAfterUpdateRendering()
     if (UNLIKELY(isMonitoringWheelEvents()))
         wheelEventTestMonitor()->checkShouldFireCallbacks();
 
+    forEachDocument([] (Document& document) {
+        document.prepareCanvasesForDisplayIfNeeded();
+    });
+
 #if ASSERT_ENABLED
     for (Frame* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
         auto* frameView = child->view();

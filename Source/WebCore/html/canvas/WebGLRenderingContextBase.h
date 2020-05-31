@@ -382,6 +382,8 @@ public:
     // Used for testing only, from Internals.
     WEBCORE_EXPORT void setFailNextGPUStatusCheck();
 
+    void prepareForDisplay();
+
     // GraphicsContextGL::Client
     void didComposite() override;
     void forceContextLost() override;

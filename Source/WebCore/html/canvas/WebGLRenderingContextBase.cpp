@@ -7526,6 +7526,13 @@ void WebGLRenderingContextBase::dispatchContextChangedNotification()
     queueTaskToDispatchEvent(*canvas, TaskSource::WebGL, WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
 }
 
+void WebGLRenderingContextBase::prepareForDisplay()
+{
+    if (!m_context)
+        return;
+
+    m_context->prepareForDisplay();
+}
 
 } // namespace WebCore
 

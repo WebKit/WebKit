@@ -62,6 +62,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     void* _sparePbuffer;
     void* _latchedPbuffer;
 #endif
+    BOOL _prepared;
 }
 
 @property (nonatomic) NakedPtr<WebCore::GraphicsContextGLOpenGL> context;
@@ -69,6 +70,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
+
+- (void)prepareForDisplay;
 
 #if USE(OPENGL) || USE(ANGLE)
 - (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;

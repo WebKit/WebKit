@@ -661,6 +661,8 @@ public:
     void screenDidChange(PlatformDisplayID);
 #endif
 
+    void prepareForDisplay();
+
 private:
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
 
