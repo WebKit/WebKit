@@ -11,7 +11,7 @@ Image by id (unique): undefined
 Image by id (multiple): undefined
 Image by id/name mixed: collection(2) IMG(name) IMG(name)
 Image by id, name present (unique): single IMG(id,name)
-Image by id, empty name present (unique): single IMG(id)
+Image by id, empty name present (unique): undefined
 Image by id, name present (multiple): collection(2) IMG(id,name) IMG(id,name)
 Image by name, id present (unique): single IMG(id,name)
 

@@ -1,5 +1,25 @@
 2020-05-31  Rob Buis  <rbuis@igalia.com>
 
+        Implement named item condition for images
+        https://bugs.webkit.org/show_bug.cgi?id=212473
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement named item condition for images, not only should we
+        check there are both an id and a name attribute, but also that
+        the name attribute is non-empty [1].
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://html.spec.whatwg.org/multipage/dom.html#dom-document-nameditem-filter
+
+        Test: imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-06.html
+
+        * html/HTMLNameCollection.cpp:
+        (WebCore::DocumentNameCollection::elementMatchesIfIdAttributeMatch):
+
+2020-05-31  Rob Buis  <rbuis@igalia.com>
+
         <area> needs to be connected in order to navigate
         https://bugs.webkit.org/show_bug.cgi?id=177357
 

@@ -68,7 +68,7 @@ bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& ele
     // FIXME: We need to fix HTMLImageElement to update the hash map for us when the name attribute is removed.
     return isObjectElementForDocumentNameCollection(element)
         || is<HTMLAppletElement>(element)
-        || (is<HTMLImageElement>(element) && element.hasName());
+        || (is<HTMLImageElement>(element) && element.hasName() && !element.getNameAttribute().isEmpty());
 }
 
 bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
