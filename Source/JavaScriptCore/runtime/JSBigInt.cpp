@@ -99,18 +99,21 @@ JSBigInt* JSBigInt::tryCreateZero(VM& vm)
 
 inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, unsigned length)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(length > maxLength)) {
-        if (nullOrGlobalObjectForOOM)
+        if (nullOrGlobalObjectForOOM) {
+            auto scope = DECLARE_THROW_SCOPE(vm);
             throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope, "BigInt generated from this operation is too big"_s);
+        }
         return nullptr;
     }
 
     ASSERT(length <= maxLength);
     void* data = Gigacage::tryMalloc(Gigacage::Primitive, length * sizeof(Digit));
     if (UNLIKELY(!data)) {
-        if (nullOrGlobalObjectForOOM)
+        if (nullOrGlobalObjectForOOM) {
+            auto scope = DECLARE_THROW_SCOPE(vm);
             throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope);
+        }
         return nullptr;
     }
     JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap)) JSBigInt(vm, vm.bigIntStructure.get(), reinterpret_cast<Digit*>(data), length);
@@ -2332,8 +2335,6 @@ JSBigInt* JSBigInt::tryRightTrim(VM& vm)
 
 JSBigInt* JSBigInt::allocateFor(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, unsigned radix, unsigned charcount)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     ASSERT(2 <= radix && radix <= 36);
 
     size_t bitsPerChar = maxBitsPerCharTable[radix];
@@ -2348,12 +2349,14 @@ JSBigInt* JSBigInt::allocateFor(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm
             // Divide by kDigitsBits, rounding up.
             unsigned length = (bitsMin + digitBits - 1) / digitBits;
             if (length <= maxLength)
-                RELEASE_AND_RETURN(scope, createWithLength(nullOrGlobalObjectForOOM, vm, length));
+                return createWithLength(nullOrGlobalObjectForOOM, vm, length);
         }
     }
 
-    if (nullOrGlobalObjectForOOM)
+    if (nullOrGlobalObjectForOOM) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
         throwOutOfMemoryError(nullOrGlobalObjectForOOM, scope, "BigInt generated from this operation is too big"_s);
+    }
 
     return nullptr;
 }
@@ -2561,7 +2564,7 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, Cha
                 }
             }
             heapResult = allocateFor(nullOrGlobalObjectForOOM, vm, radix, initialLength);
-            if (!heapResult)
+            if (UNLIKELY(!heapResult))
                 return JSValue();
             heapResult->initialize(InitializationType::WithZero);
         }
