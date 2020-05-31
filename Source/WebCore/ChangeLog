@@ -1,3 +1,21 @@
+2020-05-31  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Transition between encrypted and clear codecs throws error from SourceBuffer.appendBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=212550
+        <rdar://problem/62207260>
+
+        Reviewed by Eric Carlson.
+
+        CoreMedia returns a different codec 4CC code for "encrypted AVC" than it does for "clear AVC", though
+        the underlying codec used for both is the same. While CoreMedia does use different codec implementations
+        for each, it is capable of freely switching between the two, and the codec string used by web developers
+        for encrypted vs. clear content is identical. So we will treat these two codecs as "the same" as it pertains
+        to the MSE requirement that codecs contained in new initialization segments are "the same" as previous
+        ones. Adopt kCMFormatDescriptionExtension_ProtectedContentOriginalFormat, which can query the "original"
+        codec used for encrypted codec playback.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
 2020-05-31  Zalan Bujtas  <zalan@apple.com>
 
         [iBooks] Empty pages appear in book
