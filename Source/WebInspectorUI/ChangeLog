@@ -1,3 +1,28 @@
+2020-06-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Timelines: Edit button has wrong outline
+        https://bugs.webkit.org/show_bug.cgi?id=211105
+        <rdar://problem/62475815>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.text-only:focus):
+        Add `.text-only` to the selector to make specificity higher than of the button selector.
+
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only:focus):
+        Add `.text-only` to the selector to make specificity higher than of the button selector.
+
+        (.navigation-bar .item.radio.button:not(.text-only)): Deleted.
+        (.navigation-bar.collapsed .item.radio.button:not(.text-only)): Deleted.
+        Remove dead code. We only have text-only buttons now.
+
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WI.RadioButtonNavigationItem):
+        (WI.RadioButtonNavigationItem.prototype.get buttonStyle):
+        (WI.RadioButtonNavigationItem.prototype.set buttonStyle):
+
 2020-05-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Graphics: text editors in Keyframes section don't populate when sidebar is first shown

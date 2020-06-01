@@ -65,6 +65,10 @@
     text-align: center;
 }
 
+.navigation-bar .item.button.text-only:focus {
+    outline-offset: var(--focus-ring-outline-offset);
+}
+
 .navigation-bar .item.button > .glyph {
     color: var(--glyph-color);
     opacity: var(--glyph-opacity);

@@ -28,6 +28,8 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
     constructor(identifier, toolTip, image, imageWidth, imageHeight)
     {
         super(identifier, toolTip, image, imageWidth, imageHeight, "tab");
+
+        console.assert(this.buttonStyle === WI.ButtonNavigationItem.Style.Text);
     }
 
     // Public
@@ -58,6 +60,19 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
     set active(flag)
     {
         this.element.classList.toggle(WI.RadioButtonNavigationItem.ActiveStyleClassName, flag);
+    }
+
+    get buttonStyle()
+    {
+        return super.buttonStyle;
+    }
+
+    set buttonStyle(newButtonStyle)
+    {
+        if (newButtonStyle !== WI.ButtonNavigationItem.Style.Text)
+            return;
+
+        super.buttonStyle = newButtonStyle;
     }
 
     // Protected
