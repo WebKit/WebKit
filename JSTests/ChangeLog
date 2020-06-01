@@ -1,3 +1,21 @@
+2020-06-01  Caio Lima  <ticaiolima@gmail.com>
+
+        JSTests/exceptionFuzz/earley-boyer.js fails with early exception thrown.
+        https://bugs.webkit.org/show_bug.cgi?id=212569
+
+        Reviewed by Mark Lam.
+
+        This is a temporary fix to avoid flawky results when running
+        `exceptionFuzz` tests. Right now, exception handler starts after
+        function declarations, since they are hoisted. Since function
+        declarations emit `new_func` bytecode, those bytecodes can
+        throw an exception outside expected exception handler.
+        Embedding them in a function avoid such hoisting to happen.
+
+        * exceptionFuzz/3d-cube.js:
+        * exceptionFuzz/date-format-xparb.js:
+        * exceptionFuzz/earley-boyer.js:
+
 2020-05-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] for-in should allocate new temporary register for base

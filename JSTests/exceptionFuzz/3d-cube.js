@@ -1,4 +1,5 @@
 try {
+(function() {
 
 // 3D Cube Rotation
 // http://www.speich.net/computer/moztesting/3d.htm
@@ -355,6 +356,7 @@ Testing = null;
 LoopTime = null;
 DisplArea = null;
 
+})();
 } catch (e) {
     print("JSC EXCEPTION FUZZ: Caught exception: " + e);
 }

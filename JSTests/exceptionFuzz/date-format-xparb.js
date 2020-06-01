@@ -1,4 +1,5 @@
 try {
+(function() {
 
 /*
  * Copyright (C) 2004 Baron Schwartz <baron at sequent dot org>
@@ -421,6 +422,7 @@ for (i = 0; i < 4000; ++i) {
 // FIXME: Find a way to validate this test.
 // https://bugs.webkit.org/show_bug.cgi?id=114849
 
+})();
 } catch (e) {
     print("JSC EXCEPTION FUZZ: Caught exception: " + e);
 }
