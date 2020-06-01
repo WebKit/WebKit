@@ -1,5 +1,26 @@
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Monitor root window to update activity state
+        https://bugs.webkit.org/show_bug.cgi?id=212581
+
+        Reviewed by Adrian Perez de Castro.
+
+        To update ActivityState::IsInWindow and ActivityState::WindowIsActive.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toplevelWindowStateEvent):
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (webkitWebViewBaseDispose):
+        (toplevelWindowIsActiveChanged):
+        (toplevelWindowStateChanged):
+        (toplevelWindowRealized):
+        (toplevelWindowUnrealized):
+        (webkitWebViewBaseRoot):
+        (webkitWebViewBaseUnroot):
+        (webkit_web_view_base_class_init):
+
+2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Fix pointer lock in X11
         https://bugs.webkit.org/show_bug.cgi?id=212592
 

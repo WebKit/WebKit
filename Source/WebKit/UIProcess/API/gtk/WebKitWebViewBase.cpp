@@ -278,9 +278,15 @@ struct _WebKitWebViewBasePrivate {
     Optional<MotionEvent> lastMotionEvent;
 
     GtkWindow* toplevelOnScreenWindow { nullptr };
+#if USE(GTK4)
+    unsigned long toplevelIsActiveID { 0 };
+    unsigned long toplevelWindowStateChangedID { 0 };
+    unsigned long toplevelWindowUnrealizedID { 0 };
+#else
     unsigned long toplevelFocusInEventID { 0 };
     unsigned long toplevelFocusOutEventID { 0 };
     unsigned long toplevelWindowStateEventID { 0 };
+#endif
     unsigned long toplevelWindowRealizedID { 0 };
     unsigned long themeChangedID { 0 };
     unsigned long applicationPreferDarkThemeID { 0 };
@@ -333,6 +339,7 @@ static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webV
     priv->updateActivityStateTimer.startOneShot(0_s);
 }
 
+#if !USE(GTK4)
 static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, WebKitWebViewBase* webViewBase)
 {
     // Spurious focus in events can occur when the window is hidden.
@@ -361,7 +368,6 @@ static gboolean toplevelWindowFocusOutEvent(GtkWidget*, GdkEventFocus*, WebKitWe
     return FALSE;
 }
 
-#if !USE(GTK4)
 static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event, WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -380,7 +386,6 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
 
     return FALSE;
 }
-#endif
 
 static void themeChanged(WebKitWebViewBase* webViewBase)
 {
@@ -461,10 +466,8 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     priv->toplevelFocusOutEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "focus-out-event",
                          G_CALLBACK(toplevelWindowFocusOutEvent), webViewBase);
-#if !USE(GTK4)
     priv->toplevelWindowStateEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "window-state-event", G_CALLBACK(toplevelWindowStateEvent), webViewBase);
-#endif
 
     auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
     priv->themeChangedID =
@@ -477,6 +480,7 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     else
         priv->toplevelWindowRealizedID = g_signal_connect_swapped(window, "realize", G_CALLBACK(toplevelWindowRealized), webViewBase);
 }
+#endif
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
@@ -700,8 +704,8 @@ static void webkitWebViewBaseDispose(GObject* gobject)
         gtk_widget_unparent(widget);
 #else
     g_clear_pointer(&webView->priv->dialog, gtk_widget_destroy);
-#endif
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
+#endif
     if (webView->priv->accessible)
         webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
 #if GTK_CHECK_VERSION(3, 24, 0) && !USE(GTK4)
@@ -1720,7 +1724,127 @@ static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
     return priv->accessible.get();
 }
 
-#if !USE(GTK4)
+#if USE(GTK4)
+static void toplevelWindowIsActiveChanged(GtkWindow* window, GParamSpec*, WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (gtk_window_is_active(window)) {
+        if (priv->activityState & ActivityState::WindowIsActive)
+            return;
+        priv->activityState.add(ActivityState::WindowIsActive);
+    } else {
+        if (!(priv->activityState & ActivityState::WindowIsActive))
+            return;
+        priv->activityState.remove(ActivityState::WindowIsActive);
+    }
+
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::WindowIsActive);
+}
+
+static void toplevelWindowStateChanged(GdkSurface* surface, GParamSpec*, WebKitWebViewBase* webViewBase)
+{
+    auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
+    bool visible = !(state & GDK_SURFACE_STATE_MINIMIZED);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (visible) {
+        if (priv->activityState & ActivityState::IsVisible)
+            return;
+        priv->activityState.add(ActivityState::IsVisible);
+    } else {
+        if (!(priv->activityState & ActivityState::IsVisible))
+            return;
+        priv->activityState.remove(ActivityState::IsVisible);
+    }
+    webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
+}
+
+static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    g_clear_signal_handler(&priv->toplevelWindowRealizedID, priv->toplevelOnScreenWindow);
+    priv->toplevelWindowStateChangedID =
+        g_signal_connect(gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)), "notify::state", G_CALLBACK(toplevelWindowStateChanged), webViewBase);
+}
+
+static void toplevelWindowUnrealized(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    g_clear_signal_handler(&priv->toplevelWindowUnrealizedID, priv->toplevelOnScreenWindow);
+    g_clear_signal_handler(&priv->toplevelWindowStateChangedID, gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)));
+}
+
+static void webkitWebViewBaseRoot(GtkWidget* widget)
+{
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->root(widget);
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    priv->toplevelOnScreenWindow = GTK_WINDOW(gtk_widget_get_root(widget));
+
+    OptionSet<ActivityState::Flag> flagsToUpdate;
+    if (!(priv->activityState & ActivityState::IsInWindow)) {
+        priv->activityState.add(ActivityState::IsInWindow);
+        flagsToUpdate.add(ActivityState::IsInWindow);
+    }
+    if (gtk_widget_get_visible(GTK_WIDGET(priv->toplevelOnScreenWindow)) && gtk_window_is_active(priv->toplevelOnScreenWindow)) {
+        priv->activityState.add(ActivityState::WindowIsActive);
+        flagsToUpdate.add(ActivityState::IsInWindow);
+    }
+    if (flagsToUpdate)
+        webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
+
+    priv->toplevelIsActiveID =
+        g_signal_connect(priv->toplevelOnScreenWindow, "notify::is-active", G_CALLBACK(toplevelWindowIsActiveChanged), widget);
+    if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow))) {
+        priv->toplevelWindowStateChangedID =
+            g_signal_connect(gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)), "notify::state", G_CALLBACK(toplevelWindowStateChanged), widget);
+    } else {
+        priv->toplevelWindowRealizedID =
+            g_signal_connect_swapped(priv->toplevelOnScreenWindow, "realize", G_CALLBACK(toplevelWindowRealized), widget);
+    }
+    priv->toplevelWindowUnrealizedID =
+        g_signal_connect_swapped(priv->toplevelOnScreenWindow, "unrealize", G_CALLBACK(toplevelWindowUnrealized), widget);
+
+    auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
+    priv->themeChangedID =
+        g_signal_connect_swapped(settings, "notify::gtk-theme-name", G_CALLBACK(+[](WebKitWebViewBase* webViewBase) {
+            webViewBase->priv->pageProxy->themeDidChange();
+        }), widget);
+    priv->applicationPreferDarkThemeID =
+        g_signal_connect_swapped(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(+[](WebKitWebViewBase* webViewBase) {
+            webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
+        }), widget);
+}
+
+static void webkitWebViewBaseUnroot(GtkWidget* widget)
+{
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unroot(widget);
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    g_clear_signal_handler(&priv->toplevelIsActiveID, priv->toplevelOnScreenWindow);
+    g_clear_signal_handler(&priv->toplevelWindowRealizedID, priv->toplevelOnScreenWindow);
+    g_clear_signal_handler(&priv->toplevelWindowUnrealizedID, priv->toplevelOnScreenWindow);
+    if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow)))
+        g_clear_signal_handler(&priv->toplevelWindowStateChangedID, gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)));
+    auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
+    g_clear_signal_handler(&priv->themeChangedID, settings);
+    g_clear_signal_handler(&priv->applicationPreferDarkThemeID, settings);
+    priv->toplevelOnScreenWindow = nullptr;
+
+    OptionSet<ActivityState::Flag> flagsToUpdate;
+    if (priv->activityState & ActivityState::IsInWindow) {
+        priv->activityState.remove(ActivityState::IsInWindow);
+        flagsToUpdate.add(ActivityState::IsInWindow);
+    }
+    if (priv->activityState & ActivityState::WindowIsActive) {
+        priv->activityState.remove(ActivityState::WindowIsActive);
+        flagsToUpdate.add(ActivityState::IsInWindow);
+    }
+    if (flagsToUpdate)
+        webkitWebViewBaseScheduleUpdateActivityState(webViewBase, flagsToUpdate);
+}
+#else
 static void webkitWebViewBaseHierarchyChanged(GtkWidget* widget, GtkWidget* oldToplevel)
 {
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
@@ -1846,7 +1970,10 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->event = webkitWebViewBaseEvent;
 #endif
     widgetClass->get_accessible = webkitWebViewBaseGetAccessible;
-#if !USE(GTK4)
+#if USE(GTK4)
+    widgetClass->root = webkitWebViewBaseRoot;
+    widgetClass->unroot = webkitWebViewBaseUnroot;
+#else
     widgetClass->hierarchy_changed = webkitWebViewBaseHierarchyChanged;
 #endif
 
