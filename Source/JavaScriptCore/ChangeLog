@@ -1,5 +1,24 @@
 2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSValue::toThis should not throw exception
+        https://bugs.webkit.org/show_bug.cgi?id=212595
+
+        Reviewed by Mark Lam.
+
+        Including WebCore code, there are a lot of code which assume JSValue::toThis should not throw an exception.
+        This assumption was now broken after making JSBigInt allocation graceful for OOM. But for this particular JSValue::toThis case,
+        we can make it non-throwing code.
+
+        This patch makes JSValue::toThis non-throwing code to fix exception-missing debug assertions.
+        We ensure that BigIntObject can hold BigInt32 (actually, it can already if toObjectSlowCase path is taken).
+
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::create):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toThisSlowCase const):
+
+2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] BigInt operations should handle exception correctly
         https://bugs.webkit.org/show_bug.cgi?id=212596
 

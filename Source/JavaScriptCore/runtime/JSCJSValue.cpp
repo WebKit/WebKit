@@ -119,7 +119,6 @@ JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
 JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(!isCell());
 
@@ -127,15 +126,12 @@ JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode)
         return *this;
 
     if (isInt32() || isDouble())
-        RELEASE_AND_RETURN(scope, constructNumber(globalObject, asValue()));
+        return constructNumber(globalObject, asValue());
     if (isTrue() || isFalse())
-        RELEASE_AND_RETURN(scope, constructBooleanFromImmediateBoolean(globalObject, asValue()));
+        return constructBooleanFromImmediateBoolean(globalObject, asValue());
 #if USE(BIGINT32)
-    if (isBigInt32()) {
-        JSCell* heapBigInt = static_cast<JSCell*>(JSBigInt::createFrom(globalObject, bigInt32AsInt32()));
-        RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, heapBigInt->toObject(globalObject));
-    }
+    if (isBigInt32())
+        return BigIntObject::create(vm, globalObject, *this);
 #endif
 
     ASSERT(isUndefinedOrNull());
