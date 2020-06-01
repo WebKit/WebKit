@@ -1,3 +1,20 @@
+2020-06-01  Rob Buis  <rbuis@igalia.com>
+
+        Rename ResourceResponseBase::isHTTP to isInHTTPFamily
+        https://bugs.webkit.org/show_bug.cgi?id=208782
+
+        Reviewed by Sam Weinig.
+
+        Adapt to API change.
+
+        * Plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream):
+        * WebURLResponse.cpp:
+        (WebURLResponse::QueryInterface):
+        (WebURLResponse::allHeaderFields):
+        (WebURLResponse::localizedStringForStatusCode):
+        (WebURLResponse::statusCode):
+
 2020-05-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] ASSERT(m_eglDisplay == EGL_NO_DISPLAY) fails in ~PlatformDisplay()

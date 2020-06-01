@@ -1,3 +1,17 @@
+2020-06-01  Rob Buis  <rbuis@igalia.com>
+
+        Rename ResourceResponseBase::isHTTP to isInHTTPFamily
+        https://bugs.webkit.org/show_bug.cgi?id=208782
+
+        Reviewed by Sam Weinig.
+
+        Adapt to API change.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeStoreDecision):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders):
+
 2020-06-01  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] pthread_create() fails with EPERM in the second WebKitWebProcess with sandbox on

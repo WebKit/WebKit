@@ -265,7 +265,7 @@ static bool isMediaMIMEType(const String& type)
 
 static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, size_t bodySize)
 {
-    if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP())
+    if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isInHTTPFamily())
         return StoreDecision::NoDueToProtocol;
 
     if (originalRequest.httpMethod() != "GET")

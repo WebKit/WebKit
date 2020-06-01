@@ -190,7 +190,7 @@ void PluginView::Stream::continueLoad()
 
 static String buildHTTPHeaders(const ResourceResponse& response, long long& expectedContentLength)
 {
-    if (!response.isHTTP())
+    if (!response.isInHTTPFamily())
         return String();
 
     StringBuilder header;

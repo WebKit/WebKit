@@ -126,7 +126,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
         if (!m_client)
             return;
 
-        if (!response.isHTTP())
+        if (!response.isInHTTPFamily())
             return;
 
         if (m_client->wantsAllStreams())

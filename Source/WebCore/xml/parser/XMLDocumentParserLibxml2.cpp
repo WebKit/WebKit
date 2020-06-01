@@ -386,7 +386,7 @@ static bool externalEntityMimeTypeAllowed(const ResourceResponse& response)
     String mimeType = extractMIMETypeFromMediaType(contentType);
     if (mimeType.isEmpty()) {
         // Same logic as XMLHttpRequest::responseMIMEType(). Keep them in sync.
-        if (response.isHTTP())
+        if (response.isInHTTPFamily())
             mimeType = contentType;
         else
             mimeType = response.mimeType();

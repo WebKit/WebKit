@@ -152,7 +152,7 @@ void PluginStream::startStream()
 
     long long expectedContentLength = m_resourceResponse.expectedContentLength();
 
-    if (m_resourceResponse.isHTTP()) {
+    if (m_resourceResponse.isInHTTPFamily()) {
         StringBuilder stringBuilder;
         String separator = ": "_s;
 

@@ -260,7 +260,7 @@ HRESULT WebURLResponse::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
         *ppvObject = static_cast<IWebURLResponse*>(this);
     else if (IsEqualGUID(riid, IID_IWebURLResponsePrivate))
         *ppvObject = static_cast<IWebURLResponsePrivate*>(this);
-    else if (m_response.isHTTP() && IsEqualGUID(riid, IID_IWebHTTPURLResponse))
+    else if (m_response.isInHTTPFamily() && IsEqualGUID(riid, IID_IWebHTTPURLResponse))
         *ppvObject = static_cast<IWebHTTPURLResponse*>(this);
     else
         return E_NOINTERFACE;
@@ -358,7 +358,7 @@ HRESULT WebURLResponse::URL(__deref_opt_out BSTR* result)
 
 HRESULT WebURLResponse::allHeaderFields(_COM_Outptr_opt_ IPropertyBag** headerFields)
 {
-    ASSERT(m_response.isHTTP());
+    ASSERT(m_response.isInHTTPFamily());
 
     if (!headerFields)
         return E_POINTER;
@@ -373,7 +373,7 @@ HRESULT WebURLResponse::allHeaderFields(_COM_Outptr_opt_ IPropertyBag** headerFi
 
 HRESULT WebURLResponse::localizedStringForStatusCode(int statusCode, __deref_opt_out BSTR* statusString)
 {
-    ASSERT(m_response.isHTTP());
+    ASSERT(m_response.isInHTTPFamily());
     if (!statusString)
         return E_POINTER;
 
@@ -387,7 +387,7 @@ HRESULT WebURLResponse::localizedStringForStatusCode(int statusCode, __deref_opt
 
 HRESULT WebURLResponse::statusCode(_Out_ int* statusCode)
 {
-    ASSERT(m_response.isHTTP());
+    ASSERT(m_response.isInHTTPFamily());
     if (statusCode)
         *statusCode = m_response.httpStatusCode();
     return S_OK;
