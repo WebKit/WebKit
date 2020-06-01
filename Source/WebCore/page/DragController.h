@@ -50,116 +50,116 @@ struct DragItem;
 struct DragState;
 struct PromisedAttachmentInfo;
 
-    class DragController {
-        WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        DragController(Page&, std::unique_ptr<DragClient>&&);
-        ~DragController();
+class DragController {
+    WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
+public:
+    DragController(Page&, std::unique_ptr<DragClient>&&);
+    ~DragController();
 
-        static DragOperation platformGenericDragOperation();
+    static DragOperation platformGenericDragOperation();
 
-        WEBCORE_EXPORT DragOperation dragEntered(const DragData&);
-        WEBCORE_EXPORT void dragExited(const DragData&);
-        WEBCORE_EXPORT DragOperation dragUpdated(const DragData&);
-        WEBCORE_EXPORT bool performDragOperation(const DragData&);
-        WEBCORE_EXPORT void dragCancelled();
+    WEBCORE_EXPORT DragOperation dragEntered(const DragData&);
+    WEBCORE_EXPORT void dragExited(const DragData&);
+    WEBCORE_EXPORT DragOperation dragUpdated(const DragData&);
+    WEBCORE_EXPORT bool performDragOperation(const DragData&);
+    WEBCORE_EXPORT void dragCancelled();
 
-        bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
-        unsigned numberOfItemsToBeAccepted() const { return m_numberOfItemsToBeAccepted; }
+    bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
+    unsigned numberOfItemsToBeAccepted() const { return m_numberOfItemsToBeAccepted; }
 
-        // FIXME: It should be possible to remove a number of these accessors once all
-        // drag logic is in WebCore.
-        void setDidInitiateDrag(bool initiated) { m_didInitiateDrag = initiated; } 
-        bool didInitiateDrag() const { return m_didInitiateDrag; }
-        DragOperation sourceDragOperation() const { return m_sourceDragOperation; }
-        const URL& draggingImageURL() const { return m_draggingImageURL; }
-        void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
-        const IntPoint& dragOffset() const { return m_dragOffset; }
-        DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
-        DragHandlingMethod dragHandlingMethod() const { return m_dragHandlingMethod; }
+    // FIXME: It should be possible to remove a number of these accessors once all
+    // drag logic is in WebCore.
+    void setDidInitiateDrag(bool initiated) { m_didInitiateDrag = initiated; }
+    bool didInitiateDrag() const { return m_didInitiateDrag; }
+    DragOperation sourceDragOperation() const { return m_sourceDragOperation; }
+    const URL& draggingImageURL() const { return m_draggingImageURL; }
+    void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
+    const IntPoint& dragOffset() const { return m_dragOffset; }
+    DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
+    DragHandlingMethod dragHandlingMethod() const { return m_dragHandlingMethod; }
 
-        Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
-        OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
-        DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
-        
-        Element* draggableElement(const Frame*, Element* start, const IntPoint&, DragState&) const;
-        WEBCORE_EXPORT void dragEnded();
-        
-        WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
+    Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
+    OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
+    DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
 
-        const Vector<Ref<HTMLImageElement>>& droppedImagePlaceholders() const { return m_droppedImagePlaceholders; }
-        const RefPtr<Range>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
+    Element* draggableElement(const Frame*, Element* start, const IntPoint&, DragState&) const;
+    WEBCORE_EXPORT void dragEnded();
 
-        WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
-        WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
-        
-        bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData);
-        static const IntSize& maxDragImageSize();
-        
-        static const int MaxOriginalImageArea;
-        static const int DragIconRightInset;
-        static const int DragIconBottomInset;        
-        static const float DragImageAlpha;
+    WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
 
-    private:
-        void updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const;
-        bool dispatchTextInputEventFor(Frame*, const DragData&);
-        bool canProcessDrag(const DragData&);
-        bool concludeEditDrag(const DragData&);
-        DragOperation dragEnteredOrUpdated(const DragData&);
-        DragOperation operationForLoad(const DragData&);
-        DragHandlingMethod tryDocumentDrag(const DragData&, OptionSet<DragDestinationAction>, DragOperation&);
-        bool tryDHTMLDrag(const DragData&, DragOperation&);
-        DragOperation dragOperation(const DragData&);
-        void clearDragCaret();
-        bool dragIsMove(FrameSelection&, const DragData&);
-        bool isCopyKeyDown(const DragData&);
+    const Vector<Ref<HTMLImageElement>>& droppedImagePlaceholders() const { return m_droppedImagePlaceholders; }
+    const RefPtr<Range>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
 
-        void mouseMovedIntoDocument(Document*);
-        bool shouldUseCachedImageForDragImage(const Image&) const;
+    WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
+    WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
 
-        void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
-        void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&, PromisedAttachmentInfo&&);
+    bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData);
+    static const IntSize& maxDragImageSize();
 
-        void beginDrag(DragItem, Frame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
+    static const int MaxOriginalImageArea;
+    static const int DragIconRightInset;
+    static const int DragIconBottomInset;
+    static const float DragImageAlpha;
 
-        bool canLoadDataFromDraggingPasteboard() const
-        {
+private:
+    void updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const;
+    bool dispatchTextInputEventFor(Frame*, const DragData&);
+    bool canProcessDrag(const DragData&);
+    bool concludeEditDrag(const DragData&);
+    DragOperation dragEnteredOrUpdated(const DragData&);
+    DragOperation operationForLoad(const DragData&);
+    DragHandlingMethod tryDocumentDrag(const DragData&, OptionSet<DragDestinationAction>, DragOperation&);
+    bool tryDHTMLDrag(const DragData&, DragOperation&);
+    DragOperation dragOperation(const DragData&);
+    void clearDragCaret();
+    bool dragIsMove(FrameSelection&, const DragData&);
+    bool isCopyKeyDown(const DragData&);
+
+    void mouseMovedIntoDocument(Document*);
+    bool shouldUseCachedImageForDragImage(const Image&) const;
+
+    void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
+    void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&, PromisedAttachmentInfo&&);
+
+    void beginDrag(DragItem, Frame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
+
+    bool canLoadDataFromDraggingPasteboard() const
+    {
 #if ENABLE(DATA_INTERACTION)
-            return m_isPerformingDrop;
+        return m_isPerformingDrop;
 #else
-            return true;
+        return true;
 #endif
-        }
+    }
 
-        DragClient& client() const { return *m_client; }
+    DragClient& client() const { return *m_client; }
 
-        bool tryToUpdateDroppedImagePlaceholders(const DragData&);
-        void removeAllDroppedImagePlaceholders();
+    bool tryToUpdateDroppedImagePlaceholders(const DragData&);
+    void removeAllDroppedImagePlaceholders();
 
-        void cleanupAfterSystemDrag();
-        void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
+    void cleanupAfterSystemDrag();
+    void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 
-        Page& m_page;
-        std::unique_ptr<DragClient> m_client;
+    Page& m_page;
+    std::unique_ptr<DragClient> m_client;
 
-        RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
-        RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
-        RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
-        unsigned m_numberOfItemsToBeAccepted { 0 };
-        DragHandlingMethod m_dragHandlingMethod { DragHandlingMethod::None };
+    RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
+    RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
+    RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
+    unsigned m_numberOfItemsToBeAccepted { 0 };
+    DragHandlingMethod m_dragHandlingMethod { DragHandlingMethod::None };
 
-        OptionSet<DragDestinationAction> m_dragDestinationActionMask;
-        DragSourceAction m_dragSourceAction { DragSourceActionNone };
-        bool m_didInitiateDrag { false };
-        DragOperation m_sourceDragOperation { DragOperationNone }; // Set in startDrag when a drag starts from a mouse down within WebKit
-        IntPoint m_dragOffset;
-        URL m_draggingImageURL;
-        bool m_isPerformingDrop { false };
-        Vector<Ref<HTMLImageElement>> m_droppedImagePlaceholders;
-        RefPtr<Range> m_droppedImagePlaceholderRange;
-    };
+    OptionSet<DragDestinationAction> m_dragDestinationActionMask;
+    DragSourceAction m_dragSourceAction { DragSourceActionNone };
+    bool m_didInitiateDrag { false };
+    DragOperation m_sourceDragOperation { DragOperationNone }; // Set in startDrag when a drag starts from a mouse down within WebKit
+    IntPoint m_dragOffset;
+    URL m_draggingImageURL;
+    bool m_isPerformingDrop { false };
+    Vector<Ref<HTMLImageElement>> m_droppedImagePlaceholders;
+    RefPtr<Range> m_droppedImagePlaceholderRange;
+};
 
-    WEBCORE_EXPORT bool isDraggableLink(const Element&);
+WEBCORE_EXPORT bool isDraggableLink(const Element&);
 
 } // namespace WebCore
