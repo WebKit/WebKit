@@ -118,8 +118,6 @@ JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
 
 JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
-    VM& vm = globalObject->vm();
-
     ASSERT(!isCell());
 
     if (ecmaMode.isStrict())
@@ -131,7 +129,7 @@ JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode)
         return constructBooleanFromImmediateBoolean(globalObject, asValue());
 #if USE(BIGINT32)
     if (isBigInt32())
-        return BigIntObject::create(vm, globalObject, *this);
+        return BigIntObject::create(globalObject->vm(), globalObject, *this);
 #endif
 
     ASSERT(isUndefinedOrNull());
