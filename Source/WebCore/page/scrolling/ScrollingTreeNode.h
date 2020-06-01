@@ -31,7 +31,6 @@
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
-#include "TouchAction.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 

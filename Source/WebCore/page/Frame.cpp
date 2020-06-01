@@ -309,12 +309,13 @@ void Frame::invalidateContentEventRegionsIfNeeded()
         return;
     bool hasTouchActionElements = false;
     bool hasEditableElements = false;
-#if PLATFORM(IOS)
+#if ENABLE(TOUCH_ACTION_REGIONS)
     hasTouchActionElements = m_doc->mayHaveElementsWithNonAutoTouchAction();
 #endif
 #if ENABLE(EDITABLE_REGION)
     hasEditableElements = m_doc->mayHaveEditableElements();
 #endif
+    // FIXME: This needs to look at wheel event handlers too.
     if (!hasTouchActionElements && !hasEditableElements)
         return;
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())

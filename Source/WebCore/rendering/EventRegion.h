@@ -75,9 +75,11 @@ public:
 
     const Region& region() const { return m_region; }
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
     bool hasTouchActions() const { return !m_touchActionRegions.isEmpty(); }
     WEBCORE_EXPORT OptionSet<TouchAction> touchActionsForPoint(const IntPoint&) const;
     const Region* regionForTouchAction(TouchAction) const;
+#endif
 
     OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
     const Region& eventListenerRegionForType(EventListenerRegionType) const;
@@ -95,11 +97,15 @@ public:
     void dump(TextStream&) const;
 
 private:
+#if ENABLE(TOUCH_ACTION_REGIONS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
+#endif
     void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
 
     Region m_region;
+#if ENABLE(TOUCH_ACTION_REGIONS)
     Vector<Region> m_touchActionRegions;
+#endif
     Region m_wheelEventListenerRegion;
     Region m_nonPassiveWheelEventListenerRegion;
 #if ENABLE(EDITABLE_REGION)
@@ -113,7 +119,9 @@ template<class Encoder>
 void EventRegion::encode(Encoder& encoder) const
 {
     encoder << m_region;
+#if ENABLE(TOUCH_ACTION_REGIONS)
     encoder << m_touchActionRegions;
+#endif
 #if ENABLE(EDITABLE_REGION)
     encoder << m_editableRegion;
 #endif
@@ -130,12 +138,14 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
     EventRegion eventRegion;
     eventRegion.m_region = WTFMove(*region);
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
     Optional<Vector<Region>> touchActionRegions;
     decoder >> touchActionRegions;
     if (!touchActionRegions)
         return WTF::nullopt;
 
     eventRegion.m_touchActionRegions = WTFMove(*touchActionRegions);
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     Optional<Region> editableRegion;

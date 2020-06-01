@@ -1,3 +1,34 @@
+2020-06-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ENABLE(TOUCH_ACTION_REGIONS) to wrap code that's only relevant for platforms that consult touch-action for event handling
+        https://bugs.webkit.org/show_bug.cgi?id=212572
+
+        Reviewed by Andy Estes.
+
+        This will allow for optimizations in event region painting without ambiguity.
+
+        * dom/Document.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::invalidateContentEventRegionsIfNeeded):
+        * page/scrolling/ScrollingTreeNode.h:
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::operator== const):
+        (WebCore::EventRegion::unite):
+        (WebCore::EventRegion::translate):
+        (WebCore::EventRegion::dump const):
+        * rendering/EventRegion.h:
+        (WebCore::EventRegion::encode const):
+        (WebCore::EventRegion::decode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::maintainsEventRegion const):
+        (WebCore::RenderLayerBacking::paintDebugOverlays):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2020-06-01  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Implement ParentNode.prototype.replaceChildren

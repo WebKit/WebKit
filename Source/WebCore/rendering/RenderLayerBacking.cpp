@@ -1700,7 +1700,7 @@ bool RenderLayerBacking::maintainsEventRegion() const
     if (renderer().view().needsEventRegionUpdateForNonCompositedFrame())
         return true;
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_ACTION_REGIONS)
     if (renderer().document().mayHaveElementsWithNonAutoTouchAction())
         return true;
 #endif
@@ -3128,6 +3128,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
     return fillPattern;
 };
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
 static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize contentOffset, GraphicsContext& destContext)
 {
     auto toIndex = [](TouchAction touchAction) -> unsigned {
@@ -3165,6 +3166,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 
     return patternForDescription(patternDescriptions[actionIndex], contentOffset, destContext);
 }
+#endif
 
 static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
@@ -3199,6 +3201,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     auto visibleDebugOverlayRegions = renderer().settings().visibleDebugOverlayRegions();
 
     // The interactive part.
+#if ENABLE(TOUCH_ACTION_REGIONS)
     // Paint rects for touch action.
     if (visibleDebugOverlayRegions & TouchActionRegion) {
         constexpr auto regionColor = makeSimpleColor(0, 0, 255, 50);
@@ -3228,6 +3231,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
                 context.fillRect(rect);
         }
     }
+#endif
 
     if (visibleDebugOverlayRegions & WheelEventHandlerRegion) {
         for (auto type : { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel }) {

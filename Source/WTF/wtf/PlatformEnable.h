@@ -486,6 +486,10 @@
 #define ENABLE_TOUCH_EVENTS 0
 #endif
 
+#if !defined(ENABLE_TOUCH_ACTION_REGIONS)
+#define ENABLE_TOUCH_ACTION_REGIONS 0
+#endif
+
 #if !defined(ENABLE_VIDEO)
 #define ENABLE_VIDEO 0
 #endif

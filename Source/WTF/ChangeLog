@@ -1,3 +1,13 @@
+2020-06-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ENABLE(TOUCH_ACTION_REGIONS) to wrap code that's only relevant for platforms that consult touch-action for event handling
+        https://bugs.webkit.org/show_bug.cgi?id=212572
+
+        Reviewed by Andy Estes.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
 2020-05-31  Mark Lam  <mark.lam@apple.com>
 
         Change JSC::Config to use storage in WTF::Config instead of its own.

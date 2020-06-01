@@ -98,8 +98,10 @@ EventRegion::EventRegion() = default;
 
 bool EventRegion::operator==(const EventRegion& other) const
 {
+#if ENABLE(TOUCH_ACTION_REGIONS)
     if (m_touchActionRegions != other.m_touchActionRegions)
         return false;
+#endif
     if (m_wheelEventListenerRegion != other.m_wheelEventListenerRegion)
         return false;
     if (m_nonPassiveWheelEventListenerRegion != other.m_nonPassiveWheelEventListenerRegion)
@@ -115,7 +117,9 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
 {
     m_region.unite(region);
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
     uniteTouchActions(region, style.effectiveTouchActions());
+#endif
     uniteEventListeners(region, style.eventListenerRegionTypes());
 
 #if ENABLE(EDITABLE_REGION)
@@ -130,8 +134,12 @@ void EventRegion::translate(const IntSize& offset)
 {
     m_region.translate(offset);
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
     for (auto& touchActionRegion : m_touchActionRegions)
         touchActionRegion.translate(offset);
+#endif
+
+    // FIXME: Translate m_wheelEventListenerRegion and m_nonPassiveWheelEventListenerRegion
 
 #if ENABLE(EDITABLE_REGION)
     m_editableRegion.translate(offset);
@@ -178,6 +186,7 @@ static inline TouchAction toTouchAction(unsigned index)
     return TouchAction::Auto;
 }
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
 void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAction> touchActions)
 {
     for (auto touchAction : touchActions) {
@@ -224,6 +233,7 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
 
     return actions;
 }
+#endif
 
 void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListenerRegionType> eventListenerRegionTypes)
 {
@@ -269,6 +279,7 @@ void EventRegion::dump(TextStream& ts) const
 {
     ts << m_region;
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
     if (!m_touchActionRegions.isEmpty()) {
         TextStream::IndentScope indentScope(ts);
         ts << indent << "(touch-action\n";
@@ -282,6 +293,7 @@ void EventRegion::dump(TextStream& ts) const
         }
         ts << indent << ")\n";
     }
+#endif
 
     if (!m_wheelEventListenerRegion.isEmpty()) {
         ts << indent << "(wheel event listener region" << m_wheelEventListenerRegion;
