@@ -1,3 +1,33 @@
+2020-06-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EWS] Add a special case for running the layout test step without aborting in case of many failures for WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=212381
+
+        Reviewed by Jonathan Bedard.
+
+        Add a special case for patches uploaded by the bugzilla user that would be used
+        for prototyping a bot that helps automating the import of WPT tests. For patches
+        uploaded by this user don't pass the parameters that make the step abort early in
+        case of many errors, and only run the layout tests inside the WPT import directory.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitTests):
+        (RunWebKitTests.start):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (test_success):
+        (test_warnings):
+        (test_parse_results_json_regression):
+        (test_parse_results_json_flakes):
+        (test_parse_results_json_flakes_and_regressions):
+        (test_parse_results_json_with_newlines):
+        (test_unexpected_error):
+        (test_failure):
+        (test_success_wpt_import_bot):
+        (TestRunWebKitTestsWithoutPatch.test_success):
+        (TestRunWebKitTestsWithoutPatch.test_failure):
+        (TestRunWebKit1Tests.test_success):
+        (TestRunWebKit1Tests.test_failure):
+
 2020-06-01  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Replace Color constructors taking numeric values with type specific factory functions

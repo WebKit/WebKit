@@ -1682,8 +1682,6 @@ class RunWebKitTests(shell.Test):
                '--no-show-results',
                '--no-new-test-results',
                '--clobber-old-results',
-               '--exit-after-n-failures', '30',
-               '--skip-failing-tests',
                WithProperties('--%(configuration)s')]
 
     def __init__(self, **kwargs):
@@ -1709,6 +1707,12 @@ class RunWebKitTests(shell.Test):
 
         self.setCommand(self.command + ['--results-directory', self.resultDirectory])
         self.setCommand(self.command + ['--debug-rwt-logging'])
+
+        patch_author = self.getProperty('patch_author')
+        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
+            self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
+        else:
+            self.setCommand(self.command + ['--exit-after-n-failures', '30', '--skip-failing-tests'])
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
