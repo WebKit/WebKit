@@ -348,7 +348,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     
     int r, g, b;
     object.colorValue(r, g, b);
-    setProperty(AXPropertyName::ColorValue, Color(r, g, b));
+    setProperty(AXPropertyName::ColorValue, makeSimpleColor(r, g, b));
     
     if (bool isMathElement = object.isMathElement()) {
         setProperty(AXPropertyName::IsMathElement, isMathElement);

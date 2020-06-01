@@ -33,9 +33,11 @@
 
 namespace WebCore {
 
+class Color;
+
 class ExtendedColor : public RefCounted<ExtendedColor> {
 public:
-    static Ref<ExtendedColor> create(float, float, float, float alpha, ColorSpace = ColorSpace::SRGB);
+    WEBCORE_EXPORT static Ref<ExtendedColor> create(float c1, float c2, float c3, float alpha, ColorSpace);
 
     float alpha() const { return m_components[3]; }
 
@@ -58,10 +60,11 @@ private:
     ExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
         : m_components(c1, c2, c3, alpha)
         , m_colorSpace(colorSpace)
-    { }
+    {
+    }
 
     ColorComponents<float> m_components;
-    ColorSpace m_colorSpace { ColorSpace::SRGB };
+    ColorSpace m_colorSpace;
 };
 
 inline bool operator==(const ExtendedColor& a, const ExtendedColor& b)
@@ -73,5 +76,9 @@ inline bool operator!=(const ExtendedColor& a, const ExtendedColor& b)
 {
     return !(a == b);
 }
+
+// FIXME: If the ColorSpace is sRGB and the values can all be
+// converted exactly to integers, we should make a SimpleColor.
+WEBCORE_EXPORT Color makeExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace);
 
 }

@@ -105,10 +105,10 @@ void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& cont
     FloatRect insetRect = overlay.bounds();
 
     if (overlay.overlayType() == PageOverlay::OverlayType::Document) {
-        context.setStrokeColor(Color(0, 255, 0));
+        context.setStrokeColor(makeSimpleColor(0, 255, 0));
         insetRect.inflate(-50);
     } else {
-        context.setStrokeColor(Color(0, 0, 255));
+        context.setStrokeColor(makeSimpleColor(0, 0, 255));
         insetRect.inflate(-20);
     }
 

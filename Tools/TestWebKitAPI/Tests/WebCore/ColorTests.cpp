@@ -67,7 +67,7 @@ TEST(Color, RGBToHSL_Black)
 
 TEST(Color, RGBToHSL_Red)
 {
-    Color color(255, 0, 0);
+    Color color = makeSimpleColor(255, 0, 0);
 
     auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
@@ -83,7 +83,7 @@ TEST(Color, RGBToHSL_Red)
 
 TEST(Color, RGBToHSL_Green)
 {
-    Color color(0, 255, 0);
+    Color color = makeSimpleColor(0, 255, 0);
 
     auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
@@ -99,7 +99,7 @@ TEST(Color, RGBToHSL_Green)
 
 TEST(Color, RGBToHSL_Blue)
 {
-    Color color(0, 0, 255);
+    Color color = makeSimpleColor(0, 0, 255);
 
     auto [hue, saturation, lightness, alpha] = sRGBToHSL(color.toSRGBAComponentsLossy());
 
@@ -171,7 +171,7 @@ TEST(Color, Validity)
     EXPECT_FALSE(otherInvalidColor.isValid());
     EXPECT_FALSE(otherInvalidColor.isExtended());
 
-    Color validColor(255, 0, 0);
+    Color validColor = makeSimpleColor(255, 0, 0);
     EXPECT_TRUE(validColor.isValid());
     EXPECT_FALSE(validColor.isExtended());
 
@@ -179,7 +179,7 @@ TEST(Color, Validity)
     EXPECT_TRUE(otherValidColor.isValid());
     EXPECT_FALSE(otherValidColor.isExtended());
 
-    validColor = Color(1, 2, 3, 4);
+    validColor = makeSimpleColor(1, 2, 3, 4);
     EXPECT_TRUE(validColor.isValid());
     EXPECT_FALSE(validColor.isExtended());
     auto simpleValidColor = validColor.toSRGBASimpleColorLossy();

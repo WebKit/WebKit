@@ -687,7 +687,7 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
     if (!args.atEnd())
         return Color();
     
-    return Color(colorChannels[0], colorChannels[1], colorChannels[2], colorChannels[3], colorSpace);
+    return makeExtendedColor(colorChannels[0], colorChannels[1], colorChannels[2], colorChannels[3], colorSpace);
 }
 
 static Optional<SimpleColor> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)

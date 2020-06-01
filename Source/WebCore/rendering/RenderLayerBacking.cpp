@@ -3201,7 +3201,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     // The interactive part.
     // Paint rects for touch action.
     if (visibleDebugOverlayRegions & TouchActionRegion) {
-        Color regionColor(0, 0, 255, 50);
+        constexpr auto regionColor = makeSimpleColor(0, 0, 255, 50);
         context.setFillColor(regionColor);
         for (auto rect : eventRegion.region().rects())
             context.fillRect(rect);
@@ -3243,7 +3243,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 #if ENABLE(EDITABLE_REGION)
     // Paint rects for editable elements.
     if (visibleDebugOverlayRegions & EditableElementRegion) {
-        context.setFillColor({ 128, 0, 128, 50 });
+        context.setFillColor(makeSimpleColor(128, 0, 128, 50));
         for (auto rect : eventRegion.rectsForEditableElements())
             context.fillRect(rect);
     }

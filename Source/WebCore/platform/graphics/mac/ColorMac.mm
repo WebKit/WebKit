@@ -96,7 +96,7 @@ Color colorFromNSColor(NSColor *color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 
-    return Color(makeSimpleColorFromNSColor(color));
+    return makeSimpleColorFromNSColor(color);
 }
 
 Color semanticColorFromNSColor(NSColor *color)

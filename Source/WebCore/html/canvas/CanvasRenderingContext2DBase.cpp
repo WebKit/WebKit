@@ -626,7 +626,7 @@ void CanvasRenderingContext2DBase::setShadowBlur(float blur)
 
 String CanvasRenderingContext2DBase::shadowColor() const
 {
-    return Color(state().shadowColor).serialized();
+    return state().shadowColor.serialized();
 }
 
 void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
@@ -1307,17 +1307,17 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float grayLevel, float alpha)
 {
-    setShadow(FloatSize(width, height), blur, Color(grayLevel, grayLevel, grayLevel, alpha));
+    setShadow(FloatSize(width, height), blur, makeSimpleColorFromFloats(grayLevel, grayLevel, grayLevel, alpha));
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float r, float g, float b, float a)
 {
-    setShadow(FloatSize(width, height), blur, Color(r, g, b, a));
+    setShadow(FloatSize(width, height), blur, makeSimpleColorFromFloats(r, g, b, a));
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float c, float m, float y, float k, float a)
 {
-    setShadow(FloatSize(width, height), blur, Color(c, m, y, k, a));
+    setShadow(FloatSize(width, height), blur, makeSimpleColorFromCMYKA(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2DBase::clearShadow()

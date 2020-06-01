@@ -361,7 +361,7 @@ ShadowData* LineLayout::debugTextShadow()
     if (!m_flow.settings().simpleLineLayoutDebugBordersEnabled())
         return nullptr;
 
-    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color(0, 0, 150, 150));
+    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, makeSimpleColor(0, 0, 150, 150));
     return &debugTextShadow.get();
 }
 

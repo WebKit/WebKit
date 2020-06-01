@@ -99,7 +99,7 @@ struct PaintInfo {
     bool forceTextColor() const { return forceBlackText() || forceWhiteText(); }
     bool forceBlackText() const { return paintBehavior.contains(PaintBehavior::ForceBlackText); }
     bool forceWhiteText() const { return paintBehavior.contains(PaintBehavior::ForceWhiteText); }
-    Color forcedTextColor() const { return (forceBlackText()) ? Color::black : Color::white; }
+    Color forcedTextColor() const { return forceBlackText() ? Color::black : Color::white; }
 
     bool skipRootBackground() const { return paintBehavior.contains(PaintBehavior::SkipRootBackground); }
     bool paintRootBackgroundOnly() const { return paintBehavior.contains(PaintBehavior::RootBackgroundOnly); }

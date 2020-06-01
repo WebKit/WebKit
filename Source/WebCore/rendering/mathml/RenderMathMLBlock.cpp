@@ -119,7 +119,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     info.context().setStrokeThickness(1.0f);
     info.context().setStrokeStyle(SolidStroke);
-    info.context().setStrokeColor(Color(0, 0, 255));
+    info.context().setStrokeColor(makeSimpleColor(0, 0, 255));
 
     info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
     info.context().drawLine(IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
@@ -128,13 +128,13 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     int topStart = paddingTop();
 
-    info.context().setStrokeColor(Color(0, 255, 0));
+    info.context().setStrokeColor(makeSimpleColor(0, 255, 0));
 
     info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + topStart), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + topStart));
 
     int baseline = roundToInt(baselinePosition(AlphabeticBaseline, true, HorizontalLine));
 
-    info.context().setStrokeColor(Color(255, 0, 0));
+    info.context().setStrokeColor(makeSimpleColor(255, 0, 0));
 
     info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + baseline));
 }

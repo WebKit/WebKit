@@ -84,11 +84,11 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     const float verticalMargin = 2.5;
     const float horizontalMargin = 5;
     const unsigned fontSize = 22;
-    const Color backgroundColor(0.5f, 0.25f, 1.0f, 1.0f);
-    const Color acceleratedContextLabelColor(1.0f, 0.f, 0.f, 1.0f);
-    const Color unacceleratedContextLabelColor(1.0f, 1.0f, 1.0f, 1.0f);
-    const Color linearGlyphMaskOutlineColor(0.f, 0.f, 0.f, 0.75f);
-    const Color displayListBorderColor(0.f, 0.f, 0.f, 0.65f);
+    constexpr auto backgroundColor = makeSimpleColor(128, 64, 255, 255);
+    constexpr auto acceleratedContextLabelColor = makeSimpleColor(255, 0, 0, 255);
+    constexpr auto unacceleratedContextLabelColor = makeSimpleColor(255, 255, 255, 255);
+    constexpr auto linearGlyphMaskOutlineColor = makeSimpleColor(0, 0, 0, 192);
+    constexpr auto displayListBorderColor = makeSimpleColor(0, 0, 0, 166);
 
     TextRun textRun(String::number(repaintCount));
 

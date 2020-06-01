@@ -104,7 +104,7 @@ Color::Color(CGColorRef color, SemanticTag)
     }
 
     setSimpleColor(makeSimpleColorFromCGColor(color));
-    setIsSemantic();
+    tagAsSemantic();
 }
 
 static CGColorRef leakCGColor(const Color& color)

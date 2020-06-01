@@ -93,17 +93,17 @@ CanvasStyle::CanvasStyle(Color color)
 }
 
 CanvasStyle::CanvasStyle(float grayLevel, float alpha)
-    : m_style(Color { grayLevel, grayLevel, grayLevel, alpha })
+    : m_style(makeSimpleColorFromFloats(grayLevel, grayLevel, grayLevel, alpha))
 {
 }
 
 CanvasStyle::CanvasStyle(float r, float g, float b, float a)
-    : m_style(Color { r, g, b, a })
+    : m_style(makeSimpleColorFromFloats(r, g, b, a))
 {
 }
 
 CanvasStyle::CanvasStyle(float c, float m, float y, float k, float a)
-    : m_style(CMYKAColor { Color { c, m, y, k, a }, c, m, y, k, a })
+    : m_style(CMYKAColor { makeSimpleColorFromCMYKA(c, m, y, k, a), c, m, y, k, a })
 {
 }
 
@@ -162,7 +162,7 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
 
 bool CanvasStyle::isEquivalentRGBA(float r, float g, float b, float a) const
 {
-    return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == Color { r, g, b, a };
+    return WTF::holds_alternative<Color>(m_style) && WTF::get<Color>(m_style) == makeSimpleColorFromFloats(r, g, b, a);
 }
 
 bool CanvasStyle::isEquivalentCMYKA(float c, float m, float y, float k, float a) const

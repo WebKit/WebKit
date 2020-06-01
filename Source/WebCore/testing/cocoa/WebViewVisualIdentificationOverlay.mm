@@ -91,7 +91,7 @@ const void* const webViewVisualIdentificationOverlayKey = &webViewVisualIdentifi
     _layer = adoptNS([[CATiledLayer alloc] init]);
     [_layer setName:@"WebViewVisualIdentificationOverlay"];
     [_layer setFrame:CGRectMake(0, 0, [_view bounds].size.width, [_view bounds].size.height)];
-    WebCore::Color viewColor = isDeprecated ? WebCore::Color(255, 0, 0, 32) : WebCore::Color(0, 0, 255, 32);
+    WebCore::Color viewColor = isDeprecated ? WebCore::makeSimpleColor(255, 0, 0, 32) : WebCore::makeSimpleColor(0, 0, 255, 32);
     [_layer setBackgroundColor:cachedCGColor(viewColor)];
     [_layer setZPosition:999];
     [_layer setDelegate:self];

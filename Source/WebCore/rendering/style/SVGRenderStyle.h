@@ -73,10 +73,10 @@ public:
     static String initialStrokePaintUri() { return String(); }
     static Vector<SVGLengthValue> initialStrokeDashArray() { return { }; }
     static float initialStopOpacity() { return 1; }
-    static Color initialStopColor() { return Color(0, 0, 0); }
+    static Color initialStopColor() { return makeSimpleColor(0, 0, 0); }
     static float initialFloodOpacity() { return 1; }
-    static Color initialFloodColor() { return Color(0, 0, 0); }
-    static Color initialLightingColor() { return Color(255, 255, 255); }
+    static Color initialFloodColor() { return makeSimpleColor(0, 0, 0); }
+    static Color initialLightingColor() { return makeSimpleColor(255, 255, 255); }
     static ShadowData* initialShadow() { return nullptr; }
     static String initialMaskerResource() { return String(); }
     static String initialMarkerStartResource() { return String(); }

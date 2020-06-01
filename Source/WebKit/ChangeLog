@@ -1,3 +1,30 @@
+2020-06-01  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Replace Color constructors taking numeric values with type specific factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=212576
+
+        Reviewed by Tim Horton.
+
+        Replaces all remaining implicit and explicit uses of the Color constructors taking numeric
+        values with explicit calls to makeSimpleColor/makeSimpleColorFromFloats/makeExtendedColor,
+        giving us a consistent way to create colors. Also addes use constexpr SimpleColors where possible.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkitColorToWebCoreColor):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _tapHighlightColorForFastClick:]):
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::paintSnapshotAtSize):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindIndicatorOverlayClientIOS::drawRect):
+        (WebKit::highlightColor): Deleted.
+
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add printing support

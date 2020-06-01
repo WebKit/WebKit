@@ -1,3 +1,17 @@
+2020-06-01  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Replace Color constructors taking numeric values with type specific factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=212576
+
+        Reviewed by Tim Horton.
+
+        Replaces all remaining implicit and explicit uses of the Color constructors taking numeric
+        values with explicit calls to makeSimpleColor/makeSimpleColorFromFloats/makeExtendedColor,
+        giving us a consistent way to create colors. Also addes use constexpr SimpleColors where possible.
+
+        * WebView.cpp:
+        (compositionToUnderlines):
+
 2020-06-01  Rob Buis  <rbuis@igalia.com>
 
         Rename ResourceResponseBase::isHTTP to isInHTTPFamily

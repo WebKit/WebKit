@@ -141,7 +141,7 @@ static Color parseColor(const JSON::Object* colorObject)
 
     double a = 1.0;
     if (!colorObject->getDouble("a", a))
-        return Color(r, g, b);
+        return makeSimpleColor(r, g, b);
 
     // Clamp alpha to the [0..1] range.
     if (a < 0)
@@ -149,7 +149,7 @@ static Color parseColor(const JSON::Object* colorObject)
     else if (a > 1)
         a = 1;
 
-    return Color(r, g, b, static_cast<int>(a * 255));
+    return makeSimpleColor(r, g, b, static_cast<int>(a * 255));
 }
 
 static Color parseConfigColor(const String& fieldName, const JSON::Object* configObject)

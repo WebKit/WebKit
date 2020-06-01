@@ -75,7 +75,7 @@ G_DEFINE_BOXED_TYPE(WebKitColor, webkit_color, webkit_color_copy, webkit_color_f
 
 const WebCore::Color webkitColorToWebCoreColor(WebKitColor* color)
 {
-    return WebCore::Color(static_cast<float>(color->red), static_cast<float>(color->green),
+    return WebCore::makeSimpleColorFromFloats(static_cast<float>(color->red), static_cast<float>(color->green),
         static_cast<float>(color->blue), static_cast<float>(color->alpha));
 }
 

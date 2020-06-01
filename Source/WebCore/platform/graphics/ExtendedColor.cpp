@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ExtendedColor.h"
 
+#include "Color.h"
 #include "ColorUtilities.h"
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
@@ -103,6 +104,11 @@ bool ExtendedColor::isBlack() const
 {
     auto [c1, c2, c3, alpha] = components();
     return !c1 && !c2 && !c3 && alpha == 1;
+}
+
+Color makeExtendedColor(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
+{
+    return ExtendedColor::create(c1, c2, c3, alpha, colorSpace);
 }
 
 }

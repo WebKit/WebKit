@@ -64,9 +64,9 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), image.get());
 
     if (!pixel[3])
-        return Color(0, 0, 0, 0);
+        return Color::transparent;
 
-    return Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+    return makeSimpleColor(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& srcSize, const ImagePaintingOptions& options)

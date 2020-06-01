@@ -2218,7 +2218,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
 #endif
 
 #ifdef REVEAL_TRANSPARENCY_LAYERS
-        context.setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f));
+        context.setFillColor(makeSimpleColorFromFloats(0.0f, 0.0f, 0.5f, 0.2f));
         context.fillRect(pixelSnappedClipRect);
 #endif
     }

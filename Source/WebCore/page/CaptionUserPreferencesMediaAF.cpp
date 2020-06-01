@@ -288,7 +288,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 {
     // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
     // and webkit-media-text-track-future-nodes.
-    static NeverDestroyed<Color> defaultBackgroundColor(0, 0, 0, 0.8 * 255);
+    constexpr auto defaultBackgroundColor = makeSimpleColor(0, 0, 0, 0.8 * 255);
 
     MACaptionAppearanceBehavior behavior;
 

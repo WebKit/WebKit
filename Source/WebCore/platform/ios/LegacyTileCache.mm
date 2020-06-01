@@ -462,9 +462,9 @@ unsigned LegacyTileCache::tileCapacityForGrid(LegacyTileGrid* grid)
 Color LegacyTileCache::colorForGridTileBorder(LegacyTileGrid* grid) const
 {
     if (grid == m_zoomedOutTileGrid.get())
-        return Color(0.2f, 1.0f, 0.f, 0.5f);
+        return makeSimpleColorFromFloats(0.2f, 1.0f, 0.f, 0.5f);
 
-    return Color(0.2f, 0.9f, 0.f, 0.5f);
+    return makeSimpleColorFromFloats(0.2f, 0.9f, 0.f, 0.5f);
 }
 
 static bool shouldRepaintInPieces(const CGRect& dirtyRect, CGSRegionObj dirtyRegion, CGFloat contentsScale)

@@ -56,40 +56,25 @@ class Color {
 public:
     Color() { }
 
-    // FIXME: Remove all these constructors and creation functions and replace the ones that are still needed with free functions.
-
-    Color(SimpleColor color, bool valid = true)
+    Color(SimpleColor color)
     {
-        if (valid)
-            setSimpleColor(color);
+        setSimpleColor(color);
     }
 
     enum SemanticTag { Semantic };
     Color(SimpleColor color, SemanticTag)
+        : Color(color)
     {
-        setSimpleColor(color);
-        setIsSemantic();
+        tagAsSemantic();
     }
 
-    Color(int r, int g, int b)
+    Color(Ref<ExtendedColor>&& extendedColor)
     {
-        setSimpleColor(makeSimpleColor(r, g, b));
-    }
-
-    Color(int r, int g, int b, int a)
-    {
-        setSimpleColor(makeSimpleColor(r, g, b, a));
-    }
-
-    Color(float r, float g, float b, float a)
-    {
-        setSimpleColor(makeSimpleColorFromFloats(r, g, b, a));
-    }
-
-    // Creates a new color from the specific CMYK and alpha values.
-    Color(float c, float m, float y, float k, float a)
-    {
-        setSimpleColor(makeSimpleColorFromCMYKA(c, m, y, k, a));
+        // Zero the union, just in case a 32-bit system only assigns the
+        // top 32 bits when copying the ExtendedColor pointer below.
+        m_colorData.simpleColorAndFlags = 0;
+        m_colorData.extendedColor = &extendedColor.leakRef();
+        ASSERT(isExtended());
     }
 
     explicit Color(WTF::HashTableDeletedValueType)
@@ -113,12 +98,6 @@ public:
         m_colorData.simpleColorAndFlags = emptyHashValue;
         ASSERT(!isExtended());
     }
-
-    // This creates an ExtendedColor.
-    // FIXME: If the colorSpace is sRGB and the values can all be
-    // converted exactly to integers, we should make a normal Color.
-    WEBCORE_EXPORT Color(float, float, float, float, ColorSpace);
-    WEBCORE_EXPORT Color(Ref<ExtendedColor>&&);
 
     WEBCORE_EXPORT Color(const Color&);
     WEBCORE_EXPORT Color(Color&&);
@@ -160,7 +139,6 @@ public:
     Color dark() const;
 
     bool isDark() const;
-    
     WEBCORE_EXPORT float lightness() const;
 
     // This is an implementation of Porter-Duff's "source-over" equation
@@ -222,7 +200,7 @@ public:
     // Extended and non-extended colors will always be non-equal.
     friend bool operator==(const Color& a, const Color& b);
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
-
+    friend bool extendedColorsEqual(const Color&, const Color&);
     friend int differenceSquared(const Color&, const Color&);
 
     static bool isBlackColor(const Color&);
@@ -235,7 +213,9 @@ private:
     const SimpleColor asSimple() const;
 
     void setSimpleColor(SimpleColor);
-    void setIsSemantic() { m_colorData.simpleColorAndFlags |= isSemanticSimpleColorBit; }
+
+    void tagAsSemantic() { m_colorData.simpleColorAndFlags |= isSemanticSimpleColorBit; }
+    void tagAsValid() { m_colorData.simpleColorAndFlags |= validSimpleColor; }
 
     // 0x_______00 is an ExtendedColor pointer.
     // 0x_______01 is an invalid SimpleColor.
@@ -249,8 +229,6 @@ private:
     static const uint64_t deletedHashValue = 0xFFFFFFFFFFFFFFFD;
     static const uint64_t emptyHashValue = 0xFFFFFFFFFFFFFFFB;
 
-    WEBCORE_EXPORT void tagAsValid();
-
     union {
         uint64_t simpleColorAndFlags { invalidSimpleColor };
         ExtendedColor* extendedColor;
@@ -261,7 +239,7 @@ bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
 // One or both must be extended colors.
-WEBCORE_EXPORT bool extendedColorsEqual(const Color&, const Color&);
+bool extendedColorsEqual(const Color&, const Color&);
 
 Color blend(const Color& from, const Color& to, double progress);
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress);
@@ -286,6 +264,15 @@ inline bool operator==(const Color& a, const Color& b)
 inline bool operator!=(const Color& a, const Color& b)
 {
     return !(a == b);
+}
+
+inline bool extendedColorsEqual(const Color& a, const Color& b)
+{
+    if (a.isExtended() && b.isExtended())
+        return a.asExtended() == b.asExtended();
+
+    ASSERT(a.isExtended() || b.isExtended());
+    return false;
 }
 
 inline bool equalIgnoringSemanticColor(const Color& a, const Color& b)
@@ -396,7 +383,7 @@ Optional<Color> Color::decode(Decoder& decoder)
             return WTF::nullopt;
         if (!decoder.decode(colorSpace))
             return WTF::nullopt;
-        return Color { c1, c2, c3, alpha, colorSpace };
+        return Color { ExtendedColor::create(c1, c2, c3, alpha, colorSpace) };
     }
 
     bool isValid;

@@ -66,20 +66,6 @@ Color::Color(Color&& other)
     *this = WTFMove(other);
 }
 
-Color::Color(float c1, float c2, float c3, float alpha, ColorSpace colorSpace)
-    : Color(ExtendedColor::create(c1, c2, c3, alpha, colorSpace))
-{
-}
-
-Color::Color(Ref<ExtendedColor>&& extendedColor)
-{
-    // Zero the union, just in case a 32-bit system only assigns the
-    // top 32 bits when copying the ExtendedColor pointer below.
-    m_colorData.simpleColorAndFlags = 0;
-    m_colorData.extendedColor = &extendedColor.leakRef();
-    ASSERT(isExtended());
-}
-
 Color& Color::operator=(const Color& other)
 {
     if (*this == other)
@@ -147,12 +133,12 @@ Color Color::light() const
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
-    return {
+    return makeSimpleColor(
         static_cast<int>(multiplier * r * scaleFactor),
         static_cast<int>(multiplier * g * scaleFactor),
         static_cast<int>(multiplier * b * scaleFactor),
         alpha()
-    };
+    );
 }
 
 Color Color::dark() const
@@ -168,12 +154,12 @@ Color Color::dark() const
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
-    return {
+    return makeSimpleColor(
         static_cast<int>(multiplier * r * scaleFactor),
         static_cast<int>(multiplier * g * scaleFactor),
         static_cast<int>(multiplier * b * scaleFactor),
         alpha()
-    };
+    );
 }
 
 bool Color::isDark() const
@@ -245,19 +231,19 @@ Color Color::blendWithWhite() const
 
     // FIXME: Why is preserving the semantic bit desired and/or correct here?
     if (isSemantic())
-        result.setIsSemantic();
+        result.tagAsSemantic();
     return result;
 }
 
 Color Color::colorWithAlphaMultipliedBy(float amount) const
 {
-    float newAlpha = amount * (isExtended() ? m_colorData.extendedColor->alpha() : static_cast<float>(alpha()) / 255);
+    float newAlpha = amount * alphaAsFloat();
     return colorWithAlpha(newAlpha);
 }
 
 Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(float amount) const
 {
-    float newAlpha = amount * (isExtended() ? m_colorData.extendedColor->alpha() : static_cast<float>(alpha()) / 255);
+    float newAlpha = amount * alphaAsFloat();
     return colorWithAlphaUsingAlternativeRounding(newAlpha);
 }
 
@@ -271,7 +257,7 @@ Color Color::colorWithAlpha(float alpha) const
 
     Color result = asSimple().colorWithAlpha(newAlpha);
     if (isSemantic())
-        result.setIsSemantic();
+        result.tagAsSemantic();
     return result;
 }
 
@@ -285,7 +271,7 @@ Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
 
     Color result = asSimple().colorWithAlpha(newAlpha);
     if (isSemantic())
-        result.setIsSemantic();
+        result.tagAsSemantic();
     return result;
 }
 
@@ -325,15 +311,6 @@ ColorComponents<float> Color::toSRGBAComponentsLossy() const
     return asSimple().asSRGBFloatComponents();
 }
 
-bool extendedColorsEqual(const Color& a, const Color& b)
-{
-    if (a.isExtended() && b.isExtended())
-        return a.asExtended() == b.asExtended();
-
-    ASSERT(a.isExtended() || b.isExtended());
-    return false;
-}
-
 Color blend(const Color& from, const Color& to, double progress)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
@@ -365,17 +342,12 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, double progres
     auto fromSRGB = from.toSRGBASimpleColorLossy();
     auto toSRGB = from.toSRGBASimpleColorLossy();
 
-    return {
+    return makeSimpleColorFromFloats(
         WebCore::blend(fromSRGB.redComponent(), toSRGB.redComponent(), progress),
         WebCore::blend(fromSRGB.greenComponent(), toSRGB.greenComponent(), progress),
         WebCore::blend(fromSRGB.blueComponent(), toSRGB.blueComponent(), progress),
         WebCore::blend(fromSRGB.alphaComponent(), toSRGB.alphaComponent(), progress)
-    };
-}
-
-void Color::tagAsValid()
-{
-    m_colorData.simpleColorAndFlags |= validSimpleColor;
+    );
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

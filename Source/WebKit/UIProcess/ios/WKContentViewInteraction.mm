@@ -4328,7 +4328,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (WebCore::Color)_tapHighlightColorForFastClick:(BOOL)forFastClick
 {
     ASSERT(_showDebugTapHighlightsForFastClicking);
-    return forFastClick ? WebCore::Color(0, 225, 0, 127) : WebCore::Color(225, 0, 0, 127);
+    return forFastClick ? WebCore::makeSimpleColor(0, 225, 0, 127) : WebCore::makeSimpleColor(225, 0, 0, 127);
 }
 
 - (void)_setDoubleTapGesturesEnabled:(BOOL)enabled

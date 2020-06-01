@@ -1319,7 +1319,7 @@ public:
     const Color& visitedLinkStrokeColor() const { return m_rareInheritedData->visitedLinkStrokeColor; }
     void setHasExplicitlySetStrokeColor(bool v) { SET_VAR(m_rareInheritedData, hasSetStrokeColor, static_cast<unsigned>(v)); }
     bool hasExplicitlySetStrokeColor() const { return m_rareInheritedData->hasSetStrokeColor; };
-    static Color initialStrokeColor() { return Color(Color::transparent); }
+    static Color initialStrokeColor() { return Color::transparent; }
     Color computedStrokeColor() const;
 
     float strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }

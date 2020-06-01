@@ -2026,7 +2026,7 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
     if (isCurrentColor(result)) {
         auto borderStyle = computeBorderStyle();
         if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
-            return Color(238, 238, 238);
+            return makeSimpleColor(238, 238, 238);
 
         return visitedLink ? visitedLinkColor() : color();
     }

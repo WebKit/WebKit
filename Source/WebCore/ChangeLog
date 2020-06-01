@@ -1,3 +1,192 @@
+2020-06-01  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Replace Color constructors taking numeric values with type specific factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=212576
+
+        Reviewed by Tim Horton.
+
+        Replaces all remaining implicit and explicit uses of the Color constructors taking numeric
+        values with explicit calls to makeSimpleColor/makeSimpleColorFromFloats/makeExtendedColor,
+        giving us a consistent way to create colors. Also addes use constexpr SimpleColors where possible.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        * css/CSSValuePool.cpp:
+        (WebCore::StaticCSSValuePool::StaticCSSValuePool):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::shadowColor const):
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::CanvasStyle::isEquivalentRGBA const):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::drawOutlinedQuadWithClip):
+        (WebCore::drawShapeHighlight):
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::InspectorOverlay::drawBounds):
+        (WebCore::InspectorOverlay::drawRulers):
+        (WebCore::InspectorOverlay::drawElementTitle):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::debugTextShadow):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS const):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::touchEventRegionColors):
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::spoolAllPagesWithBoundaries):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::light const):
+        (WebCore::Color::dark const):
+        (WebCore::Color::blendWithWhite const):
+        (WebCore::Color::colorWithAlphaMultipliedBy const):
+        (WebCore::Color::colorWithAlphaMultipliedByUsingAlternativeRounding const):
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const):
+        (WebCore::blendWithoutPremultiply):
+        (WebCore::extendedColorsEqual): Deleted.
+        (WebCore::Color::tagAsValid): Deleted.
+        * platform/graphics/Color.h:
+        (WebCore::Color::Color):
+        (WebCore::Color::tagAsSemantic):
+        (WebCore::Color::tagAsValid):
+        (WebCore::extendedColorsEqual):
+        (WebCore::Color::decode):
+        (WebCore::Color::setIsSemantic): Deleted.
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::makeExtendedColor):
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::ExtendedColor):
+        (): Deleted.
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::getDebugBorderInfo const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::contentsLayerDebugBorderColor):
+        (WebCore::cloneLayerDebugBorderColor):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        (WebCore::TileCoverageMap::update):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::drawRepaintCounters):
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::interpolateColorStop):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::Color::Color):
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::colorForMarkerLineStyle):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::DropShadowFilterOperation::blend):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::colorFromNSColor):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForLink):
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::colorForGridTileBorder const):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::forcedTextColor const):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        (WebCore::replacementTextRoundedRectPressedColor): Deleted.
+        (WebCore::replacementTextRoundedRectColor): Deleted.
+        (WebCore::replacementTextColor): Deleted.
+        (WebCore::unavailablePluginBorderColor): Deleted.
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        (WebCore::borderStartEdgeColor): Deleted.
+        (WebCore::borderEndEdgeColor): Deleted.
+        (WebCore::borderFillColor): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintDebugOverlays):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderTheme::platformTextSearchHighlightColor const):
+        (WebCore::RenderTheme::paintSystemPreviewBadge):
+        (WebCore::RenderTheme::platformTapHighlightColor const):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformFocusRingColor const):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+        (WebCore::RenderThemeIOS::paintRadioDecorations):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeIOS::paintSliderTrack):
+        (WebCore::RenderThemeIOS::paintProgressBar):
+        (WebCore::paintAttachmentProgress):
+        (WebCore::paintAttachmentBorder):
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+        (WebCore::RenderThemeIOS::shadowColor const): Deleted.
+        (WebCore::attachmentBorderColor): Deleted.
+        (WebCore::attachmentProgressColor): Deleted.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        (WebCore::titleTextColorForAttachment):
+        (WebCore::AttachmentLayout::layOutSubtitle):
+        (WebCore::paintAttachmentIconBackground):
+        (WebCore::paintAttachmentTitleBackground):
+        (WebCore::paintAttachmentProgress):
+        (WebCore::paintAttachmentPlaceholderBorder):
+        (WebCore::attachmentIconBackgroundColor): Deleted.
+        (WebCore::attachmentIconBorderColor): Deleted.
+        (WebCore::attachmentTitleInactiveBackgroundColor): Deleted.
+        (WebCore::attachmentTitleInactiveTextColor): Deleted.
+        (WebCore::attachmentSubtitleTextColor): Deleted.
+        (WebCore::attachmentProgressBarBackgroundColor): Deleted.
+        (WebCore::attachmentProgressBarFillColor): Deleted.
+        (WebCore::attachmentProgressBarBorderColor): Deleted.
+        (WebCore::attachmentPlaceholderBorderColor): Deleted.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeWin::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeWin::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeWin::systemColor const):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::paint):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorResolvingCurrentColor const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialStrokeColor):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialStopColor):
+        (WebCore::SVGRenderStyle::initialFloodColor):
+        (WebCore::SVGRenderStyle::initialLightingColor):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity const):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationColorFunction::animate):
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::drawRect):
+        * testing/cocoa/WebViewVisualIdentificationOverlay.mm:
+        (-[WebViewVisualIdentificationOverlay initWithWebView:kind:deprecated:]):
+
 2020-06-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] When GraphicsLayerCA::m_uncommittedChanges is initialized with a non-zero value, nothing is painted.

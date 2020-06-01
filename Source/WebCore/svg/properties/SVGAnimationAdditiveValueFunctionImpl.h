@@ -91,7 +91,7 @@ public:
         float blue = Base::animate(progress, repeatCount, simpleFrom.blueComponent(), simpleTo.blueComponent(), simpleToAtEndOfDuration.blueComponent(), simpleAnimated.blueComponent());
         float alpha = Base::animate(progress, repeatCount, simpleFrom.alphaComponent(), simpleTo.alphaComponent(), simpleToAtEndOfDuration.alphaComponent(), simpleAnimated.alphaComponent());
         
-        animated = { roundAndClampColorChannel(red), roundAndClampColorChannel(green), roundAndClampColorChannel(blue), roundAndClampColorChannel(alpha) };
+        animated = makeSimpleColor(roundAndClampColorChannel(red), roundAndClampColorChannel(green), roundAndClampColorChannel(blue), roundAndClampColorChannel(alpha));
     }
 
     Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
@@ -120,11 +120,11 @@ private:
         auto simpleTo = m_to.toSRGBASimpleColorLossy();
 
         // Ignores any alpha and sets alpha on result to 100% opaque.
-        m_to = {
+        m_to = makeSimpleColor(
             roundAndClampColorChannel(simpleTo.redComponent() + simpleFrom.redComponent()),
             roundAndClampColorChannel(simpleTo.greenComponent() + simpleFrom.greenComponent()),
             roundAndClampColorChannel(simpleTo.blueComponent() + simpleFrom.blueComponent())
-        };
+        );
     }
 
     static Color colorFromString(SVGElement*, const String&);

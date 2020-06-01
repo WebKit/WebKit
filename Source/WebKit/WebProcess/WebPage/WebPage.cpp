@@ -2402,7 +2402,7 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
         FloatRect selectionRectangle = frame.selection().selectionBounds();
-        graphicsContext.setStrokeColor(Color(0xFF, 0, 0));
+        graphicsContext.setStrokeColor(makeSimpleColor(0xFF, 0, 0));
         graphicsContext.strokeRect(selectionRectangle, 1);
     }
 }

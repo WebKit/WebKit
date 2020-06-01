@@ -189,14 +189,14 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     GraphicsContext context(contextRef);
     // On Mac alpha is {0.7, 0.7, 0.7, 0.8}, however we can't control alpha
     // for drag images on win, so we use 1
-    static const Color backgroundColor(140, 140, 140);
+    constexpr auto backgroundColor = makeSimpleColor(140, 140, 140);
     static const IntSize radii(DragLabelRadius, DragLabelRadius);
     IntRect rect(0, 0, imageSize.width(), imageSize.height());
     context.fillRoundedRect(FloatRoundedRect(rect, radii, radii, radii, radii), backgroundColor);
  
     // Draw the text
-    static const Color topColor(0, 0, 0, 255); // original alpha = 0.75
-    static const Color bottomColor(255, 255, 255, 127); // original alpha = 0.5
+    constexpr auto topColor = makeSimpleColor(0, 0, 0, 255); // original alpha = 0.75
+    constexpr auto bottomColor = makeSimpleColor(255, 255, 255, 127); // original alpha = 0.5
     if (drawURLString) {
         if (clipURLString)
             urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), *urlFont);

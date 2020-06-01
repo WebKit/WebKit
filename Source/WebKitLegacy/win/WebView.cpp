@@ -6274,7 +6274,7 @@ static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<B
         underlines[i].endOffset = clauses[i + 1];
         BYTE attribute = attributes[clauses[i]];
         underlines[i].thick = attribute == ATTR_TARGET_CONVERTED || attribute == ATTR_TARGET_NOTCONVERTED;
-        underlines[i].color = Color(0,0,0);
+        underlines[i].color = makeSimpleColor(0, 0, 0);
     }
 }
 

@@ -44,9 +44,9 @@ StaticCSSValuePool::StaticCSSValuePool()
     m_unsetValue.construct(CSSValue::StaticCSSValue);
     m_revertValue.construct(CSSValue::StaticCSSValue);
 
-    m_transparentColor.construct(CSSValue::StaticCSSValue, Color(Color::transparent));
-    m_whiteColor.construct(CSSValue::StaticCSSValue, Color(Color::white));
-    m_blackColor.construct(CSSValue::StaticCSSValue, Color(Color::black));
+    m_transparentColor.construct(CSSValue::StaticCSSValue, Color::transparent);
+    m_whiteColor.construct(CSSValue::StaticCSSValue, Color::white);
+    m_blackColor.construct(CSSValue::StaticCSSValue, Color::black);
 
     for (unsigned i = firstCSSValueKeyword; i <= lastCSSValueKeyword; ++i)
         m_identifierValues[i].construct(CSSValue::StaticCSSValue, static_cast<CSSValueID>(i));

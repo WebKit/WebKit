@@ -144,8 +144,8 @@ WebCore::Color TestPDFPage::colorAtPoint(int x, int y) const
     auto a = pixel[i + 3];
 
     if (!a)
-        return { 0, 0, 0, 0 };
-    return { r * 255 / a, g * 255 / a, b * 255 / a, a };
+        return WebCore::makeSimpleColor(0, 0, 0, 0);
+    return WebCore::makeSimpleColor(r * 255 / a, g * 255 / a, b * 255 / a, a);
 }
 
 // Documents

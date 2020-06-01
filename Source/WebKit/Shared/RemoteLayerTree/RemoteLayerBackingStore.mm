@@ -319,7 +319,7 @@ void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, C
 
 #ifndef NDEBUG
     if (m_isOpaque)
-        context.fillRect(scaledLayerBounds, WebCore::Color(255, 47, 146));
+        context.fillRect(scaledLayerBounds, WebCore::makeSimpleColor(255, 47, 146));
 #endif
 
     context.scale(m_scale);

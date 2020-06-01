@@ -598,34 +598,34 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
     width = 2;
 
     if (needsBackdrop()) {
-        color = Color(255, 0, 255, 128); // has backdrop: magenta
+        color = makeSimpleColor(255, 0, 255, 128); // has backdrop: magenta
         width = 12;
         return;
     }
     
     if (drawsContent()) {
         if (tiledBacking()) {
-            color = Color(255, 128, 0, 128); // tiled layer: orange
+            color = makeSimpleColor(255, 128, 0, 128); // tiled layer: orange
             return;
         }
 
-        color = Color(0, 128, 32, 128); // normal layer: green
+        color = makeSimpleColor(0, 128, 32, 128); // normal layer: green
         return;
     }
 
     if (usesContentsLayer()) {
-        color = Color(0, 64, 128, 150); // non-painting layer with contents: blue
+        color = makeSimpleColor(0, 64, 128, 150); // non-painting layer with contents: blue
         width = 8;
         return;
     }
     
     if (masksToBounds()) {
-        color = Color(128, 255, 255, 48); // masking layer: pale blue
+        color = makeSimpleColor(128, 255, 255, 48); // masking layer: pale blue
         width = 16;
         return;
     }
 
-    color = Color(255, 255, 0, 192); // container: yellow
+    color = makeSimpleColor(255, 255, 0, 192); // container: yellow
 }
 
 void GraphicsLayer::updateDebugIndicators()
