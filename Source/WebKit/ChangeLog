@@ -1,5 +1,25 @@
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Wheel events are always handled by the main frame view
+        https://bugs.webkit.org/show_bug.cgi?id=212593
+
+        Reviewed by Adrian Perez de Castro.
+
+        It's not possible scroll other scrollable areas with the mouse wheel. This is because we are using the given x,
+        y delta in the scroll signal as the position. In GTK4 the scroll event doesn't include a position, so we have to
+        use the last motion event.
+
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent): Add wheelTicks parameter.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent): New create function that receives the wheelTicks.
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScroll): Use the x, y parameters as the delta and take the position from the last motion event.
+
+2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Monitor root window to update activity state
         https://bugs.webkit.org/show_bug.cgi?id=212581
 

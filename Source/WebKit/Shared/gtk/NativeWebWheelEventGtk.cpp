@@ -43,8 +43,8 @@ NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, WebWheelEvent::Phase p
 {
 }
 
-NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoint& position)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, position, WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone))
+NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoint& position, const WebCore::FloatSize& wheelTicks)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, position, wheelTicks, WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone))
     , m_nativeEvent(gdk_event_copy(event))
 {
 }

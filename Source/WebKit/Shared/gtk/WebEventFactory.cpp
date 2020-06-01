@@ -262,16 +262,21 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const 
         }
     }
 
+    return createWebWheelEvent(event, position, globalPosition, wheelTicks.value(), phase, momentumPhase);
+}
+
+WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
+{
     // FIXME: [GTK] Add a setting to change the pixels per line used for scrolling
     // https://bugs.webkit.org/show_bug.cgi?id=54826
     float step = static_cast<float>(Scrollbar::pixelsPerLineStep());
-    FloatSize delta(wheelTicks->width() * step, wheelTicks->height() * step);
+    FloatSize delta(wheelTicks.width() * step, wheelTicks.height() * step);
 
     return WebWheelEvent(WebEvent::Wheel,
         position,
         globalPosition,
         delta,
-        wheelTicks.value(),
+        wheelTicks,
         phase,
         momentumPhase,
         WebWheelEvent::ScrollByPixelWheelEvent,

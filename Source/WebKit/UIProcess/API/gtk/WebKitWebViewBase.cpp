@@ -1256,13 +1256,19 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
 #endif
 
 #if USE(GTK4)
-static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double x, double y, GtkEventController* controller)
+static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double deltaX, double deltaY, GtkEventController* controller)
 {
-    if (webViewBase->priv->dialog)
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
         return GDK_EVENT_PROPAGATE;
 
-    // FIXME: invert axis in case of SHIFT.
-    webViewBase->priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(gtk_event_controller_get_current_event(controller), { clampToInteger(x), clampToInteger(y) }));
+    auto* event = gtk_event_controller_get_current_event(controller);
+
+    // Shift+Wheel scrolls in the perpendicular direction.
+    if (gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK)
+        std::swap(deltaX, deltaY);
+
+    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, priv->lastMotionEvent ? IntPoint(priv->lastMotionEvent->position) : IntPoint(), FloatSize(-deltaX, -deltaY)));
 
     return GDK_EVENT_STOP;
 }

@@ -44,6 +44,7 @@ public:
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+    static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
     static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const String&, bool handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, Vector<String>&& commands);
 #if ENABLE(TOUCH_EVENTS)
     static WebTouchEvent createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
