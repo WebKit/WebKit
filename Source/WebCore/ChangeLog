@@ -1,3 +1,51 @@
+2020-06-01  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulationController should put one Node in only one paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=212548
+
+        Reviewed by Wenson Hsieh.
+
+        TextManipulationController mainly uses line break as delimiter to split paragraphs. In our current 
+        implementation, if text of a Node has line break, the part before the line break is in one paragraph and the
+        part after the line break is in another paragraph, which means the Node is in the ranges of two paragraphs.
+        In this case, when TextManipulationController manipulates the first paragraph, it replaces all the Nodes in the 
+        range of first paragraph with new Nodes. Then when it manipulates the second paragraph, if will find Node in the
+        range of second paragraph does not exist and fail (because the Node is removed when handling the first 
+        paragraph.). Also, TextManipulationController currently does not preserve line breaks in text, which can be an
+        issue if these line breaks are visible. 
+
+        This patch makes the ParagraphContentIterator iterate over Nodes instead of text, so a Node can only be in the 
+        range of one paragraph. To do this, it makes line break and spaces around it as a special excluded token.
+        Here are the rules for splitting paragraphs by line break now:
+        1. If the special token is the first token in a Node, text in Nodes before the Node will make a paragraph. 
+        2. If the special token is the last token in a Node, text in Nodes before the Node and in the Node will make a 
+        paragraph.
+        3. If the special token in the middle of tokens in a Node, then we don't make a new paragraph until next special
+        token meets condition 1 or 2.
+
+        This patch also fixes the issue that Nodes out of the paragraph range can be removed due to the preorder Node
+        traversal, by finding and adding those Nodes back.
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::ParagraphContentIterator::m_pastEndNode):
+        (WebCore::ParagraphContentIterator::advance):
+        (WebCore::ParagraphContentIterator::currentContent):
+        (WebCore::ParagraphContentIterator::atEnd const):
+        (WebCore::ParagraphContentIterator::advanceNode):
+        (WebCore::ParagraphContentIterator::advanceIteratorNodeAndUpdateText):
+        (WebCore::isEnclosingItemBoundaryElement):
+        (WebCore::TextManipulationController::parse):
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::TextManipulationController::addItem):
+        (WebCore::TextManipulationController::getPath):
+        (WebCore::TextManipulationController::updateInsertions):
+        (WebCore::TextManipulationController::replace):
+        (WebCore::ParagraphContentIterator::startPosition): Deleted.
+        (WebCore::ParagraphContentIterator::endPosition): Deleted.
+        (WebCore::ParagraphContentIterator::moveCurrentNodeForward): Deleted.
+        (WebCore::containsOnlyHTMLSpaces): Deleted.
+        * editing/TextManipulationController.h:
+
 2020-06-01  David Kilzer  <ddkilzer@apple.com>
 
         Don't use casts to convert between WebCore::DragDestinationAction and {Web,WK}DragDestinationAction types

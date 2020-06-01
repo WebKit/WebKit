@@ -1,3 +1,13 @@
+2020-06-01  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulationController should put one Node in only one paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=212548
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-01  Alex Christensen  <achristensen@webkit.org>
 
         Make CustomDisplayName and DefaultDisplayName API tests fail instead of timing out when something changes
