@@ -1,3 +1,13 @@
+2020-06-01  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Implement ParentNode.prototype.replaceChildren
+        https://bugs.webkit.org/show_bug.cgi?id=198578
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-replaceChildren-expected.txt:
+
 2020-05-31  Rob Buis  <rbuis@igalia.com>
 
         Implement named item condition for images

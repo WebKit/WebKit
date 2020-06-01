@@ -128,6 +128,8 @@ public:
     ExceptionOr<void> append(Vector<NodeOrString>&&);
     ExceptionOr<void> prepend(Vector<NodeOrString>&&);
 
+    ExceptionOr<void> replaceChildren(Vector<NodeOrString>&&);
+
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
 
 protected:

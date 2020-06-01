@@ -35,6 +35,7 @@
 
     [CEReactions, Unscopable, MayThrowException] void prepend((Node or DOMString)... nodes);
     [CEReactions, Unscopable, MayThrowException] void append((Node or DOMString)... nodes);
+    [CEReactions, Unscopable, MayThrowException] void replaceChildren((Node or DOMString)... nodes);
 
     [MayThrowException] Element? querySelector(DOMString selectors);
     [MayThrowException, NewObject] NodeList querySelectorAll(DOMString selectors);

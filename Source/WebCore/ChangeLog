@@ -1,3 +1,21 @@
+2020-06-01  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Implement ParentNode.prototype.replaceChildren
+        https://bugs.webkit.org/show_bug.cgi?id=198578
+
+        Reviewed by Darin Adler.
+
+        Ideally, we can use `ContainerNode::replaceAllChildren` to implement
+        this simply but the current of it does not have a path to support
+        `DocumentFragment`.
+
+        Hence, we call related methods from `ParentNode.prototype.replaceChildren` directly.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceChildren):
+        * dom/ContainerNode.h:
+        * dom/ParentNode.idl:
+
 2020-05-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Tables as flex items should obey the flex container sizing

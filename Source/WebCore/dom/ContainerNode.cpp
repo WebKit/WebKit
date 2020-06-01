@@ -952,6 +952,38 @@ ExceptionOr<void> ContainerNode::prepend(Vector<NodeOrString>&& vector)
     return insertBefore(*node, firstChild());
 }
 
+// https://dom.spec.whatwg.org/#dom-parentnode-replacechildren
+ExceptionOr<void> ContainerNode::replaceChildren(Vector<NodeOrString>&& vector)
+{
+    // step 1
+    auto result = convertNodesOrStringsIntoNode(WTFMove(vector));
+    if (result.hasException())
+        return result.releaseException();
+
+    RefPtr<Node> node = result.releaseReturnValue();
+    if (!node)
+        return { };
+
+    // step 2
+    auto validityCheckResult = ensurePreInsertionValidity(*node, nullptr);
+    if (validityCheckResult.hasException())
+        return validityCheckResult.releaseException();
+
+    // step 3
+    Ref<ContainerNode> protectedThis(*this);
+    ChildListMutationScope mutation(*this);
+    removeAllChildrenWithScriptAssertion(ChildChangeSource::API, DeferChildrenChanged::Yes);
+
+    auto insertResult = appendChildWithoutPreInsertionValidityCheck(*node);
+    if (insertResult.hasException())
+        return insertResult.releaseException();
+
+    rebuildSVGExtensionsElementsIfNecessary();
+    dispatchSubtreeModifiedEvent();
+
+    return { };
+}
+
 HTMLCollection* ContainerNode::cachedHTMLCollection(CollectionType type)
 {
     return hasRareData() && rareData()->nodeLists() ? rareData()->nodeLists()->cachedCollection<HTMLCollection>(type) : nullptr;
