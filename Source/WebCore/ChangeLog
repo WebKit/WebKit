@@ -1,3 +1,18 @@
+2020-06-01  David Kilzer  <ddkilzer@apple.com>
+
+        Don't use casts to convert between WebCore::DragDestinationAction and {Web,WK}DragDestinationAction types
+        <https://webkit.org/b/212507>
+
+        Reviewed by Darin Adler.
+
+        * page/DragActions.h:
+        (WebCore::anyDragDestinationAction): Add.
+        (WebCore::DragDestinationActionAny): Delete.
+        - Rename DragDestinationActionAny() to
+          anyDragDestinationAction() to match WebKit style.
+        * platform/DragData.h:
+        - Update to use anyDragDestinationAction().
+
 2020-06-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add ENABLE(TOUCH_ACTION_REGIONS) to wrap code that's only relevant for platforms that consult touch-action for event handling

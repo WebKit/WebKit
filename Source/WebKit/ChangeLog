@@ -1,3 +1,24 @@
+2020-06-01  David Kilzer  <ddkilzer@apple.com>
+
+        Don't use casts to convert between WebCore::DragDestinationAction and {Web,WK}DragDestinationAction types
+        <https://webkit.org/b/212507>
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/_WKDragActionsInternal.h: Add.
+        (WebKit::coreDragDestinationActionMask):
+        - Add conversion function to avoid casting.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragDataForDropSession:dragDestinationAction:]):
+        - Make use of coreDragDestinationActionMask() conversion
+          function.
+        - Extract `dragOperationMask` varible for future updates.
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add _WKDragActionsInternal.h to project.
+
 2020-06-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix Glib build after r262391

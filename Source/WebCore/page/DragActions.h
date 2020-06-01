@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-// WebCore::DragDestinationAction must be kept in sync with WebDragDestinationAction and WKDragDestinationAction.
+// See WebDragDestinationAction and WKDragDestinationAction.
 enum class DragDestinationAction : uint8_t {
     DHTML = 1,
     Edit  = 2,
     Load  = 4
 };
 
-inline constexpr OptionSet<DragDestinationAction> DragDestinationActionAny()
+constexpr OptionSet<DragDestinationAction> anyDragDestinationAction()
 {
     return OptionSet<DragDestinationAction> { DragDestinationAction::DHTML, DragDestinationAction::Edit, DragDestinationAction::Load };
 }

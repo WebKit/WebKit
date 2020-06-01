@@ -112,7 +112,6 @@
 #import "WebStorageNamespaceProvider.h"
 #import "WebTextCompletionController.h"
 #import "WebTextIterator.h"
-#import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebValidationMessageClient.h"
 #import "WebViewGroup.h"
@@ -577,6 +576,20 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 - (void)clearTarget;
 #endif
 @end
+
+#if ENABLE(DRAG_SUPPORT)
+static OptionSet<WebCore::DragDestinationAction> coreDragDestinationActionMask(WebDragDestinationAction actionMask)
+{
+    OptionSet<WebCore::DragDestinationAction> result;
+    if (actionMask & WebDragDestinationActionDHTML)
+        result.add(WebCore::DragDestinationAction::DHTML);
+    if (actionMask & WebDragDestinationActionEdit)
+        result.add(WebCore::DragDestinationAction::Edit);
+    if (actionMask & WebDragDestinationActionLoad)
+        result.add(WebCore::DragDestinationAction::Load);
+    return result;
+}
+#endif // ENABLE(DRAG_SUPPORT)
 
 WebCore::FindOptions coreOptions(WebFindOptions options)
 {
@@ -1911,8 +1924,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (WebCore::DragData)dragDataForSession:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
     auto dragOperationMask = static_cast<WebCore::DragOperation>(operation);
-    auto dragDestinationMask = OptionSet<WebCore::DragDestinationAction>::fromRaw([self dragDestinationActionMaskForSession:session]);
-    return { session, WebCore::roundedIntPoint(clientPosition), WebCore::roundedIntPoint(globalPosition), dragOperationMask, WebCore::DragApplicationNone, dragDestinationMask };
+    auto dragDestinationActionMask = coreDragDestinationActionMask([self dragDestinationActionMaskForSession:session]);
+    return { session, WebCore::roundedIntPoint(clientPosition), WebCore::roundedIntPoint(globalPosition), dragOperationMask, WebCore::DragApplicationNone, dragDestinationActionMask };
 }
 
 - (uint64_t)_enteredDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
@@ -1928,12 +1941,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
     return _private->page->dragController().dragUpdated(dragData);
 }
+
 - (void)_exitedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
     _private->page->dragController().dragExited(dragData);
 }
+
 - (void)_performDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
     [self _tryToPerformDataInteraction:session client:clientPosition global:globalPosition operation:operation];
@@ -6725,7 +6740,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (OptionSet<WebCore::DragDestinationAction>)actionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    return OptionSet<WebCore::DragDestinationAction>::fromRaw([[self _UIDelegateForwarder] webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo]);
+    return coreDragDestinationActionMask([[self _UIDelegateForwarder] webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo]);
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo

@@ -1,3 +1,16 @@
+2020-06-01  David Kilzer  <ddkilzer@apple.com>
+
+        Don't use casts to convert between WebCore::DragDestinationAction and {Web,WK}DragDestinationAction types
+        <https://webkit.org/b/212507>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (kit):
+        - Add conversion function to avoid casting.
+        (WebDragClient::willPerformDragDestinationAction):
+        - Make use of kit() conversion function.
+
 2020-06-01  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Replace Color constructors taking numeric values with type specific factory functions

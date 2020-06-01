@@ -68,6 +68,20 @@ WebDragClient::WebDragClient(WebView* webView)
 
 #if PLATFORM(MAC)
 
+static WebDragDestinationAction kit(WebCore::DragDestinationAction action)
+{
+    switch (action) {
+    case WebCore::DragDestinationAction::DHTML:
+        return WebDragDestinationActionDHTML;
+    case WebCore::DragDestinationAction::Edit:
+        return WebDragDestinationActionEdit;
+    case WebCore::DragDestinationAction::Load:
+        return WebDragDestinationActionLoad;
+    }
+    ASSERT_NOT_REACHED();
+    return WebDragDestinationActionNone;
+}
+
 bool WebDragClient::useLegacyDragClient()
 {
     return false;
@@ -86,7 +100,7 @@ static WebHTMLView *getTopHTMLView(Frame* frame)
 
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const WebCore::DragData& dragData)
 {
-    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:static_cast<WebDragDestinationAction>(action) forDraggingInfo:dragData.platformData()];
+    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:kit(action) forDraggingInfo:dragData.platformData()];
 }
 
 

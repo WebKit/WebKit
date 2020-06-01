@@ -86,6 +86,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKDragActionsInternal.h"
 #import "_WKElementAction.h"
 #import "_WKElementActionInternal.h"
 #import "_WKFocusedElementInfo.h"
@@ -7320,8 +7321,7 @@ static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperati
     [self computeClientAndGlobalPointsForDropSession:session outClientPoint:&client outGlobalPoint:&global];
 
     WebCore::DragOperation dragOperationMask = static_cast<WebCore::DragOperation>(session.allowsMoveOperation ? WebCore::DragOperationEvery : (WebCore::DragOperationEvery & ~WebCore::DragOperationMove));
-    auto dragDestinationActionMask = OptionSet<WebCore::DragDestinationAction>::fromRaw(dragDestinationAction);
-    return { session, WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), dragOperationMask, WebCore::DragApplicationNone, dragDestinationActionMask };
+    return { session, WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), dragOperationMask, WebCore::DragApplicationNone, WebKit::coreDragDestinationActionMask(dragDestinationAction) };
 }
 
 - (void)cleanUpDragSourceSessionState

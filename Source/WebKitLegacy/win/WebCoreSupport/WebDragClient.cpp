@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,20 @@ static DWORD draggingSourceOperationMaskToDragCursors(DragOperation op)
     return result;
 }
 
+static WebDragDestinationAction kit(DragDestinationAction action)
+{
+    switch (action) {
+    case DragDestinationAction::DHTML:
+        return WebDragDestinationActionDHTML;
+    case DragDestinationAction::Edit:
+        return WebDragDestinationActionEdit;
+    case DragDestinationAction::Load:
+        return WebDragDestinationActionLoad;
+    }
+    ASSERT_NOT_REACHED();
+    return WebDragDestinationActionNone;
+}
+
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 
 {
@@ -72,7 +86,7 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
     //so we just call the delegate, and don't worry about whether it's implemented
     COMPtr<IWebUIDelegate> delegateRef = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&delegateRef)))
-        delegateRef->willPerformDragDestinationAction(m_webView, (WebDragDestinationAction)action, dragData.platformData());
+        delegateRef->willPerformDragDestinationAction(m_webView, kit(action), dragData.platformData());
 }
 
 DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& windowPoint)
