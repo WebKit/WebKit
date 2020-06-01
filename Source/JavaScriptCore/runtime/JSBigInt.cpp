@@ -2320,6 +2320,8 @@ JSBigInt* JSBigInt::rightTrim(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm)
 
     trimmedBigInt->setSign(this->sign());
 
+    ensureStillAliveHere(this);
+
     return trimmedBigInt;
 }
 

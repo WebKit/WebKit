@@ -1,5 +1,16 @@
 2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSBigInt::rightTrim can miss |this| pointer and leads to incorrect GC collection
+        https://bugs.webkit.org/show_bug.cgi?id=212601
+
+        Reviewed by Saam Barati.
+
+        * stress/bigint-should-not-be-collected-while-creating.js: Added.
+        (foo.let.increment.10000n.bar):
+        (foo):
+
+2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] JSValue::toThis should not throw exception
         https://bugs.webkit.org/show_bug.cgi?id=212595
 
