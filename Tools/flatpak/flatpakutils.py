@@ -132,11 +132,13 @@ def run_sanitized(command, gather_output=False):
     except KeyError:
         pass
 
+    keywords = dict(env=sanitized_env)
     if gather_output:
-        output = subprocess.check_output(command, env=sanitized_env)
+        output = subprocess.check_output(command, **keywords)
         return output.decode('utf-8')
     else:
-        return subprocess.check_call(command, env=sanitized_env)
+        keywords["stdout"] = sys.stdout
+        return subprocess.check_call(command, **keywords)
 
 
 def check_flatpak(verbose=True):
@@ -177,7 +179,6 @@ class FlatpakObject:
         self.user = user
 
     def flatpak(self, command, *args, **kwargs):
-        show_output = kwargs.pop("show_output", False)
         comment = kwargs.pop("comment", None)
         gather_output = kwargs.get("gather_output", False)
         if comment:
@@ -195,11 +196,7 @@ class FlatpakObject:
         command.extend(args)
 
         _log.debug("Executing %s" % ' '.join(command))
-        output = run_sanitized(command, gather_output=gather_output or show_output)
-        if show_output:
-            print(output.encode('utf-8'))
-
-        return output
+        return run_sanitized(command, gather_output=gather_output)
 
 class FlatpakPackages(FlatpakObject):
 
@@ -364,14 +361,14 @@ class FlatpakPackage(FlatpakObject):
         branch = self.branch
         args = ("install", self.repo.name, self.name, "--reinstall", branch)
         comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + branch
-        self.flatpak(*args, show_output=True, comment=comment)
+        self.flatpak(*args, comment=comment)
 
     def update(self):
         if not self.is_installed(self.branch):
             return self.install()
 
         comment = "Updating %s" % self.name
-        self.flatpak("update", self.name, self.branch, show_output=True, comment=comment)
+        self.flatpak("update", self.name, self.branch, comment=comment)
 
 
 @contextmanager
@@ -557,7 +554,7 @@ class WebkitFlatpak:
             repo_file = None
         self.sdk_repo = self.repos.add(FlatpakRepo("webkit-sdk", url=url, repo_file=repo_file))
 
-    def setup_builddir(self, **kwargs):
+    def setup_builddir(self):
         if os.path.exists(os.path.join(self.flatpak_build_path, "metadata")):
             return
 
@@ -566,8 +563,7 @@ class WebkitFlatpak:
                               "org.webkit.Webkit",
                               str(self.sdk),
                               str(self.runtime),
-                              self.sdk.branch,
-                              show_output="stdout" in kwargs.keys())
+                              self.sdk.branch)
 
     def setup_gstbuild(self, building):
         gst_dir = os.environ.get('GST_BUILD_PATH')
@@ -633,7 +629,7 @@ class WebkitFlatpak:
         return host_path.replace(self.source_root, self.sandbox_source_root)
 
     def run_in_sandbox(self, *args, **kwargs):
-        self.setup_builddir(stdout=kwargs.get("stdout", sys.stdout))
+        self.setup_builddir()
         cwd = kwargs.pop("cwd", None)
         extra_env_vars = kwargs.pop("env", {})
         stdout = kwargs.pop("stdout", sys.stdout)
@@ -658,7 +654,7 @@ class WebkitFlatpak:
 
             if args[0] == "bash":
                 args.extend(['--noprofile', '--norc', '-i'])
-                sandbox_environment["PS1"] = "[📦🌐🐱 $FLATPAK_ID \\W]\\$ ".decode("utf-8")
+                sandbox_environment["PS1"] = "[📦🌐🐱 $FLATPAK_ID \\W]\\$ "
             building = os.path.basename(args[0]).startswith("build")
         else:
             building = False

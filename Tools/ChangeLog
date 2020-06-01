@@ -1,3 +1,22 @@
+2020-06-01  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Install and update don't provide any terminal output
+        https://bugs.webkit.org/show_bug.cgi?id=212579
+
+        Reviewed by Žan Doberšek.
+
+        The `show_output` option was removed from the process execution routines. We now assume the
+        output will be displayed, unless the call-site asks `gather_output`. This change makes
+        webkit-flatpak more chatty, which is nice during install/update operations.
+
+        * flatpak/flatpakutils.py:
+        (run_sanitized):
+        (FlatpakObject.flatpak):
+        (FlatpakPackage.install):
+        (FlatpakPackage.update):
+        (WebkitFlatpak.setup_builddir):
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-06-01  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILURE (r220931): !m_function in ~CompletionHandler() after switch tabs
