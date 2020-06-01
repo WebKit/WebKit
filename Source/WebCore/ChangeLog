@@ -1,3 +1,19 @@
+2020-06-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] When GraphicsLayerCA::m_uncommittedChanges is initialized with a non-zero value, nothing is painted.
+        https://bugs.webkit.org/show_bug.cgi?id=168666
+
+        Reviewed by Maciej Stachowiak.
+
+        When m_uncommittedChanges is initialized with a non-zero value, client().notifyFlushRequired() will not be
+        called in the first call to noteLayerPropertyChanged(), see https://bugs.webkit.org/show_bug.cgi?id=64808.
+
+        Covered by existing tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::initialize):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Add printing support

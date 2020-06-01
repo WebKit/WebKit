@@ -431,6 +431,7 @@ void GraphicsLayerCA::initialize(Type layerType)
     }
     m_layer = createPlatformCALayer(platformLayerType, this);
     noteLayerPropertyChanged(ContentsScaleChanged);
+    noteLayerPropertyChanged(CoverageRectChanged);
 }
 
 GraphicsLayerCA::~GraphicsLayerCA()
