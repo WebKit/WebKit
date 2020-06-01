@@ -1,3 +1,15 @@
+2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make inspector work
+        https://bugs.webkit.org/show_bug.cgi?id=212321
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add gtk_native_dialog_run() for GTK4.
+
+        * platform/gtk/GtkVersioning.h:
+        (gtk_native_dialog_run):
+
 2020-06-01  Rob Buis  <rbuis@igalia.com>
 
         Rename ResourceResponseBase::isHTTP to isInHTTPFamily

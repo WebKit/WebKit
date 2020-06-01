@@ -494,7 +494,7 @@ static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* res
 void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     UNUSED_PARAM(forceSaveDialog);
-#if !USE(GTK4)
+
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
     if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
         return;
@@ -503,7 +503,9 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
 
     GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
+#if !USE(GTK4)
     gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+#endif
 
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
@@ -530,7 +532,6 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, m_inspectorPage);
-#endif
 }
 
 void WebInspectorProxy::platformAppend(const String&, const String&)

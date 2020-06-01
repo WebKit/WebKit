@@ -583,26 +583,18 @@ void webkitWebViewBaseAddDialog(WebKitWebViewBase* webViewBase, GtkWidget* dialo
 }
 
 #if USE(GTK4)
-static void webkitWebViewBaseRemoveChild(WebKitWebViewBase* webViewBase, GtkWidget* widget)
+static void webkitWebViewBaseRemoveDialog(WebKitWebViewBase* webViewBase, GtkWidget* dialog)
 {
-    if (!widget)
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (!priv->dialog)
         return;
 
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->inspectorView == widget) {
-        priv->inspectorView = nullptr;
-        priv->inspectorViewSize = 0;
-    } else if (priv->dialog == widget) {
-        g_object_remove_weak_pointer(G_OBJECT(widget), reinterpret_cast<void**>(&priv->dialog));
-        priv->dialog = nullptr;
-    } else if (priv->keyBindingTranslator.widget() == widget)
-        priv->keyBindingTranslator.invalidate();
-    else
-        RELEASE_ASSERT_NOT_REACHED();
-
-    gtk_widget_unparent(widget);
+    g_object_remove_weak_pointer(G_OBJECT(dialog), reinterpret_cast<void**>(&priv->dialog));
+    g_clear_pointer(&priv->dialog, gtk_widget_unparent);
 }
-#else
+#endif
+
+#if !USE(GTK4)
 static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget* widget)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
@@ -682,7 +674,7 @@ void webkitWebViewBaseRemoveWebInspector(WebKitWebViewBase* webViewBase, GtkWidg
         return;
 
 #if USE(GTK4)
-    webkitWebViewBaseRemoveChild(webViewBase, inspector);
+    g_clear_pointer(&webViewBase->priv->inspectorView, gtk_widget_unparent);
 #else
     gtk_container_remove(GTK_CONTAINER(webViewBase), inspector);
 #endif
@@ -700,9 +692,10 @@ static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
 #if USE(GTK4)
-    webkitWebViewBaseRemoveChild(webView, webView->priv->dialog);
-    webkitWebViewBaseRemoveChild(webView, webView->priv->inspectorView);
-    webkitWebViewBaseRemoveChild(webView, webView->priv->keyBindingTranslator.widget());
+    webkitWebViewBaseRemoveDialog(webView, webView->priv->dialog);
+    webkitWebViewBaseRemoveWebInspector(webView, webView->priv->inspectorView);
+    if (auto* widget = webView->priv->keyBindingTranslator.widget())
+        gtk_widget_unparent(widget);
 #else
     g_clear_pointer(&webView->priv->dialog, gtk_widget_destroy);
 #endif
@@ -740,6 +733,9 @@ static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 
     ASSERT(drawingArea->isInAcceleratedCompositingMode());
     webViewBase->priv->acceleratedBackingStore->snapshot(snapshot);
+
+    if (webViewBase->priv->inspectorView)
+        gtk_widget_snapshot_child(widget, webViewBase->priv->inspectorView, snapshot);
 
     if (webViewBase->priv->dialog)
         gtk_widget_snapshot_child(widget, webViewBase->priv->dialog, snapshot);

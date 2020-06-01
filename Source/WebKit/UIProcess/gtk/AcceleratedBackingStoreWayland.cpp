@@ -372,18 +372,16 @@ void AcceleratedBackingStoreWayland::snapshot(GtkSnapshot* gtkSnapshot)
     if (!tryEnsureTexture(texture, textureSize))
         return;
 
-    FloatSize viewSize(gtk_widget_get_width(m_webPage.viewWidget()), gtk_widget_get_height(m_webPage.viewWidget()));
+    graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, static_cast<float>(textureSize.width()), static_cast<float>(textureSize.height()));
     if (m_gdkGLContext) {
         GRefPtr<GdkTexture> gdkTexture = adoptGRef(gdk_gl_texture_new(m_gdkGLContext.get(), texture, textureSize.width(), textureSize.height(), nullptr, nullptr));
-        graphene_rect_t rect = GRAPHENE_RECT_INIT(0, 0, viewSize.width(), viewSize.height());
-        gtk_snapshot_append_texture(gtkSnapshot, gdkTexture.get(), &rect);
+        gtk_snapshot_append_texture(gtkSnapshot, gdkTexture.get(), &bounds);
         return;
     }
 
     downloadTexture(texture, textureSize);
 
-    graphene_rect_t rect = GRAPHENE_RECT_INIT(0, 0, viewSize.width(), viewSize.height());
-    RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(gtkSnapshot, &rect));
+    RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(gtkSnapshot, &bounds));
 
     // The compositor renders the texture flipped for gdk, fix that here.
     cairo_matrix_t transform;

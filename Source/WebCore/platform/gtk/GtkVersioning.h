@@ -183,6 +183,25 @@ gdk_event_get_keycode(const GdkEvent* event, guint16* keycode)
     return TRUE;
 }
 
+static inline int
+gtk_native_dialog_run(GtkNativeDialog* dialog)
+{
+    struct RunDialogContext {
+        GMainLoop *loop;
+        int response;
+    } context = { g_main_loop_new(nullptr, FALSE), 0 };
+
+    gtk_native_dialog_show(dialog);
+    g_signal_connect(dialog, "response", G_CALLBACK(+[](GtkNativeDialog*, int response, RunDialogContext* context) {
+        context->response = response;
+        g_main_loop_quit(context->loop);
+    }), &context);
+    g_main_loop_run(context.loop);
+    g_main_loop_unref(context.loop);
+
+    return context.response;
+}
+
 #else // USE(GTK4)
 
 static inline void

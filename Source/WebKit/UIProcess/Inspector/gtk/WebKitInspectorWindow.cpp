@@ -76,6 +76,7 @@ static void webkit_inspector_window_init(WebKitInspectorWindow* window)
     gtk_widget_hide(window->subtitleLabel);
 
     gtk_header_bar_set_title_widget(GTK_HEADER_BAR(window->headerBar), box);
+    gtk_header_bar_set_show_title_buttons(GTK_HEADER_BAR(window->headerBar), TRUE);
 #else
     gtk_header_bar_set_title(GTK_HEADER_BAR(window->headerBar), _("Web Inspector"));
     gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(window->headerBar), TRUE);

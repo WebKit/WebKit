@@ -120,13 +120,14 @@ static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResul
 void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     UNUSED_PARAM(forceSaveDialog);
-#if !USE(GTK4)
 
     GRefPtr<GtkFileChooserNative> dialog = adoptGRef(gtk_file_chooser_native_new("Save File",
         GTK_WINDOW(m_window), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
 
     GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
+#if !USE(GTK4)
     gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+#endif
 
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
@@ -153,7 +154,6 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, m_inspectorPage);
-#endif
 }
 
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&)

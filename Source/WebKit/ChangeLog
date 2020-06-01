@@ -1,5 +1,28 @@
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Make inspector work
+        https://bugs.webkit.org/show_bug.cgi?id=212321
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRemoveDialog): Added instead of the generic webkitWebViewBaseRemoveChild that has been removed.
+        (webkitWebViewBaseRemoveWebInspector): Just unparent the inspector view instead of caling webkitWebViewBaseRemoveChild.
+        (webkitWebViewBaseDispose): Use specific functions to remove the children.
+        (webkitWebViewBaseSnapshot): Call gtk_widget_snapshot_child() on inspector view if present.
+        (webkitWebViewBaseRemoveChild): Deleted.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorProxy::platformSave): Remove GTK4 ifdefs.
+        * UIProcess/Inspector/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSave): Ditto.
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:
+        (webkit_inspector_window_init): Show title buttons in inspector window.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::snapshot): Use the texture size instead of the view size, since it's
+        different when the inspector is attached.
+
+2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r262184): fast/forms/implicit-submission.html is crashing
         https://bugs.webkit.org/show_bug.cgi?id=212520
 
