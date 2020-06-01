@@ -1,5 +1,19 @@
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Fix pointer lock in X11
+        https://bugs.webkit.org/show_bug.cgi?id=212592
+
+        Reviewed by Adrian Perez de Castro.
+
+        I forgot to forward the motion events for X11 in GTK4.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (MotionEvent::MotionEvent): Add a constructor that receives the positions and state.
+        (webkitWebViewBaseMotion): Notify the pointer lock manager about the event. Also save the last motion event and
+        compute the movement delta.
+
+2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Make inspector work
         https://bugs.webkit.org/show_bug.cgi?id=212321
 

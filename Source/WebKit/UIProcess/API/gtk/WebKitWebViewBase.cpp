@@ -173,11 +173,13 @@ struct MotionEvent {
             yRoot = rootPoint.y();
         }
 
-        position.setX(x);
-        position.setY(y);
-        globalPosition.setX(xRoot);
-        globalPosition.setY(yRoot);
+        MotionEvent(FloatPoint(x, y), FloatPoint(xRoot, yRoot), state);
+    }
 
+    MotionEvent(FloatPoint&& position, FloatPoint&& globalPosition, GdkModifierType state)
+        : position(WTFMove(position))
+        , globalPosition(WTFMove(globalPosition))
+    {
         if (state & GDK_CONTROL_MASK)
             modifiers.add(WebEvent::Modifier::ControlKey);
         if (state & GDK_SHIFT_MASK)
@@ -1371,9 +1373,23 @@ static void webkitWebViewBaseEnter(WebKitWebViewBase* webViewBase, double x, dou
 
 static gboolean webkitWebViewBaseMotion(WebKitWebViewBase* webViewBase, double x, double y, GtkEventController* controller)
 {
-    // FIXME: Forward event to dialog.
-    // FIXME: Pointer lock.
-    webViewBase->priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_event_controller_get_current_event(controller), { clampToInteger(x), clampToInteger(y) }, 0, WTF::nullopt));
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return GDK_EVENT_PROPAGATE;
+
+    if (priv->pointerLockManager) {
+        priv->pointerLockManager->didReceiveMotionEvent(FloatPoint(x, y));
+        return GDK_EVENT_STOP;
+    }
+
+    auto* event = gtk_event_controller_get_current_event(controller);
+    Optional<FloatSize> movementDelta;
+    MotionEvent motionEvent(FloatPoint(x, y), FloatPoint(x, y), gdk_event_get_modifier_state(event));
+    if (priv->lastMotionEvent)
+        movementDelta = motionEvent.position - priv->lastMotionEvent->position;
+    priv->lastMotionEvent = WTFMove(motionEvent);
+
+    webViewBase->priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, 0, movementDelta));
 
     return GDK_EVENT_PROPAGATE;
 }
