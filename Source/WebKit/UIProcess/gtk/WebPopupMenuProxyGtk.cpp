@@ -102,6 +102,9 @@ bool WebPopupMenuProxyGtk::handleKeyPress(unsigned keyval, uint32_t timestamp)
 
 void WebPopupMenuProxyGtk::activateSelectedItem()
 {
+    if (!m_popup)
+        return;
+
     GtkTreeModel* model;
     GtkTreeIter iter;
     if (!gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(m_treeView)), &model, &iter))
