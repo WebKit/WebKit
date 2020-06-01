@@ -1,5 +1,13 @@
 2020-06-01  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Glib build after r262391
+        https://bugs.webkit.org/show_bug.cgi?id=212604
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+
+2020-06-01  Alex Christensen  <achristensen@webkit.org>
+
         Revert r250312
         https://bugs.webkit.org/show_bug.cgi?id=212604
         <rdar://problem/63779241>
