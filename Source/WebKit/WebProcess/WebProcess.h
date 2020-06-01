@@ -342,7 +342,7 @@ private:
     void registerWithStateDumper();
 #endif
 
-    void markAllLayersVolatile(WTF::Function<void(bool)>&& completionHandler);
+    void markAllLayersVolatile(CompletionHandler<void()>&&);
     void cancelMarkAllLayersVolatile();
 
     void freezeAllLayerTrees();
@@ -580,11 +580,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ProcessAssertion> m_uiProcessDependencyProcessAssertion;
 #endif
-
-    enum PageMarkingLayersAsVolatileCounterType { };
-    using PageMarkingLayersAsVolatileCounter = RefCounter<PageMarkingLayersAsVolatileCounterType>;
-    std::unique_ptr<PageMarkingLayersAsVolatileCounter> m_pageMarkingLayersAsVolatileCounter;
-    unsigned m_countOfPagesFailingToMarkVolatile { 0 };
 
     bool m_suppressMemoryPressureHandler { false };
 #if PLATFORM(MAC)

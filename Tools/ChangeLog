@@ -1,3 +1,17 @@
+2020-06-01  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILURE (r220931): !m_function in ~CompletionHandler() after switch tabs
+        https://bugs.webkit.org/show_bug.cgi?id=212537
+        <rdar://problem/63766838>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSuspension.mm: Added.
+        (TEST):
+
 2020-06-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EWS] Add a special case for running the layout test step without aborting in case of many failures for WPT tests

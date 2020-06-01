@@ -773,7 +773,7 @@ public:
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
 
-    void markLayersVolatile(Function<void(bool)>&& completionHandler = { });
+    void markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();
 
     void freezeLayerTreeDueToSwipeAnimation();
@@ -2031,7 +2031,7 @@ private:
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;
-    Vector<Function<void(bool)>> m_markLayersAsVolatileCompletionHandlers;
+    Vector<CompletionHandler<void(bool)>> m_markLayersAsVolatileCompletionHandlers;
     bool m_isSuspendedUnderLock { false };
 
     HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypesWithCustomContentProviders;

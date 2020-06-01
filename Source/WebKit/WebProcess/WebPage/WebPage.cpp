@@ -2576,7 +2576,7 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 
 void WebPage::callVolatilityCompletionHandlers(bool succeeded)
 {
-    auto completionHandlers = WTFMove(m_markLayersAsVolatileCompletionHandlers);
+    auto completionHandlers = std::exchange(m_markLayersAsVolatileCompletionHandlers, { });
     for (auto& completionHandler : completionHandlers)
         completionHandler(succeeded);
 }
@@ -2604,7 +2604,7 @@ bool WebPage::markLayersVolatileImmediatelyIfPossible()
     return !drawingArea() || drawingArea()->markLayersVolatileImmediatelyIfPossible();
 }
 
-void WebPage::markLayersVolatile(WTF::Function<void (bool)>&& completionHandler)
+void WebPage::markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED(Layers, "markLayersVolatile:");
 
@@ -2634,7 +2634,7 @@ void WebPage::cancelMarkLayersVolatile()
 {
     RELEASE_LOG_IF_ALLOWED(Layers, "cancelMarkLayersVolatile:");
     m_layerVolatilityTimer.stop();
-    m_markLayersAsVolatileCompletionHandlers.clear();
+    callVolatilityCompletionHandlers(false);
 }
 
 class CurrentEvent {

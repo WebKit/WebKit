@@ -754,6 +754,7 @@
 		83779C381F82FECE007CDA8A /* VisitedLinkStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */; };
 		837A35F11D9A1E7D00663C57 /* DownloadRequestBlobURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 837A35F01D9A1E6400663C57 /* DownloadRequestBlobURL.html */; };
 		839AA35F21A26B0300980DD6 /* client-side-redirect.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 839AA35E21A26ACD00980DD6 /* client-side-redirect.html */; };
+		83A2CFDE2481B3520018B2D3 /* ProcessSuspension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83A2CFDC2481B32F0018B2D3 /* ProcessSuspension.mm */; };
 		83B6DE6F1EE75221001E792F /* RestoreSessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */; };
 		83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */; };
 		83BC5AC020E6C0DF00F5879F /* StartLoadInDidFailProvisionalLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5ABF20E6C0D300F5879F /* StartLoadInDidFailProvisionalLoad.mm */; };
@@ -2270,6 +2271,7 @@
 		83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisitedLinkStore.mm; sourceTree = "<group>"; };
 		837A35F01D9A1E6400663C57 /* DownloadRequestBlobURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestBlobURL.html; sourceTree = "<group>"; };
 		839AA35E21A26ACD00980DD6 /* client-side-redirect.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "client-side-redirect.html"; sourceTree = "<group>"; };
+		83A2CFDC2481B32F0018B2D3 /* ProcessSuspension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSuspension.mm; sourceTree = "<group>"; };
 		83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionState.cpp; sourceTree = "<group>"; };
 		83B88A331C80056D00BB2418 /* HTMLParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserIdioms.cpp; sourceTree = "<group>"; };
 		83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginLoadClientPolicies.mm; sourceTree = "<group>"; };
@@ -3177,6 +3179,7 @@
 				7C1AF7931E8DCBAB002645B9 /* PrepareForMoveToWindow.mm */,
 				41882F0221010A70002FF288 /* ProcessPreWarming.mm */,
 				CDA4438D21F7A47700379489 /* ProcessSuspendMediaBuffering.mm */,
+				83A2CFDC2481B32F0018B2D3 /* ProcessSuspension.mm */,
 				518C1152205B04F9001FF4AE /* ProcessSwapOnNavigation.mm */,
 				5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */,
 				5CFACF64226FD1FB0056C7D0 /* Proxy.mm */,
@@ -5115,6 +5118,7 @@
 				4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */,
 				41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */,
 				CDA4438E21F7A47700379489 /* ProcessSuspendMediaBuffering.mm in Sources */,
+				83A2CFDE2481B3520018B2D3 /* ProcessSuspension.mm in Sources */,
 				518C1153205B0504001FF4AE /* ProcessSwapOnNavigation.mm in Sources */,
 				7C83E0C11D0A652F00FEBCF3 /* ProvisionalURLNotChange.mm in Sources */,
 				5CFACF65226FD2DC0056C7D0 /* Proxy.mm in Sources */,

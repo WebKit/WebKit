@@ -1,3 +1,27 @@
+2020-06-01  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILURE (r220931): !m_function in ~CompletionHandler() after switch tabs
+        https://bugs.webkit.org/show_bug.cgi?id=212537
+        <rdar://problem/63766838>
+
+        Reviewed by Alex Christensen.
+
+        When WebPage::markAllLayersVolatile(), it would destroy m_pageMarkingLayersAsVolatileCounter,
+        which may not have called its completion handler yet. As a result, we would hit an assertion
+        in the CompletionHandler destructor.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::callVolatilityCompletionHandlers):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::cancelMarkLayersVolatile):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prepareToSuspend):
+        (WebKit::WebProcess::markAllLayersVolatile):
+        (WebKit::WebProcess::cancelMarkAllLayersVolatile):
+        * WebProcess/WebProcess.h:
+
 2020-06-01  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Replace Color constructors taking numeric values with type specific factory functions

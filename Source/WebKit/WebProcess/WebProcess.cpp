@@ -125,6 +125,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/Algorithms.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/Language.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
@@ -1430,44 +1431,29 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
     updateFreezerStatus();
 #endif
 
-    markAllLayersVolatile([this, completionHandler = WTFMove(completionHandler)](bool success) mutable {
-        if (success)
-            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Successfuly marked all layers as volatile");
-        else
-            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Failed to mark all layers as volatile");
-
+    markAllLayersVolatile([this, completionHandler = WTFMove(completionHandler)]() mutable {
         RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "prepareToSuspend: Process is ready to suspend");
         completionHandler();
     });
 }
 
-void WebProcess::markAllLayersVolatile(WTF::Function<void(bool)>&& completionHandler)
+void WebProcess::markAllLayersVolatile(CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile:");
-    ASSERT(!m_pageMarkingLayersAsVolatileCounter);
-    m_countOfPagesFailingToMarkVolatile = 0;
-
-    m_pageMarkingLayersAsVolatileCounter = makeUnique<PageMarkingLayersAsVolatileCounter>([this, completionHandler = WTFMove(completionHandler)] (RefCounterEvent) {
-        if (m_pageMarkingLayersAsVolatileCounter->value())
-            return;
-
-        completionHandler(m_countOfPagesFailingToMarkVolatile == 0);
-        m_pageMarkingLayersAsVolatileCounter = nullptr;
-    });
-    auto token = m_pageMarkingLayersAsVolatileCounter->count();
-    for (auto& page : m_pageMap.values())
-        page->markLayersVolatile([token, this] (bool succeeded) {
-            if (!succeeded)
-                ++m_countOfPagesFailingToMarkVolatile;
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& page : m_pageMap.values()) {
+        page->markLayersVolatile([this, callbackAggregator = callbackAggregator.copyRef(), pageID = page->identifier()] (bool succeeded) {
+            if (succeeded)
+                RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Successfuly marked layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
+            else
+                RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSuspension, "markAllLayersVolatile: Failed to mark layers as volatile for webPageID=%" PRIu64, pageID.toUInt64());
         });
+    }
 }
 
 void WebProcess::cancelMarkAllLayersVolatile()
 {
-    if (!m_pageMarkingLayersAsVolatileCounter)
-        return;
-
-    m_pageMarkingLayersAsVolatileCounter = nullptr;
+    RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "cancelMarkAllLayersVolatile:");
     for (auto& page : m_pageMap.values())
         page->cancelMarkLayersVolatile();
 }
