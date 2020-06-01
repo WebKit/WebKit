@@ -266,7 +266,9 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigIntToOtherPrimitive(JSGlobalO
     ASSERT(!primValue.isBigInt());
 
     if (primValue.isString()) {
-        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, asString(primValue)->value(globalObject));
+        String string = asString(primValue)->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
+        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, string);
         RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
         if (!bigIntValue)
             return JSBigInt::ComparisonResult::Undefined;
@@ -304,7 +306,9 @@ ALWAYS_INLINE JSBigInt::ComparisonResult compareBigInt32ToOtherPrimitive(JSGloba
     };
 
     if (primValue.isString()) {
-        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, asString(primValue)->value(globalObject));
+        String string = asString(primValue)->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
+        JSValue bigIntValue = JSBigInt::stringToBigInt(globalObject, string);
         RETURN_IF_EXCEPTION(scope, JSBigInt::ComparisonResult::Undefined);
         if (!bigIntValue)
             return JSBigInt::ComparisonResult::Undefined;
@@ -639,7 +643,7 @@ ALWAYS_INLINE JSValue jsInc(JSGlobalObject* globalObject, JSValue v)
 
 #if USE(BIGINT32)
     if (operandNumeric.isBigInt32())
-        return JSBigInt::inc(globalObject, operandNumeric.bigInt32AsInt32());
+        RELEASE_AND_RETURN(scope, JSBigInt::inc(globalObject, operandNumeric.bigInt32AsInt32()));
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());
@@ -659,7 +663,7 @@ ALWAYS_INLINE JSValue jsDec(JSGlobalObject* globalObject, JSValue v)
 
 #if USE(BIGINT32)
     if (operandNumeric.isBigInt32())
-        return JSBigInt::dec(globalObject, operandNumeric.bigInt32AsInt32());
+        RELEASE_AND_RETURN(scope, JSBigInt::dec(globalObject, operandNumeric.bigInt32AsInt32()));
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());
@@ -679,7 +683,7 @@ ALWAYS_INLINE JSValue jsBitwiseNot(JSGlobalObject* globalObject, JSValue v)
 
 #if USE(BIGINT32)
     if (operandNumeric.isBigInt32())
-        return JSBigInt::bitwiseNot(globalObject, operandNumeric.bigInt32AsInt32());
+        RELEASE_AND_RETURN(scope, JSBigInt::bitwiseNot(globalObject, operandNumeric.bigInt32AsInt32()));
 #endif
 
     ASSERT(operandNumeric.isHeapBigInt());

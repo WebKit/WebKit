@@ -1,3 +1,20 @@
+2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt operations should handle exception correctly
+        https://bugs.webkit.org/show_bug.cgi?id=212596
+
+        Reviewed by Mark Lam.
+
+        Some places miss exception check / explicit scope-release while BigInt operations can now throw an exception.
+        This patch adds them. They are covered by existing stress tests with Debug build.
+
+        * runtime/Operations.h:
+        (JSC::compareBigIntToOtherPrimitive):
+        (JSC::compareBigInt32ToOtherPrimitive):
+        (JSC::jsInc):
+        (JSC::jsDec):
+        (JSC::jsBitwiseNot):
+
 2020-05-31  Michael Saboff  <msaboff@apple.com>
 
         Consider a Thread Specific Cache for AssemblerBuffers
