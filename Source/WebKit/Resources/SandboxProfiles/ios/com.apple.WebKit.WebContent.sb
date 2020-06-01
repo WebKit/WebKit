@@ -1189,11 +1189,12 @@
         (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
         (syscall-number SYS_psynch_rw_rdlock) ;; <rdar://problem/51134351>
         (syscall-number SYS_faccessat) ;; <rdar://problem/56998930>
-        (syscall-number SYS_objc_bp_assist_cfg_np) ;; <rdar://problem/55924791>
         (syscall-number SYS_shared_region_map_and_slide_2_np) ;; <rdar://problem/60294880>
         (syscall-number SYS_ulock_wait2) ;; <rdar://problem/58743778>
         (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
     )
+    (if (defined? 'SYS_objc_bp_assist_cfg_np)
+        (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
 )
 
 (when (defined? 'mach-bootstrap)
