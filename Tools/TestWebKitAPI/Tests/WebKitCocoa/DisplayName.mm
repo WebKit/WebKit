@@ -41,13 +41,16 @@
 namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
-static void checkUntilDisplayNameIs(WKWebView *webView, NSString *expectedName, bool* done)
+static void checkUntilDisplayNameIs(WKWebView *webView, NSString *expectedName, bool* done, size_t iterations = 20)
 {
     [webView _getProcessDisplayNameWithCompletionHandler:^(NSString *name) {
         if ([name isEqualToString:expectedName])
             *done = true;
-        else
-            checkUntilDisplayNameIs(webView, expectedName, done);
+        else if (!iterations) {
+            EXPECT_FALSE(true);
+            *done = true;
+        } else
+            checkUntilDisplayNameIs(webView, expectedName, done, iterations - 1);
     }];
 }
 

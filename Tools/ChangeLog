@@ -1,3 +1,13 @@
+2020-06-01  Alex Christensen  <achristensen@webkit.org>
+
+        Make CustomDisplayName and DefaultDisplayName API tests fail instead of timing out when something changes
+        https://bugs.webkit.org/show_bug.cgi?id=212480
+
+        This saves time when debugging and running all the tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DisplayName.mm:
+        (TestWebKitAPI::checkUntilDisplayNameIs):
+
 2020-06-01  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Install and update don't provide any terminal output
