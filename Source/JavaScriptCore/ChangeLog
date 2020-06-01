@@ -1,3 +1,18 @@
+2020-06-01  Mark Lam  <mark.lam@apple.com>
+
+        x86.rb's LabelReference.x86LoadOperand()'s address operand should be a pointer type.
+        https://bugs.webkit.org/show_bug.cgi?id=212603
+
+        Reviewed by Saam Barati.
+
+        The current implementation mistakenly sets the address type to that of the value
+        being loaded.  I encountered this issue when I was trying to do a loadb from a
+        global address.  Because of this bug, the emitted code was trying do a load using
+        %al (8 byte register) as the pointer to load from.  With this fix, it now loads
+        from %rax.
+
+        * offlineasm/x86.rb:
+
 2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSValue::toThis should not throw exception
