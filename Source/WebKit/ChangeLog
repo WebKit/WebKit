@@ -1,3 +1,15 @@
+2020-06-01  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] pthread_create() fails with EPERM in the second WebKitWebProcess with sandbox on
+        https://bugs.webkit.org/show_bug.cgi?id=212380
+
+        Reviewed by Adrian Perez de Castro.
+
+        Dereference scmp_arg_cmp before use.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::setupSeccomp):
+
 2020-05-30  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKBundlePostSynchronousMessage
