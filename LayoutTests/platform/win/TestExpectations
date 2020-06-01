@@ -2097,7 +2097,6 @@ webkit.org/b/140724 css2.1/t1202-counters-04-b.html [ Failure ]
 css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 
 css3/flexbox/button.html [ Failure ]
-css3/flexbox/flexitem.html [ Failure ]
 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 

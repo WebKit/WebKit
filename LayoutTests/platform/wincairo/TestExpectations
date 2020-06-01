@@ -1342,7 +1342,6 @@ css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeo
 css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 
 css3/flexbox/button.html [ Failure ]
-css3/flexbox/flexitem.html [ Failure ]
 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 # TODO HW filters not yet supported on Windows

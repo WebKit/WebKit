@@ -1,3 +1,23 @@
+2020-05-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Tables as flex items should obey the flex container sizing
+        https://bugs.webkit.org/show_bug.cgi?id=212355
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Unskipped passing tests and added new expectations for Win and iOS which have
+        different renderings of some UI components causing a couple of test to fail by
+        small offsets.
+
+        * TestExpectations: Unskipped table-as-item-narrow-content.html that is passing now.
+        * css3/flexbox/flexitem-expected.txt: Updated. All tests passing.
+        * gpu-process/TestExpectations: Removed flexitem.html test.
+        * platform/ios/TestExpectations: Ditto.
+        * platform/ios/css3/flexbox/flexitem-expected.txt: Added.
+        * platform/win/TestExpectations: Removed flexitem.html test.
+        * platform/win/css3/flexbox/flexitem-expected.txt: Added.
+        * platform/wincairo/TestExpectations: Removed flexitem.html test.
+
 2020-05-31  Zalan Bujtas  <zalan@apple.com>
 
         [iBooks] Empty pages appear in book

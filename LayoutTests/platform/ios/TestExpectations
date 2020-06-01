@@ -1249,7 +1249,6 @@ webkit.org/b/178487 compositing/overlap-blending/nested-overlap.html [ ImageOnly
 webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
 
 # CSS tests to triage
-webkit.org/b/178588 css3/flexbox/flexitem.html [ Failure ]
 webkit.org/b/178588 css3/zoom-coords.xhtml [ Failure ]
 webkit.org/b/178588 fast/css/active-display-none.html [ Failure ]
 webkit.org/b/178588 fast/css/button-height.html [ Failure ]

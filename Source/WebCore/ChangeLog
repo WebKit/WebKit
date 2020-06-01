@@ -1,3 +1,20 @@
+2020-05-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Tables as flex items should obey the flex container sizing
+        https://bugs.webkit.org/show_bug.cgi?id=212355
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        For most of the boxes, "width:auto" means use all the available space from your container in the inline
+        direction. This means that a flex container does not need to do anything in particular to stretch them
+        in the inline axis. However that is not true for tables because their width mostly depend on the sum of
+        the sizes of their columns (whichever algorithm is used). That's why the layout code of tables should
+        check whether or not it has an override for the content logical width which is the way flexbox uses to
+        stretch flex items (and use that override width).
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth): Stretch till overrideContentLogicalWidth() if needed.
+
 2020-06-01  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Replace Color constructors taking numeric values with type specific factory functions
