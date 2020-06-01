@@ -252,9 +252,6 @@ static void notifySelectedPrinterCallback(GtkPrintUnixDialog* dialog, GParamSpec
 
 static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOperation* printOperation, GtkWindow* parent)
 {
-#if USE(GTK4)
-    return WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL;
-#else
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(GTK_PRINT_CAPABILITY_NUMBER_UP
                                                                                                  | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT
@@ -299,7 +296,6 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
     gtk_widget_destroy(GTK_WIDGET(printDialog));
 
     return returnValue;
-#endif
 }
 #else
 // TODO: We need to add an implementation for Windows.

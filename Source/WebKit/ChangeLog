@@ -1,5 +1,19 @@
 2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Add printing support
+        https://bugs.webkit.org/show_bug.cgi?id=212320
+
+        Reviewed by Adrian Perez de Castro.
+
+        Printing API hasn't changed, the only problem was that we were using gtk_dialog_run() and gdk threads deprecated API.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialog): Remove GTK4 ifdefs.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::print): Use g_idle_add_full() instead of gdk threads deprecated API.
+
+2020-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Wheel events are always handled by the main frame view
         https://bugs.webkit.org/show_bug.cgi?id=212593
 
