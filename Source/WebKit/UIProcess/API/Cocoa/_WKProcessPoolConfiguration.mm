@@ -307,12 +307,12 @@
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", directory];
 
     // FIXME: Move this to _WKWebsiteDataStoreConfiguration once rdar://problem/50109631 is fixed.
-    WebKit::LegacyGlobalSettings::singleton().setHSTSStorageDirectory(directory.path);
+    _processPoolConfiguration->setHSTSStorageDirectory(directory.path);
 }
 
 - (NSURL *)hstsStorageDirectory
 {
-    return [NSURL fileURLWithPath:WebKit::LegacyGlobalSettings::singleton().hstsStorageDirectory() isDirectory:YES];
+    return [NSURL fileURLWithPath:_processPoolConfiguration->hstsStorageDirectory() isDirectory:YES];
 }
 
 #if PLATFORM(IOS_FAMILY)

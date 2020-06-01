@@ -40,9 +40,6 @@ public:
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
 
-    void setHSTSStorageDirectory(String&& directory) { m_hstsStorageDirectory = WTFMove(directory); }
-    const String& hstsStorageDirectory() const { return m_hstsStorageDirectory; }
-
     const HashSet<String>& schemesToRegisterAsSecure() { return m_schemesToRegisterAsSecure; }
     void registerURLSchemeAsSecure(const String& scheme) { m_schemesToRegisterAsSecure.add(scheme); }
 
@@ -60,7 +57,6 @@ private:
     LegacyGlobalSettings();
     
     CacheModel m_cacheModel { CacheModel::PrimaryWebBrowser };
-    String m_hstsStorageDirectory;
     HashSet<String> m_schemesToRegisterAsSecure;
     HashSet<String> m_schemesToRegisterAsBypassingContentSecurityPolicy;
     HashSet<String> m_schemesToRegisterAsLocal;
