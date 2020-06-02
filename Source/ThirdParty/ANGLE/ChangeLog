@@ -1,3 +1,19 @@
+2020-06-02  Kenneth Russell  <kbr@chromium.org>
+
+        Revise PVRTC compressed texture validation in ANGLE backend for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=212612
+
+        Reviewed by Dean Jackson.
+
+        Correct the block sizes of PVRTC textures, and incorporate minimum
+        block sizes for width and height, as required by these formats.
+
+        * src/libANGLE/formatutils.cpp:
+        (gl::BuildInternalFormatInfoMap):
+        (gl::InternalFormat::computeCompressedImageSize const):
+        (gl::InternalFormat::getCompressedImageMinBlocks const):
+        * src/libANGLE/formatutils.h:
+
 2020-05-29  Keith Rollin  <krollin@apple.com>
 
         Revert switch to XCBuild
