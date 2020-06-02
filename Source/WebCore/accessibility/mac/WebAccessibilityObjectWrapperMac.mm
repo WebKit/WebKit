@@ -2000,6 +2000,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!backingObject)
         return nil;
 
+    // FIXME: create AXCoreObject::subrolePlatformString to replace the following linear search and heuristics, similar to rolePlatformString.
     if (backingObject->isPasswordField())
         return NSAccessibilitySecureTextFieldSubrole;
     if (backingObject->isSearchField())
@@ -2210,33 +2211,35 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString*)roleDescription
 {
-    if (!self.axBackingObject)
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
         return nil;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // attachments have the AXImage role, but a different subrole
-    if (self.axBackingObject->isAttachment())
+    if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    String roleDescription = self.axBackingObject->roleDescription();
+    String roleDescription = backingObject->roleDescription();
     if (!roleDescription.isEmpty())
         return roleDescription;
 
-    NSString *axRole = self.axBackingObject->rolePlatformString();
+    NSString *axRole = backingObject->rolePlatformString();
+    NSString *subrole = self.subrole;
     // Fallback to the system default role description.
     // If we get the same string back, then as a last resort, return unknown.
-    NSString *defaultRoleDescription = NSAccessibilityRoleDescription(axRole, [self subrole]);
+    NSString *defaultRoleDescription = NSAccessibilityRoleDescription(axRole, subrole);
 
     // On earlier Mac versions (Lion), using a non-standard subrole would result in a role description
     // being returned that looked like AXRole:AXSubrole. To make all platforms have the same role descriptions
     // we should fallback on a role description ignoring the subrole in these cases.
-    if ([defaultRoleDescription isEqualToString:[NSString stringWithFormat:@"%@:%@", axRole, [self subrole]]])
+    if ([defaultRoleDescription isEqualToString:[NSString stringWithFormat:@"%@:%@", axRole, subrole]])
         defaultRoleDescription = NSAccessibilityRoleDescription(axRole, nil);
-    
+
     if (![defaultRoleDescription isEqualToString:axRole])
         return defaultRoleDescription;
-    
+
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 

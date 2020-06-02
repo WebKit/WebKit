@@ -1,3 +1,20 @@
+2020-06-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Avoid calling axBackingObject multiple times in [WebAccessibilityObjectWrapper roleDescription].
+        https://bugs.webkit.org/show_bug.cgi?id=212643
+
+        Reviewed by Chris Fleizach.
+
+        No new functionality.
+
+        Avoid unnecessary overhead of calling axBackingObject multiple times in
+        roleDescription. axBackingObject is not just a getter but involves
+        checking whether isolated tree mode is enabled.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+
 2020-06-02  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Pass nullptr for the 2nd argument of FileReaderLoader 
