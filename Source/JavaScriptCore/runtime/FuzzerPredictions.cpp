@@ -72,7 +72,7 @@ FuzzerPredictions::FuzzerPredictions(const char* filename)
         // FIXME: The current implementation only supports one prediction per lookup key.
 
         const Vector<String>& lineParts = line.split(':');
-        RELEASE_ASSERT_WITH_MESSAGE(lineParts.size() == 2, "Expected line with two parts delimited by a colon. Found line with %lu parts.", lineParts.size());
+        RELEASE_ASSERT_WITH_MESSAGE(lineParts.size() == 2, "Expected line with two parts delimited by a colon. Found line with %zu parts.", lineParts.size());
         const String& lookupKey = lineParts[0];
         const String& predictionString = lineParts[1];
         bool ok;

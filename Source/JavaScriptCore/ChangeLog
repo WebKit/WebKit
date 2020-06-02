@@ -1,3 +1,15 @@
+2020-06-02  Paulo Matos  <pmatos@igalia.com>
+
+        Fix assert message formatting
+        https://bugs.webkit.org/show_bug.cgi?id=212591
+
+        Reviewed by Adrian Perez de Castro.
+
+        Fixes warning by gcc - lineParts.size() is size_t, %zu should be used.
+
+        * runtime/FuzzerPredictions.cpp:
+        (JSC::FuzzerPredictions::FuzzerPredictions):
+
 2020-06-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Graphics: should use the `id` (name) of the animation if it exists
