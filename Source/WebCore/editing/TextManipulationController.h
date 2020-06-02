@@ -150,8 +150,25 @@ private:
         Vector<ManipulationToken> tokens;
     };
 
+    struct ManipulationTokens {
+        Vector<ManipulationToken> tokens;
+        bool containsOnlyHTMLSpace { true };
+        bool containsLineBreak { false };
+        bool firstTokenContainsLineBreak { false };
+        bool lastTokenContainsLineBreak { false };
+    };
+    ManipulationTokens parse(StringView, Node*);
+
     void addItem(ManipulationItemData&&);
     void flushPendingItemsForCallback();
+
+    struct NodeInsertion {
+        RefPtr<Node> parentIfDifferentFromCommonAncestor;
+        Ref<Node> child;
+    };
+    using NodeEntry = std::pair<Ref<Node>, Ref<Node>>;
+    Vector<Ref<Node>> getPath(Node*, Node*);
+    void updateInsertions(Vector<NodeEntry>&, const Vector<Ref<Node>>&, Node*, HashSet<Ref<Node>>&, Vector<NodeInsertion>&);
     Optional<ManipulationFailureType> replace(const ManipulationItemData&, const Vector<ManipulationToken>&);
 
     WeakPtr<Document> m_document;
