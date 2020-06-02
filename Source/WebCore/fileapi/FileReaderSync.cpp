@@ -45,7 +45,7 @@ FileReaderSync::FileReaderSync()
 
 ExceptionOr<RefPtr<ArrayBuffer>> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
-    FileReaderLoader loader(FileReaderLoader::ReadAsArrayBuffer, 0);
+    FileReaderLoader loader(FileReaderLoader::ReadAsArrayBuffer, nullptr);
     auto result = startLoading(scriptExecutionContext, loader, blob);
     if (result.hasException())
         return result.releaseException();
@@ -54,20 +54,20 @@ ExceptionOr<RefPtr<ArrayBuffer>> FileReaderSync::readAsArrayBuffer(ScriptExecuti
 
 ExceptionOr<String> FileReaderSync::readAsBinaryString(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
-    FileReaderLoader loader(FileReaderLoader::ReadAsBinaryString, 0);
+    FileReaderLoader loader(FileReaderLoader::ReadAsBinaryString, nullptr);
     return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
 ExceptionOr<String> FileReaderSync::readAsText(ScriptExecutionContext& scriptExecutionContext, Blob& blob, const String& encoding)
 {
-    FileReaderLoader loader(FileReaderLoader::ReadAsText, 0);
+    FileReaderLoader loader(FileReaderLoader::ReadAsText, nullptr);
     loader.setEncoding(encoding);
     return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
 ExceptionOr<String> FileReaderSync::readAsDataURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
-    FileReaderLoader loader(FileReaderLoader::ReadAsDataURL, 0);
+    FileReaderLoader loader(FileReaderLoader::ReadAsDataURL, nullptr);
     loader.setDataType(blob.type());
     return startLoadingString(scriptExecutionContext, loader, blob);
 }

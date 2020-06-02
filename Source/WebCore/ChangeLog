@@ -1,3 +1,19 @@
+2020-06-02  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Pass nullptr for the 2nd argument of FileReaderLoader 
+        https://bugs.webkit.org/show_bug.cgi?id=212642
+
+        Reviewed by Darin Adler.
+
+        Instead of passing `0`, `nullptr` is better
+        because `FileReaderLoader` takes a pointer.
+
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::FileReaderSync::readAsArrayBuffer):
+        (WebCore::FileReaderSync::readAsBinaryString):
+        (WebCore::FileReaderSync::readAsText):
+        (WebCore::FileReaderSync::readAsDataURL):
+
 2020-06-02  Tim Horton  <timothy_horton@apple.com>
 
         UIColor and NSColor WebCore::Color factories should return invalid colors for nil input colors
