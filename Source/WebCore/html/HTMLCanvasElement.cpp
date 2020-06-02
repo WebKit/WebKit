@@ -1017,15 +1017,21 @@ void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNo
 
 bool HTMLCanvasElement::needsPreparationForDisplay()
 {
+#if ENABLE(WEBGL)
     return is<WebGLRenderingContextBase>(m_context.get());
+#else
+    return false;
+#endif
 }
 
 void HTMLCanvasElement::prepareForDisplay()
 {
+#if ENABLE(WEBGL)
     ASSERT(needsPreparationForDisplay());
 
     if (is<WebGLRenderingContextBase>(m_context.get()))
         downcast<WebGLRenderingContextBase>(m_context.get())->prepareForDisplay();
+#endif
 }
 
 }

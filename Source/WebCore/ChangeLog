@@ -1,3 +1,14 @@
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=212633
+
+        Reviewed by Yusuke Suzuki.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::needsPreparationForDisplay):
+        (WebCore::HTMLCanvasElement::prepareForDisplay):
+
 2020-06-02  Youenn Fablet  <youenn@apple.com>
 
         Add some logging to ServiceWorkerThread to track install/activate event handling
