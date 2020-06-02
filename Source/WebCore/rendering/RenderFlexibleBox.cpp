@@ -467,9 +467,10 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
     // This should only be called if the logical width is the cross size
     ASSERT(hasOrthogonalFlow(child));
     // If our height is auto, make sure that our returned height is unaffected by
-    // earlier layouts by returning the max preferred logical width
+    // earlier layouts by returning the shrink-to-fit size.
     if (!crossAxisLengthIsDefinite(child, child.style().logicalWidth()))
-        return child.maxPreferredLogicalWidth();
+        return std::min(child.maxPreferredLogicalWidth(), std::max(child.minPreferredLogicalWidth(), contentLogicalWidth()));
+
     return child.logicalWidth();
 }
 

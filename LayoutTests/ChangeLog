@@ -1,3 +1,12 @@
+2020-06-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] ChildIntrinsicLogicalWidth should use fit-content, not max-content
+        https://bugs.webkit.org/show_bug.cgi?id=210465
+
+        Reviewed by Javier Fernandez.
+
+        * TestExpectations: Unskipped flex-wrap-002.html which is now passing.
+
 2020-06-02  Youenn Fablet  <youenn@apple.com>
 
         [ Mac wk2 ] http/wpt/service-workers/service-worker-spinning-fetch.https.html is flaky failing.

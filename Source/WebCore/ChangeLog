@@ -1,3 +1,21 @@
+2020-06-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] ChildIntrinsicLogicalWidth should use fit-content, not max-content
+        https://bugs.webkit.org/show_bug.cgi?id=210465
+
+        Reviewed by Javier Fernandez.
+
+        When computing the hypothetical cross size of each item in the flexbox algorithm
+        the current code was using the max-size. However the specs state clearly that we
+        should use fit-content instead, i.e., the shrink-to-fit size.
+        See https://drafts.csswg.org/css-flexbox/#algo-cross-item.
+
+        Based on Blink's crrev.com/1327746 by <cbiesinger@chromium.org>
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalWidth const): Use the shrink-to-fit
+        size instead just the max-size.
+
 2020-06-02  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerPrivateMediaStreamAVFObjC should enqueue samples in a background thread

@@ -4243,7 +4243,6 @@ webkit.org/b/210089 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum
 webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-001.html [ ImageOnlyFailure ]
 webkit.org/b/210093 imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.html [ ImageOnlyFailure ]
 webkit.org/b/210144 imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-005.html [ ImageOnlyFailure ]
-webkit.org/b/210465 imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-002.html [ ImageOnlyFailure ]
 webkit.org/b/210475 imported/w3c/web-platform-tests/css/css-flexbox/image-items-flake-001.html [ ImageOnlyFailure ]
 webkit.org/b/210478 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-006.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-005.xht [ ImageOnlyFailure ]
