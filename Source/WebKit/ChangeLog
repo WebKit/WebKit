@@ -1,5 +1,53 @@
 2020-06-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r262332. rdar://problem/63891529
+
+    [Cocoa] Improve logging quality for non-ephemeral sessions
+    https://bugs.webkit.org/show_bug.cgi?id=212551
+    <rdar://problem/62461099>
+    
+    Reviewed by David Kilzer.
+    
+    Source/WebCore/PAL:
+    
+    Add support for the 'nw_context_privacy_level' setting.
+    
+    * pal/spi/cf/CFNetworkSPI.h:
+    
+    Source/WebKit:
+    
+    In Bug 209522 I switched normal mode logging to use the same privacy-protecting mode we use for ephemeral sessions.
+    This had the unintended consequence of removing network load data used to investigate networking issues.
+    
+    This patch adopts the more fine-grained logging provided by the low-level 'nw_context_privacy_level' setting.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::configurationForSessionID): Adopt 'nw_context_privacy_level' setting.
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h: Add new feature check for CFNetwork convenience setter.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262332 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+            [Cocoa] Improve logging quality for non-ephemeral sessions
+            https://bugs.webkit.org/show_bug.cgi?id=212551
+            <rdar://problem/62461099>
+
+            Reviewed by David Kilzer.
+
+            In Bug 209522 I switched normal mode logging to use the same privacy-protecting mode we use for ephemeral sessions.
+            This had the unintended consequence of removing network load data used to investigate networking issues.
+
+            This patch adopts the more fine-grained logging provided by the low-level 'nw_context_privacy_level' setting.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::configurationForSessionID): Adopt 'nw_context_privacy_level' setting.
+
+2020-06-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r262429. rdar://problem/63891546
 
     macCatalyst: WKWebView's tint color is not propagated to Web Content process
