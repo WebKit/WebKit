@@ -176,18 +176,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         ASSERT_UNUSED(ok, ok);
         // Perform API calls which will communicate with the database mapping service, and map the database.
         auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
+
+        [[objc_getClass("_LSDReadService") XPCConnectionToService] invalidate];
+
         ok = extension->revoke();
         ASSERT_UNUSED(ok, ok);
 
-        auto services = [get_LSDServiceClass() allServiceClasses];
-        for (Class cls in services) {
-            auto connection = [cls XPCConnectionToService];
-            [connection invalidate];
-        }
-
-        ASSERT(String(uti.get()) = String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0)).get()));
+        ASSERT(String(uti.get()) == String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0)).get()));
     }
-
 
 #if PLATFORM(IOS_FAMILY)
     if (parameters.runningboardExtensionHandle) {

@@ -1,3 +1,14 @@
+2020-06-02  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(r261387): Introduced sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=212634
+
+        Reviewed by Darin Adler.
+
+        Declare Launch Services class.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2020-05-31  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Transition between encrypted and clear codecs throws error from SourceBuffer.appendBuffer()

@@ -1,3 +1,18 @@
+2020-06-02  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(r261387): Introduced sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=212634
+
+        Reviewed by Darin Adler.
+
+        The change set r261387 introduced some new mach lookup sandbox violations, when attempting to close Launch Services connections that were not open.
+        Fix this by only attempting to close open connections, and do it while holding the extension to the database mapping service.
+
+        No new tests, since this patch is fixing benign sandbox violations.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-06-02  Youenn Fablet  <youenn@apple.com>
 
         Allow using web processes for service workers even though they loaded about URLs

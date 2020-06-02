@@ -86,8 +86,10 @@ enum LSSessionID {
 #endif // !USE(APPLE_INTERNAL_SDK)
 
 @interface _LSDService : NSObject <NSXPCListenerDelegate>
-+ (NSArray<Class> *)allServiceClasses;
 + (NSXPCConnection *)XPCConnectionToService;
+@end
+
+@interface _LSDReadService : _LSDService
 @end
 
 #if PLATFORM(MAC)
