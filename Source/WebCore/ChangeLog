@@ -1,3 +1,17 @@
+2020-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Add some logging to ServiceWorkerThread to track install/activate event handling
+        https://bugs.webkit.org/show_bug.cgi?id=212523
+
+        Reviewed by Chris Dumez.
+
+        Add some logging for firing install/activate events and when these events are handled.
+        No change of behavior.
+
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFireInstallEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToFireActivateEvent):
+
 2020-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make popup menus work
