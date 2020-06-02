@@ -49,10 +49,10 @@
     [CallWith=Document, MayThrowException] void begin();
     [MayThrowException] void abort();
     [MayThrowException, CallWith=GlobalObject] void completeMerchantValidation(any merchantSession);
-    [MayThrowException] void completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
-    [MayThrowException] void completeShippingContactSelection(ApplePayShippingContactUpdate update);
-    [MayThrowException] void completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
-    [MayThrowException] void completePayment(ApplePayPaymentAuthorizationResult result);
+    [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
+    [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completeShippingContactSelection(ApplePayShippingContactUpdate update);
+    [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
+    [MayThrowException, Conditional=APPLE_PAY_SESSION_V3] void completePayment(ApplePayPaymentAuthorizationResult result);
 
     [MayThrowException] void completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
     [MayThrowException] void completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);

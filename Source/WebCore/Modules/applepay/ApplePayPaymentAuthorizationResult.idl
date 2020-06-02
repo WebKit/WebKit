@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=APPLE_PAY,
+    Conditional=APPLE_PAY_SESSION_V3,
 ] dictionary ApplePayPaymentAuthorizationResult {
     required unsigned short status;
     sequence<ApplePayError> errors;

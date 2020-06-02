@@ -454,9 +454,6 @@ $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/Settings.cpp.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/Settings.h.erb
-$(PROJECT_DIR)/Scripts/generate-unified-sources.sh
-$(PROJECT_DIR)/Sources.txt
-$(PROJECT_DIR)/SourcesCocoa.txt
 $(PROJECT_DIR)/accessibility/AccessibilityRole.idl
 $(PROJECT_DIR)/accessibility/AriaAttributes.idl
 $(PROJECT_DIR)/animation/Animatable.idl

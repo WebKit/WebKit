@@ -2253,7 +2253,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Touch.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TouchEvent.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TouchList.idl
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UnifiedSourceBundlesTimeStamp.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentScripts.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentScriptsData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentStyleSheets.h

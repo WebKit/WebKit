@@ -1,3 +1,19 @@
+2020-06-02  Keith Rollin  <krollin@apple.com>
+
+        Revert FEATURES_DEFINES related changes
+        https://bugs.webkit.org/show_bug.cgi?id=212664
+        <rdar://problem/63893033>
+
+        Reviewed by Andy Estes.
+
+        Bug 262310, Bug 262311, Bug 262318, and Bug 262331 involve changes to
+        FEATURE_DEFINES and how the values there relate to those found in the
+        Platform*.h files. Those changes break XCBuild (by removing the
+        .xcfilelist related to UnifiedSources and the process for generating
+        them), and so are being reverted.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-06-02  Peng Liu  <peng.liu6@apple.com>
 
         Stressing webkitSetPresentationMode leads to wrong inline video dimensions

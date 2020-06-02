@@ -1351,9 +1351,11 @@ plain
 buy
 set-up
 donate
+#if defined(ENABLE_APPLE_PAY_SESSION_V4) && ENABLE_APPLE_PAY_SESSION_V4
 check-out
 book
 subscribe
+#endif
 #endif
 
 // font-synthesis

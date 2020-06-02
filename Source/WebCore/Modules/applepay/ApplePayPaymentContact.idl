@@ -31,8 +31,8 @@
     DOMString emailAddress;
     DOMString givenName;
     DOMString familyName;
-    DOMString phoneticGivenName;
-    DOMString phoneticFamilyName;
+    [Conditional=APPLE_PAY_SESSION_V3] DOMString phoneticGivenName;
+    [Conditional=APPLE_PAY_SESSION_V3] DOMString phoneticFamilyName;
     sequence<DOMString> addressLines;
     DOMString subLocality;
     DOMString locality;

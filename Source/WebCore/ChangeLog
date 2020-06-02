@@ -1,3 +1,53 @@
+2020-06-02  Keith Rollin  <krollin@apple.com>
+
+        Revert FEATURES_DEFINES related changes
+        https://bugs.webkit.org/show_bug.cgi?id=212664
+        <rdar://problem/63893033>
+
+        Reviewed by Andy Estes.
+
+        Bug 262310, Bug 262311, Bug 262318, and Bug 262331 involve changes to
+        FEATURE_DEFINES and how the values there relate to those found in the
+        Platform*.h files. Those changes break XCBuild (by removing the
+        .xcfilelist related to UnifiedSources and the process for generating
+        them), and so are being reverted.
+
+        No new tests -- build changes.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/GenerateUnifiedSources.xcconfig: Added.
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/applepay/ApplePayError.idl:
+        * Modules/applepay/ApplePayPaymentAuthorizationResult.idl:
+        * Modules/applepay/ApplePayPaymentContact.idl:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.idl:
+        * Modules/applepay/ApplePayRequestBase.idl:
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/applepay/ApplePayShippingContactUpdate.idl:
+        * Modules/applepay/ApplePayShippingMethodUpdate.idl:
+        * Modules/applepay/PaymentCoordinatorClient.cpp:
+        (WebCore::PaymentCoordinatorClient::supportsVersion):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::computePaymentMethodErrors const):
+        * Scripts/generate-unified-sources.sh:
+        * UnifiedSources-output.xcfilelist: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::applePayButtonDescription const):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ApplePayButtonType const):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::toPKPaymentButtonType):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+
 2020-06-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r262424.

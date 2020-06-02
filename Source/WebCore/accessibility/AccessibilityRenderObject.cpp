@@ -1130,12 +1130,14 @@ String AccessibilityRenderObject::applePayButtonDescription() const
         return AXApplePaySetupLabel();
     case ApplePayButtonType::Donate:
         return AXApplePayDonateLabel();
+#if ENABLE(APPLE_PAY_SESSION_V4)
     case ApplePayButtonType::CheckOut:
         return AXApplePayCheckOutLabel();
     case ApplePayButtonType::Book:
         return AXApplePayBookLabel();
     case ApplePayButtonType::Subscribe:
         return AXApplePaySubscribeLabel();
+#endif
     }
 }
 #endif
