@@ -102,10 +102,14 @@ bool EventRegion::operator==(const EventRegion& other) const
     if (m_touchActionRegions != other.m_touchActionRegions)
         return false;
 #endif
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
     if (m_wheelEventListenerRegion != other.m_wheelEventListenerRegion)
         return false;
     if (m_nonPassiveWheelEventListenerRegion != other.m_nonPassiveWheelEventListenerRegion)
         return false;
+#endif
+
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion != other.m_editableRegion)
         return false;
@@ -120,7 +124,10 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
 #if ENABLE(TOUCH_ACTION_REGIONS)
     uniteTouchActions(region, style.effectiveTouchActions());
 #endif
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
     uniteEventListeners(region, style.eventListenerRegionTypes());
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     if (overrideUserModifyIsEditable || style.userModify() != UserModify::ReadOnly)
@@ -235,6 +242,7 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
 }
 #endif
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
 void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListenerRegionType> eventListenerRegionTypes)
 {
     if (eventListenerRegionTypes.contains(EventListenerRegionType::Wheel))
@@ -265,14 +273,13 @@ const Region& EventRegion::eventListenerRegionForType(EventListenerRegionType ty
     ASSERT_NOT_REACHED();
     return m_wheelEventListenerRegion;
 }
+#endif // ENABLE(WHEEL_EVENT_REGIONS)
 
 #if ENABLE(EDITABLE_REGION)
-
 bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 {
     return m_editableRegion.intersects(rect);
 }
-
 #endif
 
 void EventRegion::dump(TextStream& ts) const
@@ -295,6 +302,7 @@ void EventRegion::dump(TextStream& ts) const
     }
 #endif
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
     if (!m_wheelEventListenerRegion.isEmpty()) {
         ts << indent << "(wheel event listener region" << m_wheelEventListenerRegion;
         if (!m_nonPassiveWheelEventListenerRegion.isEmpty()) {
@@ -304,6 +312,7 @@ void EventRegion::dump(TextStream& ts) const
         }
         ts << indent << ")\n";
     }
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     if (!m_editableRegion.isEmpty()) {

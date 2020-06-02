@@ -1,3 +1,24 @@
+2020-06-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add ENABLE(WHEEL_EVENT_REGIONS), enabled on macOS which is the only platform that needs wheel event regions for scrolling thread hit-testing
+        https://bugs.webkit.org/show_bug.cgi?id=212620
+
+        Reviewed by Tim Horton.
+
+        Surround code related to wheel event regions with ENABLE(WHEEL_EVENT_REGIONS).
+
+        Eventually we'll use this same code for touch event regions, and when we do, we
+        can rejigger the #ifdefs.
+
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::operator== const):
+        (WebCore::EventRegion::unite):
+        (WebCore::EventRegion::containsEditableElementsInRect const):
+        (WebCore::EventRegion::dump const):
+        * rendering/EventRegion.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintDebugOverlays):
+
 2020-06-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Avoid calling axBackingObject multiple times in [WebAccessibilityObjectWrapper roleDescription].

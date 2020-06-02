@@ -3168,6 +3168,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 }
 #endif
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
 static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
     constexpr auto fillColor = makeSimpleColor(0, 128, 0, 128);
@@ -3185,6 +3186,7 @@ static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType
 
     return patternForDescription(patternAndPhase, contentOffset, destContext);
 }
+#endif
 
 void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, GraphicsContext& context)
 {
@@ -3233,6 +3235,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     }
 #endif
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
     if (visibleDebugOverlayRegions & WheelEventHandlerRegion) {
         for (auto type : { EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel }) {
             auto fillPattern = patternForEventListenerRegionType(type, contentOffsetInCompositingLayer(), context);
@@ -3243,6 +3246,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
                 context.fillRect(rect);
         }
     }
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     // Paint rects for editable elements.

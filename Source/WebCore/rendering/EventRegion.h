@@ -81,8 +81,10 @@ public:
     const Region* regionForTouchAction(TouchAction) const;
 #endif
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
     OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
     const Region& eventListenerRegionForType(EventListenerRegionType) const;
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;
@@ -106,8 +108,10 @@ private:
 #if ENABLE(TOUCH_ACTION_REGIONS)
     Vector<Region> m_touchActionRegions;
 #endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
     Region m_wheelEventListenerRegion;
     Region m_nonPassiveWheelEventListenerRegion;
+#endif
 #if ENABLE(EDITABLE_REGION)
     Region m_editableRegion;
 #endif

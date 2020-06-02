@@ -490,6 +490,10 @@
 #define ENABLE_TOUCH_ACTION_REGIONS 0
 #endif
 
+#if !defined(ENABLE_WHEEL_EVENT_REGIONS)
+#define ENABLE_WHEEL_EVENT_REGIONS 0
+#endif
+
 #if !defined(ENABLE_VIDEO)
 #define ENABLE_VIDEO 0
 #endif
