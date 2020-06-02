@@ -9289,18 +9289,8 @@ bool LayerFlushController::flushLayers()
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-- (void)_setMockVideoPresentationModeEnabled:(BOOL)enabled
-{
-    _private->mockVideoPresentationModeEnabled = enabled;
-}
-
 - (void)_enterVideoFullscreenForVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode
 {
-    if (_private->mockVideoPresentationModeEnabled) {
-        videoElement->didBecomeFullscreenElement();
-        return;
-    }
-
     if (_private->fullscreenController) {
         if ([_private->fullscreenController videoElement] == videoElement) {
             // The backend may just warn us that the underlaying plaftormMovie()
@@ -9329,9 +9319,6 @@ bool LayerFlushController::flushLayers()
 
 - (void)_exitVideoFullscreen
 {
-    if (_private->mockVideoPresentationModeEnabled)
-        return;
-
     if (!_private->fullscreenController && _private->fullscreenControllersExiting.isEmpty())
         return;
 

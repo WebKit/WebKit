@@ -1,63 +1,66 @@
 <!doctype html>
 <html>
     <head>
-	    <script src=media-file.js></script>
-	    <script src=video-test.js></script>
-	    <script>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
             function start()
             {
-	            if (window.internals) {
-                    window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
-                    window.internals.setMockVideoPresentationModeEnabled(true);
+                if (window.internals) {
+                    internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+                    internals.setMockVideoPresentationModeEnabled(true);
                 }
-	
-	            video = document.getElementsByTagName('video')[0];
-	            waitForEventOnce("canplaythrough", canplaythrough);
-	            video.src = findMediaFile("video", "content/test");
 
-	            consoleWrite("");
+                video = document.getElementsByTagName('video')[0];
+                waitForEventOnce("canplaythrough", canplaythrough);
+                video.src = findMediaFile("video", "content/test");
+
+                consoleWrite("");
             }
-	
-	        function canplaythrough()
-	        {
-	            testExpected("video.webkitSupportsFullscreen", true);
-	            testExpected("video.webkitDisplayingFullscreen", false);
-	
-	            consoleWrite("<br>** Try to enter fullscreen");
-	            runWithKeyDown("video.webkitSetPresentationMode('fullscreen')");
-	            waitForEventOnce('webkitpresentationmodechanged', presentationModeChanged1);
-	        }
-	
-	        function presentationModeChanged1()
-	        {
-	            consoleWrite("<br>** Entered fullscreen");
-	            testExpected("video.webkitPresentationMode", "fullscreen");
-	            consoleWrite("<br>** Try to enter picture-in-picture");
-	            waitForEventOnce('webkitpresentationmodechanged', presentationModeChanged2);
-	            runWithKeyDown("video.webkitSetPresentationMode('picture-in-picture')");
-	        }
-	
-	        function presentationModeChanged2()
-	        {
-	            consoleWrite("<br>** Entered picture-in-picture");
-	            testExpected("video.webkitPresentationMode", "picture-in-picture");
-	            consoleWrite("<br>** Try to return to inline");
-	            waitForEventOnce('webkitpresentationmodechanged', testCompleted);
-	            runWithKeyDown("video.webkitSetPresentationMode('inline')");
-	        }
-	
-	        function testCompleted()
-	        {
-	            consoleWrite("<br>** Returned to inline");
-	            testExpected("video.webkitPresentationMode", "inline");
-	            consoleWrite("<br>** Test Completed");
-	            endTest();
-	        }
-	    </script>
-	</head>
-	
-	<body onload="start()">
-	    <video controls playsinline></video>
-	    <p>Test the video presentation mode (video fullscreen and picture-in-picture) API.</p>
-	</body>
+
+            async function canplaythrough()
+            {
+                testExpected("video.webkitSupportsFullscreen", true);
+                await testExpectedEventually('video.webkitDisplayingFullscreen', false);
+
+                consoleWrite("<br>** Try to enter fullscreen");
+                runWithKeyDown("video.webkitSetPresentationMode('fullscreen')");
+                waitForEventOnce('webkitpresentationmodechanged', presentationModeChanged1);
+            }
+
+            async function presentationModeChanged1()
+            {
+                await testExpectedEventually('video.webkitDisplayingFullscreen', true);
+                consoleWrite("<br>** Entered fullscreen");
+                testExpected("video.webkitPresentationMode", "fullscreen");
+                consoleWrite("<br>** Try to enter picture-in-picture");
+                waitForEventOnce('webkitpresentationmodechanged', presentationModeChanged2);
+                runWithKeyDown("video.webkitSetPresentationMode('picture-in-picture')");
+            }
+
+            async function presentationModeChanged2()
+            {
+                await testExpectedEventually('video.webkitDisplayingFullscreen', true);
+                consoleWrite("<br>** Entered picture-in-picture");
+                testExpected("video.webkitPresentationMode", "picture-in-picture");
+                consoleWrite("<br>** Try to return to inline");
+                waitForEventOnce('webkitpresentationmodechanged', testCompleted);
+                runWithKeyDown("video.webkitSetPresentationMode('inline')");
+            }
+
+            async function testCompleted()
+            {
+                await testExpectedEventually('video.webkitDisplayingFullscreen', false);
+                consoleWrite("<br>** Returned to inline");
+                testExpected("video.webkitPresentationMode", "inline");
+                consoleWrite("<br>** Test Completed");
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls playsinline></video>
+        <p>Test the video presentation mode (video fullscreen and picture-in-picture) API.</p>
+    </body>
 </html>

@@ -323,10 +323,6 @@ private:
     Vector<RetainPtr<WebVideoFullscreenController>> fullscreenControllersExiting;
 #endif
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    BOOL mockVideoPresentationModeEnabled;
-#endif
-
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<WebCore::PlaybackSessionModelMediaElement> playbackSessionModel;
     RefPtr<WebCore::PlaybackSessionInterfaceMac> playbackSessionInterface;

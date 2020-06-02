@@ -236,5 +236,6 @@ private:
 
     String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&) const final;
 
+    bool m_mockVideoPresentationModeEnabled { false };
     WebView *m_webView;
 };

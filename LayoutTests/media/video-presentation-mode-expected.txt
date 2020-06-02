@@ -9,6 +9,7 @@ EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 ** Try to enter fullscreen
 RUN(video.webkitSetPresentationMode('fullscreen'))
 EVENT(webkitpresentationmodechanged)
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 
 ** Entered fullscreen
 EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
@@ -16,6 +17,7 @@ EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
 ** Try to enter picture-in-picture
 RUN(video.webkitSetPresentationMode('picture-in-picture'))
 EVENT(webkitpresentationmodechanged)
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 
 ** Entered picture-in-picture
 EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
@@ -23,6 +25,7 @@ EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
 ** Try to return to inline
 RUN(video.webkitSetPresentationMode('inline'))
 EVENT(webkitpresentationmodechanged)
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
 
 ** Returned to inline
 EXPECTED (video.webkitPresentationMode == 'inline') OK

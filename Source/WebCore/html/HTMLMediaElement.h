@@ -561,7 +561,7 @@ public:
 
     bool isSuspended() const final;
 
-    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
+    WEBCORE_EXPORT void didBecomeFullscreenElement() override;
     WEBCORE_EXPORT void willExitFullscreen();
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

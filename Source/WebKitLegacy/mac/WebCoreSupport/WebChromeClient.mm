@@ -72,6 +72,7 @@
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLPlugInImageElement.h>
+#import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
@@ -969,7 +970,7 @@ bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullsc
 
 void WebChromeClient::setMockVideoPresentationModeEnabled(bool enabled)
 {
-    [m_webView _setMockVideoPresentationModeEnabled:enabled];
+    m_mockVideoPresentationModeEnabled = enabled;
 }
 
 void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode, bool standby)
@@ -977,21 +978,30 @@ void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& vide
     ASSERT_UNUSED(standby, !standby);
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _enterVideoFullscreenForVideoElement:&videoElement mode:mode];
+    if (m_mockVideoPresentationModeEnabled)
+        videoElement.didBecomeFullscreenElement();
+    else
+        [m_webView _enterVideoFullscreenForVideoElement:&videoElement mode:mode];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&)
+void WebChromeClient::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _exitVideoFullscreen];
+    if (m_mockVideoPresentationModeEnabled)
+        videoElement.didStopBeingFullscreenElement();
+    else
+        [m_webView _exitVideoFullscreen];
     END_BLOCK_OBJC_EXCEPTIONS;    
 }
 
 void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _exitVideoFullscreen];
+    if (m_mockVideoPresentationModeEnabled)
+        videoElement.didStopBeingFullscreenElement();
+    else
+        [m_webView _exitVideoFullscreen];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

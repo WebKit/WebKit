@@ -270,7 +270,6 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 #if ENABLE(VIDEO) && defined(__cplusplus)
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-- (void)_setMockVideoPresentationModeEnabled:(BOOL)enabled;
 - (void)_enterVideoFullscreenForVideoElement:(NakedPtr<WebCore::HTMLVideoElement>)videoElement mode:(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)mode;
 - (void)_exitVideoFullscreen;
 #if PLATFORM(MAC)

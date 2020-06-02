@@ -38,16 +38,20 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline></video>"];
-    [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
-
-    __block bool presentationModeChanged = false;
-    [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')"];
 
-    TestWebKitAPI::Util::run(&presentationModeChanged);
+    do {
+        id result = [webView objectByEvaluatingJavaScript:@"document.querySelector('video').webkitDisplayingFullscreen"];
+        if ([result boolValue])
+            break;
 
-    presentationModeChanged = false;
+        TestWebKitAPI::Util::sleep(0.5);
+    } while (true);
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
+
+    __block bool presentationModeChanged = false;
     [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView _closeAllMediaPresentations];

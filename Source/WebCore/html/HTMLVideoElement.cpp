@@ -348,7 +348,9 @@ bool HTMLVideoElement::webkitSupportsFullscreen()
 
 bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
-    return isFullscreen() && !waitingToEnterFullscreen();
+    // This function starts to return true after the video element has entered
+    // fullscreen/picture-in-picture until it has exited fullscreen/picture-in-picture
+    return (isFullscreen() && !waitingToEnterFullscreen()) || (!isFullscreen() && m_isChangingPresentationMode);
 }
 
 void HTMLVideoElement::ancestorWillEnterFullscreen()
@@ -467,10 +469,15 @@ void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenM
 {
     INFO_LOG(LOGIDENTIFIER, ", mode = ", mode);
 
+    if (m_isChangingPresentationMode)
+        return;
+
     if (mode == VideoFullscreenModeNone) {
         if (isFullscreen()) {
             if (toPresentationMode(fullscreenMode()) == VideoPresentationMode::PictureInPicture)
                 m_isEnteringOrExitingPictureInPicture = true;
+
+            m_isChangingPresentationMode = true;
             exitFullscreen();
         }
 
@@ -483,7 +490,10 @@ void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenM
     if (mode == VideoFullscreenModePictureInPicture)
         m_isEnteringOrExitingPictureInPicture = true;
 
-    enterFullscreen(mode);
+    if (mode != fullscreenMode()) {
+        m_isChangingPresentationMode = true;
+        enterFullscreen(mode);
+    }
 }
 
 auto HTMLVideoElement::webkitPresentationMode() const -> VideoPresentationMode
@@ -504,14 +514,18 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
     HTMLMediaElement::fullscreenModeChanged(mode);
 }
 
-void HTMLVideoElement::didEnterFullscreen()
+void HTMLVideoElement::didBecomeFullscreenElement()
 {
+    m_isChangingPresentationMode = false;
     if (m_isEnteringOrExitingPictureInPicture)
         m_isWaitingForPictureInPictureWindowFrame = true;
+
+    HTMLMediaElement::didBecomeFullscreenElement();
 }
 
-void HTMLVideoElement::didExitFullscreen()
+void HTMLVideoElement::didStopBeingFullscreenElement()
 {
+    m_isChangingPresentationMode = false;
     if (m_isEnteringOrExitingPictureInPicture) {
         m_isEnteringOrExitingPictureInPicture = false;
 #if ENABLE(PICTURE_IN_PICTURE_API)

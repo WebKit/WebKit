@@ -1,3 +1,27 @@
+2020-06-02  Peng Liu  <peng.liu6@apple.com>
+
+        Stressing webkitSetPresentationMode leads to wrong inline video dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=202425
+
+        Reviewed by Eric Carlson.
+
+        Move DumpRenderTree's implementation of the mock video presentation mode from WebView
+        to WebChromeClient and call videoElement.didStopBeingFullscreenElement() when a video
+        element exits fullscreen.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setMockVideoPresentationModeEnabled):
+        (WebChromeClient::enterVideoFullscreenForVideoElement):
+        (WebChromeClient::exitVideoFullscreenForVideoElement):
+        (WebChromeClient::exitVideoFullscreenToModeWithoutAnimation):
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]):
+        (-[WebView _exitVideoFullscreen]):
+        (-[WebView _setMockVideoPresentationModeEnabled:]): Deleted.
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
 2020-06-01  David Kilzer  <ddkilzer@apple.com>
 
         Don't use casts to convert between WebCore::DragDestinationAction and {Web,WK}DragDestinationAction types

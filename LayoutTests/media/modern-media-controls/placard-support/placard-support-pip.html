@@ -25,8 +25,10 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>PlacardSupport</code> behavior when entering picture-in-picture.");
 
-if (window.internals)
+if (window.internals) {
     window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+    window.internals.setMockVideoPresentationModeEnabled(true);
+}
 
 const container = document.querySelector("div#host");
 const media = document.querySelector("video");
@@ -36,19 +38,22 @@ const button = document.body.appendChild(document.createElement("div"));
 button.innerText = "Enter picture-in-picture";
 
 button.addEventListener("click", togglePiP);
-
 media.addEventListener("webkitpresentationmodechanged", () => {
     if (media.webkitPresentationMode == "picture-in-picture") {
-        shouldBe("mediaController.controls.placard", "mediaController.controls.pipPlacard");
-        shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.pipPlacard)");
-        togglePiP();
+        shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
+            shouldBe("mediaController.controls.placard", "mediaController.controls.pipPlacard");
+            shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.pipPlacard)");
+            togglePiP();
+        });
     } else {
-        shouldBeNull("mediaController.controls.placard");
-        shouldBeFalse("mediaController.controls.children.includes(mediaController.controls.pipPlacard)");
-        container.remove();
-        media.remove();
-        button.remove();
-        finishJSTest();
+        shouldBecomeEqual("media.webkitDisplayingFullscreen", "false", () => {
+            shouldBeNull("mediaController.controls.placard");
+            shouldBeFalse("mediaController.controls.children.includes(mediaController.controls.pipPlacard)");
+            container.remove();
+            media.remove();
+            button.remove();
+            finishJSTest();
+        });
     }
 });
 

@@ -441,8 +441,6 @@ void VideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
     if (!videoElement)
         return;
 
-    videoElement->didEnterFullscreen();
-
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), videoElement] {
         videoElement->didBecomeFullscreenElement();
     });
@@ -508,7 +506,7 @@ void VideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
     model->setVideoFullscreenLayer(nil);
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     if (videoElement)
-        videoElement->didExitFullscreen();
+        videoElement->didStopBeingFullscreenElement();
 
     interface->setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
     interface->setFullscreenStandby(false);

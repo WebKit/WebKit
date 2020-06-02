@@ -1,11 +1,11 @@
 This tests that the "webkitpresentationmodechanged" event is fired only once when the browser switches back to inline from the picture-in-picture mode.
 
-RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
 RUN(video.src = findMediaFile("video", "content/test"))
 EVENT(canplaythrough)
 RUN(video.play())
 RUN(video.webkitSetPresentationMode("picture-in-picture"))
 EVENT(webkitpresentationmodechanged)
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
 EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
 RUN(video.webkitSetPresentationMode("inline"))
 EVENT(webkitpresentationmodechanged)

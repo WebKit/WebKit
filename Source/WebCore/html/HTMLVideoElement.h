@@ -89,8 +89,8 @@ public:
     void setFullscreenMode(VideoFullscreenMode);
     void fullscreenModeChanged(VideoFullscreenMode) final;
 
-    WEBCORE_EXPORT void didEnterFullscreen();
-    WEBCORE_EXPORT void didExitFullscreen();
+    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
+    WEBCORE_EXPORT void didStopBeingFullscreenElement() final;
     void setVideoFullscreenFrame(FloatRect) final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -134,6 +134,7 @@ private:
     unsigned m_lastReportedVideoWidth { 0 };
     unsigned m_lastReportedVideoHeight { 0 };
 
+    bool m_isChangingPresentationMode { false };
     bool m_isEnteringOrExitingPictureInPicture { false };
     bool m_isWaitingForPictureInPictureWindowFrame { false };
 #if ENABLE(PICTURE_IN_PICTURE_API)

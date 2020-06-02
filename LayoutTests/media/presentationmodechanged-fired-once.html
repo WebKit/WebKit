@@ -8,8 +8,12 @@
 
         function go()
         {
+            if (window.internals) {
+                internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+                internals.setMockVideoPresentationModeEnabled(true);
+            }
+
             findMediaElement();
-            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
             run('video.src = findMediaFile("video", "content/test")');
             waitForEventOnce('canplaythrough', canPlayThrough);
         }
@@ -21,8 +25,9 @@
             waitForEventOnce("webkitpresentationmodechanged", presentationModeChanged1);
         }
 
-        function presentationModeChanged1()
+        async function presentationModeChanged1()
         {
+            await testExpectedEventually('video.webkitDisplayingFullscreen', true);
             testExpected("video.webkitPresentationMode", "picture-in-picture");
             runWithKeyDown('video.webkitSetPresentationMode("inline")');
             waitForEvent("webkitpresentationmodechanged", presentationModeChanged2);

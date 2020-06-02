@@ -3,8 +3,10 @@ Testing the PlacardSupport behavior when entering picture-in-picture.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS media.webkitDisplayingFullscreen became true
 PASS mediaController.controls.placard is mediaController.controls.pipPlacard
 PASS mediaController.controls.children.includes(mediaController.controls.pipPlacard) is true
+PASS media.webkitDisplayingFullscreen became false
 PASS mediaController.controls.placard is null
 PASS mediaController.controls.children.includes(mediaController.controls.pipPlacard) is false
 PASS successfullyParsed is true
