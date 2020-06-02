@@ -1,3 +1,24 @@
+2020-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Fix thread-safety issue in [WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpiration]
+        https://bugs.webkit.org/show_bug.cgi?id=212615
+        <rdar://problem/63569049>
+
+        Reviewed by Geoffrey Garen.
+
+        [WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpiration] may get called on a background thread
+        by RunningBoard. When this happened it would check the _applicationIsBackgrounded flag on a background thread,
+        which was not safe, it would also call _releaseBackgroundTask on the background thread which definitely was not
+        safe and could lead to crashes such as the one in the radar.
+
+        To address the issue, we now call callOnMainRunLoopAndWait() as soon as _handleBackgroundTaskExpiration gets
+        called and run the whole implementation on the main thread. Previously, we were already doing a dispatch_sync()
+        to the main thread but only for part of the implementation.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpiration]):
+        (-[WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpirationOnMainThread]):
+
 2020-06-01  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unused WebContent process sandbox syscall

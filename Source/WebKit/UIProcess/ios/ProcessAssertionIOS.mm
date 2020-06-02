@@ -224,6 +224,17 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 - (void)_handleBackgroundTaskExpiration
 {
     RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
+    callOnMainRunLoopAndWait([self] {
+        [self _handleBackgroundTaskExpirationOnMainThread];
+    });
+}
+
+- (void)_handleBackgroundTaskExpirationOnMainThread
+{
+    ASSERT(RunLoop::isMain());
+
+    // FIXME: While relying on _applicationIsBackgrounded is acceptable for applications, this is inacurate in the case
+    // of daemons.
     if (!_applicationIsBackgrounded) {
         // We've received the invalidation warning after the app has become foreground again. In this case, we should not
         // warn clients of imminent suspension. To be safe (avoid potential killing), we end the task right away and call
@@ -235,15 +246,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         return;
     }
 
-    // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
-    if (RunLoop::isMain())
-        [self _notifyAssertionsOfImminentSuspension];
-    else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self _notifyAssertionsOfImminentSuspension];
-        });
-    }
-
+    [self _notifyAssertionsOfImminentSuspension];
     [self _scheduleReleaseTask];
 }
 
