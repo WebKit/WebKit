@@ -1,3 +1,24 @@
+2020-06-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        [buildbot] [GTK][WPE] Move JavaScript related tests to own bot
+        https://bugs.webkit.org/show_bug.cgi?id=212481
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Currently GTK and WPE tests bots run too many tests. This makes
+        the total running time for each build very long.
+
+        This patch moves JavaScript related tests (jscore-test and
+        test262-test) to a separated bot which will be triggered by the
+        corresponding build bot of each platform.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (TestFactory.__init__):
+        (TestJSFactory):
+        (TestJSFactory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make popup menus work

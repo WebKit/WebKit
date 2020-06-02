@@ -117,10 +117,8 @@ class TestFactory(Factory):
         if platform == "gtk":
             self.addStep(RunGtkAPITests())
             self.addStep(RunWebDriverTests())
-            self.addStep(RunTest262Tests())
         if platform == "wpe":
             self.addStep(RunWPEAPITests())
-            self.addStep(RunTest262Tests())
 
 
 class BuildAndTestFactory(TestFactory):
@@ -196,6 +194,15 @@ class Test262Factory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
+        self.addStep(RunTest262Tests())
+
+
+class TestJSFactory(Factory):
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, SVNMirror=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, SVNMirror, device_model)
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+        self.addStep(RunJavaScriptCoreTests())
         self.addStep(RunTest262Tests())
 
 

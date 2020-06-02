@@ -77,6 +77,9 @@
                     { "name": "gtk-linux-slave-9", "platform": "gtk" },
                     { "name": "gtk-linux-slave-10", "platform": "gtk" },
                     { "name": "gtk-linux-slave-11", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-12", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-13", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-14", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -87,7 +90,9 @@
                     { "name": "wpe-linux-bot-1", "platform": "wpe" },
                     { "name": "wpe-linux-bot-2", "platform": "wpe" },
                     { "name": "wpe-linux-bot-3", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-4", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-4", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-5", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-6", "platform": "wpe" }
                   ],
 
     "builders":   [ 
@@ -252,24 +257,35 @@
                     {
                       "name": "GTK Linux 64-bit Release (Build)", "type": "BuildAndGenerateJSCBundle", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
+                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js",
+                                   "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Tests)", "type": "Test", "builddir": "gtk-linux-64-release-tests",
+                      "name": "GTK Linux 64-bit Release (Tests)", "type": "TestAllButJSC", "builddir": "gtk-linux-64-release-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-6"]
                     },
                     {
+                      "name": "GTK Linux 64-bit Release (Tests JS)", "type": "TestJS", "builddir": "gtk-linux-64-release-tests-js",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-bot-12"]
+                    },
+                    {
                       "name": "GTK Linux 64-bit Debug (Build)", "type": "Build", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["gtk-linux-64-debug-tests"],
+                      "triggers": ["gtk-linux-64-debug-tests", "gtk-linux-64-debug-tests-js"],
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "Test", "builddir": "gtk-linux-64-debug-tests",
+                      "name": "GTK Linux 64-bit Debug (Tests)", "type": "TestAllButJSC", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-7"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Debug (Tests JS)", "type": "TestJS", "builddir": "gtk-linux-64-debug-tests-js",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-bot-13"]
                     },
                     {
                       "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "gtk-linux-64-release-perf-tests",
@@ -278,7 +294,7 @@
                       "slavenames": ["gtk-linux-slave-8"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release Wayland (Tests)", "type": "Test", "builddir": "gtk-linux-64-release-wayland-tests",
+                      "name": "GTK Linux 64-bit Release Wayland (Tests)", "type": "TestAllButJSC", "builddir": "gtk-linux-64-release-wayland-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--display-server=wayland"],
                       "slavenames": ["gtk-linux-slave-9"]
@@ -360,24 +376,34 @@
                     {
                       "name": "WPE Linux 64-bit Release (Build)", "type": "Build", "builddir": "wpe-linux-64-release",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["wpe-linux-64-release-tests"],
+                      "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js"],
                       "slavenames": ["wpe-linux-bot-1"]
                     },
-                   {
-                      "name": "WPE Linux 64-bit Release (Tests)", "type": "Test", "builddir": "wpe-linux-64-release-tests",
+                    {
+                      "name": "WPE Linux 64-bit Release (Tests)", "type": "TestAllButJSC", "builddir": "wpe-linux-64-release-tests",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-2"]
                     },
                     {
+                      "name": "WPE Linux 64-bit Release (Tests JS)", "type": "TestJS", "builddir": "wpe-linux-64-release-tests-js",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["wpe-linux-bot-5"]
+                    },
+                    {
                       "name": "WPE Linux 64-bit Debug (Build)", "type": "Build", "builddir": "wpe-linux-64-debug",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["wpe-linux-64-debug-tests"],
+                      "triggers": ["wpe-linux-64-debug-tests", "wpe-linux-64-debug-tests-js"],
                       "slavenames": ["wpe-linux-bot-3"]
                     },
                     {
-                      "name": "WPE Linux 64-bit Debug (Tests)", "type": "Test", "builddir": "wpe-linux-64-debug-tests",
+                      "name": "WPE Linux 64-bit Debug (Tests)", "type": "TestAllButJSC", "builddir": "wpe-linux-64-debug-tests",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-4"]
+                    },
+                    {
+                      "name": "WPE Linux 64-bit Debug (Tests JS)", "type": "TestJS", "builddir": "wpe-linux-64-debug-tests-js",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["wpe-linux-bot-6"]
                     }
                   ],
 
@@ -471,8 +497,14 @@
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
                       "builderNames": ["GTK Linux 64-bit Release (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests-js",
+                      "builderNames": ["GTK Linux 64-bit Release (Tests JS)"]
+                    },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
                       "builderNames": ["GTK Linux 64-bit Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-js",
+                      "builderNames": ["GTK Linux 64-bit Debug (Tests JS)"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-perf-tests",
                       "builderNames": ["GTK Linux 64-bit Release (Perf)"]
@@ -495,8 +527,14 @@
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
                       "builderNames": ["WPE Linux 64-bit Release (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "wpe-linux-64-release-tests-js",
+                      "builderNames": ["WPE Linux 64-bit Release (Tests JS)"]
+                    },
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests",
                       "builderNames": ["WPE Linux 64-bit Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-js",
+                      "builderNames": ["WPE Linux 64-bit Debug (Tests JS)"]
                     }
                   ]
 }
