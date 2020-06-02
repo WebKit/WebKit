@@ -1,5 +1,15 @@
 2020-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Make popup menus work
+        https://bugs.webkit.org/show_bug.cgi?id=211178
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::dismissAllPopupMenus):
+
+2020-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Make it possible to run layout tests
         https://bugs.webkit.org/show_bug.cgi?id=212328
 

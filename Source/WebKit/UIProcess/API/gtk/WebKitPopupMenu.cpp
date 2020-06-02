@@ -28,24 +28,17 @@ namespace WebKit {
 using namespace WebCore;
 
 WebKitPopupMenu::WebKitPopupMenu(GtkWidget* webView, WebPopupMenuProxy::Client& client)
-#if USE(GTK4)
-    : WebPopupMenuProxy(client)
-#else
     : WebPopupMenuProxyGtk(webView, client)
-#endif
 {
 }
 
-#if !USE(GTK4)
 static void menuCloseCallback(WebKitPopupMenu* popupMenu)
 {
     popupMenu->activateItem(WTF::nullopt);
 }
-#endif
 
 void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& platformData, int32_t selectedIndex)
 {
-#if !USE(GTK4)
     GRefPtr<WebKitOptionMenu> menu = adoptGRef(webkitOptionMenuCreate(*this, items, selectedIndex));
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
     if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), rect, menu.get(), event)) {
@@ -53,34 +46,28 @@ void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction
         g_signal_connect_swapped(m_menu.get(), "close", G_CALLBACK(menuCloseCallback), this);
     } else
         WebPopupMenuProxyGtk::showPopupMenu(rect, direction, pageScaleFactor, items, platformData, selectedIndex);
-#endif
 }
 
 void WebKitPopupMenu::hidePopupMenu()
 {
-#if !USE(GTK4)
     if (!m_menu) {
         WebPopupMenuProxyGtk::hidePopupMenu();
         return;
     }
     g_signal_handlers_disconnect_matched(m_menu.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     webkit_option_menu_close(m_menu.get());
-#endif
 }
 
 void WebKitPopupMenu::cancelTracking()
 {
-#if !USE(GTK4)
     if (!m_menu) {
         WebPopupMenuProxyGtk::cancelTracking();
         return;
     }
     hidePopupMenu();
     m_menu = nullptr;
-#endif
 }
 
-#if !USE(GTK4)
 void WebKitPopupMenu::activateItem(Optional<unsigned> itemIndex)
 {
     WebPopupMenuProxyGtk::activateItem(itemIndex);
@@ -89,6 +76,5 @@ void WebKitPopupMenu::activateItem(Optional<unsigned> itemIndex)
         m_menu = nullptr;
     }
 }
-#endif
 
 } // namespace WebKit

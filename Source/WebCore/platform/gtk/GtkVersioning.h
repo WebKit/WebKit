@@ -221,6 +221,12 @@ gtk_dialog_run(GtkDialog* dialog)
     return context.response;
 }
 
+static inline void
+gtk_tree_view_column_cell_get_size(GtkTreeViewColumn* column, const GdkRectangle*, gint* xOffset, gint* yOffset, gint* width, gint* height)
+{
+    gtk_tree_view_column_cell_get_size(column, xOffset, yOffset, width, height);
+}
+
 #else // USE(GTK4)
 
 static inline void

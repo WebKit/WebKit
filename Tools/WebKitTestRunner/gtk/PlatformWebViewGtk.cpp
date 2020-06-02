@@ -247,7 +247,12 @@ void PlatformWebView::didInitializeClients()
 
 void PlatformWebView::dismissAllPopupMenus()
 {
-#if !USE(GTK4)
+#if USE(GTK4)
+    for (auto* child = gtk_widget_get_first_child(GTK_WIDGET(m_view)); child; child = gtk_widget_get_next_sibling(child)) {
+        if (GTK_IS_POPOVER(child))
+            gtk_widget_unparent(child);
+    }
+#else
     // gtk_menu_popdown doesn't modify the GList of attached menus, so it should
     // be safe to walk this list while calling it.
     GList* attachedMenusList = gtk_menu_get_for_attach_widget(GTK_WIDGET(m_view));
