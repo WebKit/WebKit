@@ -45,7 +45,6 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 
-VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_RequiredLowLatency;
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
