@@ -1,3 +1,12 @@
+2020-06-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ macOS ] REGRESSION(r262366): webgl/1.0.3/conformance/canvas/buffer-offscreen-test.html & webgl/2.0.0/conformance/canvas/buffer-offscreen-test.html are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=212594
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Mark tests as failing.
+
 2020-06-01  Jason Lawrence  <lawrence.j@apple.com>
 
         (r261103) [ Mac WK2 ] inspector/page/overrideSetting-ITPDebugModeEnabled.html is a flaky failure

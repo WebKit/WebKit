@@ -1967,5 +1967,8 @@ webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 
 webkit.org/b/212488 [ Catalina ] media/video-play-audio-require-user-gesture.html [ Pass Timeout ]
 
+webkit.org/b/212594 webgl/2.0.0/conformance/canvas/buffer-offscreen-test.html [ Failure ]
+webkit.org/b/212594 webgl/1.0.3/conformance/canvas/buffer-offscreen-test.html [ Failure ]
+
 # This test requires an update to system decoders
 webkit.org/b/212565 [ Catalina Mojave ] imported/w3c/web-platform-tests/encoding/single-byte-decoder.html [ Failure ]
