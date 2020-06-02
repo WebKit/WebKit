@@ -1,5 +1,50 @@
 2020-06-02  Youenn Fablet  <youenn@apple.com>
 
+        MediaPlayerPrivateMediaStreamAVFObjC should enqueue samples in a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=212073
+
+        Reviewed by Eric Carlson.
+
+        Do not hop to the main thread when rendering video samples anymore.
+        Instead, we enqueue to the display layer in the background thread but still hop to the main thread for two things:
+        - Update of various states of the player
+        - keep a ref to the video sample if canvas rendering is needed.
+
+        Most display layer operations stay in the main thread (creation, flushing...).
+        Deletion of the display layer and access from a background are covered by a lock.
+        The m_canEnqueueDisplayLayer boolean ensures we do not enqueue too early when the display layer is not yet properly initialized.
+
+        LocalSampleBufferDisplayLayer needs to handle the fact that enqueueing might be done in a background thread.
+        Instead of introducing a lock, we introduce a work queue and we hop to this queue whenever we need to enqueue/mutate the pending samples.
+
+        Covered by existing tests and manual testing.
+
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (-[WebAVSampleBufferStatusChangeListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSampleBuffer):
+        (WebCore::LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::videoTransformationMatrix):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSampleAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatrix): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer): Deleted.
+
+2020-06-02  Youenn Fablet  <youenn@apple.com>
+
         [ Mac wk2 ] http/wpt/service-workers/service-worker-spinning-fetch.https.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=207515
         <rdar://problem/59329307>
