@@ -69,6 +69,8 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/FreeList.h
     bmalloc/FreeListInlines.h
     bmalloc/Gigacage.h
+    bmalloc/GigacageConfig.h
+    bmalloc/GigacageKind.h
     bmalloc/Heap.h
     bmalloc/HeapConstants.h
     bmalloc/HeapKind.h

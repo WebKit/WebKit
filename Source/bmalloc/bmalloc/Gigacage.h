@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "Algorithm.h"
 #include "BAssert.h"
 #include "BExport.h"
 #include "BInline.h"
 #include "BPlatform.h"
+#include "GigacageConfig.h"
 #include "Sizes.h"
+#include "StdLibExtras.h"
 #include <cstddef>
 #include <inttypes.h>
 
@@ -43,12 +44,6 @@
 
 
 namespace Gigacage {
-
-enum Kind {
-    Primitive,
-    JSValue,
-    NumberOfKinds
-};
 
 BINLINE const char* name(Kind kind)
 {
@@ -65,8 +60,6 @@ BINLINE const char* name(Kind kind)
 }
 
 #if GIGACAGE_ENABLED
-
-constexpr size_t configSizeToProtect = 16 * bmalloc::Sizes::kB;
 
 #if BOS_EFFECTIVE_ADDRESS_WIDTH < 48
 constexpr size_t primitiveGigacageSize = 2 * bmalloc::Sizes::GB;
@@ -97,51 +90,11 @@ constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 constexpr size_t primitiveGigacageMask = gigacageSizeToMask(primitiveGigacageSize);
 constexpr size_t jsValueGigacageMask = gigacageSizeToMask(jsValueGigacageSize);
 
-struct Config {
-    void* basePtr(Kind kind) const
-    {
-        RELEASE_BASSERT(kind < NumberOfKinds);
-        return basePtrs[kind];
-    }
-
-    void setBasePtr(Kind kind, void* ptr)
-    {
-        RELEASE_BASSERT(kind < NumberOfKinds);
-        basePtrs[kind] = ptr;
-    }
-
-    union {
-        struct {
-            // All the fields in this struct should be chosen such that their
-            // initial value is 0 / null / falsy because Config is instantiated
-            // as a global singleton.
-
-            bool isEnabled;
-            bool isPermanentlyFrozen;
-            bool disablingPrimitiveGigacageIsForbidden;
-            bool shouldBeEnabled;
-
-            // We would like to just put the std::once_flag for these functions
-            // here, but we can't because std::once_flag has a implicitly-deleted
-            // default constructor. So, we use a boolean instead.
-            bool shouldBeEnabledHasBeenCalled;
-            bool ensureGigacageHasBeenCalled;
-
-            void* start;
-            size_t totalSize;
-            void* basePtrs[NumberOfKinds];
-        };
-        char ensureSize[configSizeToProtect];
-    };
-};
-static_assert(sizeof(Config) == configSizeToProtect, "Gigacage Config must fit in configSizeToProtect");
-
-extern "C" alignas(configSizeToProtect) BEXPORT Config g_gigacageConfig;
-
 // These constants are needed by the LLInt.
 constexpr ptrdiff_t offsetOfPrimitiveGigacageBasePtr = Kind::Primitive * sizeof(void*);
 constexpr ptrdiff_t offsetOfJSValueGigacageBasePtr = Kind::JSValue * sizeof(void*);
 
+extern "C" BEXPORT bool disablePrimitiveGigacageRequested;
 
 BINLINE bool isEnabled() { return g_gigacageConfig.isEnabled; }
 
@@ -155,12 +108,26 @@ BEXPORT void removePrimitiveDisableCallback(void (*)(void*), void*);
 
 BEXPORT void forbidDisablingPrimitiveGigacage();
 
-BEXPORT bool isDisablingPrimitiveGigacageForbidden();
-inline bool isPrimitiveGigacagePermanentlyEnabled() { return isDisablingPrimitiveGigacageForbidden(); }
-inline bool canPrimitiveGigacageBeDisabled() { return !isDisablingPrimitiveGigacageForbidden(); }
+BINLINE bool disablingPrimitiveGigacageIsForbidden()
+{
+    return g_gigacageConfig.disablingPrimitiveGigacageIsForbidden;
+}
+
+BINLINE bool disableNotRequestedForPrimitiveGigacage()
+{
+    return !disablePrimitiveGigacageRequested;
+}
+
+BINLINE bool isEnabled(Kind kind)
+{
+    if (kind == Primitive)
+        return g_gigacageConfig.basePtr(Primitive) && (disablingPrimitiveGigacageIsForbidden() || disableNotRequestedForPrimitiveGigacage());
+    return g_gigacageConfig.basePtr(kind);
+}
 
 BINLINE void* basePtr(Kind kind)
 {
+    BASSERT(isEnabled(kind));
     return g_gigacageConfig.basePtr(kind);
 }
 
@@ -168,11 +135,6 @@ BINLINE void* addressOfBasePtr(Kind kind)
 {
     RELEASE_BASSERT(kind < NumberOfKinds);
     return &g_gigacageConfig.basePtrs[kind];
-}
-
-BINLINE bool isEnabled(Kind kind)
-{
-    return !!g_gigacageConfig.basePtr(kind);
 }
 
 BINLINE size_t size(Kind kind)
@@ -210,9 +172,9 @@ template<typename T>
 BINLINE T* caged(Kind kind, T* ptr)
 {
     BASSERT(ptr);
-    void* gigacageBasePtr = g_gigacageConfig.basePtr(kind);
-    if (!gigacageBasePtr)
+    if (!isEnabled(kind))
         return ptr;
+    void* gigacageBasePtr = basePtr(kind);
     return reinterpret_cast<T*>(
         reinterpret_cast<uintptr_t>(gigacageBasePtr) + (
             reinterpret_cast<uintptr_t>(ptr) & mask(kind)));
@@ -251,13 +213,13 @@ BINLINE void* basePtr(Kind)
 BINLINE size_t size(Kind) { BCRASH(); return 0; }
 BINLINE void ensureGigacage() { }
 BINLINE bool contains(const void*) { return false; }
+BINLINE bool disablingPrimitiveGigacageIsForbidden() { return false; }
 BINLINE bool isEnabled() { return false; }
 BINLINE bool isCaged(Kind, const void*) { return true; }
 BINLINE bool isEnabled(Kind) { return false; }
 template<typename T> BINLINE T* caged(Kind, T* ptr) { return ptr; }
 template<typename T> BINLINE T* cagedMayBeNull(Kind, T* ptr) { return ptr; }
 BINLINE void forbidDisablingPrimitiveGigacage() { }
-BINLINE bool canPrimitiveGigacageBeDisabled() { return false; }
 BINLINE void disablePrimitiveGigacage() { }
 BINLINE void addPrimitiveDisableCallback(void (*)(void*), void*) { }
 BINLINE void removePrimitiveDisableCallback(void (*)(void*), void*) { }

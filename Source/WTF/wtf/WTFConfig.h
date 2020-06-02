@@ -33,6 +33,22 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/threads/Signals.h>
 
+#if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+namespace Gigacage {
+constexpr size_t reservedSlotsForGigacageConfig = 0;
+constexpr size_t reservedBytesForGigacageConfig = 0;
+}
+#else
+#include <bmalloc/GigacageConfig.h>
+#endif
+
+namespace WebConfig {
+
+using Slot = uint64_t;
+extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
+
+} // namespace WebConfig
+
 namespace WTF {
 
 constexpr size_t ConfigSizeToProtect = CeilingOnPageSize;
@@ -45,28 +61,31 @@ struct Config {
         ~AssertNotFrozenScope();
     };
 
-    union {
-        struct {
-            // All the fields in this struct should be chosen such that their
-            // initial value is 0 / null / falsy because Config is instantiated
-            // as a global singleton.
+    // All the fields in this struct should be chosen such that their
+    // initial value is 0 / null / falsy because Config is instantiated
+    // as a global singleton.
 
-            bool isPermanentlyFrozen;
+    bool isPermanentlyFrozen;
 
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
-            SignalHandlers signalHandlers;
+    SignalHandlers signalHandlers;
 #endif
-            PtrTagLookup* ptrTagLookupHead;
+    PtrTagLookup* ptrTagLookupHead;
 
-            uint64_t spaceForExtensions[1];
-        };
-        char ensureSize[ConfigSizeToProtect];
-    };
+    uint64_t spaceForExtensions[1];
 };
 
-extern "C" alignas(ConfigSizeToProtect) WTF_EXPORT_PRIVATE Config g_wtfConfig;
+constexpr size_t startSlotOfWTFConfig = Gigacage::reservedSlotsForGigacageConfig;
+constexpr size_t startOffsetOfWTFConfig = startSlotOfWTFConfig * sizeof(WebConfig::Slot);
 
-static_assert(sizeof(Config) == ConfigSizeToProtect);
+constexpr size_t offsetOfWTFConfigExtension = startOffsetOfWTFConfig + offsetof(WTF::Config, spaceForExtensions);
+
+constexpr size_t alignmentOfWTFConfig = std::alignment_of<WTF::Config>::value;
+
+static_assert(Gigacage::reservedBytesForGigacageConfig + sizeof(WTF::Config) <= ConfigSizeToProtect);
+static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) == startOffsetOfWTFConfig);
+
+#define g_wtfConfig (*bitwise_cast<WTF::Config*>(&WebConfig::g_config[WTF::startSlotOfWTFConfig]))
 
 ALWAYS_INLINE Config::AssertNotFrozenScope::AssertNotFrozenScope()
 {

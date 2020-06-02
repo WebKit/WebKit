@@ -7247,7 +7247,7 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
         return;
     }
     
-    if (Gigacage::canPrimitiveGigacageBeDisabled()) {
+    if (!Gigacage::disablingPrimitiveGigacageIsForbidden()) {
         VM& vm = this->vm();
         if (vm.primitiveGigacageEnabled().isStillValid())
             m_jit.graph().watchpoints().addLazily(vm.primitiveGigacageEnabled());

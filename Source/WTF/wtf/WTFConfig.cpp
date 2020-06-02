@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/WTFConfig.h>
 
+#include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
 
@@ -35,9 +36,13 @@
 #include <sys/mman.h>
 #endif
 
-namespace WTF {
+namespace WebConfig {
 
-alignas(ConfigSizeToProtect) WTF_EXPORT_PRIVATE Config g_wtfConfig;
+alignas(WTF::ConfigSizeToProtect) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Slot)];
+
+} // namespace WebConfig
+
+namespace WTF {
 
 void Config::permanentlyFreeze()
 {
@@ -46,8 +51,12 @@ void Config::permanentlyFreeze()
 
     RELEASE_ASSERT(roundUpToMultipleOf(pageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
 
-    if (!g_wtfConfig.isPermanentlyFrozen)
+    if (!g_wtfConfig.isPermanentlyFrozen) {
         g_wtfConfig.isPermanentlyFrozen = true;
+#if GIGACAGE_ENABLED
+        g_gigacageConfig.isPermanentlyFrozen = true;
+#endif
+    }
 
     int result = 0;
 #if OS(DARWIN)
@@ -57,9 +66,9 @@ void Config::permanentlyFreeze()
     };
 
     // There's no going back now!
-    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_wtfConfig), ConfigSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
+    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&WebConfig::g_config), ConfigSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
 #elif OS(LINUX)
-    result = mprotect(&g_wtfConfig, ConfigSizeToProtect, PROT_READ);
+    result = mprotect(&WebConfig::g_config, ConfigSizeToProtect, PROT_READ);
 #elif OS(WINDOWS)
     // FIXME: Implement equivalent, maybe with VirtualProtect.
     // Also need to fix WebKitTestRunner.

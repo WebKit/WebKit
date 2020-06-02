@@ -151,6 +151,8 @@
 		EB17D11123BFCD42002093A7 /* HeapConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB17D11023BFC8C4002093A7 /* HeapConstants.cpp */; };
 		EB17D11223BFCD7A002093A7 /* HeapConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = EB17D10E23BE691D002093A7 /* HeapConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD3A2321E8CC00F136D0 /* FailureAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEC3A39324846A8100395B54 /* GigacageConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A39224846A6D00395B54 /* GigacageConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEC3A395248471FE00395B54 /* GigacageKind.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A394248471FE00395B54 /* GigacageKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -307,6 +309,8 @@
 		EB17D10E23BE691D002093A7 /* HeapConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeapConstants.h; path = bmalloc/HeapConstants.h; sourceTree = "<group>"; };
 		EB17D11023BFC8C4002093A7 /* HeapConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeapConstants.cpp; path = bmalloc/HeapConstants.cpp; sourceTree = "<group>"; };
 		FE48BD3A2321E8CC00F136D0 /* FailureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FailureAction.h; path = bmalloc/FailureAction.h; sourceTree = "<group>"; };
+		FEC3A39224846A6D00395B54 /* GigacageConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageConfig.h; path = bmalloc/GigacageConfig.h; sourceTree = "<group>"; };
+		FEC3A394248471FE00395B54 /* GigacageKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageKind.h; path = bmalloc/GigacageKind.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -486,6 +490,8 @@
 				FE48BD3A2321E8CC00F136D0 /* FailureAction.h */,
 				0F5BF14E1F22DEAF0029D91D /* Gigacage.cpp */,
 				0F5BF14C1F22B0C30029D91D /* Gigacage.h */,
+				FEC3A39224846A6D00395B54 /* GigacageConfig.h */,
+				FEC3A394248471FE00395B54 /* GigacageKind.h */,
 				14DA320E18875D9F007269E0 /* Heap.cpp */,
 				14DA320C18875B09007269E0 /* Heap.h */,
 				EB17D11023BFC8C4002093A7 /* HeapConstants.cpp */,
@@ -606,6 +612,7 @@
 				FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */,
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
 				0F7EB8441F9541B000F1ABCB /* FreeList.h in Headers */,
+				FEC3A39324846A8100395B54 /* GigacageConfig.h in Headers */,
 				0F7EB8291F9541B000F1ABCB /* FreeListInlines.h in Headers */,
 				0F5BF14D1F22B0C30029D91D /* Gigacage.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
@@ -654,6 +661,7 @@
 				E378A9E0246B68750029C2BB /* ObjectTypeTable.h in Headers */,
 				E328D84D23CEB38900545B18 /* Packed.h in Headers */,
 				0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */,
+				FEC3A395248471FE00395B54 /* GigacageKind.h in Headers */,
 				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */,
