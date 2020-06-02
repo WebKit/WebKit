@@ -71,7 +71,7 @@ Interdiff of #[% oldid %] and #[% newid %] for [% terms.bug %] #[% bugid %]
       [% FOREACH patch = other_patches %]
         <option value="[% patch.id %]"
         [% IF patch.selected %] selected[% END %]
-        >[% patch.desc FILTER html %]</option>
+        >[% patch.id %] - [% patch.desc FILTER html %]</option>
       [% END %]
       </select>
       and this patch
