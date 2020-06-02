@@ -1,3 +1,32 @@
+2020-06-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r262208. rdar://problem/63891613
+
+    REGRESSION (r254541): Valid mime types can only be added to the HashSet of the supported types for encoding
+    https://bugs.webkit.org/show_bug.cgi?id=212427
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2020-05-27
+    Reviewed by Darin Adler.
+    
+    Add back a check for the mime type validity which was removed in r254541.
+    
+    * platform/MIMETypeRegistry.cpp:
+    (WebCore::MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            REGRESSION (r254541): Valid mime types can only be added to the HashSet of the supported types for encoding
+            https://bugs.webkit.org/show_bug.cgi?id=212427
+
+            Reviewed by Darin Adler.
+
+            Add back a check for the mime type validity which was removed in r254541.
+
+            * platform/MIMETypeRegistry.cpp:
+            (WebCore::MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData):
+
 2020-05-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Non-collapsing row border should not make the table wider/taller
