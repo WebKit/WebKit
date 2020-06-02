@@ -1,3 +1,26 @@
+2020-06-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Update TestExpectations Sections
+        https://bugs.webkit.org/show_bug.cgi?id=212586
+
+        Initial conversion from the "kind of failure" to the "feature" based
+        approach to organizing the glib test expectations.
+
+        This is an attempt to group related expectations closer together. At
+        the time of this patch, some sections are only related to the top
+        folder at LayoutTests, like WebAnimations, but others have entries
+        from multiple folders, like GStreamer, WebGL. More specific features
+        like EncryptedMedia will likely have their own sections even though it
+        could be seen as a subset of GStreamer.
+
+        In doubt, there is a NEEDS TRIAGING section at the end of the file
+        where one can put the failure if not sure about which existing section
+        it should go and ask for a more detailed investigation.
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/glib/TestExpectations:
+
 2020-06-01  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] ChildIntrinsicLogicalWidth should use fit-content, not max-content
