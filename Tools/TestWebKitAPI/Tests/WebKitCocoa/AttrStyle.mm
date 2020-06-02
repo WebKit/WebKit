@@ -61,7 +61,7 @@ TEST(WebKit, AttrStyle)
 
     isDone = false;
     [webView evaluateJavaScript:@"document.body.getAttributeNode('dir').style.cssText" completionHandler:^(NSString *result, NSError *error) {
-        EXPECT_STREQ("direction: rtl; unicode-bidi: embed;", result.UTF8String);
+        EXPECT_STREQ("direction: rtl; unicode-bidi: isolate;", result.UTF8String);
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);

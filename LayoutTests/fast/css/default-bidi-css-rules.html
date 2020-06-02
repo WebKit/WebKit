@@ -21,14 +21,14 @@ function styleOf(name, attributes) {
 
 var tests = [
     ['div', {}, 'ltr', 'isolate'],
-    ['div', {'dir': 'ltr'}, 'ltr', 'embed'],
-    ['div', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['div', {'dir': 'ltr'}, 'ltr', 'isolate'],
+    ['div', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['div', {'dir': 'auto'}, 'ltr', 'isolate'],
     ['div', {'dir': ''}, 'ltr', 'embed'],
 
     ['span', {}, 'ltr', 'normal'],
-    ['span', {'dir': 'ltr'}, 'ltr', 'embed'],
-    ['span', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['span', {'dir': 'ltr'}, 'ltr', 'isolate'],
+    ['span', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['span', {'dir': 'auto'}, 'ltr', 'isolate'],
     ['span', {'dir': ''}, 'ltr', 'embed'],
 
@@ -51,14 +51,14 @@ var tests = [
     ['bdo', {'dir': ''}, 'ltr', 'bidi-override'],
 
     ['textarea', {}, 'ltr', 'normal'],
-    ['textarea', {'dir': 'ltr'}, 'ltr', 'embed'],
-    ['textarea', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['textarea', {'dir': 'ltr'}, 'ltr', 'isolate'],
+    ['textarea', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['textarea', {'dir': 'auto'}, 'ltr', 'plaintext'],
     ['textarea', {'dir': ''}, 'ltr', 'embed'],
 
     ['pre', {}, 'ltr', 'normal'],
-    ['pre', {'dir': 'ltr'}, 'ltr', 'embed'],
-    ['pre', {'dir': 'rtl'}, 'rtl', 'embed'],
+    ['pre', {'dir': 'ltr'}, 'ltr', 'isolate'],
+    ['pre', {'dir': 'rtl'}, 'rtl', 'isolate'],
     ['pre', {'dir': 'auto'}, 'ltr', 'plaintext'],
     ['pre', {'dir': ''}, 'ltr', 'embed'],
 ].forEach(function (test) {

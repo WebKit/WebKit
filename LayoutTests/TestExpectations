@@ -390,17 +390,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/2dcontext/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
 
 # Newly imported WPT ref tests failures.
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-001a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-002a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-003a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-003c.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-004a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-005a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-006a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-007a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-007c.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-008a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-009c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html [ ImageOnlyFailure ]

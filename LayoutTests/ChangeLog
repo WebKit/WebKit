@@ -1,3 +1,32 @@
+2020-06-01  Noam Rosenthal  <noam@webkit.org>
+
+        Make unicode-bidi:isolate the default for an element with a dir attribute (instead of unicode-bidi:embed)
+        https://bugs.webkit.org/show_bug.cgi?id=134630
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+                Unskipped w3c tests that now pass, testing this behavior.
+
+        * fast/css/default-bidi-css-rules-expected.txt:
+        * fast/css/default-bidi-css-rules.html:
+                This test was modified, as the default bidi CSS rules are modified.
+
+        * editing/selection/move-by-word-visually-mac-expected.txt:
+        * editing/selection/move-by-word-visually-single-space-inline-element.html:
+        * editing/style/make-text-writing-direction-inline-mac.html:
+        * editing/style/make-text-writing-direction-inline-win.html:
+        * fast/css/absolute-inline-alignment-2-expected.html:
+        * fast/css/absolute-inline-alignment-2.html:
+        * fast/text/bidi-embedding-pop-and-push-same.html:
+        * fast/text/bidi-reverse-runs-crash-expected.txt:
+        * fast/text/bidi-reverse-runs-crash.html:
+        * fast/text/international/bidi-LDB-2-HTML.html:
+        * fast/text/international/bidi-ignored-for-first-child-inline.html:
+        * fast/text/international/iso-8859-8.html:
+                These tests rely on the previous unicode-bidi: embed default.
+                Modified them to include that old default explicitly in the test, as they test something else.
+
 2020-06-01  Chris Dumez  <cdumez@apple.com>
 
         Update web-platform-tests/webaudio from upstream

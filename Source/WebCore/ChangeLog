@@ -1,3 +1,16 @@
+2020-06-01  Noam Rosenthal  <noam@webkit.org>
+
+        Make unicode-bidi:isolate the default for an element with a dir attribute (instead of unicode-bidi:embed)
+        https://bugs.webkit.org/show_bug.cgi?id=134630
+
+        Reviewed by Simon Fraser.
+
+        Unskipped 11 dir-isolation w3c tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute):
+                Use isolate instead of embed for unicode-bidi when dir attribute is present.
+
 2020-06-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Graphics: should use the `id` (name) of the animation if it exists

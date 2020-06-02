@@ -208,10 +208,15 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
         if (equalLettersIgnoringASCIICase(value, "auto"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
         else {
-            if (isLTROrRTLIgnoringCase(value))
+            auto unicodeBidiValue = CSSValueEmbed;
+
+            if (isLTROrRTLIgnoringCase(value)) {
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, value);
+                unicodeBidiValue = CSSValueIsolate;
+            } 
+
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, CSSValueEmbed);
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiValue);
         }
     } else if (name.matches(XMLNames::langAttr))
         mapLanguageAttributeToLocale(value, style);
