@@ -1,3 +1,12 @@
+2020-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Allow using web processes for service workers even though they loaded about URLs
+        https://bugs.webkit.org/show_bug.cgi?id=212464
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2020-06-02  Diego Pino Garcia  <dpino@igalia.com>
 
         [buildbot] [GTK][WPE] Move JavaScript related tests to own bot

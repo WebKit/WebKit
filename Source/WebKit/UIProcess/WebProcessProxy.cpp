@@ -1557,6 +1557,9 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     if (m_registrableDomain && m_registrableDomain->isEmpty())
         return;
 
+    if (url.protocolIsAbout())
+        return;
+
     auto registrableDomain = WebCore::RegistrableDomain { url };
     if (m_registrableDomain && *m_registrableDomain != registrableDomain) {
 #if ENABLE(SERVICE_WORKER)

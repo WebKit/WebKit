@@ -1,3 +1,19 @@
+2020-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Allow using web processes for service workers even though they loaded about URLs
+        https://bugs.webkit.org/show_bug.cgi?id=212464
+
+        Reviewed by Chris Dumez.
+
+        Before the patch, a web process that loads about:blank will not be able to run service workers.
+        A web process that is running service workers and is loading an about:blank page will also kill its service workers.
+        To prevent this, do not take into account about:blank URLs for the computation of the registrable domain of a process.
+
+        Covered by API tests.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didStartProvisionalLoadForMainFrame):
+
 2020-06-02  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: WKWebView's tint color is not propagated to Web Content process

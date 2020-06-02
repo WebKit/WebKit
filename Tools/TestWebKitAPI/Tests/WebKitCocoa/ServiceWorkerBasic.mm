@@ -1576,7 +1576,7 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     waitUntilServiceWorkerProcessCount(processPool, 2);
 }
 
-static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess)
+static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, bool loadAboutBlankBeforePage)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
@@ -1602,6 +1602,18 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    if (loadAboutBlankBeforePage) {
+        didFinishNavigation = false;
+        [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+        TestWebKitAPI::Util::run(&didFinishNavigation);
+    }
+
     [webView loadRequest:server.request()];
 
     waitUntilServiceWorkerProcessCount(processPool, 1);
@@ -1610,11 +1622,20 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess)
 
 TEST(ServiceWorkers, OutOfAndInProcessServiceWorker)
 {
-    bool useSeparateServiceWorkerProcess = false;
-    EXPECT_EQ(1u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess));
+    bool useSeparateServiceWorkerProcess = true;
+    bool firstLoadAboutBlank = true;
 
-    useSeparateServiceWorkerProcess = true;
-    EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess));
+    EXPECT_EQ(1u, launchServiceWorkerProcess(!useSeparateServiceWorkerProcess, !firstLoadAboutBlank));
+    EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, !firstLoadAboutBlank));
+}
+
+TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughServiceWorker)
+{
+    bool useSeparateServiceWorkerProcess = true;
+    bool firstLoadAboutBlank = true;
+
+    EXPECT_EQ(1u, launchServiceWorkerProcess(!useSeparateServiceWorkerProcess, firstLoadAboutBlank));
+    EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
 }
 
 void waitUntilServiceWorkerProcessForegroundActivityState(WKWebView *page, bool shouldHaveActivity)
