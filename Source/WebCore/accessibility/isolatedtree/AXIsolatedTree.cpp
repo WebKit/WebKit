@@ -198,17 +198,16 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     AXTRACE("AXIsolatedTree::updateNode");
     AXLOG(&axObject);
     ASSERT(isMainThread());
+
     AXID axID = axObject.objectID();
     auto* axParent = axObject.parentObject();
     AXID parentID = axParent ? axParent->objectID() : InvalidAXID;
 
-    LockHolder locker { m_changeLogLock };
-    if (auto object = nodeForID(axID)) {
-        ASSERT(object->objectID() == axID);
-        auto newObject = AXIsolatedObject::create(axObject, m_treeID, parentID);
+    auto newObject = AXIsolatedObject::create(axObject, m_treeID, parentID);
+    newObject->m_childrenIDs = axObject.childrenIDs();
 
-        // The new object should have the same children as the old one.
-        newObject->m_childrenIDs = object->m_childrenIDs;
+    {
+        LockHolder locker { m_changeLogLock };
         // Remove the old object and set the new one to be updated on the AX thread.
         m_pendingNodeRemovals.append(axID);
         m_pendingAppends.append(NodeChange(newObject, axObject.wrapper()));

@@ -1,3 +1,18 @@
+2020-06-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        AXIsolatedTree::updateNode should not call nodeForID.
+        https://bugs.webkit.org/show_bug.cgi?id=212662
+
+        Reviewed by Chris Fleizach.
+
+        In isolated tree mode AXIsolatedTree::nodeForID should be called only
+        on the secondary AX thread. So removing the need to call nodeForID in
+        updateNode by using AXCoreObject::childrenIDs() instead of retrieving
+        the isolated node to access its children IDs.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNode):
+
 2020-06-02  Keith Rollin  <krollin@apple.com>
 
         Revert FEATURES_DEFINES related changes
