@@ -337,8 +337,8 @@ void Network3BackendDispatcher::dispatch(long requestId, const String& method, R
     RefPtr<JSON::Object> parameters;
     message->getObject("params"_s, parameters);
 
-    typedef void (Network3BackendDispatcher::*CallHandler)(long requestId, RefPtr<JSON::Object>&& message);
-    typedef HashMap<String, CallHandler> DispatchMap;
+    using CallHandler = void (Network3BackendDispatcher::*)(long requestId, RefPtr<JSON::Object>&& message);
+    using DispatchMap = HashMap<String, CallHandler>;
     static NeverDestroyed<DispatchMap> dispatchMap;
     if (dispatchMap.get().isEmpty()) {
         static const struct MethodTable {
@@ -637,7 +637,7 @@ namespace Protocol {
 // Typedefs.
 namespace Network2 {
 /* Unique loader identifier. */
-typedef String LoaderId;
+using LoaderId = String;
 } // Network2
 // End of typedefs.
 

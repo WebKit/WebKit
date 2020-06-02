@@ -313,7 +313,7 @@ namespace Protocol {
 // Typedefs.
 namespace Runtime {
 /* Unique object identifier. */
-typedef int RemoteObjectId;
+using RemoteObjectId = int;
 } // Runtime
 // End of typedefs.
 

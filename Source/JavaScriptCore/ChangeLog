@@ -1,3 +1,27 @@
+2020-06-02  Rob Buis  <rbuis@igalia.com>
+
+        Make generated C++ code use modern C++
+        https://bugs.webkit.org/show_bug.cgi?id=190714
+
+        Reviewed by Sam Weinig.
+
+        Update inspector protocol generator and rebaseline the tests.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * yarr/generateYarrUnicodePropertyTables.py:
+
 2020-06-02  Paulo Matos  <pmatos@igalia.com>
 
         Fix assert message formatting
