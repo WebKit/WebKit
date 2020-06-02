@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<script src='/js-test-resources/ui-helper.js'></script>
+<script src='/resources/js-test-pre.js'></script>
+<script src='/resources/payment-request.js'></script>
+</head>
+<body>
+<script>
+
+description('Test ApplePayInstallmentItem and friends.');
+
+jsTestIsAsync = true;
+
+apiVersion = 9;
+
+expectedAPR = '3.875';
+expectedApplicationMetadata = { integer: 1, float: 2.1, string: 'string', date: new Date(), bool: true, array: ['a', 'b'], null: null };
+expectedBindingTotalAmount = '1.00';
+expectedCurrencyCode = 'USD';
+expectedFeatureType = 'appleCard';
+expectedIsInStorePurchase = false;
+expectedItemAmount = '31.45';
+expectedItemType = "mac";
+expectedMerchandisingImageData = 'dGVzdA==';
+expectedMerchantIdentifier = 'merchant';
+expectedOpenToBuyThresholdAmount = '2.50';
+expectedProgramIdentifier = 'programIdentifier';
+expectedProgramTerms = 'programTerms';
+expectedReferrerIdentifier = 'referrer';
+expectedRetailChannel = 'web';
+
+let validRequest = () => {
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Your Label', amount: '10.00' },
+        installmentConfiguration: {
+            bindingTotalAmount: expectedBindingTotalAmount,
+            currencyCode: expectedCurrencyCode,
+            merchandisingImageData: expectedMerchandisingImageData,
+            merchantIdentifier: expectedMerchantIdentifier,
+            openToBuyThresholdAmount: expectedOpenToBuyThresholdAmount,
+            referrerIdentifier: expectedReferrerIdentifier,
+            items: [{
+                type: expectedItemType,
+                amount: expectedItemAmount,
+                currencyCode: expectedCurrencyCode,
+                programIdentifier: expectedProgramIdentifier,
+                apr: expectedAPR,
+                programTerms: expectedProgramTerms,
+            }, {
+            }],
+            applicationMetadata: expectedApplicationMetadata,
+            retailChannel: expectedRetailChannel,
+        },
+    };
+};
+
+activateThen(() => {
+
+    debug('Test installmentConfiguration.items');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = 4; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = ""; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = null; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = true; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = new Date(); new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = ["a", "b"]; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = [{type: 4}]; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.items = [{type: "invalid"}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = undefined; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = []; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{type: undefined}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{type: "generic"}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{type: "phone"}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{type: "pad"}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{type: "watch"}]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.items = [{type: "mac"}]; new ApplePaySession(apiVersion, request)');
+    debug('');
+
+    debug('Test installmentConfiguration.applicationMetadata');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = 4; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = ""; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = null; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = true; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = new Date(); new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = ["a", "b"]; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = undefined; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = {}; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.applicationMetadata = {"foo": "bar"}; new ApplePaySession(apiVersion, request)');
+    debug('');
+
+    debug('Test installmentConfiguration.retailChannel');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.retailChannel = null; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.retailChannel = 4; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.retailChannel = ""; new ApplePaySession(apiVersion, request)');
+    shouldThrow('request = validRequest(); request.installmentConfiguration.retailChannel = "invalid"; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.retailChannel = undefined; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.retailChannel = "unknown"; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.retailChannel = "app"; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.retailChannel = "web"; new ApplePaySession(apiVersion, request)');
+    shouldNotThrow('request = validRequest(); request.installmentConfiguration.retailChannel = "inStore"; new ApplePaySession(apiVersion, request)');
+    debug('');
+
+    debug('Test platform conversion');
+    let session = new ApplePaySession(apiVersion, validRequest());
+    session.begin();
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items.length', '2');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].type', 'expectedItemType');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].amount', 'expectedItemAmount');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].currencyCode', 'expectedCurrencyCode');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].programIdentifier', 'expectedProgramIdentifier');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].apr', 'expectedAPR');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[0].programTerms', 'expectedProgramTerms');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.items[1].type', '"generic"');
+    shouldBe('JSON.stringify(internals.mockPaymentCoordinator.installmentConfiguration.applicationMetadata)', 'JSON.stringify(expectedApplicationMetadata, Object.keys(expectedApplicationMetadata).sort())');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.retailChannel', 'expectedRetailChannel');
+
+    finishJSTest();
+});
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

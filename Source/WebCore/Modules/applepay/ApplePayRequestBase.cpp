@@ -35,7 +35,7 @@
 #include <WebKitAdditions/ApplePayRequestBaseAdditions.cpp>
 #else
 namespace WebCore {
-static void finishConverting(ApplePaySessionPaymentRequest&, ApplePayRequestBase&) { }
+static ExceptionOr<void> finishConverting(ApplePaySessionPaymentRequest&, ApplePayRequestBase&) { return { }; }
 static bool requiresSupportedNetworks(unsigned, const ApplePayRequestBase&) { return true; }
 }
 #endif
@@ -103,7 +103,9 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     if (version >= 3)
         result.setSupportedCountries(WTFMove(request.supportedCountries));
 
-    finishConverting(result, request);
+    auto exception = finishConverting(result, request);
+    if (exception.hasException())
+        return exception.releaseException();
 
     return WTFMove(result);
 }

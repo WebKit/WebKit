@@ -109,6 +109,9 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     m_shippingMethods = convert(request.shippingMethods());
     m_requiredBillingContactFields = request.requiredBillingContactFields();
     m_requiredShippingContactFields = request.requiredShippingContactFields();
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    m_installmentConfiguration = request.installmentConfiguration().applePayInstallmentConfiguration();
+#endif
 
     ASSERT(showCount == hideCount);
     ++showCount;
