@@ -26,61 +26,18 @@
 #include "config.h"
 #include "JSCConfig.h"
 
-#include <wtf/Lock.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/WTFConfig.h>
-
-#if OS(DARWIN)
-#include <mach/mach.h>
-#elif OS(LINUX)
-#include <sys/mman.h>
-#endif
-
 namespace JSC {
-
-alignas(ConfigSizeToProtect) JS_EXPORT_PRIVATE Config g_jscConfig;
 
 void Config::disableFreezingForTesting()
 {
-    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen);
+    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());
     g_jscConfig.disabledFreezingForTesting = true;
 }
 
 void Config::enableRestrictedOptions()
 {
-    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen);
+    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());
     g_jscConfig.restrictedOptionsEnabled = true;
-}
-    
-void Config::permanentlyFreeze()
-{
-    WTF::Config::permanentlyFreeze();
-
-    static Lock configLock;
-    auto locker = holdLock(configLock);
-
-    RELEASE_ASSERT(roundUpToMultipleOf(pageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
-
-    if (!g_jscConfig.isPermanentlyFrozen)
-        g_jscConfig.isPermanentlyFrozen = true;
-
-    int result = 0;
-#if OS(DARWIN)
-    enum {
-        AllowPermissionChangesAfterThis = false,
-        DisallowPermissionChangesAfterThis = true
-    };
-
-    // There's no going back now!
-    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_jscConfig), ConfigSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
-#elif OS(LINUX)
-    result = mprotect(&g_jscConfig, ConfigSizeToProtect, PROT_READ);
-#elif OS(WINDOWS)
-    // FIXME: Implement equivalent, maybe with VirtualProtect.
-    // Also need to fix WebKitTestRunner.
-#endif
-    RELEASE_ASSERT(!result);
-    RELEASE_ASSERT(g_jscConfig.isPermanentlyFrozen);
 }
 
 } // namespace JSC

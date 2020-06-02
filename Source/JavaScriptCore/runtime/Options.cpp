@@ -677,7 +677,7 @@ static bool isSeparator(char c)
 
 bool Options::setOptions(const char* optionsStr)
 {
-    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen);
+    RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());
     Vector<char*> options;
 
     size_t length = strlen(optionsStr);

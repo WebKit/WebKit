@@ -2168,7 +2168,7 @@ static EncodedJSValue JSC_HOST_CALL functionCallWithStackSize(JSGlobalObject* gl
         return throwVMError(globalObject, throwScope, "Not supported for this platform");
 
 #if ENABLE(MASM_PROBE)
-    if (g_jscConfig.isPermanentlyFrozen || !g_jscConfig.disabledFreezingForTesting)
+    if (g_jscConfig.isPermanentlyFrozen() || !g_jscConfig.disabledFreezingForTesting)
         return throwVMError(globalObject, throwScope, "Options are frozen");
 
     if (callFrame->argumentCount() < 2)

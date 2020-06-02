@@ -57,6 +57,8 @@ struct Config {
             SignalHandlers signalHandlers;
 #endif
             PtrTagLookup* ptrTagLookupHead;
+
+            uint64_t spaceForExtensions[1];
         };
         char ensureSize[ConfigSizeToProtect];
     };

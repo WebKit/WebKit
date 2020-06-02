@@ -1,3 +1,50 @@
+2020-06-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r262356. rdar://problem/63891520
+
+    Change JSC::Config to use storage in WTF::Config instead of its own.
+    https://bugs.webkit.org/show_bug.cgi?id=212575
+    <rdar://problem/63796584>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Source/JavaScriptCore:
+    
+    Since Configs must be rounded up to CeilingOnPageSize, this will save us some
+    memory since the contents of both Configs do not add up to CeilingOnPageSize.
+    
+    g_jscConfig is now located at g_wtfConfig.spaceForExtensions.
+    
+    * runtime/JSCConfig.cpp:
+    (JSC::Config::disableFreezingForTesting):
+    (JSC::Config::enableRestrictedOptions):
+    (JSC::Config::permanentlyFreeze): Deleted.
+    * runtime/JSCConfig.h:
+    (JSC::Config::permanentlyFreeze):
+    (JSC::Config::isPermanentlyFrozen):
+    (): Deleted.
+    * runtime/Options.cpp:
+    (JSC::Options::setOptions):
+    * tools/JSDollarVM.cpp:
+    (JSC::functionCallWithStackSize):
+    
+    Source/WTF:
+    
+    * wtf/WTFConfig.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262356 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-31  Mark Lam  <mark.lam@apple.com>
+
+            Change JSC::Config to use storage in WTF::Config instead of its own.
+            https://bugs.webkit.org/show_bug.cgi?id=212575
+            <rdar://problem/63796584>
+
+            Reviewed by Yusuke Suzuki.
+
+            * wtf/WTFConfig.h:
+
 2020-05-22  David Kilzer  <ddkilzer@apple.com>
 
         WTF::isValidEnum() has a typo in static_assert making it a tautological comparison
