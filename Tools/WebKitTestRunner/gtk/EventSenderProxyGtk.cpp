@@ -37,6 +37,7 @@
 #include "TestController.h"
 #include "WebKitWebViewBaseInternal.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <wtf/StdLibExtras.h>

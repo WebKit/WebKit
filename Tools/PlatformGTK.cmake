@@ -1,8 +1,5 @@
 if (DEVELOPER_MODE)
-    if (NOT USE_GTK4)
-        add_subdirectory(WebKitTestRunner)
-    endif ()
-
+    add_subdirectory(WebKitTestRunner)
     add_subdirectory(ImageDiff)
 
     if (ENABLE_API_TESTS)

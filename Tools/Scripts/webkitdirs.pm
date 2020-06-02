@@ -1092,7 +1092,20 @@ sub builtDylibPathForName
 
     if (isGtk()) {
         my $extension = isDarwin() ? ".dylib" : ".so";
-        return "$configurationProductDir/lib/libwebkit2gtk-4.0" . $extension;
+        my @apiVersions = ("4.0", "5.0");
+        for my $apiVersion (@apiVersions) {
+            my $libraryPath;
+            if ($libraryName eq "JavaScriptCore") {
+                $libraryPath = "$configurationProductDir/lib/libjavascriptcoregtk-$apiVersion$extension";
+            } else {
+                $libraryPath = "$configurationProductDir/lib/libwebkit2gtk-$apiVersion$extension";
+            }
+            if (-e $libraryPath) {
+                return $libraryPath;
+            }
+        }
+
+        return "";
     }
     if (isIOSWebKit()) {
         return "$configurationProductDir/$libraryName.framework/$libraryName";

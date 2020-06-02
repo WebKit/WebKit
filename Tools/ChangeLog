@@ -1,3 +1,29 @@
+2020-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make it possible to run layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=212328
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Build WTR with GTK4.
+
+        * PlatformGTK.cmake:
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName): Try with both 4 and 5 API versions.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::setWindowIsKey):
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+        (WTR::PlatformWebView::addToWindow):
+        (WTR::PlatformWebView::removeFromWindow):
+        (WTR::PlatformWebView::windowSnapshotImage):
+        (WTR::PlatformWebView::dismissAllPopupMenus):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.cpp:
+        (WTR::UIScriptControllerGtk::copyText):
+
 2020-06-01  Noam Rosenthal  <noam@webkit.org>
 
         Make unicode-bidi:isolate the default for an element with a dir attribute (instead of unicode-bidi:embed)
