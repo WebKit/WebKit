@@ -1,5 +1,42 @@
 2020-06-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r262280. rdar://problem/63891526
+
+    Avoid unnecessary sync IPC messages when togging the callout bar for selections.
+    https://bugs.webkit.org/show_bug.cgi?id=212508
+    
+    The loupe gesture only needs to be activated and evaluated if the tap is inside
+    an existing selectionView. We can do that test in the UIProcess without resorting to a sync IPC message.
+    Doing that evaluation locally will eliminate unnecessary hangs in the UIProcess.
+    
+    Reviewed by Wenson Hsieh.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _pointIsInsideSelectionRect:outBoundingRect:]):
+    (-[WKContentView _shouldToggleSelectionCommandsAfterTapAt:]):
+    (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262280 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-28  Megan Gardner  <megan_gardner@apple.com>
+
+            Avoid unnecessary sync IPC messages when togging the callout bar for selections.
+            https://bugs.webkit.org/show_bug.cgi?id=212508
+
+            The loupe gesture only needs to be activated and evaluated if the tap is inside
+            an existing selectionView. We can do that test in the UIProcess without resorting to a sync IPC message.
+            Doing that evaluation locally will eliminate unnecessary hangs in the UIProcess.
+
+            Reviewed by Wenson Hsieh.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _pointIsInsideSelectionRect:outBoundingRect:]):
+            (-[WKContentView _shouldToggleSelectionCommandsAfterTapAt:]):
+            (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+2020-06-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r262255. rdar://problem/63891604
 
     Do not send a second sync request for positition information to the web process if we have not recieved information since the previous sync request.

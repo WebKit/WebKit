@@ -2328,12 +2328,8 @@ static Class tapAndAHalfRecognizerClass()
     return textSelectionRects;
 }
 
-- (BOOL)_shouldToggleSelectionCommandsAfterTapAt:(CGPoint)point
+- (BOOL)_pointIsInsideSelectionRect:(CGPoint)point outBoundingRect:(WebCore::FloatRect *)outBoundingRect
 {
-    if (_lastSelectionDrawingInfo.selectionRects.isEmpty())
-        return NO;
-
-    WebCore::FloatRect selectionBoundingRect;
     BOOL pointIsInSelectionRect = NO;
     for (auto& rectInfo : _lastSelectionDrawingInfo.selectionRects) {
         auto rect = rectInfo.rect();
@@ -2341,9 +2337,19 @@ static Class tapAndAHalfRecognizerClass()
             continue;
 
         pointIsInSelectionRect |= rect.contains(WebCore::roundedIntPoint(point));
-        selectionBoundingRect.unite(rect);
+        if (outBoundingRect)
+            outBoundingRect->unite(rect);
     }
+    return pointIsInSelectionRect;
+}
 
+- (BOOL)_shouldToggleSelectionCommandsAfterTapAt:(CGPoint)point
+{
+    if (_lastSelectionDrawingInfo.selectionRects.isEmpty())
+        return NO;
+
+    WebCore::FloatRect selectionBoundingRect;
+    BOOL pointIsInSelectionRect = [self _pointIsInsideSelectionRect:point outBoundingRect:&selectionBoundingRect];
     WebCore::FloatRect unobscuredContentRect = self.unobscuredContentRect;
     selectionBoundingRect.intersect(unobscuredContentRect);
 
@@ -2553,7 +2559,9 @@ static Class tapAndAHalfRecognizerClass()
                 return NO;
             }
             default:
-                break;
+                if (!_page->editorState().selectionIsRange)
+                    return NO;
+                return [self _pointIsInsideSelectionRect:point outBoundingRect:nil];
             }
         }
     }
