@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,53 +20,17 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "bmalloc.h"
+#pragma once
 
-#include "BExport.h"
-#include "GigacageConfig.h"
+namespace Gigacage {
 
-namespace WebConfig {
+enum Kind {
+    Primitive,
+    JSValue,
+    NumberOfKinds
+};
 
-constexpr size_t ConfigSizeToProtect = 16 * bmalloc::Sizes::kB;
-
-alignas(ConfigSizeToProtect) BEXPORT Slot g_config[ConfigSizeToProtect / sizeof(Slot)];
-
-} // namespace WebConfig
-
-extern "C" {
-
-BEXPORT void* mbmalloc(size_t);
-BEXPORT void* mbmemalign(size_t, size_t);
-BEXPORT void mbfree(void*, size_t);
-BEXPORT void* mbrealloc(void*, size_t, size_t);
-BEXPORT void mbscavenge();
-    
-void* mbmalloc(size_t size)
-{
-    return bmalloc::api::malloc(size);
-}
-
-void* mbmemalign(size_t alignment, size_t size)
-{
-    return bmalloc::api::memalign(alignment, size);
-}
-
-void mbfree(void* p, size_t)
-{
-    bmalloc::api::free(p);
-}
-
-void* mbrealloc(void* p, size_t, size_t size)
-{
-    return bmalloc::api::realloc(p, size);
-}
-
-void mbscavenge()
-{
-    bmalloc::api::scavenge();
-}
-
-} // extern "C"
+} // namespace Gigacage

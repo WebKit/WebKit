@@ -424,6 +424,20 @@ macro cage(basePtr, mask, ptr, scratch)
     end
 end
 
+macro cagePrimitive(basePtr, mask, ptr, scratch)
+    if GIGACAGE_ENABLED and not (C_LOOP or C_LOOP_WIN)
+        loadb _g_config + (constexpr Gigacage::startOffsetOfGigacageConfig) + Gigacage::Config::disablingPrimitiveGigacageIsForbidden, scratch
+        btbnz scratch, .doCaging
+
+        loadb _disablePrimitiveGigacageRequested, scratch
+        btbnz scratch, .done
+
+    .doCaging:
+        cage(basePtr, mask, ptr, scratch)
+    .done:
+    end
+end
+
 macro cagedPrimitive(ptr, length, scratch, scratch2)
     if ARM64E
         const source = scratch2
@@ -432,7 +446,7 @@ macro cagedPrimitive(ptr, length, scratch, scratch2)
         const source = ptr
     end
     if GIGACAGE_ENABLED
-        cage(_g_gigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
+        cagePrimitive(_g_config + (constexpr Gigacage::startOffsetOfGigacageConfig) + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
         if ARM64E
             const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
             bfiq scratch2, 0, 64 - numberOfPACBits, ptr
@@ -446,7 +460,7 @@ end
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
     if GIGACAGE_ENABLED
-        cage(_g_gigacageConfig + Gigacage::Config::basePtrs + GigacageJSValueBasePtrOffset, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
+        cage(_g_config + (constexpr Gigacage::startOffsetOfGigacageConfig) + Gigacage::Config::basePtrs + GigacageJSValueBasePtrOffset, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
     end
 end
 

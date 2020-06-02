@@ -1,3 +1,115 @@
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
+        Change Gigacage::Config to use storage in WebConfig::g_config instead of its own.
+        https://bugs.webkit.org/show_bug.cgi?id=212585
+        <rdar://problem/63812487>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Gigacage::Config now reserves and expect space to be available in an external
+           WebConfig::g_config buffer.  Gigacage does not allocate that buffer.
+
+        2. Moved Gigacage::Config to GigacageConfig.h.
+           This allows WTFConfig.h to include GigacageConfig.h instead of all of Gigacage.h.
+
+        3. Moved Gigacage::Kind to GigacageKind.h.
+           Otherwise, Gigacage::Kind would need to move to GigacageConfig.h which is a
+           weird place to put it.
+
+        4. Removed freezeGigacageConfig(), unfreezeGigacageConfig(), and
+           permanentlyFreezeGigacageConfig().
+
+           It is no longer possible to temporarily freeze and unfreeze the Gigacage::Config
+           because it now share the same memory page with higher level Configs.
+
+           permanentlyFreezeGigacageConfig() is no longer needed because it is subsumed
+           by WTF::Config::permanentlyFreeze(), which will freeze the entire WebConfig::g_config
+           buffer.
+
+           One difference in behavior here is that Gigacage::Config data used to be permanently
+           frozen as soon as forbidDisablingPrimitiveGigacage() is called.  Now, it isn't
+           permanently frozen until the end of the construction of the first JSC::VM instance
+           in the process (just like the other Config records).  This still guarantees that
+           it is frozen before any JS script can run.
+
+        5. Previously, disablePrimitiveGigacage() works by nullifying the Primitive gigacage
+           base pointer.  We can no longer do that because the base pointer will be frozen
+           on VM instantiation.  Instead, if not forbidden, we now disable the Primitive
+           gigacage by setting a disablePrimitiveGigacageRequested bool variable that is
+           not frozen in the Gigacage::Config.
+
+           To check if the Primitive gigacage is enabled, the LLInt, AssemblyHelpers::cageConditionally(),
+           and runtime functions will check the following conditions:
+
+               g_gigacageConfig.basePtr(Primitive) &&
+                   (disablingPrimitiveGigacageIsForbidden() || disableNotRequestedForPrimitiveGigacage())
+
+               The base pointer being null means the gigacage was never set up.
+
+               If disablingPrimitiveGigacageIsForbidden() is true, then we don't care
+               whether a disable request has been received.
+
+               Otherwise, the gigacage is only enabled if it has been set up, and a
+               disable request has not been received.
+
+               Note that the first 2 terms are frozen in the Gigacage::Config.  Only the
+               last term is a runtime variable.  If disabling is forbidden, then the
+               runtime variable never comes into play.
+
+           The FTL does not rely on a runtime check for whether the Primitive gigacage is
+           enabled or not.  Instead, it relies on a watchpoint to handle this.  So, it
+           just works, and there's no performance penalty with adding the 2 extra terms
+           to check.
+
+           Note also that the jsc shell and the WebProcess will forbid disabling of the
+           Primitive gigacage.  This means the AssemblyHelpers::cageConditionally() will
+           also not generate the runtime checks for the 2 extra terms.
+
+           Only the LLInt and runtime functions will have to do work to check the 2 extra
+           terms.  But because these are not in perf critical paths, this is ok.
+
+           Note that we're deliberately gating the disablePrimitiveGigacageRequested
+           variable check on disablingPrimitiveGigacageIsForbidden though, logically, the
+           isEnable check does not really depend on whether disabling is forbidden or not.
+           We do this because disablingPrimitiveGigacageIsForbidden is frozen in the Config,
+           and it is, therefore, a stronger guarantee of correctness whereas the variable
+           can be corrupted.
+
+        6. Replaced isDisablingPrimitiveGigacageForbidden(), canPrimitiveGigacageBeDisabled(),
+           and isPrimitiveGigacagePermanentlyEnabled() with disablingPrimitiveGigacageIsForbidden().
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::forbidDisablingPrimitiveGigacage):
+        (Gigacage::bmalloc::freezeGigacageConfig): Deleted.
+        (Gigacage::bmalloc::unfreezeGigacageConfig): Deleted.
+        (Gigacage::bmalloc::permanentlyFreezeGigacageConfig): Deleted.
+        (Gigacage::bmalloc::UnfreezeGigacageConfigScope::UnfreezeGigacageConfigScope): Deleted.
+        (Gigacage::bmalloc::UnfreezeGigacageConfigScope::~UnfreezeGigacageConfigScope): Deleted.
+        (Gigacage::isDisablingPrimitiveGigacageForbidden): Deleted.
+        * bmalloc/Gigacage.h:
+        (Gigacage::disablingPrimitiveGigacageIsForbidden):
+        (Gigacage::disableNotRequestedForPrimitiveGigacage):
+        (Gigacage::isEnabled):
+        (Gigacage::basePtr):
+        (Gigacage::caged):
+        (Gigacage::forbidDisablingPrimitiveGigacage):
+        (): Deleted.
+        (Gigacage::Config::basePtr const): Deleted.
+        (Gigacage::Config::setBasePtr): Deleted.
+        (Gigacage::isPrimitiveGigacagePermanentlyEnabled): Deleted.
+        (Gigacage::canPrimitiveGigacageBeDisabled): Deleted.
+        * bmalloc/GigacageConfig.h: Added.
+        (Gigacage::Config::basePtr const):
+        (Gigacage::Config::setBasePtr):
+        * bmalloc/GigacageKind.h: Added.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::usingGigacage):
+        * bmalloc/mbmalloc.cpp:
+
 2020-05-23  Caio Lima  <ticaiolima@gmail.com>
 
         [bmalloc] Fix OOM errors on MIPS after r261667

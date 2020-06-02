@@ -1,3 +1,38 @@
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
+        Change Gigacage::Config to use storage in WebConfig::g_config instead of its own.
+        https://bugs.webkit.org/show_bug.cgi?id=212585
+        <rdar://problem/63812487>
+
+        Reviewed by Yusuke Suzuki.
+
+        We now think of the various Config records as being allocated from parts of a
+        WebConfig::g_config buffer.  WTF::Config will manage the mechanics of freezing
+        that buffer.  And the JSC VM is still the determiner of if/when to freeze the
+        buffer, and it will do this at the end of the construction of the very first
+        VM instance (as before).
+
+        Gigacage::Config reserves space in WebConfig::g_config.
+        WTF::Config will honor that reservation and place itself after that.
+        JSC::Config will continue to place itself at WTF::Config::spaceForExtensions.
+
+        The upside of this approach this is that we can now share the same memory page
+        for all the Configs, and can freeze them in one go.
+
+        The downside is that g_gigacageConfig, g_wtfConfig, and g_jscConfig now have to
+        be macros.  This results in some weirdness e.g. they are no longer qualified by
+        namespaces: referring to WTF::g_wtfConfig is now incorrect.
+
+        * wtf/Gigacage.h:
+        (Gigacage::disablingPrimitiveGigacageIsForbidden):
+        (Gigacage::isDisablingPrimitiveGigacageForbidden): Deleted.
+        (Gigacage::isPrimitiveGigacagePermanentlyEnabled): Deleted.
+        (Gigacage::canPrimitiveGigacageBeDisabled): Deleted.
+        * wtf/WTFConfig.cpp:
+        (WTF::Config::permanentlyFreeze):
+        * wtf/WTFConfig.h:
+        (): Deleted.
+
 2020-06-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add ENABLE(TOUCH_ACTION_REGIONS) to wrap code that's only relevant for platforms that consult touch-action for event handling

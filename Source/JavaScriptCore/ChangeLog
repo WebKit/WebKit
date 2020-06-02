@@ -1,3 +1,23 @@
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
+        Change Gigacage::Config to use storage in WebConfig::g_config instead of its own.
+        https://bugs.webkit.org/show_bug.cgi?id=212585
+        <rdar://problem/63812487>
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageConditionally):
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCConfig.h:
+        (JSC::Config::isPermanentlyFrozen):
+
 2020-06-02  Saam Barati  <sbarati@apple.com>
 
         MultiDeleteByOffset should not always def

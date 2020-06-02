@@ -15829,7 +15829,7 @@ private:
         if (!Gigacage::isEnabled(kind))
             return doUntagArrayPtr(ptr);
         
-        if (kind == Gigacage::Primitive && Gigacage::canPrimitiveGigacageBeDisabled()) {
+        if (kind == Gigacage::Primitive && !Gigacage::disablingPrimitiveGigacageIsForbidden()) {
             if (vm().primitiveGigacageEnabled().isStillValid())
                 m_graph.watchpoints().addLazily(vm().primitiveGigacageEnabled());
             else

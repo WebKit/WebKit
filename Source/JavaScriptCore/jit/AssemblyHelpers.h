@@ -1699,15 +1699,18 @@ public:
     {
 #if GIGACAGE_ENABLED
         if (Gigacage::isEnabled(kind)) {
-            if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageForbidden())
+            if (kind != Gigacage::Primitive || Gigacage::disablingPrimitiveGigacageIsForbidden())
                 cageWithoutUntagging(kind, storage);
             else {
 #if CPU(ARM64E)
                 if (length == scratch)
                     scratch = getCachedMemoryTempRegisterIDAndInvalidate();
 #endif
+                JumpList done;
+                done.append(branchTest8(NonZero, AbsoluteAddress(&Gigacage::disablePrimitiveGigacageRequested)));
+
                 loadPtr(Gigacage::addressOfBasePtr(kind), scratch);
-                Jump done = branchTest64(Zero, scratch);
+                done.append(branchTest64(Zero, scratch));
 #if CPU(ARM64E)
                 GPRReg tempReg = getCachedDataTempRegisterIDAndInvalidate();
                 move(storage, tempReg);

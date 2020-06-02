@@ -56,7 +56,7 @@ struct Callback {
     void* argument { nullptr };
 };
 
-}
+} // namespace Gigacage
 
 namespace bmalloc {
 
@@ -79,74 +79,11 @@ namespace Gigacage {
 // If this were less than 32GB, those OOB accesses could reach outside of the cage.
 constexpr size_t gigacageRunway = 32llu * bmalloc::Sizes::GB;
 
-alignas(configSizeToProtect) Config g_gigacageConfig;
+bool disablePrimitiveGigacageRequested = false;
 
 using namespace bmalloc;
 
 namespace {
-
-#if BOS(DARWIN)
-enum {
-    AllowPermissionChangesAfterThis = false,
-    DisallowPermissionChangesAfterThis = true
-};
-#endif
-
-static void freezeGigacageConfig()
-{
-    int result;
-#if BOS(DARWIN)
-    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_gigacageConfig), configSizeToProtect, AllowPermissionChangesAfterThis, VM_PROT_READ);
-#else
-    result = mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ);
-#endif
-    RELEASE_BASSERT(!result);
-}
-
-static void unfreezeGigacageConfig()
-{
-    RELEASE_BASSERT(!g_gigacageConfig.isPermanentlyFrozen);
-    int result;
-#if BOS(DARWIN)
-    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_gigacageConfig), configSizeToProtect, AllowPermissionChangesAfterThis, VM_PROT_READ | VM_PROT_WRITE);
-#else
-    result = mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ | PROT_WRITE);
-#endif
-    RELEASE_BASSERT(!result);
-}
-
-static void permanentlyFreezeGigacageConfig()
-{
-    static Mutex configLock;
-    LockHolder locking(configLock);
-
-    if (!g_gigacageConfig.isPermanentlyFrozen) {
-        unfreezeGigacageConfig();
-        g_gigacageConfig.isPermanentlyFrozen = true;
-    }
-
-    // There's no going back now!
-    int result;
-#if BOS(DARWIN)
-    result = vm_protect(mach_task_self(), reinterpret_cast<vm_address_t>(&g_gigacageConfig), configSizeToProtect, DisallowPermissionChangesAfterThis, VM_PROT_READ);
-#else
-    result = mprotect(&g_gigacageConfig, configSizeToProtect, PROT_READ);
-#endif
-    RELEASE_BASSERT(!result);
-}
-
-class UnfreezeGigacageConfigScope {
-public:
-    UnfreezeGigacageConfigScope()
-    {
-        unfreezeGigacageConfig();
-    }
-    
-    ~UnfreezeGigacageConfigScope()
-    {
-        freezeGigacageConfig();
-    }
-};
 
 size_t runwaySize(Kind kind)
 {
@@ -240,7 +177,6 @@ void ensureGigacage()
             g_gigacageConfig.totalSize = totalSize;
             vmDeallocatePhysicalPages(base, totalSize);
             g_gigacageConfig.isEnabled = true;
-            freezeGigacageConfig();
         });
 }
 
@@ -250,9 +186,9 @@ void disablePrimitiveGigacage()
         fprintf(stderr, "FATAL: Disabling Primitive gigacage is forbidden, but we don't want that in this process.\n");
 
     RELEASE_BASSERT(!g_gigacageConfig.disablingPrimitiveGigacageIsForbidden);
-    RELEASE_BASSERT(!g_gigacageConfig.isPermanentlyFrozen);
 
     ensureGigacage();
+    disablePrimitiveGigacageRequested = true;
     if (!g_gigacageConfig.basePtrs[Primitive]) {
         // It was never enabled. That means that we never even saved any callbacks. Or, we had already disabled
         // it before, and already called the callbacks.
@@ -264,8 +200,6 @@ void disablePrimitiveGigacage()
     for (Callback& callback : callbacks.callbacks)
         callback.function(callback.argument);
     callbacks.callbacks.shrink(0);
-    UnfreezeGigacageConfigScope unfreezeScope;
-    g_gigacageConfig.basePtrs[Primitive] = nullptr;
 }
 
 void addPrimitiveDisableCallback(void (*function)(void*), void* argument)
@@ -312,17 +246,9 @@ void forbidDisablingPrimitiveGigacage()
     RELEASE_BASSERT(g_gigacageConfig.shouldBeEnabledHasBeenCalled
         && (GIGACAGE_ALLOCATION_CAN_FAIL || !g_gigacageConfig.shouldBeEnabled || verifyGigacageIsEnabled()));
 
-    if (!g_gigacageConfig.disablingPrimitiveGigacageIsForbidden) {
-        unfreezeGigacageConfig();
+    if (!g_gigacageConfig.disablingPrimitiveGigacageIsForbidden)
         g_gigacageConfig.disablingPrimitiveGigacageIsForbidden = true;
-    }
-    permanentlyFreezeGigacageConfig();
-    RELEASE_BASSERT(isDisablingPrimitiveGigacageForbidden());
-}
-
-BNO_INLINE bool isDisablingPrimitiveGigacageForbidden()
-{
-    return g_gigacageConfig.disablingPrimitiveGigacageIsForbidden;
+    RELEASE_BASSERT(disablingPrimitiveGigacageIsForbidden());
 }
 
 bool shouldBeEnabled()

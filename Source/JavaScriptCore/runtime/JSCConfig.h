@@ -51,7 +51,7 @@ struct Config {
         enableRestrictedOptions();
     }
 
-    bool isPermanentlyFrozen() { return WTF::g_wtfConfig.isPermanentlyFrozen; }
+    bool isPermanentlyFrozen() { return g_wtfConfig.isPermanentlyFrozen; }
 
     // All the fields in this struct should be chosen such that their
     // initial value is 0 / null / falsy because Config is instantiated
@@ -82,12 +82,11 @@ struct Config {
     WTF::PtrTagLookup ptrTagLookupRecord;
 };
 
-constexpr size_t offsetOfWTFConfigExtension = offsetof(WTF::Config, spaceForExtensions);
 constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
 
-static_assert(sizeof(JSC::Config) <= (sizeof(WTF::Config) - offsetOfWTFConfigExtension));
-static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(offsetOfWTFConfigExtension) == offsetOfWTFConfigExtension);
+static_assert(WTF::offsetOfWTFConfigExtension + sizeof(JSC::Config) <= WTF::ConfigSizeToProtect);
+static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(WTF::offsetOfWTFConfigExtension) == WTF::offsetOfWTFConfigExtension);
 
-#define g_jscConfig (*bitwise_cast<Config*>(&WTF::g_wtfConfig.spaceForExtensions))
+#define g_jscConfig (*bitwise_cast<JSC::Config*>(&g_wtfConfig.spaceForExtensions))
 
 } // namespace JSC
