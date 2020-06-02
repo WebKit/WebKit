@@ -32,6 +32,11 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
         WI.animationManager.animationCreated(animation);
     }
 
+    nameChanged(animationId, name)
+    {
+        WI.animationManager.nameChanged(animationId, name);
+    }
+
     effectChanged(animationId, effect)
     {
         WI.animationManager.effectChanged(animationId, effect);

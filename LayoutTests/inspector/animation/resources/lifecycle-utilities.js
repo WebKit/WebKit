@@ -48,11 +48,17 @@ TestPage.registerInitializer(() => {
     InspectorTest.AnimationLifecycleUtilities = {};
 
     InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated = async function(animationType) {
+        let nameChangedPromise = null;
+        if (animationType === WI.Animation.Type.WebAnimation)
+            nameChangedPromise = WI.Animation.awaitEvent(WI.Animation.Event.NameChanged);
+
         let animationCollectionItemAddedEvent = await WI.animationManager.animationCollection.awaitEvent(WI.Collection.Event.ItemAdded);
 
-        InspectorTest.pass("Animation created.");
-
         let animation = animationCollectionItemAddedEvent.data.item;
+
+        await nameChangedPromise;
+
+        InspectorTest.pass(`Animation created '${animation.displayName}'.`);
 
         for (let i = 0; i < animation.backtrace.length; ++i) {
             let callFrame = animation.backtrace[i];

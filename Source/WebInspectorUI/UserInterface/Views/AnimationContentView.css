@@ -25,7 +25,7 @@
 
 .content-view.animation {
     position: relative;
-    width: 100%;
+    width: calc(100% - 8px);
     margin: 4px;
     background-color: var(--background-color-content);
     border: 1px solid var(--border-color);
@@ -44,11 +44,18 @@
 }
 
 .content-view.animation > header > .titles {
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .content-view.animation > header > .titles > .title {
     color: var(--text-color-gray-dark);
+}
+
+.content-view.animation > header > .titles > .title > code {
+    font-family: Menlo, monospace;
+    font-size: 11px;
 }
 
 .content-view.animation > header > .titles > .subtitle {

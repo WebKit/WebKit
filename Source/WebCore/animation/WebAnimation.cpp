@@ -144,6 +144,13 @@ void WebAnimation::effectTimingDidChange()
     InspectorInstrumentation::didChangeWebAnimationEffectTiming(*this);
 }
 
+void WebAnimation::setId(const String& id)
+{
+    m_id = id;
+
+    InspectorInstrumentation::didChangeWebAnimationName(*this);
+}
+
 void WebAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
 {
     setEffect(WTFMove(newEffect));

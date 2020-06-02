@@ -25,7 +25,7 @@
 
 WI.Animation = class Animation extends WI.Object
 {
-    constructor(animationId, {cssAnimationName, cssTransitionProperty, effect, backtrace} = {})
+    constructor(animationId, {name, cssAnimationName, cssTransitionProperty, effect, backtrace} = {})
     {
         super();
 
@@ -34,6 +34,7 @@ WI.Animation = class Animation extends WI.Object
 
         this._animationId = animationId;
 
+        this._name = name || null;
         this._cssAnimationName = cssAnimationName || null;
         this._cssTransitionProperty = cssTransitionProperty || null;
         this._updateEffect(effect);
@@ -48,6 +49,7 @@ WI.Animation = class Animation extends WI.Object
     static fromPayload(payload)
     {
         return new WI.Animation(payload.animationId, {
+            name: payload.name,
             cssAnimationName: payload.cssAnimationName,
             cssTransitionProperty: payload.cssTransitionProperty,
             effect: payload.effect,
@@ -114,6 +116,9 @@ WI.Animation = class Animation extends WI.Object
     // Public
 
     get animationId() { return this._animationId; }
+    get name() { return this._name; }
+    get cssAnimationName() { return this._cssAnimationName; }
+    get cssTransitionProperty() { return this._cssTransitionProperty; }
     get backtrace() { return this._backtrace; }
 
     get animationType()
@@ -172,6 +177,9 @@ WI.Animation = class Animation extends WI.Object
 
     get displayName()
     {
+        if (this._name)
+            return this._name;
+
         if (this._cssAnimationName)
             return this._cssAnimationName;
 
@@ -211,6 +219,13 @@ WI.Animation = class Animation extends WI.Object
     }
 
     // AnimationManager
+
+    nameChanged(name)
+    {
+        this._name = name || null;
+
+        this.dispatchEventToListeners(WI.Animation.Event.NameChanged);
+    }
 
     effectChanged(effect)
     {
@@ -271,6 +286,7 @@ WI.Animation.FillMode = {
 };
 
 WI.Animation.Event = {
+    NameChanged: "animation-name-changed",
     EffectChanged: "animation-effect-changed",
     TargetChanged: "animation-target-changed",
 };

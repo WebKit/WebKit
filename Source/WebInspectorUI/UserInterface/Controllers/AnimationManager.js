@@ -107,6 +107,16 @@ WI.AnimationManager = class AnimationManager
         this._animationIdMap.set(animation.animationId, animation);
     }
 
+    nameChanged(animationId, name)
+    {
+        let animation = this._animationIdMap.get(animationId);
+        console.assert(animation);
+        if (!animation)
+            return;
+
+        animation.nameChanged(name);
+    }
+
     effectChanged(animationId, effect)
     {
         let animation = this._animationIdMap.get(animationId);

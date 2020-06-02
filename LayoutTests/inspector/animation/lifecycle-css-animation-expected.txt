@@ -4,7 +4,7 @@ Tests for the Animation.animationCreated and Animation.animationDestroyed events
 == Running test suite: Animation.Lifecycle
 -- Running test case: Animation.Lifecycle.CSSAnimation
 PASS: There should not be any animations.
-PASS: Animation created.
+PASS: Animation created 'fade-in'.
 PASS: Animation type should be CSS Animation.
 startDelay: 100
 iterationCount: 2

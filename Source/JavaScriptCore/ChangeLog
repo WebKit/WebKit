@@ -1,3 +1,14 @@
+2020-06-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Graphics: should use the `id` (name) of the animation if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=212618
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Animation.json:
+         - added an optional `name` property to the `Animation.Animation` type
+         - created a new `Animation.nameChanged` event
+
 2020-06-01  Saam Barati  <sbarati@apple.com>
 
         Correct misunderstandings on how ThreadSpecific work

@@ -308,6 +308,7 @@ public:
 #endif
 
     static void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
+    static void didChangeWebAnimationName(WebAnimation&);
     static void didSetWebAnimationEffect(WebAnimation&);
     static void didChangeWebAnimationEffectTiming(WebAnimation&);
     static void didChangeWebAnimationEffectTarget(WebAnimation&);
@@ -514,6 +515,7 @@ private:
 #endif
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, Element&, KeyframeEffect&, ComputedEffectTiming);
+    static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
     static void didSetWebAnimationEffectImpl(InstrumentingAgents&, WebAnimation&);
     static void didChangeWebAnimationEffectTimingImpl(InstrumentingAgents&, WebAnimation&);
     static void didChangeWebAnimationEffectTargetImpl(InstrumentingAgents&, WebAnimation&);
@@ -1486,6 +1488,13 @@ inline void InspectorInstrumentation::willApplyKeyframeEffect(Element& target, K
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* instrumentingAgents = instrumentingAgentsForDocument(target.document()))
         willApplyKeyframeEffectImpl(*instrumentingAgents, target, effect, computedTiming);
+}
+
+inline void InspectorInstrumentation::didChangeWebAnimationName(WebAnimation& animation)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
+        didChangeWebAnimationNameImpl(*instrumentingAgents, animation);
 }
 
 inline void InspectorInstrumentation::didSetWebAnimationEffect(WebAnimation& animation)

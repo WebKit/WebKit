@@ -67,6 +67,7 @@ public:
 
     // InspectorInstrumentation
     void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
+    void didChangeWebAnimationName(WebAnimation&);
     void didSetWebAnimationEffect(WebAnimation&);
     void didChangeWebAnimationEffectTiming(WebAnimation&);
     void didChangeWebAnimationEffectTarget(WebAnimation&);

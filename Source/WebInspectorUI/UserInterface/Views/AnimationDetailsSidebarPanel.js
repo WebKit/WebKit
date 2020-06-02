@@ -59,11 +59,13 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
         if (this._animation) {
             this._animation.removeEventListener(WI.Animation.Event.TargetChanged, this._handleAnimationTargetChanged, this);
             this._animation.removeEventListener(WI.Animation.Event.EffectChanged, this._handleAnimationEffectChanged, this);
+            this._animation.removeEventListener(WI.Animation.Event.NameChanged, this._handleAnimationNameChanged, this);
         }
 
         this._animation = animation || null;
 
         if (this._animation) {
+            this._animation.addEventListener(WI.Animation.Event.NameChanged, this._handleAnimationNameChanged, this);
             this._animation.addEventListener(WI.Animation.Event.EffectChanged, this._handleAnimationEffectChanged, this);
             this._animation.addEventListener(WI.Animation.Event.TargetChanged, this._handleAnimationTargetChanged, this);
         }
@@ -77,12 +79,14 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
     {
         super.initialLayout();
 
-        this._nameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
+        this._idRow = new WI.DetailsSectionSimpleRow(WI.UIString("Identifier"));
         this._typeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Type"));
+        this._cssAnimationNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
+        this._cssTransitionPropertyRow = new WI.DetailsSectionSimpleRow(WI.UIString("Property"));
         this._targetRow = new WI.DetailsSectionSimpleRow(WI.UIString("Target", "Web Animation Target Label", "Label for the current DOM node target of a web animation"));
 
         const identitySectionTitle = WI.UIString("Identity", "Web Animation Identity Title", "Section title for information about a web animation");
-        let identitySection = new WI.DetailsSection("animation-identity", identitySectionTitle, [new WI.DetailsSectionGroup([this._nameRow, this._typeRow, this._targetRow])]);
+        let identitySection = new WI.DetailsSection("animation-identity", identitySectionTitle, [new WI.DetailsSectionGroup([this._idRow, this._typeRow, this._cssAnimationNameRow, this._cssTransitionPropertyRow, this._targetRow])]);
         this.contentView.element.appendChild(identitySection.element);
 
         this._iterationCountRow = new WI.DetailsSectionSimpleRow(WI.UIString("Iterations", "Web Animation Iteration Count Label", "Label for the number of iterations of a web animation"));
@@ -150,8 +154,29 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
 
     _refreshIdentitySection()
     {
-        this._nameRow.value = this._animation.displayName;
-        this._typeRow.value = WI.Animation.displayNameForAnimationType(this._animation.animationType);
+        let animationType = this._animation.animationType;
+        let displayName = this._animation.displayName;
+        let cssAnimationName = this._animation.cssAnimationName;
+        let cssTransitionProperty = this._animation.cssTransitionProperty;
+
+        switch (animationType) {
+        case WI.Animation.Type.WebAnimation:
+            this._idRow.value = this._animation.name;
+            break;
+
+        case WI.Animation.Type.CSSAnimation:
+            this._idRow.value = cssAnimationName !== displayName ? displayName : null;
+            break;
+
+        case WI.Animation.Type.CSSTransition:
+            this._idRow.value = cssTransitionProperty !== displayName ? displayName : null;
+            break;
+        }
+
+        this._typeRow.value = WI.Animation.displayNameForAnimationType(animationType);
+
+        this._cssAnimationNameRow.value = cssAnimationName;
+        this._cssTransitionPropertyRow.value = cssTransitionProperty;
 
         this._targetRow.value = null;
         this._animation.requestEffectTarget((domNode) => {
@@ -246,6 +271,11 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
         let callFrames = this._animation.backtrace;
         this._backtraceTreeController.callFrames = callFrames;
         this._backtraceSection.element.hidden = !callFrames.length;
+    }
+
+    _handleAnimationNameChanged(event)
+    {
+        this._refreshIdentitySection();
     }
 
     _handleAnimationEffectChanged(event)

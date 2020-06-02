@@ -1142,6 +1142,12 @@ void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& 
         animationAgent->willApplyKeyframeEffect(target, effect, computedTiming);
 }
 
+void InspectorInstrumentation::didChangeWebAnimationNameImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
+{
+    if (auto* animationAgent = instrumentingAgents.enabledInspectorAnimationAgent())
+        animationAgent->didChangeWebAnimationName(animation);
+}
+
 void InspectorInstrumentation::didSetWebAnimationEffectImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
 {
     if (auto* animationAgent = instrumentingAgents.enabledInspectorAnimationAgent())

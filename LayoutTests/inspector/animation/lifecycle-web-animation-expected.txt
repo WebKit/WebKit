@@ -6,7 +6,7 @@ Tests for the Animation.animationCreated and Animation.animationDestroyed events
 PASS: There should not be any animations.
 Creating animation...
 
-PASS: Animation created.
+PASS: Animation created 'web-animation-test'.
   0: animate - [native code]
   1: createAnimation - inspector/animation/resources/lifecycle-utilities.js:7:35
   2: Global Code - [program code]

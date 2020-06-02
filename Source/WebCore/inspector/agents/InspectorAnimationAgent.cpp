@@ -434,6 +434,17 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(Element& target, KeyframeE
     m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch().elapsedTime().seconds(), WTFMove(event));
 }
 
+void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
+{
+    // The `animationId` may be empty if Animation is tracking but not enabled.
+    auto animationId = findAnimationId(animation);
+    if (animationId.isEmpty())
+        return;
+
+    auto name = animation.id();
+    m_frontendDispatcher->nameChanged(animationId, !name.isEmpty() ? &name : nullptr);
+}
+
 void InspectorAnimationAgent::didSetWebAnimationEffect(WebAnimation& animation)
 {
     if (is<DeclarativeAnimation>(animation))
@@ -530,6 +541,10 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, bool captur
     auto animationPayload = Inspector::Protocol::Animation::Animation::create()
         .setAnimationId(animationId)
         .release();
+
+    auto name = animation.id();
+    if (!name.isEmpty())
+        animationPayload->setName(name);
 
     if (is<CSSAnimation>(animation))
         animationPayload->setCssAnimationName(downcast<CSSAnimation>(animation).animationName());

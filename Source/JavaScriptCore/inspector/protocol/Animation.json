@@ -29,6 +29,7 @@
             "type": "object",
             "properties": [
                 { "name": "animationId", "$ref": "AnimationId" },
+                { "name": "name", "type": "string", "optional": true, "description": "Equal to `Animation.prototype.get id`." },
                 { "name": "cssAnimationName", "type": "string", "optional": true, "description": "Equal to the corresponding `animation-name` CSS property. Should not be provided if `transitionProperty` is also provided." },
                 { "name": "cssTransitionProperty", "type": "string", "optional": true, "description": "Equal to the corresponding `transition-property` CSS property. Should not be provided if `animationName` is also provided." },
                 { "name": "effect", "$ref": "Effect", "optional": true },
@@ -116,6 +117,14 @@
             "description": "Dispatched whenever a `WebAnimation` is created.",
             "parameters": [
                 { "name": "animation", "$ref": "Animation" }
+            ]
+        },
+        {
+            "name": "nameChanged",
+            "description": "Dispatched whenever `Animation.prototype.set id` is called.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" },
+                { "name": "name", "type": "string", "optional": true, "description": "Equal to `Animation.prototype.get id`." }
             ]
         },
         {

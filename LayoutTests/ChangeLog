@@ -1,3 +1,20 @@
+2020-06-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Graphics: should use the `id` (name) of the animation if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=212618
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/animation/nameChanged.html: Added.
+        * inspector/animation/nameChanged-expected.txt: Added.
+
+        * inspector/animation/resources/lifecycle-utilities.js:
+        * inspector/animation/lifecycle-css-animation-expected.txt:
+        * inspector/animation/lifecycle-css-transition-expected.txt:
+        * inspector/animation/lifecycle-web-animation.html:
+        * inspector/animation/lifecycle-web-animation-expected.txt:
+        Print out the name of the animation after it's created.
+
 2020-06-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ macOS ] REGRESSION(r262366): webgl/1.0.3/conformance/canvas/buffer-offscreen-test.html & webgl/2.0.0/conformance/canvas/buffer-offscreen-test.html are constant failures

@@ -63,7 +63,7 @@ public:
     virtual bool isCSSTransition() const { return false; }
 
     const String& id() const { return m_id; }
-    void setId(const String& id) { m_id = id; }
+    void setId(const String&);
 
     AnimationEffect* bindingsEffect() const { return effect(); }
     virtual void setBindingsEffect(RefPtr<AnimationEffect>&&);

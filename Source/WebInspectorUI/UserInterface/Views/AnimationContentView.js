@@ -62,9 +62,8 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
         let titlesContainer = headerElement.appendChild(document.createElement("div"));
         titlesContainer.className = "titles";
 
-        let titleElement = titlesContainer.appendChild(document.createElement("span"));
-        titleElement.className = "title";
-        titleElement.textContent = this.representedObject.displayName;
+        this._titleElement = titlesContainer.appendChild(document.createElement("span"));
+        this._titleElement.className = "title";
 
         this._subtitleElement = titlesContainer.appendChild(document.createElement("span"));
         this._subtitleElement.className = "subtitle";
@@ -87,6 +86,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
     {
         super.layout();
 
+        this._refreshTitle();
         this._refreshSubtitle();
         this._refreshPreview();
     }
@@ -102,6 +102,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
     {
         super.attached();
 
+        this.representedObject.addEventListener(WI.Animation.Event.NameChanged, this._handleNameChanged, this);
         this.representedObject.addEventListener(WI.Animation.Event.EffectChanged, this._handleEffectChanged, this);
         this.representedObject.addEventListener(WI.Animation.Event.TargetChanged, this._handleTargetChanged, this);
     }
@@ -110,11 +111,54 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
     {
         this.representedObject.removeEventListener(WI.Animation.Event.TargetChanged, this._handleTargetChanged, this);
         this.representedObject.removeEventListener(WI.Animation.Event.EffectChanged, this._handleEffectChanged, this);
+        this.representedObject.removeEventListener(WI.Animation.Event.NameChanged, this._handleNameChanged, this);
 
         super.detached();
     }
 
     // Private
+
+    _refreshTitle()
+    {
+        this._titleElement.removeChildren();
+
+        let displayName = this.representedObject.displayName;
+
+        let showIdentifierIfDifferent = (cssName) => {
+            let formatString = "";
+            let substitutions = [];
+
+            if (cssName === displayName)
+                formatString = WI.UIString("(%s)");
+            else {
+                formatString = WI.UIString("%s (%s)");
+                substitutions.push(displayName);
+            }
+
+            let cssNameWrapper = document.createElement("code");
+            cssNameWrapper.textContent = cssName;
+            substitutions.push(cssNameWrapper);
+
+            String.format(formatString, substitutions, String.standardFormatters, this._titleElement, function(a, b) {
+                a.append(b);
+                return a;
+            });
+        };
+
+        switch (this.representedObject.animationType) {
+        case WI.Animation.Type.WebAnimation:
+            this._titleElement.textContent = this.representedObject.name || WI.UIString("(%s)").format(displayName);
+            break;
+
+        case WI.Animation.Type.CSSAnimation:
+            showIdentifierIfDifferent(this.representedObject.cssAnimationName);
+            break;
+
+        case WI.Animation.Type.CSSTransition:
+            showIdentifierIfDifferent(this.representedObject.cssTransitionProperty);
+            break;
+        }
+    }
 
     _refreshSubtitle()
     {
@@ -269,6 +313,14 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
                 addTitle(titleRect, keyframe.style);
             }
         }
+    }
+
+    _handleNameChanged(event)
+    {
+        if (!this.didInitialLayout)
+            return;
+
+        this._refreshTitle();
     }
 
     _handleEffectChanged(event)
