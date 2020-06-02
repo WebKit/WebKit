@@ -1,5 +1,14 @@
 2020-06-02  Jacob Uphoff  <jacob_uphoff@apple.com>
 
+        [ iOS debug ] REGRESSION(r262254): imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/canvas_colorsandstyles_createlineargradient_001.htm is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=212636
+
+        Unreviewed test gardening
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-06-02  Jacob Uphoff  <jacob_uphoff@apple.com>
+
         Removing expectations for a test that is now passing
         https://bugs.webkit.org/show_bug.cgi?id=211920
 
