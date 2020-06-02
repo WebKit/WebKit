@@ -46,6 +46,9 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 [ HighSierra ] http/tests/ssl/applepay/ApplePaySessionV5.html [ Skip ]
 [ HighSierra ] accessibility/mac/apple-pay-session-v4.html [ Skip ]
 
+# ApplePayInstallmentItem is not available in Mojave.
+[ Mojave ] http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Skip ]
+
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 

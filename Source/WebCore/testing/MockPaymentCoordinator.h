@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayInstallmentConfiguration.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayShippingMethod.h"
 #include "MockPaymentAddress.h"
@@ -62,6 +63,10 @@ public:
 
     bool supportsUnrestrictedApplePay() const final { return m_supportsUnrestrictedApplePay; }
     void setSupportsUnrestrictedApplePay(bool supports) { m_supportsUnrestrictedApplePay = supports; }
+    
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    ApplePayInstallmentConfiguration installmentConfiguration() const { return m_installmentConfiguration; }
+#endif
 
     void ref() const { }
     void deref() const { }
@@ -99,6 +104,9 @@ private:
     MockPaymentContactFields m_requiredBillingContactFields;
     MockPaymentContactFields m_requiredShippingContactFields;
     bool m_supportsUnrestrictedApplePay { true };
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    ApplePayInstallmentConfiguration m_installmentConfiguration;
+#endif
 };
 
 } // namespace WebCore
