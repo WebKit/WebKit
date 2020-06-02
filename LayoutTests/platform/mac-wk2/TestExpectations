@@ -1036,3 +1036,5 @@ webkit.org/b/183424 media/video-zoom-controls.html [ Pass Failure ]
 webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
 
 webkit.org/b/261103 [ Debug ] inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
+
+webkit.org/b/212667 [ Mojave Debug ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
