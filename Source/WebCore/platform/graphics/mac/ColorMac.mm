@@ -92,11 +92,21 @@ static RGBA32 makeRGBAFromNSColor(NSColor *color)
 
 Color colorFromNSColor(NSColor *color)
 {
+    if (!color)
+        return { };
+
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
     return Color(makeRGBAFromNSColor(color));
 }
 
 Color semanticColorFromNSColor(NSColor *color)
 {
+    if (!color)
+        return { };
+
+    // FIXME: ExtendedColor - needs to handle color spaces.
+
     return Color(makeRGBAFromNSColor(color), Color::Semantic);
 }
 
