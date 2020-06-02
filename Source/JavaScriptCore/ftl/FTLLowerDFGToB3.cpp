@@ -8471,22 +8471,20 @@ private:
 
             m_out.appendTo(blocks[block], block + 1 < blocks.size() ? blocks[block + 1] : exit);
 
-            if (variant.newStructure()) {
-                LValue storage;
+            LValue storage;
 
-                if (isInlineOffset(variant.offset()))
-                    storage = base;
-                else
-                    storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
+            if (isInlineOffset(variant.offset()))
+                storage = base;
+            else
+                storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
 
-                storeProperty(m_out.int64Zero, storage, data.identifierNumber, variant.offset());
+            storeProperty(m_out.int64Zero, storage, data.identifierNumber, variant.offset());
 
-                ASSERT(variant.oldStructure()->indexingType() == variant.newStructure()->indexingType());
-                ASSERT(variant.oldStructure()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
-                ASSERT(variant.oldStructure()->typeInfo().type() == variant.newStructure()->typeInfo().type());
-                m_out.store32(
-                    weakStructureID(m_graph.registerStructure(variant.newStructure())), base, m_heaps.JSCell_structureID);
-            }
+            ASSERT(variant.oldStructure()->indexingType() == variant.newStructure()->indexingType());
+            ASSERT(variant.oldStructure()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
+            ASSERT(variant.oldStructure()->typeInfo().type() == variant.newStructure()->typeInfo().type());
+            m_out.store32(
+                weakStructureID(m_graph.registerStructure(variant.newStructure())), base, m_heaps.JSCell_structureID);
 
             results.append(m_out.anchor(variant.result() ? m_out.booleanTrue : m_out.booleanFalse));
             m_out.jump(continuation);

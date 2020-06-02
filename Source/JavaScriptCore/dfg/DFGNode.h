@@ -98,6 +98,7 @@ struct MultiDeleteByOffsetData {
     Vector<DeleteByIdVariant, 2> variants;
 
     bool writesStructures() const;
+    bool allVariantsStoreEmpty() const;
 };
 
 struct MatchStructureVariant {

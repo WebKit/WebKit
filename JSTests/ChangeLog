@@ -1,3 +1,17 @@
+2020-06-02  Saam Barati  <sbarati@apple.com>
+
+        MultiDeleteByOffset should not always def
+        https://bugs.webkit.org/show_bug.cgi?id=212621
+        <rdar://problem/63824182>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/multi-del-by-offset-doesnt-always-def-osr-entry.js: Added.
+        (foo):
+        * stress/multi-del-by-offset-doesnt-always-def.js: Added.
+        (foo):
+        (let.p.set undefined):
+
 2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSBigInt::rightTrim can miss |this| pointer and leads to incorrect GC collection

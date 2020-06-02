@@ -66,6 +66,15 @@ bool MultiDeleteByOffsetData::writesStructures() const
     return false;
 }
 
+bool MultiDeleteByOffsetData::allVariantsStoreEmpty() const
+{
+    for (unsigned i = variants.size(); i--;) {
+        if (!variants[i].newStructure())
+            return false;
+    }
+    return true;
+}
+
 void BranchTarget::dump(PrintStream& out) const
 {
     if (!block)

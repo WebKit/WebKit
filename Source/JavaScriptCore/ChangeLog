@@ -1,3 +1,25 @@
+2020-06-02  Saam Barati  <sbarati@apple.com>
+
+        MultiDeleteByOffset should not always def
+        https://bugs.webkit.org/show_bug.cgi?id=212621
+        <rdar://problem/63824182>
+
+        Reviewed by Yusuke Suzuki.
+
+        Clobberize used to claim that MultiDeleteByOffset always defd a value.
+        That's an incorrect modeling of MultiDeleteByOffset though, since it might
+        have delete misses in its variant list. This would lead us to incorrectly
+        CSE when we shouldn't. This patch fixes this by saying MultiDeleteByOffset
+        only defs when all its cases write out a value (are hits).
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::MultiDeleteByOffsetData::allVariantsStoreEmpty const):
+        * dfg/DFGNode.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiDeleteByOffset):
+
 2020-06-02  Rob Buis  <rbuis@igalia.com>
 
         Make generated C++ code use modern C++
