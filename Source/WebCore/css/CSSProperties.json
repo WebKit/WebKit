@@ -1431,7 +1431,7 @@
                     "-webkit-border-bottom-left-radius"
                 ],
                 "initial": "initialBorderRadius",
-                "converter": "Radius"
+                "custom": "Inherit|Value"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1444,7 +1444,7 @@
                     "-webkit-border-bottom-right-radius"
                 ],
                 "initial": "initialBorderRadius",
-                "converter": "Radius"
+                "custom": "Inherit|Value"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1933,7 +1933,7 @@
                     "-webkit-border-top-left-radius"
                 ],
                 "initial": "initialBorderRadius",
-                "converter": "Radius"
+                "custom": "Inherit|Value"
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1946,7 +1946,7 @@
                     "-webkit-border-top-right-radius"
                 ],
                 "initial": "initialBorderRadius",
-                "converter": "Radius"
+                "custom": "Inherit|Value"
             },
             "specification": {
                 "category": "css-backgrounds",

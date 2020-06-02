@@ -1,0 +1,24 @@
+Test computed style adjustments for the "-apple-pay-button" appearance.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(plainButton).minWidth is "100px"
+PASS getComputedStyle(plainButton).width is "100px"
+PASS getComputedStyle(plainButton).minHeight is "30px"
+PASS getComputedStyle(plainButton).height is "30px"
+PASS getComputedStyle(plainButton).borderRadius is "4px"
+PASS getComputedStyle(squareCornersButton).minWidth is "100px"
+PASS getComputedStyle(squareCornersButton).width is "100px"
+PASS getComputedStyle(squareCornersButton).minHeight is "30px"
+PASS getComputedStyle(squareCornersButton).height is "30px"
+PASS getComputedStyle(squareCornersButton).borderRadius is "0px"
+PASS getComputedStyle(buyButton).minWidth is "140px"
+PASS getComputedStyle(buyButton).width is "140px"
+PASS getComputedStyle(buyButton).minHeight is "30px"
+PASS getComputedStyle(buyButton).height is "30px"
+PASS getComputedStyle(buyButton).borderRadius is "4px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+    

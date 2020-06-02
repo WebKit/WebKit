@@ -1113,6 +1113,8 @@ webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailur
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
+fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
 
 # <rdar://problem/23500327> storage/websql/alter-to-info-table.html
 storage/websql/alter-to-info-table.html [ Pass Failure ]

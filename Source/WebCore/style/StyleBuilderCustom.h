@@ -124,6 +124,15 @@ public:
     // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(BuilderState&);
     static void applyValueDisplay(BuilderState&, CSSValue&);
+    // FIXME: <https://webkit.org/b/212506> Teach makeprop.pl to generate setters for hasExplicitlySet* flags
+    static void applyInheritBorderBottomLeftRadius(BuilderState&);
+    static void applyValueBorderBottomLeftRadius(BuilderState&, CSSValue&);
+    static void applyInheritBorderBottomRightRadius(BuilderState&);
+    static void applyValueBorderBottomRightRadius(BuilderState&, CSSValue&);
+    static void applyInheritBorderTopLeftRadius(BuilderState&);
+    static void applyValueBorderTopLeftRadius(BuilderState&, CSSValue&);
+    static void applyInheritBorderTopRightRadius(BuilderState&);
+    static void applyValueBorderTopRightRadius(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
@@ -979,6 +988,54 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
     }
 
     builderState.setFontDescription(WTFMove(fontDescription));
+}
+
+inline void BuilderCustom::applyInheritBorderBottomLeftRadius(BuilderState& builderState)
+{
+    builderState.style().setBorderBottomLeftRadius(forwardInheritedValue(builderState.parentStyle().borderBottomLeftRadius()));
+    builderState.style().setHasExplicitlySetBorderRadius(builderState.parentStyle().hasExplicitlySetBorderRadius());
+}
+
+inline void BuilderCustom::applyValueBorderBottomLeftRadius(BuilderState& builderState, CSSValue& value)
+{
+    builderState.style().setBorderBottomLeftRadius(BuilderConverter::convertRadius(builderState, value));
+    builderState.style().setHasExplicitlySetBorderRadius(true);
+}
+
+inline void BuilderCustom::applyInheritBorderBottomRightRadius(BuilderState& builderState)
+{
+    builderState.style().setBorderBottomRightRadius(forwardInheritedValue(builderState.parentStyle().borderBottomRightRadius()));
+    builderState.style().setHasExplicitlySetBorderRadius(builderState.parentStyle().hasExplicitlySetBorderRadius());
+}
+
+inline void BuilderCustom::applyValueBorderBottomRightRadius(BuilderState& builderState, CSSValue& value)
+{
+    builderState.style().setBorderBottomRightRadius(BuilderConverter::convertRadius(builderState, value));
+    builderState.style().setHasExplicitlySetBorderRadius(true);
+}
+
+inline void BuilderCustom::applyInheritBorderTopLeftRadius(BuilderState& builderState)
+{
+    builderState.style().setBorderTopLeftRadius(forwardInheritedValue(builderState.parentStyle().borderTopLeftRadius()));
+    builderState.style().setHasExplicitlySetBorderRadius(builderState.parentStyle().hasExplicitlySetBorderRadius());
+}
+
+inline void BuilderCustom::applyValueBorderTopLeftRadius(BuilderState& builderState, CSSValue& value)
+{
+    builderState.style().setBorderTopLeftRadius(BuilderConverter::convertRadius(builderState, value));
+    builderState.style().setHasExplicitlySetBorderRadius(true);
+}
+
+inline void BuilderCustom::applyInheritBorderTopRightRadius(BuilderState& builderState)
+{
+    builderState.style().setBorderTopRightRadius(forwardInheritedValue(builderState.parentStyle().borderTopRightRadius()));
+    builderState.style().setHasExplicitlySetBorderRadius(builderState.parentStyle().hasExplicitlySetBorderRadius());
+}
+
+inline void BuilderCustom::applyValueBorderTopRightRadius(BuilderState& builderState, CSSValue& value)
+{
+    builderState.style().setBorderTopRightRadius(BuilderConverter::convertRadius(builderState, value));
+    builderState.style().setHasExplicitlySetBorderRadius(true);
 }
 
 inline bool BuilderCustom::isValidDisplayValue(BuilderState& builderState, DisplayType display)

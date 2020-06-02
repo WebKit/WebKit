@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            padding: 25px;
+            width: 500px;
+        }
+
+        .apple-pay-button {
+            -webkit-appearance: -apple-pay-button;
+        }
+
+        .round-corners {
+            border-radius: 5px;
+        }
+
+        .square-corners {
+            border-radius: 0px;
+        }
+
+
+    </style>    
+</head>
+<body>
+    <div class=container>
+        <button class='apple-pay-button' style='border-radius: inherit'></button>
+        <button class='apple-pay-button' style='border-radius: initial'></button>
+        <button class='apple-pay-button square-corners' style='border-radius: unset'></button>
+        <button class='apple-pay-button square-corners' style='border-radius: revert'></button>
+    </div>
+        <div class='container square-corners'>
+        <button class='apple-pay-button' style='border-radius: inherit'></button>
+        <button class='apple-pay-button' style='border-radius: initial'></button>
+        <button class='apple-pay-button' style='border-radius: unset'></button>
+        <button class='apple-pay-button' style='border-radius: revert'></button>
+    </div>
+    <div class='container square-corners'>
+        <button class='apple-pay-button' style='border-radius: inherit'></button>
+        <div style='border-radius: inherit'>
+            <button class='apple-pay-button' style='border-radius: inherit'></button>
+            <button class='apple-pay-button round-corners' style='border-radius: inherit'></button>
+            <button class='apple-pay-button round-corners' style='all: inherit'></button>
+        </div>
+    </div>
+    <div class='container' style='border-radius: inherit'>
+        <button class='apple-pay-button' style='border-radius: inherit'></button>
+        <button class='apple-pay-button square-corners' style='all: revert'></button>
+        <button class='apple-pay-button square-corners' style='all: initial'></button>
+        <button class='apple-pay-button square-corners' style='all: unset'></button>
+    </div>
+</body>
+</html>

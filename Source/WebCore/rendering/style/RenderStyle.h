@@ -294,6 +294,7 @@ public:
     const LengthSize& borderBottomLeftRadius() const { return m_surroundData->border.bottomLeftRadius(); }
     const LengthSize& borderBottomRightRadius() const { return m_surroundData->border.bottomRightRadius(); }
     bool hasBorderRadius() const { return m_surroundData->border.hasBorderRadius(); }
+    bool hasExplicitlySetBorderRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderRadius; }
 
     float borderLeftWidth() const { return m_surroundData->border.borderLeftWidth(); }
     BorderStyle borderLeftStyle() const { return m_surroundData->border.left().style(); }
@@ -859,6 +860,7 @@ public:
 
     void setBorderRadius(LengthSize&&);
     void setBorderRadius(const IntSize&);
+    void setHasExplicitlySetBorderRadius(bool v) { m_nonInheritedFlags.hasExplicitlySetBorderRadius = v; }
 
     RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
@@ -1800,6 +1802,7 @@ private:
         unsigned floating : 2; // Float
         unsigned tableLayout : 1; // TableLayoutType
 
+        unsigned hasExplicitlySetBorderRadius : 1;
         unsigned hasExplicitlySetDirection : 1;
         unsigned hasExplicitlySetWritingMode : 1;
         unsigned hasExplicitlySetTextAlign : 1;
@@ -1931,6 +1934,7 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && unicodeBidi == other.unicodeBidi
         && floating == other.floating
         && tableLayout == other.tableLayout
+        && hasExplicitlySetBorderRadius == other.hasExplicitlySetBorderRadius
         && hasExplicitlySetDirection == other.hasExplicitlySetDirection
         && hasExplicitlySetWritingMode == other.hasExplicitlySetWritingMode
         && hasExplicitlySetTextAlign == other.hasExplicitlySetTextAlign
@@ -1963,6 +1967,10 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     tableLayout = other.tableLayout;
     hasViewportUnits = other.hasViewportUnits;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
+
+    // Unlike properties tracked by the other hasExplicitlySet* flags, border-radius is non-inherited
+    // and we need to remember whether it's been explicitly set when copying m_surroundData.
+    hasExplicitlySetBorderRadius = other.hasExplicitlySetBorderRadius;
 }
 
 inline bool RenderStyle::NonInheritedFlags::hasPseudoStyle(PseudoId pseudo) const

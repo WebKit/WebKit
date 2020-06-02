@@ -180,6 +180,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.unicodeBidi = initialUnicodeBidi();
     m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
     m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
+    m_nonInheritedFlags.hasExplicitlySetBorderRadius = false;
     m_nonInheritedFlags.hasExplicitlySetDirection = false;
     m_nonInheritedFlags.hasExplicitlySetWritingMode = false;
     m_nonInheritedFlags.hasExplicitlySetTextAlign = false;
