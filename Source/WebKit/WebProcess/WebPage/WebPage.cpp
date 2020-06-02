@@ -726,6 +726,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
 #endif
 
+#if ENABLE(TINT_COLOR_SUPPORT)
+    setTintColor(parameters.tintColor);
+#endif
+
     m_needsFontAttributes = parameters.needsFontAttributes;
 
 #if ENABLE(WEB_RTC)

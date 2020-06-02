@@ -1,5 +1,23 @@
 2020-06-02  Tim Horton  <timothy_horton@apple.com>
 
+        macCatalyst: WKWebView's tint color is not propagated to Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=212630
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
+2020-06-02  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r258949): Dynamic user accent color changes are not respected by WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=212628
         <rdar://problem/63436275>

@@ -1567,6 +1567,10 @@ private:
     void drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t first, uint32_t count);
 #endif
 
+#if ENABLE(TINT_COLOR_SUPPORT)
+    void setTintColor(WebCore::Color);
+#endif
+
     void setMainFrameIsScrollable(bool);
 
     void unapplyEditCommand(WebUndoStepID commandID);

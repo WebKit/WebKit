@@ -113,6 +113,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << smartInsertDeleteEnabled;
     encoder << additionalSupportedImageTypes;
 #endif
+#if ENABLE(TINT_COLOR_SUPPORT)
+    encoder << tintColor;
+#endif
 #if USE(WPE_RENDERER)
     encoder << hostFileDescriptor;
 #endif
@@ -353,6 +356,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.smartInsertDeleteEnabled))
         return WTF::nullopt;
     if (!decoder.decode(parameters.additionalSupportedImageTypes))
+        return WTF::nullopt;
+#endif
+
+#if ENABLE(TINT_COLOR_SUPPORT)
+    if (!decoder.decode(parameters.tintColor))
         return WTF::nullopt;
 #endif
 
