@@ -1,3 +1,13 @@
+2020-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update texture creation validation according to the discussion at https://github.com/gpuweb/gpuweb/pull/799/files
+        https://bugs.webkit.org/show_bug.cgi?id=212390
+
+        Reviewed by Dean Jackson.
+
+        * webgpu/texture-creation-expected.txt:
+        * webgpu/texture-creation.html:
+
 2020-06-01  Noam Rosenthal  <noam@webkit.org>
 
         Make unicode-bidi:isolate the default for an element with a dir attribute (instead of unicode-bidi:embed)

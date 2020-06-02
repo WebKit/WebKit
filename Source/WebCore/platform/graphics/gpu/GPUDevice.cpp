@@ -146,6 +146,11 @@ RefPtr<GPUTexture> GPUDevice::tryCreateTexture(const GPUTextureDescriptor& descr
         return { };
     }
 
+    if (descriptor.sampleCount != 1 && descriptor.sampleCount != 4) {
+        m_errorScopes->generatePrefixedError("Texture sampleCount can only be 1 or 4.");
+        return { };
+    }
+
     if (descriptor.sampleCount != 1) {
         if (descriptor.dimension != GPUTextureDimension::_2d) {
             m_errorScopes->generatePrefixedError("Texture dimension incompatible with multisampling.");
@@ -157,6 +162,10 @@ RefPtr<GPUTexture> GPUDevice::tryCreateTexture(const GPUTextureDescriptor& descr
         }
         if (descriptor.size.depth != 1) {
             m_errorScopes->generatePrefixedError("Array textures can't be multisampled.");
+            return { };
+        }
+        if (descriptor.usage & static_cast<GPUTextureUsageFlags>(GPUTextureUsage::Flags::Storage)) {
+            m_errorScopes->generatePrefixedError("Multisampled textures can't have STORAGE usage.");
             return { };
         }
         // FIXME: Only some pixel formats are capable of MSAA. When we add those new pixel formats, we'll have to add filtering code here.

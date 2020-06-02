@@ -27,14 +27,15 @@ PASS Creating a texture of width 2 height 1 depth 1 mipLevelCount 2 sampleCount 
 PASS Creating a texture of width 2 height 2 depth 2 mipLevelCount 2 sampleCount 1 dimension 3d format rgba8unorm usage 0. 
 PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 3 sampleCount 1 dimension 2d format rgba8unorm usage 0. 
 PASS Creating a texture of width 2 height 2 depth 2 mipLevelCount 3 sampleCount 1 dimension 3d format rgba8unorm usage 0. 
-PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 2 dimension 1d format rgba8unorm usage 0. 
-PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 2 dimension 2d format rgba8unorm usage 0. 
-PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 1 sampleCount 2 dimension 2d format rgba8unorm usage 0. 
-PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 2 sampleCount 2 dimension 2d format rgba8unorm usage 0. 
-PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 2 dimension 3d format rgba8unorm usage 0. 
+PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 4 dimension 1d format rgba8unorm usage 0. 
+PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 4 dimension 2d format rgba8unorm usage 0. 
+PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 1 sampleCount 4 dimension 2d format rgba8unorm usage 0. 
+PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 2 sampleCount 4 dimension 2d format rgba8unorm usage 0. 
+PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 4 dimension 3d format rgba8unorm usage 0. 
 PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 1 sampleCount 3 dimension 2d format rgba8unorm usage 0. 
 PASS Creating a texture of width 2 height 2 depth 1 mipLevelCount 1 sampleCount 300 dimension 2d format rgba8unorm usage 0. 
-PASS Creating a texture of width 2 height 2 depth 2 mipLevelCount 1 sampleCount 2 dimension 2d format rgba8unorm usage 0. 
+PASS Creating a texture of width 2 height 2 depth 2 mipLevelCount 1 sampleCount 4 dimension 2d format rgba8unorm usage 0. 
+PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 2 dimension 2d format rgba8unorm usage 0. 
 PASS Creating a texture of width 2 height 1 depth 1 mipLevelCount 1 sampleCount 1 dimension 1d format rgba8unorm usage 0. 
 PASS Creating a texture of width 1 height 2 depth 1 mipLevelCount 1 sampleCount 1 dimension 1d format rgba8unorm usage 0. 
 PASS Creating a texture of width 1 height 1 depth 2 mipLevelCount 1 sampleCount 1 dimension 1d format rgba8unorm usage 0. 
@@ -52,4 +53,5 @@ PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 
 PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 1 dimension 2d format rgba16float usage 0. 
 PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 1 dimension 2d format rgba8unorm usage 1000. 
 PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 1 dimension 2d format rgba8unorm usage 31. 
+PASS Creating a texture of width 1 height 1 depth 1 mipLevelCount 1 sampleCount 4 dimension 2d format rgba8unorm usage 8. 
 
