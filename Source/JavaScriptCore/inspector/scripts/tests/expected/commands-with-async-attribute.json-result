@@ -618,8 +618,8 @@ enum class PrimaryColors;
 // Typedefs.
 namespace Database {
 /* Unique identifier of Database object. */
-using DatabaseId = int;
-using ColorList = JSON::ArrayOf<Inspector::Protocol::Database::PrimaryColors>;
+typedef int DatabaseId;
+typedef JSON::ArrayOf<Inspector::Protocol::Database::PrimaryColors> ColorList;
 } // Database
 // End of typedefs.
 
@@ -734,7 +734,7 @@ template<typename T> struct DefaultHash;
 // Hash declarations in the 'Database' Domain
 template<>
 struct DefaultHash<Inspector::Protocol::Database::PrimaryColors> {
-    using Hash = IntHash<Inspector::Protocol::Database::PrimaryColors>;
+    typedef IntHash<Inspector::Protocol::Database::PrimaryColors> Hash;
 };
 
 } // namespace WTF

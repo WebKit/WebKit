@@ -1,3 +1,15 @@
+2020-06-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r262424.
+
+        Caused webkitpy test failure
+
+        Reverted changeset:
+
+        "Make generated C++ code use modern C++"
+        https://bugs.webkit.org/show_bug.cgi?id=190714
+        https://trac.webkit.org/changeset/262424
+
 2020-06-02  Peng Liu  <peng.liu6@apple.com>
 
         Stressing webkitSetPresentationMode leads to wrong inline video dimensions

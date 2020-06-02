@@ -327,8 +327,8 @@ enum class CastedAnimals;
 
 // Typedefs.
 namespace Test {
-using CastedObjectId = int;
-using UncastedObjectId = int;
+typedef int CastedObjectId;
+typedef int UncastedObjectId;
 } // Test
 // End of typedefs.
 
@@ -596,11 +596,11 @@ template<typename T> struct DefaultHash;
 // Hash declarations in the 'Test' Domain
 template<>
 struct DefaultHash<Inspector::Protocol::Test::UncastedAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Test::UncastedAnimals>;
+    typedef IntHash<Inspector::Protocol::Test::UncastedAnimals> Hash;
 };
 template<>
 struct DefaultHash<Inspector::Protocol::Test::CastedAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Test::CastedAnimals>;
+    typedef IntHash<Inspector::Protocol::Test::CastedAnimals> Hash;
 };
 
 } // namespace WTF

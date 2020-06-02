@@ -169,7 +169,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             typedef_lines = []
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
-            typedef_lines.append('using %s = %s;' % (declaration.type_name, primitive_name))
+            typedef_lines.append('typedef %s %s;' % (primitive_name, declaration.type_name))
             sections.append(self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(typedef_lines)))
 
         for declaration in array_declarations:
@@ -177,7 +177,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             typedef_lines = []
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
-            typedef_lines.append('using %s = JSON::ArrayOf<%s>;' % (declaration.type_name, element_type))
+            typedef_lines.append('typedef JSON::ArrayOf<%s> %s;' % (element_type, declaration.type_name))
             sections.append(self.wrap_with_guard_for_condition(declaration.condition, '\n'.join(typedef_lines)))
 
         lines = []
@@ -486,7 +486,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
                 enum_lines = []
                 enum_lines.append('template<>')
                 enum_lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> {' % (domain.domain_name, enum_type.raw_name()))
-                enum_lines.append('    using Hash = IntHash<Inspector::Protocol::%s::%s>;' % (domain.domain_name, enum_type.raw_name()))
+                enum_lines.append('    typedef IntHash<Inspector::Protocol::%s::%s> Hash;' % (domain.domain_name, enum_type.raw_name()))
                 enum_lines.append('};')
                 domain_lines.append(self.wrap_with_guard_for_condition(enum_type.declaration().condition, '\n'.join(enum_lines)))
 

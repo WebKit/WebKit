@@ -493,7 +493,7 @@ template<typename T> struct DefaultHash;
 // Hash declarations in the 'TypeDomain' Domain
 template<>
 struct DefaultHash<Inspector::Protocol::TypeDomain::TypeDomainEnum> {
-    using Hash = IntHash<Inspector::Protocol::TypeDomain::TypeDomainEnum>;
+    typedef IntHash<Inspector::Protocol::TypeDomain::TypeDomainEnum> Hash;
 };
 
 } // namespace WTF

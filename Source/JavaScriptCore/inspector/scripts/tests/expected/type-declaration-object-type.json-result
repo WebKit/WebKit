@@ -333,7 +333,7 @@ class ParameterBundle;
 
 // Typedefs.
 namespace Database {
-using ErrorList = JSON::ArrayOf<Inspector::Protocol::Database::Error>;
+typedef JSON::ArrayOf<Inspector::Protocol::Database::Error> ErrorList;
 } // Database
 // End of typedefs.
 
@@ -909,7 +909,7 @@ template<typename T> struct DefaultHash;
 // Hash declarations in the 'Database' Domain
 template<>
 struct DefaultHash<Inspector::Protocol::Database::MouseButton> {
-    using Hash = IntHash<Inspector::Protocol::Database::MouseButton>;
+    typedef IntHash<Inspector::Protocol::Database::MouseButton> Hash;
 };
 
 } // namespace WTF

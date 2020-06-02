@@ -139,8 +139,8 @@ ${dispatchCases}
     RefPtr<JSON::Object> parameters;
     message->getObject("params"_s, parameters);
 
-    using CallHandler = void (${domainName}BackendDispatcher::*)(long requestId, RefPtr<JSON::Object>&& message);
-    using DispatchMap = HashMap<String, CallHandler>;
+    typedef void (${domainName}BackendDispatcher::*CallHandler)(long requestId, RefPtr<JSON::Object>&& message);
+    typedef HashMap<String, CallHandler> DispatchMap;
     static NeverDestroyed<DispatchMap> dispatchMap;
     if (dispatchMap.get().isEmpty()) {
         static const struct MethodTable {

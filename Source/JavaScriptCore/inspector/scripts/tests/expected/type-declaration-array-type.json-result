@@ -322,16 +322,16 @@ enum class Reason;
 
 // Typedefs.
 namespace Debugger {
-using BreakpointId = int;
+typedef int BreakpointId;
 } // Debugger
 
 namespace Runtime {
-using ObjectId = int;
-using LuckyNumbers = JSON::ArrayOf<int>;
-using BabyNames = JSON::ArrayOf<String>;
-using NewObjects = JSON::ArrayOf<int>;
-using OldObjects = JSON::ArrayOf<int>;
-using StopReasons = JSON::ArrayOf<Inspector::Protocol::Debugger::Reason>;
+typedef int ObjectId;
+typedef JSON::ArrayOf<int> LuckyNumbers;
+typedef JSON::ArrayOf<String> BabyNames;
+typedef JSON::ArrayOf<int> NewObjects;
+typedef JSON::ArrayOf<int> OldObjects;
+typedef JSON::ArrayOf<Inspector::Protocol::Debugger::Reason> StopReasons;
 } // Runtime
 // End of typedefs.
 
@@ -380,7 +380,7 @@ template<typename T> struct DefaultHash;
 // Hash declarations in the 'Debugger' Domain
 template<>
 struct DefaultHash<Inspector::Protocol::Debugger::Reason> {
-    using Hash = IntHash<Inspector::Protocol::Debugger::Reason>;
+    typedef IntHash<Inspector::Protocol::Debugger::Reason> Hash;
 };
 
 } // namespace WTF

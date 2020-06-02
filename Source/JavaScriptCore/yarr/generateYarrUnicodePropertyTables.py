@@ -551,7 +551,7 @@ class PropertyData:
         for propertyData in cls.allPropertyData:
             propertyData.dump(file, propertyData != cls.allPropertyData[-1])
 
-        file.write("using CreateCharacterClass = std::unique_ptr<CharacterClass> (*)();\n")
+        file.write("typedef std::unique_ptr<CharacterClass> (*CreateCharacterClass)();\n")
         file.write("static CreateCharacterClass createFunctions[{}] = {{\n   ".format(len(cls.allPropertyData)))
         functionsOnThisLine = 0
         for propertyData in cls.allPropertyData:

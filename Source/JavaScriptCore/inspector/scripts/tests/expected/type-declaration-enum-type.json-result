@@ -379,11 +379,11 @@ template<typename T> struct DefaultHash;
 // Hash declarations in the 'Runtime' Domain
 template<>
 struct DefaultHash<Inspector::Protocol::Runtime::FarmAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Runtime::FarmAnimals>;
+    typedef IntHash<Inspector::Protocol::Runtime::FarmAnimals> Hash;
 };
 template<>
 struct DefaultHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> {
-    using Hash = IntHash<Inspector::Protocol::Runtime::TwoLeggedAnimals>;
+    typedef IntHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> Hash;
 };
 
 } // namespace WTF
