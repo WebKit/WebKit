@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebDataListSuggestionsDropdownGtk.h"
 
-#if ENABLE(DATALIST_ELEMENT) && !USE(GTK4)
+#if ENABLE(DATALIST_ELEMENT)
 
 #include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>
@@ -65,10 +65,22 @@ WebDataListSuggestionsDropdownGtk::WebDataListSuggestionsDropdownGtk(GtkWidget* 
 
     auto* swindow = gtk_scrolled_window_new(nullptr, nullptr);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+#if USE(GTK4)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swindow), m_treeView);
+#else
     gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swindow), GTK_SHADOW_ETCHED_IN);
     gtk_container_add(GTK_CONTAINER(swindow), m_treeView);
     gtk_widget_show(m_treeView);
+#endif
 
+#if USE(GTK4)
+    m_popup = gtk_popover_new();
+    gtk_popover_set_has_arrow(GTK_POPOVER(m_popup), FALSE);
+    gtk_popover_set_autohide(GTK_POPOVER(m_popup), FALSE);
+    gtk_popover_set_position(GTK_POPOVER(m_popup), GTK_POS_BOTTOM);
+    gtk_popover_set_child(GTK_POPOVER(m_popup), swindow);
+    gtk_widget_set_parent(m_popup, m_webView);
+#else
     m_popup = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_window_set_type_hint(GTK_WINDOW(m_popup), GDK_WINDOW_TYPE_HINT_COMBO);
     gtk_window_set_resizable(GTK_WINDOW(m_popup), FALSE);
@@ -77,6 +89,7 @@ WebDataListSuggestionsDropdownGtk::WebDataListSuggestionsDropdownGtk(GtkWidget* 
 
     g_signal_connect_object(m_webView, "focus-out-event", G_CALLBACK(gtk_widget_hide), m_popup, G_CONNECT_SWAPPED);
     g_signal_connect_object(m_webView, "unmap-event", G_CALLBACK(gtk_widget_hide), m_popup, G_CONNECT_SWAPPED);
+#endif
 
 #if ENABLE(DEVELOPER_MODE)
     g_object_set_data(G_OBJECT(m_webView), "wk-datalist-popup", m_popup);
@@ -85,12 +98,20 @@ WebDataListSuggestionsDropdownGtk::WebDataListSuggestionsDropdownGtk(GtkWidget* 
 
 WebDataListSuggestionsDropdownGtk::~WebDataListSuggestionsDropdownGtk()
 {
+#if !USE(GTK4)
     gtk_window_set_transient_for(GTK_WINDOW(m_popup), nullptr);
     gtk_window_set_attached_to(GTK_WINDOW(m_popup), nullptr);
+#endif
+
 #if ENABLE(DEVELOPER_MODE)
     g_object_set_data(G_OBJECT(m_webView), "wk-datalist-popup", nullptr);
 #endif
+
+#if USE(GTK4)
+    g_clear_pointer(&m_popup, gtk_widget_unparent);
+#else
     gtk_widget_destroy(m_popup);
+#endif
 }
 
 void WebDataListSuggestionsDropdownGtk::treeViewRowActivatedCallback(GtkTreeView* treeView, GtkTreePath* path, GtkTreeViewColumn*, WebDataListSuggestionsDropdownGtk* menu)
@@ -128,20 +149,30 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
     auto* column = gtk_tree_view_get_column(GTK_TREE_VIEW(m_treeView), 0);
     gint itemHeight;
     gtk_tree_view_column_cell_get_size(column, nullptr, nullptr, nullptr, nullptr, &itemHeight);
+#if !USE(GTK4)
     gint verticalSeparator;
     gtk_widget_style_get(m_treeView, "vertical-separator", &verticalSeparator, nullptr);
     itemHeight += verticalSeparator;
+#endif
     if (!itemHeight)
         return;
 
     auto* display = gtk_widget_get_display(m_webView);
+#if USE(GTK4)
+    auto* monitor = gdk_display_get_monitor_at_surface(display, gtk_native_get_surface(gtk_widget_get_native(m_webView)));
+#else
     auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
+#endif
     GdkRectangle area;
     gdk_monitor_get_workarea(monitor, &area);
     int width = std::min(information.elementRect.width(), area.width);
     size_t itemCount = std::min<size_t>(information.suggestions.size(), (area.height / 3) / itemHeight);
 
+#if USE(GTK4)
+    auto* swindow = GTK_SCROLLED_WINDOW(gtk_popover_get_child(GTK_POPOVER(m_popup)));
+#else
     auto* swindow = GTK_SCROLLED_WINDOW(gtk_bin_get_child(GTK_BIN(m_popup)));
+#endif
     // Disable scrollbars when there's only one item to ensure the scrolled window doesn't take them into account when calculating its minimum size.
     gtk_scrolled_window_set_policy(swindow, GTK_POLICY_NEVER, itemCount > 1 ? GTK_POLICY_AUTOMATIC : GTK_POLICY_NEVER);
     gtk_widget_realize(m_treeView);
@@ -150,6 +181,10 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
     gtk_widget_set_size_request(m_popup, width, -1);
     gtk_scrolled_window_set_min_content_height(swindow, itemCount * itemHeight);
 
+#if USE(GTK4)
+    GdkRectangle windowRect(information.elementRect);
+    gtk_popover_set_pointing_to(GTK_POPOVER(m_popup), &windowRect);
+#else
     GtkRequisition menuRequisition;
     gtk_widget_get_preferred_size(m_popup, &menuRequisition, nullptr);
     WebCore::IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, information.elementRect.location());
@@ -173,6 +208,7 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
     }
     gtk_window_set_attached_to(GTK_WINDOW(m_popup), m_webView);
     gtk_window_set_screen(GTK_WINDOW(m_popup), gtk_widget_get_screen(m_webView));
+#endif
 
     gtk_widget_show(m_popup);
 }

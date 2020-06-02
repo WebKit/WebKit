@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT) && !USE(GTK4)
+#if ENABLE(DATALIST_ELEMENT)
 
 #include "WebDataListSuggestionsDropdown.h"
 

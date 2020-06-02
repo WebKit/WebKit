@@ -273,11 +273,7 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
 #if ENABLE(DATALIST_ELEMENT)
 RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
 {
-#if USE(GTK4)
-    return nullptr;
-#else
     return WebDataListSuggestionsDropdownGtk::create(m_viewWidget, page);
-#endif
 }
 #endif
 
