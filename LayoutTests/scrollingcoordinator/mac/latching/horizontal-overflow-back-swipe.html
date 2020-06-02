@@ -49,6 +49,7 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 0, "began", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+            await UIHelper.animationFrame();
             eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
             return UIHelper.waitForScrollCompletion();
@@ -86,7 +87,7 @@
 
             debug('Swipe to the left');
             
-            await Promise.all([onScrollCompletion(mouseLocationX, mouseLocationY), onSwipeCallback()]);
+            await Promise.all([onSwipeCallback(), onScrollCompletion(mouseLocationX, mouseLocationY)]);
 
             // Should not have received any scroll events.
             shouldBe('minXOffset', '0');

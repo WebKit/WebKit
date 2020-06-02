@@ -1,3 +1,19 @@
+2020-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        [ macOS ] scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=210351
+        <rdar://problem/61601464>
+
+        Reviewed by Tim Horton.
+
+        Try to deflake this test. It timed out when all the wheel events were received in the UI process
+        before the ViewGestureController had received a response from the web process about whether the
+        first event had been handled. Fix by adding a rAF() wait in the middle of sending the events.
+        
+        Also register the swipe callback before starting the event sending.
+
+        * scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html:
+
 2020-06-02  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Landing expectations for tests that were recently imported but did not have them
