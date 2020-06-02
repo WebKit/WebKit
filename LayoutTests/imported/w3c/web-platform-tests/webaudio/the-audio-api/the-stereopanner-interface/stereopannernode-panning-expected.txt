@@ -1,7 +1,9 @@
-CONSOLE MESSAGE: TypeError: this.context.createStereoPanner is not a function. (In 'this.context.createStereoPanner()', 'this.context.createStereoPanner' is undefined)
-
-Harness Error (FAIL), message = TypeError: this.context.createStereoPanner is not a function. (In 'this.context.createStereoPanner()', 'this.context.createStereoPanner' is undefined)
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "mono-test" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "stereo-test" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
 PASS > [mono-test]  
+PASS > [stereo-test]  
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

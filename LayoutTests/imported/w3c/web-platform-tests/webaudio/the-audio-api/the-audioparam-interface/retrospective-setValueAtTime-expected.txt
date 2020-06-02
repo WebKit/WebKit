@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
-
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
 PASS > [test] Test setValueAtTime with startTime in the past 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

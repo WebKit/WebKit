@@ -90,13 +90,13 @@
         should(
             () => new AudioWorkletNode(context, 'dummy', options2),
             'Creating AudioWorkletNode with channelCount 0')
-            .throw('NotSupportedError');
+            .throw(DOMException, 'NotSupportedError');
 
         const options3 = {channelCount: 33};
         should(
             () => new AudioWorkletNode(context, 'dummy', options3),
             'Creating AudioWorkletNode with channelCount 33')
-            .throw('NotSupportedError');
+            .throw(DOMException, 'NotSupportedError');
 
         task.done();
       });
@@ -116,7 +116,7 @@
         should(
             () => new AudioWorkletNode(context, 'dummy', options1),
             'Creating AudioWorkletNode with channelCountMode "foobar"')
-            .throw('TypeError');
+            .throw(TypeError);
 
         task.done();
       });
@@ -138,7 +138,7 @@
         should(
             () => new AudioWorkletNode(context, 'dummy', options1),
             'Creating AudioWorkletNode with channelCountMode "foobar"')
-            .throw('TypeError');
+            .throw(TypeError);
 
         task.done();
       });

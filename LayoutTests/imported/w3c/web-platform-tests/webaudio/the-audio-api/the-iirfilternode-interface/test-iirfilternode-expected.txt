@@ -1,21 +1,21 @@
 
 PASS IIRFilterNode coefficients are checked properly 
-FAIL feedforward coefficients can not be empty assert_throws: function "function () {
+FAIL feedforward coefficients can not be empty assert_throws_dom: function "function () {
         ac.createIIRFilter(arg1, arg2)
       }" threw object "TypeError: ac.createIIRFilter is not a function. (In 'ac.createIIRFilter(arg1, arg2)', 'ac.createIIRFilter' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
-FAIL feedback coefficients can not be empty assert_throws: function "function () {
+FAIL feedback coefficients can not be empty assert_throws_dom: function "function () {
         ac.createIIRFilter(arg1, arg2)
       }" threw object "TypeError: ac.createIIRFilter is not a function. (In 'ac.createIIRFilter(arg1, arg2)', 'ac.createIIRFilter' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
-FAIL more than 20 feedforward coefficients can not be used assert_throws: function "function () {
+FAIL more than 20 feedforward coefficients can not be used assert_throws_dom: function "function () {
         ac.createIIRFilter(arg1, arg2)
       }" threw object "TypeError: ac.createIIRFilter is not a function. (In 'ac.createIIRFilter(arg1, arg2)', 'ac.createIIRFilter' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
-FAIL more than 20 feedback coefficients can not be used assert_throws: function "function () {
+FAIL more than 20 feedback coefficients can not be used assert_throws_dom: function "function () {
         ac.createIIRFilter(arg1, arg2)
       }" threw object "TypeError: ac.createIIRFilter is not a function. (In 'ac.createIIRFilter(arg1, arg2)', 'ac.createIIRFilter' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
-FAIL at least one feedforward coefficient must be non-zero assert_throws: function "function () {
+FAIL at least one feedforward coefficient must be non-zero assert_throws_dom: function "function () {
         ac.createIIRFilter(arg1, arg2)
       }" threw object "TypeError: ac.createIIRFilter is not a function. (In 'ac.createIIRFilter(arg1, arg2)', 'ac.createIIRFilter' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL the first feedback coefficient must be non-zero assert_throws: function "function () {
+FAIL the first feedback coefficient must be non-zero assert_throws_dom: function "function () {
         ac.createIIRFilter(arg1, arg2)
       }" threw object "TypeError: ac.createIIRFilter is not a function. (In 'ac.createIIRFilter(arg1, arg2)', 'ac.createIIRFilter' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
 FAIL IIRFilterNode getFrequencyResponse handles invalid frequencies properly ac.createIIRFilter is not a function. (In 'ac.createIIRFilter([0.5, 0.5], [1.0])', 'ac.createIIRFilter' is undefined)

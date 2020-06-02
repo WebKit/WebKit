@@ -1,0 +1,34 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "disconnect()" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "disconnect(output)" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "disconnect(AudioNode)" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "disconnect(AudioNode, output)" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "disconnect(AudioNode, output, input)" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+PASS Executing "exceptions" 
+FAIL Executing "disabled-outputs" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+PASS Audit report 
+PASS > [disconnect()]  
+PASS > [disconnect(output)]  
+PASS > [disconnect(AudioNode)]  
+PASS > [disconnect(AudioNode, output)]  
+PASS > [disconnect(AudioNode, output, input)]  
+PASS > [exceptions]  
+PASS   splitter.disconnect(2) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   Disconnecting a connection twice did not throw an exception. 
+FAIL X gain1.disconnect(gain2) did not throw an exception. assert_true: expected true got false
+FAIL X gain1.disconnect(gain3) did not throw an exception. assert_true: expected true got false
+FAIL X splitter.disconnect(gain2, 2) did not throw an exception. assert_true: expected true got false
+FAIL X splitter.disconnect(gain1, 0) did not throw an exception. assert_true: expected true got false
+FAIL X splitter.disconnect(gain3, 0, 0) did not throw an exception. assert_true: expected true got false
+FAIL X splitter.disconnect(merger, 3, 0) did not throw an exception. assert_true: expected true got false
+FAIL < [exceptions] 6 out of 8 assertions were failed. assert_true: expected true got false
+PASS > [disabled-outputs]  
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 7 tasks were failed. assert_true: expected true got false
+

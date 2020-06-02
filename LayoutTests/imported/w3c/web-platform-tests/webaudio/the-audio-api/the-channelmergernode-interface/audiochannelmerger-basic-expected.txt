@@ -1,5 +1,8 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "exceptions-channels" 
+PASS Executing "exceptions-properties" 
+PASS Audit report 
 PASS > [exceptions-channels]  
 PASS   context.createChannelMerger() did not throw an exception. 
 PASS   context.createChannelMerger(0) threw IndexSizeError: "The index is not in the allowed range.". 

@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Frequency AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Q AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Gain AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Detune AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "All k-rate inputs" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [Frequency AudioParam] k-rate input works 
+PASS > [Q AudioParam] k-rate input works 
+PASS > [Gain AudioParam] k-rate input works 
+PASS > [Detune AudioParam] k-rate input works 
+PASS > [All k-rate inputs]  
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+

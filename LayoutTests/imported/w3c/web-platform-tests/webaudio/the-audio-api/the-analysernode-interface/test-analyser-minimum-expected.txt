@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: TypeError: ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
 
-Harness Error (FAIL), message = TypeError: ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
-
+FAIL Test AnalyserNode when the input is silent TypeError: ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
 

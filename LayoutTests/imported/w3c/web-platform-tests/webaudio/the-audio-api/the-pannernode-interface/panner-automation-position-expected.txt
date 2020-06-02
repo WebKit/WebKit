@@ -1,7 +1,21 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "0: 1-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "0: 2-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "1: 1-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "1: 2-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "2: 1-channel exponential rolloff: 1.5" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "2: 2-channel exponential rolloff: 1.5" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "3: 1-channel linear rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+FAIL Executing "3: 2-channel linear rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')"
+PASS Audit report 
 PASS > [0: 1-channel inverse rolloff: 1]  
+PASS > [0: 2-channel inverse rolloff: 1]  
+PASS > [1: 1-channel inverse rolloff: 1]  
+PASS > [1: 2-channel inverse rolloff: 1]  
+PASS > [2: 1-channel exponential rolloff: 1.5]  
+PASS > [2: 2-channel exponential rolloff: 1.5]  
+PASS > [3: 1-channel linear rolloff: 1]  
+PASS > [3: 2-channel linear rolloff: 1]  
+PASS # AUDIT TASK RUNNER FINISHED: 8 tasks ran successfully. 
 

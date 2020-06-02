@@ -1,0 +1,25 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "invalid constructor" 
+FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
+FAIL Executing "nullable buffer" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.buffer')"
+FAIL Executing "constructor options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'factoryNode.detune.value = options.detune')"
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new OfflineAudioContext(...) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [invalid constructor]  
+PASS   new AudioBufferSourceNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
+PASS   new AudioBufferSourceNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
+PASS   new AudioBufferSourceNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
+PASS > [default constructor]  
+FAIL X node0 = new AudioBufferSourceNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+FAIL X node0 instanceof AudioBufferSourceNode is not equal to true. Got false. assert_true: expected true got false
+PASS > [nullable buffer]  
+FAIL X node1 = new AudioBufferSourceNode(c, {"buffer":null} incorrectly threw TypeError: "function is not a constructor (evaluating 'new AudioBufferSourceNode(context, options)')". assert_true: expected true got false
+PASS > [constructor options]  
+FAIL X node = new AudioBufferSourceNode(c, {"buffer":{},"detune":0.5,"loop":true,"loopEnd":0.010416666666666666,"loopStart":0.00010416666666666667,"playbackRate":0.75}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AudioBufferSourceNode(context, options)')". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+

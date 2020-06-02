@@ -1,0 +1,11 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "buffer-stitching-1" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "buffer-stitching-2" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [buffer-stitching-1] Subsample buffer stitching, same rates 
+PASS   Test 1: context.sampleRate is equal to 44100. 
+PASS > [buffer-stitching-2] Subsample buffer stitching, different rates 
+PASS   Test 2: context.sampleRate is equal to 44100. 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

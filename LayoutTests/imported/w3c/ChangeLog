@@ -1,3 +1,14 @@
+2020-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests/webaudio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=212610
+
+        Reviewed by Eric Carlson.
+
+        Import webaudio web-platform-tests from upstream d3ea88514a93b7b6968.
+
+        * web-platform-tests/webaudio/*: Updated.
+
 2020-06-01  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Implement ParentNode.prototype.replaceChildren

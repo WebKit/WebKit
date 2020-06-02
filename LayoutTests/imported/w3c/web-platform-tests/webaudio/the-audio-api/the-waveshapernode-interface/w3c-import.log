@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/ctor-waveshaper.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/curve-tests.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/silent-inputs.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-limits.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-simple.html

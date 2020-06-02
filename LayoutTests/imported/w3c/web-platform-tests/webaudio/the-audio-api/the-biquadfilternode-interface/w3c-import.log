@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-allpass.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-bandpass.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-highpass.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-highshelf.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-lowpass.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-lowshelf.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-notch.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-peaking.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-tail.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquadfilternode-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/ctor-biquadfilter.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html

@@ -1,0 +1,62 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "setValueCurve" 
+PASS Executing "automations" 
+FAIL Executing "catch-exception" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+PASS Executing "start-end" 
+PASS Executing "curve overlap" 
+PASS Executing "curve lengths" 
+PASS Audit report 
+PASS > [setValueCurve]  
+PASS   setValueCurveAtTime(curve, 0.0125, 0.0125) did not throw an exception. 
+FAIL X setValueAtTime(1, 0.018750000000000003) did not throw an exception. assert_true: expected true got false
+FAIL X linearRampToValueAtTime(1, 0.018750000000000003) did not throw an exception. assert_true: expected true got false
+FAIL X exponentialRampToValueAtTime(1, 0.018750000000000003) did not throw an exception. assert_true: expected true got false
+FAIL X setTargetAtTime(1, 0.018750000000000003, 1) did not throw an exception. assert_true: expected true got false
+PASS   setValueAtTime(1, 0.026250000000000002) did not throw an exception. 
+FAIL < [setValueCurve] 4 out of 6 assertions were failed. assert_true: expected true got false
+PASS > [automations]  
+PASS   linearRampToValueAtTime(1, 0.0125) did not throw an exception. 
+PASS   exponentialRampToValueAtTime(1, 0.025) did not throw an exception. 
+PASS   setTargetAtTime(1, 0.037500000000000006, 0.1) did not throw an exception. 
+PASS   setValueCurveAtTime(curve, 0.05, 0.1) did not throw an exception. 
+FAIL X setValueCurveAtTime(curve, 0.00625, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime(curve, 0.018750000000000003, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime(curve, 0.03125, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime(curve, 0.043750000000000004, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime([NaN, NaN], 0.043750000000000004, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime([1, Infinity], 0.043750000000000004, 0.01) did not throw an exception. assert_true: expected true got false
+PASS   delayTime.setValueCurveAtTime([1, 5], 0.043750000000000004, 0.01) did not throw an exception. 
+FAIL X delayTime.setValueCurveAtTime([1, 5, Infinity], 0.043750000000000004, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime(curve, 0.031415926535897934, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL < [automations] 8 out of 13 assertions were failed. assert_true: expected true got false
+PASS > [catch-exception]  
+PASS > [start-end]  
+PASS   setValueAtTime(1, 0) did not throw an exception. 
+PASS   linearRampToValueAtTime(0, 0.0025) did not throw an exception. 
+PASS   setValueCurveAtTime(..., 0.0025, 0.0025) did not throw an exception. 
+PASS   exponentialRampToValueAtTime(1, 0.0075) did not throw an exception. 
+PASS   setValueCurveAtTime(..., 0.0075, 0.0025) did not throw an exception. 
+PASS   setValueCurveAtTime(..., 0.01, 0.0025) did not throw an exception. 
+PASS   setValueAtTime(0, 0.0125) did not throw an exception. 
+PASS   setValueCurveAtTime(..., 0.0125, 0.0025) did not throw an exception. 
+PASS   setTargetAtTime(1, 0.015000000000000001, 1) did not throw an exception. 
+PASS < [start-end] All assertions passed. (total 9 assertions) 
+PASS > [curve overlap]  
+FAIL X g.gain.setValueCurveAtTime([1,2,3], 5, 10) incorrectly threw TypeError: "Argument 1 ('values') to AudioParam.setValueCurveAtTime must be an instance of Float32Array". assert_true: expected true got false
+FAIL X second g.gain.setValueCurveAtTime([1,2,3], 5, 10) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+FAIL X g.gain.setValueCurveAtTime([1,2,3], 5, 5) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+FAIL X g.gain.setValueCurveAtTime([1,2,3], 2.5, 10) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+FAIL X g.gain.setValueCurveAtTime([1,2,3], 10, 10) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+FAIL X g.gain.setValueCurveAtTime([1,2,3], 6, 9) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+FAIL X g.gain.setValueCurveAtTime([1,2,3], 4, 11) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+PASS   g.gain.setValueAtTime(1.0, 15) did not throw an exception. 
+FAIL < [curve overlap] 7 out of 8 assertions were failed. assert_true: expected true got false
+PASS > [curve lengths]  
+FAIL X setValueCurveAtTime([], 0, 0.01) did not throw an exception. assert_true: expected true got false
+FAIL X setValueCurveAtTime([1], 0, 0.01) did not throw an exception. assert_true: expected true got false
+PASS   setValueCurveAtTime([1,2], 0, 0.01) did not throw an exception. 
+FAIL < [curve lengths] 2 out of 3 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 4 out of 6 tasks were failed. assert_true: expected true got false
+

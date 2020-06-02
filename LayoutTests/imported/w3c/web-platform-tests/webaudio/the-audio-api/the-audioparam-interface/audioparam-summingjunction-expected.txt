@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+PASS Audit report 
+PASS > [test]  
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

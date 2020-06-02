@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "no-nan" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "interpolation" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [no-nan] NaN does not occur 
+PASS > [interpolation] Interpolation of linear ramp 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+

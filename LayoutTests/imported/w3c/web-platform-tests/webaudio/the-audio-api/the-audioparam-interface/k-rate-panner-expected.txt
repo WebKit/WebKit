@@ -1,0 +1,33 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Panner k-rate positionX" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Panner k-rate positionY" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Panner k-rate orientationX" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Panner k-rate orientationY" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Panner k-rate orientationZ" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate positionX" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate positionY" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate positionZ" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate forwardX" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate forwardY" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate forwardZ" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate upX" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate upY" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener k-rate upZ" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [Panner k-rate positionX]  
+PASS > [Panner k-rate positionY]  
+PASS > [Panner k-rate orientationX]  
+PASS > [Panner k-rate orientationY]  
+PASS > [Panner k-rate orientationZ]  
+PASS > [Listener k-rate positionX]  
+PASS > [Listener k-rate positionY]  
+PASS > [Listener k-rate positionZ]  
+PASS > [Listener k-rate forwardX]  
+PASS > [Listener k-rate forwardY]  
+PASS > [Listener k-rate forwardZ]  
+PASS > [Listener k-rate upX]  
+PASS > [Listener k-rate upY]  
+PASS > [Listener k-rate upZ]  
+PASS # AUDIT TASK RUNNER FINISHED: 14 tasks ran successfully. 
+

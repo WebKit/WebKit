@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Insert same event at same time" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Linear + Expo" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Expo + Linear" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Linear + SetTarget" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Multiple linear ramps at the same time" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Multiple exponential ramps at the same time" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [Insert same event at same time]  
+PASS > [Linear + Expo] Different events at same time 
+PASS > [Expo + Linear] Different events at same time 
+PASS > [Linear + SetTarget] Different events at same time 
+PASS > [Multiple linear ramps at the same time] Verify output 
+PASS > [Multiple exponential ramps at the same time] Verify output 
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,12 +14,45 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/idl-test.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/adding-events.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-close.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-connect-audioratesignal.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exceptional-values.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exponentialRampToValueAtTime.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-large-endtime.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-linearRampToValueAtTime.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-method-chaining.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setTargetAtTime.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueAtTime.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurveAtTime.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-summingjunction.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-connections.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-constant-source.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-connections.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-exponentialRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-linearRampToValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setTargetAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueCurveAtTime.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-test.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/set-target-conv.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/setTargetAtTime-after-event-within-block.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/setValueAtTime-within-block.html

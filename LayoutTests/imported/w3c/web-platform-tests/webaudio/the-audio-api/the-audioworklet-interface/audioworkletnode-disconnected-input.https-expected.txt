@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: TypeError: Not enough arguments
-
-Harness Error (FAIL), message = TypeError: Not enough arguments
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
 PASS > [test] Input array length should be zero for disconnected input 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

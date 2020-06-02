@@ -1,7 +1,19 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "setup" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+FAIL Executing "without-audio-node-options" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
+FAIL Executing "audio-node-options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testNode.numberOfInputs')"
+FAIL Executing "channel-count" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
+FAIL Executing "channel-count-mode" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
+FAIL Executing "channel-interpretation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
+PASS Audit report 
 PASS > [setup]  
+PASS > [without-audio-node-options]  
+FAIL X Creating AudioWOrkletNode without options incorrectly threw ReferenceError: "Can't find variable: AudioWorkletNode". assert_true: expected true got false
+PASS > [audio-node-options]  
+FAIL X Creating AudioWOrkletNode with options: {"numberOfInputs":7,"numberOfOutputs":18,"channelCount":4,"channelCountMode":"clamped-max","channelInterpretation":"discrete"} incorrectly threw ReferenceError: "Can't find variable: AudioWorkletNode". assert_true: expected true got false
+PASS > [channel-count]  
+PASS > [channel-count-mode]  
+PASS > [channel-interpretation]  
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 6 tasks were failed. assert_true: expected true got false
 

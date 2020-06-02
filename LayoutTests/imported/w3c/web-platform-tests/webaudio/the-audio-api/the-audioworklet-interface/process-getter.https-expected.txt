@@ -1,0 +1,4 @@
+
+FAIL 'process' getter on prototype promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+FAIL 'process' getter on instance promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+

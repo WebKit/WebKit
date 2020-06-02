@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "attack" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "knee" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "ratio" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "release" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "threshold" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [attack] Dynamics compressor attack 
+PASS > [knee] Dynamics compressor knee 
+PASS > [ratio] Dynamics compressor ratio 
+PASS > [release] Dynamics compressor release 
+PASS > [threshold] Dynamics compressor threshold 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+

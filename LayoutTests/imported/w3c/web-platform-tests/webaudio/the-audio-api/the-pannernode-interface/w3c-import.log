@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,12 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/ctor-panner.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-exponential.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-inverse.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-linear.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-equalpower-stereo.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-azimuth.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-stereo.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html

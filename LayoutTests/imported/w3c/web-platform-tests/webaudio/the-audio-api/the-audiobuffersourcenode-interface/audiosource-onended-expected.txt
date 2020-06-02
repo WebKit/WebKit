@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "absn-set-onended" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "absn-add-listener" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "osc-set-onended" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "osc-add-listener" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+PASS Audit report 
+PASS > [absn-set-onended]  
+PASS > [absn-add-listener]  
+PASS > [osc-set-onended]  
+PASS > [osc-add-listener]  
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+

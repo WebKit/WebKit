@@ -1,8 +1,13 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: ConstantSourceNode
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: ConstantSourceNode
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "createConstantSource()" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "new ConstantSourceNode()" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "start/stop exceptions" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Audit report 
 PASS > [createConstantSource()]  
 FAIL X Factory method: node = context.createConstantSource() incorrectly threw TypeError: "context.createConstantSource is not a function. (In 'context.createConstantSource()', 'context.createConstantSource' is undefined)". assert_true: expected true got false
+PASS > [new ConstantSourceNode()]  
+FAIL X Constructor: node = new ConstantSourceNode() incorrectly threw ReferenceError: "Can't find variable: ConstantSourceNode". assert_true: expected true got false
+PASS > [start/stop exceptions]  
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 3 tasks were failed. assert_true: expected true got false
 

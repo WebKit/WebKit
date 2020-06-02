@@ -1,0 +1,33 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "invalid constructor" 
+FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
+FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node[entry.attribute]')"
+FAIL Executing "nullable buffer" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.buffer')"
+PASS Executing "illegal sample-rate" 
+FAIL Executing "construct with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.buffer')"
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new OfflineAudioContext(...) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [invalid constructor]  
+PASS   new ConvolverNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
+PASS   new ConvolverNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
+PASS   new ConvolverNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
+PASS > [default constructor]  
+FAIL X node0 = new ConvolverNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+FAIL X node0 instanceof ConvolverNode is not equal to true. Got false. assert_true: expected true got false
+PASS > [test AudioNodeOptions]  
+FAIL X new ConvolverNode(c, {"channelCount":1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new ConvolverNode(context, options)')". assert_true: expected true got false
+PASS > [nullable buffer]  
+FAIL X node1 = new ConvolverNode(c, {"buffer":null} incorrectly threw TypeError: "function is not a constructor (evaluating 'new ConvolverNode(context, options)')". assert_true: expected true got false
+PASS > [illegal sample-rate]  
+FAIL X node1 = new ConvolverNode(c, {"buffer":{}} threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
+FAIL < [illegal sample-rate] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS > [construct with options]  
+FAIL X node = new ConvolverNode(c, {"buffer":{},"disableNormalization":false}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new ConvolverNode(context, options)')". assert_true: expected true got false
+FAIL X node1 instanceOf ConvolverNode is not equal to true. Got false. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 7 tasks were failed. assert_true: expected true got false
+

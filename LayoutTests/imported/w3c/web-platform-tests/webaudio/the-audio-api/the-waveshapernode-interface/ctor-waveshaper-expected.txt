@@ -1,0 +1,25 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "incorrect construction" 
+FAIL Executing "valid default construction" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
+FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
+FAIL Executing "valid non-default" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.curve')"
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new OfflineAudioContext(...) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [incorrect construction]  
+PASS   new WaveShaperNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
+PASS   new WaveShaperNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
+PASS   new WaveShaperNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS < [incorrect construction] All assertions passed. (total 3 assertions) 
+PASS > [valid default construction]  
+FAIL X node0 = new WaveShaperNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+FAIL X node0 instanceof WaveShaperNode is not equal to true. Got false. assert_true: expected true got false
+PASS > [test AudioNodeOptions]  
+FAIL X new WaveShaperNode(c, {channelCount: 17}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[nodeName]')". assert_true: expected true got false
+PASS > [valid non-default]  
+FAIL X node1 = new WaveShaperNode(, {"curve":{"0":1,"1":2,"2":3},"oversample":"4x"}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new WaveShaperNode(context, options)')". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+

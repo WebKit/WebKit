@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
-
-Harness Error (FAIL), message = TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)"
+PASS Audit report 
 PASS > [test] WaveShaperNode including values outside the range of [-1,1] 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

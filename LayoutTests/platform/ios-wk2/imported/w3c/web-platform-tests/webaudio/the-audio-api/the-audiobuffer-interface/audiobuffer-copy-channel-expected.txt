@@ -1,0 +1,35 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+FAIL Executing "copyFrom-exceptions" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebAssembly"
+FAIL Executing "copyTo-exceptions" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebAssembly"
+FAIL Executing "copyFrom-validate" promise_test: Unhandled rejection with value: object "TypeError: buffer.copyFromChannel is not a function. (In 'buffer.copyFromChannel(dst8, c)', 'buffer.copyFromChannel' is undefined)"
+FAIL Executing "copyTo-validate" promise_test: Unhandled rejection with value: object "TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(src, c)', 'buffer.copyToChannel' is undefined)"
+PASS Audit report 
+PASS > [initialize]  
+PASS   Initialized values contains only the constant -1. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [copyFrom-exceptions]  
+FAIL X AudioBuffer.prototype.copyFromChannel does not exist. Got undefined. assert_true: expected true got false
+PASS   0: buffer = context.createBuffer(3, 16, context.sampleRate) did not throw an exception. 
+PASS   1: buffer.copyFromChannel(null, 0) threw TypeError: "buffer.copyFromChannel is not a function. (In 'buffer.copyFromChannel(null, 0)', 'buffer.copyFromChannel' is undefined)". 
+PASS   2: buffer.copyFromChannel(context, 0) threw TypeError: "buffer.copyFromChannel is not a function. (In 'buffer.copyFromChannel(context, 0)', 'buffer.copyFromChannel' is undefined)". 
+FAIL X 3: buffer.copyFromChannel(x, -1) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
+FAIL X 4: buffer.copyFromChannel(x, 3) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
+FAIL X 5: buffer.copyFromChannel(x, 0, -1) incorrectly threw TypeError: "buffer.copyFromChannel is not a function. (In 'buffer.copyFromChannel(x, 0, -1)', 'buffer.copyFromChannel' is undefined)". assert_true: expected true got false
+FAIL X 6: buffer.copyFromChannel(x, 0, 16) incorrectly threw TypeError: "buffer.copyFromChannel is not a function. (In 'buffer.copyFromChannel(x, 0, bufferLength)', 'buffer.copyFromChannel' is undefined)". assert_true: expected true got false
+FAIL X 7: buffer.copyFromChannel(x, 3) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
+PASS > [copyTo-exceptions]  
+FAIL X AudioBuffer.prototype.copyToChannel does not exist. Got undefined. assert_true: expected true got false
+PASS   0: buffer.copyToChannel(null, 0) threw TypeError: "buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(null, 0)', 'buffer.copyToChannel' is undefined)". 
+PASS   1: buffer.copyToChannel(context, 0) threw TypeError: "buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(context, 0)', 'buffer.copyToChannel' is undefined)". 
+FAIL X 2: buffer.copyToChannel(x, -1) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
+FAIL X 3: buffer.copyToChannel(x, 3) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
+FAIL X 4: buffer.copyToChannel(x, 0, -1) incorrectly threw TypeError: "buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(x, 0, -1)', 'buffer.copyToChannel' is undefined)". assert_true: expected true got false
+FAIL X 5: buffer.copyToChannel(x, 0, 16) incorrectly threw TypeError: "buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(x, 0, bufferLength)', 'buffer.copyToChannel' is undefined)". assert_true: expected true got false
+FAIL X 6: buffer.copyToChannel(x, 3) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
+PASS > [copyFrom-validate]  
+PASS > [copyTo-validate]  
+PASS   buffer = createConstantBuffer(context, 16, [-1,-1,-1]) did not throw an exception. 
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 5 tasks were failed. assert_true: expected true got false
+

@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "getoutputtimestamp-initial-values" promise_test: Unhandled rejection with value: object "TypeError: context.getOutputTimestamp is not a function. (In 'context.getOutputTimestamp()', 'context.getOutputTimestamp' is undefined)"
+PASS Audit report 
+PASS > [getoutputtimestamp-initial-values]  
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

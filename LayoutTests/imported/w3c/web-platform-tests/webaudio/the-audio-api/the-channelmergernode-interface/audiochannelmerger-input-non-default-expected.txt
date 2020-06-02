@@ -1,7 +1,11 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'context.startRendering().then')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering().then')
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "silent-channel" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "stereo-down-mixing" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+FAIL Executing "undefined-channel-layout" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+PASS Audit report 
 PASS > [silent-channel]  
+PASS > [stereo-down-mixing]  
+PASS > [undefined-channel-layout]  
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 

@@ -2099,6 +2099,12 @@
     "imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [
         "slow"
     ],

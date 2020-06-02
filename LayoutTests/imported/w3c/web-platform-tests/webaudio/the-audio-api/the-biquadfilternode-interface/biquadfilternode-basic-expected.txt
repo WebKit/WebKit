@@ -1,0 +1,31 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test] Basic tests for BiquadFilterNode 
+PASS   Number of inputs is equal to 1. 
+PASS   Number of outputs is equal to 1. 
+PASS   Default filter type is equal to lowpass. 
+PASS   Default frequency value is equal to 350. 
+PASS   Default Q value is equal to 1. 
+PASS   Default gain value is equal to 0. 
+PASS   Setting filter.type to lowpass did not throw an exception. 
+PASS   Filter type is is equal to lowpass. 
+PASS   Setting filter.type to highpass did not throw an exception. 
+PASS   Filter type is is equal to highpass. 
+PASS   Setting filter.type to bandpass did not throw an exception. 
+PASS   Filter type is is equal to bandpass. 
+PASS   Setting filter.type to lowshelf did not throw an exception. 
+PASS   Filter type is is equal to lowshelf. 
+PASS   Setting filter.type to highshelf did not throw an exception. 
+PASS   Filter type is is equal to highshelf. 
+PASS   Setting filter.type to peaking did not throw an exception. 
+PASS   Filter type is is equal to peaking. 
+PASS   Setting filter.type to notch did not throw an exception. 
+PASS   Filter type is is equal to notch. 
+PASS   Setting filter.type to allpass did not throw an exception. 
+PASS   Filter type is is equal to allpass. 
+PASS   Setting filter.type to (invalid) 99 is not equal to 99. 
+PASS < [test] All assertions passed. (total 23 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

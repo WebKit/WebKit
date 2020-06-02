@@ -1,0 +1,11 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Set Listener.positionX.value" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Listener.positionX.setValue" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Listener.setPosition" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
+PASS > [Set Listener.positionX.value]  
+PASS > [Listener.positionX.setValue]  
+PASS > [Listener.setPosition]  
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+

@@ -1,9 +1,8 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')"
+PASS Audit report 
 PASS > [test] DelayNode with delay set to non-default maximum delay 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

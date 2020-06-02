@@ -1,0 +1,19 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+FAIL Executing "test value" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
+FAIL Executing "test time" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
+FAIL Executing "test setValueCurve" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
+FAIL Executing "special cases 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
+FAIL Executing "special cases 2" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
+PASS Audit report 
+PASS > [initialize]  
+FAIL X Creating context for testing incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
+FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS > [test value] Test non-finite arguments for AudioParam value 
+PASS > [test time] Test non-finite arguments for AudioParam time 
+PASS > [test setValueCurve] Test non-finite arguments for setValueCurveAtTime 
+PASS > [special cases 1] Test exceptions for finite values 
+PASS > [special cases 2] Test special cases for expeonentialRamp 
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 6 tasks were failed. assert_true: expected true got false
+

@@ -1,0 +1,6 @@
+
+FAIL super() after new AudioWorkletProcessor() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+FAIL new AudioWorkletProcessor() after super() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+FAIL new AudioWorkletProcessor() after new AudioWorkletProcessor() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+FAIL Singleton AudioWorkletProcessor promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+

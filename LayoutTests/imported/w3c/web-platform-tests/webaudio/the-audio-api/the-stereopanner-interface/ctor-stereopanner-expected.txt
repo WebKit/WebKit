@@ -1,0 +1,24 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "invalid constructor" 
+FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: Right hand side of instanceof is not an object"
+FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node[entry.attribute]')"
+FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: StereoPannerNode"
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new OfflineAudioContext(...) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [invalid constructor]  
+PASS   new StereoPannerNode() threw TypeError: "undefined is not a constructor (evaluating 'new window[name]()')". 
+PASS   new StereoPannerNode(1) threw TypeError: "undefined is not a constructor (evaluating 'new window[name](1)')". 
+PASS   new StereoPannerNode(context, 42) threw TypeError: "undefined is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
+PASS > [default constructor]  
+FAIL X node0 = new StereoPannerNode(context) incorrectly threw TypeError: "undefined is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+PASS > [test AudioNodeOptions]  
+FAIL X new StereoPannerNode(c, {"channelCount":1}) incorrectly threw ReferenceError: "Can't find variable: StereoPannerNode". assert_true: expected true got false
+PASS > [constructor with options]  
+FAIL X node1 = new StereoPannerNode(, {"pan":0.75}) incorrectly threw ReferenceError: "Can't find variable: StereoPannerNode". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+

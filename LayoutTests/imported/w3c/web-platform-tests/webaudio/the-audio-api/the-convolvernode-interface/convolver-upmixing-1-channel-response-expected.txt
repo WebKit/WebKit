@@ -1,0 +1,5 @@
+
+FAIL speakers, initially mono Not enough arguments
+FAIL discrete Not enough arguments
+FAIL speakers, initially stereo Not enough arguments
+

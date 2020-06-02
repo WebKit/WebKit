@@ -279,6 +279,14 @@ imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.html [ Skip ]
 
+# Skip WPT webaudio tests that are timing out.
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-multi-channels.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-routing.html [ Skip ]
+
+# Test prints out sample rate, which appears to be hardware-specific.
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html [ Pass Failure ]
+
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
 # Requires BroadcastChannel.
@@ -302,6 +310,8 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ DumpJSConsoleLogInStdErr ]
 fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-createImageBitmap.html [ DumpJSConsoleLogInStdErr ]
 http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ DumpJSConsoleLogInStdErr ]
@@ -1938,8 +1948,6 @@ webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 fast/text/user-installed-fonts/extended-character.html [ Pass ImageOnlyFailure ]
 fast/text/user-installed-fonts/extended-character-with-user-font.html [ Pass ImageOnlyFailure ]
 
-# Does timeout
-imported/w3c/web-platform-tests/webaudio/idlharness.https.html [ Skip ]
 # Do assert in OfflineAudioContext
 [ Debug ] imported/w3c/web-platform-tests/webaudio/ [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-disconnect.html [ DumpJSConsoleLogInStdErr ]

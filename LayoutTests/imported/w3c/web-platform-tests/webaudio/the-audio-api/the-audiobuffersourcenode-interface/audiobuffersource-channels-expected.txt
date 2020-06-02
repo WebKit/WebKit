@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "validate .buffer" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: 128, sampleRate: context.sampleRate})')"
+PASS Audit report 
+PASS > [validate .buffer] Validatation of AudioBuffer in .buffer attribute setter 
+PASS   source.buffer = 57 threw TypeError: "The AudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer". 
+PASS   source.buffer = null did not throw an exception. 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

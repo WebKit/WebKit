@@ -1,5 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
 PASS > [test] Basic tests for DynamicsCompressorNode API 
 PASS   compressor.threshold.value is equal to -24. 
 PASS   compressor.knee.value is equal to 30. 
@@ -7,7 +9,7 @@ PASS   compressor.ratio.value is equal to 12.
 PASS   compressor.attack.value is equal to 0.003000000026077032. 
 PASS   compressor.release.value is equal to 0.25. 
 FAIL X typeof compressor.reduction is not equal to number. Got object. assert_true: expected true got false
-FAIL X compressor.reduction is not equal to 0. Got undefined. assert_true: expected true got false
+FAIL X compressor.reduction is not equal to 0. Got AudioParam. assert_true: expected true got false
 FAIL < [test] 2 out of 7 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

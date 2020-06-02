@@ -1,0 +1,16 @@
+
+PASS MediaStreamAudioSourceNode created with factory method and MediaStream with no tracks 
+FAIL MediaStreamAudioSourceNode created with constructor and MediaStream with no tracks assert_throws_dom: A MediaStreamAudioSourceNode can only be constructed via the constructor
+          with a MediaStream that has at least one track of kind "audio" function "function () {
+              new MediaStreamAudioSourceNode(ac, { mediaStream: emptyStream });
+            }" threw object "TypeError: function is not a constructor (evaluating 'new MediaStreamAudioSourceNode(ac, { mediaStream: emptyStream })')" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS MediaStreamAudioSourceNode created with the factory method and MediaStream with only a video track 
+FAIL MediaStreamAudioSourceNode created with constructor and MediaStream with only a video track assert_throws_dom: A MediaStreamAudioSourceNode can only be constructed via the factory with a
+          MediaStream that has at least one track of kind "audio" function "function () {
+              new MediaStreamAudioSourceNode(ac, {
+                mediaStream: videoOnlyStream,
+              });
+            }" threw object "TypeError: function is not a constructor (evaluating 'new MediaStreamAudioSourceNode(ac, {
+                mediaStream: videoOnlyStream,
+              })')" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

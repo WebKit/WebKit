@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,10 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-cascade.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-channels.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-setBuffer-already-has-value.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-setBuffer-null.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/ctor-convolver.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html

@@ -1,5 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "simple" 
+PASS Audit report 
 PASS > [simple]  
 PASS   Initial WaveShaper.curve is equal to null. 
 PASS   Initial WaveShaper.oversample is equal to none. 

@@ -1,0 +1,3 @@
+
+FAIL Test that cycles that don't contain a DelayNode are muted function is not a constructor (evaluating 'new OscillatorNode(off)')
+

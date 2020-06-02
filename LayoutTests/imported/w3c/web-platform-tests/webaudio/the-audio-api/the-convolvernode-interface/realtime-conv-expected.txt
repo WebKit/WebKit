@@ -1,0 +1,8 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer(
+                {length: pulseLength, sampleRate: context.sampleRate})')"
+PASS Audit report 
+PASS > [test] Test convolver with real-time context 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

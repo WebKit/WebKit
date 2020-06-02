@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// See https://github.com/web-platform-tests/wpt/issues/12781 for information on
+// the purpose of audit.js, and why testharness.js does not suffice.
 
 /**
  * @fileOverview  WebAudio layout test utility library. Built around W3C's
@@ -17,7 +19,7 @@
 
   // Selected methods from testharness.js.
   let testharnessProperties = [
-    'test', 'async_test', 'promise_test', 'promise_rejects', 'generate_tests',
+    'test', 'async_test', 'promise_test', 'promise_rejects_js', 'generate_tests',
     'setup', 'done', 'assert_true', 'assert_false'
   ];
 
@@ -32,6 +34,12 @@
 window.Audit = (function() {
 
   'use strict';
+
+  // NOTE: Moving this method (or any other code above) will change the location
+  // of 'CONSOLE ERROR...' message in the expected text files.
+  function _logError(message) {
+    console.error('[audit.js] ' + message);
+  }
 
   function _logPassed(message) {
     test(function(arg) {
@@ -70,13 +78,16 @@ window.Audit = (function() {
               String(target.slice(0, options.numberOfArrayElements)) + '...';
           targetString = '[' + arrayElements + ']';
         } else if (target === null) {
-          // null is an object, so we need to handle this specially.
           targetString = String(target);
         } else {
-          // We're expecting String() to return something like "[object Foo]",
-          // so we split the string to get the object type "Foo".  This is
-          // pretty fragile.
-          targetString = '' + String(targetString).split(/[\s\]]/)[1];
+          targetString = '' + String(target).split(/[\s\]]/)[1];
+        }
+        break;
+      case 'function':
+        if (Error.isPrototypeOf(target)) {
+          targetString = "EcmaScript error " + target.name;
+        } else {
+          targetString = String(target);
         }
         break;
       default:
@@ -265,18 +276,25 @@ window.Audit = (function() {
 
     /**
      * Check if |actual| operation wrapped in a function throws an exception
-     * with a expected error type correctly. |expected| is optional.
+     * with a expected error type correctly. |expected| is optional. If it is an
+     * instance of DOMException, then the description (second argument) can be
+     * provided to be more strict about the expected exception type. |expected|
+     * also can be other generic error types such as TypeError, RangeError or
+     * etc.
      *
      * @example
      *   should(() => { let a = b; }, 'A bad code').throw();
-     *   should(() => { let c = d; }, 'Assigning d to c.')
-     *       .throw('ReferenceError');
-     *   should(() => { let e = f; }, 'Assigning e to f.')
-     *       .throw('ReferenceError', { omitErrorMessage: true });
+     *   should(() => { new SomeConstructor(); }, 'A bad construction')
+     *       .throw(DOMException, 'NotSupportedError');
+     *   should(() => { let c = d; }, 'Assigning d to c')
+     *       .throw(ReferenceError);
+     *   should(() => { let e = f; }, 'Assigning e to f')
+     *       .throw(ReferenceError, { omitErrorMessage: true });
      *
      * @result
      *   "PASS   A bad code threw an exception of ReferenceError: b is not
      *       defined."
+     *   "PASS   A bad construction threw DOMException:NotSupportedError."
      *   "PASS   Assigning d to c threw ReferenceError: d is not defined."
      *   "PASS   Assigning e to f threw ReferenceError: [error message
      *       omitted]."
@@ -301,10 +319,16 @@ window.Audit = (function() {
           // The expected error type was not given.
           didThrowCorrectly = true;
           passDetail = '${actual} threw ' + error.name + errorMessage + '.';
-        } else if (error.name === this._expected) {
-          // The expected error type match the actual one.
+        } else if (this._expected === DOMException &&
+                   (this._expectedDescription === undefined ||
+                    this._expectedDescription === error.name)) {
+          // Handles DOMException with the associated name.
           didThrowCorrectly = true;
           passDetail = '${actual} threw ${expected}' + errorMessage + '.';
+        } else if (this._expected == error.constructor) {
+          // Handler other error types.
+          didThrowCorrectly = true;
+          passDetail = '${actual} threw ' + error.name + errorMessage + '.';
         } else {
           didThrowCorrectly = false;
           failDetail =
@@ -350,7 +374,7 @@ window.Audit = (function() {
      *
      * @example
      *   should('My promise', promise).beResolve().then((result) => {
-     *     // log(result);
+     *     log(result);
      *   });
      *
      * @result
@@ -766,21 +790,31 @@ window.Audit = (function() {
       }
 
       // Compare against the expected sequence.
-      for (let j = 0; j < this._expected.length; j++) {
-        if (this._expected[j] !== indexedActual[j].value) {
-          firstErrorIndex = indexedActual[j].index;
-          passed = false;
-          break;
+      let failMessage =
+          '${actual} expected to have the value sequence of ${expected} but ' +
+          'got ';
+      if (this._expected.length === indexedActual.length) {
+        for (let j = 0; j < this._expected.length; j++) {
+          if (this._expected[j] !== indexedActual[j].value) {
+            firstErrorIndex = indexedActual[j].index;
+            passed = false;
+            failMessage += this._actual[firstErrorIndex] + ' at index ' +
+                firstErrorIndex + '.';
+            break;
+          }
         }
+      } else {
+        passed = false;
+        let indexedValues = indexedActual.map(x => x.value);
+        failMessage += `${indexedActual.length} values, [${
+            indexedValues}], instead of ${this._expected.length}.`;
       }
 
       return this._assert(
           passed,
           '${actual} contains all the expected values in the correct order: ' +
               '${expected}.',
-          '${actual} expected to have the value sequence of ${expected} but ' +
-              'got ' + this._actual[firstErrorIndex] + ' at index ' +
-              firstErrorIndex + '.');
+          failMessage);
     }
 
     /**
@@ -1147,15 +1181,22 @@ window.Audit = (function() {
 
     // Run this task. |this| task will be passed into the user-supplied test
     // task function.
-    run() {
+    run(harnessTest) {
       this._state = TaskState.STARTED;
-
+      this._harnessTest = harnessTest;
       // Print out the task entry with label and description.
       _logPassed(
           '> [' + this._label + '] ' +
           (this._description ? this._description : ''));
 
-      this._taskFunction(this, this.should.bind(this));
+      return new Promise((resolve, reject) => {
+        this._resolve = resolve;
+        this._reject = reject;
+        let result = this._taskFunction(this, this.should.bind(this));
+        if (result && typeof result.then === "function") {
+          result.then(() => this.done()).catch(reject);
+        }
+      });
     }
 
     // Update the task success based on the individual assertion/test inside.
@@ -1171,6 +1212,7 @@ window.Audit = (function() {
 
     // Finish the current task and start the next one if available.
     done() {
+      assert_equals(this._state, TaskState.STARTED)
       this._state = TaskState.FINISHED;
 
       let message = '< [' + this._label + '] ';
@@ -1185,7 +1227,26 @@ window.Audit = (function() {
         _logFailed(message);
       }
 
-      this._taskRunner._runNextTask();
+      this._resolve();
+    }
+
+    // Runs |subTask| |time| milliseconds later. |setTimeout| is not allowed in
+    // WPT linter, so a thin wrapper around the harness's |step_timeout| is
+    // used here.  Returns a Promise which is resolved after |subTask| runs.
+    timeout(subTask, time) {
+      return new Promise(resolve => {
+        this._harnessTest.step_timeout(() => {
+          let result = subTask();
+          if (result && typeof result.then === "function") {
+            // Chain rejection directly to the harness test Promise, to report
+            // the rejection against the subtest even when the caller of
+            // timeout does not handle the rejection.
+            result.then(resolve, this._reject());
+          } else {
+            resolve();
+          }
+        }, time);
+      });
     }
 
     isPassed() {
@@ -1206,18 +1267,9 @@ window.Audit = (function() {
     constructor() {
       this._tasks = {};
       this._taskSequence = [];
-      this._currentTaskIndex = -1;
 
       // Configure testharness.js for the async operation.
       setup(new Function(), {explicit_done: true});
-    }
-
-    _runNextTask() {
-      if (this._currentTaskIndex < this._taskSequence.length) {
-        this._tasks[this._taskSequence[this._currentTaskIndex++]].run();
-      } else {
-        this._finish();
-      }
     }
 
     _finish() {
@@ -1237,13 +1289,13 @@ window.Audit = (function() {
             prefix + this._taskSequence.length + ' tasks ran successfully.');
       }
 
-      // From testharness.js, report back to the test infrastructure that
-      // the task runner completed all the tasks.
-      _testharnessDone();
+      return Promise.resolve();
     }
 
     // |taskLabel| can be either a string or a dictionary. See Task constructor
-    // for the detail.
+    // for the detail.  If |taskFunction| returns a thenable, then the task
+    // is considered complete when the thenable is fulfilled; otherwise the
+    // task must be completed with an explicit call to |task.done()|.
     define(taskLabel, taskFunction) {
       let task = new Task(this, taskLabel, taskFunction);
       if (this._tasks.hasOwnProperty(task.label)) {
@@ -1282,10 +1334,70 @@ window.Audit = (function() {
         return;
       }
 
-      // Start the first task.
-      this._currentTaskIndex = 0;
-      this._runNextTask();
+      for (let taskIndex in this._taskSequence) {
+        let task = this._tasks[this._taskSequence[taskIndex]];
+        // Some tests assume that tasks run in sequence, which is provided by
+        // promise_test().
+        promise_test((t) => task.run(t), `Executing "${task.label}"`);
+      }
+
+      // Schedule a summary report on completion.
+      promise_test(() => this._finish(), "Audit report");
+
+      // From testharness.js. The harness now need not wait for more subtests
+      // to be added.
+      _testharnessDone();
     }
+  }
+
+  /**
+   * Load file from a given URL and pass ArrayBuffer to the following promise.
+   * @param  {String} fileUrl file URL.
+   * @return {Promise}
+   *
+   * @example
+   *   Audit.loadFileFromUrl('resources/my-sound.ogg').then((response) => {
+   *       audioContext.decodeAudioData(response).then((audioBuffer) => {
+   *           // Do something with AudioBuffer.
+   *       });
+   *   });
+   */
+  function loadFileFromUrl(fileUrl) {
+    return new Promise((resolve, reject) => {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', fileUrl, true);
+      xhr.responseType = 'arraybuffer';
+
+      xhr.onload = () => {
+        // |status = 0| is a workaround for the run_web_test.py server. We are
+        // speculating the server quits the transaction prematurely without
+        // completing the request.
+        if (xhr.status === 200 || xhr.status === 0) {
+          resolve(xhr.response);
+        } else {
+          let errorMessage = 'loadFile: Request failed when loading ' +
+              fileUrl + '. ' + xhr.statusText + '. (status = ' + xhr.status +
+              ')';
+          if (reject) {
+            reject(errorMessage);
+          } else {
+            new Error(errorMessage);
+          }
+        }
+      };
+
+      xhr.onerror = (event) => {
+        let errorMessage =
+            'loadFile: Network failure when loading ' + fileUrl + '.';
+        if (reject) {
+          reject(errorMessage);
+        } else {
+          new Error(errorMessage);
+        }
+      };
+
+      xhr.send();
+    });
   }
 
   /**
@@ -1313,11 +1425,17 @@ window.Audit = (function() {
       if (options && options.requireResultFile == true) {
         _logError(
             'this test requires the explicit comparison with the ' +
-            'expected result when it runs with run-webkit-tests.');
+            'expected result when it runs with run_web_tests.py.');
       }
 
       return new TaskRunner();
     },
+
+    /**
+     * Load file from a given URL and pass ArrayBuffer to the following promise.
+     * See |loadFileFromUrl| method for the detail.
+     */
+    loadFileFromUrl: loadFileFromUrl
 
   };
 

@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
-
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 
 PASS # AUDIT TASK RUNNER STARTED. 
-PASS > [linear-clamp-low]  
+FAIL Executing "linear-clamp-high" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
+PASS > [linear-clamp-high] rolloffFactor clamping for linear distance model 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

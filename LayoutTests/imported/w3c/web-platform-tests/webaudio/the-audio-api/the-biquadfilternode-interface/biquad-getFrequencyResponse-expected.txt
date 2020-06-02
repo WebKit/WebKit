@@ -1,0 +1,23 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "lowpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "highpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "bandpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "lowshelf" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "highshelf" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "peaking" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "notch" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "allpass" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode')"
+FAIL Executing "getFrequencyResponse" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
+PASS > [lowpass] Frequency response 
+PASS > [highpass] Frequency response 
+PASS > [bandpass] Frequency response 
+PASS > [lowshelf] Frequency response 
+PASS > [highshelf] Frequency response 
+PASS > [peaking] Frequency response 
+PASS > [notch] Frequency response 
+PASS > [allpass] Frequency response 
+PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
+PASS # AUDIT TASK RUNNER FINISHED: 9 tasks ran successfully. 
+

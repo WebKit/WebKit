@@ -1,0 +1,26 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+PASS Executing "invalid constructor" 
+FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
+FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node[options.testAttribute]')"
+FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.threshold')"
+PASS Audit report 
+PASS > [initialize]  
+PASS   context = new OfflineAudioContext(...) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [invalid constructor]  
+PASS   new DynamicsCompressorNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
+PASS   new DynamicsCompressorNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
+PASS   new DynamicsCompressorNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
+PASS > [default constructor]  
+FAIL X node0 = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
+FAIL X node0 instanceof DynamicsCompressorNode is not equal to true. Got false. assert_true: expected true got false
+PASS > [test AudioNodeOptions]  
+FAIL X new DynamicsCompressorNode(c, {"channelCount":1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context, options.nodeOptions)')". assert_true: expected true got false
+PASS > [constructor with options]  
+FAIL X node1 = new DynamicsCompressorNode(c, {"threshold":-33,"knee":15,"ratio":7,"attack":0.625,"release":0.125}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context, options)')". assert_true: expected true got false
+FAIL X node1 instanceof DynamicsCompressorNode is not equal to true. Got false. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+

@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "note-grain-on-play" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
+PASS > [note-grain-on-play] Test noteGrainOn offset rendering 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

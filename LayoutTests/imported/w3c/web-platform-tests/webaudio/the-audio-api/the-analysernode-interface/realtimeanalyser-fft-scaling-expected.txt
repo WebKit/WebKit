@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "FFT scaling tests" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+PASS Audit report 
+PASS > [FFT scaling tests] Test Scaling of FFT in AnalyserNode 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

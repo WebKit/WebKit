@@ -1,7 +1,12 @@
-CONSOLE MESSAGE: TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
-
-Harness Error (FAIL), message = TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "1-pole IIR" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "compare IIR and biquad" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+            [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "getFrequencyResponse" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: IIRFilterNode"
+PASS Audit report 
 PASS > [1-pole IIR]  
+PASS > [compare IIR and biquad]  
+PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 

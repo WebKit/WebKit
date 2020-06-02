@@ -1,7 +1,31 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
-
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "coefficient-normalization" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "one-zero" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "one-pole" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "0: lowpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "1: highpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "2: bandpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "3: notch" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "4: allpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "5: lowshelf" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "6: highshelf" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "7: peaking" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "multi-channel" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "4th-order-iir" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
 PASS > [coefficient-normalization]  
+PASS > [one-zero]  
+PASS > [one-pole]  
+PASS > [0: lowpass]  
+PASS > [1: highpass]  
+PASS > [2: bandpass]  
+PASS > [3: notch]  
+PASS > [4: allpass]  
+PASS > [5: lowshelf]  
+PASS > [6: highshelf]  
+PASS > [7: peaking]  
+PASS > [multi-channel]  
+PASS > [4th-order-iir]  
+PASS # AUDIT TASK RUNNER FINISHED: 13 tasks ran successfully. 
 

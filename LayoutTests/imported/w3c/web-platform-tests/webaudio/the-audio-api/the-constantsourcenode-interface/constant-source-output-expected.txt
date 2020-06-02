@@ -1,7 +1,17 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: ConstantSourceNode
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: ConstantSourceNode
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "constant source" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "stop before start" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "stop equal to start" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "start/stop" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "basic automation" promise_test: Unhandled rejection with value: object "TypeError: context.createConstantSource is not a function. (In 'context.createConstantSource()', 'context.createConstantSource' is undefined)"
+FAIL Executing "connected audioparam" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Audit report 
 PASS > [constant source]  
+PASS > [stop before start]  
+PASS > [stop equal to start]  
+PASS > [start/stop]  
+PASS > [basic automation]  
+PASS > [connected audioparam]  
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 

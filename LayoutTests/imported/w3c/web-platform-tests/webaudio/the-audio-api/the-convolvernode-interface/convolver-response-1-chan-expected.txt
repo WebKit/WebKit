@@ -1,11 +1,30 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
-
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 
 PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "initialize" 
+FAIL Executing "1-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "2-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "3-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "4-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "5.1-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "3-channel input, explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "4-channel input, explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "5.1-channel input, explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "mono-upmix-explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "mono-upmix-clamped-max" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
 PASS > [initialize] Convolver response with one channel 
 FAIL X new AudioBuffer({numberOfChannels: 1, length: 2, sampleRate: 8192}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AudioBuffer(
                       {numberOfChannels: 1, length: 2, sampleRate: sampleRate})')". assert_true: expected true got false
 FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [1-channel input] produces 1-channel output 
+PASS > [2-channel input] produces 2-channel output 
+PASS > [3-channel input] 3->2 downmix producing 2-channel output 
+PASS > [4-channel input] 4->2 downmix producing 2-channel output 
+PASS > [5.1-channel input] 5.1->2 downmix producing 2-channel output 
+PASS > [3-channel input, explicit] 3->2 explicit downmix producing 2-channel output 
+PASS > [4-channel input, explicit] 4->2 explicit downmix producing 2-channel output 
+PASS > [5.1-channel input, explicit] 5.1->2 explicit downmix producing 2-channel output 
+PASS > [mono-upmix-explicit] 1->2 upmix, count mode explicit 
+PASS > [mono-upmix-clamped-max] 1->2 upmix, count mode clamped-max 
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 11 tasks were failed. assert_true: expected true got false
 

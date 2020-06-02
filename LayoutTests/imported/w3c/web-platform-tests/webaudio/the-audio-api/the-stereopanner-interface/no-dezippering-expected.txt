@@ -1,7 +1,15 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
-
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test mono input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "test stereo input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "test mono input setValue" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "test stereo input setValue" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "test mono input automation" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
 PASS > [test mono input] Test StereoPanner with mono input has no dezippering 
+PASS > [test stereo input] Test StereoPanner with stereo input has no dezippering 
+PASS > [test mono input setValue] Test StereoPanner with mono input value setter vs setValueAtTime 
+PASS > [test stereo input setValue] Test StereoPanner with mono input value setter  vs setValueAtTime 
+PASS > [test mono input automation] Test StereoPanner with mono input and automation 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

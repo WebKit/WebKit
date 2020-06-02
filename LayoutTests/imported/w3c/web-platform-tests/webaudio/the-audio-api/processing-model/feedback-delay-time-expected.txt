@@ -1,0 +1,3 @@
+
+FAIL Test that a DelayNode allows a feedback loop of a single rendering quantum function is not a constructor (evaluating 'new AudioBufferSourceNode(off, {buffer: b})')
+

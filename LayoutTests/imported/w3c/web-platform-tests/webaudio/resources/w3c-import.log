@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,14 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/4ch-440.wav
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/audio-param.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/audiobuffersource-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/audionodeoptions.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/audioparam-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/audit-util.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/audit.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/biquad-filters.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/biquad-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/convolution-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/delay-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/distance-model-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/merger-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/mix-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/mixing-rules.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/note-grain-on-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/panner-formulas.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/panner-model-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/sin_440Hz_-6dBFS_1s.wav

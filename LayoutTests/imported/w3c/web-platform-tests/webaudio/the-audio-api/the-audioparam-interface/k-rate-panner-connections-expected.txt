@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Panner x" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Panner y" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Panner z" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener x" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener y" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Listener z" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [Panner x] k-rate input 
+PASS > [Panner y] k-rate input 
+PASS > [Panner z] k-rate input 
+PASS > [Listener x] k-rate input 
+PASS > [Listener y] k-rate input 
+PASS > [Listener z] k-rate input 
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+

@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "cancel1" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [cancel1] cancel setValueCurve 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
+PASS > [Test 0] No dezippering for frequency 
+PASS > [Test 1] No dezippering for detune 
+PASS > [Test 2] No dezippering for Q 
+PASS > [Test 3] No dezippering for gain 
+PASS > [Test 4] No dezippering of frequency vs JS filter 
+PASS > [Test 5] Test with modulation 
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+

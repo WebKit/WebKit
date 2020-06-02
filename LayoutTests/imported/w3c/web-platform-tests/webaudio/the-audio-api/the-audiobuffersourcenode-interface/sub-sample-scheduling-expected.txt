@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "sub-sample accurate start" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "sub-sample accurate stop" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "sub-sample-grain" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "sub-sample accurate start with playbackRate" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [sub-sample accurate start]  
+PASS > [sub-sample accurate stop]  
+PASS > [sub-sample-grain]  
+PASS > [sub-sample accurate start with playbackRate]  
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
+

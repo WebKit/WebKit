@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "start/stop exceptions" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBufferSourceNode(context)')"
+PASS Audit report 
+PASS > [start/stop exceptions]  
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

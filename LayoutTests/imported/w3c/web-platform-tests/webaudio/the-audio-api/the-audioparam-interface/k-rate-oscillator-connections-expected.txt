@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [Test 1] k-rate frequency input 
+PASS > [Test 2] k-rate detune input 
+PASS > [Test 3] k-rate frequency input with a-rate detune 
+PASS > [Test 4] a-rate frequency with k-rate detune input 
+PASS > [Test 5] k-rate inputs for frequency and detune 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+

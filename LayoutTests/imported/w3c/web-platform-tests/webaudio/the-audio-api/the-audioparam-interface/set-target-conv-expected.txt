@@ -1,0 +1,7 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "convergence handled correctly" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [convergence handled correctly]  
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

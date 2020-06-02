@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "automate-freq" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "automate-q" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "automate-gain" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "automate-detune" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "automate-all" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "modulation" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Audit report 
+PASS > [automate-freq]  
+PASS > [automate-q]  
+PASS > [automate-gain]  
+PASS > [automate-detune]  
+PASS > [automate-all]  
+PASS > [modulation]  
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+

@@ -1,7 +1,8 @@
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering()
-            .then')
-
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "silent-disconnect" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+PASS Audit report 
 PASS > [silent-disconnect]  
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

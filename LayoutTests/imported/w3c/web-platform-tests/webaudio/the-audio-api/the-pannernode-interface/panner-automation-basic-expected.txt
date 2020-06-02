@@ -1,7 +1,41 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Stereo panner.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Mono panner.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Stereo panner.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Mono panner.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Stereo panner.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Mono panner.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Stereo listener.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Mono listener.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Stereo listener.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Mono listener.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Stereo listener.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "Mono listener.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+FAIL Executing "setPosition" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "orientation setter" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "forward setter" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+FAIL Executing "up setter" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+            .then')"
+PASS Audit report 
 PASS > [Stereo panner.positionX]  
+PASS > [Mono panner.positionX]  
+PASS > [Stereo panner.positionY]  
+PASS > [Mono panner.positionY]  
+PASS > [Stereo panner.positionZ]  
+PASS > [Mono panner.positionZ]  
+PASS > [Stereo listener.positionX]  
+PASS > [Mono listener.positionX]  
+PASS > [Stereo listener.positionY]  
+PASS > [Mono listener.positionY]  
+PASS > [Stereo listener.positionZ]  
+PASS > [Mono listener.positionZ]  
+PASS > [setPosition]  
+PASS > [orientation setter]  
+PASS > [forward setter]  
+PASS > [up setter]  
+PASS # AUDIT TASK RUNNER FINISHED: 16 tasks ran successfully. 
 

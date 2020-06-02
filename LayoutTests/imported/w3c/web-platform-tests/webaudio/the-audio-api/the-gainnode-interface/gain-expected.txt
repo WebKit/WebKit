@@ -1,11 +1,9 @@
-CONSOLE MESSAGE: TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-                context, {numberOfInputs: context.destination.channelCount})')
-
-Harness Error (FAIL), message = TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-                context, {numberOfInputs: context.destination.channelCount})')
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "create context" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.destination.channelCount')"
+PASS Audit report 
 PASS > [create context] Create context for test 
-PASS < [create context] All assertions passed. (total 0 assertions) 
 PASS > [test] GainNode functionality 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

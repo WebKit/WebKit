@@ -1,4 +1,6 @@
 
-FAIL Test AnalyserNode API assert_equals: analyser node has 1 input channels by default expected 1 but got 2
+FAIL Test AnalyserNode API assert_throws_dom: function "function () {
+        analyser.minDecibels = -30;
+      }" did not throw
 FAIL Test AnalyserNode's ctor API function is not a constructor (evaluating 'new AnalyserNode(context)')
 

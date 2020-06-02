@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: TypeError: context.createStereoPanner is not a function. (In 'context.createStereoPanner()', 'context.createStereoPanner' is undefined)
-
-Harness Error (FAIL), message = TypeError: context.createStereoPanner is not a function. (In 'context.createStereoPanner()', 'context.createStereoPanner' is undefined)
 
 PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: context.createStereoPanner is not a function. (In 'context.createStereoPanner()', 'context.createStereoPanner' is undefined)"
+PASS Audit report 
 PASS > [test] Attributes and basic functionality of StereoPannerNode 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "Initializing AudioWorklet and Context" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet')"
+FAIL Executing "Verify Size of AudioParam Arrays" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
+PASS Audit report 
+PASS > [Initializing AudioWorklet and Context]  
+FAIL X Creating offline context for testing incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
+PASS > [Verify Size of AudioParam Arrays]  
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+

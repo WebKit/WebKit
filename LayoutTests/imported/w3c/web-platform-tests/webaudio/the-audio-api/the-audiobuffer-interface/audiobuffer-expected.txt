@@ -1,0 +1,19 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "Basic tests for AudioBuffer" 
+PASS Audit report 
+PASS > [Basic tests for AudioBuffer]  
+PASS   buffer = context.createBuffer(4, 88200, 44100) is true. 
+PASS   buffer.sampleRate is equal to 44100. 
+PASS   buffer.length is equal to 88200. 
+PASS   buffer.duration is equal to 2. 
+PASS   buffer.numberOfChannels is equal to 4. 
+PASS   buffer.getChannelData(0) instanceof window.Float32Array is true. 
+PASS   buffer.getChannelData(1) instanceof window.Float32Array is true. 
+PASS   buffer.getChannelData(2) instanceof window.Float32Array is true. 
+PASS   buffer.getChannelData(3) instanceof window.Float32Array is true. 
+PASS   buffer.getChannelData(4) threw SyntaxError: "The string did not match the expected pattern.". 
+FAIL X context.createBuffer(1, 1000, 24576).duration is not equal to 0.040690104166666664. Got 0.0406901054084301. assert_true: expected true got false
+FAIL < [Basic tests for AudioBuffer] 1 out of 11 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+

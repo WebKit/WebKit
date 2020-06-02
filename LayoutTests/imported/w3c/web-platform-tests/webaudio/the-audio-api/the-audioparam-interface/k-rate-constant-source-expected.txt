@@ -1,0 +1,11 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "ConstantSource k-rate offset" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "ConstantSourceNode.offset k-rate automation" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "ConstantSource.offset" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Audit report 
+PASS > [ConstantSource k-rate offset]  
+PASS > [ConstantSourceNode.offset k-rate automation] Explicitly test ConstantSourceNode.offset k-rate automation is k-rate 
+PASS > [ConstantSource.offset] Verify k-rate automation matches k-rate input 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+

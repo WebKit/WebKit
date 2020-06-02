@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+FAIL Executing "initialize" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context)')"
+PASS Audit report 
+PASS > [initialize]  
+PASS > [test]  
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+
