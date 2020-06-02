@@ -1,3 +1,22 @@
+2020-06-02  Tim Horton  <timothy_horton@apple.com>
+
+        UIColor and NSColor WebCore::Color factories should return invalid colors for nil input colors
+        https://bugs.webkit.org/show_bug.cgi?id=212631
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::colorFromNSColor):
+        (WebCore::semanticColorFromNSColor):
+        * platform/ios/ColorIOS.mm:
+        (WebCore::colorFromUIColor):
+        This doesn't affect any code currently in WebKit, but it is very, very surprising
+        that these functions happily accept a null color, assert in debug, but in release
+        do crazy things like try to paint the null color into a small bitmap to figure out
+        what it really is.
+
+        Also, this matches the behavior of the Color constructors that take CGColorRef.
+
 2020-06-02  Rob Buis  <rbuis@igalia.com>
 
         Make generated C++ code use modern C++

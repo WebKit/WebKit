@@ -94,6 +94,9 @@ static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
 
 Color colorFromNSColor(NSColor *color)
 {
+    if (!color)
+        return { };
+
     // FIXME: ExtendedColor - needs to handle color spaces.
 
     return makeSimpleColorFromNSColor(color);
@@ -101,6 +104,9 @@ Color colorFromNSColor(NSColor *color)
 
 Color semanticColorFromNSColor(NSColor *color)
 {
+    if (!color)
+        return { };
+
     // FIXME: ExtendedColor - needs to handle color spaces.
 
     return Color(makeSimpleColorFromNSColor(color), Color::Semantic);

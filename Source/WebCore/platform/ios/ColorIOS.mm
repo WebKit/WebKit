@@ -34,6 +34,9 @@ namespace WebCore {
 
 Color colorFromUIColor(UIColor *color)
 {
+    if (!color)
+        return { };
+
     // FIXME: ExtendedColor - needs to handle color spaces.
 
     // FIXME: Make this work for a UIColor that was created from a pattern or a DispayP3 color.
