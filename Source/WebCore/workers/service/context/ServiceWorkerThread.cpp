@@ -79,6 +79,7 @@ ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, S
     , m_heartBeatTimeout(SWContextManager::singleton().connection()->shouldUseShortTimeout() ? heartBeatTimeoutForTest : heartBeatTimeout)
     , m_heartBeatTimer { *this, &ServiceWorkerThread::heartBeatTimerFired }
 {
+    ASSERT(isMainThread());
     AtomString::init();
 }
 
@@ -115,7 +116,7 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
 void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
     auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
-    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), message = WTFMove(message), sourceData = WTFMove(sourceData), serviceWorkerIdentifier = this->identifier()]() mutable {
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), message = WTFMove(message), sourceData = WTFMove(sourceData)]() mutable {
         URL sourceURL;
         ExtendableMessageEventSource source;
         if (WTF::holds_alternative<ServiceWorkerClientData>(sourceData)) {
@@ -134,9 +135,9 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
             source = WTFMove(sourceWorker);
         }
         fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), ExtendableMessageEventSource { source }, sourceURL);
-        callOnMainThread([serviceWorkerIdentifier] {
-            if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
-                serviceWorkerThreadProxy->thread().finishedFiringMessageEvent();
+        callOnMainThread([weakThis = WTFMove(weakThis)] {
+            if (weakThis)
+                weakThis->finishedFiringMessageEvent();
         });
     });
 }
@@ -144,11 +145,11 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
 void ServiceWorkerThread::queueTaskToFireInstallEvent()
 {
     auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
-    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), serviceWorkerIdentifier = this->identifier()] {
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef()]() mutable {
         auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(installEvent);
 
-        installEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
+        installEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTFMove(weakThis)](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) mutable {
             bool hasRejectedAnyPromise = false;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {
@@ -156,9 +157,9 @@ void ServiceWorkerThread::queueTaskToFireInstallEvent()
                     break;
                 }
             }
-            callOnMainThread([serviceWorkerIdentifier, hasRejectedAnyPromise] {
-                if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
-                    serviceWorkerThreadProxy->thread().finishedFiringInstallEvent(hasRejectedAnyPromise);
+            callOnMainThread([weakThis = WTFMove(weakThis), hasRejectedAnyPromise] {
+                if (weakThis)
+                    weakThis->finishedFiringInstallEvent(hasRejectedAnyPromise);
             });
         });
     });
@@ -167,14 +168,14 @@ void ServiceWorkerThread::queueTaskToFireInstallEvent()
 void ServiceWorkerThread::queueTaskToFireActivateEvent()
 {
     auto serviceWorkerGlobalScope = makeRef(downcast<ServiceWorkerGlobalScope>(*workerGlobalScope()));
-    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef(), serviceWorkerIdentifier = this->identifier()]() mutable {
+    serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = makeWeakPtr(this), serviceWorkerGlobalScope = serviceWorkerGlobalScope.copyRef()]() mutable {
         auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(activateEvent);
 
-        activateEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&&) {
-            callOnMainThread([serviceWorkerIdentifier] {
-                if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
-                    serviceWorkerThreadProxy->thread().finishedFiringActivateEvent();
+        activateEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTFMove(weakThis)](auto&&) mutable {
+            callOnMainThread([weakThis = WTFMove(weakThis)] {
+                if (weakThis)
+                    weakThis->finishedFiringActivateEvent();
             });
         });
     });
@@ -191,11 +192,11 @@ void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
     m_state = State::Starting;
     startHeartBeatTimer();
 
-    WorkerThread::start([callback = WTFMove(callback), serviceWorkerIdentifier = this->identifier()](auto& errorMessage) mutable {
+    WorkerThread::start([callback = WTFMove(callback), weakThis = makeWeakPtr(this)](auto& errorMessage) mutable {
         bool doesHandleFetch = true;
-        if (auto* threadProxy = SWContextManager::singleton().workerByID(serviceWorkerIdentifier)) {
-            threadProxy->thread().finishedStarting();
-            doesHandleFetch = threadProxy->thread().doesHandleFetch();
+        if (weakThis) {
+            weakThis->finishedStarting();
+            doesHandleFetch = weakThis->doesHandleFetch();
         }
         callback(errorMessage, doesHandleFetch);
     });

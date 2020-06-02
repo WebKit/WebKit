@@ -1,3 +1,15 @@
+2020-06-02  Youenn Fablet  <youenn@apple.com>
+
+        [ Mac wk2 ] http/wpt/service-workers/service-worker-spinning-fetch.https.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=207515
+        <rdar://problem/59329307>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/service-worker-spinning-fetch.https.html:
+        In case service worker gets closed, fetch failure might be logged as console log message.
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Update texture creation validation according to the discussion at https://github.com/gpuweb/gpuweb/pull/799/files

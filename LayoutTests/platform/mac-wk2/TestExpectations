@@ -1018,8 +1018,6 @@ webkit.org/b/209564 svg/as-image/svg-image-with-data-uri-background.html [ Pass 
 
 webkit.org/b/209624 [ Release ] tiled-drawing/scrolling/fixed/four-bars-zoomed.html [ Pass Failure ]
 
-webkit.org/b/209672 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Failure Crash ]
-
 webkit.org/b/209769 [ Catalina ] tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 
 webkit.org/b/209878  [ Debug ] webrtc/datachannel/multiple-connections.html [ Slow ]
