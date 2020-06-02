@@ -1,3 +1,35 @@
+2020-06-02  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r258949): Dynamic user accent color changes are not respected by WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=212628
+        <rdar://problem/63436275>
+
+        Reviewed by Per Arne Vollan.
+
+        Two issues with the "CFPrefs Direct Mode" mechanism caused dynamic changes to the
+        user accent color preference to not be respected anymore:
+
+        - the default change, when synchronized to the Web Content process, was
+        written into the wrong domain, because of bug 212627.
+
+        - AppKit caches the resolved accent color; the cache is invalidated when the
+        a CoreUI notification is posted. Since we synchronize preferences ourselves,
+        the ordering of the default change and notification are no longer guaranteed,
+        so AppKit sometimes reads and re-caches the old accent color.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::userAccentColorPreferenceKey):
+        (WebKit::shouldWriteToAppDomainForPreferenceKey):
+        (WebKit::WebProcess::notifyPreferencesChanged):
+        To fix the first problem, write the default into the standardUserDefaults.
+        This is just a workaround, we need a more general solution to this problem
+        for all global preferences. We know it's OK in this case, because AppKit
+        happens to read from standardUserDefaults.
+
+        (WebKit::dispatchSimulatedNotificationsForPreferenceChange):
+        To fix the second problem, re-emit the notification once we have synchronized
+        the preference to the Web Content process.
+
 2020-06-02  Rob Buis  <rbuis@igalia.com>
 
         Make generated C++ code use modern C++
