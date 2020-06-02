@@ -1,0 +1,9 @@
+Moving the cursor using the arrow keys into an input element fires scroll events when text has to scroll into view. Uses arrow keys to move forward and backwards in the input element.
+
+  
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Scroll event fired for <input> element. Test timed out
+NOTRUN Scroll event fired for <textarea> element. 
+

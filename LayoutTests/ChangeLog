@@ -1,3 +1,12 @@
+2020-06-02  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Landing expectations for tests that were recently imported but did not have them
+
+        Unreviewed test gardening
+
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-deltas-expected.txt: Added.
+
 2020-06-02  Jason Lawrence  <lawrence.j@apple.com>
 
         [ iOS wk2 ] animations/play-state-paused.html is flaky failing.
