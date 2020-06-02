@@ -1336,8 +1336,6 @@ webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/repo
 
 webkit.org/b/207551 http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html [ Pass Timeout ]
 
-webkit.org/b/207552 http/tests/storageAccess/has-storage-access-false-by-default-ephemeral-database.html [ Pass Timeout ]
-
 webkit.org/b/190852 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Pass Failure ]
 
 webkit.org/b/209514 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
