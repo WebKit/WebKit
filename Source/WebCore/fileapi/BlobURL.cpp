@@ -61,14 +61,6 @@ String BlobURL::getOrigin(const URL& url)
     return url.string().substring(startIndex, endIndex - startIndex - 1);
 }
 
-String BlobURL::getIdentifier(const URL& url)
-{
-    ASSERT(url.protocolIs(kBlobProtocol));
-
-    unsigned startIndex = url.pathAfterLastSlash();
-    return url.string().substring(startIndex);
-}
-
 URL BlobURL::createBlobURL(const String& originString)
 {
     ASSERT(!originString.isEmpty());
