@@ -564,8 +564,9 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 
 @interface _WebSafeForwarder : NSObject
 {
-    __weak id _target;
-    __weak id _defaultTarget;
+    // Do not not change _target and _defaultTarget to __weak. See <rdar://problem/62624078>.
+    __unsafe_unretained id _target;
+    __unsafe_unretained id _defaultTarget;
 #if PLATFORM(IOS_FAMILY)
     _WebSafeAsyncForwarder *_asyncForwarder;
 #endif
