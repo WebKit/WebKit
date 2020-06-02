@@ -1,3 +1,19 @@
+2020-06-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        Assert network process is not suspended when trying to merge new ITP data
+        https://bugs.webkit.org/show_bug.cgi?id=212663
+        <rdar://problem/63892899>
+
+        Reviewed by Chris Dumez.
+
+        Add a debug assert to check if statistics are being merged into the
+        ITP database after prepareToSuspend() has been called. If this assert
+        is hit, it means the ITP database thread is not being stopped when
+        the process is suspended.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+
 2020-06-02  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(r261387): Introduced sandbox violations
