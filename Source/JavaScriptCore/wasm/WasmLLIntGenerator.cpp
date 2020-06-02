@@ -441,13 +441,6 @@ static ThreadSpecific<Buffer>& threadSpecificBuffer()
     return *threadSpecificBufferPtr;
 }
 
-void clearLLIntThreadSpecificCache()
-{
-    auto& threadSpecific = threadSpecificBuffer();
-    if (threadSpecific.isSet())
-        threadSpecific->clear();
-}
-
 LLIntGenerator::LLIntGenerator(const ModuleInformation& info, unsigned functionIndex, const Signature&)
     : BytecodeGeneratorBase(makeUnique<FunctionCodeBlock>(functionIndex), 0)
     , m_info(info)
@@ -455,12 +448,6 @@ LLIntGenerator::LLIntGenerator(const ModuleInformation& info, unsigned functionI
 {
     {
         auto& threadSpecific = threadSpecificBuffer();
-
-        if (!threadSpecific.isSet()) {
-            void* ptr = static_cast<Buffer*>(threadSpecific);
-            new (ptr) Buffer();
-        }
-
         Buffer buffer = WTFMove(*threadSpecific);
         *threadSpecific = Buffer();
         m_writer.setInstructionBuffer(WTFMove(buffer));

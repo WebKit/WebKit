@@ -158,7 +158,6 @@ private:
         
         ASSERT(!m_plan);
         
-        clearAssembleDataThreadSpecificCache();
         m_compilationScope = nullptr;
         m_plan = nullptr;
     }

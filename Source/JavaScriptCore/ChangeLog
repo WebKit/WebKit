@@ -1,3 +1,40 @@
+2020-06-01  Saam Barati  <sbarati@apple.com>
+
+        Correct misunderstandings on how ThreadSpecific work
+        https://bugs.webkit.org/show_bug.cgi?id=212616
+
+        Reviewed by Michael Saboff.
+
+        There were two misunderstandings I had when writing code using ThreadSpecific
+        when doing LLInt bytecode buffer caching in Wasm.
+        
+        1. For ThreadSpecific<Vector>, I was calling Vector's constructor twice
+        unnecessarily, and incorrectly, since we ended up constructing over an
+        already constructed Vector for the second call. When doing operator* or
+        operator-> on a ThreadSpecific<T>, T() is called if it has not been
+        initialized yet. So there is no need to do manually call the constructor
+        the second time.
+        
+        2. There is no need to try to destroy entries for ThreadSpecific manually
+        since we already run destructors when the thread goes away.
+        
+        This patch removes code for (1) and (2) both from the Wasm bytecode
+        buffer and from AssemblerData.
+
+        * assembler/AssemblerBuffer.cpp:
+        (JSC::clearAssembleDataThreadSpecificCache): Deleted.
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        (JSC::AssemblerBuffer::getThreadSpecificAssemblerData): Deleted.
+        * dfg/DFGWorklist.cpp:
+        * jit/JITWorklist.cpp:
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::clearLLIntThreadSpecificCache): Deleted.
+        * wasm/WasmLLIntGenerator.h:
+        * wasm/WasmWorklist.cpp:
+
 2020-06-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix build failure in ARMv7k

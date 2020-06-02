@@ -45,13 +45,6 @@ ThreadSpecificAssemblerData& threadSpecificAssemblerData()
     return *threadSpecificAssemblerDataPtr;
 }
 
-void clearAssembleDataThreadSpecificCache()
-{
-    auto& threadSpecific = threadSpecificAssemblerData();
-    if (threadSpecific.isSet())
-        threadSpecific->clear();
-}
-
 #endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC

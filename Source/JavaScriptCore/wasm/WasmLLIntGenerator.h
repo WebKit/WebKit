@@ -35,8 +35,6 @@ class FunctionCodeBlock;
 
 Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t*, size_t, const Signature&, const ModuleInformation&, uint32_t functionIndex);
 
-void clearLLIntThreadSpecificCache();
-
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

@@ -46,7 +46,6 @@ namespace JSC {
     typedef ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True> ThreadSpecificAssemblerData;
 
     JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerData();
-    void clearAssembleDataThreadSpecificCache();
 
     class LinkBuffer;
 
@@ -210,13 +209,13 @@ namespace JSC {
             : m_storage()
             , m_index(0)
         {
-            auto& threadSpecific = getThreadSpecificAssemblerData();
+            auto& threadSpecific = threadSpecificAssemblerData();
             m_storage.takeBufferIfLarger(WTFMove(*threadSpecific));
         }
 
         ~AssemblerBuffer()
         {
-            auto& threadSpecific = getThreadSpecificAssemblerData();
+            auto& threadSpecific = threadSpecificAssemblerData();
             threadSpecific->takeBufferIfLarger(WTFMove(m_storage));
         }
 
@@ -334,18 +333,6 @@ namespace JSC {
 
 
     protected:
-        ThreadSpecificAssemblerData& getThreadSpecificAssemblerData()
-        {
-            auto& threadSpecific = threadSpecificAssemblerData();
-
-            if (!threadSpecific.isSet()) {
-                void* ptr = static_cast<AssemblerData*>(threadSpecific);
-                new (ptr) AssemblerData();
-            }
-
-            return threadSpecific;
-        }
-        
         template<typename IntegralType>
         void putIntegral(IntegralType value)
         {

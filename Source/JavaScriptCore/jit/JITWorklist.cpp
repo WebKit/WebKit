@@ -146,11 +146,6 @@ private:
         return WorkResult::Continue;
     }
 
-    void threadIsStopping(const AbstractLocker&) final
-    {
-        clearAssembleDataThreadSpecificCache();
-    }
-
     JITWorklist& m_worklist;
     Plans m_myPlans;
 };
