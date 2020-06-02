@@ -1,3 +1,18 @@
+2020-06-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        [WebAccessibilityObjectWrapper subrole] should check for the nullity of the underlying AXCoreObject before dereferencing.
+        https://bugs.webkit.org/show_bug.cgi?id=212607
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        - Check for nullity of the backingObject before dereferencing.
+        - self.axBackingObject is now called only once, instead of many times unnecessarily.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2020-06-01  Sihui Liu  <sihui_liu@apple.com>
 
         TextManipulationController should put one Node in only one paragraph
