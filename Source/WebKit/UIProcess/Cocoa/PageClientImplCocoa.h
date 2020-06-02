@@ -54,6 +54,10 @@ public:
 
     bool scrollingUpdatesDisabledForTesting() final;
 
+#if ENABLE(TINT_COLOR_SUPPORT)
+    WebCore::Color tintColor() final;
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void didInsertAttachment(API::Attachment&, const String& source) final;
     void didRemoveAttachment(API::Attachment&) final;

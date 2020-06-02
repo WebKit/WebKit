@@ -350,6 +350,10 @@ public:
     virtual void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) = 0;
 #endif
 
+#if ENABLE(TINT_COLOR_SUPPORT)
+    virtual WebCore::Color tintColor() = 0;
+#endif
+
     virtual bool effectiveAppearanceIsDark() const { return false; }
     virtual bool effectiveUserInterfaceLevelIsElevated() const { return false; }
 

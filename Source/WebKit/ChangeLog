@@ -1,5 +1,46 @@
 2020-06-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r262429. rdar://problem/63891546
+
+    macCatalyst: WKWebView's tint color is not propagated to Web Content process
+    https://bugs.webkit.org/show_bug.cgi?id=212630
+    
+    Reviewed by Anders Carlsson.
+    
+    * Shared/WebPageCreationParameters.cpp:
+    (WebKit::WebPageCreationParameters::encode const):
+    (WebKit::WebPageCreationParameters::decode):
+    * Shared/WebPageCreationParameters.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.h:
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::creationParameters):
+    * WebProcess/WebPage/WebPage.cpp:
+    * WebProcess/WebPage/WebPage.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262429 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-02  Tim Horton  <timothy_horton@apple.com>
+
+            macCatalyst: WKWebView's tint color is not propagated to Web Content process
+            https://bugs.webkit.org/show_bug.cgi?id=212630
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/WebPageCreationParameters.cpp:
+            (WebKit::WebPageCreationParameters::encode const):
+            (WebKit::WebPageCreationParameters::decode):
+            * Shared/WebPageCreationParameters.h:
+            * UIProcess/Cocoa/PageClientImplCocoa.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::creationParameters):
+            * WebProcess/WebPage/WebPage.cpp:
+            * WebProcess/WebPage/WebPage.h:
+
+2020-06-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r262427. rdar://problem/63891546
 
     REGRESSION (r258949): Dynamic user accent color changes are not respected by WKWebView
