@@ -1,5 +1,41 @@
 2020-06-02  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r262389. rdar://problem/63897040
+
+    x86.rb's LabelReference.x86LoadOperand()'s address operand should be a pointer type.
+    https://bugs.webkit.org/show_bug.cgi?id=212603
+    
+    Reviewed by Saam Barati.
+    
+    The current implementation mistakenly sets the address type to that of the value
+    being loaded.  I encountered this issue when I was trying to do a loadb from a
+    global address.  Because of this bug, the emitted code was trying do a load using
+    %al (8 byte register) as the pointer to load from.  With this fix, it now loads
+    from %rax.
+    
+    * offlineasm/x86.rb:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262389 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-01  Mark Lam  <mark.lam@apple.com>
+
+            x86.rb's LabelReference.x86LoadOperand()'s address operand should be a pointer type.
+            https://bugs.webkit.org/show_bug.cgi?id=212603
+
+            Reviewed by Saam Barati.
+
+            The current implementation mistakenly sets the address type to that of the value
+            being loaded.  I encountered this issue when I was trying to do a loadb from a
+            global address.  Because of this bug, the emitted code was trying do a load using
+            %al (8 byte register) as the pointer to load from.  With this fix, it now loads
+            from %rax.
+
+            * offlineasm/x86.rb:
+
+2020-06-02  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r262434. rdar://problem/63891520
 
     Change Gigacage::Config to use storage in WebConfig::g_config instead of its own.

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Digia Plc. and/or its subsidiary(-ies)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -447,7 +447,7 @@ class LabelReference
         else
             $asm.puts "lea #{dst.x86Operand(:ptr)}, #{asmLabel}"
         end
-        "#{offset}(#{dst.x86Operand(kind)})"
+        "#{offset}(#{dst.x86Operand(:ptr)})"
     end
 end
 
