@@ -194,6 +194,8 @@ static void webkitEmojiChooserAddRecentItem(WebKitEmojiChooser* chooser, GVarian
 
 static void emojiActivated(GtkFlowBox* box, GtkFlowBoxChild* child, WebKitEmojiChooser* chooser)
 {
+    gtk_popover_popdown(GTK_POPOVER(chooser));
+
     GtkWidget* label = gtk_bin_get_child(GTK_BIN(gtk_bin_get_child(GTK_BIN(child))));
     GUniquePtr<char> text(g_strdup(gtk_label_get_label(GTK_LABEL(label))));
 
@@ -201,8 +203,6 @@ static void emojiActivated(GtkFlowBox* box, GtkFlowBoxChild* child, WebKitEmojiC
     auto modifier = static_cast<gunichar>(GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(child), "modifier")));
     webkitEmojiChooserAddRecentItem(chooser, item, modifier);
     g_signal_emit(chooser, signals[EMOJI_PICKED], 0, text.get());
-
-    gtk_popover_popdown(GTK_POPOVER(chooser));
 }
 
 static bool emojiDataHasVariations(GVariant* emojiData)

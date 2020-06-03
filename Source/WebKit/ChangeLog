@@ -1,3 +1,21 @@
+2020-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Implement emoji chooser
+        https://bugs.webkit.org/show_bug.cgi?id=212330
+
+        Reviewed by Adrian Perez de Castro.
+
+        GtkEmojiChooser is public API in GTK4, so just use that instead of our own.
+
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp:
+        (emojiActivated): Close the popover before emitting emoji-picked for consistency with GTK.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate):
+        (_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired):
+        (webkitWebViewBaseDispose):
+        (emojiChooserClosed):
+        (webkitWebViewBaseShowEmojiChooser):
+
 2020-06-03  Youenn Fablet  <youenn@apple.com>
 
         Add more logging related to service worker fetch event handling
