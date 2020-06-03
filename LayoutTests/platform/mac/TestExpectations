@@ -1532,7 +1532,6 @@ webkit.org/b/183490 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/183490 media/modern-media-controls/start-support/start-support-fullscreen.html [ Failure ]
 webkit.org/b/183490 media/video-playsinline.html [ Failure ]
 webkit.org/b/183490 media/video-webkit-playsinline.html [ Failure ]
-webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Failure ]
 
 webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
 
@@ -1970,3 +1969,5 @@ webkit.org/b/212594 webgl/1.0.3/conformance/canvas/buffer-offscreen-test.html [ 
 
 # This test requires an update to system decoders
 webkit.org/b/212565 [ Catalina Mojave ] imported/w3c/web-platform-tests/encoding/single-byte-decoder.html [ Failure ]
+
+webkit.org/b/212694 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Pass Timeout ]
