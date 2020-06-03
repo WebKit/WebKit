@@ -1,3 +1,18 @@
+2020-06-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Hide the PiP button in fullscreen mode if PiP is disabled in preferences
+        https://bugs.webkit.org/show_bug.cgi?id=212699
+        <rdar://problem/60391437>
+
+        Reviewed by Eric Carlson.
+
+        In r260474, we hid the PiP button in fullscreen when PiP was unsupported on the
+        current device; we must also hide the PiP button when clients have disabled PiP
+        via preferences.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+
 2020-06-03  Kate Cheney  <katherine_cheney@apple.com>
 
         Any active sqlite transactions for the ITP database should be aborted when the network process suspends.

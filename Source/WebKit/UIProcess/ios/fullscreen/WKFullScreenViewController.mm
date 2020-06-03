@@ -265,7 +265,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
-    [_pipButton setHidden:!playbackSessionModel || !playbackSessionModel->isPictureInPictureSupported()];
+    bool isPiPEnabled = false;
+    if (auto page = [self._webView _page])
+        isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
+    bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
+    [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 }
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
