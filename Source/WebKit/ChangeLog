@@ -1,3 +1,17 @@
+2020-06-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Reduce sandbox logging by permitting necessary sysctl
+        https://bugs.webkit.org/show_bug.cgi?id=212710
+        <rdar://problem/63900239>
+
+        Reviewed by Per Arne Vollan.
+
+        Telemetry indicates that we need to access "sysctl.name2oid" in the
+        Network process during error handling for HTTP connections. Allow this
+        access and avoid generating unnecessary logging for this case.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-06-03  Youenn Fablet  <youenn@apple.com>
 
         Add more logging related to service worker fetch event handling

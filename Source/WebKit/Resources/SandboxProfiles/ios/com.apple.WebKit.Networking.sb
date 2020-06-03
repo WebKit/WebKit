@@ -481,7 +481,6 @@
     (sysctl-name "kern.usrstack64")
     (sysctl-name "kern.waketime")
     (sysctl-name "security.mac.sandbox.sentinel")
-    (sysctl-name "sysctl.name2oid")
     (sysctl-name "vm.loadavg")
     (sysctl-name-prefix "kern.argmax")
     (sysctl-name-prefix "kern.proc.pid.")
@@ -566,6 +565,7 @@
         "kern.secure_kernel" ;; Needed by XPC bundle resolution
         "kern.tcsm_available" ;; Needed for IndexedDB support
         "kern.version"
+        "sysctl.name2oid"
         "vm.footprint_suspend"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
