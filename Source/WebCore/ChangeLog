@@ -1,3 +1,18 @@
+2020-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Add more logging related to service worker fetch event handling
+        https://bugs.webkit.org/show_bug.cgi?id=212632
+
+        Reviewed by Chris Dumez.
+
+        Add logging related to creating/canceling/deleting fetch event handler related client.
+        No change of behavior.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+        (WebCore::ServiceWorkerThreadProxy::cancelFetch):
+        (WebCore::ServiceWorkerThreadProxy::removeFetch):
+
 2020-06-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         ASSERTION FAILED: isCell() under WebCore::JSDOMConstructor seen with webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html

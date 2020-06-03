@@ -79,6 +79,7 @@ ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient(WebPageProxyIdent
     , m_frameID(frameID)
     , m_userAgent(userAgent)
 {
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient webPageProxyID %llu, pageID %llu, frameID  %llu", webPageProxyID.toUInt64(), pageID.toUInt64(), frameID.toUInt64());
 }
 
 Ref<DocumentLoader> ServiceWorkerFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
@@ -138,8 +139,6 @@ void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesS
 
 void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerContextData& data, String&& userAgent)
 {
-    LOG(ServiceWorker, "WebSWContextManagerConnection::installServiceWorker for worker %" PRIu64, data.serviceWorkerIdentifier.toUInt64());
-
     auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
 
 #if ENABLE(INDEXED_DATABASE)
@@ -212,7 +211,10 @@ void WebSWContextManagerConnection::cancelFetch(SWServerConnectionIdentifier ser
 
 void WebSWContextManagerConnection::continueDidReceiveFetchResponse(SWServerConnectionIdentifier serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, FetchIdentifier fetchIdentifier)
 {
-    if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
+    auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::continueDidReceiveFetchResponse for service worker %llu, fetch identifier %llu, has service worker %d", serviceWorkerIdentifier.toUInt64(), fetchIdentifier.toUInt64(), !!serviceWorkerThreadProxy);
+
+    if (serviceWorkerThreadProxy)
         serviceWorkerThreadProxy->continueDidReceiveFetchResponse(serverConnectionIdentifier, fetchIdentifier);
 }
 
