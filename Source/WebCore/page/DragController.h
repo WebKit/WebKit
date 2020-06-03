@@ -42,6 +42,7 @@ class Frame;
 class FrameSelection;
 class HTMLImageElement;
 class HTMLInputElement;
+class HitTestResult;
 class IntRect;
 class Page;
 class PlatformMouseEvent;
@@ -93,6 +94,7 @@ public:
     WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
     WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
 
+    void prepareForDragStart(Frame& sourceFrame, DragSourceAction, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;
     bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData);
     static const IntSize& maxDragImageSize();
 
@@ -117,6 +119,8 @@ private:
 
     void mouseMovedIntoDocument(Document*);
     bool shouldUseCachedImageForDragImage(const Image&) const;
+
+    Optional<HitTestResult> hitTestResultForDragStart(Frame&, Element&, const IntPoint&) const;
 
     void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
     void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&, PromisedAttachmentInfo&&);

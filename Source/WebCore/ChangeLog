@@ -1,3 +1,23 @@
+2020-06-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a helper method to populate a DataTransfer before dispatching a "dragstart" event
+        https://bugs.webkit.org/show_bug.cgi?id=212614
+        Work towards <rdar://problem/61368402>
+
+        Reviewed by Tim Horton.
+
+        Add a helper method in DragController to pre-populate the StaticPasteboard-backed DataTransfer before
+        dispatching the "dragstart" event. There should be no change in behavior yet, since StaticPasteboard doesn't
+        implement methods for writing data to the pasteboard, which this new method uses.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::prepareForDragStart const):
+        (WebCore::DragController::hitTestResultForDragStart const):
+        (WebCore::DragController::startDrag):
+        * page/DragController.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragStartEventOnSourceElement):
+
 2020-06-02  Andres Gonzalez  <andresg_22@apple.com>
 
         AXIsolatedTree::updateNode should not call nodeForID.

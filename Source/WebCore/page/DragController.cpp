@@ -899,25 +899,75 @@ static IntPoint dragLocForSelectionDrag(Frame& src)
     return IntPoint(xpos, ypos);
 }
 
-bool DragController::startDrag(Frame& src, const DragState& state, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData hasData)
+void DragController::prepareForDragStart(Frame& source, DragSourceAction action, Element& element, DataTransfer& dataTransfer, const IntPoint& dragOrigin) const
 {
-    if (!src.view() || !src.contentRenderer() || !state.source)
-        return false;
+#if !PLATFORM(WIN)
+    Ref<Frame> protector(source);
+    auto hitTestResult = hitTestResultForDragStart(source, element, dragOrigin);
+    if (!hitTestResult)
+        return;
 
-    Ref<Frame> protector(src);
+    auto& pasteboard = dataTransfer.pasteboard();
+    auto& editor = source.editor();
+    if (action == DragSourceActionSelection) {
+        if (enclosingTextFormControl(source.selection().selection().start()))
+            pasteboard.writePlainText(editor.selectedTextForDataTransfer(), Pasteboard::CannotSmartReplace);
+        else
+            editor.writeSelectionToPasteboard(pasteboard);
+        return;
+    }
+
+    auto* image = getImage(element);
+    auto imageURL = hitTestResult->absoluteImageURL();
+    if ((action & DragSourceActionImage) && !imageURL.isEmpty() && image && !image->isNull()) {
+        editor.writeImageToPasteboard(pasteboard, element, imageURL, { });
+        return;
+    }
+
+    auto linkURL = hitTestResult->absoluteLinkURL();
+    if ((action & DragSourceActionLink) && !linkURL.isEmpty() && source.document()->securityOrigin().canDisplay(linkURL))
+        editor.copyURL(linkURL, hitTestResult->textContent().simplifyWhiteSpace(), pasteboard);
+#else
+    // FIXME: Make this work on Windows by implementing Editor::writeSelectionToPasteboard and Editor::writeImageToPasteboard.
+    UNUSED_PARAM(source);
+    UNUSED_PARAM(action);
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(dataTransfer);
+    UNUSED_PARAM(dragOrigin);
+#endif
+}
+
+Optional<HitTestResult> DragController::hitTestResultForDragStart(Frame& source, Element& element, const IntPoint& location) const
+{
+    if (!source.view() || !source.contentRenderer())
+        return WTF::nullopt;
+
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
-    HitTestResult hitTestResult = src.eventHandler().hitTestResultAtPoint(dragOrigin, hitType);
+    auto hitTestResult = source.eventHandler().hitTestResultAtPoint(location, hitType);
 
-    bool sourceContainsHitNode = state.source->containsIncludingShadowDOM(hitTestResult.innerNode());
+    bool sourceContainsHitNode = element.containsIncludingShadowDOM(hitTestResult.innerNode());
     if (!sourceContainsHitNode) {
         // The original node being dragged isn't under the drag origin anymore... maybe it was
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
         // something that's not actually under the drag origin.
-        return false;
+        return WTF::nullopt;
     }
 
-    URL linkURL = hitTestResult.absoluteLinkURL();
-    URL imageURL = hitTestResult.absoluteImageURL();
+    return { hitTestResult };
+}
+
+bool DragController::startDrag(Frame& src, const DragState& state, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData hasData)
+{
+    if (!state.source)
+        return false;
+
+    Ref<Frame> protector(src);
+    auto hitTestResult = hitTestResultForDragStart(src, *state.source, dragOrigin);
+    if (!hitTestResult)
+        return false;
+
+    auto linkURL = hitTestResult->absoluteLinkURL();
+    auto imageURL = hitTestResult->absoluteImageURL();
 
     IntPoint mouseDraggedPoint = src.view()->windowToContents(dragEvent.position());
 
@@ -1046,13 +1096,13 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             if (element.isContentRichlyEditable())
                 selectElement(element);
             if (!attachmentInfo)
-                declareAndWriteDragImage(dataTransfer, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult.altDisplayString());
+                declareAndWriteDragImage(dataTransfer, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult->altDisplayString());
         }
 
         client().willPerformDragSourceAction(DragSourceActionImage, dragOrigin, dataTransfer);
 
         if (!dragImage)
-            doImageDrag(element, dragOrigin, hitTestResult.imageRect(), src, m_dragOffset, state, WTFMove(attachmentInfo));
+            doImageDrag(element, dragOrigin, hitTestResult->imageRect(), src, m_dragOffset, state, WTFMove(attachmentInfo));
         else {
             // DHTML defined drag image
             doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, WTFMove(attachmentInfo));
@@ -1064,7 +1114,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     if (!linkURL.isEmpty() && (m_dragSourceAction & DragSourceActionLink)) {
         PasteboardWriterData pasteboardWriterData;
 
-        String textContentWithSimplifiedWhiteSpace = hitTestResult.textContent().simplifyWhiteSpace();
+        String textContentWithSimplifiedWhiteSpace = hitTestResult->textContent().simplifyWhiteSpace();
 
         if (hasData == HasNonDefaultPasteboardData::No) {
             // Simplify whitespace so the title put on the dataTransfer resembles what the user sees
@@ -1078,7 +1128,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             // but don't overwrite more general pasteboard types.
             PasteboardURL pasteboardURL;
             pasteboardURL.url = linkURL;
-            pasteboardURL.title = hitTestResult.textContent();
+            pasteboardURL.title = hitTestResult->textContent();
             dataTransfer.pasteboard().writeTrustworthyWebURLsPboardType(pasteboardURL);
         }
 
