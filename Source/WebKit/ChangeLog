@@ -1,3 +1,31 @@
+2020-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Fix input methods
+        https://bugs.webkit.org/show_bug.cgi?id=212317
+
+        Reviewed by Adrian Perez de Castro.
+
+        Stop using GdkEvent to synthesize compositing events, add a specific NativeWebKeyboardEvent constructor for them.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp:
+        (webkitInputMethodContextImplGtkSetClientWidget):
+        (webkitInputMethodContextImplGtkSetClientWindow): Deleted.
+        * UIProcess/API/gtk/WebKitInputMethodContextImplGtk.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseUnrealize):
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        (webkitWebViewBaseFocusEnter):
+        (webkitWebViewBaseFocusLeave):
+        (webkitWebViewBaseKeyPressed):
+        (webkitWebViewBaseKeyReleased):
+        (toplevelWindowIsActiveChanged):
+        (webkitWebViewBaseSynthesizeCompositionKeyPress):
+
 2020-06-03  Santosh Mahto  <santosh.mahto@collabora.com>
 
         [GTK4] Implement file chooser

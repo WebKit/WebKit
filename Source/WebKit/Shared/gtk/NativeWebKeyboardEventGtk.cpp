@@ -33,9 +33,14 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, HandledByInputMethod handledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), WTFMove(commands)))
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, Vector<String>&& commands)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, false, WTF::nullopt, WTF::nullopt, WTFMove(commands)))
     , m_nativeEvent(gdk_event_copy(event))
+{
+}
+
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, Optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, Optional<EditingRange>&& preeditSelectionRange)
+    : WebKeyboardEvent(WebEvent::KeyDown, text, "Unidentified"_s, "Unidentified"_s, "U+0000"_s, 229, GDK_KEY_VoidSymbol, true, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange), { }, false, { }, WallTime::now())
 {
 }
 

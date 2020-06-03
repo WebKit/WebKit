@@ -530,11 +530,11 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributesMask);
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
+#endif
 
     auto* imContext = priv->inputMethodFilter.context();
     if (WEBKIT_IS_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext))
-        webkitInputMethodContextImplGtkSetClientWindow(WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext), window);
-#endif
+        webkitInputMethodContextImplGtkSetClientWidget(WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext), widget);
 
     if (priv->acceleratedBackingStore)
         priv->acceleratedBackingStore->realize();
@@ -546,7 +546,7 @@ static void webkitWebViewBaseUnrealize(GtkWidget* widget)
 
     auto* imContext = webView->priv->inputMethodFilter.context();
     if (WEBKIT_IS_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext))
-        webkitInputMethodContextImplGtkSetClientWindow(WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext), nullptr);
+        webkitInputMethodContextImplGtkSetClientWidget(WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext), nullptr);
 
     if (webView->priv->acceleratedBackingStore)
         webView->priv->acceleratedBackingStore->unrealize();
@@ -1000,7 +1000,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     auto filterResult = priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent));
     if (!filterResult.handled) {
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), filterResult.keyText,
-            NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt, priv->keyBindingTranslator.commandsForKeyEvent(keyEvent)));
+            priv->keyBindingTranslator.commandsForKeyEvent(keyEvent)));
     }
 
     return GDK_EVENT_STOP;
@@ -1011,10 +1011,8 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
-    if (!priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent)).handled) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), { },
-            NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt, { }));
-    }
+    if (!priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent)).handled)
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), { }, { }));
 
     return GDK_EVENT_STOP;
 }
@@ -1024,11 +1022,13 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
 static void webkitWebViewBaseFocusEnter(WebKitWebViewBase* webViewBase, GtkEventController*)
 {
     webkitWebViewBaseSetFocus(webViewBase, true);
+    webViewBase->priv->inputMethodFilter.notifyFocusedIn();
 }
 
 static void webkitWebViewBaseFocusLeave(WebKitWebViewBase* webViewBase, GtkEventController*)
 {
     webkitWebViewBaseSetFocus(webViewBase, false);
+    webViewBase->priv->inputMethodFilter.notifyFocusedOut();
 }
 
 static gboolean webkitWebViewBaseKeyPressed(WebKitWebViewBase* webViewBase, unsigned keyval, unsigned, GdkModifierType state, GtkEventController* controller)
@@ -1073,7 +1073,7 @@ static gboolean webkitWebViewBaseKeyPressed(WebKitWebViewBase* webViewBase, unsi
     auto filterResult = priv->inputMethodFilter.filterKeyEvent(event);
     if (!filterResult.handled) {
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, filterResult.keyText,
-            NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt, priv->keyBindingTranslator.commandsForKeyEvent(GTK_EVENT_CONTROLLER_KEY(controller))));
+            priv->keyBindingTranslator.commandsForKeyEvent(GTK_EVENT_CONTROLLER_KEY(controller))));
     }
 
     return GDK_EVENT_STOP;
@@ -1084,10 +1084,8 @@ static void webkitWebViewBaseKeyReleased(WebKitWebViewBase* webViewBase, unsigne
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     auto* event = gtk_event_controller_get_current_event(controller);
-    if (!priv->inputMethodFilter.filterKeyEvent(event).handled) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, { },
-            NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt, { }));
-    }
+    if (!priv->inputMethodFilter.filterKeyEvent(event).handled)
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, { }, { }));
 }
 #endif
 
@@ -1745,10 +1743,14 @@ static void toplevelWindowIsActiveChanged(GtkWindow* window, GParamSpec*, WebKit
         if (priv->activityState & ActivityState::WindowIsActive)
             return;
         priv->activityState.add(ActivityState::WindowIsActive);
+        if (priv->activityState & ActivityState::IsFocused)
+            priv->inputMethodFilter.notifyFocusedIn();
     } else {
         if (!(priv->activityState & ActivityState::WindowIsActive))
             return;
         priv->activityState.remove(ActivityState::WindowIsActive);
+        if (priv->activityState & ActivityState::IsFocused)
+            priv->inputMethodFilter.notifyFocusedOut();
     }
 
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::WindowIsActive);
@@ -2477,22 +2479,7 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
 
 void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, Optional<Vector<CompositionUnderline>>&& underlines, Optional<EditingRange>&& selectionRange)
 {
-#if !USE(GTK4)
-    static GdkEvent* event = nullptr;
-    if (!event) {
-        event = gdk_event_new(GDK_KEY_PRESS);
-        event->key.time = GDK_CURRENT_TIME;
-
-        // The Windows composition key event code is 299 or VK_PROCESSKEY. We need to
-        // emit this code for web compatibility reasons when key events trigger
-        // composition results. GDK doesn't have an equivalent, so we send VoidSymbol
-        // here to WebCore. PlatformKeyEvent converts this code into VK_PROCESSKEY.
-        event->key.keyval = GDK_KEY_VoidSymbol;
-    }
-
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, text, NativeWebKeyboardEvent::HandledByInputMethod::Yes, WTFMove(underlines), WTFMove(selectionRange), { }));
-#endif
+    webViewBase->priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
 }
 
 static inline OptionSet<WebEvent::Modifier> toWebKitModifiers(unsigned modifiers)

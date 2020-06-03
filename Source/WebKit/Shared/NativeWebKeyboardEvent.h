@@ -73,8 +73,8 @@ public:
     NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    enum class HandledByInputMethod : bool { No, Yes };
-    NativeWebKeyboardEvent(GdkEvent*, const String&, HandledByInputMethod, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&, Vector<String>&& commands);
+    NativeWebKeyboardEvent(GdkEvent*, const String&, Vector<String>&& commands);
+    NativeWebKeyboardEvent(const String&, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<EditingRange>&&);
     NativeWebKeyboardEvent(Type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isKeypad, OptionSet<Modifier>);
 #elif PLATFORM(IOS_FAMILY)
     enum class HandledByInputMethod : bool { No, Yes };

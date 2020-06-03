@@ -47,7 +47,7 @@ struct _WebKitInputMethodContextImplGtkClass {
 
 GType webkit_input_method_context_impl_gtk_get_type();
 WebKitInputMethodContext* webkitInputMethodContextImplGtkNew();
-void webkitInputMethodContextImplGtkSetClientWindow(WebKitInputMethodContextImplGtk*, GdkWindow*);
+void webkitInputMethodContextImplGtkSetClientWidget(WebKitInputMethodContextImplGtk*, GtkWidget*);
 
 G_END_DECLS
 

@@ -231,9 +231,11 @@ WebKitInputMethodContext* webkitInputMethodContextImplGtkNew()
     return WEBKIT_INPUT_METHOD_CONTEXT(g_object_new(WEBKIT_TYPE_INPUT_METHOD_CONTEXT_IMPL_GTK, nullptr));
 }
 
-void webkitInputMethodContextImplGtkSetClientWindow(WebKitInputMethodContextImplGtk* context, GdkWindow* window)
+void webkitInputMethodContextImplGtkSetClientWidget(WebKitInputMethodContextImplGtk* context, GtkWidget* widget)
 {
-#if !USE(GTK4)
-    gtk_im_context_set_client_window(context->priv->context.get(), window);
+#if USE(GTK4)
+    gtk_im_context_set_client_widget(context->priv->context.get(), widget);
+#else
+    gtk_im_context_set_client_window(context->priv->context.get(), widget ? gtk_widget_get_window(widget) : nullptr);
 #endif
 }
