@@ -281,6 +281,8 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName);
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), kUTTypeWebArchive, m_pasteboardName);
     }
+    if (!pasteboardImage.dataInHTMLFormat.isEmpty())
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(pasteboardImage.dataInHTMLFormat, legacyHTMLPasteboardType(), m_pasteboardName);
     writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount);
 }
 
@@ -788,6 +790,11 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
     }
 }
 #endif
+
+bool Pasteboard::canWriteTrustworthyWebURLsPboardType()
+{
+    return true;
+}
 
 }
 

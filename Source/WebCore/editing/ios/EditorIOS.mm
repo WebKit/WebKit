@@ -206,10 +206,12 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
     pasteboardImage.resourceData = cachedImage->resourceBuffer();
 
-    Position beforeImagePosition(&imageElement, Position::PositionIsBeforeAnchor);
-    Position afterImagePosition(&imageElement, Position::PositionIsAfterAnchor);
-    auto imageRange = Range::create(imageElement.document(), beforeImagePosition, afterImagePosition);
-    client()->getClientPasteboardDataForRange(imageRange.ptr(), pasteboardImage.clientTypes, pasteboardImage.clientData);
+    if (!pasteboard.isStatic()) {
+        Position beforeImagePosition(&imageElement, Position::PositionIsBeforeAnchor);
+        Position afterImagePosition(&imageElement, Position::PositionIsAfterAnchor);
+        auto imageRange = Range::create(imageElement.document(), beforeImagePosition, afterImagePosition);
+        client()->getClientPasteboardDataForRange(imageRange.ptr(), pasteboardImage.clientTypes, pasteboardImage.clientData);
+    }
 
     pasteboard.write(pasteboardImage);
 }

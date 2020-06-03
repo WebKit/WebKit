@@ -1,3 +1,101 @@
+2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        dataTransfer.types is empty when handling the "dragstart" event
+        https://bugs.webkit.org/show_bug.cgi?id=212685
+        <rdar://problem/61368402>
+
+        Reviewed by Andy Estes.
+
+        Implements several currently stubbed methods on StaticPasteboard, so that the DataTransfer provided to the page
+        on the "dragstart" event contains the DOM-exposed data types that will be written to the system pasteboard. This
+        includes "text/html", "text/plain", and "text/uri-list".
+
+        Tests:  DragAndDropTests.DataTransferTypesOnDragStartForTextSelection
+                DragAndDropTests.DataTransferTypesOnDragStartForImage
+                DragAndDropTests.DataTransferTypesOnDragStartForLink
+
+        ...as well as several existing tests in DragAndDropTestsIOS.mm that attempt to set pasteboard data during the
+        dragstart event:
+
+                DragAndDropTests.DataTransferSanitizeHTML
+                DragAndDropTests.DataTransferSetDataCannotWritePlatformTypes
+                DragAndDropTests.DataTransferSetDataInvalidURL
+                DragAndDropTests.DataTransferSetDataUnescapedURL
+                DragAndDropTests.DataTransferSetDataValidURL
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::commitToPasteboard):
+
+        Only commit data to the native pasteboard if the page actually tried to write or modify the data. This allows us
+        to preserve existing behavior by allowing DragController to write dragged data to the pasteboard normally in the
+        case where the page didn't specify any custom data. In the case where the page does specify custom data, we will
+        write this custom data *in addition* to any default data that was written to the static pasteboard. While this
+        is a departure from our current behavior (which is to treat the pasteboard as a blank slate that contains only
+        whatever custom data was provided by the page), it matches behavior in both Chrome and Firefox, and is likely
+        more compatible with webpages that don't have UA-specific logic targeting WebKit.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::writeSelectionToPasteboard):
+
+        Avoid calling into the injected bundle (as well as writing a few particular non-web-exposed types, such as web
+        archive data) in the case where we're writing to a static pasteboard (there's no point in doing this for the
+        static pasteboard, and in the worst case, it could confuse some internal clients).
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeImageToPasteboard): Ditto.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeImageToPasteboard):
+
+        Ditto. But additionally, introduce a markup string to PasteboardImage, so that we will expose the "text/html"
+        type when starting a drag on an image element.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+        Only attempt to call into `Pasteboard::writeTrustworthyWebURLsPboardType` in the case where the pasteboard
+        supports this type (i.e. on macOS). This fixes an existing assertion that was hit by my new API test, which
+        attempts to override the contents of the pasteboard with custom data while starting a drag on a link.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
+        Since the StaticPasteboard contains data before the page has written anything, don't use `Pasteboard::hasData()`
+        to determine whether there's custom data; instead, use the new `hasNonDefaultData()` method on
+        `StaticPasteboard` (see below).
+
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::canWriteTrustworthyWebURLsPboardType):
+
+        On non-macOS ports, return false.
+
+        * platform/Pasteboard.h:
+        * platform/StaticPasteboard.cpp:
+        (WebCore::StaticPasteboard::hasNonDefaultData const):
+
+        Keep track of whether the page attempted to stage any custom data during "dragstart" by maintaining the set of
+        types written by the page, via calls to `writeString()` and similar. I'm using a set of types here instead of a
+        simple `bool` flag to ensure correctness in the case where the page adds a type, and then later removes that
+        same custom type, such that there is no longer non-default data.
+
+        (WebCore::StaticPasteboard::writeString):
+        (WebCore::StaticPasteboard::writeData):
+        (WebCore::StaticPasteboard::writeStringInCustomData):
+        (WebCore::StaticPasteboard::clear):
+
+        See above.
+
+        (WebCore::StaticPasteboard::writeMarkup):
+        (WebCore::StaticPasteboard::writePlainText):
+        (WebCore::StaticPasteboard::write):
+
+        Implement these methods by writing to the `PasteboardCustomData`. These methods are invoked by our own code
+        rather than the bindings, and should only be used to stage default data types when starting a drag.
+
+        * platform/StaticPasteboard.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::canWriteTrustworthyWebURLsPboardType):
+
 2020-06-03  Jer Noble  <jer.noble@apple.com>
 
         Crash with uncaught exception: *** -[AVSampleBufferAudioRenderer enqueueSampleBuffer:] Sample buffer has media type 'vide' instead of 'soun'

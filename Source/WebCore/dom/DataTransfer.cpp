@@ -424,8 +424,8 @@ Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, con
 void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
 {
     ASSERT(is<StaticPasteboard>(*m_pasteboard) && !is<StaticPasteboard>(nativePasteboard));
-    PasteboardCustomData customData = downcast<StaticPasteboard>(*m_pasteboard).takeCustomData();
-    if (!customData.hasData()) {
+    auto& staticPasteboard = downcast<StaticPasteboard>(*m_pasteboard);
+    if (!staticPasteboard.hasNonDefaultData()) {
         // We clear the platform pasteboard here to ensure that the pasteboard doesn't contain any data
         // that may have been written before starting the drag or copying, and after ending the last
         // drag session or paste. After pushing the static pasteboard's contents to the platform, the
@@ -434,6 +434,7 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
         return;
     }
 
+    auto customData = staticPasteboard.takeCustomData();
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
         customData.setOrigin(m_originIdentifier);
         nativePasteboard.writeCustomData({ customData });

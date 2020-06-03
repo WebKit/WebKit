@@ -1,3 +1,74 @@
+2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        dataTransfer.types is empty when handling the "dragstart" event
+        https://bugs.webkit.org/show_bug.cgi?id=212685
+        <rdar://problem/61368402>
+
+        Reviewed by Andy Estes.
+
+        Adds new API tests and test infrastructure to verify that DataTransfer types and data are accessible during
+        the "dragstart" event. See below for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (-[TestWKWebView selectElementWithID:]):
+        (-[DragAndDropSimulator dragFromElementWithID:to:]):
+
+        Add a few (very specialized) helper methods to assist with simulating drags over the various elements in the new
+        drag and drop test harness page below (dragstart-data.html).
+
+        (runDragStartDataTestCase):
+
+        Test the following scenarios (split between three API tests) by dumping the resulting DataTransfer types and
+        their data strings, and observing the results:
+
+        - Dragging a normal text selection.
+        - Dragging a normal text selection, and then adding a URL string.
+        - Dragging a normal text selection, and then adding a custom pasteboard type.
+        - Dragging a normal text selection, but then replacing the data with just a URL string.
+        - Dragging a normal text selection, but then replacing the data with just a custom data type.
+        - Dragging an image element.
+        - Dragging an image element, and then overriding the plain text data.
+        - Dragging a link (anchor element).
+        - Dragging a link, and then adding a custom type.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/dragstart-data.html: Added.
+
+        Add a new test harness to help test DataTransfer types when starting a drag. This test page can also be used as
+        a manual test harness, by simply opening the test page, starting drags on the various elements and observing the
+        output in the textarea.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/dump-datatransfer-types.html:
+
+        Tweak this test page to replace the DataTransfer with custom data (rather than simply append it) by calling
+        `DataTransfer.clearData()` prior to writing the custom types.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebViewHostWindow initWithWebView:contentRect:styleMask:backing:defer:]):
+
+        Add a `__weak` reference on TestWKWebViewHostWindow back to the TestWKWebView, so that we can consult
+        `-eventTimestamp` when synthesizing mouse events on macOS during API tests.
+
+        (-[TestWKWebViewHostWindow _mouseDownAtPoint:simulatePressure:clickCount:]):
+        (-[TestWKWebViewHostWindow _mouseUpAtPoint:clickCount:]):
+        (-[TestWKWebViewHostWindow initWithWebView:frame:]):
+        (-[TestWKWebView _setUpTestWindow:]):
+        (-[TestWKWebView setEventTimestampOffset:]):
+        (-[TestWKWebView eventTimestamp]):
+
+        Add a mechanism to offset synthetic event timestamps by a given time interval (i.e. the event timestamp offset).
+
+        (-[TestWKWebView mouseMoveToPoint:withFlags:]):
+        (-[TestWKWebView _mouseEventWithType:atLocation:]):
+        (-[TestWKWebView typeCharacter:]):
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropSimulator runFrom:to:]):
+
+        While simulating drag and drop on macOS, use `-setEventTimestampOffset:` to "leap forward" in time, so that the
+        150 millisecond delay when dragging a text selection doesn't prevent drags from beginning.
+
 2020-06-03  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation sometimes fails to replace text in attributes

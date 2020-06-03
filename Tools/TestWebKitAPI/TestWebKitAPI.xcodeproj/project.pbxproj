@@ -1102,6 +1102,7 @@
 		F469FB241F01804B00401539 /* contenteditable-and-target.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F469FB231F01803500401539 /* contenteditable-and-target.html */; };
 		F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30EB1ED28619000482E1 /* apple.gif */; };
 		F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */; };
+		F46BD56924870643008282D6 /* dragstart-data.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46BD5682487062D008282D6 /* dragstart-data.html */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
 		F47DFB2621A878DF00021FB6 /* data-detectors.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47DFB2421A8704A00021FB6 /* data-detectors.html */; };
 		F4811E5921940BDE00A5E0FD /* WKWebViewEditActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */; };
@@ -1318,6 +1319,7 @@
 				5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */,
 				F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */,
 				F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */,
+				F46BD56924870643008282D6 /* dragstart-data.html in Copy Resources */,
 				F4194AD11F5A320100ADD83F /* drop-targets.html in Copy Resources */,
 				2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */,
 				A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */,
@@ -2767,6 +2769,7 @@
 		F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIPasteboardTests.mm; sourceTree = "<group>"; };
 		F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "rich-and-plain-text.html"; sourceTree = "<group>"; };
 		F469FB231F01803500401539 /* contenteditable-and-target.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-and-target.html"; sourceTree = "<group>"; };
+		F46BD5682487062D008282D6 /* dragstart-data.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dragstart-data.html"; sourceTree = "<group>"; };
 		F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-page-contenteditable.html"; sourceTree = "<group>"; };
 		F47D30EB1ED28619000482E1 /* apple.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = apple.gif; sourceTree = "<group>"; };
 		F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gif-and-file-input.html"; sourceTree = "<group>"; };
@@ -3560,6 +3563,7 @@
 				5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */,
 				F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */,
 				F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */,
+				F46BD5682487062D008282D6 /* dragstart-data.html */,
 				F4194AD01F5A2EA500ADD83F /* drop-targets.html */,
 				2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */,
 				A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */,

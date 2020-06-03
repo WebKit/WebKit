@@ -271,14 +271,23 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 @implementation TestWKWebViewHostWindow {
     BOOL _forceKeyWindow;
+    __weak TestWKWebView *_webView;
 }
 
 #if PLATFORM(MAC)
+
 static int gEventNumber = 1;
 
 NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
     return NSEventMaskPressure | NSEventMaskLeftMouseDown | NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged;
+}
+
+- (instancetype)initWithWebView:(TestWKWebView *)webView contentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)style backing:(NSBackingStoreType)backingStoreType defer:(BOOL)flag
+{
+    if (self = [super initWithContentRect:contentRect styleMask:style backing:backingStoreType defer:flag])
+        _webView = webView;
+    return self;
 }
 
 - (void)_mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure clickCount:(NSUInteger)clickCount
@@ -289,7 +298,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     if (simulatePressure)
         modifierFlags |= NSEventMaskPressure;
 
-    NSEvent *event = [NSEvent mouseEventWithType:mouseEventType location:point modifierFlags:modifierFlags timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:simulatePressure];
+    NSEvent *event = [NSEvent mouseEventWithType:mouseEventType location:point modifierFlags:modifierFlags timestamp:_webView.eventTimestamp windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:simulatePressure];
     if (!simulatePressure) {
         [self sendEvent:event];
         return;
@@ -309,9 +318,10 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 - (void)_mouseUpAtPoint:(NSPoint)point clickCount:(NSUInteger)clickCount
 {
-    [self sendEvent:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0]];
+    [self sendEvent:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:_webView.eventTimestamp windowNumber:self.windowNumber context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0]];
 }
-#endif // PLATFORM(MAC)
+
+#endif
 
 - (BOOL)isKeyWindow
 {
@@ -319,6 +329,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 }
 
 #if PLATFORM(IOS_FAMILY)
+
 static NeverDestroyed<RetainPtr<UIWindow>> gOverriddenApplicationKeyWindow;
 static NeverDestroyed<std::unique_ptr<InstanceMethodSwizzler>> gApplicationKeyWindowSwizzler;
 static NeverDestroyed<std::unique_ptr<InstanceMethodSwizzler>> gSharedApplicationSwizzler;
@@ -345,6 +356,14 @@ static UIWindow *applicationKeyWindowOverride(id, SEL)
 {
     return gOverriddenApplicationKeyWindow.get().get();
 }
+
+- (instancetype)initWithWebView:(TestWKWebView *)webView frame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+        _webView = webView;
+    return self;
+}
+
 #endif
 
 - (void)makeKeyWindow
@@ -387,6 +406,9 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
     InputSessionChangeCount _inputSessionChangeCount;
+#endif
+#if PLATFORM(MAC)
+    NSTimeInterval _eventTimestampOffset;
 #endif
 }
 
@@ -437,14 +459,14 @@ static UICalloutBar *suppressUICalloutBar()
 - (void)_setUpTestWindow:(NSRect)frame
 {
 #if PLATFORM(MAC)
-    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithContentRect:frame styleMask:(NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable) backing:NSBackingStoreBuffered defer:NO]);
+    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithWebView:self contentRect:frame styleMask:(NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable) backing:NSBackingStoreBuffered defer:NO]);
     [_hostWindow setFrameOrigin:NSMakePoint(0, 0)];
     [_hostWindow setIsVisible:YES];
     [_hostWindow contentView].wantsLayer = YES;
     [[_hostWindow contentView] addSubview:self];
     [_hostWindow makeKeyAndOrderFront:self];
 #else
-    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithFrame:frame]);
+    _hostWindow = adoptNS([[TestWKWebViewHostWindow alloc] initWithWebView:self frame:frame]);
     [_hostWindow setHidden:NO];
     [_hostWindow addSubview:self];
 #endif
@@ -684,7 +706,19 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 #endif
 
 #if PLATFORM(MAC)
+
 @implementation TestWKWebView (MacOnly)
+
+- (void)setEventTimestampOffset:(NSTimeInterval)offset
+{
+    _eventTimestampOffset += offset;
+}
+
+- (NSTimeInterval)eventTimestamp
+{
+    return GetCurrentEventTime() + _eventTimestampOffset;
+}
+
 - (void)mouseDownAtPoint:(NSPoint)pointInWindow simulatePressure:(BOOL)simulatePressure
 {
     [_hostWindow _mouseDownAtPoint:pointInWindow simulatePressure:simulatePressure clickCount:1];
@@ -697,7 +731,7 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 - (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags
 {
-    [self mouseMoved:[self _mouseEventWithType:NSEventTypeMouseMoved atLocation:pointInWindow flags:flags timestamp:GetCurrentEventTime() clickCount:0]];
+    [self mouseMoved:[self _mouseEventWithType:NSEventTypeMouseMoved atLocation:pointInWindow flags:flags timestamp:self.eventTimestamp clickCount:0]];
 }
 
 - (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks
@@ -725,7 +759,7 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 - (NSEvent *)_mouseEventWithType:(NSEventType)type atLocation:(NSPoint)pointInWindow
 {
-    return [self _mouseEventWithType:type atLocation:pointInWindow flags:0 timestamp:GetCurrentEventTime() clickCount:0];
+    return [self _mouseEventWithType:type atLocation:pointInWindow flags:0 timestamp:self.eventTimestamp clickCount:0];
 }
 
 - (NSEvent *)_mouseEventWithType:(NSEventType)type atLocation:(NSPoint)locationInWindow flags:(NSEventModifierFlags)flags timestamp:(NSTimeInterval)timestamp clickCount:(NSUInteger)clickCount
@@ -749,8 +783,8 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
     NSEventType keyDownEventType = NSEventTypeKeyDown;
     NSEventType keyUpEventType = NSEventTypeKeyUp;
-    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+    [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
 }
 
 - (void)waitForPendingMouseEvents
@@ -763,6 +797,7 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 }
 
 @end
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)

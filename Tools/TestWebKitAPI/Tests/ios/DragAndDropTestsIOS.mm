@@ -78,7 +78,7 @@ static NSData *testZIPArchive()
     return [NSData dataWithContentsOfURL:zipFileURL];
 }
 
-@implementation TestWKWebView (DragAndDropTests)
+@implementation TestWKWebView (DragAndDropTestsIOS)
 
 - (BOOL)editorContainsImageElement
 {

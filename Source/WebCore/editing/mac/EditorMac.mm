@@ -250,7 +250,14 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         return;
     ASSERT(cachedImage);
 
-    pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
+    if (!pasteboard.isStatic())
+        pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
+
+    if (auto imageRange = makeRangeSelectingNode(imageElement)) {
+        auto serializeComposedTree = m_document.settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No;
+        pasteboardImage.dataInHTMLFormat = serializePreservingVisualAppearance(VisibleSelection { *imageRange }, ResolveURLs::YesExcludingLocalFileURLsForPrivacy, serializeComposedTree);
+    }
+
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;
     pasteboardImage.url.userVisibleForm = WTF::userVisibleString(pasteboardImage.url.url);

@@ -130,6 +130,8 @@
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character;
 - (void)waitForPendingMouseEvents;
+- (void)setEventTimestampOffset:(NSTimeInterval)offset;
+@property (nonatomic, readonly) NSTimeInterval eventTimestamp;
 @end
 #endif
 

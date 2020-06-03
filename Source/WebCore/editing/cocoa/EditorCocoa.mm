@@ -119,13 +119,15 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     PasteboardWebContent content;
     content.contentOrigin = m_document.originIdentifierForPasteboard();
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
-    content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-    content.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
-    content.dataInRTFFormat = dataInRTFFormat(string.get());
-    content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
+    if (!pasteboard.isStatic()) {
+        content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+        content.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
+        content.dataInRTFFormat = dataInRTFFormat(string.get());
+        content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
+        client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
+    }
     content.dataInHTMLFormat = selectionInHTMLFormat();
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
-    client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
 
     pasteboard.write(content);
 }

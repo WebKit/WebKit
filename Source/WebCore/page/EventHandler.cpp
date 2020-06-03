@@ -3872,13 +3872,14 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     invalidateDataTransfer();
 
     dragState().dataTransfer = DataTransfer::createForDrag();
-    HasNonDefaultPasteboardData hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
+    auto hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
     
     if (dragState().shouldDispatchEvents) {
         ASSERT(dragState().source);
         auto dragStartDataTransfer = DataTransfer::createForDragStartEvent(dragState().source->document());
         m_mouseDownMayStartDrag = dispatchDragStartEventOnSourceElement(dragStartDataTransfer);
-        hasNonDefaultPasteboardData = dragStartDataTransfer->pasteboard().hasData() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
+        if (downcast<StaticPasteboard>(dragStartDataTransfer->pasteboard()).hasNonDefaultData())
+            hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::Yes;
         dragState().dataTransfer->moveDragState(WTFMove(dragStartDataTransfer));
 
         if (dragState().source && dragState().type == DragSourceActionDHTML && !dragState().dataTransfer->hasDragImage()) {

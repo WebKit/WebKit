@@ -1123,7 +1123,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
                 src.editor().copyURL(linkURL, textContentWithSimplifiedWhiteSpace, dataTransfer.pasteboard());
             else
                 pasteboardWriterData.setURLData(src.editor().pasteboardWriterURL(linkURL, textContentWithSimplifiedWhiteSpace));
-        } else {
+        } else if (dataTransfer.pasteboard().canWriteTrustworthyWebURLsPboardType()) {
             // Make sure the pasteboard also contains trustworthy link data
             // but don't overwrite more general pasteboard types.
             PasteboardURL pasteboardURL;

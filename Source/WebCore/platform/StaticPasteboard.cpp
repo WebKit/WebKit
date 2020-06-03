@@ -58,34 +58,101 @@ String StaticPasteboard::readStringInCustomData(const String& type)
     return m_customData.readStringInCustomData(type);
 }
 
+bool StaticPasteboard::hasNonDefaultData() const
+{
+    return !m_nonDefaultDataTypes.isEmpty();
+}
+
 void StaticPasteboard::writeString(const String& type, const String& value)
 {
+    m_nonDefaultDataTypes.add(type);
     m_customData.writeString(type, value);
 }
 
 void StaticPasteboard::writeData(const String& type, Ref<SharedBuffer>&& data)
 {
+    m_nonDefaultDataTypes.add(type);
     m_customData.writeData(type, WTFMove(data));
 }
 
 void StaticPasteboard::writeStringInCustomData(const String& type, const String& value)
 {
+    m_nonDefaultDataTypes.add(type);
     m_customData.writeStringInCustomData(type, value);
 }
 
 void StaticPasteboard::clear()
 {
+    m_nonDefaultDataTypes.clear();
+    m_fileContentState = Pasteboard::FileContentState::NoFileOrImageData;
     m_customData.clear();
 }
 
 void StaticPasteboard::clear(const String& type)
 {
+    m_nonDefaultDataTypes.remove(type);
     m_customData.clear(type);
 }
 
 PasteboardCustomData StaticPasteboard::takeCustomData()
 {
     return std::exchange(m_customData, { });
+}
+
+void StaticPasteboard::writeMarkup(const String& markup)
+{
+    m_customData.writeString("text/html"_s, markup);
+}
+
+void StaticPasteboard::writePlainText(const String& text, SmartReplaceOption)
+{
+    m_customData.writeString("text/plain"_s, text);
+}
+
+void StaticPasteboard::write(const PasteboardURL& url)
+{
+    m_customData.writeString("text/uri-list"_s, url.url.string());
+}
+
+void StaticPasteboard::write(const PasteboardImage& image)
+{
+    // FIXME: This should ideally remember the image data, so that when this StaticPasteboard
+    // is committed to the native pasteboard, we'll preserve the image as well. For now, stick
+    // with our existing behavior, which prevents image data from being copied in the case where
+    // any non-default data was written by the page.
+    m_fileContentState = Pasteboard::FileContentState::InMemoryImage;
+
+#if PLATFORM(MAC)
+    if (!image.dataInHTMLFormat.isEmpty())
+        writeMarkup(image.dataInHTMLFormat);
+#else
+    UNUSED_PARAM(image);
+#endif
+
+#if !PLATFORM(WIN)
+    if (Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(image.url.url.string()))
+        write(image.url);
+#endif
+}
+
+void StaticPasteboard::write(const PasteboardWebContent& content)
+{
+    String markup;
+    String text;
+
+#if PLATFORM(COCOA)
+    markup = content.dataInHTMLFormat;
+    text = content.dataInStringFormat;
+#elif PLATFORM(GTK) || USE(LIBWPE)
+    markup = content.markup;
+    text = content.text;
+#endif
+
+    if (!markup.isEmpty())
+        writeMarkup(markup);
+
+    if (!text.isEmpty())
+        writePlainText(text, SmartReplaceOption::CannotSmartReplace);
 }
 
 }
