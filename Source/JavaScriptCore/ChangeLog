@@ -1,5 +1,22 @@
 2020-06-03  Mark Lam  <mark.lam@apple.com>
 
+        DFGSSAConversionPhase.cpp needs to #include OperandsInlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=212687
+
+        Reviewed by Keith Miller.
+
+        Without this, strange build failures can happen with unified builds.
+
+        For example, the Windows build started failing due a linkage error in this file
+        when the patch from https://bugs.webkit.org/show_bug.cgi?id=212680 landed.
+        212680 introduced a new .cpp file, and that probably bumped DFGSSAConversionPhase.cpp
+        into another unified unit, thereby depriving it from seeing the OperandsInlines.h
+        #include'd by another .cpp.
+
+        * dfg/DFGSSAConversionPhase.cpp:
+
+2020-06-03  Mark Lam  <mark.lam@apple.com>
+
         Fix non-unified --jsc-only build.
         https://bugs.webkit.org/show_bug.cgi?id=212707
 
