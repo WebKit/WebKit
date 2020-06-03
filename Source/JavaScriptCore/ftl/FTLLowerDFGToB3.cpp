@@ -704,7 +704,7 @@ private:
 
         if (validateDFGDoesGC) {
             bool expectDoesGC = doesGC(m_graph, m_node);
-            m_out.store(m_out.constBool(expectDoesGC), m_out.absolute(vm().heap.addressOfExpectDoesGC()));
+            m_out.store(m_out.constInt64(DoesGCCheck::encode(expectDoesGC, m_node->index(), m_node->op())), m_out.absolute(vm().heap.addressOfDoesGC()));
         }
 
         switch (m_node->op()) {
