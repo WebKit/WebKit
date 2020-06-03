@@ -382,9 +382,9 @@ class Error;
 // Typedefs.
 namespace Database {
 /* Unique identifier of Database object. */
-typedef String DatabaseId;
-typedef String PrimaryColors;
-typedef JSON::ArrayOf<String> ColorList;
+using DatabaseId = String;
+using PrimaryColors = String;
+using ColorList = JSON::ArrayOf<String>;
 } // Database
 // End of typedefs.
 

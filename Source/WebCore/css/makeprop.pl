@@ -618,7 +618,7 @@ inline CSSPropertyID convertToCSSPropertyID(int value)
 } // namespace WebCore
 
 namespace WTF {
-template<> struct DefaultHash<WebCore::CSSPropertyID> { typedef IntHash<unsigned> Hash; };
+template<> struct DefaultHash<WebCore::CSSPropertyID> { using Hash = IntHash<unsigned>; };
 template<> struct HashTraits<WebCore::CSSPropertyID> : GenericHashTraits<WebCore::CSSPropertyID> {
     static const bool emptyValueIsZero = true;
     static void constructDeletedValue(WebCore::CSSPropertyID& slot) { slot = static_cast<WebCore::CSSPropertyID>(WebCore::lastCSSProperty + 1); }

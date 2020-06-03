@@ -1,3 +1,17 @@
+2020-06-03  Rob Buis  <rbuis@igalia.com>
+
+        Make generated C++ code use modern C++
+        https://bugs.webkit.org/show_bug.cgi?id=190714
+
+        Reviewed by Jonathan Bedard.
+
+        Replace typedef usage by alias-declaration.
+
+        * Scripts/test-legacyMessages.h:
+        * Scripts/test-superclassMessages.h:
+        * Scripts/testMessages.h:
+        * Scripts/webkit/messages.py:
+
 2020-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] WTR: Forward key events to the active popup menu

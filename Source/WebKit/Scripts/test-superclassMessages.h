@@ -48,7 +48,7 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class LoadURL {
 public:
-    typedef std::tuple<const String&> Arguments;
+    using Arguments = std::tuple<const String&>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadURL; }
     static const bool isSync = false;
@@ -70,7 +70,7 @@ private:
 #if ENABLE(TEST_FEATURE)
 class TestAsyncMessage {
 public:
-    typedef std::tuple<WebKit::TestTwoStateEnum> Arguments;
+    using Arguments = std::tuple<WebKit::TestTwoStateEnum>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessage; }
     static const bool isSync = false;
@@ -100,7 +100,7 @@ private:
 #if ENABLE(TEST_FEATURE)
 class TestAsyncMessageWithNoArguments {
 public:
-    typedef std::tuple<> Arguments;
+    using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessageWithNoArguments; }
     static const bool isSync = false;
@@ -125,7 +125,7 @@ private:
 #if ENABLE(TEST_FEATURE)
 class TestAsyncMessageWithMultipleArguments {
 public:
-    typedef std::tuple<> Arguments;
+    using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessageWithMultipleArguments; }
     static const bool isSync = false;
@@ -150,7 +150,7 @@ private:
 #if ENABLE(TEST_FEATURE)
 class TestAsyncMessageWithConnection {
 public:
-    typedef std::tuple<const int&> Arguments;
+    using Arguments = std::tuple<const int&>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_TestAsyncMessageWithConnection; }
     static const bool isSync = false;
@@ -179,7 +179,7 @@ private:
 
 class TestSyncMessage {
 public:
-    typedef std::tuple<uint32_t> Arguments;
+    using Arguments = std::tuple<uint32_t>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_TestSyncMessage; }
     static const bool isSync = true;
@@ -204,7 +204,7 @@ private:
 
 class TestSynchronousMessage {
 public:
-    typedef std::tuple<bool> Arguments;
+    using Arguments = std::tuple<bool>;
 
     static IPC::MessageName name() { return IPC::MessageName::WebPage_TestSynchronousMessage; }
     static const bool isSync = true;
