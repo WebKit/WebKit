@@ -1,3 +1,17 @@
+2020-06-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        ASSERTION FAILED: isCell() under WebCore::JSDOMConstructor seen with webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html
+        https://bugs.webkit.org/show_bug.cgi?id=212650
+
+        Reviewed by Mark Lam.
+
+        Some DOM constructor can return jsNull. For example, AudioContext constructor can return jsNull when it exceeds # of hardware audio contexts.
+        However CodeGeneratorJS assumes that DOM constructor always returns an object, or throws an exception.
+        This patch adds object check after DOM constructor call to handle the jsNull case while it does not change the existing semantics.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+
 2020-06-02  Simon Fraser  <simon.fraser@apple.com>
 
         EventRegion::translate() needs to offset the wheel event regions
