@@ -155,11 +155,14 @@
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue
 {
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    Optional<String> encodedString;
-    if (encodedValue)
-        encodedString = String(encodedValue);
-    for (auto* processPool : WebKit::WebProcessPool::allProcessPools())
-        processPool->notifyPreferencesChanged(domain, key, encodedString);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        Optional<String> encodedString;
+        if (encodedValue)
+            encodedString = String(encodedValue);
+
+        for (auto* processPool : WebKit::WebProcessPool::allProcessPools())
+            processPool->notifyPreferencesChanged(domain, key, encodedString);
+    });
 #endif
 }
 @end

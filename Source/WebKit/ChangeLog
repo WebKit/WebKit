@@ -1,3 +1,18 @@
+2020-06-03  Chris Dumez  <cdumez@apple.com>
+
+        WebProcessPool::notifyPreferencesChanged() is unsafely called on a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=212697
+        <rdar://problem/63876652>
+
+        Reviewed by Per Arne Vollan.
+
+        Make sure we dispatch to the main thread in [WKPreferenceObserver preferenceDidChange] before
+        we iterate over the process pools and call WebProcessPool::notifyPreferencesChanged() on each
+        one.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKPreferenceObserver preferenceDidChange:key:encodedValue:]):
+
 2020-06-03  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Reduce sandbox logging by permitting necessary sysctl
