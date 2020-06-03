@@ -1,3 +1,26 @@
+2020-06-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix non-unified --jsc-only build.
+        https://bugs.webkit.org/show_bug.cgi?id=212707
+
+        Reviewed by Yusuke Suzuki.
+
+        These files need JSGlobalObjectInlines.h.  But rather than adding yet another
+        #include, we'll just remove many individual ones and just #include JSCInlines.h
+        instead.
+
+        * wasm/js/JSToWasmICCallee.cpp:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+
 2020-06-03  Rob Buis  <rbuis@igalia.com>
 
         Make generated C++ code use modern C++

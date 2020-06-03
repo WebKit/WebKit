@@ -29,11 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AuxiliaryBarrierInlines.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
-#include "JSObjectInlines.h"
 #include "JSWebAssemblyInstance.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 static EncodedJSValue JSC_HOST_CALL webAssemblyInstanceProtoFuncExports(JSGlobalObject*, CallFrame*);

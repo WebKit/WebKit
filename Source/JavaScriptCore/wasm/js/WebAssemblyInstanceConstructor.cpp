@@ -28,11 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCJSValueInlines.h"
-#include "JSObjectInlines.h"
+#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
-#include "StructureInlines.h"
 #include "WebAssemblyInstancePrototype.h"
 
 #include "WebAssemblyInstanceConstructor.lut.h"
