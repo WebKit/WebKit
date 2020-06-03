@@ -1,2 +1,2 @@
-PASS: no selection made
+PASS: Selected: PressMe
 

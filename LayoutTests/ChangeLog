@@ -1,3 +1,19 @@
+2020-06-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Refactor long press test to reflect current behaviour.
+        https://bugs.webkit.org/show_bug.cgi?id=212709
+        <rdar://problem/59572126>
+
+        Reviewed by Wenson Hsieh.
+
+        Previously, if you long pressed on editable content, the selection assistant would be triggered
+        in the wrong mode and you could not modify or interact with the selection. With changes and
+        refactors that have happened in UIKit and WebKit, the selection can be interacted with
+        correctly inside of an editable area. We should now allow and test for this behavior.
+
+        * fast/events/touch/ios/long-press-on-editable-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable.html:
+
 2020-06-03  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION: (r262456): [ Mac ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html is timing out.

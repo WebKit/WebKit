@@ -29,9 +29,9 @@
                 testRunner.runUIScript(getPressScript(), function(result) {
                     var selectionText = document.getSelection().toString();
                     if (selectionText == "PressMe")
-                        output += 'FAILED: Selected: ' + selectionText;
+                        output += 'PASS: Selected: ' + selectionText;
                     else
-                        output += 'PASS: no selection made';
+                        output += 'FAILED: no selection made';
                     output += '<br>';
                     document.getElementById('target').innerHTML = output;
                     testRunner.notifyDone();
