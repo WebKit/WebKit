@@ -81,6 +81,8 @@ class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsS
 public:
     ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
     ~ResourceLoadStatisticsDatabaseStore();
+
+    static HashSet<ResourceLoadStatisticsDatabaseStore*>& allStores();
     void populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore&);
     void mergeStatistics(Vector<ResourceLoadStatistics>&&) override;
     void clear(CompletionHandler<void()>&&) override;
@@ -144,6 +146,7 @@ public:
     bool domainIDExistsInDatabase(int);
     Optional<Vector<String>> checkForMissingTablesInSchema();
     void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
+    void interrupt();
 
 private:
     void includeTodayAsOperatingDateIfNecessary() override;

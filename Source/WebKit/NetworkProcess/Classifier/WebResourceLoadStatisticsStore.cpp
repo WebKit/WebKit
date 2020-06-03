@@ -1425,6 +1425,9 @@ void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& complet
 
     sharedStatisticsQueue()->dispatch([completionHandler = completionHandlerCaller.release()] () mutable {
 
+        for (auto& databaseStore : ResourceLoadStatisticsDatabaseStore::allStores())
+            databaseStore->interrupt();
+        
         Locker<Lock> stateLocker(suspendedStateLock);
         ASSERT(suspendedState != State::Suspended);
 

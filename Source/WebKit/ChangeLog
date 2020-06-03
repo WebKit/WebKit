@@ -1,3 +1,28 @@
+2020-06-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Any active sqlite transactions for the ITP database should be aborted when the network process suspends.
+        https://bugs.webkit.org/show_bug.cgi?id=212608
+        <rdar://problem/60540768>
+
+        Reviewed by Chris Dumez.
+
+        Calls to WebResourceLoadStatisticsStore::suspend() should abort any
+        active SQLite transactions. Unfinished transactions will hold the lock
+        of a database file and could cause the network process to crash when
+        suspending.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::~ResourceLoadStatisticsDatabaseStore):
+        Store all ResourceLoadStatisticsDatabaseStore instances in a static
+        HashSet so existing transactions can be aborted when the process is
+        preparing to suspend.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::interrupt):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+
 2020-06-03  Chris Dumez  <cdumez@apple.com>
 
         WebProcessPool::notifyPreferencesChanged() is unsafely called on a background thread

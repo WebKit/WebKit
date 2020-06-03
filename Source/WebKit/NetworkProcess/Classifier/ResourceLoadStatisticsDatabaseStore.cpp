@@ -277,6 +277,13 @@ static const HashMap<String, String>& createTableQueries()
     return createTableQueries;
 }
 
+HashSet<ResourceLoadStatisticsDatabaseStore*>& ResourceLoadStatisticsDatabaseStore::allStores()
+{
+    ASSERT(!RunLoop::isMain());
+
+    static NeverDestroyed<HashSet<ResourceLoadStatisticsDatabaseStore*>> map;
+    return map;
+}
 
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
@@ -300,11 +307,13 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     });
 
     includeTodayAsOperatingDateIfNecessary();
+    allStores().add(this);
 }
 
 ResourceLoadStatisticsDatabaseStore::~ResourceLoadStatisticsDatabaseStore()
 {
     close();
+    allStores().remove(this);
 }
 
 void ResourceLoadStatisticsDatabaseStore::close()
@@ -521,6 +530,12 @@ SQLiteStatementAutoResetScope ResourceLoadStatisticsDatabaseStore::scopedStateme
         }
     }
     return SQLiteStatementAutoResetScope { statement.get() };
+}
+
+void ResourceLoadStatisticsDatabaseStore::interrupt()
+{
+    if (m_database.isOpen())
+        m_database.interrupt();
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isEmpty() const
