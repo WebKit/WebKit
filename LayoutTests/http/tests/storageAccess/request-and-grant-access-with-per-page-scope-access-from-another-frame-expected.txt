@@ -1,0 +1,36 @@
+Tests that storage access is granted for all frames under per-page storage scope.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Storage access was granted. document.cookie == firstPartyCookie=value, cookies seen server-side == {"firstPartyCookie":"value"}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
+
+--------
+Frame: '<!--frame1-->'
+--------
+Should not receive cookies without user interaction.
+Did not receive cookie named 'firstPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--frame2-->'
+--------
+Should not receive cookies with user interaction.
+Did not receive cookie named 'firstPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--frame3-->'
+--------
+
+
+--------
+Frame: '<!--frame4-->'
+--------
+Should receive cookies even though it's not the requesting frame.
+Received cookie named 'firstPartyCookie'.
+Client-side document.cookie: firstPartyCookie=value

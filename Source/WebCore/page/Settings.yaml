@@ -692,6 +692,9 @@ allowMediaContentTypesRequiringHardwareSupportAsFallback:
 storageAccessAPIEnabled:
   initial: true
 
+storageAccessAPIPerPageScopeEnabled:
+  initial: false
+
 timeWithoutMouseMovementBeforeHidingControls:
   type: Seconds
   initial: 3_s

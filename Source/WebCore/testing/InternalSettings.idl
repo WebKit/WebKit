@@ -120,5 +120,7 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     [EnabledAtRuntime=WebAnimations] boolean webAnimationsCSSIntegrationEnabled();
 
     void setShouldDeactivateAudioSession(boolean shouldDeactivate);
+    
+    void setStorageAccessAPIPerPageScopeEnabled(boolean enabled);
 };
 

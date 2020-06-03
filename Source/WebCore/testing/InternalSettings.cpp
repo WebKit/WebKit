@@ -1028,6 +1028,10 @@ void InternalSettings::setShouldDeactivateAudioSession(bool should)
 #endif
 }
 
+void InternalSettings::setStorageAccessAPIPerPageScopeEnabled(bool enabled)
+{
+    settings().setStorageAccessAPIPerPageScopeEnabled(enabled);
+}
 // If you add to this class, make sure that you update the Backup class for test reproducability!
 
 }

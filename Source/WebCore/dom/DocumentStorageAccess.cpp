@@ -170,7 +170,10 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         promise->reject();
         return;
     }
-    
+
+    if (page->settings().storageAccessAPIPerPageScopeEnabled())
+        m_storageAccessScope = StorageAccessScope::PerPage;
+
     auto subFrameDomain = RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host());
     auto topFrameDomain = RegistrableDomain::uncheckedCreateFromHost(topSecurityOrigin.host());
     

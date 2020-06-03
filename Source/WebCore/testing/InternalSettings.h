@@ -136,6 +136,8 @@ public:
     static bool webAnimationsCSSIntegrationEnabled();
 
     void setShouldDeactivateAudioSession(bool);
+    
+    void setStorageAccessAPIPerPageScopeEnabled(bool);
 
 private:
     explicit InternalSettings(Page*);
