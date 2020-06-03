@@ -1,3 +1,15 @@
+2020-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Add more logging related to service worker fetch event handling
+        https://bugs.webkit.org/show_bug.cgi?id=212632
+        <rdar://problem/63913271>
+
+        Unreviewed.
+        Build fix.
+
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::continueDidReceiveResponse):
+
 2020-06-03  Alex Christensen  <achristensen@webkit.org>
 
         Pass WebPageProxyIdentifier to PreconnectTask

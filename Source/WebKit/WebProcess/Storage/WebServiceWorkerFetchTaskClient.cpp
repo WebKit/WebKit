@@ -190,7 +190,7 @@ void WebServiceWorkerFetchTaskClient::cancel()
 
 void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 {
-    RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::continueDidReceiveResponse, has connection %d, didFinish %d, response type %ld", !!m_connection, m_didFinish, m_responseData.index());
+    RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::continueDidReceiveResponse, has connection %d, didFinish %d, response type %ld", !!m_connection, m_didFinish, static_cast<long>(m_responseData.index()));
 
     if (!m_connection)
         return;
