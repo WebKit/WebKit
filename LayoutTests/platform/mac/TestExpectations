@@ -1936,8 +1936,6 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
-webkit.org/b/210351 scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html [ Pass Timeout ]
-
 webkit.org/b/182571 [ Debug ] media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html [ Pass Timeout ]
 
 # Certain versions of macOS use different text security characters.

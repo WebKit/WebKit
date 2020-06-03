@@ -1,3 +1,12 @@
+2020-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Followup to r262438
+
+        Remove scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html from TestExpectations
+        now that it should no longer be flaky.
+
+        * platform/mac/TestExpectations:
+
 2020-06-02  Peng Liu  <peng.liu6@apple.com>
 
         Layout test failures: media/video-create-with-user-gesture.html and media/video-restricted-no-preload-auto.html
