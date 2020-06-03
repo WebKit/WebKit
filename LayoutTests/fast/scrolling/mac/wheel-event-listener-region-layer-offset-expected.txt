@@ -1,0 +1,40 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (offsetFromRenderer width=-94 height=-69)
+          (position 14.00 44.00)
+          (bounds 294.00 269.00)
+          (drawsContent 1)
+          (event region
+            (rect (20,20) width=50 height=49)
+            (rect (20,69) width=50 height=1)
+            (rect (94,69) width=200 height=1)
+            (rect (94,70) width=200 height=199)
+          (wheel event listener region
+            (rect (20,20) width=50 height=49)
+            (rect (20,69) width=50 height=1)
+            (rect (94,69) width=200 height=1)
+            (rect (94,70) width=200 height=199)
+            (non-passive
+              (rect (20,20) width=50 height=49)
+              (rect (20,69) width=50 height=1)
+              (rect (94,69) width=200 height=1)
+              (rect (94,70) width=200 height=199)
+            )
+          )
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -146,7 +146,10 @@ void EventRegion::translate(const IntSize& offset)
         touchActionRegion.translate(offset);
 #endif
 
-    // FIXME: Translate m_wheelEventListenerRegion and m_nonPassiveWheelEventListenerRegion
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    m_wheelEventListenerRegion.translate(offset);
+    m_nonPassiveWheelEventListenerRegion.translate(offset);
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     m_editableRegion.translate(offset);

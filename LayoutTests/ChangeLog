@@ -1,3 +1,13 @@
+2020-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        EventRegion::translate() needs to offset the wheel event regions
+        https://bugs.webkit.org/show_bug.cgi?id=212683
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/scrolling/mac/wheel-event-listener-region-layer-offset-expected.txt: Added.
+        * fast/scrolling/mac/wheel-event-listener-region-layer-offset.html: Added.
+
 2020-06-02  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition2.html is a flaky failure

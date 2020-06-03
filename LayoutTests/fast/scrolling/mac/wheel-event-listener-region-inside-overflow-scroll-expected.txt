@@ -42,9 +42,9 @@
                     (rect (-2,-2) width=204 height=204)
                     (rect (0,202) width=185 height=218)
                   (wheel event listener region
-                    (rect (22,22) width=100 height=400)
+                    (rect (20,20) width=100 height=400)
                     (non-passive
-                      (rect (22,22) width=100 height=400)
+                      (rect (20,20) width=100 height=400)
                     )
                   )
                   )
