@@ -1,3 +1,16 @@
+2020-06-02  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition2.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=212660
+        <rdar://problem/61948534>
+
+        Reviewed by Simon Fraser.
+
+        When the device is busy and the transition gets delayed, the opacity change could miss the content observation window.
+        Forcing synchronous style change makes is less flaky.
+
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition2.html:
+
 2020-06-02  Simon Fraser  <simon.fraser@apple.com>
 
         Followup to r262438

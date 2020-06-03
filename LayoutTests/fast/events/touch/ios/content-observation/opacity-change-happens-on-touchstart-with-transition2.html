@@ -9,7 +9,7 @@
     width: 400px;
     height: 400px;
     border: 1px solid green;
-    transition: opacity 20ms ease-out 10ms;
+    transition: opacity 0ms ease-out 1ms;
 }
 </style>
 <script>
@@ -36,9 +36,12 @@ async function test() {
 <pre id=result></pre>
 <script>
 tapthis.addEventListener("touchstart", function( event ) {
+    tapthis.addEventListener('transitionend', () => {
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
+    });
     tapthis.style.opacity = "1";
-    if (window.testRunner)
-        setTimeout("testRunner.notifyDone()", 250);
+    document.body.offsetHeight;
 }, false);
 
 tapthis.addEventListener("click", function( event ) {   
