@@ -141,13 +141,6 @@ String AccessibilitySVGElement::accessibilityDescription() const
             return xlinkTitle;
     }
 
-    if (m_renderer->isSVGText()) {
-        AccessibilityTextUnderElementMode mode;
-        String text = textUnderElement(mode);
-        if (!text.isEmpty())
-            return text;
-    }
-
     if (is<SVGUseElement>(element())) {
         if (AccessibilityObject* target = targetForUseElement())
             return target->accessibilityDescription();
@@ -188,18 +181,9 @@ String AccessibilitySVGElement::helpText() const
             return target->helpText();
     }
 
-    String description = accessibilityDescription();
-
-    if (m_renderer->isSVGText()) {
-        AccessibilityTextUnderElementMode mode;
-        String text = textUnderElement(mode);
-        if (!text.isEmpty() && text != description)
-            return text;
-    }
-
     auto titleElements = childrenOfType<SVGTitleElement>(*element());
     if (auto titleChild = childElementWithMatchingLanguage(titleElements)) {
-        if (titleChild->textContent() != description)
+        if (titleChild->textContent() != accessibilityDescription())
             return titleChild->textContent();
     }
 

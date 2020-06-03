@@ -1,3 +1,21 @@
+2020-06-03  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: SVG text node with content is described as "empty group" even if it's not empty
+        https://bugs.webkit.org/show_bug.cgi?id=210315
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/svg-text.html
+
+        SVGText elements are conveyed as AXGroups and cannot have a description
+        or help property, but instead the content of the element is exposed as
+        static text.
+
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::accessibilityDescription const):
+        (WebCore::AccessibilitySVGElement::helpText const):
+        * accessibility/AccessibilitySVGElement.h:
+
 2020-06-03  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation sometimes fails to replace text in attributes

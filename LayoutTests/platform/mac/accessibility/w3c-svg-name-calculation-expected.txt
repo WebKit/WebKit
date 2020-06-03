@@ -142,9 +142,9 @@ test23:
 	AXHelp: 
 	AXTitleUIElement: null
 test24:
-	Expected name: end
+	Expected 
 	AXTitle: 
-	AXDescription: end
+	AXDescription: 
 	AXHelp: 
 	AXTitleUIElement: null
 test25:

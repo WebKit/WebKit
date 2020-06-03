@@ -37,13 +37,12 @@ public:
     static Ref<AccessibilitySVGElement> create(RenderObject*);
     virtual ~AccessibilitySVGElement();
 
-    String accessibilityDescription() const final;
-    String helpText() const final;
-
 protected:
     explicit AccessibilitySVGElement(RenderObject*);
 
 private:
+    String accessibilityDescription() const final;
+    String helpText() const final;
     void accessibilityText(Vector<AccessibilityText>&) const final;
     AccessibilityRole determineAccessibilityRole() final;
     AccessibilityRole determineAriaRoleAttribute() const final;

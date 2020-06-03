@@ -1,3 +1,16 @@
+2020-06-03  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: SVG text node with content is described as "empty group" even if it's not empty
+        https://bugs.webkit.org/show_bug.cgi?id=210315
+
+        Reviewed by Darin Adler.
+
+        * accessibility/svg-text-expected.txt: Added.
+        * accessibility/svg-text.html: Added.
+        * accessibility/w3c-svg-name-calculation.html: Expected name for an SVG
+        text element should be "". Its text content is exposed as a child static text accessibility object.
+        * platform/mac/accessibility/w3c-svg-name-calculation-expected.txt:
+
 2020-06-03  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add setting for per-page storage access scope
