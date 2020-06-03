@@ -1,3 +1,20 @@
+2020-06-03  Jer Noble  <jer.noble@apple.com>
+
+        Crash with uncaught exception: *** -[AVSampleBufferAudioRenderer enqueueSampleBuffer:] Sample buffer has media type 'vide' instead of 'soun'
+        https://bugs.webkit.org/show_bug.cgi?id=212646
+        <rdar://problem/63040834>
+
+        Reviewed by Eric Carlson.
+
+        Protect against the possibility of AVStreamDataParser generating non-video or -audio samples in an otherwise
+        video- or audio-track. Check the format description attached to the sample before appending, and ASSERT in
+        debug builds and ERROR_LOG in release builds, as this is an exceptional condition.
+
+        * platform/graphics/FourCC.h:
+        (WTF::LogArgument<WebCore::FourCC>::toString):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+
 2020-06-03  Kate Cheney  <katherine_cheney@apple.com>
 
         Any active sqlite transactions for the ITP database should be aborted when the network process suspends.
