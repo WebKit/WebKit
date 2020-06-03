@@ -1397,7 +1397,7 @@ void NetworkProcess::setAdClickAttributionDebugMode(bool debugMode)
     }
 }
 
-void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
 #if ENABLE(SERVER_PRECONNECT)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -1407,6 +1407,8 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, const URL& url, cons
 
     NetworkLoadParameters parameters;
     parameters.request = ResourceRequest { url };
+    parameters.webPageProxyID = webPageProxyID;
+    parameters.webPageID = webPageID;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     if (!userAgent.isEmpty()) {
         // FIXME: we add user-agent to the preconnect request because otherwise the preconnect

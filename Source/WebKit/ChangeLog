@@ -1,3 +1,23 @@
+2020-06-03  Alex Christensen  <achristensen@webkit.org>
+
+        Pass WebPageProxyIdentifier to PreconnectTask
+        https://bugs.webkit.org/show_bug.cgi?id=212648
+
+        Reviewed by Chris Dumez.
+
+        Otherwise, AuthenticationManager::didReceiveAuthenticationChallenge sometimes returned early because there was no pageID.
+        Observed connecting to real websites from my home wifi.  Unable to test using local servers because connecting happens too fast.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::preconnectTo):
+
 2020-06-03  Rob Buis  <rbuis@igalia.com>
 
         Make generated C++ code use modern C++
