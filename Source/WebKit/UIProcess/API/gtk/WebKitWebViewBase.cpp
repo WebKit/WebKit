@@ -2571,7 +2571,6 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
         return;
 
     if (type != KeyEventType::Release) {
-#if !USE(GTK4)
         if (auto* popupMenu = priv->pageProxy->activePopupMenu()) {
             auto* gtkPopupMenu = static_cast<WebPopupMenuProxyGtk*>(popupMenu);
             if (gtkPopupMenu->handleKeyPress(keyval, GDK_CURRENT_TIME))
@@ -2582,7 +2581,6 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
                 return;
             }
         }
-#endif
 
 #if ENABLE(FULLSCREEN_API)
         if (priv->fullScreenModeActive) {
@@ -2598,12 +2596,10 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
         }
 #endif
 
-#if !USE(GTK4)
         if (keyval == GDK_KEY_Menu) {
             webkitWebViewBasePopupMenu(GTK_WIDGET(webViewBase));
             return;
         }
-#endif
     }
 
     auto keycode = widgetKeyvalToKeycode(GTK_WIDGET(webViewBase), keyval);
