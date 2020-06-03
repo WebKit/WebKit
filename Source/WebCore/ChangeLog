@@ -1,3 +1,36 @@
+2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text manipulation] Extract the value attribute in inputs of type "text" and "search"
+        https://bugs.webkit.org/show_bug.cgi?id=212706
+        <rdar://problem/63876969>
+
+        Reviewed by Tim Horton.
+
+        Allow text manipulation to extract text for the value of text fields that were not last modified by user input.
+        Aside from button types, it generally doesn't make sense to perform text manipulation over arbitrary input
+        element values, especially for text field types such as passwords, URLs, emails, and numbers. However, some
+        webpages set the `value` of inputs to implement `placeholder`-like behavior in text fields, and we need to be
+        compatible with this.
+
+        Tests:  TextManipulation.StartTextManipulationExtractsValuesFromTextInputs
+                TextManipulation.CompleteTextManipulationInButtonsAndTextFields
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::shouldExtractValueForTextManipulation):
+
+        Unfortunately, we need to check the type attribute here against "text", since inputs of type "date" and "time"
+        fall back to text fields on macOS, and we still want to avoid extracting values for these.
+
+        (WebCore::isAttributeForTextManipulation):
+
+        Pull the `value` attribute of this out into a separate method, above.
+
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::TextManipulationController::replace):
+
+        Treat the text field value separately from other attributes by calling `HTMLInputElement::value()` upon
+        extraction, and `HTMLInputElement::setValue()` upon replacement.
+
 2020-06-03  Rob Buis  <rbuis@igalia.com>
 
         Disallow responses when a response contains invalid header values

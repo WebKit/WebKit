@@ -1,3 +1,17 @@
+2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Text manipulation] Extract the value attribute in inputs of type "text" and "search"
+        https://bugs.webkit.org/show_bug.cgi?id=212706
+        <rdar://problem/63876969>
+
+        Reviewed by Tim Horton.
+
+        Add a new test case (similar to the existing test `StartTextManipulationExtractsValuesFromButtonInputs`) to
+        verify that we extract text from the `value` of inputs of type "text" and "search".
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-03  Michael Saboff  <msaboff@apple.com>
 
         [iOS] TestWTF.WTF_Lock.ContendedShortSection is consistently timing out on debug simulator builds

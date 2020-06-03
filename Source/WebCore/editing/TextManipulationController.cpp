@@ -36,6 +36,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "InputTypeNames.h"
 #include "NodeTraversal.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -219,13 +220,17 @@ private:
     Optional<String> m_text;
 };
 
-static bool isAttributeForTextManipulation(const Element& element, const QualifiedName& nameToCheck)
+static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
+{
+    if (input.isSearchField() || equalIgnoringASCIICase(input.attributeWithoutSynchronization(typeAttr), InputTypeNames::text()))
+        return !input.lastChangeWasUserEdit();
+
+    return input.isTextButton();
+}
+
+static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
 {
     using namespace HTMLNames;
-
-    if (nameToCheck == valueAttr)
-        return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isTextButton();
-
     static const QualifiedName* const attributeNames[] = {
         &titleAttr.get(),
         &altAttr.get(),
@@ -380,10 +385,17 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
             if (currentElement.hasAttributes()) {
                 for (auto& attribute : currentElement.attributesIterator()) {
-                    if (isAttributeForTextManipulation(currentElement, attribute.name()))
+                    if (isAttributeForTextManipulation(attribute.name()))
                         addItem(ManipulationItemData { Position(), Position(), makeWeakPtr(currentElement), attribute.name(), { ManipulationToken { m_tokenIdentifier.generate(), attribute.value(), tokenInfo(&currentElement) } } });
                 }
             }
+
+            if (is<HTMLInputElement>(currentElement)) {
+                auto& input = downcast<HTMLInputElement>(currentElement);
+                if (shouldExtractValueForTextManipulation(input))
+                    addItem(ManipulationItemData { { }, { }, makeWeakPtr(currentElement), valueAttr, { ManipulationToken { m_tokenIdentifier.generate(), input.value(), tokenInfo(&currentElement) } } });
+            }
+
             if (!enclosingItemBoundaryElement && isEnclosingItemBoundaryElement(currentElement))
                 enclosingItemBoundaryElement = &currentElement;
         }
@@ -616,6 +628,8 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         }
         if (item.attributeName == nullQName())
             element->setTextContent(newValue.toString());
+        else if (item.attributeName == valueAttr && is<HTMLInputElement>(*element))
+            downcast<HTMLInputElement>(*element).setValue(newValue.toString());
         else
             element->setAttribute(item.attributeName, newValue.toString());
         return WTF::nullopt;

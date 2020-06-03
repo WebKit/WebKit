@@ -784,6 +784,43 @@ TEST(TextManipulation, StartTextManipulationExtractsValuesFromButtonInputs)
     EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationExtractsValuesFromTextInputs)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<body>"
+        "<input type='search' value='One'>"
+        "<input type='text' value='Two'>"
+        "<input id='a' type='search'>"
+        "<input id='b' type='text'>"
+        "<input type='number' value='6'>"
+        "<input type='email' value='foo@bar.com'>"
+        "<input type='url' value='https://www.apple.com'>"
+        "<script>"
+        "document.getElementById('a').focus();"
+        "document.execCommand('InsertText', true, 'Three');"
+        "document.getElementById('b').focus();"
+        "document.execCommand('InsertText', true, 'Four');"
+        "</script>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("One", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
+}
+
 TEST(TextManipulation, StartTextManipulationExtractsVisibleLineBreaksInTextAsExcludedTokens)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
@@ -2204,6 +2241,45 @@ TEST(TextManipulation, InsertingContentIntoAlreadyManipulatedContentDoesNotCreat
 
     EXPECT_FALSE(foundNewItemAfterCompletingTextManipulation);
     EXPECT_WK_STREQ("<p><b>hello,</b><span> WebKit!</span> world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
+TEST(TextManipulation, CompleteTextManipulationInButtonsAndTextFields)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<input type='text' value='hello1'><input type='submit' value='hello2'>"];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+
+    auto* firstItem = items.firstObject;
+    auto* lastItem = items.lastObject;
+    EXPECT_EQ(firstItem.tokens.count, 1UL);
+    EXPECT_EQ(lastItem.tokens.count, 1UL);
+    EXPECT_STREQ("hello1", firstItem.tokens[0].content.UTF8String);
+    EXPECT_STREQ("hello2", lastItem.tokens[0].content.UTF8String);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        createItem(firstItem.identifier, {{ firstItem.tokens[0].identifier, @"world1" }}).get(),
+        createItem(lastItem.identifier, {{ lastItem.tokens[0].identifier, @"world2" }}).get()
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("world1", [webView stringByEvaluatingJavaScript:@"document.querySelector('input[type=text]').value"]);
+    EXPECT_WK_STREQ("world2", [webView stringByEvaluatingJavaScript:@"document.querySelector('input[type=submit]').value"]);
 }
 
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
