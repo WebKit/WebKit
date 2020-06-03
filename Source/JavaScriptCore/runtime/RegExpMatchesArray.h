@@ -64,7 +64,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     RegExp* regExp, unsigned startOffset, MatchResult& result)
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(vm.heap.expectDoesGC());
+        vm.heap.verifyCanGC();
 
     Vector<int, 32> subpatternResults;
     int position = regExp->matchInline(globalObject, vm, inputValue, startOffset, subpatternResults);

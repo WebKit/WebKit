@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include "CellState.h"
 #include "CollectionScope.h"
 #include "CollectorPhase.h"
+#include "DFGDoesGCCheck.h"
 #include "DeleteAllCodeEffort.h"
 #include "GCConductor.h"
 #include "GCIncomingRefCountedSet.h"
@@ -303,13 +304,15 @@ public:
     const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
-    bool expectDoesGC() const { return m_expectDoesGC; }
-    void setExpectDoesGC(bool value) { m_expectDoesGC = value; }
-    bool* addressOfExpectDoesGC() { return &m_expectDoesGC; }
+    DoesGCCheck* addressOfDoesGC() { return &m_doesGC; }
+    void setDoesGCExpectation(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp) { m_doesGC.set(expectDoesGC, nodeIndex, nodeOp); }
+    void setDoesGCExpectation(bool expectDoesGC, DoesGCCheck::Special special) { m_doesGC.set(expectDoesGC, special); }
+    void verifyCanGC() { m_doesGC.verifyCanGC(vm()); }
 #else
-    bool expectDoesGC() const { UNREACHABLE_FOR_PLATFORM(); return true; }
-    void setExpectDoesGC(bool) { UNREACHABLE_FOR_PLATFORM(); }
-    bool* addressOfExpectDoesGC() { UNREACHABLE_FOR_PLATFORM(); return nullptr; }
+    DoesGCCheck* addressOfDoesGC() { UNREACHABLE_FOR_PLATFORM(); return nullptr; }
+    void setDoesGCExpectation(bool, unsigned, unsigned) { }
+    void setDoesGCExpectation(bool, DoesGCCheck::Special) { }
+    void verifyCanGC() { }
 #endif
 
     // If true, the GC believes that the mutator is currently messing with the heap. We call this
@@ -606,7 +609,7 @@ private:
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
     Lock m_raceMarkStackLock;
 #if ENABLE(DFG_DOES_GC_VALIDATION)
-    bool m_expectDoesGC { true };
+    DoesGCCheck m_doesGC;
 #endif
 
     StructureIDTable m_structureIDTable;

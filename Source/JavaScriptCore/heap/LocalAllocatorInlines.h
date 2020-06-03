@@ -33,7 +33,7 @@ namespace JSC {
 ALWAYS_INLINE void* LocalAllocator::allocate(Heap& heap, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     if (validateDFGDoesGC)
-        RELEASE_ASSERT(heap.expectDoesGC());
+        heap.verifyCanGC();
     return m_freeList.allocate(
         [&] () -> HeapCell* {
             sanitizeStackForVM(heap.vm());

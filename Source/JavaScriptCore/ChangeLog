@@ -1,5 +1,174 @@
 2020-06-02  Mark Lam  <mark.lam@apple.com>
 
+        Enhance DoesGC verification to print more useful info when verification fails.
+        https://bugs.webkit.org/show_bug.cgi?id=212680
+
+        Reviewed by Yusuke Suzuki.
+
+        When DoesGC verification fails, the first step of debugging it would be to find
+        out what and which DFG node resulted in the failed verification.  In pre-existing
+        code, all we get is an assertion failure.
+
+        This patch makes it so that the verifier will dump useful info.  Here's an example:
+
+            Error: DoesGC failed @ D@34 DateGetInt32OrNaN in #DtCHMz:[0x1135bd1d0->0x1135bcab0->0x1135e5c80, DFGFunctionCall, 150 (DidTryToEnterInLoop)]
+                [0] frame 0x7ffee8285660 {
+                  name: 
+                  sourceURL: 
+                  isInlinedFrame: false
+                  callee: 0x1135f6820
+                  returnPC: 0x50ce61248ae6
+                  callerFrame: 0x7ffee82856f0
+                  rawLocationBits: 5 0x5
+                  codeBlock: 0x1135bd1d0 #DtCHMz:[0x1135bd1d0->0x1135bcab0->0x1135e5c80, DFGFunctionCall, 150 (DidTryToEnterInLoop)]
+                    hasCodeOrigins: true
+                    callSiteIndex: 5 of 13
+                    jitCode: 0x113020200 start 0x50ce61214c60 end 0x50ce61219b00
+                    line: 1
+                    column: 60
+                  EntryFrame: 0x7ffee8285860
+                }
+                [1] frame 0x7ffee82856f0 {
+                  name: 
+                  sourceURL: date-format-xparb.js
+                  isInlinedFrame: false
+                  callee: 0x1135f65a0
+                  returnPC: 0x50ce61227e99
+                  callerFrame: 0x7ffee8285770
+                  rawLocationBits: 4 0x4
+                  codeBlock: 0x1135bd0a0 #BU6Zcd:[0x1135bd0a0->0x1135bc260->0x1135e5180, DFGFunctionCall, 112 (DidTryToEnterInLoop)]
+                    hasCodeOrigins: true
+                    callSiteIndex: 4 of 12
+                    jitCode: 0x113004000 start 0x50ce61212c60 end 0x50ce61214960
+                    line: 26
+                    column: 22
+                  EntryFrame: 0x7ffee8285860
+                }
+                [2] frame 0x7ffee8285770 {
+                  name: 
+                  sourceURL: date-format-xparb.js
+                  isInlinedFrame: false
+                  callee: 0x1135f64e0
+                  returnPC: 0x108058eb1
+                  callerFrame: 0x7ffee82857e0
+                  rawLocationBits: 1001 0x3e9
+                  codeBlock: 0x1135bc130 #DAS9xe:[0x1135bc130->0x1135e5100, BaselineFunctionCall, 1149]
+                    bc#1001 of 1149
+                    line: 417
+                    column: 38
+                  EntryFrame: 0x7ffee8285860
+                }
+                [3] frame 0x7ffee82857e0 {
+                  name: global code
+                  sourceURL: date-format-xparb.js
+                  isInlinedFrame: false
+                  callee: 0x1130f97b8
+                  returnPC: 0x108039043
+                  callerFrame: 0x0
+                  rawLocationBits: 23 0x17
+                  codeBlock: 0x1135bc000 <global>#CukXvt:[0x1135bc000->0x1130cd768, LLIntGlobal, 81]
+                    bc#23 of 81
+                    line: 425
+                    column: 3
+                  EntryFrame: 0x7ffee8285860
+                }
+
+            ASSERTION FAILED: expectDoesGC()
+
+        The error message now comes with the node index, NodeType, codeBlock which this
+        failure was found in, and the JS call stack that led to the failure.
+
+        Changes made:
+
+        1. Introduced a DoesGCCheck value that is used to encode some of the above data.
+
+           Previously, we only recorded whether doesGC() returns true or false for the
+           Node.  Now, we record the nodeIndex and nodeOp as well.
+
+           Note that we also set DoesGC expectations for OSR exits.  So, DoesGCCheck
+           includes Special cases for those.
+
+        2. Added store64(TrustedImm64 imm, const void* address) emitters for X86_64 and ARM64.
+           Also added a test for this new emitter in testmasm.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::store64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::store64):
+        * assembler/testmasm.cpp:
+        (JSC::testStore64Imm64AddressPointer):
+        (JSC::run):
+        * dfg/DFGDoesGCCheck.cpp: Added.
+        (JSC::DFG::DoesGCCheck::verifyCanGC):
+        * dfg/DFGDoesGCCheck.h: Added.
+        (JSC::DFG::DoesGCCheck::DoesGCCheck):
+        (JSC::DFG::DoesGCCheck::encode):
+        (JSC::DFG::DoesGCCheck::set):
+        (JSC::DFG::DoesGCCheck::expectDoesGC):
+        (JSC::DFG::DoesGCCheck::special):
+        (JSC::DFG::DoesGCCheck::nodeIndex):
+        (JSC::DFG::DoesGCCheck::nodeOp):
+        (JSC::DFG::DoesGCCheck::isSpecial):
+        (JSC::DFG::DoesGCCheck::specialIndex):
+        (JSC::DFG::DoesGCCheck::bits):
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::operationCompileOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::operationCompileFTLOSRExit):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::reallocatePreciseAllocationNonVirtual):
+        * heap/CompleteSubspaceInlines.h:
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        * heap/DeferGC.h:
+        (JSC::DeferGC::~DeferGC):
+        * heap/GCDeferralContextInlines.h:
+        (JSC::GCDeferralContext::~GCDeferralContext):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectNow):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/Heap.h:
+        (JSC::Heap::addressOfDoesGC):
+        (JSC::Heap::setDoesGCExpectation):
+        (JSC::Heap::verifyCanGC):
+        (JSC::Heap::expectDoesGC const): Deleted.
+        (JSC::Heap::setExpectDoesGC): Deleted.
+        (JSC::Heap::addressOfExpectDoesGC): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::acquireAccess):
+        (JSC::Heap::stopIfNecessary):
+        * heap/LocalAllocatorInlines.h:
+        (JSC::LocalAllocator::allocate):
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::tryCreate):
+        (JSC::PreciseAllocation::createForLowerTier):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::JSString::toAtomString const):
+        (JSC::JSString::toExistingAtomString const):
+        (JSC::JSString::value const):
+        (JSC::JSString::tryGetValue const):
+        (JSC::JSRopeString::unsafeView const):
+        (JSC::JSRopeString::viewWithUnderlyingString const):
+        (JSC::JSString::unsafeView const):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
         VMInspector APIs should be taking a VM* instead of a JSGlobalObject*.
         https://bugs.webkit.org/show_bug.cgi?id=212676
 
