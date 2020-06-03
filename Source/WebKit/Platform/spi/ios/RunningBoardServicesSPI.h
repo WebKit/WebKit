@@ -29,6 +29,12 @@
 
 #import <RunningBoardServices/RunningBoardServices.h>
 
+extern const NSTimeInterval RBSProcessTimeLimitationNone;
+
+@interface RBSProcessLimitations : NSObject
+@property (nonatomic, readwrite, assign) NSTimeInterval runTime;
+@end
+
 #else
 
 @interface RBSAttribute : NSObject
@@ -76,9 +82,17 @@ typedef NS_ENUM(uint8_t, RBSTaskState) {
 @property (nonatomic, readonly, copy) NSSet<NSString *> *endowmentNamespaces;
 @end
 
+extern const NSTimeInterval RBSProcessTimeLimitationNone;
+
+@interface RBSProcessLimitations : NSObject
+@property (nonatomic, readwrite, assign) NSTimeInterval runTime;
+@end
+
 @interface RBSProcessHandle : NSObject
 + (RBSProcessHandle *)handleForIdentifier:(RBSProcessIdentifier *)identifier error:(NSError **)outError;
++ (RBSProcessHandle *)currentProcess;
 @property (nonatomic, readonly, strong) RBSProcessState *currentState;
+@property (nonatomic, readonly, strong) RBSProcessLimitations *activeLimitations;
 @end
 
 #endif

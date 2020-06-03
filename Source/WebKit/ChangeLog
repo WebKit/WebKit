@@ -1,3 +1,32 @@
+2020-06-02  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] WKProcessAssertionBackgroundTaskManager incorrectly ignores expiration notifications for daemons
+        https://bugs.webkit.org/show_bug.cgi?id=212619
+
+        Reviewed by Alex Christensen.
+
+        WKProcessAssertionBackgroundTaskManager was incorrectly ignoring process assertion expiration notifications
+        for daemons, because it was relying on visibility to make decisions. For daemons (or ViewServices), we would
+        not get application visibility notifications and would therefore always assume the app is visible.
+        As a result, _handleBackgroundTaskExpiration would think it received an outdated expiration notification for
+        a visible app and would simply re-take the assertion right away.
+
+        To address the issue, we now rely on a RunningBoard API that lets us know if the suspension timer has been
+        started or not (and how much remains on the timer). If the suspension timer is not active when get receive
+        the expiration notification, we know it is an outdated notification and we ignore it (release and re-take
+        assertion right away). This can happen if we did not have time to process the expiration notification before
+        suspended and thus only get it upon resuming. It can also happen if the user re-activates the app right after
+        the expiration notice has been sent.
+
+        * Platform/spi/ios/RunningBoardServicesSPI.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (processHasActiveRunTimeLimitation):
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpiration]):
+        (-[WKProcessAssertionBackgroundTaskManager _handleBackgroundTaskExpirationOnMainThread]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+
 2020-06-02  Christopher Reid  <chris.reid@sony.com>
 
         REGRESSION[r260844]: [GTK][WPE] Inspector GResource no longer updated after WebInspectorUI file updates

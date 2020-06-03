@@ -48,6 +48,11 @@ using WebKit::ProcessAndUIAssertion;
 // on the expiration handler getting called).
 static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
+static bool processHasActiveRunTimeLimitation()
+{
+    return [RBSProcessHandle currentProcess].activeLimitations.runTime != RBSProcessTimeLimitationNone;
+}
+
 @interface WKProcessAssertionBackgroundTaskManager
 #if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)
     : NSObject <RBSAssertionObserving>
@@ -71,7 +76,6 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 #endif
 
     WeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
-    BOOL _applicationIsBackgrounded;
     dispatch_block_t _pendingTaskReleaseTask;
 }
 
@@ -91,15 +95,14 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
     _backgroundTask = UIBackgroundTaskInvalid;
 #endif
 
+    // FIXME: Stop relying on UIApplication notifications as this does not work as expected for daemons or ViewServices.
+    // We should likely use ProcessTaskStateObserver to monitor suspension state.
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
-        _applicationIsBackgrounded = NO;
         [self _cancelPendingReleaseTask];
         [self _updateBackgroundTask];
     }];
 
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:^(NSNotification *) {
-        _applicationIsBackgrounded = YES;
-        
         if (![self _hasBackgroundTask])
             WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
     }];
@@ -182,8 +185,8 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 - (void)_updateBackgroundTask
 {
     if (!_assertionsNeedingBackgroundTask.computesEmpty() && ![self _hasBackgroundTask]) {
-        if (_applicationIsBackgrounded) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because the application is already in the background", self);
+        if (processHasActiveRunTimeLimitation()) {
+            RELEASE_LOG_ERROR(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because RunningBoard has already started the expiration timer", self);
             return;
         }
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: beginBackgroundTaskWithName", self);
@@ -223,7 +226,9 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
 - (void)_handleBackgroundTaskExpiration
 {
-    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
+    auto remainingTime = [RBSProcessHandle currentProcess].activeLimitations.runTime;
+    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Background task expired while holding WebKit ProcessAssertion (isMainThread: %d, remainingTime: %g).", RunLoop::isMain(), remainingTime);
+
     callOnMainRunLoopAndWait([self] {
         [self _handleBackgroundTaskExpirationOnMainThread];
     });
@@ -233,12 +238,13 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 {
     ASSERT(RunLoop::isMain());
 
-    // FIXME: While relying on _applicationIsBackgrounded is acceptable for applications, this is inacurate in the case
-    // of daemons.
-    if (!_applicationIsBackgrounded) {
-        // We've received the invalidation warning after the app has become foreground again. In this case, we should not
-        // warn clients of imminent suspension. To be safe (avoid potential killing), we end the task right away and call
-        // _updateBackgroundTask asynchronously to start a new task if necessary.
+    auto remainingTime = [RBSProcessHandle currentProcess].activeLimitations.runTime;
+    RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: _handleBackgroundTaskExpirationOnMainThread (remainingTime: %g).", remainingTime);
+
+    // If there is no time limitation, then it means that the process is now allowed to run again and the expiration notification
+    // is outdated (e.g. we did not have time to process the expiration notification before suspending and thus only process it
+    // upon resuming, or the user reactivated the app shortly after expiration).
+    if (remainingTime == RBSProcessTimeLimitationNone) {
         [self _releaseBackgroundTask];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self _updateBackgroundTask];
@@ -256,7 +262,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         return;
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: endBackgroundTask", self);
-    if (_applicationIsBackgrounded)
+    if (processHasActiveRunTimeLimitation())
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
 
 #if HAVE(RUNNINGBOARD_VISIBILITY_ASSERTIONS)

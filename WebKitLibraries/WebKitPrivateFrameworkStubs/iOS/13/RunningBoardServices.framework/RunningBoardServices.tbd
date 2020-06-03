@@ -5,5 +5,6 @@ objc-constraint: none
 platform: ios
 exports:
   - archs:           [ x86_64, arm64, arm64e ]
+    symbols:         [ _RBSProcessTimeLimitationNone ]
     objc-classes:    [ RBSAttribute, RBSDomainAttribute, RBSTarget, RBSAssertion, RBSProcessIdentifier, RBSProcessState, RBSProcessHandle ]
 ...
