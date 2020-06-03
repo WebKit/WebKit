@@ -564,7 +564,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     dfg/DFGCommon.h
     dfg/DFGCompilationMode.h
-    dfg/DFGDoesGCCheck.h
     dfg/DFGMinifiedID.h
 
     domjit/DOMJITAbstractHeap.h

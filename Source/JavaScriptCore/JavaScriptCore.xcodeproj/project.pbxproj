@@ -1936,7 +1936,6 @@
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
 		FEB58C15187B8B160098EF0B /* ErrorHandlingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC160322339E9F900A04CB8 /* CellSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC160312339E9F900A04CB8 /* CellSize.h */; };
-		FEC3A3A1248735CA00395B54 /* DFGDoesGCCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A3A0248735BC00395B54 /* DFGDoesGCCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC5797323105B5100BCA83F /* VMInspectorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797223105B4800BCA83F /* VMInspectorInlines.h */; };
 		FEC5797623105F4E00BCA83F /* Integrity.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC5797523105F4300BCA83F /* Integrity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC579782310954C00BCA83F /* IntegrityInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC579772310954B00BCA83F /* IntegrityInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5233,8 +5232,6 @@
 		FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorHandlingScope.cpp; sourceTree = "<group>"; };
 		FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorHandlingScope.h; sourceTree = "<group>"; };
 		FEC160312339E9F900A04CB8 /* CellSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellSize.h; sourceTree = "<group>"; };
-		FEC3A39F248735BC00395B54 /* DFGDoesGCCheck.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDoesGCCheck.cpp; path = dfg/DFGDoesGCCheck.cpp; sourceTree = "<group>"; };
-		FEC3A3A0248735BC00395B54 /* DFGDoesGCCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGDoesGCCheck.h; path = dfg/DFGDoesGCCheck.h; sourceTree = "<group>"; };
 		FEC5797223105B4800BCA83F /* VMInspectorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspectorInlines.h; sourceTree = "<group>"; };
 		FEC5797423105F4200BCA83F /* Integrity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrity.cpp; sourceTree = "<group>"; };
 		FEC5797523105F4300BCA83F /* Integrity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrity.h; sourceTree = "<group>"; };
@@ -7899,8 +7896,6 @@
 				0FF427621591A1C9004CB9FF /* DFGDisassembler.h */,
 				0F5A1271192D9FDF008764A3 /* DFGDoesGC.cpp */,
 				0F5A1272192D9FDF008764A3 /* DFGDoesGC.h */,
-				FEC3A39F248735BC00395B54 /* DFGDoesGCCheck.cpp */,
-				FEC3A3A0248735BC00395B54 /* DFGDoesGCCheck.h */,
 				0FD81AD0154FB4EB00983E72 /* DFGDominators.h */,
 				0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */,
 				0FD3C82014115CF800FD81CB /* DFGDriver.cpp */,
@@ -10201,7 +10196,6 @@
 				79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */,
 				0FE050281AA9095600D33B33 /* ScopedArguments.h in Headers */,
 				0FE050291AA9095600D33B33 /* ScopedArgumentsTable.h in Headers */,
-				FEC3A3A1248735CA00395B54 /* DFGDoesGCCheck.h in Headers */,
 				0FE0502B1AA9095600D33B33 /* ScopeOffset.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
 				33111B8B2397256500AA34CE /* Scribble.h in Headers */,

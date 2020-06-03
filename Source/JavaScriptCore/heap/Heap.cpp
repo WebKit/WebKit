@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -1064,7 +1064,7 @@ void Heap::collect(Synchronousness synchronousness, GCRequest request)
 void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
 {
     if (validateDFGDoesGC)
-        verifyCanGC();
+        RELEASE_ASSERT(expectDoesGC());
 
     switch (synchronousness) {
     case Async: {
@@ -1097,7 +1097,7 @@ void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
 void Heap::collectAsync(GCRequest request)
 {
     if (validateDFGDoesGC)
-        verifyCanGC();
+        RELEASE_ASSERT(expectDoesGC());
 
     if (!m_isSafeToCollect)
         return;
@@ -1121,7 +1121,7 @@ void Heap::collectAsync(GCRequest request)
 void Heap::collectSync(GCRequest request)
 {
     if (validateDFGDoesGC)
-        verifyCanGC();
+        RELEASE_ASSERT(expectDoesGC());
 
     if (!m_isSafeToCollect)
         return;
@@ -1784,7 +1784,7 @@ NEVER_INLINE void Heap::resumeTheMutator()
 void Heap::stopIfNecessarySlow()
 {
     if (validateDFGDoesGC)
-        verifyCanGC();
+        RELEASE_ASSERT(expectDoesGC());
 
     while (stopIfNecessarySlow(m_worldState.load())) { }
     
@@ -1799,7 +1799,7 @@ void Heap::stopIfNecessarySlow()
 bool Heap::stopIfNecessarySlow(unsigned oldState)
 {
     if (validateDFGDoesGC)
-        verifyCanGC();
+        RELEASE_ASSERT(expectDoesGC());
 
     RELEASE_ASSERT(oldState & hasAccessBit);
     RELEASE_ASSERT(!(oldState & stoppedBit));
@@ -2601,7 +2601,7 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 {
     ASSERT(deferralContext || isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
     if (validateDFGDoesGC)
-        verifyCanGC();
+        RELEASE_ASSERT(expectDoesGC());
 
     if (!m_isSafeToCollect)
         return;

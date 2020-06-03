@@ -658,31 +658,6 @@ void testCountTrailingZeros64WithoutNullCheck()
     bool wordCanBeZero = false;
     testCountTrailingZeros64Impl(wordCanBeZero);
 }
-
-void testStore64Imm64AddressPointer()
-{
-    auto doTest = [] (int64_t value) {
-        int64_t dest;
-        void* destAddress = &dest;
-
-        auto test = compile([=] (CCallHelpers& jit) {
-            emitFunctionPrologue(jit);
-            jit.store64(CCallHelpers::TrustedImm64(value), destAddress);
-            emitFunctionEpilogue(jit);
-            jit.ret();
-        });
-
-        invoke<size_t>(test);
-        CHECK_EQ(dest, value);
-    };
-    
-    for (auto value : int64Operands())
-        doTest(value);
-
-    doTest(0x98765555AAAA4321);
-    doTest(0xAAAA432198765555);
-}
-
 #endif // CPU(X86_64) || CPU(ARM64)
 
 void testCompareDouble(MacroAssembler::DoubleCondition condition)
@@ -2524,7 +2499,6 @@ void run(const char* filter)
     RUN(testClearBits64WithMaskTernary());
     RUN(testCountTrailingZeros64());
     RUN(testCountTrailingZeros64WithoutNullCheck());
-    RUN(testStore64Imm64AddressPointer());
 #endif
 
 #if CPU(ARM64)

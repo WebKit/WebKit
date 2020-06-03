@@ -347,7 +347,6 @@ dfg/DFGDesiredWatchpoints.cpp
 dfg/DFGDesiredWeakReferences.cpp
 dfg/DFGDisassembler.cpp
 dfg/DFGDoesGC.cpp
-dfg/DFGDoesGCCheck.cpp
 dfg/DFGDriver.cpp
 dfg/DFGEdge.cpp
 dfg/DFGEpoch.cpp

@@ -1459,17 +1459,6 @@ public:
         store<64>(src, address);
     }
 
-    void store64(TrustedImm64 imm, const void* address)
-    {
-        if (!imm.m_value) {
-            store64(ARM64Registers::zr, address);
-            return;
-        }
-
-        moveToCachedReg(imm, dataMemoryTempRegister());
-        store64(dataTempRegister, address);
-    }
-
     void store64(TrustedImm32 imm, ImplicitAddress address)
     {
         store64(TrustedImm64(imm.m_value), address);

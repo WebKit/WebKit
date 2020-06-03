@@ -1,5 +1,76 @@
 2020-06-02  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r262475 to unbreak Windows bot.
+        https://bugs.webkit.org/show_bug.cgi?id=212680
+
+        Not reviewed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/testmasm.cpp:
+        (JSC::testCountTrailingZeros64WithoutNullCheck):
+        (JSC::run):
+        (JSC::testStore64Imm64AddressPointer): Deleted.
+        * dfg/DFGDoesGCCheck.cpp: Removed.
+        * dfg/DFGDoesGCCheck.h: Removed.
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::operationCompileOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::operationCompileFTLOSRExit):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::reallocatePreciseAllocationNonVirtual):
+        * heap/CompleteSubspaceInlines.h:
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        * heap/DeferGC.h:
+        (JSC::DeferGC::~DeferGC):
+        * heap/GCDeferralContextInlines.h:
+        (JSC::GCDeferralContext::~GCDeferralContext):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectNow):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/Heap.h:
+        (JSC::Heap::expectDoesGC const):
+        (JSC::Heap::setExpectDoesGC):
+        (JSC::Heap::addressOfExpectDoesGC):
+        (JSC::Heap::addressOfDoesGC): Deleted.
+        (JSC::Heap::setDoesGCExpectation): Deleted.
+        (JSC::Heap::verifyCanGC): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::acquireAccess):
+        (JSC::Heap::stopIfNecessary):
+        * heap/LocalAllocatorInlines.h:
+        (JSC::LocalAllocator::allocate):
+        * heap/PreciseAllocation.cpp:
+        (JSC::PreciseAllocation::tryCreate):
+        (JSC::PreciseAllocation::createForLowerTier):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::JSString::toAtomString const):
+        (JSC::JSString::toExistingAtomString const):
+        (JSC::JSString::value const):
+        (JSC::JSString::tryGetValue const):
+        (JSC::JSRopeString::unsafeView const):
+        (JSC::JSRopeString::viewWithUnderlyingString const):
+        (JSC::JSString::unsafeView const):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
         Enhance DoesGC verification to print more useful info when verification fails.
         https://bugs.webkit.org/show_bug.cgi?id=212680
 
