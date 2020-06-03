@@ -83,7 +83,10 @@ void generateToAir(Procedure& procedure)
     if (procedure.optLevel() >= 2) {
         reduceDoubleToFloat(procedure);
         reduceStrength(procedure);
-        hoistLoopInvariantValues(procedure);
+        // FIXME: Re-enable B3 hoistLoopInvariantValues
+        // https://bugs.webkit.org/show_bug.cgi?id=212651
+        if (Options::useB3HoistLoopInvariantValues())
+            hoistLoopInvariantValues(procedure);
         if (eliminateCommonSubexpressions(procedure))
             eliminateCommonSubexpressions(procedure);
         eliminateDeadCode(procedure);

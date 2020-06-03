@@ -1,3 +1,16 @@
+2020-06-03  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Disable B3 hoistLoopInvariantValues by default
+        https://bugs.webkit.org/show_bug.cgi?id=212511
+        <rdar://problem/63813245>
+
+        Reviewed by Mark Lam.
+
+        Enable the B3 hoistLoopInvariantValues pass in one of our existing configurations to
+        avoid bit rot since we'd like to re-enable it eventually.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text manipulation] Extract the value attribute in inputs of type "text" and "search"

@@ -754,7 +754,7 @@ def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", "--airForceBriggsAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", "--airForceBriggsAllocator=true", "--useB3HoistLoopInvariantValues=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)

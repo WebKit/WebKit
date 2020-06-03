@@ -1,3 +1,110 @@
+2020-06-03  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Disable B3 hoistLoopInvariantValues by default
+        https://bugs.webkit.org/show_bug.cgi?id=212511
+        <rdar://problem/63813245>
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/interpreter-wasm.js: Added.
+        (key.in.Module.Module.hasOwnProperty):
+        (quit_):
+        (locateFile):
+        (ENVIRONMENT_IS_NODE.read_):
+        (ENVIRONMENT_IS_NODE.readBinary):
+        (ENVIRONMENT_IS_NODE.quit_):
+        (ENVIRONMENT_IS_NODE.Module.string_appeared_here):
+        (else.read_):
+        (else.readBinary):
+        (else.quit_):
+        (else):
+        (else.xhr.onload):
+        (else.readAsync):
+        (else.setWindowTitle):
+        (key.in.moduleOverrides.moduleOverrides.hasOwnProperty):
+        (dynamicAlloc):
+        (getNativeTypeSize):
+        (warnOnce):
+        (convertJsFunctionToWasm):
+        (addFunctionWasm):
+        (removeFunctionWasm):
+        (setTempRet0):
+        (setValue):
+        (assert):
+        (getCFunc):
+        (toC.string_appeared_here):
+        (convertReturnValue):
+        (ccall):
+        (UTF8ArrayToString):
+        (UTF8ToString):
+        (stringToUTF8Array):
+        (stringToUTF8):
+        (lengthBytesUTF8):
+        (allocateUTF8OnStack):
+        (writeArrayToMemory):
+        (writeAsciiToMemory):
+        (updateGlobalBufferAndViews):
+        (callRuntimeCallbacks):
+        (preRun):
+        (initRuntime):
+        (preMain):
+        (exitRuntime):
+        (postRun):
+        (addOnPreRun):
+        (addOnPostRun):
+        (addRunDependency):
+        (removeRunDependency):
+        (hasPrefix):
+        (isDataURI):
+        (isFileURI):
+        (getBinary):
+        (getBinaryPromise):
+        (createWasm.receiveInstance):
+        (createWasm.receiveInstantiatedSource):
+        (createWasm.instantiateArrayBuffer):
+        (createWasm.instantiateAsync.):
+        (createWasm.instantiateAsync):
+        (createWasm):
+        (__ATINIT__.push.func):
+        (demangle):
+        (demangleAll):
+        (_emscripten_get_sbrk_ptr):
+        (_emscripten_memcpy_big):
+        (abortOnCannotGrowMemory):
+        (_emscripten_resize_heap):
+        (PATH.splitPath):
+        (PATH.normalizeArray):
+        (PATH.normalize):
+        (PATH.dirname):
+        (PATH.basename):
+        (PATH.extname):
+        (PATH.join):
+        (PATH.join2):
+        (SYSCALLS.printChar):
+        (SYSCALLS.getStr):
+        (SYSCALLS.get64):
+        (_fd_write):
+        (_setTempRet0):
+        (___wasm_call_ctors.Module.string_appeared_here):
+        (_main.Module.string_appeared_here):
+        (_malloc.Module.string_appeared_here):
+        (___errno_location.Module.string_appeared_here):
+        (_free.Module.string_appeared_here):
+        (stackSave.Module.string_appeared_here):
+        (stackAlloc.Module.string_appeared_here):
+        (stackRestore.Module.string_appeared_here):
+        (__growWasmMemory.Module.string_appeared_here):
+        (dynCall_ii.Module.string_appeared_here):
+        (dynCall_iiii.Module.string_appeared_here):
+        (dynCall_jiji.Module.string_appeared_here):
+        (ExitStatus):
+        (dependenciesFulfilled):
+        (callMain):
+        (run.doRun):
+        (run):
+        (exit):
+        * microbenchmarks/interpreter-wasm.wasm: Added.
+
 2020-06-02  Saam Barati  <sbarati@apple.com>
 
         MultiDeleteByOffset should not always def

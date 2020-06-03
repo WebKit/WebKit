@@ -1,3 +1,22 @@
+2020-06-03  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Disable B3 hoistLoopInvariantValues by default
+        https://bugs.webkit.org/show_bug.cgi?id=212511
+        <rdar://problem/63813245>
+
+        Reviewed by Mark Lam.
+
+        The hoistLoopInvariantValues optimization in B3 does not calculate the cost of hoisting the candidates.
+        For example, in the test case provided with the bug, a switch inside a loop can lead to hoisting the body
+        of several switch cases which would never be executed. Other than leading to worse runtime, this also
+        increases the pressure in the register allocate, leading to worse compile times (~10x worse in this case).
+        I have added a FIXME to consider adding cost calculation and re-enabling this pass, but given that we
+        already have LICM in DFG, it should be ok to disable it for now.
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * runtime/OptionsList.h:
+
 2020-06-03  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix broken Windows debug build.
