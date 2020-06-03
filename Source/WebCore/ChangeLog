@@ -1,3 +1,28 @@
+2020-06-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Dynamically setting "position: absolute" in a grid item doesn't trigger a relayout of that element
+        https://bugs.webkit.org/show_bug.cgi?id=191465
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        From Blink r484620 by Sergio Villar <svillar@igalia.com>
+
+        Containing block overrides not cleared for position:absolute
+
+        Whenever a position:absolute block gets a new containing block the
+        previously set containing block overrides are not cleared. This causes the
+        block not to be properly layout for its new containing block (for example
+        when using relative sizes).
+
+        In particular this affects grid items which always get a containing block
+        override size (which represent the grid areas) in case their
+        containing block switches from the grid container to a grid ancestor.
+
+        No new tests, as this change is covered by current web platform tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertPositionedObject): Clear the containing block's override width and height.
+
 2020-06-03  Youenn Fablet  <youenn@apple.com>
 
         Add more logging related to service worker fetch event handling

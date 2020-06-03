@@ -1,3 +1,16 @@
+2020-06-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Dynamically setting "position: absolute" in a grid item doesn't trigger a relayout of that element
+        https://bugs.webkit.org/show_bug.cgi?id=191465
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Several tests pass now thanks to this change.
+
+        * TestExpectations: Removed failure expectations, since now these tests pass now.
+          - absolute-positioning-changing-containing-block-001.html
+          - grid-item-absolute-positioning-dynamic-001.html
+
 2020-06-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         ASSERTION FAILED: isCell() under WebCore::JSDOMConstructor seen with webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html

@@ -1752,6 +1752,9 @@ TrackedRendererListHashSet* RenderBlock::positionedObjects() const
 void RenderBlock::insertPositionedObject(RenderBox& positioned)
 {
     ASSERT(!isAnonymousBlock());
+
+    positioned.clearOverrideContainingBlockContentSize();
+
     if (positioned.isRenderFragmentedFlow())
         return;
     // FIXME: Find out if we can do this as part of positioned.setChildNeedsLayout(MarkOnlyThis)
