@@ -49,27 +49,27 @@ gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDialog* s
     return TRUE;
 }
 
-#if !USE(GTK4)
 static void fileChooserDialogResponseCallback(GtkFileChooser* dialog, gint responseID, WebKitFileChooserRequest* request)
 {
     GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
     if (responseID == GTK_RESPONSE_ACCEPT) {
-        GUniquePtr<GSList> filesList(gtk_file_chooser_get_filenames(dialog));
-        GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new());
-        for (GSList* file = filesList.get(); file; file = g_slist_next(file))
-            g_ptr_array_add(filesArray.get(), file->data);
-        g_ptr_array_add(filesArray.get(), 0);
+        GSList* filesList = gtk_file_chooser_get_files(dialog);
+        GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new_with_free_func(g_free));
+        for (GSList* file = filesList; file; file = g_slist_next(file)) {
+            if (gchar* filename = g_file_get_path(G_FILE(file->data)))
+                g_ptr_array_add(filesArray.get(), filename);
+        }
+        g_ptr_array_add(filesArray.get(), nullptr);
+        g_slist_free_full(filesList, g_object_unref);
         webkit_file_chooser_request_select_files(adoptedRequest.get(), reinterpret_cast<const gchar* const*>(filesArray->pdata));
     } else
         webkit_file_chooser_request_cancel(adoptedRequest.get());
 
     g_object_unref(dialog);
 }
-#endif
 
 gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRequest* request)
 {
-#if !USE(GTK4)
     GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(webView));
     if (!WebCore::widgetIsOnscreenToplevelWindow(toplevel))
         toplevel = 0;
@@ -85,13 +85,14 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRe
         gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), allowsMultipleSelection);
 
-    if (const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request))
-        gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(dialog), selectedFiles[0]);
+    if (const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request)) {
+        GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(selectedFiles[0]));
+        gtk_file_chooser_select_file(GTK_FILE_CHOOSER(dialog), file.get(), nullptr);
+    }
 
     g_signal_connect(dialog, "response", G_CALLBACK(fileChooserDialogResponseCallback), g_object_ref(request));
 
     gtk_native_dialog_show(GTK_NATIVE_DIALOG(dialog));
-#endif
 
     return TRUE;
 }

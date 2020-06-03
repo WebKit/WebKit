@@ -1,3 +1,17 @@
+2020-06-03  Santosh Mahto  <santosh.mahto@collabora.com>
+
+        [GTK4] Implement file chooser
+        https://bugs.webkit.org/show_bug.cgi?id=212322
+
+        Reviewed by Carlos Garcia Campos.
+
+        Port FileChooser to gtk4, Now FileChooser uses undeprecated api's.
+        Covered by existing tests.
+
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (fileChooserDialogResponseCallback):
+        (webkitWebViewRunFileChooser):
+
 2020-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Implement emoji chooser
