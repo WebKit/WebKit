@@ -150,16 +150,13 @@ if (USE_ANGLE_WEBGL)
         FLATTENED
     )
 
-    add_custom_command(
-        OUTPUT ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE/angle.timestamp
+    add_custom_target(ANGLE-webgl-headers
         DEPENDS LibGLESv2EntryPointsHeaders ANGLEWebGLHeaders
         COMMAND BUILT_PRODUCTS_DIR=${ANGLE_FRAMEWORK_HEADERS_DIR}/
+            DERIVED_FILE_DIR=${BUILT_PRODUCTS_DIR}
             PUBLIC_HEADERS_FOLDER_PATH=ANGLE
             ${CMAKE_CURRENT_SOURCE_DIR}/adjust-angle-include-paths.sh
         VERBATIM
-    )
-    add_custom_target(ANGLE-webgl-headers
-        DEPENDS ${ANGLE_FRAMEWORK_HEADERS_DIR}/ANGLE/angle.timestamp
     )
     add_dependencies(ANGLEFramework ANGLE-webgl-headers)
 endif ()

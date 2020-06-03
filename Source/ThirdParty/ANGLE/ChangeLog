@@ -1,3 +1,37 @@
+2020-06-02  Keith Rollin  <krollin@apple.com>
+
+        Change ANGLE's header postprocessing script to not rely on timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=212623
+        <rdar://problem/63856997>
+
+        Reviewed by David Kilzer.
+        Reviewed by Kennneth Russell.
+
+        Some WebKit builds involve multiple passes, where each pass is a
+        superset of the previous pass. In the cases where each pass produces
+        the same files, it is required that files be produced in exactly the
+        same way in each of those passes. A build process that relies on a
+        file containing a timestamp trips up that prerequisite.
+
+        adjust-angle-include-paths.sh uses such a mechanism, using a timestamp
+        file to determine if any exported headers need to be post-processed.
+        Since this violates our prerequisite, we need a different approach.
+        Instead of using a timestamp, always perform the post-processing, but
+        write the output to a temporary location. Then see if it differs from
+        what's in the actual final destination. If the two files diff, then
+        copy the one from the temporary location to the final destination.
+
+        This approach does cause more work in the area of post-processing.
+        However, this post-processing is actually very cheap. And avoiding the
+        post-processing is not actually the original goal of the timestamp.
+        The actual goal is to avoid touching the modification dates of the
+        exported headers, which would then cause a lot of downstream
+        rebuilding. The new approach with the temporary files also achieves
+        that goal.
+
+        * CMakeLists.txt:
+        * adjust-angle-include-paths.sh:
+
 2020-06-02  Kenneth Russell  <kbr@chromium.org>
 
         Revise PVRTC compressed texture validation in ANGLE backend for WebGL

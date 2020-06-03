@@ -27,15 +27,12 @@ else
     output_dir=${BUILT_PRODUCTS_DIR}${PUBLIC_HEADERS_FOLDER_PATH}
 fi
 
-if [ $(uname) == "Linux" ]; then
-    inplace_opt=(-i)
-else
-    inplace_opt=(-i "")
-fi
+mkdir -p "${DERIVED_FILE_DIR}"
+BASE_NAME=$(basename "$0")
+TEMP_FILE=$(mktemp "${DERIVED_FILE_DIR}/${BASE_NAME}.XXXXXX")
 
 for i in $output_dir/*.h ; do
-    if [ ! -f $output_dir/angle.timestamp ] || [ $i -nt $output_dir/angle.timestamp ] ; then
-        sed -e '
+    sed -e '
 s/^#include [<"]EGL\/\(.*\)[>"]/#include <ANGLE\/\1>/
 s/^#include [<"]GLES\/\(.*\)[>"]/#include <ANGLE\/\1>/
 s/^#include [<"]GLES2\/\(.*\)[>"]/#include <ANGLE\/\1>/
@@ -43,9 +40,12 @@ s/^#include [<"]GLES3\/\(.*\)[>"]/#include <ANGLE\/\1>/
 s/^#include [<"]KHR\/\(.*\)[>"]/#include <ANGLE\/\1>/
 s/^#include [<"]export.h[>"]/#include <ANGLE\/export.h>/
 s/^#include "\(eglext_angle\|gl2ext_angle\|ShaderVars\).h"/#include <ANGLE\/\1.h>/
-' "${inplace_opt[@]}" $i
+' < "$i" > "${TEMP_FILE}"
+    if ! diff -q "${TEMP_FILE}" "$i" &> /dev/null ; then
+        cp "${TEMP_FILE}" "$i"
         echo Postprocessed ANGLE header `basename $i`
     fi
 done
 
-date > $output_dir/angle.timestamp
+rm -f "${TEMP_FILE}" &> /dev/null
+exit 0
