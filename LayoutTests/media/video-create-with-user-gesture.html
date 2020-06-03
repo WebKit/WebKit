@@ -10,10 +10,10 @@
         runWithKeyDown(() => {
             run('video = document.createElement("video")');
         });
+        waitForEventAndEnd('playing');
         run('video.src = findMediaFile("video", "content/test")');
         run('video.setAttribute("autoplay", "")');
         run('document.body.appendChild(video)');
-        waitForEventAndEnd('playing');
         failTestIn(10000);
     }
     </script>

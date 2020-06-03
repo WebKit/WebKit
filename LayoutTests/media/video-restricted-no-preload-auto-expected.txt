@@ -1,8 +1,8 @@
 
 Test that "no auto-loading restriction" only allows metadata to load in spite of preload='auto'.
 
-** setting video.src
 EXPECTED (video.preload == 'auto') OK
+** setting video.src
 RUN(internals.setMediaElementRestrictions(video, 'AutoPreloadingNotPermitted'))
 
 EVENT(loadedmetadata)
