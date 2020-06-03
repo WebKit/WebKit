@@ -1,3 +1,12 @@
+2020-06-03  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        [ macOS wk1 debug ] svg/custom/textPath-change-id.svg is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=212721
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-03  Megan Gardner  <megan_gardner@apple.com>
 
         Refactor long press test to reflect current behaviour.

@@ -1040,3 +1040,5 @@ webkit.org/b/261103 [ Debug ] inspector/page/overrideSetting-ITPDebugModeEnabled
 webkit.org/b/212667 [ Mojave Debug ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
 
 webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
+
+webkit.org/b/212721 svg/custom/textPath-change-id.svg [ Pass ImageOnlyFailure ]
