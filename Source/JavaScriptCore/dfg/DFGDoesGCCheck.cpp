@@ -39,7 +39,7 @@ namespace DFG {
 
 extern const char* dfgOpNames[];
 
-JS_EXPORT_PRIVATE void DoesGCCheck::verifyCanGC(VM& vm)
+void DoesGCCheck::verifyCanGC(VM& vm)
 {
     if (!expectDoesGC()) {
         dataLog("Error: DoesGC failed");

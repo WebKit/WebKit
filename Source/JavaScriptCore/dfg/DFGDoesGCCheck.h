@@ -80,7 +80,7 @@ struct DoesGCCheck {
 
     bool isSpecial() { return specialIndex(); }
 
-    void verifyCanGC(VM&);
+    JS_EXPORT_PRIVATE void verifyCanGC(VM&);
 
 private:
     unsigned specialIndex() { return (m_value >> specialShift) & specialMask; }
