@@ -5,6 +5,15 @@
 
         Unreviewed test gardening.
 
+        * platform/ios/TestExpectations: Skip this test on debug since it always asserts.
+
+2020-06-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        ASSERTION FAILED: isCell() under WebCore::JSDOMConstructor seen with webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html
+        https://bugs.webkit.org/show_bug.cgi?id=212650
+
+        Unreviewed test gardening.
+
         * platform/mac/TestExpectations: Skip this test on debug since it always asserts.
 
 2020-06-02  Jason Lawrence  <lawrence.j@apple.com>
