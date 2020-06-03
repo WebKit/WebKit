@@ -1,3 +1,30 @@
+2020-06-03  Rob Buis  <rbuis@igalia.com>
+
+        Disallow responses when a response contains invalid header values
+        https://bugs.webkit.org/show_bug.cgi?id=184493
+
+        Reviewed by Darin Adler.
+
+        Update improved test results and import fetch/h1-parsing.
+
+        * web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/header-value-null-byte.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/header-value-null-byte.any.worker-expected.txt:
+        * web-platform-tests/fetch/h1-parsing/resources-with-0x00-in-header.window-expected.txt: Added.
+        * web-platform-tests/fetch/h1-parsing/resources-with-0x00-in-header.window.html: Added.
+        * web-platform-tests/fetch/h1-parsing/resources-with-0x00-in-header.window.js: Added.
+        (async_test.t.t.step_timeout):
+        * web-platform-tests/fetch/h1-parsing/resources/README.md: Added.
+        * web-platform-tests/fetch/h1-parsing/resources/blue-with-0x00-in-a-header.asis: Added.
+        * web-platform-tests/fetch/h1-parsing/resources/document-with-0x00-in-header.py: Added.
+        (main):
+        * web-platform-tests/fetch/h1-parsing/resources/script-with-0x00-in-header.py: Added.
+        (main):
+        * web-platform-tests/fetch/h1-parsing/resources/w3c-import.log: Added.
+        * web-platform-tests/fetch/h1-parsing/w3c-import.log: Added.
+        * web-platform-tests/xhr/headers-normalize-response-expected.txt:
+
 2020-06-01  Chris Dumez  <cdumez@apple.com>
 
         Update web-platform-tests/webaudio from upstream

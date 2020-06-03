@@ -1,0 +1,5 @@
+
+PASS Expect network error for script with 0x00 in a header 
+FAIL Expect network error for frame navigation to resource with 0x00 in a header assert_equals: expected null but got Document node with 1 child
+PASS Expect network error for image with 0x00 in a header 
+

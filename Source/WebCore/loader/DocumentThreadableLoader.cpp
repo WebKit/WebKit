@@ -599,6 +599,11 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         return;
     }
 
+    if (response.containsInvalidHTTPHeaders()) {
+        didFail(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), "Response contained invalid HTTP headers", ResourceError::Type::General));
+        return;
+    }
+
     if (!shouldPerformSecurityChecks()) {
         // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
         // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was

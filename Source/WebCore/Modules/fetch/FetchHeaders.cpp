@@ -43,7 +43,8 @@ static ExceptionOr<bool> canWriteHeader(const String& name, const String& value,
 {
     if (!isValidHTTPToken(name))
         return Exception { TypeError, makeString("Invalid header name: '", name, "'") };
-    if (!isValidHTTPHeaderValue(value))
+    ASSERT(value.isEmpty() || (!isHTTPSpace(value[0]) && !isHTTPSpace(value[value.length() - 1])));
+    if (!isValidHTTPHeaderValue((value)))
         return Exception { TypeError, makeString("Header '", name, "' has invalid value: '", value, "'") };
     if (guard == FetchHeaders::Guard::Immutable)
         return Exception { TypeError, "Headers object's guard is 'immutable'"_s };
@@ -77,7 +78,8 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
 
 static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
 {
-    auto canWriteResult = canWriteHeader(header.key, header.value, header.value, guard);
+    String normalizedValue = stripLeadingAndTrailingHTTPSpaces(header.value);
+    auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
     if (!canWriteResult.releaseReturnValue())
@@ -207,7 +209,8 @@ ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
 void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
 {
     for (auto& header : headers) {
-        auto canWriteResult = canWriteHeader(header.key, header.value, header.value, guard);
+        String normalizedValue = stripLeadingAndTrailingHTTPSpaces(header.value);
+        auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
         if (canWriteResult.hasException())
             continue;
         if (!canWriteResult.releaseReturnValue())

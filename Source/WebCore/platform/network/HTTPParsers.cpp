@@ -129,7 +129,6 @@ bool isValidHTTPHeaderValue(const String& value)
         return false;
     for (unsigned i = 0; i < value.length(); ++i) {
         c = value[i];
-        ASSERT(isLatin1(c));
         if (c == 0x00 || c == 0x0A || c == 0x0D)
             return false;
     }

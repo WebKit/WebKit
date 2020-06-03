@@ -352,6 +352,11 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
 
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
 
+    if (response.containsInvalidHTTPHeaders()) {
+        didFail(ResourceError(errorDomainWebKitInternal, 0, request().url(), "Response contained invalid HTTP headers", ResourceError::Type::General));
+        return;
+    }
+
 #if USE(QUICK_LOOK)
     if (shouldCreatePreviewLoaderForResponse(response)) {
         m_previewLoader = makeUnique<LegacyPreviewLoader>(*this, response);
@@ -436,6 +441,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             return;
         }
     }
+
     m_resource->responseReceived(response);
     if (reachedTerminalState())
         return;

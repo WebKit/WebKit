@@ -1,3 +1,37 @@
+2020-06-03  Rob Buis  <rbuis@igalia.com>
+
+        Disallow responses when a response contains invalid header values
+        https://bugs.webkit.org/show_bug.cgi?id=184493
+
+        Reviewed by Darin Adler.
+
+        From the Fetch specification [1]:
+        "A value is a byte sequence that matches the following conditions:
+        "- Contains no 0x00 (NUL) or HTTP newline bytes."
+
+        [1] https://fetch.spec.whatwg.org/#concept-header-value
+
+        Tests: imported/w3c/web-platform-tests/fetch/h1-parsing/resources-with-0x00-in-header.window.html
+               imported/web-platform-tests/fetch/api/basic/header-value-combining.any.html
+               imported/web-platform-tests/fetch/api/basic/header-value-combining.any.worker.html
+               imported/web-platform-tests/fetch/api/basic/header-value-null-byte.any.html
+               imported/web-platform-tests/fetch/api/basic/header-value-null-byte.any.worker.html
+               imported/web-platform-tests/xhr/headers-normalize-response.htm
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::canWriteHeader):
+        (WebCore::appendToHeaderMap):
+        (WebCore::FetchHeaders::filterAndFill):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidHTTPHeaderValue):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::containsInvalidHTTPHeaders const):
+        * platform/network/ResourceResponseBase.h:
+
 2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         dataTransfer.types is empty when handling the "dragstart" event

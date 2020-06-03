@@ -1,3 +1,23 @@
+2020-06-03  Rob Buis  <rbuis@igalia.com>
+
+        Disallow responses when a response contains invalid header values
+        https://bugs.webkit.org/show_bug.cgi?id=184493
+
+        Reviewed by Darin Adler.
+
+        Update improved test results.
+
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt:
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt:
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt:
+        * platform/mac-mojave/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt:
+        * platform/mac-mojave/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt:
+
 2020-06-03  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: SVG text node with content is described as "empty group" even if it's not empty
