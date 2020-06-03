@@ -1,3 +1,21 @@
+2020-06-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] lint-test-expectations doesn't work when platform is WPE
+        https://bugs.webkit.org/show_bug.cgi?id=212700
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        When passing arguments '--wpe' or '--platform=wpe*',
+        lint-test-expectations does nothing for WPE, despite currently 
+        there are many lint errors in WPE's TestExpectations file.
+
+        As a side-effect of this patch, now `Tools/Scripts/webkit-path
+        rebaseline` lists the WPE Release and Debug bots.
+
+        * Scripts/webkitpy/port/builders.py: Add WPE to the list of
+        exact_matches and fuzzy_matches.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+
 2020-06-03  Jonathan Bedard  <jbedard@apple.com>
 
         Allow using web processes for service workers even though they loaded about URLs (Follow-up fix)

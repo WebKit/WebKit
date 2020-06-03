@@ -75,6 +75,9 @@ _exact_matches = {
     "GTK Linux 32-bit Release": {"port_name": "gtk-wk2", "is_debug": False},
     "GTK Linux 64-bit Debug (Tests)": {"port_name": "gtk-wk2", "is_debug": True},
     "GTK Linux 64-bit Release (Tests)": {"port_name": "gtk-wk2", "is_debug": False},
+    "GTK Linux 64-bit Release Wayland (Tests)": {"port_name": "gtk-wayland", "is_debug": False},
+    "WPE Linux 64-bit Debug (Tests)": {"port_name": "wpe", "is_debug": True},
+    "WPE Linux 64-bit Release (Tests)": {"port_name": "wpe", "is_debug": False},
 }
 
 
@@ -84,6 +87,7 @@ _fuzzy_matches = {
     r"Apple Lion": "mac-lion",
     r"Windows": "win",
     r"GTK": "gtk",
+    r"WPE": "wpe",
 }
 
 
