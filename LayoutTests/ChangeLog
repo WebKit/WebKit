@@ -1,3 +1,18 @@
+2020-06-03  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: (r262456): [ Mac ] media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=212694
+
+        Reviewed by Jer Noble.
+
+        Enable the mock video presentation mode of the WebKitTestRunner in the test,
+        and only request a video element to change its video presentation mode after
+        the previous change is completed.
+
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html:
+        * platform/mac/TestExpectations:
+
 2020-06-03  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         REGRESSION: [macOS WK2] Layout Test fast/mediastream/device-cha nge-event-2.html is a flaky timeout

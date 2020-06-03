@@ -1966,5 +1966,3 @@ webkit.org/b/212488 [ Catalina ] media/video-play-audio-require-user-gesture.htm
 
 # This test requires an update to system decoders
 webkit.org/b/212565 [ Catalina Mojave ] imported/w3c/web-platform-tests/encoding/single-byte-decoder.html [ Failure ]
-
-webkit.org/b/212694 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Pass Timeout ]

@@ -9,16 +9,18 @@ window.jsTestIsAsync = true;
 
 description("Testing that entering fullscreen, then going into picture-in-picture and then going back to inline presents inline controls.");
 
-if (window.internals)
-    window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+if (window.internals) {
+    internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+    internals.setMockVideoPresentationModeEnabled(true);
+}
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 
 media.addEventListener("play", () => {
     debug("");
-    debug("Media started playing, we pause it and enter fullscreen by clicking on the matching button.");
     shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+    debug("Media started playing, we pause it and enter fullscreen by clicking on the matching button.");
 
     media.pause();
     window.requestAnimationFrame(() => clickOnElement(shadowRoot.querySelector("button.fullscreen")));
@@ -29,36 +31,41 @@ media.addEventListener("webkitpresentationmodechanged", () => {
     if (previousPresentationMode === media.webkitPresentationMode)
         return;
 
-    previousPresentationMode = media.webkitPresentationMode;
-
     debug("");
     debug(`Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = ${media.webkitPresentationMode}.`);
 
-    switch (media.webkitPresentationMode) {
-    case "fullscreen":
-        window.requestAnimationFrame(() => {
-            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('fullscreen')");
+    let displayingFullscreen = "true";
+    if (media.webkitPresentationMode == "inline")
+        displayingFullscreen = "false";
 
-            debug("");
-            debug("We enter picture-in-picture by clicking on the matching button.");
-            clickOnElement(shadowRoot.querySelector("button.pip"));
-        });
-        break;
-    case "picture-in-picture":
-        debug("");
-        debug("We exit picture-in-picture.");
-        window.setTimeout(() => media.webkitSetPresentationMode("inline"));
-        break;
-    case "inline":
-        window.requestAnimationFrame(() => {
-            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+    shouldBecomeEqual("media.webkitDisplayingFullscreen", displayingFullscreen, () => {
+        previousPresentationMode = media.webkitPresentationMode;
+        switch (media.webkitPresentationMode) {
+        case "fullscreen":
+            window.requestAnimationFrame(() => {
+                shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('fullscreen')");
 
+                debug("");
+                debug("We enter picture-in-picture by clicking on the matching button.");
+                clickOnElement(shadowRoot.querySelector("button.pip"));
+            });
+            break;
+        case "picture-in-picture":
             debug("");
-            media.remove();
-            finishJSTest();
-        });
-        break;
-    }
+            debug("We exit picture-in-picture.");
+            window.setTimeout(() => media.webkitSetPresentationMode("inline"));
+            break;
+        case "inline":
+            window.requestAnimationFrame(() => {
+                shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+
+                debug("");
+                media.remove();
+                finishJSTest();
+            });
+            break;
+        }
+    });
 });
 
 function clickOnElement(element)
