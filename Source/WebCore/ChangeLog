@@ -1,3 +1,24 @@
+2020-06-02  Dean Jackson  <dino@apple.com>
+
+        [ macOS ] REGRESSION(r262366): webgl/1.0.3/conformance/canvas/buffer-offscreen-test.html & webgl/2.0.0/conformance/canvas/buffer-offscreen-test.html are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=212594
+        <rdar://problem/63828783>
+
+        Reviewed by Eric Carlson.
+
+        The change in r262366 split the OpenGL work to prepare a canvas for rendering from the actual painting
+        (or compositing in this case). Canvas elements were being "prepared" at the end of the HTML run loop
+        if they'd done anything that would change pixels. The problem is that canvas elements that are not in
+        the document body are never composited, and thus should never be prepared, otherwise they will clear
+        their drawing buffer. In other words, a canvas in this state must keep the same buffer through
+        each rendering frame.
+
+        The solution is to check if the canvas is in the tree scope at the time we consider preparing
+        it for display.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareCanvasesForDisplayIfNeeded):
+
 2020-06-03  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add setting for per-page storage access scope

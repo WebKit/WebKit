@@ -8587,6 +8587,13 @@ void Document::prepareCanvasesForDisplayIfNeeded()
     // Some canvas contexts need to do work when rendering has finished but
     // before their content is composited.
     for (auto* canvas : m_canvasesNeedingDisplayPreparation) {
+        // However, if they are not in the document body, then they won't
+        // be composited and thus don't need preparation. Unfortunately they
+        // can't tell at the time they were added to the list, since they
+        // could be inserted or removed from the document body afterwards.
+        if (!canvas->isInTreeScope())
+            continue;
+
         auto refCountedCanvas = makeRefPtr(canvas);
         refCountedCanvas->prepareForDisplay();
     }
