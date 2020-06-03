@@ -1,3 +1,24 @@
+2020-06-03  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Release Assert @ WebCore::RenderTreeBuilder::RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=212714
+
+        Reviewed by Geoffrey Garen.
+
+        Widget removal in the middle of building a Render Tree causes side effects, leading to Release Assert. Moved the scope for suspension of widgets
+        update to RenderTreeBuilder instead of having it in RenderTreeUpdater.
+
+        Also made sure that the WidgetHierarchyUpdatesSuspensionScope::moveWidgets() should handle all widgets scheduled to move, including new widgets
+        scheduled during moveWidgets().
+
+        Test: fast/rendering/widget-removal-in-render-tree-builder-crash.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::WidgetHierarchyUpdatesSuspensionScope::moveWidgets):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
 2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Text manipulation] Extract the value attribute in inputs of type "text" and "search"
