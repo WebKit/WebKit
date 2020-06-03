@@ -1038,3 +1038,5 @@ webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Time
 webkit.org/b/261103 [ Debug ] inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
 
 webkit.org/b/212667 [ Mojave Debug ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
+
+webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
