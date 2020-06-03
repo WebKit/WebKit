@@ -1,3 +1,20 @@
+2020-06-03  Michael Saboff  <msaboff@apple.com>
+
+        [iOS] TestWTF.WTF_Lock.ContendedShortSection is consistently timing out on debug simulator builds
+        https://bugs.webkit.org/show_bug.cgi?id=211650
+
+        Reviewed by Saam Barati.
+
+        The prior change to disable this test for Debug actually enabled it
+        only for Debug IOS builds of any type, simulator or real HW.
+
+        This test has intermittently failed or timed out on Debug simulator
+        builds for for almost a year.  We want to test Release builds as well as
+        hardware builds. Therefore we should disable Debug simulator builds,
+        and test all other variants.
+
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+
 2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         dataTransfer.types is empty when handling the "dragstart" event
