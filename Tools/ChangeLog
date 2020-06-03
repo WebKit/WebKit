@@ -1,3 +1,12 @@
+2020-06-03  Jonathan Bedard  <jbedard@apple.com>
+
+        Allow using web processes for service workers even though they loaded about URLs (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=212464
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm: didFinishNavigation is now used unconditionally.
+
 2020-06-02  Keith Rollin  <krollin@apple.com>
 
         Revert FEATURES_DEFINES related changes
