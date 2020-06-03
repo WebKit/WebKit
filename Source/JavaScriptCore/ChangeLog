@@ -1,3 +1,45 @@
+2020-06-02  Mark Lam  <mark.lam@apple.com>
+
+        VMInspector APIs should be taking a VM* instead of a JSGlobalObject*.
+        https://bugs.webkit.org/show_bug.cgi?id=212676
+
+        Reviewed by Saam Barati and Robin Morisset.
+
+        This because:
+        1. None of the functions currently taking a JSGlobalObject* actually need the
+           globalObject.  All of them need the VM.
+        2. The role of the VMInspector is to enable inspection of the VM.  By requiring
+           that it be passed a JSGlobalObject*, we were actually preventing the VMInspector
+           from being used in code that have a VM to inspect but don't have a JSGlobalObject
+           to use.
+
+        The reason I'm choosing to pass VM* instead of VM& is because it makes these
+        functions trivial to call using lldb interactively.  The VMInspector functions
+        are also intentionally designed so that they can be used for this purpose.
+        On occasion, I may have to cast literal numbers (addresses) to VM*.  Technically,
+        I could cast a number to VM* and dereference it to get a VM& too.  However, at
+        present, lldb is often buggy and not always reliable with casts.  I would like to
+        lessen the chance that lldb fails on me when I'm deep in the middle of a debugging
+        session, and have a need to call one of these functions.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGC):
+        (JSC::functionEdenGC):
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::functionDumpCallFrame):
+        (JSC::functionDumpStack):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::currentThreadOwnsJSLock):
+        (JSC::ensureCurrentThreadOwnsJSLock):
+        (JSC::VMInspector::gc):
+        (JSC::VMInspector::edenGC):
+        (JSC::VMInspector::isValidCodeBlock):
+        (JSC::VMInspector::codeBlockForFrame):
+        (JSC::VMInspector::dumpCallFrame):
+        (JSC::VMInspector::dumpStack):
+        * tools/VMInspector.h:
+
 2020-06-02  Keith Rollin  <krollin@apple.com>
 
         Revert FEATURES_DEFINES related changes

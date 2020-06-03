@@ -1777,7 +1777,7 @@ static EncodedJSValue JSC_HOST_CALL functionNoInline(JSGlobalObject*, CallFrame*
 static EncodedJSValue JSC_HOST_CALL functionGC(JSGlobalObject* globalObject, CallFrame*)
 {
     DollarVMAssertScope assertScope;
-    VMInspector::gc(globalObject);
+    VMInspector::gc(&globalObject->vm());
     return JSValue::encode(jsUndefined());
 }
 
@@ -1786,7 +1786,7 @@ static EncodedJSValue JSC_HOST_CALL functionGC(JSGlobalObject* globalObject, Cal
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(JSGlobalObject* globalObject, CallFrame*)
 {
     DollarVMAssertScope assertScope;
-    VMInspector::edenGC(globalObject);
+    VMInspector::edenGC(&globalObject->vm());
     return JSValue::encode(jsUndefined());
 }
 
@@ -1859,7 +1859,7 @@ static EncodedJSValue JSC_HOST_CALL functionCodeBlockForFrame(JSGlobalObject* gl
         frameNumber = value.asUInt32() + 1;
     }
 
-    CodeBlock* codeBlock = VMInspector::codeBlockForFrame(globalObject, callFrame, frameNumber);
+    CodeBlock* codeBlock = VMInspector::codeBlockForFrame(&globalObject->vm(), callFrame, frameNumber);
     if (codeBlock)
         return JSValue::encode(codeBlock);
     return JSValue::encode(jsUndefined());
@@ -1885,7 +1885,7 @@ static CodeBlock* codeBlockFromArg(JSGlobalObject* globalObject, CallFrame* call
             candidateCodeBlock = static_cast<CodeBlock*>(value.asCell());
     }
 
-    if (candidateCodeBlock && VMInspector::isValidCodeBlock(globalObject, candidateCodeBlock))
+    if (candidateCodeBlock && VMInspector::isValidCodeBlock(&vm, candidateCodeBlock))
         return candidateCodeBlock;
 
     if (candidateCodeBlock)
@@ -1980,7 +1980,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(JSGlobalObject* global
     DollarVMAssertScope assertScope;
     // When the callers call this function, they are expecting to dump their
     // own frame. So skip 1 for this frame.
-    VMInspector::dumpCallFrame(globalObject, callFrame, 1);
+    VMInspector::dumpCallFrame(&globalObject->vm(), callFrame, 1);
     return JSValue::encode(jsUndefined());
 }
 
@@ -1991,7 +1991,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpStack(JSGlobalObject* globalObje
     DollarVMAssertScope assertScope;
     // When the callers call this function, they are expecting to dump the
     // stack starting their own frame. So skip 1 for this frame.
-    VMInspector::dumpStack(globalObject, callFrame, 1);
+    VMInspector::dumpStack(&globalObject->vm(), callFrame, 1);
     return JSValue::encode(jsUndefined());
 }
 
