@@ -1421,6 +1421,8 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceTextContentWithMulti
         "    <option selected>Hello world</option>"
         "    <option>Should not be replaced</option>"
         "</select>"
+        "<span aria-label='label'>Text</span>"
+        "<img src='apple.gif' alt='image'>"
         "</html>"];
 
     done = false;
@@ -1430,18 +1432,27 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceTextContentWithMulti
     TestWebKitAPI::Util::run(&done);
 
     auto *items = [delegate items];
-    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items.count, 6UL);
     EXPECT_EQ(items[0].tokens.count, 1UL);
     EXPECT_EQ(items[1].tokens.count, 1UL);
     EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_EQ(items[4].tokens.count, 1UL);
+    EXPECT_EQ(items[5].tokens.count, 2UL);
     EXPECT_WK_STREQ("This is a test", items[0].tokens[0].content);
     EXPECT_WK_STREQ("Hello world", items[1].tokens[0].content);
     EXPECT_WK_STREQ("Should not be replaced", items[2].tokens[0].content);
+    EXPECT_WK_STREQ("label", items[3].tokens[0].content);
+    EXPECT_WK_STREQ("image", items[4].tokens[0].content);
+    EXPECT_WK_STREQ("Text", items[5].tokens[0].content);
+    EXPECT_WK_STREQ("[]", items[5].tokens[1].content);
 
     auto replacementItems = retainPtr(@[
         createItem(items[0].identifier, { { items[0].tokens[0].identifier, @"Replacement" }, { items[0].tokens[0].identifier, @"title" } }).autorelease(),
         createItem(items[1].identifier, { { items[1].tokens[0].identifier, @"Replacement" }, { items[1].tokens[0].identifier, @"option" } }).autorelease(),
         createItem(items[2].identifier, { { items[2].tokens[0].identifier, @"Failed replacement" }, { @"12345", @"option" } }).autorelease(),
+        createItem(items[3].identifier, { { items[3].tokens[0].identifier, @"Replacement" }, { items[3].tokens[0].identifier, @"label" } }).autorelease(),
+        createItem(items[4].identifier, { { items[4].tokens[0].identifier, @"Replacement" }, { items[4].tokens[0].identifier, @"image" } }).autorelease(),
     ]);
 
     done = false;
@@ -1449,7 +1460,7 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceTextContentWithMulti
         EXPECT_EQ(errors.count, 1UL);
         EXPECT_EQ(errors.firstObject.domain, _WKTextManipulationItemErrorDomain);
         EXPECT_EQ(errors.firstObject.code, _WKTextManipulationItemErrorInvalidToken);
-        EXPECT_EQ(errors.firstObject.userInfo[_WKTextManipulationItemErrorItemKey], [replacementItems lastObject]);
+        EXPECT_EQ(errors.firstObject.userInfo[_WKTextManipulationItemErrorItemKey], [replacementItems objectAtIndex:2]);
         done = true;
     }];
 
@@ -1459,6 +1470,8 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceTextContentWithMulti
     EXPECT_WK_STREQ("Replacement option", options.firstObject);
     EXPECT_WK_STREQ("Should not be replaced", options.lastObject);
     EXPECT_WK_STREQ("Replacement title", [webView stringByEvaluatingJavaScript:@"document.title"]);
+    EXPECT_WK_STREQ("Replacement label", [webView objectByEvaluatingJavaScript:@"document.querySelector('span').getAttribute('aria-label')"]);
+    EXPECT_WK_STREQ("Replacement image", [webView objectByEvaluatingJavaScript:@"document.querySelector('img').getAttribute('alt')"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationShouldReplaceContentsAroundParagraphWithJustImage)

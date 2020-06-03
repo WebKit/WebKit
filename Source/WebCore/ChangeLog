@@ -1,3 +1,18 @@
+2020-06-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation sometimes fails to replace text in attributes
+        https://bugs.webkit.org/show_bug.cgi?id=212701
+
+        Reviewed by Wenson Hsieh.
+
+        Concatenate replacement tokens of same identifier for attribute like we do for title and option element in 
+        r260393.
+
+        Covered by test: TextManipulation.CompleteTextManipulationShouldReplaceTextContentWithMultipleTokens
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace):
+
 2020-06-02  Dean Jackson  <dino@apple.com>
 
         [ macOS ] REGRESSION(r262366): webgl/1.0.3/conformance/canvas/buffer-offscreen-test.html & webgl/2.0.0/conformance/canvas/buffer-offscreen-test.html are constant failures

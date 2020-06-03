@@ -1,3 +1,16 @@
+2020-06-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation sometimes fails to replace text in attributes
+        https://bugs.webkit.org/show_bug.cgi?id=212701
+
+        Reviewed by Wenson Hsieh.
+
+        Modify TextManipulation.CompleteTextManipulationShouldReplaceTextContentWithMultipleTokens to cover text 
+        manipulation for attributes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] lint-test-expectations doesn't work when platform is WPE

@@ -603,7 +603,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         auto element = makeRefPtr(item.element.get());
         if (!element)
             return ManipulationFailureType::ContentChanged;
-        if (replacementTokens.size() > 1 && !canPerformTextManipulationByReplacingEntireTextContent(*element))
+        if (replacementTokens.size() > 1 && !canPerformTextManipulationByReplacingEntireTextContent(*element) && item.attributeName == nullQName())
             return ManipulationFailureType::InvalidToken;
         auto expectedTokenIdentifier = item.tokens[0].identifier;
         StringBuilder newValue;
