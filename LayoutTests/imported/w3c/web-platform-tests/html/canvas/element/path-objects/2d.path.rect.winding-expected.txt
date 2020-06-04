@@ -1,0 +1,5 @@
+2d.path.rect.winding
+Actual output:
+
+FAIL Canvas test: 2d.path.rect.winding assert_equals: Red channel of the pixel at (25, 12) expected 0 but got 255
+

@@ -1,6 +1,0 @@
-2d.imageData.get.zero
-getImageData() throws INDEX_SIZE_ERR if size is zero
-Actual output:
-
-FAIL getImageData() throws INDEX_SIZE_ERR if size is zero assert_throws: function "function () { ctx.getImageData(1, 1, 0.1, 10); }" did not throw
-

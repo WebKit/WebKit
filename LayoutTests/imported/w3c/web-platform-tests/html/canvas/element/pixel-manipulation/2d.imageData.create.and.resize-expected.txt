@@ -1,0 +1,6 @@
+2d.imageData.create.and.resize
+Verify no crash when resizing an image bitmap to zero.
+Actual output:
+
+PASS Verify no crash when resizing an image bitmap to zero. 
+

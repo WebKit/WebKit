@@ -1,0 +1,6 @@
+2d.shadow.filter.value
+test if ctx.filter works correctly
+Actual output:
+
+FAIL test if ctx.filter works correctly assert_true: ctx.filter == 'none' expected true got false
+

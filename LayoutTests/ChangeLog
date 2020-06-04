@@ -1,3 +1,34 @@
+2020-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/2dcontext from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=212639
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * canvas/philip/tests/2d.drawImage.incomplete.emptysrc.html:
+        * canvas/philip/tests/2d.drawImage.incomplete.nosrc.html:
+        * canvas/philip/tests/2d.drawImage.incomplete.removedsrc.html:
+        * canvas/philip/tests/2d.pattern.image.incomplete.emptysrc.html:
+        * canvas/philip/tests/2d.pattern.image.incomplete.removedsrc.html:
+        * gpu-process/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/2dcontext/line-styles/2d.line.cap.round-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt: Removed.
+
 2020-06-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Gardening, update test expectations and baselines after r262525

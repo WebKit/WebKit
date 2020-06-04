@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/LICENSE.txt
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/build.sh
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/current-work-canvas.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentest.py
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/gentestutils.py
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/name2dir-offscreen.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/name2dir.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/spec.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/specextract.py
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates-offscreen.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/tests.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/tests2d-offscreen.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/tests2d.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/tests2dtext.yaml

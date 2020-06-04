@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-video-resize.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/common.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-blob-invalidtype.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-closed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-in-worker-transfer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-sizeOverflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/transfer-worker.js

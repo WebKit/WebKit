@@ -1156,7 +1156,6 @@ webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-webkit.org/b/137530 imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ ImageOnlyFailure ]
 
 # Canvas tests that have stderr:
 canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
@@ -1334,8 +1333,6 @@ webkit.org/b/180267 editing/execCommand/remove-formatting-2.html [ Failure ]
 webkit.org/b/180269 editing/execCommand/toggle-link-mac.html [ Failure ]
 webkit.org/b/180269 editing/execCommand/toggle-unlink-mac.html
 webkit.org/b/180269 editing/execCommand/unlink.html [ Failure ]
-
-webkit.org/b/188020 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
 
 webkit.org/b/180275 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
 webkit.org/b/180725 editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
@@ -3023,8 +3020,6 @@ webkit.org/b/187228 fast/text/user-installed-fonts/local.html [ ImageOnlyFailure
 
 webkit.org/b/181838 js/slow-stress/Int32Array-alloc-huge-long-lived.html [ Slow ]
 
-webkit.org/b/182422 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Skip ]
-
 webkit.org/b/182592 webgl/webgl-texture-image-buffer-reuse.html [ Skip ]
 
 webkit.org/b/182850 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Skip ]
@@ -3302,13 +3297,6 @@ fast/text/international/system-language/system-font-punctuation.html [ Failure ]
 # <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
 fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 
-# drawFocusRing without keyboard enabled does nothing
-imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_001.html [ Skip ]
-imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_002.html [ Skip ]
-imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_003.html [ Skip ]
-imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_004.html [ Skip ]
-imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_005.html [ Skip ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=175736
 canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 fast/canvas/canvas-currentColor.html [ Failure ]
@@ -3328,20 +3316,6 @@ imported/w3c/canvas/2d.gradient.radial.touch1.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
 imported/w3c/canvas/2d.gradient.radial.touch3.html [ Failure ]
 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.bottom.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.cylinder.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.front.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.shape1.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.cone.top.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.inside1.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.inside2.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.inside3.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.outside1.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.outside2.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.outside3.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.touch1.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.touch2.html [ Failure ]
-imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.radial.touch3.html [ Failure ]
 
 # These tests fail with tiny (0.01%) image diffs with accelerated drawing enabled.
 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
@@ -3368,29 +3342,6 @@ canvas/philip/tests/2d.gradient.radial.touch1.html [ Failure ]
 canvas/philip/tests/2d.gradient.radial.touch2.html [ Failure ]
 canvas/philip/tests/2d.gradient.radial.touch3.html [ Failure ]
 fast/canvas/set-colors.html [ Failure ]
-
-webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
-
-webkit.org/b/202523 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.stroke.scale2.html [ Failure ]
-
-# canvas tests that fail with small antialiasing diffs
-imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/compositing/canvas_compositing_globalcompositeoperation_001.htm [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/line-styles/canvas_linestyles_linecap_001.htm [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/line-styles/lineto_a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/the-canvas-state/canvas_state_restore_001.htm [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_scale_001.htm [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/2dcontext/transformations/transform_a.html [ ImageOnlyFailure ]
-
-webkit.org/b/202455 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/2d.drawImage.broken.html [ Failure ]
-
-webkit.org/b/202458 imported/w3c/web-platform-tests/2dcontext/imagebitmap/canvas-createImageBitmap-resize.html [ Failure ]
-
-webkit.org/b/202516 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.rect.winding.html [ Failure ]
-
-webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-the-canvas/2d.text.measure.fontBoundingBox.html [ Failure ]
-webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-the-canvas/2d.text.measure.emHeights.html [ Failure ]
 
 webkit.org/b/202958 css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
 

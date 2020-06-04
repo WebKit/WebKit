@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.bitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.clip.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.fillStyle.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.font.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.globalAlpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.globalCompositeOperation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.imageSmoothingEnabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.lineCap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.lineJoin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.lineWidth.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.miterLimit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.path.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.shadowBlur.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.shadowColor.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.shadowOffsetX.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.shadowOffsetY.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.stack.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.stackdepth.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.strokeStyle.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.textAlign.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.textBaseline.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.transformation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/2d.state.saverestore.underflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/canvas_state_restore_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/canvas_state_restore_001.htm

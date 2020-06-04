@@ -128,7 +128,6 @@ imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-d
 imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/sequence-conversion.html [ Skip ]
 imported/w3c/web-platform-tests/WebIDL/current-realm.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/images/canvas-remote-read-remote-image-redirect.html [ Skip ]
-imported/w3c/web-platform-tests/2dcontext [ Skip ]
 imported/w3c/web-platform-tests/cors/resources/image-tainting-checker.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Node-cloneNode.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/imagedata-cloned-canvas-in-array.html [ Skip ]

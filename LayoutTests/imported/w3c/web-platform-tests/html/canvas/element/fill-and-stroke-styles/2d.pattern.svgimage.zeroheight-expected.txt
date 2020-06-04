@@ -1,0 +1,5 @@
+2d.pattern.svgimage.zeroheight
+Actual output:
+
+FAIL Canvas test: 2d.pattern.svgimage.zeroheight Type error
+

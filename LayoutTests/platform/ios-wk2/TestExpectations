@@ -1314,15 +1314,11 @@ webkit.org/b/206630 [ Debug ] fast/forms/validationMessage.html [ Pass Timeout ]
 
 webkit.org/b/206687 imported/w3c/web-platform-tests/beacon/idlharness.any.html [ Pass Timeout ]
 
-webkit.org/b/206752 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable.html [ Pass Failure ]
-
 webkit.org/b/206946 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Pass Timeout ]
 
 webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
 
 webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
-
-webkit.org/b/207161 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ Pass Failure ]
 
 webkit.org/b/206627 storage/websql [ Skip ]
 
@@ -1709,6 +1705,16 @@ quicklook/pages.html [ ImageOnlyFailure ]
 quicklook/multi-sheet-numbers-09.html [ Skip ]
 http/tests/quicklook/secure-document-with-subresources.html [ Skip ]
 
+# Newly imported canvas web-platform-tests that are failing on iOS only.
+imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/compositing/canvas_compositing_globalcompositeoperation_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/line-styles/canvas_linestyles_linecap_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/line-styles/lineto_a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state/canvas_state_restore_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_reset_001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_scale_001.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/transformations/transform_a.html [ ImageOnlyFailure ]
+
 webkit.org/b/209281 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/frame-removal.html [ Pass Failure ]
 
 webkit.org/b/209352 http/tests/security/stylesheet-href-redirect.html [ Pass Timeout ]
@@ -1742,8 +1748,6 @@ webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass
 webkit.org/b/211928 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion-database.html [ Pass Timeout ]
 
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
-
-webkit.org/b/212636 [ Debug ] imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/canvas_colorsandstyles_createlineargradient_001.htm [ Slow ]
 
 webkit.org/b/186045 [ Release ] imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ Pass Failure ]
 

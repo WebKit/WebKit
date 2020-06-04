@@ -1,0 +1,7 @@
+2d.text.draw.baseline.ideographic
+Actual output:
+Expected output:
+
+
+FAIL Canvas test: 2d.text.draw.baseline.ideographic assert_approx_equals: Red channel of the pixel at (5, 5) expected 0 +/- 2 but got 128
+

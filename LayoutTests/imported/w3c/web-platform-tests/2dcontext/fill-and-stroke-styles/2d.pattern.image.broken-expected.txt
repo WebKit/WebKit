@@ -1,5 +1,0 @@
-2d.pattern.image.broken
-Actual output:
-
-FAIL Canvas test: 2d.pattern.image.broken assert_throws: function "function () { ctx.createPattern(img, 'repeat'); }" did not throw
-
