@@ -122,6 +122,9 @@ int XPCServiceMain(int argc, const char** argv)
     if (argc >= 1 && argv[0] && strstr(argv[0], "com.apple.WebKit.WebContent")) {
         // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
         _CFPrefsSetDirectModeEnabled(YES);
+#if HAVE(CFPREFS_READONLY_SPI)
+        _CFPrefsSetReadOnly(YES);
+#endif
     }
 #else
     UNUSED_PARAM(argc);

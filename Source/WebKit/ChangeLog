@@ -1,5 +1,24 @@
 2020-06-04  Per Arne Vollan  <pvollan@apple.com>
 
+        [Cocoa] Adopt read-only mode for preferences in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=212411
+        <rdar://problem/63640788>
+
+        Reviewed by Darin Adler.
+
+        The WebContent process should never write preferences. Adopt read-only mode for preferences.
+        This will fix some sandbox violations when the UI process is notifying the WebContent process
+        about preference changes. When notified, the WebContent process will use the preferences API
+        to write those preferences in-process, but there should be no attempt at writing these new
+        values to disk, which this patch will ensure.
+
+        No new tests, since this is fixing a benign sandbox violation.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+
+2020-06-04  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] The WebContent process should be allowed to consume an extension to the runningboard service
         https://bugs.webkit.org/show_bug.cgi?id=212753
         <rdar://problem/63948859>
