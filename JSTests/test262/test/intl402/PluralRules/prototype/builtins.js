@@ -10,10 +10,6 @@ description: >
 author: Zibi Braniecki
 ---*/
 
-assert.sameValue(Object.prototype.toString.call(Intl.PluralRules.prototype), "[object Object]",
-                 "The [[Class]] internal property of a built-in non-function object must be " +
-                 "\"Object\".");
-
 assert(Object.isExtensible(Intl.PluralRules.prototype), "Built-in objects must be extensible.");
 
 assert.sameValue(Object.getPrototypeOf(Intl.PluralRules.prototype), Object.prototype,

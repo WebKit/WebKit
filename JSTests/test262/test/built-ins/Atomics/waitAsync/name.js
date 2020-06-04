@@ -6,7 +6,7 @@ esid: sec-atomics.waitasync
 description: >
   Atomics.waitAsync.name is "waitAsync".
 includes: [propertyHelper.js]
-features: [Atomics.waitAsync]
+features: [Atomics.waitAsync, Atomics]
 ---*/
 
 verifyProperty(Atomics.waitAsync, 'name', {

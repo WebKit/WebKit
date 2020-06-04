@@ -23,7 +23,7 @@ info: |
   Return _resultObject_.
 
 flags: [async]
-features: [Atomics.waitAsync]
+features: [Atomics.waitAsync, TypedArray, SharedArrayBuffer, destructuring-binding, Atomics, arrow-function]
 ---*/
 
 const i32a = new Int32Array(

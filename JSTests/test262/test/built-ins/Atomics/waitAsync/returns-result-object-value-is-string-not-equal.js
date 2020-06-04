@@ -22,7 +22,7 @@ info: |
   Perform ! CreateDataPropertyOrThrow(_resultObject_, *"value"*, _promiseCapability_.[[Promise]]).
   Return _resultObject_.
 
-features: [Atomics.waitAsync]
+features: [Atomics.waitAsync, TypedArray, SharedArrayBuffer, destructuring-binding, Atomics]
 ---*/
 
 const i32a = new Int32Array(

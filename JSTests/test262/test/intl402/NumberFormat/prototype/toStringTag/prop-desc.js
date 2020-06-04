@@ -9,7 +9,7 @@ includes: [propertyHelper.js]
 ---*/
 
 verifyProperty(Intl.NumberFormat.prototype, Symbol.toStringTag, {
-  value: 'Object',
+  value: 'Intl.NumberFormat',
   writable: false,
   enumerable: false,
   configurable: true

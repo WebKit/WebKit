@@ -18,7 +18,7 @@ info: |
   5. If waitable is true, then
     a. If typeName is not "Int32Array" or "BigInt64Array", throw a TypeError exception.
 
-features: [Atomics.waitAsync, ArrayBuffer, Atomics, TypedArray]
+features: [Atomics.waitAsync, ArrayBuffer, Atomics, TypedArray, arrow-function]
 ---*/
 const i32a = new Int32Array(
   new ArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)

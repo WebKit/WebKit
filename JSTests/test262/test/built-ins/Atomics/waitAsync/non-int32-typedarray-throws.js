@@ -19,7 +19,7 @@ info: |
   5. If waitable is true, then
     a. If typeName is not "Int32Array" or "BigInt64Array", throw a TypeError exception.
 
-features: [Atomics.waitAsync, Float32Array, Float64Array, Int8Array, TypedArray, Uint16Array, Uint8Array, Uint8ClampedArray]
+features: [Atomics.waitAsync, Float32Array, Float64Array, Int8Array, TypedArray, Uint16Array, Uint8Array, Uint8ClampedArray, arrow-function, SharedArrayBuffer, Atomics]
 ---*/
 const poisoned = {
   valueOf() {

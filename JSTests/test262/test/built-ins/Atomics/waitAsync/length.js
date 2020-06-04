@@ -20,7 +20,7 @@ info: |
     object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
     [[Configurable]]: true }.
 includes: [propertyHelper.js]
-features: [Atomics.waitAsync,Atomics]
+features: [Atomics.waitAsync, Atomics]
 ---*/
 
 verifyProperty(Atomics.waitAsync, 'length', {

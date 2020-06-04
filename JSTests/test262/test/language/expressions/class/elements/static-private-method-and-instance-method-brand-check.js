@@ -4,7 +4,7 @@
 /*---
 description: Brand for static private names and instance private names are different (field definitions in a class expression)
 esid: prod-FieldDefinition
-features: [class-static-methods-private, class]
+features: [class-static-methods-private, class-methods-private, class]
 flags: [generated]
 info: |
     ClassTail : ClassHeritage { ClassBody }

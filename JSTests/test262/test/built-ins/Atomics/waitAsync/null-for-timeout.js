@@ -16,7 +16,7 @@ info: |
 
     Null -> Return +0.
 
-features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, computed-property-names, Atomics]
+features: [Atomics.waitAsync, SharedArrayBuffer, Symbol, Symbol.toPrimitive, TypedArray, computed-property-names, Atomics, arrow-function]
 flags: [async]
 ---*/
 

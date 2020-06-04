@@ -10,10 +10,6 @@ description: >
 author: Norbert Lindenberg
 ---*/
 
-assert.sameValue(Object.prototype.toString.call(Intl.Collator.prototype), "[object Object]",
-                 "The [[Class]] internal property of a built-in non-function object must be " +
-                 "\"Object\".");
-
 assert(Object.isExtensible(Intl.Collator.prototype), "Built-in objects must be extensible.");
 
 assert.sameValue(Object.getPrototypeOf(Intl.Collator.prototype), Object.prototype,

@@ -7,7 +7,7 @@ description: >
   a timeout
 flags: [async]
 includes: [atomicsHelper.js]
-features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics]
+features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, Atomics, arrow-function, async-functions]
 ---*/
 assert.sameValue(typeof Atomics.waitAsync, 'function');
 

@@ -8,9 +8,6 @@ test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-no-line-terminator-html-close-comment-body.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/annexB/built-ins/String/prototype/replaceAll/custom-replacer-emulates-undefined.js:
-  default: 'Test262Error: Expected SameValue(«», «null») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «null») to be true'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:
@@ -666,6 +663,12 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
+test/built-ins/AsyncFromSyncIteratorPrototype/return/return-null.js:
+  default: 'Test262:AsyncTestFailure:TypeError: null is not a function'
+  strict mode: 'Test262:AsyncTestFailure:TypeError: null is not a function'
+test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-null.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«TypeError: null is not a function», «[object Object]») to be true'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«TypeError: null is not a function», «[object Object]») to be true'
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-promise.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
@@ -985,24 +988,6 @@ test/built-ins/Object/seal/proxy-no-ownkeys-returned-keys-order.js:
 test/built-ins/Object/values/order-after-define-property.js:
   default: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
   strict mode: 'Test262Error: Expected [b, a] and [a, b] to have the same contents. '
-test/built-ins/Promise/all/invoke-resolve-get-error-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/all/resolve-not-callable-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/allSettled/invoke-resolve-get-error-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/allSettled/resolve-not-callable-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/any/invoke-resolve-get-error-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/any/resolve-not-callable-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/built-ins/Promise/create-resolving-functions-reject.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
@@ -1018,12 +1003,6 @@ test/built-ins/Promise/prototype/finally/invokes-then-with-function.js:
 test/built-ins/Promise/prototype/finally/resolved-observable-then-calls-argument.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected true but got false'
-test/built-ins/Promise/race/invoke-resolve-get-error-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/Promise/race/resolve-not-callable-close.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/built-ins/Promise/reject-function-nonconstructor.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1566,6 +1545,9 @@ test/built-ins/TypedArrayConstructors/ctors/buffer-arg/detachedbuffer.js:
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/length-to-number-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/ctors/object-arg/iterator-is-null-as-array-like.js:
+  default: 'TypeError: Type error (Testing with Float64Array.)'
+  strict mode: 'TypeError: Type error (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/object-arg/length-excessive-throws.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -1686,12 +1668,24 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
   strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
+test/intl402/Collator/prototype/toStringTag/toString.js:
+  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.Collator]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.Collator]») to be true'
+test/intl402/Collator/prototype/toStringTag/toStringTag.js:
+  default: 'Test262Error: descriptor value should be Intl.Collator'
+  strict mode: 'Test262Error: descriptor value should be Intl.Collator'
 test/intl402/Collator/usage-de.js:
   default: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
   strict mode: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
+test/intl402/DateTimeFormat/prototype/toStringTag/toString.js:
+  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.DateTimeFormat]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.DateTimeFormat]») to be true'
+test/intl402/DateTimeFormat/prototype/toStringTag/toStringTag.js:
+  default: 'Test262Error: descriptor value should be Intl.DateTimeFormat'
+  strict mode: 'Test262Error: descriptor value should be Intl.DateTimeFormat'
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
@@ -1785,6 +1779,18 @@ test/intl402/Locale/likely-subtags.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+test/intl402/NumberFormat/prototype/toStringTag/configurable.js:
+  default: 'Test262Error: Expected SameValue(«Object», «Intl.NumberFormat») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«Object», «Intl.NumberFormat») to be true'
+test/intl402/NumberFormat/prototype/toStringTag/prop-desc.js:
+  default: 'Test262Error: descriptor value should be Intl.NumberFormat'
+  strict mode: 'Test262Error: descriptor value should be Intl.NumberFormat'
+test/intl402/PluralRules/prototype/toStringTag/toString.js:
+  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.PluralRules]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.PluralRules]») to be true'
+test/intl402/PluralRules/prototype/toStringTag/toStringTag.js:
+  default: 'Test262Error: descriptor value should be Intl.PluralRules'
+  strict mode: 'Test262Error: descriptor value should be Intl.PluralRules'
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
   default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
@@ -2135,6 +2141,12 @@ test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
 test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
+test/language/expressions/async-generator/yield-star-getiter-async-return-method-is-null.js:
+  default: "Test262:AsyncTestFailure:TypeError: null is not a function (near '...yield* asyncIterable...')"
+  strict mode: "Test262:AsyncTestFailure:TypeError: null is not a function (near '...yield* asyncIterable...')"
+test/language/expressions/async-generator/yield-star-getiter-async-throw-method-is-null.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/await/async-await-interleaved.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
@@ -3020,6 +3032,9 @@ test/language/expressions/super/prop-poisoned-underscore-proto.js:
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'
+test/language/expressions/yield/star-return-is-null.js:
+  default: "TypeError: null is not a function (near '...yield* iterable...')"
+  strict mode: "TypeError: null is not a function (near '...yield* iterable...')"
 test/language/expressions/yield/star-rhs-iter-nrml-res-done-no-value.js:
   default: 'Test262Error: access count (first iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (first iteration) Expected SameValue(«1», «0») to be true'
@@ -3029,6 +3044,9 @@ test/language/expressions/yield/star-rhs-iter-rtrn-res-done-no-value.js:
 test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   default: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
+test/language/expressions/yield/star-throw-is-null.js:
+  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/global-code/script-decl-func-err-non-configurable.js:
   default: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
@@ -3088,6 +3106,9 @@ test/language/statements/async-generator/return-undefined-implicit-and-explicit.
 test/language/statements/async-generator/yield-return-then-getter-ticks.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, get then, tick 2] to have the same contents. Ticks for return with thenable getter'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, get then, tick 2] to have the same contents. Ticks for return with thenable getter'
+test/language/statements/async-generator/yield-star-return-missing-value-is-awaited.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«[object Promise]», «3») to be true'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«[object Promise]», «3») to be true'
 test/language/statements/async-generator/yield-star-return-then-getter-ticks.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get return, tick 3, tick 4] and [start, tick 1, tick 2, get then, tick 3, get return, get then, tick 4] to have the same contents. Ticks for return with thenable getter'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get return, tick 3, tick 4] and [start, tick 1, tick 2, get then, tick 3, get return, get then, tick 4] to have the same contents. Ticks for return with thenable getter'
@@ -3258,6 +3279,9 @@ test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-obj
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/async-func-decl-dstr-array-elem-target-simple-strict.js:
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-await-of/iterator-close-non-throw-get-method-is-null.js:
+  default: "Test262:AsyncTestFailure:TypeError: null is not a function (near '..._ of iterable...')"
+  strict mode: "Test262:AsyncTestFailure:TypeError: null is not a function (near '..._ of iterable...')"
 test/language/statements/for-await-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
@@ -3472,6 +3496,9 @@ test/language/statements/for-of/head-lhs-non-asnmt-trgt.js:
 test/language/statements/for-of/head-var-no-expr.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-of/iterator-close-non-throw-get-method-is-null.js:
+  default: "TypeError: null is not a function (near '..._ of iterable...')"
+  strict mode: "TypeError: null is not a function (near '..._ of iterable...')"
 test/language/statements/for-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/head-lhs-let.js:

@@ -18,7 +18,7 @@ features: [Symbol.replace, String.prototype.replaceAll, IsHTMLDDA]
 
 var searchValue = $262.IsHTMLDDA;
 var replacerGets = 0;
-Object.defineProperty(searchValue, Symbol.replaceAll, {
+Object.defineProperty(searchValue, Symbol.replace, {
   get: function() {
     replacerGets += 1;
     return searchValue;

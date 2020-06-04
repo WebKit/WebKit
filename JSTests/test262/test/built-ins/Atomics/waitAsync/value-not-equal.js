@@ -21,7 +21,7 @@ info: |
     d. Return promiseCapability.[[Promise]].
 
 flags: [async]
-features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray]
+features: [Atomics.waitAsync, SharedArrayBuffer, TypedArray, computed-property-names, Symbol, Symbol.toPrimitive, Atomics, arrow-function]
 ---*/
 const i32a = new Int32Array(
   new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4)

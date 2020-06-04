@@ -80,9 +80,6 @@ skip:
     - test/built-ins/TypedArrayConstructors/internals/Set/BigInt
     - test/built-ins/TypedArrayConstructors/of/BigInt
   files:
-    - test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-object.js
-    - test/built-ins/Array/prototype/unshift/length-near-integer-limit.js
-
     # https://bugs.webkit.org/show_bug.cgi?id=186749
     - test/built-ins/RegExp/property-escapes/character-class.js
 
@@ -124,10 +121,6 @@ skip:
     - test/built-ins/TypedArrayConstructors/prototype/toLocaleString/bigint-inherited.js
     - test/built-ins/TypedArrayConstructors/prototype/toString/bigint-inherited.js
     - test/built-ins/TypedArrayConstructors/prototype/values/bigint-inherited.js
-
-    # These tests timeout even with --timeout parameter set
-    # https://bugs.webkit.org/show_bug.cgi?id=208639
-    - test/built-ins/Array/prototype/lastIndexOf/length-near-integer-limit.js
 
     # These tests require macOS system ICU to actually update its CLDR data >:(
     # https://bugs.webkit.org/show_bug.cgi?id=209783

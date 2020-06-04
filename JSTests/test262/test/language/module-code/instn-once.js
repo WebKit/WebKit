@@ -1,24 +1,24 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-description: Module is instantiated exactly once
-esid: sec-moduledeclarationinstantiation
+description: Module is linked exactly once
+esid: sec-moduledeclarationlinking
 info: |
-  Instantiate( ) Concrete Method
+  Link ( ) Concrete Method
     [...]
-    4. Let result be InnerModuleInstantiation(module, stack, 0).
+    4. Let result be InnerModuleLinking(module, stack, 0).
     [...]
 
-  InnerModuleInstantiation( module, stack, index )
+  InnerModuleLinking( module, stack, index )
     [...]
-    2. If module.[[Status]] is "instantiating", "instantiated", or "evaluated", then
+    2. If module.[[Status]] is "linking", "linked", or "evaluated", then
       a. Return index.
-    3. Assert: module.[[Status]] is "uninstantiated".
-    4. Set module.[[Status]] to "instantiating".
+    3. Assert: module.[[Status]] is "unlinked".
+    4. Set module.[[Status]] to "linking".
     [...]
     9. For each String required that is an element of module.[[RequestedModules]], do
       a. Let requiredModule be ? HostResolveImportedModule(module, required).
-      b. Set index to ? InnerModuleInstantiation(requiredModule, stack, index).
+      b. Set index to ? InnerModuleLinking(requiredModule, stack, index).
     [...]
 flags: [module]
 features: [export-star-as-namespace-from-module]

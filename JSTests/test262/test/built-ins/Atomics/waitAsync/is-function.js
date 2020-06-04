@@ -4,7 +4,7 @@
 /*---
 esid: sec-atomics.waitasync
 description: Atomics.waitAsync is callable
-features: [Atomics.waitAsync]
+features: [Atomics.waitAsync, Atomics]
 ---*/
 
 assert.sameValue(typeof Atomics.waitAsync, 'function');
