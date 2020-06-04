@@ -1,3 +1,44 @@
+2020-06-04  Jonathan Bedard  <jbedard@apple.com>
+
+        Add watchOS framework stubs
+        https://bugs.webkit.org/show_bug.cgi?id=212761
+        <rdar://problem/63986144>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/watchos: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/CorePDF.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/CorePDF.framework/CorePDF.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/CorePrediction.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/DeviceIdentity.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/DeviceIdentity.framework/DeviceIdentity.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/FileProvider.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/IOKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/IOKit.framework/IOKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/IOSurfaceAccelerator.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/LocalAuthentication.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/LocalAuthentication.framework/LocalAuthentication.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/PepperUICore.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/PepperUICore.framework/PepperUICore.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/RunningBoardServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/SafariSafeBrowsing.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/URLFormatting.framework: Added.
+        * WebKitPrivateFrameworkStubs/watchos/6/URLFormatting.framework/URLFormatting.tbd: Added.
+
 2020-04-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Stop using legacy BKSApplicationStateMonitor
