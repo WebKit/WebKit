@@ -114,6 +114,10 @@ Usage: $programName [options] [options to pass to build system]
   --device                          DEPRECATED alias of --ios-device
   --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
   --simulator                       DEPRECATED alias of --ios-simulator
+  --tvos-device                     Use "appletvos.internal" SDK if installed, else "appletvos" SDK (tvOS only)
+  --tvos-simulator                  Use "appletvsimulator" (tvOS only)
+  --watchos-device                  Use "watchos.internal" SDK if installed, else "watchos" SDK (watchOS only)
+  --watchos-simulator               Use "watchsimulator" (watchOS only)
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (iOS and Mac only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
@@ -237,14 +241,14 @@ if (isAppleCocoaWebKit()) {
 
     # ANGLE and libwebrtc must come before WebCore
     splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
-    if (not $archs32bit and ((portName() eq Mac and not architecture() eq "i386") or 
-        (portName() eq iOS and (architecture() eq "arm64" or architecture() eq "x86_64")))) {
+    # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {
+    if (portName() eq Mac or portName() eq iOS) {
         splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
     }
 
     push @projects, ("Source/WebKit");
 
-    if (!isIOSWebKit()) {
+    if (!isEmbeddedWebKit()) {
         push @projects, ("Tools/MiniBrowser");
 
         # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
@@ -266,7 +270,7 @@ if (isAppleCocoaWebKit()) {
         push @projects, ("Tools/lldb/lldbWebKitTester");
     }
 
-    # Build Tools needed for Apple ports
+    # Build Tools needed for Apple ports (except for tvOS)
     push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
 
 } elsif (isWinCairo() && !$skipLibraryUpdate) {

@@ -375,6 +375,14 @@ sub determineArchitecture
                 $architecture = 'x86_64';
             } elsif ($xcodeSDK =~ /^iphoneos/) {
                 $architecture = 'arm64';
+            } elsif ($xcodeSDK =~ /^watchsimulator/) {
+                $architecture = 'i386';
+            } elsif ($xcodeSDK =~ /^watchos/) {
+                $architecture = 'arm64_32 arm64e armv7k';
+            } elsif ($xcodeSDK =~ /^appletvsimulator/) {
+                $architecture = 'x86_64';
+            } elsif ($xcodeSDK =~ /^appletvos/) {
+                $architecture = 'arm64';
             }
         }
     } elsif (isCMakeBuild()) {
@@ -517,6 +525,10 @@ sub argumentsForConfiguration()
     push(@args, '--ios-device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
     push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/ && $simulatorIdiom eq "iPhone");
     push(@args, '--ipad-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/ && $simulatorIdiom eq "iPad");
+    push(@args, '--tvos-device') if (defined $xcodeSDK && $xcodeSDK =~ /^appletvos/);
+    push(@args, '--tvos-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^appletvsimulator/);
+    push(@args, '--watchos-device') if (defined $xcodeSDK && $xcodeSDK =~ /^watchos/);
+    push(@args, '--watchos-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^watchsimulator/);
     push(@args, '--maccatalyst') if (defined $xcodeSDK && $xcodeSDK =~ /^maccatalyst/);
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
@@ -532,7 +544,7 @@ sub argumentsForConfiguration()
 sub extractNonMacOSHostConfiguration
 {
     my @args = ();
-    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--ftw', 'SDKROOT', 'ARCHS');
+    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--ftw', '--tvos', '--watchos', 'SDKROOT', 'ARCHS');
     foreach (@{$_[0]}) {
         my $line = $_;
         my $flag = 0;

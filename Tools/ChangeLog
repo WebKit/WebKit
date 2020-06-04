@@ -1,3 +1,17 @@
+2020-06-04  Jonathan Bedard  <jbedard@apple.com>
+
+        Add watchOS and tvOS to build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=212719
+        <rdar://problem/63951600>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/build-webkit: Add tvOS and watchOS flags, generalize embedded if statements.
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture): Add tvOS and watchOS architectures.
+        (argumentsForConfiguration): Add tvOS and watchOS flags.
+        (extractNonMacOSHostConfiguration): Ditto.
+
 2020-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Work around broken system version macro
