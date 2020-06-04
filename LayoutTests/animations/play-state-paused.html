@@ -1,9 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Test of -webkit-animation-play-state</title>
-  <style type="text/css" media="screen">
+  <title>Test of animation-play-state</title>
+  <style>
     body {
       margin: 0;
     }
@@ -16,57 +16,52 @@
       width: 100px;
       background-color: red;
       margin: 0;
-      -webkit-animation-duration: 2s;
-      -webkit-animation-timing-function: linear;
-      -webkit-animation-name: "move1";
-      -webkit-animation-play-state: running;
+      animation-duration: 2s;
+      animation-timing-function: linear;
+      animation-name: move;
+      animation-play-state: running;
     }
-    #safezone {
-      position: absolute;
-      top: 100px;
-      height: 100px;
-      width: 200px;
-      left: 100px;
-      background-color: green;
-    }
-    @-webkit-keyframes "move1" {
+
+    @keyframes move {
       from { margin-left: 0px; }
       to   { margin-left: 300px; }
     }
-    #result {
-      color: white; /* hide from pixel results */
-    }
   </style>
-  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
-    const expectedValues = [
-      // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["move1", 0.5, "box", "margin-left", 75, 20],
-      ["move1", 1.0, "box", "margin-left", 150, 20],
-      ["move1", 2.5, "box", "margin-left", 150, 20],
-    ];
-
-    function pauseAnimation()
-    {
-        const box = document.getElementById("box");
-        box.style.webkitAnimationPlayState = "paused";
-        box.getAnimations()[0].currentTime = 1000;
-    }
-
-    function setTimers()
-    {
-        setTimeout(pauseAnimation, 1000);
-    }
-
-    runAnimationTest(expectedValues, setTimers, null, true);
-
-  </script>
+  <script src="../resources/testharness.js"></script>
+  <script src="../resources/testharnessreport.js"></script>
+  <script src="resources/animation-test.js"></script>
 </head>
 <body>
-<!-- This tests the operation of -webkit-animation-play-state. After 1 second the red boxes should be hidden by the green boxes. You should see no red boxes. -->
 <div id="box"></div>
-<div id="safezone"></div>
-<div id="result"></div>
+<script>
+
+async_test(async t => {
+    const delay = 100;
+
+    const test = new AnimationTest({
+        target: document.getElementById("box"),
+        styleExtractor: style => parseFloat(style.marginLeft)
+    });
+
+    // Record two computed values after the specified delay each.
+    await test.recordValueAfterRunningFor(delay);
+    await test.recordValueAfterRunningFor(delay);
+
+    // We'll now pause the animation using the CSS property "animation-play-state".
+    box.style.animationPlayState = "paused";
+
+    // And now we'll record values after the specified delay each and check that those are the same.
+    const initialPausedValue = await test.valueAfterWaitingFor(delay);
+    const currentPausedValue = await test.valueAfterWaitingFor(delay);
+    assert_equals(initialPausedValue, currentPausedValue, "Values recorded while paused are the same.");
+
+    // Finally, check the values recorded earlier in the test.
+    test.checkRecordedValues();
+
+    t.done();
+}, `Pausing an animation using the animation-play-state property stops animating styles.`);
+
+</script>
 </div>
 </body>
 </html>

@@ -1,3 +1,17 @@
+2020-06-04  Antoine Quint  <graouts@webkit.org>
+
+        [ iOS wk2 ] animations/play-state-paused.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=212641
+        <rdar://problem/63879230>
+
+        Reviewed by Dean Jackson.
+
+        Rewrite this test to use the AnimationTest helper that will non-flakily check animated values while an animation is running.
+
+        * animations/play-state-paused-expected.txt:
+        * animations/play-state-paused.html:
+        * platform/ios-wk2/TestExpectations:
+
 2020-06-02  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/2dcontext from upstream

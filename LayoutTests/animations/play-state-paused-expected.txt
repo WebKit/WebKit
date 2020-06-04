@@ -1,4 +1,3 @@
-PASS - "margin-left" property for "box" element at 0.5s saw something close to: 75
-PASS - "margin-left" property for "box" element at 1s saw something close to: 150
-PASS - "margin-left" property for "box" element at 2.5s saw something close to: 150
+
+PASS Pausing an animation using the animation-play-state property stops animating styles. 
 
