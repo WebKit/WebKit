@@ -1,0 +1,7 @@
+Test of canvas shadowBlur Gaussian blur pixel values
+
+
+PASS shadowBlur Gaussian pixel values for no blur 
+FAIL shadowBlur Gaussian pixel values for small blur assert_true: at row 0 col 6 red component 13 should be between 18 and 44 (inclusive). expected true got false
+FAIL shadowBlur Gaussian pixel values for large blur assert_true: at row 0 col 39 red component 41 should be between 49 and 75 (inclusive). expected true got false
+

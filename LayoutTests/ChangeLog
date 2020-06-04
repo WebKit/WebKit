@@ -1,3 +1,42 @@
+2020-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Gardening after r262539
+        https://bugs.webkit.org/show_bug.cgi?id=212770
+
+        Unreviewed gardening.
+
+        Add baselines for GTK/WPE and comment out enabling offscreen canvas
+        tests that are now broken. Fixing them in bug 212613.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.globalAlpha.canvascopy-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/drawimage_canvas-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.bottom-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.cylinder-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.front-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.shape1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.top-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.inside1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.inside2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.inside3-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.outside1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.outside2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.outside3-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.isPointInStroke.scaleddashes-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.rect.winding-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/shadows/shadowBlur_gaussian_tolerance.1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/text-styles/2d.text.draw.baseline.ideographic-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-06-04  Antoine Quint  <graouts@webkit.org>
 
         [ iOS wk2 ] animations/play-state-paused.html is flaky failing.

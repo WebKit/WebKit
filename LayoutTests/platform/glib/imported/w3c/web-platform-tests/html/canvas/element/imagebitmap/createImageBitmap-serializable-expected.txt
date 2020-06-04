@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: Type error
+
+PASS Serialize ImageBitmap created from an HTMLCanvasElement 
+PASS Serialize ImageBitmap created from an HTMLVideoElement 
+PASS Serialize ImageBitmap created from an HTMLVideoElement from a data URL 
+PASS Serialize ImageBitmap created from a bitmap HTMLImageElement 
+PASS Serialize ImageBitmap created from a vector HTMLImageElement 
+FAIL Serialize ImageBitmap created from a bitmap SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Serialize ImageBitmap created from a vector SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Serialize ImageBitmap created from an OffscreenCanvas 
+FAIL Serialize ImageBitmap created from an ImageData promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+PASS Serialize ImageBitmap created from an ImageBitmap 
+PASS Serialize ImageBitmap created from a Blob 
+FAIL Serializing a non-origin-clean ImageBitmap throws. assert_throws_dom: function "() => worker.postMessage(bitmap)" did not throw
+

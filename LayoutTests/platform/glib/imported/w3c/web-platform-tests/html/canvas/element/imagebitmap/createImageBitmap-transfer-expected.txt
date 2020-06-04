@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: Type error
+
+PASS Transfer ImageBitmap created from an HTMLCanvasElement 
+PASS Transfer ImageBitmap created from an HTMLVideoElement 
+PASS Transfer ImageBitmap created from an HTMLVideoElement from a data URL 
+PASS Transfer ImageBitmap created from a bitmap HTMLImageElement 
+PASS Transfer ImageBitmap created from a vector HTMLImageElement 
+FAIL Transfer ImageBitmap created from a bitmap SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Transfer ImageBitmap created from a vector SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Transfer ImageBitmap created from an OffscreenCanvas 
+FAIL Transfer ImageBitmap created from an ImageData promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+PASS Transfer ImageBitmap created from an ImageBitmap 
+PASS Transfer ImageBitmap created from a Blob 
+FAIL Transferring a non-origin-clean ImageBitmap throws. assert_throws_dom: function "() => worker.postMessage(bitmap, [bitmap])" did not throw
+
