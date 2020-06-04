@@ -1,3 +1,21 @@
+2020-06-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Gardening, update test expectations and baselines after r262525
+        https://bugs.webkit.org/show_bug.cgi?id=212751
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block-expected.txt: Added after r262312.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block-expected.txt: Added after r262312.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow-expected.txt: Added after r262312.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/unload-a-document/002-expected.txt: Removed after r262312.
+        * platform/glib/imported/w3c/web-platform-tests/websockets/unload-a-document/004-expected.txt: Removed after r262312.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/encoding/single-byte-decoder-expected.txt: Added after r262235.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback-expected.txt: Removed after r262254.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt: Updated after r262235.
+
 2020-06-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r262527 and r262531.

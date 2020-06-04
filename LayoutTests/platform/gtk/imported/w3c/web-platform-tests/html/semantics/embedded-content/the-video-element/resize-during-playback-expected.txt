@@ -1,4 +1,0 @@
-
-FAIL mp4 video assert_equals: Expected resize event, but got ended event instead expected "resize" but got "ended"
-FAIL webm video assert_equals: Expected resize event, but got ended event instead expected "resize" but got "ended"
-  

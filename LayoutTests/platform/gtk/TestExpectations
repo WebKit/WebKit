@@ -1076,6 +1076,7 @@ webkit.org/b/211979 editing/async-clipboard/clipboard-write-items-twice.html [ T
 webkit.org/b/211979 editing/async-clipboard/clipboard-write-text.html [ Timeout ]
 webkit.org/b/211979 editing/async-clipboard/clipboard-item-get-type-basic.html [ Failure ]
 webkit.org/b/211979 editing/async-clipboard/clipboard-read-text.html [ Failure ]
+webkit.org/b/211979 editing/async-clipboard/clipboard-read-write-images.html [ Failure ]
 webkit.org/b/211979 editing/async-clipboard/sanitize-when-reading-markup.html [ Failure ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
@@ -4532,6 +4533,10 @@ webkit.org/b/207678 imported/w3c/web-platform-tests/url/a-element.html [ Failure
 
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
+webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
+
+webkit.org/b/212745 imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -4690,9 +4695,6 @@ imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/i
 
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
-
-# Passing since r262008.
-imported/w3c/web-platform-tests/css/css-writing-modes/bidi-plaintext-011.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
