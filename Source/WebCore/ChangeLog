@@ -1,3 +1,22 @@
+2020-06-04  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME][GStreamer] cdmProxyAttached does not need to force a bump ref in the signature
+        https://bugs.webkit.org/show_bug.cgi?id=212754
+
+        Reviewed by Philippe Normand.
+
+        cdmProxyAttached is currently receiving a RefPtr<CDMProxy> in the
+        signature, what causes a ref bump when the function is called. A
+        const RefPtr<CDMProxy>& is more suitable cause the reference is
+        already bumped when the CDMProxy assigned in the decryptor
+        attribute.
+
+        No new tests, just a rework.
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (cdmProxyAttached):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+
 2020-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Work around broken system version macro

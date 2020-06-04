@@ -42,7 +42,7 @@ struct _WebKitMediaClearKeyDecryptPrivate {
 };
 
 static void finalize(GObject*);
-static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<CDMProxy>);
+static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, const RefPtr<CDMProxy>&);
 static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffer* keyid, GstBuffer* sample, unsigned subSamplesCount, GstBuffer* subSamples);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_clear_key_decrypt_debug_category);
@@ -106,7 +106,7 @@ static void finalize(GObject* object)
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
-static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, RefPtr<CDMProxy> cdmProxy)
+static bool cdmProxyAttached(WebKitMediaCommonEncryptionDecrypt* self, const RefPtr<CDMProxy>& cdmProxy)
 {
     WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_CK_DECRYPT(self));
     priv->cdmProxy = reinterpret_cast<CDMProxyClearKey*>(cdmProxy.get());
