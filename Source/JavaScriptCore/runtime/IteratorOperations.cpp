@@ -95,7 +95,7 @@ void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord
     }
 
     JSValue returnFunction = iterationRecord.iterator.get(globalObject, vm.propertyNames->returnKeyword);
-    if (UNLIKELY(throwScope.exception()) || returnFunction.isUndefined()) {
+    if (UNLIKELY(throwScope.exception()) || returnFunction.isUndefinedOrNull()) {
         if (exception)
             throwException(globalObject, throwScope, exception);
         return;

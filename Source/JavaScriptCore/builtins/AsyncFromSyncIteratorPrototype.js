@@ -74,7 +74,7 @@ function return(value)
         return promise;
     }
 
-    if (returnMethod === @undefined) {
+    if (@isUndefinedOrNull(returnMethod)) {
         @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value, done: true });
         return promise;
     }
@@ -121,7 +121,7 @@ function throw(exception)
         return promise;
     }
 
-    if (throwMethod === @undefined) {
+    if (@isUndefinedOrNull(throwMethod)) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, exception);
         return promise;
     }

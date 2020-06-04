@@ -1,3 +1,32 @@
+2020-06-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        GetMethod isn't performed properly on iterators
+        https://bugs.webkit.org/show_bug.cgi?id=212771
+
+        Reviewed by Saam Barati.
+
+        Before this change, iterator's "return" and "throw" methods with value of `null` were
+        considered incorrect rather than missing, causing TypeError to be thrown.
+
+        This patch aligns method lookup of iterators with the spec [1], V8, and SpiderMonkey
+        by utilizing isUndefinedOrNull(), which doesn't special-case [[IsHTMLDDA]] objects [2],
+        fixing a few Annex B tests.
+
+        for/of microbenchmarks are neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-getmethod (step 3)
+        [2]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitIteratorGenericClose):
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorClose):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+
 2020-06-04  Mark Lam  <mark.lam@apple.com>
 
         Reduce DFGDoesGCCheck to only storing a uint32_t.

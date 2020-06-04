@@ -169,7 +169,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
             // 3) The base object might have indexed getters.
             // it should not be observable that we do not use the iterator.
 
-            if (!iteratorFunc.isUndefined()
+            if (!iteratorFunc.isUndefinedOrNull()
                 && (iteratorFunc != object->globalObject(vm)->arrayProtoValuesFunction()
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType()))) {

@@ -304,12 +304,6 @@ test/annexB/language/expressions/assignment/dstr/array-pattern-emulates-undefine
 test/annexB/language/expressions/assignment/dstr/object-pattern-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/annexB/language/expressions/yield/star-iterable-return-emulates-undefined-throws-when-called.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/annexB/language/expressions/yield/star-iterable-throw-emulates-undefined-throws-when-called.js:
-  default: 'Test262Error: Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«1», «0») to be true'
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
 test/annexB/language/function-code/block-decl-func-skip-early-err-block.js:
@@ -624,12 +618,6 @@ test/annexB/language/statements/const/dstr/array-pattern-emulates-undefined.js:
 test/annexB/language/statements/const/dstr/object-pattern-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
-test/annexB/language/statements/for-await-of/iterator-close-return-emulates-undefined-throws-when-called.js:
-  default: "Test262:AsyncTestFailure:Test262Error: Test262Error: expected TypeError because `iter[Symbol.asyncIterator]() returned a non-object: Test262Error: shouldn't touch Symbol.iterator Expected SameValue(«function Test262Error(message) {"
-  strict mode: "Test262:AsyncTestFailure:Test262Error: Test262Error: expected TypeError because `iter[Symbol.asyncIterator]() returned a non-object: Test262Error: shouldn't touch Symbol.iterator Expected SameValue(«function Test262Error(message) {"
-test/annexB/language/statements/for-of/iterator-close-return-emulates-undefined-throws-when-called.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/annexB/language/statements/function/default-parameters-emulates-undefined.js:
   default: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «[object Function]») to be true'
@@ -663,12 +651,6 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/AsyncFromSyncIteratorPrototype/return/return-null.js:
-  default: 'Test262:AsyncTestFailure:TypeError: null is not a function'
-  strict mode: 'Test262:AsyncTestFailure:TypeError: null is not a function'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-null.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«TypeError: null is not a function», «[object Object]») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«TypeError: null is not a function», «[object Object]») to be true'
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-promise.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
@@ -1545,9 +1527,6 @@ test/built-ins/TypedArrayConstructors/ctors/buffer-arg/detachedbuffer.js:
 test/built-ins/TypedArrayConstructors/ctors/buffer-arg/length-to-number-detachbuffer.js:
   default: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError but got a RangeError (Testing with Float64Array.)'
-test/built-ins/TypedArrayConstructors/ctors/object-arg/iterator-is-null-as-array-like.js:
-  default: 'TypeError: Type error (Testing with Float64Array.)'
-  strict mode: 'TypeError: Type error (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/object-arg/length-excessive-throws.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
@@ -2141,12 +2120,6 @@ test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
 test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/async-generator/yield-star-getiter-async-return-method-is-null.js:
-  default: "Test262:AsyncTestFailure:TypeError: null is not a function (near '...yield* asyncIterable...')"
-  strict mode: "Test262:AsyncTestFailure:TypeError: null is not a function (near '...yield* asyncIterable...')"
-test/language/expressions/async-generator/yield-star-getiter-async-throw-method-is-null.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/expressions/await/async-await-interleaved.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [Await: 1, Promise: 1, Promise: 2, Await: 2] and [Await: 1, Promise: 1, Await: 2, Promise: 2] to have the same contents. Async/await and promises should be interleaved'
@@ -3032,9 +3005,6 @@ test/language/expressions/super/prop-poisoned-underscore-proto.js:
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'
-test/language/expressions/yield/star-return-is-null.js:
-  default: "TypeError: null is not a function (near '...yield* iterable...')"
-  strict mode: "TypeError: null is not a function (near '...yield* iterable...')"
 test/language/expressions/yield/star-rhs-iter-nrml-res-done-no-value.js:
   default: 'Test262Error: access count (first iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (first iteration) Expected SameValue(«1», «0») to be true'
@@ -3044,9 +3014,6 @@ test/language/expressions/yield/star-rhs-iter-rtrn-res-done-no-value.js:
 test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   default: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
-test/language/expressions/yield/star-throw-is-null.js:
-  default: 'Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «1») to be true'
 test/language/global-code/script-decl-func-err-non-configurable.js:
   default: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
@@ -3279,9 +3246,6 @@ test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-obj
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/async-func-decl-dstr-array-elem-target-simple-strict.js:
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-await-of/iterator-close-non-throw-get-method-is-null.js:
-  default: "Test262:AsyncTestFailure:TypeError: null is not a function (near '..._ of iterable...')"
-  strict mode: "Test262:AsyncTestFailure:TypeError: null is not a function (near '..._ of iterable...')"
 test/language/statements/for-await-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and-constructor-lookup-two.js:
@@ -3496,9 +3460,6 @@ test/language/statements/for-of/head-lhs-non-asnmt-trgt.js:
 test/language/statements/for-of/head-var-no-expr.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/iterator-close-non-throw-get-method-is-null.js:
-  default: "TypeError: null is not a function (near '..._ of iterable...')"
-  strict mode: "TypeError: null is not a function (near '..._ of iterable...')"
 test/language/statements/for-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/head-lhs-let.js:
