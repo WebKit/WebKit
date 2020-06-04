@@ -1,3 +1,13 @@
+2020-06-04  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Re-enable content filtering in the simulator build
+        https://bugs.webkit.org/show_bug.cgi?id=212711
+        <rdar://problem/63938350>
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2020-06-04  Zalan Bujtas  <zalan@apple.com>
 
         Reset fragment line info when the relatively positioned inline box becomes static with block child.
