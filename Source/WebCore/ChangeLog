@@ -1,3 +1,9 @@
+2020-06-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PlayStation] Unreviewed build fix following r262352.
+
+        * platform/graphics/ColorUtilities.cpp:
+
 2020-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         DOM constructor should only accept Ref<> / ExceptionOr<Ref<>> for creation to ensure toJSNewlyCreated is always returning object
