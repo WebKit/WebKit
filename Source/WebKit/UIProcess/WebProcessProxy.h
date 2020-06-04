@@ -501,10 +501,6 @@ private:
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
-#if PLATFORM(IOS_FAMILY)
-    bool m_hasSentMessageToUnblockAccessibilityServer { false };
-    std::unique_ptr<WebCore::DeferrableOneShotTimer> m_unexpectedActivityTimer;
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
