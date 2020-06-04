@@ -1,0 +1,11 @@
+--- !tapi-tbd-v3
+archs:           [ x86_64, arm64, arm64e ]
+install-name:    '/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport'
+objc-constraint: none
+platform: tvos
+exports:
+  -
+    archs:           [ x86_64, arm64, arm64e ]
+    symbols:         [ CPCopyBundleIdentifierFromAuditToken ]
+    objc-classes:    [ CPNetworkObserver ]
+...

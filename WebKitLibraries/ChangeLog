@@ -1,5 +1,44 @@
 2020-06-04  Jonathan Bedard  <jbedard@apple.com>
 
+        Add tvOS framework stubs
+        https://bugs.webkit.org/show_bug.cgi?id=212760
+        <rdar://problem/63986134>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/appletvos: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/AppSupport.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/AppSupport.framework/AppSupport.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/AssertionServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/AssertionServices.framework/AssertionServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/AuthKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/AuthKit.framework/AuthKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/CorePDF.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/CorePDF.framework/CorePDF.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/CorePrediction.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/CorePrediction.framework/CorePrediction.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/DeviceIdentity.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/DeviceIdentity.framework/DeviceIdentity.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/FileProvider.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/FileProvider.framework/FileProvider.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/GraphicsServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/GraphicsServices.framework/GraphicsServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/IOKit.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/IOKit.framework/IOKit.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/IOSurfaceAccelerator.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/LocalAuthentication.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/LocalAuthentication.framework/LocalAuthentication.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/RunningBoardServices.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/RunningBoardServices.framework/RunningBoardServices.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/SafariSafeBrowsing.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/URLFormatting.framework: Added.
+        * WebKitPrivateFrameworkStubs/appletvos/13/URLFormatting.framework/URLFormatting.tbd: Added.
+
+2020-06-04  Jonathan Bedard  <jbedard@apple.com>
+
         Add watchOS framework stubs
         https://bugs.webkit.org/show_bug.cgi?id=212761
         <rdar://problem/63986144>

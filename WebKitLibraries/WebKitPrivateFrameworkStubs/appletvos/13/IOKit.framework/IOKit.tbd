@@ -1,0 +1,19 @@
+--- !tapi-tbd-v3
+archs:           [ x86_64, arm64, arm64e ]
+platform:        tvos
+install-name:    '/System/Library/Frameworks/IOKit.framework/IOKit'
+exports:
+  - archs:           [ x86_64, arm64, arm64e ]
+    symbols:         [ _IOHIDEventAppendEvent, _IOHIDEventCreateDigitizerEvent,
+                       _IOHIDEventCreateDigitizerFingerEvent,
+                       _IOHIDEventCreateDigitizerStylusEventWithPolarOrientation,
+                       _IOHIDEventCreateKeyboardEvent,
+                       _IOHIDEventCreateVendorDefinedEvent,
+                       _IOHIDEventGetIntegerValue, _IOHIDEventGetType,
+                       _IOHIDEventSetFloatValue, _IOHIDEventSetIntegerValue,
+                       _IOHIDEventSystemClientCreate,
+                       _IOPMAssertionCreateWithDescription,
+                       _IOPMAssertionRelease, _IOPSCopyPowerSourcesInfo,
+                       _IOPSCopyPowerSourcesList,
+                       _IOPSGetPowerSourceDescription ]
+...
