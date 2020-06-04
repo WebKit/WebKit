@@ -619,6 +619,33 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
         RELEASE_LOG_INFO(ITPDebug, "About to %{public}s cookies in third-party contexts for (%{public}d of %u): %{public}s.", action, batchNumber, numberOfBatches, domainsToString(batch).utf8().data());
 }
 
+void ResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent)
+{
+    // Populate the Operating Dates table with enough days to require pruning.
+    double daysAgoInSeconds = 0;
+    for (unsigned i = 1; i <= operatingDatesWindowLong; i++) {
+        double daysToSubtract = Seconds::fromHours(24 * i).value();
+        daysAgoInSeconds = WallTime::now().secondsSinceEpoch().value() - daysToSubtract;
+        auto dateToInsert = OperatingDate::fromWallTime(WallTime::fromRawSeconds(daysAgoInSeconds));
+        m_operatingDates.append(OperatingDate(dateToInsert.year(), dateToInsert.month(), dateToInsert.monthDay()));
+    }
+
+    // Make sure mostRecentUserInteractionTime is the least recent of all entries.
+    daysAgoInSeconds -= Seconds::fromHours(24).value();
+
+    auto statistic = ResourceLoadStatistics(domain);
+    statistic.lastSeen = WallTime::fromRawSeconds(daysAgoInSeconds);
+    statistic.hadUserInteraction = hasUserInteraction;
+    statistic.mostRecentUserInteractionTime = WallTime::fromRawSeconds(daysAgoInSeconds);
+    statistic.isPrevalentResource = isPrevalent;
+    statistic.gotLinkDecorationFromPrevalentResource = isScheduledForAllButCookieDataRemoval;
+
+    Vector<ResourceLoadStatistics> statistics;
+    statistics.append(WTFMove(statistic));
+
+    mergeStatistics(WTFMove(statistics));
+}
+
 } // namespace WebKit
 
 #endif

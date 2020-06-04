@@ -908,6 +908,14 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoa
     return isRemovalEnabled && !isResourceGrandfathered && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, window);
 }
 
+Optional<WallTime> ResourceLoadStatisticsMemoryStore::mostRecentUserInteractionTime(const ResourceLoadStatistics& statistic)
+{
+    if (statistic.mostRecentUserInteractionTime.secondsSinceEpoch().value() <= 0)
+        return WTF::nullopt;
+
+    return statistic.mostRecentUserInteractionTime;
+}
+
 Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
@@ -922,7 +930,8 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
     auto oldestUserInteraction = now;
     Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        oldestUserInteraction = std::min(oldestUserInteraction, statistic.mostRecentUserInteractionTime);
+        if (auto mostRecentUserInteractionTime = this->mostRecentUserInteractionTime(statistic))
+            oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
             domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::All));
         else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
@@ -935,7 +944,7 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
     }
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
-    if (!parameters().isRunningTest && now - oldestUserInteraction > parameters().minimumTimeBetweenDataRecordsRemoval) {
+    if (!parameters().isRunningTest && now - oldestUserInteraction < parameters().minimumTimeBetweenDataRecordsRemoval) {
         domainsToRemoveWebsiteDataFor.removeAllMatching([&] (auto& pair) {
             return pair.second == WebsiteDataToRemove::AllButCookies;
         });

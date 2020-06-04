@@ -58,17 +58,21 @@ public:
     static OperatingDate fromWallTime(WallTime);
     static OperatingDate today();
     Seconds secondsSinceEpoch() const;
+    int year() { return m_year; }
+    int month() { return m_month; }
+    int monthDay() { return m_monthDay; }
+
     bool operator==(const OperatingDate& other) const;
     bool operator<(const OperatingDate& other) const;
     bool operator<=(const OperatingDate& other) const;
     
-private:
     OperatingDate(int year, int month, int monthDay)
         : m_year(year)
         , m_month(month)
         , m_monthDay(monthDay)
     { }
 
+private:
     int m_year { 0 };
     int m_month { 0 }; // [0, 11].
     int m_monthDay { 0 }; // [1, 31].
@@ -188,6 +192,7 @@ public:
 
     virtual bool isMemoryStore() const { return false; }
     virtual bool isDatabaseStore()const { return false; }
+    void insertExpiredStatisticForTesting(const RegistrableDomain&, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool);
 
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);
