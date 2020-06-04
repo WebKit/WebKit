@@ -1,5 +1,56 @@
 2020-06-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r261246. rdar://problem/63951358
+
+    pointermove event sometimes has incorrect pointerType of 'mouse' on touch interactions
+    https://bugs.webkit.org/show_bug.cgi?id=210716
+    <rdar://problem/62084817>
+    
+    Patch by Antoine Quint <graouts@apple.com> on 2020-05-06
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    Set the SyntheticClickType to OneFingerTap when creating a synthetic "mousemove" event for a synthetic "click" event as part of a tap.
+    On top of being more indicative of the actual action that triggered the synthetic event, it also has the added quality that it will
+    not yield a "pointermove" event.
+    
+    Test: pointerevents/ios/click-no-pointermove.html
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::dispatchSyntheticMouseMove):
+    
+    LayoutTests:
+    
+    Add a new test that checks that with content observation enabled a tap on a <button> element
+    dispatches synthetic mousemove and click events but no pointermove event.
+    
+    * pointerevents/ios/click-no-pointermove-expected.txt: Added.
+    * pointerevents/ios/click-no-pointermove.html: Added.
+    * pointerevents/utils.js:
+    (target_test):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@261246 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-06  Antoine Quint  <graouts@apple.com>
+
+            pointermove event sometimes has incorrect pointerType of 'mouse' on touch interactions
+            https://bugs.webkit.org/show_bug.cgi?id=210716
+            <rdar://problem/62084817>
+
+            Reviewed by Darin Adler.
+
+            Set the SyntheticClickType to OneFingerTap when creating a synthetic "mousemove" event for a synthetic "click" event as part of a tap.
+            On top of being more indicative of the actual action that triggered the synthetic event, it also has the added quality that it will
+            not yield a "pointermove" event.
+
+            Test: pointerevents/ios/click-no-pointermove.html
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::dispatchSyntheticMouseMove):
+
+2020-06-04  Alan Coon  <alancoon@apple.com>
+
         Revert r258924. rdar://problem/63902456
 
 2020-05-19  Russell Epstein  <repstein@apple.com>

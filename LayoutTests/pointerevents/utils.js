@@ -12,6 +12,7 @@ function target_test(...args)
     let continutation = args[impliedOptions ? 0 : 1];
     let description = args[impliedOptions ? 1 : 2];
 
+    options.name = options.name || "div";
     options.x = options.x || 0;
     options.y = options.y || 0;
     options.width = options.width || "100%";
@@ -24,7 +25,7 @@ function target_test(...args)
 
 function makeTarget(test, options)
 {
-    const target = document.body.appendChild(document.createElement("div"));
+    const target = document.body.appendChild(document.createElement(options.name));
     target.setAttribute("style", `
         position: absolute;
         left: ${options.x};
