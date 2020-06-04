@@ -1,0 +1,6 @@
+2d.imageData.object.ctor.array.bounds
+ImageData has a usable constructor
+Actual output:
+
+PASS ImageData has a usable constructor 
+

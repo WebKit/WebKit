@@ -1,0 +1,8 @@
+2d.shadow.alpha.2
+Shadow colour alpha components are used
+Actual output:
+Expected output:
+
+
+PASS Shadow colour alpha components are used 
+

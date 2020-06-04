@@ -1,0 +1,8 @@
+2d.path.arcTo.collinear.3
+arcTo() with all points on a line, and P0 between P1/P2, draws a straight line to P1
+Actual output:
+Expected output:
+
+
+PASS arcTo() with all points on a line, and P0 between P1/P2, draws a straight line to P1 
+

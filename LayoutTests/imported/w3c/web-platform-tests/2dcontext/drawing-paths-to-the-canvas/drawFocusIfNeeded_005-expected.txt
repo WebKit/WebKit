@@ -1,0 +1,11 @@
+Description
+
+This test uses drawFocusIfNeeded to draw a complex path focus then compare ImageData from before and after.
+
+Before:
+
+After:
+
+
+PASS drawFocusIfNeeded does draw a focus ring if the element is in focus and the user activated a particular focus ring. 
+

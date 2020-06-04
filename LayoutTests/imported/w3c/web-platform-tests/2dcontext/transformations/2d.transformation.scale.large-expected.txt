@@ -1,0 +1,9 @@
+2d.transformation.scale.large
+scale() with large scale factors works
+Not really that large at all, but it hits the limits in Firefox.
+Actual output:
+Expected output:
+
+
+PASS scale() with large scale factors works 
+

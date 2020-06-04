@@ -1,0 +1,8 @@
+2d.line.miter.acute
+Miter joins are drawn correctly with acute angles
+Actual output:
+Expected output:
+
+
+PASS Miter joins are drawn correctly with acute angles 
+

@@ -1,0 +1,5 @@
+
+FAIL BroadcastChannel'ing a tainted ImageBitmap to a COOP+COEP popup Can't find variable: BroadcastChannel
+FAIL Messaging a tainted ImageBitMap via serialize/deserialize to a COEP shared worker Can't find variable: SharedWorker
+FAIL Messaging a tainted ImageBitMap via transfer to a COEP shared worker Can't find variable: SharedWorker
+

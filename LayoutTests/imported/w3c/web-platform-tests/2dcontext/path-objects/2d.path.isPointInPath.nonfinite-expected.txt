@@ -1,0 +1,6 @@
+2d.path.isPointInPath.nonfinite
+isPointInPath() returns false for non-finite arguments
+Actual output:
+
+PASS isPointInPath() returns false for non-finite arguments 
+

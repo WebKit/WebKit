@@ -1,0 +1,8 @@
+2d.drawImage.9arg.destsize
+Actual output:
+Expected output:
+
+ 
+
+PASS Canvas test: 2d.drawImage.9arg.destsize 
+

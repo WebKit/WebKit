@@ -1,0 +1,8 @@
+2d.path.quadraticCurveTo.nonfinite
+quadraticCurveTo() with Infinity/NaN is ignored
+Actual output:
+Expected output:
+
+
+PASS quadraticCurveTo() with Infinity/NaN is ignored 
+

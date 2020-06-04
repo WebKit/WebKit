@@ -1,0 +1,6 @@
+2d.line.miter.valid
+Setting miterLimit to valid values works
+Actual output:
+
+PASS Setting miterLimit to valid values works 
+

@@ -1,0 +1,6 @@
+2d.path.isPointInPath.bezier
+isPointInPath() works on Bezier curves
+Actual output:
+
+PASS isPointInPath() works on Bezier curves 
+

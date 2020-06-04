@@ -1,0 +1,8 @@
+2d.clearRect.path
+clearRect does not affect the current path
+Actual output:
+Expected output:
+
+
+PASS clearRect does not affect the current path 
+

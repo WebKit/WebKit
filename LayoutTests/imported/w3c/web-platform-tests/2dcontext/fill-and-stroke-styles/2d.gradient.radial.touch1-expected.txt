@@ -1,0 +1,7 @@
+2d.gradient.radial.touch1
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.gradient.radial.touch1 
+

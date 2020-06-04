@@ -1,0 +1,8 @@
+2d.path.moveTo.nonfinite
+moveTo() with Infinity/NaN is ignored
+Actual output:
+Expected output:
+
+
+PASS moveTo() with Infinity/NaN is ignored 
+

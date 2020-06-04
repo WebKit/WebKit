@@ -1,0 +1,8 @@
+2d.imageData.put.dirty.outside
+putImageData() handles dirty rectangles outside the canvas correctly
+Actual output:
+Expected output:
+
+
+PASS putImageData() handles dirty rectangles outside the canvas correctly 
+

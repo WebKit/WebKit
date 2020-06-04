@@ -1,0 +1,6 @@
+2d.imageData.get.order.cols
+getImageData() returns leftmost columns first
+Actual output:
+
+PASS getImageData() returns leftmost columns first 
+

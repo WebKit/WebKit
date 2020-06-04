@@ -1,0 +1,7 @@
+2d.pattern.paint.repeaty.outside
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.pattern.paint.repeaty.outside 
+

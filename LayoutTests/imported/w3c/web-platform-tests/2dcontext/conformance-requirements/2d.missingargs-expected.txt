@@ -1,0 +1,6 @@
+2d.missingargs
+Missing arguments cause TypeError
+Actual output:
+
+PASS Missing arguments cause TypeError 
+

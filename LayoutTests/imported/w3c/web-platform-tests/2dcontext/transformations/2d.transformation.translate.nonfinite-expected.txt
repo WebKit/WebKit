@@ -1,0 +1,8 @@
+2d.transformation.translate.nonfinite
+translate() with Infinity/NaN is ignored
+Actual output:
+Expected output:
+
+
+PASS translate() with Infinity/NaN is ignored 
+

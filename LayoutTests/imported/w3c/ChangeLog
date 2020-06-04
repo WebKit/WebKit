@@ -1,3 +1,21 @@
+2020-06-04  Jacob Uphoff  <jacob_uphoff@apple.com>
+
+        Unreviewed, reverting r262527 and r262531.
+
+        The commit 262527 caused over 100 web platform tests to fail
+        and 262531 edited the file after
+
+        Reverted changesets:
+
+        "Resync web-platform-tests/2dcontext from upstream"
+        https://bugs.webkit.org/show_bug.cgi?id=212639
+        https://trac.webkit.org/changeset/262527
+
+        "[GTK][WPE] Gardening, temporarily disable offscreen-canvas
+        tests"
+        https://bugs.webkit.org/show_bug.cgi?id=212738
+        https://trac.webkit.org/changeset/262531
+
 2020-06-02  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/2dcontext from upstream

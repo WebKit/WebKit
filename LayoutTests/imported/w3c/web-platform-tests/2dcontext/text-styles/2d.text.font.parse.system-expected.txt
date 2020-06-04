@@ -1,0 +1,6 @@
+2d.text.font.parse.system
+System fonts must be computed to explicit values
+Actual output:
+
+PASS System fonts must be computed to explicit values 
+

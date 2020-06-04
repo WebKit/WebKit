@@ -1,0 +1,7 @@
+2d.gradient.radial.nonfinite
+createRadialGradient() throws TypeError if arguments are not finite
+Defined in "Web IDL" (draft)
+Actual output:
+
+PASS createRadialGradient() throws TypeError if arguments are not finite 
+

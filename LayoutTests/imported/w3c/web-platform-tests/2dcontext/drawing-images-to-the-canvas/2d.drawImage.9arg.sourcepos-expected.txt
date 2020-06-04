@@ -1,0 +1,7 @@
+2d.drawImage.9arg.sourcepos
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.drawImage.9arg.sourcepos 
+

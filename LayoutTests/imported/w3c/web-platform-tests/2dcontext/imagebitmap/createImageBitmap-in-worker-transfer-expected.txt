@@ -1,0 +1,3 @@
+
+PASS Transfer ImageBitmap created in worker 
+

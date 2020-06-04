@@ -1,0 +1,7 @@
+2d.path.moveTo.basic
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.path.moveTo.basic 
+

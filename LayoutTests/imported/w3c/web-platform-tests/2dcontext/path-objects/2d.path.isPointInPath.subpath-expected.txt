@@ -1,0 +1,6 @@
+2d.path.isPointInPath.subpath
+isPointInPath() uses the current path, not just the subpath
+Actual output:
+
+PASS isPointInPath() uses the current path, not just the subpath 
+

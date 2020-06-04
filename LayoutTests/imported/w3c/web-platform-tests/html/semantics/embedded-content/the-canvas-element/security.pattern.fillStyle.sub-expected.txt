@@ -1,16 +1,18 @@
-CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+Blocked access to external URL http://www1.localhost:8800/media/movie_300.mp4
+Blocked access to external URL http://www1.localhost:8800/media/movie_300.mp4
+Blocked access to external URL http://www1.localhost:8800/common/redirect.py?location=http://localhost:8800/media/movie_300.mp4
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+Blocked access to external URL http://www1.localhost:8800/images/red.png
 Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean
 
 
-PASS cross-origin HTMLImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-FAIL cross-origin SVGImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "TypeError: Type error"
-PASS cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-PASS redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-PASS redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-PASS unclean HTMLCanvasElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean 
-FAIL unclean ImageBitmap: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL cross-origin HTMLImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL cross-origin SVGImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL unclean HTMLCanvasElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL unclean ImageBitmap: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "[object Event]"
 

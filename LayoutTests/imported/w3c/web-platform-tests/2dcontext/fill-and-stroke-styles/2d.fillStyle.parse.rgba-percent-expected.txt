@@ -1,0 +1,7 @@
+2d.fillStyle.parse.rgba-percent
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.fillStyle.parse.rgba-percent 
+

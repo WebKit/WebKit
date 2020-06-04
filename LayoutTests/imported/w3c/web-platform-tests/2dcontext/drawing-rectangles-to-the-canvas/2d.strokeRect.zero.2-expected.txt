@@ -1,0 +1,8 @@
+2d.strokeRect.zero.2
+strokeRect of 0x0 pixels draws nothing, including caps and joins
+Actual output:
+Expected output:
+
+
+PASS strokeRect of 0x0 pixels draws nothing, including caps and joins 
+

@@ -1,0 +1,6 @@
+2d.imageData.get.order.alpha
+getImageData() returns A in the fourth component
+Actual output:
+
+PASS getImageData() returns A in the fourth component 
+

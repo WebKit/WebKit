@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: TypeError: testCanvas.convertToBlob is not a function. (In 'testCanvas.convertToBlob(encodeOptions)', 'testCanvas.convertToBlob' is undefined)
+
+Harness Error (FAIL), message = TypeError: testCanvas.convertToBlob is not a function. (In 'testCanvas.convertToBlob(encodeOptions)', 'testCanvas.convertToBlob' is undefined)
+
+FAIL createImageBitmap in e-sRGB from an opaque sRGB HTMLImageElement (BMP, GIF, ICO, JPG, PNG, WEBP) with resize. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL createImageBitmap in e-sRGB from a transparent sRGB HTMLImageElement (BMP, ICO, PNG, WEBP) with resize. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL createImageBitmap in e-sRGB from a sRGB SVG image with resize. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+TIMEOUT createImageBitmap in e-sRGB from a sRGB HTMLVideoElement with resize. Test timed out
+NOTRUN createImageBitmap in e-sRGB from an opaque sRGB HTMLCanvasElement with resize. 
+NOTRUN createImageBitmap in e-sRGB from an opaque e-sRGB HTMLCanvasElement with resize. 
+NOTRUN createImageBitmap in e-sRGB from a transparent sRGB HTMLCanvasElement with resize. 
+NOTRUN createImageBitmap in e-sRGB from a transparent e-sRGB HTMLCanvasElement with resize. 
+NOTRUN createImageBitmap in e-sRGB from an opaque sRGB Blob with resize. 
+NOTRUN createImageBitmap in e-sRGB from a transparent sRGB Blob with resize. 
+NOTRUN createImageBitmap in e-sRGB from color managed Blob with resize. blobPixelFormat: uint8, transparency: false 
+

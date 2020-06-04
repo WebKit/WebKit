@@ -1,0 +1,6 @@
+2d.imageData.get.source.outside
+getImageData() returns transparent black outside the canvas
+Actual output:
+
+PASS getImageData() returns transparent black outside the canvas 
+

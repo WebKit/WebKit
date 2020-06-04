@@ -1,0 +1,8 @@
+2d.strokeRect.globalalpha
+strokeRect is affected by globalAlpha
+Actual output:
+Expected output:
+
+
+PASS strokeRect is affected by globalAlpha 
+

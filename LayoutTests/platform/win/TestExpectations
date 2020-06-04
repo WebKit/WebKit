@@ -4369,6 +4369,8 @@ webkit.org/b/220830 fast/text/emoji-variation-selector.html [ ImageOnlyFailure ]
 
 webkit.org/b/201491 fast/block/float/float-with-anonymous-previous-sibling.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+
 webkit.org/b/202938 fast/images/reset-image-animation.html [ Failure Pass ]
 
 webkit.org/b/202939 fast/workers/worker-exception-during-navigation.html [ Failure Pass ]

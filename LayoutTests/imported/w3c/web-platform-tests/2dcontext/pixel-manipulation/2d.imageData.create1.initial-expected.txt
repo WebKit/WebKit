@@ -1,0 +1,6 @@
+2d.imageData.create1.initial
+createImageData(imgdata) returns transparent black data of the right size
+Actual output:
+
+PASS createImageData(imgdata) returns transparent black data of the right size 
+

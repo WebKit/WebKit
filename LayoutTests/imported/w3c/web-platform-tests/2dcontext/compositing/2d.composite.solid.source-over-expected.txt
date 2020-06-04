@@ -1,0 +1,7 @@
+2d.composite.solid.source-over
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.composite.solid.source-over 
+

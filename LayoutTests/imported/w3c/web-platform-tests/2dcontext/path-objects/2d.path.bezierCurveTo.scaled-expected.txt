@@ -1,0 +1,7 @@
+2d.path.bezierCurveTo.scaled
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.path.bezierCurveTo.scaled 
+

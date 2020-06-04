@@ -1,0 +1,8 @@
+2d.text.draw.align.end.ltr
+textAlign end with ltr is the right edge
+Actual output:
+Expected output:
+
+
+PASS textAlign end with ltr is the right edge 
+

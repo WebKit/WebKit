@@ -1,0 +1,6 @@
+2d.state.saverestore.shadowOffsetY
+save()/restore() works for shadowOffsetY
+Actual output:
+
+PASS save()/restore() works for shadowOffsetY 
+

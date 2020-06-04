@@ -1,0 +1,8 @@
+2d.text.draw.fill.maxWidth.NaN
+fillText handles maxWidth correctly
+Actual output:
+Expected output:
+
+
+PASS fillText handles maxWidth correctly 
+

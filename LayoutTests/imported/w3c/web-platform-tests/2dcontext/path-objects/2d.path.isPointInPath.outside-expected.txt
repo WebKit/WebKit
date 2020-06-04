@@ -1,0 +1,6 @@
+2d.path.isPointInPath.outside
+isPointInPath() works on paths outside the canvas
+Actual output:
+
+PASS isPointInPath() works on paths outside the canvas 
+

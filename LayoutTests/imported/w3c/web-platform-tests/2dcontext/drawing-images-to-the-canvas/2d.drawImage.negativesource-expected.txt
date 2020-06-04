@@ -1,0 +1,8 @@
+2d.drawImage.negativesource
+Negative source width/height represents the correct rectangle
+Actual output:
+Expected output:
+
+
+PASS Negative source width/height represents the correct rectangle 
+

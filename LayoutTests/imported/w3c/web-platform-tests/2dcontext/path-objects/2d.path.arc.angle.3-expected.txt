@@ -1,0 +1,8 @@
+2d.path.arc.angle.3
+arc() wraps angles mod 2pi when anticlockwise and end > start+2pi
+Actual output:
+Expected output:
+
+
+PASS arc() wraps angles mod 2pi when anticlockwise and end > start+2pi 
+

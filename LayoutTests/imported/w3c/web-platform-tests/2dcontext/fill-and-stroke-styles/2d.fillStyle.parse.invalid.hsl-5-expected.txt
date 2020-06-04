@@ -1,0 +1,7 @@
+2d.fillStyle.parse.invalid.hsl-5
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.fillStyle.parse.invalid.hsl-5 
+

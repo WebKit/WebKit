@@ -1,0 +1,6 @@
+
+FAIL Test default context creation attributes ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
+FAIL Test context creation attributes alpha: true ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
+FAIL Test context creation attributes alpha: false ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
+FAIL Test context creation attributes desynchronized: false ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
+

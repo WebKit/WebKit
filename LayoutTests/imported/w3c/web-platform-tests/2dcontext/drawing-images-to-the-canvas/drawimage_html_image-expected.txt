@@ -1,0 +1,143 @@
+
+PASS Draw 100x100 image to 100x100 canvas at 0,0. 
+PASS Test scenario 1: dx = 0, dy = 0 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 1: dx = 0, dy = 0 --- Pixel 0,99 should be light purple. 
+PASS Test scenario 1: dx = 0, dy = 0 --- Pixel 99,0 should be light purple. 
+PASS Test scenario 1: dx = 0, dy = 0 --- Pixel 99,99 should be light purple. 
+PASS Test scenario 1: dx = 0, dy = 0 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 25,25 should be light purple. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 25,99 should be light purple. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 99,25 should be light purple. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 99,99 should be light purple. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 0,0 should be red. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 24,24 should be red. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 0,25 should be red. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 25,0 should be red. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 0,99 should be red. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel 99,0 should be red. 
+PASS Test scenario 2: dx = 25, dy = 25 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 50,50 should be light purple. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 99,99 should be light purple. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 50,99 should be gray. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 99,50 should be gray. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 0,0 should be red. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 49,49 should be red. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 0,50 should be red. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 50,0 should be red. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 0,99 should be red. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel 99,0 should be red. 
+PASS Test scenario 3: dx = 50, dy = 50, dw = 50, dh = 50 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 50,50 should be light purple. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 65,65 should be light purple. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 50,65 should be gray. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 65,50 should be gray. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 0,0 should be red. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 49,49 should be red. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 49,66 should be red. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 66,49 should be red. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 66,66 should be red. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel 99,99 should be red. 
+PASS Test scenario 4: dx = 50, dy = 50, dw = 16, dh = 16 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 50,50 should be light purple. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 99,81 should be light purple. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 50,81 should be gray. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 99,50 should be gray. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 0,0 should be red. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 49,49 should be red. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 49,82 should be red. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 99,49 should be red. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 99,82 should be red. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel 99,99 should be red. 
+PASS Test scenario 5: dx = 50, dy = 50, dw = 64, dh = 32 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 0,31 should be light purple. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 31,0 should be light purple. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 31,31 should be light purple. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 0,32 should be red. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 32,0 should be red. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 32,32 should be red. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 99,99 should be red. 
+PASS Test scenario 6: sx = 0, sy = 0, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 32,32 should be light purple. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 32,63 should be light purple. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 63,32 should be light purple. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 63,63 should be light purple. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 0,0 should be red. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 31,31 should be red. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 31,64 should be red. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 64,31 should be red. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 64,64 should be red. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel 99,99 should be red. 
+PASS Test scenario 7: sx = 0, sy = 0, sw = 32, sh = 32, dx = 32, dy = 32, dw = 32, dh = 32 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 0,31 should be light purple. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 31,0 should be light purple. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 31,31 should be light purple. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 0,32 should be red. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 32,0 should be red. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 32,32 should be red. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel 99,99 should be red. 
+PASS Test scenario 8: sx = 32, sy = 32, sw = 32, sh = 32, dx = 0, dy = 0, dw = 32, dh = 32 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 0,31 should be light purple. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 31,0 should be light purple. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 31,31 should be light purple. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 0,32 should be red. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 32,0 should be red. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 32,32 should be red. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel 99,99 should be red. 
+PASS Test scenario 9: sx = 32, sy = 32, sw = 32, sh = 32, dx = 32, dy = 32, dw = -32, dh = -32 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 10: sx = 0, sy = 0, sw = 512, sh = 512, dx = 0, dy = 0, dw = 256, dh = 256 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 10: sx = 0, sy = 0, sw = 512, sh = 512, dx = 0, dy = 0, dw = 256, dh = 256 --- Pixel 0,99 should be light purple. 
+PASS Test scenario 10: sx = 0, sy = 0, sw = 512, sh = 512, dx = 0, dy = 0, dw = 256, dh = 256 --- Pixel 99,0 should be light purple. 
+PASS Test scenario 10: sx = 0, sy = 0, sw = 512, sh = 512, dx = 0, dy = 0, dw = 256, dh = 256 --- Pixel 99,99 should be light purple. 
+PASS Test scenario 10: sx = 0, sy = 0, sw = 512, sh = 512, dx = 0, dy = 0, dw = 256, dh = 256 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw = 800, dh = 800 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw = 800, dh = 800 --- Pixel 0,99 should be light purple. 
+PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw = 800, dh = 800 --- Pixel 99,0 should be light purple. 
+PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw = 800, dh = 800 --- Pixel 99,99 should be light purple. 
+PASS Test scenario 11: sx = 0, sy = 0, sw = 2048, sh = 2048, dx = 0, dy = 0, dw = 800, dh = 800 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,70 should be light purple. 
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 70,99 should be light purple. assert_array_equals: expected property 0 to be 253 but got 255 (expected array [253, 140, 245, 255] got object "255,0,0,255")
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,70 should be light purple. assert_array_equals: expected property 0 to be 253 but got 255 (expected array [253, 140, 245, 255] got object "255,0,0,255")
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,99 should be light purple. assert_array_equals: expected property 0 to be 253 but got 255 (expected array [253, 140, 245, 255] got object "255,0,0,255")
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 0,0 should be red. 
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 0,99 should be red. 
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,0 should be red. 
+FAIL Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 69,69 should be red. assert_array_equals: expected property 0 to be 255 but got 253 (expected array [255, 0, 0, 255] got object "253,140,245,255")
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 69,99 should be red. 
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel 99,69 should be red. 
+PASS Test scenario 12: sx = -20, sy = -20, sw = 50, sh = 50, dx = 20, dy = 20, dw = 125, dh = 125 --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 13: draw an image element that does not have a source --- Pixel 0,0 should be red. 
+PASS Test scenario 13: draw an image element that does not have a source --- Pixel 0,99 should be red. 
+PASS Test scenario 13: draw an image element that does not have a source --- Pixel 99,0 should be red. 
+PASS Test scenario 13: draw an image element that does not have a source --- Pixel 99,69 should be red. 
+PASS Test scenario 13: draw an image element that does not have a source --- Pixel outside canvas should be transparent black.
+ 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 0,0 should be light purple. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 15,31 should be light purple. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 17,33 should be light purple. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 31,63 should be light purple. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 16,0 should be gray. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 31,31 should be gray. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 0,33 should be gray. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 15,63 should be gray. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 0,64 should be red. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 32,0 should be red. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 32,64 should be red. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel 99,99 should be red. 
+PASS Test scenario 14: sx = 64, sy = 64, sw = 384, sh = 384, dx = 0, dy = 0, dw = 32, dh = 64 --- Pixel outside canvas should be transparent black.
+ 
+

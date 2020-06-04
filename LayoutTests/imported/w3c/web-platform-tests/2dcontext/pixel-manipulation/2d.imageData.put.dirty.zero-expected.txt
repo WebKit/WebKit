@@ -1,0 +1,8 @@
+2d.imageData.put.dirty.zero
+putImageData() with zero-sized dirty rectangle puts nothing
+Actual output:
+Expected output:
+
+
+PASS putImageData() with zero-sized dirty rectangle puts nothing 
+

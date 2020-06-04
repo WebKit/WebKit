@@ -1,0 +1,8 @@
+2d.shadow.stroke.basic
+Shadows are drawn for strokes
+Actual output:
+Expected output:
+
+
+PASS Shadows are drawn for strokes 
+

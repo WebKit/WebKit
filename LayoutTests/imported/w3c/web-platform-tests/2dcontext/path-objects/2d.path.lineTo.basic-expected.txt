@@ -1,0 +1,7 @@
+2d.path.lineTo.basic
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.path.lineTo.basic 
+

@@ -1,0 +1,8 @@
+2d.path.stroke.prune.corner
+Zero-length line segments are removed before stroking with miters
+Actual output:
+Expected output:
+
+
+PASS Zero-length line segments are removed before stroking with miters 
+

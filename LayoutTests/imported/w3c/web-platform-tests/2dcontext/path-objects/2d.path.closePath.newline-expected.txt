@@ -1,0 +1,7 @@
+2d.path.closePath.newline
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.path.closePath.newline 
+

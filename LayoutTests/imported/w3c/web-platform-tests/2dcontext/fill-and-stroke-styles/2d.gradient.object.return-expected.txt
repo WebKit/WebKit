@@ -1,0 +1,6 @@
+2d.gradient.object.return
+createLinearGradient() and createRadialGradient() returns objects implementing CanvasGradient
+Actual output:
+
+PASS createLinearGradient() and createRadialGradient() returns objects implementing CanvasGradient 
+

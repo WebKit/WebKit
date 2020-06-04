@@ -1,0 +1,24 @@
+
+PASS createImageBitmap from an HTMLCanvasElement imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an HTMLCanvasElement imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+PASS createImageBitmap from an HTMLVideoElement imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an HTMLVideoElement imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 1
+PASS createImageBitmap from an HTMLVideoElement from a data URL imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an HTMLVideoElement from a data URL imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 1
+PASS createImageBitmap from a bitmap HTMLImageElement imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from a bitmap HTMLImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+PASS createImageBitmap from a vector HTMLImageElement imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from a vector HTMLImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+FAIL createImageBitmap from a bitmap SVGImageElement imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL createImageBitmap from a bitmap SVGImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL createImageBitmap from a vector SVGImageElement imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL createImageBitmap from a vector SVGImageElement imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS createImageBitmap from an OffscreenCanvas imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an OffscreenCanvas imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+FAIL createImageBitmap from an ImageData imageOrientation: "none", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+FAIL createImageBitmap from an ImageData imageOrientation: "flipY", and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+PASS createImageBitmap from an ImageBitmap imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an ImageBitmap imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+PASS createImageBitmap from a Blob imageOrientation: "none", and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from a Blob imageOrientation: "flipY", and drawImage on the created ImageBitmap assert_approx_equals: Red channel of the pixel at (5, 15) expected 255 +/- 10 but got 0
+

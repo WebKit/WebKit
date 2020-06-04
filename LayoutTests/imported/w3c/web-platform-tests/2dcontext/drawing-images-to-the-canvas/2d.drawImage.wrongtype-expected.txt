@@ -1,0 +1,7 @@
+2d.drawImage.wrongtype
+Incorrect image types in drawImage do not match any defined overloads, so WebIDL throws a TypeError
+Defined in "Web IDL" (draft)
+Actual output:
+
+PASS Incorrect image types in drawImage do not match any defined overloads, so WebIDL throws a TypeError 
+

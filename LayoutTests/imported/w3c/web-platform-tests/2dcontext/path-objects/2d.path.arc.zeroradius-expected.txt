@@ -1,0 +1,8 @@
+2d.path.arc.zeroradius
+arc() with zero radius draws a line to the start point
+Actual output:
+Expected output:
+
+
+PASS arc() with zero radius draws a line to the start point 
+

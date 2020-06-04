@@ -1,0 +1,8 @@
+2d.composite.uncovered.fill.copy
+fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged.
+Actual output:
+Expected output:
+
+
+PASS fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged. 
+

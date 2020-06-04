@@ -1,0 +1,8 @@
+2d.path.bezierCurveTo.ensuresubpath.2
+If there is no subpath, the first control point is added
+Actual output:
+Expected output:
+
+
+PASS If there is no subpath, the first control point is added 
+

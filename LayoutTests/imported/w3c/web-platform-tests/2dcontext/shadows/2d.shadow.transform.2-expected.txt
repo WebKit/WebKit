@@ -1,0 +1,8 @@
+2d.shadow.transform.2
+Shadow offsets are not affected by transformations
+Actual output:
+Expected output:
+
+
+PASS Shadow offsets are not affected by transformations 
+
