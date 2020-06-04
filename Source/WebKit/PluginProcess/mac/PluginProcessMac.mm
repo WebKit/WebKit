@@ -395,7 +395,7 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
     // Disable Dark Mode in the plugin process to avoid rendering issues.
     [NSApp setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
 
-#if HAVE(APP_SSO)
+#if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     [NSURLSession _disableAppSSO];
 #endif
 }

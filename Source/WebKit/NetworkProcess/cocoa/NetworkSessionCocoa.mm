@@ -1169,7 +1169,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
 
-#if HAVE(APP_SSO)
+#if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     configuration._preventsAppSSO = true;
 #endif
 

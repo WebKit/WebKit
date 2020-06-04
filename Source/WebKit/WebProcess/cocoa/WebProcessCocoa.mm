@@ -533,7 +533,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     registerWithStateDumper();
 #endif
 
-#if HAVE(APP_SSO)
+#if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     [NSURLSession _disableAppSSO];
 #endif
 
