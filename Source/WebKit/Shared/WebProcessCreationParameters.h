@@ -203,7 +203,6 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::HandleArray diagnosticsExtensionHandles;
-    Optional<SandboxExtension::Handle> runningboardExtensionHandle;
     SandboxExtension::HandleArray dynamicMachExtensionHandles;
     SandboxExtension::HandleArray dynamicIOKitExtensionHandles;
 #endif

@@ -322,14 +322,10 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
         return @"UnboundedNetworking";
     case ProcessAssertionType::Foreground:
         return @"Foreground";
-    case ProcessAssertionType::DependentProcessLink:
-        return @"DependentProcessLink";
     case ProcessAssertionType::MediaPlayback:
         return @"MediaPlayback";
     }
 #else
-    if (assertionType == ProcessAssertionType::DependentProcessLink)
-        return @"DependentProcessLink";
     return nil;
 #endif
 }
@@ -351,9 +347,6 @@ static BKSProcessAssertionFlags flagsForAssertionType(ProcessAssertionType asser
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
         return foregroundTabFlags;
-    case ProcessAssertionType::DependentProcessLink:
-        ASSERT_NOT_REACHED();
-        return backgroundTabFlags;
     }
 }
 
@@ -368,9 +361,6 @@ static BKSProcessAssertionReason toBKSProcessAssertionReason(ProcessAssertionTyp
         return BKSProcessAssertionReasonFinishTaskUnbounded;
     case ProcessAssertionType::MediaPlayback:
         return BKSProcessAssertionReasonMediaPlayback;
-    case ProcessAssertionType::DependentProcessLink:
-        ASSERT_NOT_REACHED();
-        return BKSProcessAssertionReasonExtension;
     }
 }
 

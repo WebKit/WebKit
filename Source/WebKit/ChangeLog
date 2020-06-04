@@ -1,3 +1,34 @@
+2020-06-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Drop DependentProcessLink ProcessAssertion as it creates power leaks
+        https://bugs.webkit.org/show_bug.cgi?id=212768
+        <rdar://problem/62408828>
+
+        Reviewed by Alex Christensen.
+
+        Drop DependentProcessLink ProcessAssertion since it creates a process assertion cycle between
+        the UIProcess and the WebContent process and leads to power leaks.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::assertionName const):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionType):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::runningBoardNameForAssertionType):
+        (WebKit::flagsForAssertionType):
+        (WebKit::toBKSProcessAssertionReason):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         Revise sandbox to support network stack telemetry without sandbox violation reports

@@ -403,10 +403,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (isInternalInstall())
         parameters.diagnosticsExtensionHandles = SandboxExtension::createHandlesForMachLookup(diagnosticServices(), WTF::nullopt, SandboxExtension::Flags::NoReport);
 
-    SandboxExtension::Handle runningboardExtensionHandle;
-    if (SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport))
-        parameters.runningboardExtensionHandle = WTFMove(runningboardExtensionHandle);
-
     if (WebCore::deviceHasAGXCompilerService())
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(agxCompilerClasses(), WTF::nullopt);
 #endif

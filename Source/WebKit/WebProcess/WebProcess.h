@@ -577,10 +577,6 @@ private:
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
-#if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<ProcessAssertion> m_uiProcessDependencyProcessAssertion;
-#endif
-
     bool m_suppressMemoryPressureHandler { false };
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;

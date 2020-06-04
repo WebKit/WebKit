@@ -112,7 +112,6 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
             return "Suspended"_s;
         case ProcessAssertionType::UnboundedNetworking:
         case ProcessAssertionType::MediaPlayback:
-        case ProcessAssertionType::DependentProcessLink:
             ASSERT_NOT_REACHED(); // These other assertion types are not used by the ProcessThrottler.
             break;
         }
