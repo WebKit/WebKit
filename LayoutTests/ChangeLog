@@ -1,5 +1,51 @@
 2020-06-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r262196. rdar://problem/63951363
+
+    Crash under WebNotificationManager::removeNotificationFromContextMap()
+    https://bugs.webkit.org/show_bug.cgi?id=212410
+    <rdar://63496726>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    Protect the notification object in WebNotificationManager::didDestroyNotification() since
+    removing it from m_notificationIDMap will deref it and may end up destroying the notification
+    object otherwise.
+    
+    Test: http/tests/notifications/crash-on-navigation.html
+    
+    * WebProcess/Notifications/WebNotificationManager.cpp:
+    (WebKit::WebNotificationManager::didDestroyNotification):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/tests/notifications/crash-on-navigation-expected.txt: Added.
+    * http/tests/notifications/crash-on-navigation.html: Added.
+    * http/tests/notifications/resources/crash-on-navigation-iframe.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262196 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-27  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebNotificationManager::removeNotificationFromContextMap()
+            https://bugs.webkit.org/show_bug.cgi?id=212410
+            <rdar://63496726>
+
+            Reviewed by Alex Christensen.
+
+            Add layout test coverage.
+
+            * http/tests/notifications/crash-on-navigation-expected.txt: Added.
+            * http/tests/notifications/crash-on-navigation.html: Added.
+            * http/tests/notifications/resources/crash-on-navigation-iframe.html: Added.
+
+2020-06-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r261246. rdar://problem/63951358
 
     pointermove event sometimes has incorrect pointerType of 'mouse' on touch interactions
