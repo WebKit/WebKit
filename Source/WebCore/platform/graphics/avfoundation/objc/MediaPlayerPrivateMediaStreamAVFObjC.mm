@@ -252,14 +252,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sam
 
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sample)
 {
-    if (!m_canEnqueueDisplayLayer)
-        return;
-
     auto locker = tryHoldLock(m_sampleBufferDisplayLayerLock);
     if (!locker)
         return;
 
-    if (!m_sampleBufferDisplayLayer || m_sampleBufferDisplayLayer->didFail())
+    if (!m_canEnqueueDisplayLayer || !m_sampleBufferDisplayLayer || m_sampleBufferDisplayLayer->didFail())
         return;
 
     if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
@@ -377,9 +374,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 {
-    m_canEnqueueDisplayLayer = false;
-
     auto locker = holdLock(m_sampleBufferDisplayLayerLock);
+
+    m_canEnqueueDisplayLayer = false;
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer = nullptr;
 

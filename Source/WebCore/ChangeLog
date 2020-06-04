@@ -1,3 +1,18 @@
+2020-06-04  Youenn Fablet  <youenn@apple.com>
+
+        Read MediaPlayerPrivateMediaStreamAVFObjC::m_canEnqueueDisplayLayer after the lock
+        https://bugs.webkit.org/show_bug.cgi?id=212693
+
+        Reviewed by Eric Carlson.
+
+        In case destroyLayers is called and shortly after ensureLayers is also called, the m_canEnqueueDisplayLayer check in enqueueVideoSample
+        might be bypassed. Make sure to lock before checking m_canEnqueueDisplayLayer in enqueueVideoSample.
+        For good measure, set m_canEnqueueDisplayLayer to false after locking in destroyLayers.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers):
+
 2020-06-03  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Validate index parameter in PlatformPasteboard
