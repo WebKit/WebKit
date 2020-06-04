@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+'use strict';
+
+if (window.internals)
+    internals.settings.setContentChangeObserverEnabled(true);
+
+target_test({ name: "button", width: "200px", height: "200px" }, async (target, test) => {
+    const eventTracker = new EventTracker(target, ["pointermove", "mousemove", "click"]);
+
+    // Tap and allow some time for the "click" event to be dispatched and for the double-tap
+    // delay to expire such that this test doesn't prevent the next test from receiving a tap.
+    await UIHelper.tapAt(100, 100);
+    await UIHelper.delayFor(100);
+
+    eventTracker.assertMatchesEvents([
+        { type: "mousemove" },
+        { type: "click" },
+    ]);
+    test.done();
+}, `Testing that a synthetic click event does not dispatch a pointermove event for the synthetic mousemove event.`);
+
+</script>
+</body>
+</html>
