@@ -1,8 +1,0 @@
-2d.transformation.scale.multiple
-Multiple scale()s combine
-Actual output:
-Expected output:
-
-
-PASS Multiple scale()s combine 
-

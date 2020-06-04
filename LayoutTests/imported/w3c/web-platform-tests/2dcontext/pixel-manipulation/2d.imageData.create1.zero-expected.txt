@@ -1,6 +1,0 @@
-2d.imageData.create1.zero
-createImageData(null) throws TypeError
-Actual output:
-
-PASS createImageData(null) throws TypeError 
-

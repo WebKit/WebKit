@@ -1,7 +1,0 @@
-2d.voidreturn
-void methods return undefined
-Defined in "Web IDL" (draft)
-Actual output:
-
-PASS void methods return undefined 
-

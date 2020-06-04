@@ -1,7 +1,0 @@
-2d.drawImage.composite
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.drawImage.composite 
-

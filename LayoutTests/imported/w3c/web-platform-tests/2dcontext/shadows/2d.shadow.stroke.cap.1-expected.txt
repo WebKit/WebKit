@@ -1,8 +1,0 @@
-2d.shadow.stroke.cap.1
-Shadows are not drawn for areas outside stroke caps
-Actual output:
-Expected output:
-
-
-PASS Shadows are not drawn for areas outside stroke caps 
-

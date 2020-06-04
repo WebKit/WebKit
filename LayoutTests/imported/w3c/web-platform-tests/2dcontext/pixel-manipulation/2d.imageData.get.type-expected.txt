@@ -1,6 +1,0 @@
-2d.imageData.get.type
-getImageData() returns an ImageData object containing a Uint8ClampedArray object
-Actual output:
-
-PASS getImageData() returns an ImageData object containing a Uint8ClampedArray object 
-

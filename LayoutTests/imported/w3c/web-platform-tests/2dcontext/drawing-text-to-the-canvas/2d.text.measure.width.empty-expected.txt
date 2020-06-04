@@ -1,6 +1,0 @@
-2d.text.measure.width.empty
-The empty string has zero width
-Actual output:
-
-PASS The empty string has zero width 
-

@@ -1,5 +1,0 @@
-2d.composite.operation.over
-Actual output:
-
-PASS Canvas test: 2d.composite.operation.over 
-

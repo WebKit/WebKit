@@ -1,3 +1,0 @@
-
-PASS Canvas should not be tainted after drawing SVG including <foreignObject> 
-

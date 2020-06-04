@@ -1,6 +1,0 @@
-2d.state.saverestore.textAlign
-save()/restore() works for textAlign
-Actual output:
-
-PASS save()/restore() works for textAlign 
-

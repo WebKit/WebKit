@@ -1,6 +1,0 @@
-2d.state.saverestore.lineJoin
-save()/restore() works for lineJoin
-Actual output:
-
-PASS save()/restore() works for lineJoin 
-

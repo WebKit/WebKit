@@ -1,6 +1,0 @@
-2d.state.saverestore.stackdepth
-save()/restore() stack depth is not unreasonably limited
-Actual output:
-
-PASS save()/restore() stack depth is not unreasonably limited 
-

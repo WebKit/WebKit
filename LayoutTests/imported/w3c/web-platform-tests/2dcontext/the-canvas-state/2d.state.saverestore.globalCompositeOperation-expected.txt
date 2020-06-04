@@ -1,6 +1,0 @@
-2d.state.saverestore.globalCompositeOperation
-save()/restore() works for globalCompositeOperation
-Actual output:
-
-PASS save()/restore() works for globalCompositeOperation 
-

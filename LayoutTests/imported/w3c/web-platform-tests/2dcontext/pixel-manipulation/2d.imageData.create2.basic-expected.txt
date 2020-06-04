@@ -1,6 +1,0 @@
-2d.imageData.create2.basic
-createImageData(sw, sh) exists and returns something
-Actual output:
-
-PASS createImageData(sw, sh) exists and returns something 
-

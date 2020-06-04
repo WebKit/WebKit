@@ -1,6 +1,0 @@
-2d.line.width.invalid
-Setting lineWidth to invalid values is ignored
-Actual output:
-
-PASS Setting lineWidth to invalid values is ignored 
-

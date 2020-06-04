@@ -1,8 +1,0 @@
-2d.line.join.round
-lineJoin 'round' is rendered correctly
-Actual output:
-Expected output:
-
-
-PASS lineJoin 'round' is rendered correctly 
-

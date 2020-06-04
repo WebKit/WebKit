@@ -1,5 +1,0 @@
-2d.gradient.object.invalidoffset
-Actual output:
-
-PASS Canvas test: 2d.gradient.object.invalidoffset 
-

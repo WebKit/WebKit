@@ -1,6 +1,0 @@
-2d.text.measure.width.space
-Space characters are converted to U+0020 and collapsed (per CSS)
-Actual output:
-
-FAIL Space characters are converted to U+0020 and collapsed (per CSS) assert_equals: ctx.measureText('A  B').width === 150 (got 200[number], expected 150[number]) expected 150 but got 200
-

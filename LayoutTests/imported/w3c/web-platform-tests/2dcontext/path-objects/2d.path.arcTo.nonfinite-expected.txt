@@ -1,8 +1,0 @@
-2d.path.arcTo.nonfinite
-arcTo() with Infinity/NaN is ignored
-Actual output:
-Expected output:
-
-
-PASS arcTo() with Infinity/NaN is ignored 
-

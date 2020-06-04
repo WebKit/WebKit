@@ -1,5 +1,0 @@
-2d.line.defaults
-Actual output:
-
-PASS Canvas test: 2d.line.defaults 
-

@@ -1,5 +1,0 @@
-2d.composite.globalAlpha.default
-Actual output:
-
-PASS Canvas test: 2d.composite.globalAlpha.default 
-

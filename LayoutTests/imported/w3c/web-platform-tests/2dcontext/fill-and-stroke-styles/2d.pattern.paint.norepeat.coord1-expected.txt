@@ -1,7 +1,0 @@
-2d.pattern.paint.norepeat.coord1
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.pattern.paint.norepeat.coord1 
-

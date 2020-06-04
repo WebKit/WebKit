@@ -1,8 +1,0 @@
-2d.imageData.put.cross
-putImageData() accepts image data got from a different canvas
-Actual output:
-Expected output:
-
-
-PASS putImageData() accepts image data got from a different canvas 
-

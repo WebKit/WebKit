@@ -1,8 +1,0 @@
-2d.fillStyle.parse.current.removed
-currentColor is solid black when the canvas element is not in a document
-Actual output:
-Expected output:
-
-
-PASS currentColor is solid black when the canvas element is not in a document 
-

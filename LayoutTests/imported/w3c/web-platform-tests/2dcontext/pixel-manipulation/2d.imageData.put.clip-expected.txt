@@ -1,8 +1,0 @@
-2d.imageData.put.clip
-putImageData() is not affected by clipping regions
-Actual output:
-Expected output:
-
-
-PASS putImageData() is not affected by clipping regions 
-

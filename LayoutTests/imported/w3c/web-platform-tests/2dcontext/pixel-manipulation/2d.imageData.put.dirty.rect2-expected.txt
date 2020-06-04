@@ -1,8 +1,0 @@
-2d.imageData.put.dirty.rect2
-putImageData() only modifies areas inside the dirty rectangle, using x and y
-Actual output:
-Expected output:
-
-
-PASS putImageData() only modifies areas inside the dirty rectangle, using x and y 
-

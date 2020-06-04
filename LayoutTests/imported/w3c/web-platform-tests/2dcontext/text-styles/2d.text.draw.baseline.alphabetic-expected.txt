@@ -1,7 +1,0 @@
-2d.text.draw.baseline.alphabetic
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.text.draw.baseline.alphabetic 
-

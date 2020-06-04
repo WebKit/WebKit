@@ -1,8 +1,0 @@
-2d.imageData.put.wrongtype
-putImageData() does not accept non-ImageData objects
-Actual output:
-Expected output:
-
-
-PASS putImageData() does not accept non-ImageData objects 
-

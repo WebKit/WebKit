@@ -1,8 +1,0 @@
-2d.fillRect.path
-fillRect does not affect the current path
-Actual output:
-Expected output:
-
-
-PASS fillRect does not affect the current path 
-

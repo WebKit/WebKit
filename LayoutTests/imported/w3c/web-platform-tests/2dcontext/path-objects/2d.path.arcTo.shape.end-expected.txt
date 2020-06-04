@@ -1,8 +1,0 @@
-2d.path.arcTo.shape.end
-arcTo() does not draw anything from P1 to P2
-Actual output:
-Expected output:
-
-
-PASS arcTo() does not draw anything from P1 to P2 
-

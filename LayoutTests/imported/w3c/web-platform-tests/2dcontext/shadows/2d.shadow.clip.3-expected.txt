@@ -1,8 +1,0 @@
-2d.shadow.clip.3
-Shadows of clipped shapes are still drawn within the clipping region
-Actual output:
-Expected output:
-
-
-PASS Shadows of clipped shapes are still drawn within the clipping region 
-

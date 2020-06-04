@@ -1,8 +1,0 @@
-2d.strokeRect.nonfinite
-strokeRect() with Infinity/NaN is ignored
-Actual output:
-Expected output:
-
-
-PASS strokeRect() with Infinity/NaN is ignored 
-

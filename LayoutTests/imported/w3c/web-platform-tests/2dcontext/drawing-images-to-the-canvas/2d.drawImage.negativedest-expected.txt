@@ -1,8 +1,0 @@
-2d.drawImage.negativedest
-Negative destination width/height represents the correct rectangle
-Actual output:
-Expected output:
-
-
-PASS Negative destination width/height represents the correct rectangle 
-

@@ -1,6 +1,0 @@
-2d.text.measure.baselines
-Testing baselines
-Actual output:
-
-FAIL Testing baselines ctx.measureText('A').getBaselines is not a function. (In 'ctx.measureText('A').getBaselines()', 'ctx.measureText('A').getBaselines' is undefined)
-

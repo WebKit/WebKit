@@ -1,5 +1,0 @@
-2d.composite.operation.highlight
-Actual output:
-
-PASS Canvas test: 2d.composite.operation.highlight 
-

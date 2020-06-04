@@ -1,8 +1,0 @@
-2d.strokeRect.zero.1
-strokeRect of 0x0 pixels draws nothing
-Actual output:
-Expected output:
-
-
-PASS strokeRect of 0x0 pixels draws nothing 
-

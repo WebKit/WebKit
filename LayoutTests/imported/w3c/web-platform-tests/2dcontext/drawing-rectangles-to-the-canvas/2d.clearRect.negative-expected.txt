@@ -1,8 +1,0 @@
-2d.clearRect.negative
-clearRect of negative sizes works
-Actual output:
-Expected output:
-
-
-PASS clearRect of negative sizes works 
-

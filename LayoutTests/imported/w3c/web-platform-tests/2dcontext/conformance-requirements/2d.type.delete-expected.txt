@@ -1,7 +1,0 @@
-2d.type.delete
-window.CanvasRenderingContext2D is Configurable
-Defined in "Web IDL" (draft)
-Actual output:
-
-PASS window.CanvasRenderingContext2D is Configurable 
-

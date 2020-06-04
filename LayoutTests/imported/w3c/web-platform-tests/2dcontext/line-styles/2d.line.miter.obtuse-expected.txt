@@ -1,8 +1,0 @@
-2d.line.miter.obtuse
-Miter joins are drawn correctly with obtuse angles
-Actual output:
-Expected output:
-
-
-PASS Miter joins are drawn correctly with obtuse angles 
-

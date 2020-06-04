@@ -1,6 +1,0 @@
-2d.text.measure.width.basic
-The width of character is same as font used
-Actual output:
-
-PASS The width of character is same as font used 
-

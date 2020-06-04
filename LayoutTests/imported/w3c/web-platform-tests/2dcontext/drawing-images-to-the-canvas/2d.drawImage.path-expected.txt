@@ -1,7 +1,0 @@
-2d.drawImage.path
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.drawImage.path 
-

@@ -1,6 +1,0 @@
-2d.drawImage.zerocanvas
-drawImage with zero-sized canvas as the source shoud throw exception
-Actual output:
-
-PASS drawImage with zero-sized canvas as the source shoud throw exception 
-

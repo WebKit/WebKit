@@ -1,8 +1,0 @@
-2d.path.arc.twopie.3
-arc() draws a full circle when end = start + 2pi+e and anticlockwise
-Actual output:
-Expected output:
-
-
-PASS arc() draws a full circle when end = start + 2pi+e and anticlockwise 
-

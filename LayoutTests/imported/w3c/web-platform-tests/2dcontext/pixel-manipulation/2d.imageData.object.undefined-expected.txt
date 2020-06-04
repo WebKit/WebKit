@@ -1,6 +1,0 @@
-2d.imageData.object.undefined
-ImageData.data converts undefined to 0
-Actual output:
-
-PASS ImageData.data converts undefined to 0 
-

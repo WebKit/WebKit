@@ -1,8 +1,0 @@
-2d.clearRect.clip
-clearRect is affected by clipping regions
-Actual output:
-Expected output:
-
-
-PASS clearRect is affected by clipping regions 
-

@@ -1,8 +1,0 @@
-2d.text.draw.fontface.repeat
-Draw with the font immediately, then wait a bit until and draw again. (This crashes some version of WebKit.)
-Actual output:
-Expected output:
-
-
-PASS Draw with the font immediately, then wait a bit until and draw again. (This crashes some version of WebKit.) 
-

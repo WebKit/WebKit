@@ -1,5 +1,0 @@
-2d.pattern.repeat.case
-Actual output:
-
-PASS Canvas test: 2d.pattern.repeat.case 
-

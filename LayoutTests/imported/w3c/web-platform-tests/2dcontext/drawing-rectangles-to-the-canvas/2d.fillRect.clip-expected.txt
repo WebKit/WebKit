@@ -1,8 +1,0 @@
-2d.fillRect.clip
-fillRect is affected by clipping regions
-Actual output:
-Expected output:
-
-
-PASS fillRect is affected by clipping regions 
-

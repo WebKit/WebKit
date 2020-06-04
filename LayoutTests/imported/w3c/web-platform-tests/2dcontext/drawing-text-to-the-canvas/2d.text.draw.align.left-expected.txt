@@ -1,8 +1,0 @@
-2d.text.draw.align.left
-textAlign left is the left of the first em square (not the bounding box)
-Actual output:
-Expected output:
-
-
-PASS textAlign left is the left of the first em square (not the bounding box) 
-

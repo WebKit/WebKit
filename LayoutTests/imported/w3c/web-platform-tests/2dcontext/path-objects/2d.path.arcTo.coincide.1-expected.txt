@@ -1,8 +1,0 @@
-2d.path.arcTo.coincide.1
-arcTo() has no effect if P0 = P1
-Actual output:
-Expected output:
-
-
-PASS arcTo() has no effect if P0 = P1 
-

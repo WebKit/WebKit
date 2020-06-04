@@ -1,6 +1,0 @@
-2d.imageData.get.length
-getImageData() returns a correctly-sized Uint8ClampedArray
-Actual output:
-
-PASS getImageData() returns a correctly-sized Uint8ClampedArray 
-

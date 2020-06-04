@@ -1,8 +1,0 @@
-2d.path.arc.shape.5
-arc() from 0 to 5pi does not draw crazy things
-Actual output:
-Expected output:
-
-
-PASS arc() from 0 to 5pi does not draw crazy things 
-

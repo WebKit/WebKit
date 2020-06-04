@@ -1,8 +1,0 @@
-2d.shadow.offset.positiveX
-Shadows can be offset with positive x
-Actual output:
-Expected output:
-
-
-PASS Shadows can be offset with positive x 
-

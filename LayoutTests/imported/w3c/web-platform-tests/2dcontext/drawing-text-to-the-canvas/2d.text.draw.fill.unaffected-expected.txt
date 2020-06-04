@@ -1,8 +1,0 @@
-2d.text.draw.fill.unaffected
-fillText does not start a new path or subpath
-Actual output:
-Expected output:
-
-
-PASS fillText does not start a new path or subpath 
-

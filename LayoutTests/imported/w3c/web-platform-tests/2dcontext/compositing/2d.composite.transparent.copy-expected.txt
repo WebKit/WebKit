@@ -1,7 +1,0 @@
-2d.composite.transparent.copy
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.composite.transparent.copy 
-

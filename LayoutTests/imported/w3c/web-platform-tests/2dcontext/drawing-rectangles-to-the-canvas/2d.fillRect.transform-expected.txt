@@ -1,8 +1,0 @@
-2d.fillRect.transform
-fillRect is affected by transforms
-Actual output:
-Expected output:
-
-
-PASS fillRect is affected by transforms 
-

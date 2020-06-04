@@ -1,7 +1,0 @@
-2d.path.clip.basic.2
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.path.clip.basic.2 
-

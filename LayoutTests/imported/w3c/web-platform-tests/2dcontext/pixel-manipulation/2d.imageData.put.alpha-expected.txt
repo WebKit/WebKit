@@ -1,8 +1,0 @@
-2d.imageData.put.alpha
-putImageData() puts non-solid image data correctly
-Actual output:
-Expected output:
-
-
-PASS putImageData() puts non-solid image data correctly 
-

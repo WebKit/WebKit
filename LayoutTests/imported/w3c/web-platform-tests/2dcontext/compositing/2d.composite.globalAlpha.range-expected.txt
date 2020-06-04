@@ -1,5 +1,0 @@
-2d.composite.globalAlpha.range
-Actual output:
-
-PASS Canvas test: 2d.composite.globalAlpha.range 
-

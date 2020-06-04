@@ -1,6 +1,0 @@
-2d.imageData.create2.negative
-createImageData(sw, sh) takes the absolute magnitude of the size arguments
-Actual output:
-
-PASS createImageData(sw, sh) takes the absolute magnitude of the size arguments 
-

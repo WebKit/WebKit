@@ -1,8 +1,0 @@
-2d.drawImage.animated.gif
-drawImage() of an animated GIF draws the first frame
-Actual output:
-Expected output:
-
-
-PASS drawImage() of an animated GIF draws the first frame 
-

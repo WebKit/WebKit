@@ -1,8 +1,0 @@
-2d.shadow.enable.y
-Shadows are drawn if shadowOffsetY is set
-Actual output:
-Expected output:
-
-
-PASS Shadows are drawn if shadowOffsetY is set 
-

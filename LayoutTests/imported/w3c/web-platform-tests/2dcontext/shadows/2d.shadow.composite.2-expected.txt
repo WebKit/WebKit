@@ -1,8 +1,0 @@
-2d.shadow.composite.2
-Shadows are drawn using globalCompositeOperation
-Actual output:
-Expected output:
-
-
-PASS Shadows are drawn using globalCompositeOperation 
-

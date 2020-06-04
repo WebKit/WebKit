@@ -1,8 +1,0 @@
-2d.line.miter.lineedge
-Miter joins are not drawn when the miter limit is exceeded at the corners of a zero-height rectangle
-Actual output:
-Expected output:
-
-
-PASS Miter joins are not drawn when the miter limit is exceeded at the corners of a zero-height rectangle 
-

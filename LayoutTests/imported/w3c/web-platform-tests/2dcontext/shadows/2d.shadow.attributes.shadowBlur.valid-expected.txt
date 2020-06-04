@@ -1,5 +1,0 @@
-2d.shadow.attributes.shadowBlur.valid
-Actual output:
-
-PASS Canvas test: 2d.shadow.attributes.shadowBlur.valid 
-

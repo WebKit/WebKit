@@ -1,8 +1,0 @@
-2d.path.arc.empty
-arc() with an empty path does not draw a straight line to the start point
-Actual output:
-Expected output:
-
-
-PASS arc() with an empty path does not draw a straight line to the start point 
-

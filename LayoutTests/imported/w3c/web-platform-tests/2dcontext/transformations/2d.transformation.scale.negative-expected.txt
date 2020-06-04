@@ -1,8 +1,0 @@
-2d.transformation.scale.negative
-scale() with negative scale factors works
-Actual output:
-Expected output:
-
-
-PASS scale() with negative scale factors works 
-

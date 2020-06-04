@@ -1,7 +1,0 @@
-2d.composite.globalAlpha.imagepattern
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.composite.globalAlpha.imagepattern 
-

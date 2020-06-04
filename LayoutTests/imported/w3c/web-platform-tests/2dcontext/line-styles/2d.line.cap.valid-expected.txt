@@ -1,6 +1,0 @@
-2d.line.cap.valid
-Setting lineCap to valid values works
-Actual output:
-
-PASS Setting lineCap to valid values works 
-

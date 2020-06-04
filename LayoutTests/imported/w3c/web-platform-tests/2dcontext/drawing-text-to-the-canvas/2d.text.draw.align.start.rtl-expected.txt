@@ -1,8 +1,0 @@
-2d.text.draw.align.start.rtl
-textAlign start with rtl is the right edge
-Actual output:
-Expected output:
-
-
-PASS textAlign start with rtl is the right edge 
-

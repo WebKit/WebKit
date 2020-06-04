@@ -1,7 +1,0 @@
-Description: Shadows must be drawn for linear gradients.
-
-Test passes if there is one gradient filled rectangle and one black rectangle, and no red seen on the page.
-
-
-PASS linear gradient fillRect draws shadow (black rectange) 
-

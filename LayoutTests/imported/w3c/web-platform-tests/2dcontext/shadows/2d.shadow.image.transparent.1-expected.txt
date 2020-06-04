@@ -1,8 +1,0 @@
-2d.shadow.image.transparent.1
-Shadows are not drawn for transparent images
-Actual output:
-Expected output:
-
-
-PASS Shadows are not drawn for transparent images 
-

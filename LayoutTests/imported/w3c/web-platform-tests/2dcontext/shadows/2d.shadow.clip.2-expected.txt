@@ -1,8 +1,0 @@
-2d.shadow.clip.2
-Shadows are not drawn outside the clipping region
-Actual output:
-Expected output:
-
-
-PASS Shadows are not drawn outside the clipping region 
-

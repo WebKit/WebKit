@@ -1,4 +1,0 @@
-
-PASS Invalid arguments to setLineDash() 
-PASS setLineDash 
-

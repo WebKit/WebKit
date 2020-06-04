@@ -1,3 +1,0 @@
-
-PASS createImageBitmap: blob with wrong mime type 
-

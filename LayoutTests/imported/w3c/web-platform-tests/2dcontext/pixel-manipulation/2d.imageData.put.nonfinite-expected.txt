@@ -1,7 +1,0 @@
-2d.imageData.put.nonfinite
-putImageData() throws TypeError if arguments are not finite
-Defined in "Web IDL" (draft)
-Actual output:
-
-PASS putImageData() throws TypeError if arguments are not finite 
-

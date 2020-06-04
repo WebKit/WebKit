@@ -1,8 +1,0 @@
-2d.pattern.animated.gif
-createPattern() of an animated GIF draws the first frame
-Actual output:
-Expected output:
-
-
-PASS createPattern() of an animated GIF draws the first frame 
-

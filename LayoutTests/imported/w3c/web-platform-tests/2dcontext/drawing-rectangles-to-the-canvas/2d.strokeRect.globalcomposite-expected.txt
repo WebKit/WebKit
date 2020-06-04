@@ -1,8 +1,0 @@
-2d.strokeRect.globalcomposite
-strokeRect is not affected by globalCompositeOperation
-Actual output:
-Expected output:
-
-
-PASS strokeRect is not affected by globalCompositeOperation 
-

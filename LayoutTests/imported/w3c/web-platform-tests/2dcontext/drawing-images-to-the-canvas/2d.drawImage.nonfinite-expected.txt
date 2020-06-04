@@ -1,8 +1,0 @@
-2d.drawImage.nonfinite
-drawImage() with Infinity/NaN is ignored
-Actual output:
-Expected output:
-
-
-PASS drawImage() with Infinity/NaN is ignored 
-

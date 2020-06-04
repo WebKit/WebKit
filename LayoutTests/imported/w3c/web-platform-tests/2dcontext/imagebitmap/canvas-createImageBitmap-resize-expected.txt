@@ -1,7 +1,0 @@
-
-PASS createImageBitmap from a Blob with resize option. 
-PASS createImageBitmap from a HTMLCanvasElement with resize option. 
-PASS createImageBitmap from a HTMLImageElement with resize option. 
-PASS createImageBitmap from an ImageBitmap with resize option. 
-FAIL createImageBitmap from an ImageData with resize option. promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
-

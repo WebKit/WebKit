@@ -1,8 +1,0 @@
-2d.line.join.parallel
-Line joins are drawn at 180-degree joins
-Actual output:
-Expected output:
-
-
-PASS Line joins are drawn at 180-degree joins 
-

@@ -1,8 +1,0 @@
-2d.path.lineTo.ensuresubpath.1
-If there is no subpath, the point is added and nothing is drawn
-Actual output:
-Expected output:
-
-
-PASS If there is no subpath, the point is added and nothing is drawn 
-

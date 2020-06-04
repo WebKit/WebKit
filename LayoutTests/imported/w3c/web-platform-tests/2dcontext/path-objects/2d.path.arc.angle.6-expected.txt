@@ -1,8 +1,0 @@
-2d.path.arc.angle.6
-arc() draws a full circle when anticlockwise and start > end+2pi
-Actual output:
-Expected output:
-
-
-PASS arc() draws a full circle when anticlockwise and start > end+2pi 
-

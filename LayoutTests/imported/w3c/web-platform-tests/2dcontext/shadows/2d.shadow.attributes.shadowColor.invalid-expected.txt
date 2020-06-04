@@ -1,5 +1,0 @@
-2d.shadow.attributes.shadowColor.invalid
-Actual output:
-
-PASS Canvas test: 2d.shadow.attributes.shadowColor.invalid 
-

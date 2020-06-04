@@ -1,6 +1,0 @@
-2d.imageData.create1.basic
-createImageData(imgdata) exists and returns something
-Actual output:
-
-PASS createImageData(imgdata) exists and returns something 
-

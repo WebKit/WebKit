@@ -1,6 +1,0 @@
-2d.text.measure.emHeights
-Testing emHeights
-Actual output:
-
-FAIL Testing emHeights assert_equals: ctx.measureText('A').emHeightAscent === 37.5 (got 85[number], expected 37.5[number]) expected 37.5 but got 85
-

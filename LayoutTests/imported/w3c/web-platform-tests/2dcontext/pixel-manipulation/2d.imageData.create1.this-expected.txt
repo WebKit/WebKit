@@ -1,7 +1,0 @@
-2d.imageData.create1.this
-createImageData(imgdata) should throw when called with the wrong |this|
-Defined in "Web IDL" (draft)
-Actual output:
-
-PASS createImageData(imgdata) should throw when called with the wrong |this| 
-

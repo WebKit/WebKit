@@ -1,8 +1,0 @@
-2d.clearRect.globalalpha
-clearRect is not affected by globalAlpha
-Actual output:
-Expected output:
-
-
-PASS clearRect is not affected by globalAlpha 
-

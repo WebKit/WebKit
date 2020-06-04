@@ -1,6 +1,0 @@
-2d.imageData.object.ctor.size
-ImageData has a usable constructor
-Actual output:
-
-PASS ImageData has a usable constructor 
-

@@ -1,7 +1,0 @@
-2d.drawImage.9arg.sourcesize
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.drawImage.9arg.sourcesize 
-

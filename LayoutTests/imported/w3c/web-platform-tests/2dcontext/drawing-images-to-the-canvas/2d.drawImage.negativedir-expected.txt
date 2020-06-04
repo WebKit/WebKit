@@ -1,8 +1,0 @@
-2d.drawImage.negativedir
-Negative dimensions do not affect the direction of the image
-Actual output:
-Expected output:
-
-
-PASS Negative dimensions do not affect the direction of the image 
-

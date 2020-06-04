@@ -1,7 +1,0 @@
-2d.gradient.radial.cone.front
-Actual output:
-Expected output:
-
-
-FAIL Canvas test: 2d.gradient.radial.cone.front assert_equals: Green channel of the pixel at (98, 25) expected 255 but got 254
-

@@ -1,8 +1,0 @@
-2d.imageData.put.path
-putImageData() does not affect the current path
-Actual output:
-Expected output:
-
-
-PASS putImageData() does not affect the current path 
-

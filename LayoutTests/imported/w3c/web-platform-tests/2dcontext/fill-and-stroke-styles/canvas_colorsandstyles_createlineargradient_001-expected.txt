@@ -1,7 +1,0 @@
-Description: If the two points in a linear gradient have identical x,y coordinates, the canvas must paint nothing.
-
-Test passes if there is one left-to-right, green-to-blue linear gradient seen on the page and no red is seen on the page.
-
-
-PASS linear gradient from point to self draws nothing 
-

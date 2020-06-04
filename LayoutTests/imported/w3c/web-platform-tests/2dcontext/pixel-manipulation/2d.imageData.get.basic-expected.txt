@@ -1,6 +1,0 @@
-2d.imageData.get.basic
-getImageData() exists and returns something
-Actual output:
-
-PASS getImageData() exists and returns something 
-

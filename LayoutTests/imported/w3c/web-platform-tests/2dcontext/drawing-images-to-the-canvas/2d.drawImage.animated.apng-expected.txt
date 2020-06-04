@@ -1,8 +1,0 @@
-2d.drawImage.animated.apng
-drawImage() of an APNG with no poster frame draws the first frame
-Actual output:
-Expected output:
-
-
-PASS drawImage() of an APNG with no poster frame draws the first frame 
-

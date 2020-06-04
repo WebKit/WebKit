@@ -1,8 +1,0 @@
-2d.imageData.get.unaffected
-getImageData() is not affected by context state
-Actual output:
-Expected output:
-
-
-PASS getImageData() is not affected by context state 
-

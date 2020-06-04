@@ -1,7 +1,0 @@
-2d.gradient.radial.inside1
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.gradient.radial.inside1 
-

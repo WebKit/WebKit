@@ -1,8 +1,0 @@
-2d.shadow.image.scale
-Shadows are drawn correctly for scaled images
-Actual output:
-Expected output:
-
-
-PASS Shadows are drawn correctly for scaled images 
-

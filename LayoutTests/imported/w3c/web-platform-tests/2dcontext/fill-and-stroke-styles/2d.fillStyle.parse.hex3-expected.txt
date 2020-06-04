@@ -1,7 +1,0 @@
-2d.fillStyle.parse.hex3
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.fillStyle.parse.hex3 
-

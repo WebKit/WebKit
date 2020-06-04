@@ -1,7 +1,0 @@
-2d.gradient.object.type
-window.CanvasGradient exists and has the right properties
-Defined in "Web IDL" (draft)
-Actual output:
-
-PASS window.CanvasGradient exists and has the right properties 
-

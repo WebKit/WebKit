@@ -1,8 +1,0 @@
-2d.clearRect.nonfinite
-clearRect() with Infinity/NaN is ignored
-Actual output:
-Expected output:
-
-
-PASS clearRect() with Infinity/NaN is ignored 
-

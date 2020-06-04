@@ -1,8 +1,0 @@
-2d.path.lineTo.nonfinite
-lineTo() with Infinity/NaN is ignored
-Actual output:
-Expected output:
-
-
-PASS lineTo() with Infinity/NaN is ignored 
-

@@ -1,8 +1,0 @@
-2d.line.join.closed
-Line joins are drawn at the corner of a closed rectangle
-Actual output:
-Expected output:
-
-
-PASS Line joins are drawn at the corner of a closed rectangle 
-

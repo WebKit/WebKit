@@ -1,3 +1,19 @@
+2020-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/2dcontext from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=212639
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/2dcontext from upstream d3ea88514a93b7b6968.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/2dcontext/*: Removed.
+        * web-platform-tests/html/canvas/element/*: Added.
+        * web-platform-tests/html/canvas/resources/*: Added.
+        * web-platform-tests/html/canvas/tools/*: Added.
+
 2020-06-03  Rob Buis  <rbuis@igalia.com>
 
         Disallow responses when a response contains invalid header values

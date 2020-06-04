@@ -1,8 +1,0 @@
-2d.path.arc.default
-arc() with missing last argument defaults to clockwise
-Actual output:
-Expected output:
-
-
-PASS arc() with missing last argument defaults to clockwise 
-

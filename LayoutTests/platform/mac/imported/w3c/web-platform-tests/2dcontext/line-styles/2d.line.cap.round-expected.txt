@@ -1,8 +1,0 @@
-2d.line.cap.round
-lineCap 'round' is rendered correctly
-Actual output:
-Expected output:
-
-
-FAIL lineCap 'round' is rendered correctly assert_equals: Red channel of the pixel at (67, 6) expected 0 but got 1
-
