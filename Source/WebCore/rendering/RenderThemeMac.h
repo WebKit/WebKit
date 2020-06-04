@@ -104,6 +104,8 @@ private:
     // System fonts.
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const final;
 
+    String extraDefaultStyleSheet() final;
+
 #if ENABLE(VIDEO)
     // Media controls
     String mediaControlsStyleSheet() final;

@@ -1,3 +1,20 @@
+2020-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add a way to override the contact AutoFill button image
+        https://bugs.webkit.org/show_bug.cgi?id=212775
+        <rdar://problem/60381452>
+
+        Reviewed by Tim Horton.
+
+        Rename `SYSTEM_ATTACHMENT_PLACEHOLDER_ICON` to `ALTERNATE_ICONS`, and use it to additionally guard an alternate
+        appearance for the contact AutoFill button icon.
+
+        * css/html.css:
+        (input::-webkit-contacts-auto-fill-button):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::extraDefaultStyleSheet):
+
 2020-06-04  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Rename BlobLineEndings to EndingType to match the latest spec

@@ -2785,7 +2785,7 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     icon->paint(context, layout.iconRect);
 }
 
-#if HAVE(SYSTEM_ATTACHMENT_PLACEHOLDER_ICON) && USE(APPLE_INTERNAL_SDK)
+#if HAVE(ALTERNATE_ICONS) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/RenderThemeMacAdditions.mm>
 #else
 
@@ -2795,6 +2795,11 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
         return { Image::loadPlatformResource("AttachmentPlaceholder@2x"), 2 };
 
     return { Image::loadPlatformResource("AttachmentPlaceholder"), 1 };
+}
+
+String RenderThemeMac::extraDefaultStyleSheet()
+{
+    return { };
 }
 
 #endif
