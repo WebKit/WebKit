@@ -262,6 +262,16 @@ static const Vector<String>& nonBrowserServices()
     return services;
 }
 
+static const Vector<String>& diagnosticServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<String> {
+        "com.apple.diagnosticd",
+        "com.apple.osanalytics.osanalyticshelper"
+    });
+    return services;
+}
+
 static const Vector<String>& agxCompilerClasses()
 {
     ASSERT(isMainThread());
@@ -279,6 +289,7 @@ static const Vector<String>& agxCompilerClasses()
     });
     return iokitClasses;
 }
+
 #endif
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
@@ -389,11 +400,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (!WebCore::IOSApplication::isMobileSafari())
         parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
     
-    if (isInternalInstall()) {
-        SandboxExtension::Handle diagnosticsExtensionHandle;
-        SandboxExtension::createHandleForMachLookup("com.apple.diagnosticd", WTF::nullopt, diagnosticsExtensionHandle, SandboxExtension::Flags::NoReport);
-        parameters.diagnosticsExtensionHandle = WTFMove(diagnosticsExtensionHandle);
-    }
+    if (isInternalInstall())
+        parameters.diagnosticsExtensionHandles = SandboxExtension::createHandlesForMachLookup(diagnosticServices(), WTF::nullopt, SandboxExtension::Flags::NoReport);
 
     SandboxExtension::Handle runningboardExtensionHandle;
     if (SandboxExtension::createHandleForMachLookup("com.apple.runningboard", WTF::nullopt, runningboardExtensionHandle, SandboxExtension::Flags::NoReport))
