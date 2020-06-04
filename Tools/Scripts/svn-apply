@@ -85,13 +85,19 @@ sub removeDirectoriesIfNeeded();
 sub scmKnowsOfFile($);
 sub scmCopy($$);
 sub scmAdd($);
+sub scmAddQueued($);
+sub scmCommitQueueToggledExecutableBit();
+sub scmCommitQueueAdded();
 sub scmRemove($);
+sub scmToggleExecutableBitQueued($$);
 
 my $merge = 0;
 my $showHelp = 0;
 my $reviewer;
 my $force = 0;
 my $skipChangeLogs = 0;
+my @scmQueuedFilesToAdd = ();
+my %scmQueuedExecutableBits;
 
 my $optionParseSuccess = GetOptions(
     "merge!" => \$merge,
@@ -159,40 +165,50 @@ for my $diffHashRef (@nonCopyDiffHashRefs) {
     patch($diffHashRef);
 }
 
+# For git we need to toggle the executable bit before adding the files
+# For SVN is the other way around.
+if (isGit()) {
+    scmCommitQueueToggledExecutableBit();
+    scmCommitQueueAdded();
+} elsif (isSVN()) {
+    scmCommitQueueAdded();
+    scmCommitQueueToggledExecutableBit();
+}
+
 removeDirectoriesIfNeeded();
 
 exit $globalExitStatus;
 
 sub addDirectoriesIfNeeded($)
 {
-    # Git removes a directory once the last file in it is removed. We need
-    # explicitly check for the existence of each directory along the path
-    # (and create it if it doesn't) so as to support patches that move all files in
-    # directory A to A/B. That is, we cannot depend on %checkedDirectories.
     my ($path) = @_;
     my @dirs = File::Spec->splitdir($path);
     my $dir = ".";
     while (scalar @dirs) {
         $dir = File::Spec->catdir($dir, shift @dirs);
-        next if !isGit() && exists $checkedDirectories{$dir};
-        if (! -e $dir) {
-            mkdir $dir or die "Failed to create required directory '$dir' for path '$path'\n";
-            scmAdd($dir);
-            $checkedDirectories{$dir} = 1;
-        }
-        elsif (-d $dir) {
-            # SVN prints "svn: warning: 'directory' is already under version control"
-            # if you try and add a directory which is already in the repository.
-            # Git will ignore the add, but re-adding large directories can be sloooow.
-            # So we check first to see if the directory is under version control first.
-            if (!scmKnowsOfFile($dir)) {
-                scmAdd($dir);
+        die "'$dir' exists, but is not a directory" if ( -e $dir && ! -d $dir);
+        if (isGit()) {
+            # Git removes a directory once the last file in it is removed. We need
+            # explicitly check for the existence of each directory along the path
+            # (and create it if it doesn't) so as to support patches that move all files in
+            # directory A to A/B. That is, we cannot depend on %checkedDirectories.
+            mkdir $dir if (! -e $dir);
+        } elsif (isSVN()) {
+            next if exists $checkedDirectories{$dir};
+            if (! -e $dir) {
+                mkdir $dir or die "Failed to create required directory '$dir' for path '$path'\n";
+                scmAdd($dir)
             }
-            $checkedDirectories{$dir} = 1;
+            elsif (-d $dir) {
+                # SVN prints "svn: warning: 'directory' is already under version control"
+                # if you try and add a directory which is already in the repository
+                # So we check first to see if the directory is under version control first.
+                if (!scmKnowsOfFile($dir)) {
+                    scmAdd($dir);
+                }
+            }
         }
-        else {
-            die "'$dir' exists, but is not a directory";
-        }
+        $checkedDirectories{$dir} = 1;
     }
 }
 
@@ -238,7 +254,7 @@ sub handleBinaryChange($$)
         close FILE;
         if (!scmKnowsOfFile($fullPath)) {
             # Addition
-            scmAdd($fullPath);
+            scmAddQueued($fullPath);
         }
     } else {
         # Deletion
@@ -291,7 +307,7 @@ sub handleGitBinaryChange($$)
         print FILE $out;
         close FILE;
         if ($isFileAddition) {
-            scmAdd($fullPath);
+            scmAddQueued($fullPath);
         }
     }
 }
@@ -372,22 +388,18 @@ sub patch($)
             rename($fullPath, "$fullPath.orig") if -e $fullPath;
             applyPatch($patch, $fullPath);
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
-            scmAdd($fullPath);
-            my $escapedFullPath = escapeSubversionPath("$fullPath.orig");
-            # What is this for?
-            system("svn", "stat", "$escapedFullPath") if isSVN() && -e "$fullPath.orig";
+            scmAddQueued($fullPath);
         } elsif ($addition && !$hasTextChunks) {
             # Add empty file.
             die "\"$fullPath\" already exists" if -e $fullPath;
             open(my $FH, ">>", $fullPath) or die "Could not open \"$fullPath\" for writing: $!";
             close($FH);
-            scmAdd($fullPath);
+            scmAddQueued($fullPath);
         } elsif (!defined($diffHashRef->{executableBitDelta})) {
             die "Can't handle patch for \"$fullPath\".";
         }
     }
-
-    scmToggleExecutableBit($fullPath, $diffHashRef->{executableBitDelta}) if defined($diffHashRef->{executableBitDelta});
+    scmToggleExecutableBitQueued($fullPath, $diffHashRef->{executableBitDelta}) if defined($diffHashRef->{executableBitDelta});
 }
 
 sub removeDirectoriesIfNeeded()
@@ -493,5 +505,50 @@ sub scmRemove($)
         # already deleted the directory and `git rm` would exit with an error claiming
         # there was no file. The --ignore-unmatch switch gracefully handles this case.
         system("git", "rm", "--force", "--ignore-unmatch", $path) == 0 or die "Failed to git rm --force --ignore-unmatch $path.";
+    }
+}
+
+# Calling "git add" / "svn add" per each file its very slow on big patches
+# We queue the filenames to execute them at the end in a few commands.
+sub scmAddQueued($)
+{
+    my ($path) = @_;
+    if (isSVN()) {
+        push(@scmQueuedFilesToAdd, escapeSubversionPath($path));
+    } elsif (isGit()) {
+        push(@scmQueuedFilesToAdd, $path);
+    }
+}
+
+sub scmCommitQueueAdded()
+{
+    my @cmdBase;
+    if (isSVN()) {
+        @cmdBase = ("svn", "add")
+    } elsif (isGit()) {
+        @cmdBase = ("git", "add")
+    }
+
+    # When we are handling a very large patch (more than 1000 files modified)
+    # Instead of executing only one add command, we execute several commands
+    # with 1000 files each one. We do that to avoid running into E2BIG errors
+    # on the execve() syscall (argument list is too long).
+    while (@scmQueuedFilesToAdd) {
+        my @cmdGrouped = splice(@scmQueuedFilesToAdd, 0, 1000);
+        unshift (@cmdGrouped, @cmdBase);
+        system (@cmdGrouped);
+    }
+}
+
+sub scmToggleExecutableBitQueued($$)
+{
+    my ($path, $executableBitDelta) = @_;
+    $scmQueuedExecutableBits{$path} = $executableBitDelta;
+}
+
+sub scmCommitQueueToggledExecutableBit()
+{
+    foreach my $path (keys %scmQueuedExecutableBits) {
+        scmToggleExecutableBit($path, $scmQueuedExecutableBits{$path});
     }
 }
