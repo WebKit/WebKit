@@ -1,3 +1,19 @@
+2020-06-03  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Validate index parameter in PlatformPasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=212713
+        <rdar://problem/60068765>
+
+        Reviewed by Wenson Hsieh.
+
+        Validate index parameter in PlatformPasteboard, before calling [NSIndexSet indexSetWithIndex:].
+        Per documentation, index needs to be in the range [0 .. NSNotFound-1].
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::readBuffer const):
+        (WebCore::PlatformPasteboard::readString const):
+        (WebCore::PlatformPasteboard::readURL const):
+
 2020-06-03  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add new values for -apple-pay-button-type
