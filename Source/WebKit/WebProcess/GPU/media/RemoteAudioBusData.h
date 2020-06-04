@@ -66,9 +66,8 @@ struct RemoteAudioBusData {
             SharedMemory::Handle handle;
             if (!decoder.decode(handle))
                 return false;
-            auto memory = SharedMemory::map(handle, SharedMemory::Protection::ReadWrite);
-            if (memory)
-                result.channelBuffers.append(*memory);
+            if (auto memory = SharedMemory::map(handle, SharedMemory::Protection::ReadWrite))
+                result.channelBuffers.append(memory.releaseNonNull());
         }
 
         return true;

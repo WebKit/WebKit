@@ -1,3 +1,14 @@
+2020-06-04  Youenn Fablet  <youenn@apple.com>
+
+        Minor optimisation to RemoteAudioBusData::decode
+        https://bugs.webkit.org/show_bug.cgi?id=212692
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/GPU/media/RemoteAudioBusData.h:
+        (WebKit::RemoteAudioBusData::decode):
+        Use releaseNonNull to remove some count churn.
+
 2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] fast/events/watchos/change-focus-during-change-event.html crashes
