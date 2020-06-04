@@ -1,3 +1,21 @@
+2020-06-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Reduce telemetry and report generation for WebContent Process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=212779
+        <rdar://problem/63769879>
+
+        Reviewed by Per Arne Vollan.
+
+        This patch cleans up a set of telemetry and reports generated during normal
+        WebKit operation. Now that we understand the uses of these XPC services, we
+        can reduce the logging traffic.
+
+        This is important to do now, since generating the telemetry and reports has
+        a non-zero power cost.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-06-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         Disable CFNetwork AppSSO interception for Mac Catalyst
