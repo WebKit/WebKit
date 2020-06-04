@@ -1,3 +1,16 @@
+2020-06-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, temporarily disable offscreen-canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=212738
+
+        Unreviewed gardening.
+
+        The test started failing after r262527. Disable the tests temporarily
+        to let the test bots pass.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-06-03  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add new values for -apple-pay-button-type
