@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -60,18 +60,18 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    const GregorianDateTime* gregorianDateTime(VM& vm) const
+    const GregorianDateTime* gregorianDateTime(VM::DateCache& cache) const
     {
         if (m_data && m_data->m_gregorianDateTimeCachedForMS == internalNumber())
             return &m_data->m_cachedGregorianDateTime;
-        return calculateGregorianDateTime(vm);
+        return calculateGregorianDateTime(cache);
     }
 
-    const GregorianDateTime* gregorianDateTimeUTC(VM& vm) const
+    const GregorianDateTime* gregorianDateTimeUTC(VM::DateCache& cache) const
     {
         if (m_data && m_data->m_gregorianDateTimeUTCCachedForMS == internalNumber())
             return &m_data->m_cachedGregorianDateTimeUTC;
-        return calculateGregorianDateTimeUTC(vm);
+        return calculateGregorianDateTimeUTC(cache);
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -86,8 +86,8 @@ private:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
     void finishCreation(VM&);
     JS_EXPORT_PRIVATE void finishCreation(VM&, double);
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(VM&) const;
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(VM&) const;
+    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(VM::DateCache&) const;
+    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(VM::DateCache&) const;
 
     double m_internalNumber { PNaN };
     mutable RefPtr<DateInstanceData> m_data;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,13 +153,6 @@ public:
         m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(vm()));
     }
 
-    // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
-    void fastExceptionCheck()
-    {
-        callExceptionFuzz(vm());
-        m_exceptionChecks.append(branchTestPtr(Zero, GPRInfo::returnValueGPR));
-    }
-    
     OSRExitCompilationInfo& appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())
     {
         OSRExitCompilationInfo info;

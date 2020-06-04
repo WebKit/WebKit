@@ -1,3 +1,89 @@
+2020-06-04  Mark Lam  <mark.lam@apple.com>
+
+        SpeculativeJIT::compileDateGet()'s slow path does not need an exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=212645
+
+        Reviewed by Yusuke Suzuki.
+
+        SpeculativeJIT::compileDateGet() implements a bunch of Date intrinsics which call
+        into a C++ operation function do their work.  However, the call to these operation
+        functions were done using a slow path generator configured to automatically
+        emit exception checks after the call.  These exception checks are unneeded because
+        those functions will not throw any exceptions.
+
+        This issue was found with JSC stress test runs on a debug build.  The doesGC
+        verifier was failing on the exceptionFuzz/date-format-xparb.js test.  The reason
+        is because doesGC does not expect any these Date intrinsics to throw any exceptions,
+        but SpeculativeJIT was emitting the unneeded exception checks there.  These
+        exception check sites get turned into throw sites by the exceptionFuzzer, and
+        they allocate an Error object there.  This allocation made the doesGC verifier
+        not happy.
+
+        This patch fixes this issue by changing SpeculativeJIT::compileDateGet() to
+        pass ExceptionCheckRequirement::CheckNotNeeded to the slow path generator.
+
+        The patch also proves that all the operation functions cannot throw any exceptions.
+        Previously, the operations passes a VM& to the Date functions.  The purpose for
+        doing this is so that the Date functions can work with a few date cache data
+        structures stored as VM fields.
+
+        This patch refactors those VM fields into a VM::DateCache struct, and changed all
+        those Date functions to take a VM::DateCache& instead of a VM&.  Since the Date
+        functions no longer take a VM&, this proves that they cannot throw because they
+        would need a VM& to make a ThrowScope in order to throw.
+
+        Update: Yusuke pointed out that the lack of a JSGlobalObject* argument is sufficient
+        to guarantee that the Date functions cannot throw.  However, we'll keep this
+        DateCache refactoring since it provides additional info that the Date functions
+        only operate on the DateCache fields and nothing else in VM.
+
+        Also removed DFG::JITCompile's fastExceptionCheck() which is unused.
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::fastExceptionCheck): Deleted.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDateGet):
+        * runtime/DateConstructor.cpp:
+        (JSC::millisecondsFromComponents):
+        (JSC::callDate):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::calculateGregorianDateTime const):
+        (JSC::DateInstance::calculateGregorianDateTimeUTC const):
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::formateDateInstance):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        * runtime/JSDateMath.cpp:
+        (JSC::localTimeOffset):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDate):
+        * runtime/JSDateMath.h:
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache):
+        * runtime/VM.h:
+
 2020-06-04  Paulo Matos  <pmatos@igalia.com>
 
         Fix 32bit build broken at r262513

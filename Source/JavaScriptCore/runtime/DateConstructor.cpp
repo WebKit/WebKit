@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -95,7 +95,7 @@ static double millisecondsFromComponents(JSGlobalObject* globalObject, const Arg
     t.setMinute(JSC::toInt32(doubleArguments[4]));
     t.setSecond(JSC::toInt32(doubleArguments[5]));
     t.setIsDST(-1);
-    return gregorianDateTimeToMS(vm, t, doubleArguments[6], timeType);
+    return gregorianDateTimeToMS(vm.dateCache, t, doubleArguments[6], timeType);
 }
 
 // ECMA 15.9.3
@@ -147,7 +147,7 @@ static EncodedJSValue JSC_HOST_CALL callDate(JSGlobalObject* globalObject, CallF
 {
     VM& vm = globalObject->vm();
     GregorianDateTime ts;
-    msToGregorianDateTime(vm, WallTime::now().secondsSinceEpoch().milliseconds(), WTF::LocalTime, ts);
+    msToGregorianDateTime(vm.dateCache, WallTime::now().secondsSinceEpoch().milliseconds(), WTF::LocalTime, ts);
     return JSValue::encode(jsNontrivialString(vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 

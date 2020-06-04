@@ -723,7 +723,6 @@ public:
     const ArgList* emptyList;
     SmallStrings smallStrings;
     NumericStrings numericStrings;
-    DateInstanceCache dateInstanceCache;
     std::unique_ptr<SimpleStats> machineCodeBytesPerBytecodeWordForBaselineJIT;
     WeakGCMap<std::pair<CustomGetterSetter*, int>, JSCustomGetterSetterFunction> customGetterSetterFunctionMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> stringCache;
@@ -962,12 +961,16 @@ public:
 
     JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
-    
-    LocalTimeOffsetCache utcTimeOffsetCache;
-    LocalTimeOffsetCache localTimeOffsetCache;
 
-    String cachedDateString;
-    double cachedDateStringValue;
+    struct DateCache {
+        DateInstanceCache dateInstanceCache;
+        LocalTimeOffsetCache utcTimeOffsetCache;
+        LocalTimeOffsetCache localTimeOffsetCache;
+
+        String cachedDateString;
+        double cachedDateStringValue;
+    };
+    DateCache dateCache;
 
     std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
     RefPtr<TypedArrayController> m_typedArrayController;

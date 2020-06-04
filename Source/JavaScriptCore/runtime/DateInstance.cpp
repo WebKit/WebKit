@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -52,33 +52,33 @@ String DateInstance::toStringName(const JSObject*, JSGlobalObject*)
     return "Date"_s;
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTime(VM& vm) const
+const GregorianDateTime* DateInstance::calculateGregorianDateTime(VM::DateCache& cache) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
         return nullptr;
 
     if (!m_data)
-        m_data = vm.dateInstanceCache.add(milli);
+        m_data = cache.dateInstanceCache.add(milli);
 
     if (m_data->m_gregorianDateTimeCachedForMS != milli) {
-        msToGregorianDateTime(vm, milli, WTF::LocalTime, m_data->m_cachedGregorianDateTime);
+        msToGregorianDateTime(cache, milli, WTF::LocalTime, m_data->m_cachedGregorianDateTime);
         m_data->m_gregorianDateTimeCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTime;
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(VM& vm) const
+const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(VM::DateCache& cache) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
         return nullptr;
 
     if (!m_data)
-        m_data = vm.dateInstanceCache.add(milli);
+        m_data = cache.dateInstanceCache.add(milli);
 
     if (m_data->m_gregorianDateTimeUTCCachedForMS != milli) {
-        msToGregorianDateTime(vm, milli, WTF::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
+        msToGregorianDateTime(cache, milli, WTF::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
         m_data->m_gregorianDateTimeUTCCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTimeUTC;

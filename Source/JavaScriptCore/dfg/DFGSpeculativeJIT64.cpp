@@ -5737,7 +5737,7 @@ void SpeculativeJIT::compileDateGet(Node* node)
         callback(resultRegs.payloadGPR());
         m_jit.boxInt32(resultRegs.payloadGPR(), resultRegs);
 
-        addSlowPathGenerator(slowPathCall(slowCases, this, operation, resultRegs, &vm(), baseGPR));
+        addSlowPathGenerator(slowPathCall(slowCases, this, operation, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultRegs, &vm(), baseGPR));
 
         jsValueResult(resultRegs, node);
     };

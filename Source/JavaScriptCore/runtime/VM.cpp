@@ -855,11 +855,11 @@ VM::ClientData::~ClientData()
 
 void VM::resetDateCache()
 {
-    utcTimeOffsetCache.reset();
-    localTimeOffsetCache.reset();
-    cachedDateString = String();
-    cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
-    dateInstanceCache.reset();
+    dateCache.utcTimeOffsetCache.reset();
+    dateCache.localTimeOffsetCache.reset();
+    dateCache.cachedDateString = String();
+    dateCache.cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
+    dateCache.dateInstanceCache.reset();
 }
 
 void VM::whenIdle(Function<void()>&& callback)

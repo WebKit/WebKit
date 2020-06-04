@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -83,10 +83,10 @@ namespace JSC {
 // NOTE: The implementation relies on the fact that no time zones have
 // more than one daylight savings offset change per month.
 // If this function is called with NaN it returns NaN.
-static LocalTimeOffset localTimeOffset(VM& vm, double ms, WTF::TimeType inputTimeType = WTF::UTCTime)
+static LocalTimeOffset localTimeOffset(VM::DateCache& dateCache, double ms, WTF::TimeType inputTimeType = WTF::UTCTime)
 {
     LocalTimeOffsetCache& cache = inputTimeType == WTF::LocalTime
-        ? vm.localTimeOffsetCache : vm.utcTimeOffsetCache;
+        ? dateCache.localTimeOffsetCache : dateCache.utcTimeOffsetCache;
 
     double start = cache.start;
     double end = cache.end;
@@ -147,30 +147,30 @@ static inline double timeToMS(double hour, double min, double sec, double ms)
     return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
 }
 
-double gregorianDateTimeToMS(VM& vm, const GregorianDateTime& t, double milliSeconds, WTF::TimeType inputTimeType)
+double gregorianDateTimeToMS(VM::DateCache& cache, const GregorianDateTime& t, double milliSeconds, WTF::TimeType inputTimeType)
 {
     double day = dateToDaysFrom1970(t.year(), t.month(), t.monthDay());
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double localTimeResult = (day * WTF::msPerDay) + ms;
 
     double localToUTCTimeOffset = inputTimeType == WTF::LocalTime
-        ? localTimeOffset(vm, localTimeResult, inputTimeType).offset : 0;
+        ? localTimeOffset(cache, localTimeResult, inputTimeType).offset : 0;
 
     return localTimeResult - localToUTCTimeOffset;
 }
 
 // input is UTC
-void msToGregorianDateTime(VM& vm, double ms, WTF::TimeType outputTimeType, GregorianDateTime& tm)
+void msToGregorianDateTime(VM::DateCache& cache, double ms, WTF::TimeType outputTimeType, GregorianDateTime& tm)
 {
     LocalTimeOffset localTime;
     if (outputTimeType == WTF::LocalTime) {
-        localTime = localTimeOffset(vm, ms);
+        localTime = localTimeOffset(cache, ms);
         ms += localTime.offset;
     }
     tm = GregorianDateTime(ms, localTime);
 }
 
-static double parseDate(VM& vm, const char* dateString)
+static double parseDate(VM::DateCache& cache, const char* dateString)
 {
     bool isLocalTime;
     double value = WTF::parseES5DateFromNullTerminatedCharacters(dateString, isLocalTime);
@@ -178,7 +178,7 @@ static double parseDate(VM& vm, const char* dateString)
         value = WTF::parseDateFromNullTerminatedCharacters(dateString, isLocalTime);
 
     if (isLocalTime)
-        value -= localTimeOffset(vm, value, WTF::LocalTime).offset;
+        value -= localTimeOffset(cache, value, WTF::LocalTime).offset;
 
     return value;
 }
@@ -186,9 +186,10 @@ static double parseDate(VM& vm, const char* dateString)
 double parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
+    auto& cache = vm.dateCache;
 
-    if (date == vm.cachedDateString)
-        return vm.cachedDateStringValue;
+    if (date == cache.cachedDateString)
+        return cache.cachedDateStringValue;
     auto expectedString = date.tryGetUtf8();
     if (!expectedString) {
         if (expectedString.error() == UTF8ConversionError::OutOfMemory)
@@ -200,9 +201,9 @@ double parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
     }
 
     auto dateUtf8 = expectedString.value();
-    double value = parseDate(vm, dateUtf8.data());
-    vm.cachedDateString = date;
-    vm.cachedDateStringValue = value;
+    double value = parseDate(cache, dateUtf8.data());
+    cache.cachedDateString = date;
+    cache.cachedDateStringValue = value;
     return value;
 }
 
