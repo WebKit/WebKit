@@ -1470,13 +1470,7 @@ void ResourceLoadStatisticsDatabaseStore::classifyPrevalentResources()
     reclassifyResources();
 }
 
-void ResourceLoadStatisticsDatabaseStore::syncStorageIfNeeded()
-{
-    ASSERT(!RunLoop::isMain());
-    m_database.runVacuumCommand();
-}
-
-void ResourceLoadStatisticsDatabaseStore::syncStorageImmediately()
+void ResourceLoadStatisticsDatabaseStore::runVacuumCommand()
 {
     ASSERT(!RunLoop::isMain());
     m_database.runVacuumCommand();

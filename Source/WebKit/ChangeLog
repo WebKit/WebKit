@@ -1,3 +1,20 @@
+2020-06-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        ITP SQLite Database should only vacuum once per day
+        https://bugs.webkit.org/show_bug.cgi?id=212712
+        <rdar://problem/63939711>
+
+        Reviewed by Brent Fulgham.
+
+        Currently the SQLite Database runs a vacuum command each time statistics
+        are processed. This is probably too frequent, because the database
+        rarely needs to delete large amounts of data. We can cut this down to once a day.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+
 2020-06-04  Youenn Fablet  <youenn@apple.com>
 
         Minor optimisation to RemoteAudioBusData::decode

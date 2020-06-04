@@ -93,8 +93,9 @@ public:
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
 
     void classifyPrevalentResources() override;
-    void syncStorageIfNeeded() override;
-    void syncStorageImmediately() override;
+    void syncStorageIfNeeded() override { };
+    void syncStorageImmediately() override { };
+    void runVacuumCommand();
 
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&) override;
 
