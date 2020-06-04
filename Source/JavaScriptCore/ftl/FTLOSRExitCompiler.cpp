@@ -215,7 +215,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         // to set it here because compileFTLOSRExit() is only called on the first time
         // we exit from this site, but all subsequent exits will take this compiled
         // ramp without calling compileFTLOSRExit() first.
-        jit.store64(CCallHelpers::TrustedImm64(DoesGCCheck::encode(true, DoesGCCheck::Special::FTLOSRExit)), vm.heap.addressOfDoesGC());
+        jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::FTLOSRExit)), vm.heap.addressOfDoesGC());
     }
 
     // Bring the stack back into a sane form and assert that it's sane.

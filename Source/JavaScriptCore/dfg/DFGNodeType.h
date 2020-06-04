@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -551,6 +551,10 @@ enum NodeType {
 #undef DFG_OP_ENUM
     LastNodeType
 };
+
+#define DFG_OP_COUNT(opcode, flags) + 1
+constexpr unsigned numberOfNodeTypes = FOR_EACH_DFG_OP(DFG_OP_COUNT);
+#undef DFG_OP_COUNT
 
 // Specifies the default flags for each node.
 inline NodeFlags defaultFlags(NodeType op)

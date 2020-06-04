@@ -1,3 +1,59 @@
+2020-06-04  Mark Lam  <mark.lam@apple.com>
+
+        Reduce DFGDoesGCCheck to only storing a uint32_t.
+        https://bugs.webkit.org/show_bug.cgi?id=212734
+
+        Reviewed by Saam Barati and Caio Lima.
+
+        This patch changes the encoding of DoesGCCheck so that it will fit better in a
+        uint32_t.  This has the following benefits:
+        1. speed improvement for debug builds because it now takes less instructions
+           (especially in JITted code) to store to DoesGCCheck::m_value.
+        2. enables this check for 32-bit platforms as well.
+
+        Fun fact: we currently have 373 DFG::NodeTypes.  Hence, 9 bits for nodeOp.
+
+        The new encoding provides 21 bis for the nodeIndex.  This gives us up to 2097152
+        node indexes.  In my experience, I've never seen more than 3 decimal digits for
+        the nodeIndex so far.  If we ever find that we need more than 21 bits of nodeIndex,
+        we have 2 options to deal with it:
+
+        1. We can just ignore the high bits.  After all, it is the nodeOp that is the
+           most interesting piece of data we need to debug doesGC issues.
+
+        2. We can make DoesGCCheck use uint64_t for storage.  This encoding automatically
+           scales to 64-bit, while still allowing the more efficient form of storing a
+           32-bit immediate to be used for the common cases.
+
+        This patch also makes ENABLE_DFG_DOES_GC_VALIDATION dependent on ENABLE(DFG_JIT).
+        DoesGC is only relevant for the DFG and FTL JITs.
+
+        * dfg/DFGDoesGCCheck.cpp:
+        (JSC::DFG::DoesGCCheck::verifyCanGC):
+        * dfg/DFGDoesGCCheck.h:
+        (JSC::DFG::DoesGCCheck::encode):
+        (JSC::DFG::DoesGCCheck::expectDoesGC const):
+        (JSC::DFG::DoesGCCheck::isSpecial const):
+        (JSC::DFG::DoesGCCheck::special):
+        (JSC::DFG::DoesGCCheck::nodeOp):
+        (JSC::DFG::DoesGCCheck::nodeIndex):
+        (JSC::DFG::DoesGCCheck::expectDoesGC): Deleted.
+        (JSC::DFG::DoesGCCheck::isSpecial): Deleted.
+        (JSC::DFG::DoesGCCheck::specialIndex): Deleted.
+        (JSC::DFG::DoesGCCheck::bits): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * heap/Heap.h:
+
 2020-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Work around broken system version macro

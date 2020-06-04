@@ -36,7 +36,6 @@ namespace DFG {
 
 struct DoesGCCheck {
     enum class Special {
-        ReservedUnused, // so that specials start with 1. isSpecial() relies on this.
         Uninitialized,
         DFGOSRExit,
         FTLOSRExit,
@@ -47,20 +46,16 @@ struct DoesGCCheck {
         : m_value(encode(true, Special::Uninitialized))
     { }
 
-    static uint64_t encode(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp)
+    static uint32_t encode(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp)
     {
-        uint64_t result = bits(nodeIndex) << nodeIndexShift;
-        result |= bits(nodeOp) << nodeOpShift;
-        result |= bits(expectDoesGC) << expectDoesGCShift;
-        return result;
+        // We know nodeOp always fits because of the static_assert in DFGDoesGCCheck.cpp.
+        ASSERT((nodeIndex << nodeIndexShift) >> nodeIndexShift == nodeIndex);
+        return nodeIndex << nodeIndexShift | nodeOp << nodeOpShift | bits(expectDoesGC);
     }
 
-    static uint64_t encode(bool expectDoesGC, Special special)
+    static uint32_t encode(bool expectDoesGC, Special special)
     {
-        ASSERT(bits(special) < numberOfSpecials);
-        uint64_t result = bits(special) << specialShift;
-        result |= bits(expectDoesGC) << expectDoesGCShift;
-        return result;
+        return bits(special) << specialShift | isSpecialBit | bits(expectDoesGC);
     }
 
     void set(bool expectDoesGC, unsigned nodeIndex, unsigned nodeOp)
@@ -73,32 +68,39 @@ struct DoesGCCheck {
         m_value = encode(expectDoesGC, special);
     }
 
-    bool expectDoesGC() { return m_value & expectDoesGCMask; }
-    Special special() { return static_cast<Special>(specialIndex()); }
-    unsigned nodeIndex() { return m_value >> nodeIndexShift; }
-    unsigned nodeOp() { return (m_value >> nodeOpShift) & nodeOpMask; }
+    bool expectDoesGC() const { return m_value & expectDoesGCBit; }
+    bool isSpecial() const { return m_value & isSpecialBit; }
 
-    bool isSpecial() { return specialIndex(); }
+    Special special() { return static_cast<Special>(m_value >> specialShift); }
+
+    unsigned nodeOp() { return (m_value >> nodeOpShift) & nodeOpMask; }
+    unsigned nodeIndex() { return m_value >> nodeIndexShift; }
 
     JS_EXPORT_PRIVATE void verifyCanGC(VM&);
 
 private:
-    unsigned specialIndex() { return (m_value >> specialShift) & specialMask; }
+    template<typename T> static uint32_t bits(T value) { return static_cast<uint32_t>(value); }
 
-    template<typename T> static uint64_t bits(T value) { return static_cast<uint64_t>(value); }
+    // The value cannot be both a Special and contain node information at the
+    // time. Hence, the 2 can have separate encodings. The isSpecial bit
+    // determines which encoding is in use.
 
-    static constexpr uint64_t numberOfSpecials = static_cast<uint64_t>(Special::NumberOfSpecials);
+    static constexpr unsigned expectDoesGCBit = 1 << 0;
+    static constexpr unsigned isSpecialBit = 1 << 1;
+    static constexpr unsigned commonBits = 2;
+    static_assert((expectDoesGCBit | isSpecialBit) == (1 << commonBits) - 1);
 
-    static constexpr unsigned expectDoesGCShift = 0;
-    static constexpr unsigned specialShift = 1;
-    static constexpr unsigned nodeOpShift = 16;
-    static constexpr unsigned nodeIndexShift = 32;
+    static constexpr unsigned specialShift = commonBits;
 
-    static constexpr unsigned expectDoesGCMask = 0x1;
-    static constexpr unsigned specialMask = 0x7fff;
-    static constexpr unsigned nodeOpMask = 0xffff;
+    static constexpr unsigned nodeOpBits = 9;
+    static constexpr unsigned nodeOpMask = (1 << nodeOpBits) - 1;
+    static constexpr unsigned nodeOpShift = commonBits;
 
-    uint64_t m_value { 0 };
+    static constexpr unsigned nodeIndexBits = 21;
+    static constexpr unsigned nodeIndexShift = nodeOpShift + nodeOpBits;
+    static_assert(nodeIndexShift + nodeIndexBits == 32);
+
+    uint32_t m_value { 0 };
 };
 
 } // namespace DFG

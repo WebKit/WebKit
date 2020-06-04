@@ -560,7 +560,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         // to set it here because compileOSRExit() is only called on the first time
         // we exit from this site, but all subsequent exits will take this compiled
         // ramp without calling compileOSRExit() first.
-        jit.store64(CCallHelpers::TrustedImm64(DoesGCCheck::encode(true, DoesGCCheck::Special::DFGOSRExit)), vm.heap.addressOfDoesGC());
+        jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::DFGOSRExit)), vm.heap.addressOfDoesGC());
     }
 #endif
     
