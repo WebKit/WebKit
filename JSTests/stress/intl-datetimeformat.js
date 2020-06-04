@@ -137,9 +137,9 @@ shouldBe(Object.getPrototypeOf(Intl.DateTimeFormat.prototype), Object.prototype)
 shouldBe(Intl.DateTimeFormat.prototype.constructor, Intl.DateTimeFormat);
 
 // 12.4.2 Intl.DateTimeFormat.prototype [ @@toStringTag ]
-// The initial value of the @@toStringTag property is the string value Object.
-shouldBe(Intl.DateTimeFormat.prototype[Symbol.toStringTag], 'Object');
-shouldBe(Object.prototype.toString.call(Intl.DateTimeFormat.prototype), '[object Object]');
+// The initial value of the @@toStringTag property is the string value "Intl.DateTimeFormat".
+shouldBe(Intl.DateTimeFormat.prototype[Symbol.toStringTag], 'Intl.DateTimeFormat');
+shouldBe(Object.prototype.toString.call(Intl.DateTimeFormat.prototype), '[object Intl.DateTimeFormat]');
 // This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
 shouldBe(Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).writable, false);
 shouldBe(Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, Symbol.toStringTag).enumerable, false);

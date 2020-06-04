@@ -136,9 +136,9 @@ shouldBe(Object.getPrototypeOf(Intl.PluralRules.prototype), Object.prototype);
 shouldBe(Intl.PluralRules.prototype.constructor, Intl.PluralRules);
 
 // 13.4.2 Intl.PluralRules.prototype [ @@toStringTag ]
-// The initial value of the @@toStringTag property is the string value Object.
-shouldBe(Intl.PluralRules.prototype[Symbol.toStringTag], 'Object');
-shouldBe(Object.prototype.toString.call(Intl.PluralRules.prototype), '[object Object]');
+// The initial value of the @@toStringTag property is the string value "Intl.PluralRules".
+shouldBe(Intl.PluralRules.prototype[Symbol.toStringTag], 'Intl.PluralRules');
+shouldBe(Object.prototype.toString.call(Intl.PluralRules.prototype), '[object Intl.PluralRules]');
 // This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
 shouldBe(Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, Symbol.toStringTag).writable, false);
 shouldBe(Object.getOwnPropertyDescriptor(Intl.PluralRules.prototype, Symbol.toStringTag).enumerable, false);

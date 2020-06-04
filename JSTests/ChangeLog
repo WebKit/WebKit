@@ -1,3 +1,19 @@
+2020-06-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Intl classes should have meaningful @@toStringTag values
+        https://bugs.webkit.org/show_bug.cgi?id=212769
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark 16 test cases as passing.
+
+        * stress/intl-collator.js:
+        * stress/intl-datetimeformat.js:
+        * stress/intl-numberformat.js:
+        * stress/intl-pluralrules.js:
+        Update stress tests.
+
 2020-06-04  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         GetMethod isn't performed properly on iterators

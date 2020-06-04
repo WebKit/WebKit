@@ -1647,24 +1647,12 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
   strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
-test/intl402/Collator/prototype/toStringTag/toString.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.Collator]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.Collator]») to be true'
-test/intl402/Collator/prototype/toStringTag/toStringTag.js:
-  default: 'Test262Error: descriptor value should be Intl.Collator'
-  strict mode: 'Test262Error: descriptor value should be Intl.Collator'
 test/intl402/Collator/usage-de.js:
   default: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
   strict mode: 'Test262Error: Expected [Ä, AE] and [AE, Ä] to have the same contents. search'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
-test/intl402/DateTimeFormat/prototype/toStringTag/toString.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.DateTimeFormat]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.DateTimeFormat]») to be true'
-test/intl402/DateTimeFormat/prototype/toStringTag/toStringTag.js:
-  default: 'Test262Error: descriptor value should be Intl.DateTimeFormat'
-  strict mode: 'Test262Error: descriptor value should be Intl.DateTimeFormat'
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
@@ -1758,18 +1746,6 @@ test/intl402/Locale/likely-subtags.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
-test/intl402/NumberFormat/prototype/toStringTag/configurable.js:
-  default: 'Test262Error: Expected SameValue(«Object», «Intl.NumberFormat») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«Object», «Intl.NumberFormat») to be true'
-test/intl402/NumberFormat/prototype/toStringTag/prop-desc.js:
-  default: 'Test262Error: descriptor value should be Intl.NumberFormat'
-  strict mode: 'Test262Error: descriptor value should be Intl.NumberFormat'
-test/intl402/PluralRules/prototype/toStringTag/toString.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.PluralRules]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl.PluralRules]») to be true'
-test/intl402/PluralRules/prototype/toStringTag/toStringTag.js:
-  default: 'Test262Error: descriptor value should be Intl.PluralRules'
-  strict mode: 'Test262Error: descriptor value should be Intl.PluralRules'
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
   default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'

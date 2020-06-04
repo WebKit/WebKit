@@ -44,7 +44,7 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions
 
 namespace JSC {
 
-const ClassInfo IntlNumberFormatPrototype::s_info = { "Object", &Base::s_info, &numberFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatPrototype) };
+const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat", &Base::s_info, &numberFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatPrototype) };
 
 /* Source for IntlNumberFormatPrototype.lut.h
 @begin numberFormatPrototypeTable

@@ -241,9 +241,9 @@ shouldBe(Object.getPrototypeOf(Intl.Collator.prototype), Object.prototype);
 shouldBe(Intl.Collator.prototype.constructor, Intl.Collator);
 
 // 10.3.2 Intl.Collator.prototype [ @@toStringTag ]
-// The initial value of the @@toStringTag property is the string value Object.
-shouldBe(Intl.Collator.prototype[Symbol.toStringTag], 'Object');
-shouldBe(Object.prototype.toString.call(Intl.Collator.prototype), '[object Object]');
+// The initial value of the @@toStringTag property is the string value "Intl.Collator".
+shouldBe(Intl.Collator.prototype[Symbol.toStringTag], 'Intl.Collator');
+shouldBe(Object.prototype.toString.call(Intl.Collator.prototype), '[object Intl.Collator]');
 // This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.
 shouldBe(Object.getOwnPropertyDescriptor(Intl.Collator.prototype, Symbol.toStringTag).writable, false);
 shouldBe(Object.getOwnPropertyDescriptor(Intl.Collator.prototype, Symbol.toStringTag).enumerable, false);
