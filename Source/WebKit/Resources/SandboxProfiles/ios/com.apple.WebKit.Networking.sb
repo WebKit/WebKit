@@ -409,7 +409,7 @@
     required-etc-files
     (literal "/"))
 
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events"))
 
@@ -418,14 +418,14 @@
     (local-name "com.apple.cfprefsd.agent")
 )
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.cfprefsd.daemon") ;; Needed by _CFPreferencesGetAppBooleanValueWithContainer and others.
 )
 
 (allow ipc-posix-shm-read*
     (ipc-posix-name-prefix "apple.cfprefs."))
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.runningboard")) ;; Needed by process assertion code (ProcessTaskStateObserver).
 
 (allow-multi-instance-xpc-services)
@@ -536,9 +536,6 @@
 (allow process-info-rusage (target self))
 (allow process-info-codesignature (target self))
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.analyticsd"))
-
 ;;;
 ;;; End rules originally copied from 'common.sb'
 ;;;
@@ -610,7 +607,7 @@
     (global-name "com.apple.securityd"))
 
 ;; PassKit framework
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.passd.in-app-payment")
     (global-name "com.apple.passd.library"))
 
@@ -635,10 +632,9 @@
       (remote tcp "localhost:62078"))
 
 ;; Various services required by system frameworks
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.lsd.mapdb")
-    (global-name "com.apple.analyticsd")
-    (global-name "com.apple.AppSSO.service-xpc"))
+    (global-name "com.apple.analyticsd"))
 
 ;; For reporting progress for active downloads <rdar://problem/44405661>
 (allow mach-lookup (with report) (with telemetry)
