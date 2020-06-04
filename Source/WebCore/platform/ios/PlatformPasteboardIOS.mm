@@ -695,7 +695,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
 
 RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& type) const
 {
-    if ((NSInteger)index >= [m_pasteboard numberOfItems])
+    if ((NSInteger)index < 0 || (NSInteger)index >= [m_pasteboard numberOfItems])
         return nullptr;
 
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
@@ -714,7 +714,7 @@ String PlatformPasteboard::readString(size_t index, const String& type) const
         return [(NSURL *)readURL(index, title) absoluteString];
     }
 
-    if ((NSInteger)index >= [m_pasteboard numberOfItems])
+    if ((NSInteger)index < 0 || (NSInteger)index >= [m_pasteboard numberOfItems])
         return { };
 
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
@@ -742,7 +742,7 @@ String PlatformPasteboard::readString(size_t index, const String& type) const
 
 URL PlatformPasteboard::readURL(size_t index, String& title) const
 {
-    if ((NSInteger)index >= [m_pasteboard numberOfItems])
+    if ((NSInteger)index < 0 || (NSInteger)index >= [m_pasteboard numberOfItems])
         return { };
 
     id value = [m_pasteboard valuesForPasteboardType:(__bridge NSString *)kUTTypeURL inItemSet:[NSIndexSet indexSetWithIndex:index]].firstObject;
