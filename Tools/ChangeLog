@@ -1,3 +1,13 @@
+2020-06-04  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION: (r262398) Text manipulation crashes when content is added
+        https://bugs.webkit.org/show_bug.cgi?id=212785
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Improve watchlist logic for comments on patches touching imported WPT tests.

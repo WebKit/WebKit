@@ -1830,6 +1830,48 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenContentIsRemoved)
     EXPECT_WK_STREQ("new content", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationFailWhenContentIsAdded)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p>hello, world</p></body></html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("hello, world", items[0].tokens[0].content.UTF8String);
+
+    done = false;
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        if (items.count == 2)
+            done = true;
+    };
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('p').innerHTML = 'hello, world &#10; bye';"
+        "document.body.appendChild(document.createElement('div')).innerHTML = 'end'"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    __block auto item = createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"Hello, World" }});
+    [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors.count, 1UL);
+        EXPECT_EQ(errors.firstObject.domain, _WKTextManipulationItemErrorDomain);
+        EXPECT_EQ(errors.firstObject.code, _WKTextManipulationItemErrorContentChanged);
+        EXPECT_EQ(errors.firstObject.userInfo[_WKTextManipulationItemErrorItemKey], item.get());
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("<p>hello, world \n bye</p><div>end</div>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationFailWhenDocumentHasBeenNavigatedAway)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

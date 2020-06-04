@@ -653,16 +653,19 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             continue;
 
         Vector<ManipulationToken> tokensInCurrentNode;
-        if (content.isReplacedContent)
+        if (content.isReplacedContent) {
+            if (currentTokenIndex >= item.tokens.size())
+                return ManipulationFailureType::ContentChanged;
+
             tokensInCurrentNode.append(item.tokens[currentTokenIndex]);
-        else
+        } else
             tokensInCurrentNode = parse(content.text, content.node.get()).tokens;
 
         bool isNodeIncluded = WTF::anyOf(tokensInCurrentNode, [] (auto& token) {
             return !token.isExcluded;
         });
         for (auto& token : tokensInCurrentNode) {
-            if (currentTokenIndex > item.tokens.size())
+            if (currentTokenIndex >= item.tokens.size())
                 return ManipulationFailureType::ContentChanged;
 
             auto& currentToken = item.tokens[currentTokenIndex++];

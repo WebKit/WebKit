@@ -1,3 +1,17 @@
+2020-06-04  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION:(r262398) Text manipulation crashes when content is added
+        https://bugs.webkit.org/show_bug.cgi?id=212785
+
+        Reviewed by Ryosuke Niwa.
+
+        r262398 accidentally removed the bound check on array index and was not caught by existing tests.
+
+        Test: TextManipulation.CompleteTextManipulationFailWhenContentIsAdded
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace):
+
 2020-06-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PlayStation] Unreviewed build fix following r262352.
