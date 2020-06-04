@@ -50,12 +50,13 @@ URL::URL(CFURLRef url)
 #if !USE(FOUNDATION)
 RetainPtr<CFURLRef> URL::createCFURL() const
 {
-    // FIXME: What should this return for invalid URLs?
-    // Currently it throws away the high bytes of the characters in the string in that case,
-    // which is clearly wrong.
-    URLCharBuffer buffer;
-    copyToBuffer(buffer);
-    auto cfURL = createCFURLFromBuffer(buffer.data(), buffer.size());
+    RetainPtr<CFURLRef> cfURL;
+    if (LIKELY(m_string.is8Bit()))
+        cfURL = WTF::createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
+    else {
+        CString utf8 = m_string.utf8();
+        cfURL = WTF::createCFURLFromBuffer(utf8.data(), utf8.length());
+    }
 
     if (protocolIsInHTTPFamily() && !isCFURLSameOrigin(cfURL.get(), *this))
         return nullptr;

@@ -197,7 +197,6 @@ private:
     friend class URLParser;
     void invalidate();
     static bool protocolIs(const String&, const char*);
-    void copyToBuffer(Vector<char, 512>& buffer) const;
     unsigned hostStart() const;
 
     friend WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);

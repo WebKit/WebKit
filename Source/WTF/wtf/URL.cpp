@@ -47,24 +47,6 @@ typedef Vector<UChar, 512> UCharBuffer;
 
 static constexpr unsigned invalidPortNumber = 0xFFFF;
 
-// Copies the source to the destination, assuming all the source characters are
-// ASCII. The destination buffer must be large enough. Null characters are allowed
-// in the source string, and no attempt is made to null-terminate the result.
-static void copyASCII(const String& string, char* dest)
-{
-    if (string.isEmpty())
-        return;
-
-    if (string.is8Bit())
-        memcpy(dest, string.characters8(), string.length());
-    else {
-        const UChar* src = string.characters16();
-        size_t length = string.length();
-        for (size_t i = 0; i < length; i++)
-            dest[i] = static_cast<char>(src[i]);
-    }
-}
-
 void URL::invalidate()
 {
     m_isValid = false;
@@ -771,14 +753,6 @@ bool URL::isHierarchical() const
         return false;
     ASSERT(m_string[m_schemeEnd] == ':');
     return m_string[m_schemeEnd + 1] == '/';
-}
-
-void URL::copyToBuffer(Vector<char, 512>& buffer) const
-{
-    // FIXME: This throws away the high bytes of all the characters in the string!
-    // That's fine for a valid URL, which is all ASCII, but not for invalid URLs.
-    buffer.resize(m_string.length());
-    copyASCII(m_string, buffer.data());
 }
 
 template<typename StringClass>
