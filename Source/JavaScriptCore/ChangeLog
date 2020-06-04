@@ -1,3 +1,15 @@
+2020-06-04  Paulo Matos  <pmatos@igalia.com>
+
+        Fix 32bit build broken at r262513
+        https://bugs.webkit.org/show_bug.cgi?id=212735
+
+        Unreviewed Gardening.
+
+        Proper fix is being worked out under https://bugs.webkit.org/show_bug.cgi?id=212734
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+
 2020-06-03  Tadeu Zagallo  <tzagallo@apple.com>
 
         Disable B3 hoistLoopInvariantValues by default

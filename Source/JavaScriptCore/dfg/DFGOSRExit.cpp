@@ -550,6 +550,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         }
     }
 
+#if USE(JSVALUE64)
     if (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
         // code running that expects no GC. We need to set this before arguments
@@ -561,7 +562,8 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         // ramp without calling compileOSRExit() first.
         jit.store64(CCallHelpers::TrustedImm64(DoesGCCheck::encode(true, DoesGCCheck::Special::DFGOSRExit)), vm.heap.addressOfDoesGC());
     }
-
+#endif
+    
     // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit. This
     // could toast some stack that the DFG used. We need to do it before storing to stack offsets
     // used by baseline.
