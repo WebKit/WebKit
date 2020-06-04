@@ -1,3 +1,15 @@
+2020-06-04  Mark Lam  <mark.lam@apple.com>
+
+        Editors should not automatically trim trailing whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=212763
+
+        Reviewed by Yusuke Suzuki.
+
+        Doing so would force a lot of unnecessary code changes and make patches hard to
+        review.  It is common WebKit practice to not make unrelated changes in patches.
+
+        * .editorconfig:
+
 2020-06-02  Keith Rollin  <krollin@apple.com>
 
         Revert FEATURES_DEFINES related changes
