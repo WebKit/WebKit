@@ -1,5 +1,40 @@
 2020-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        Improve watchlist logic for comments on patches touching imported WPT tests.
+        https://bugs.webkit.org/show_bug.cgi?id=212597
+
+        Reviewed by Youenn Fablet.
+
+        On r262295 I added a watchlist comment for patches touching the imported WPT tests.
+        However, this is commenting on patches that are importing WPT tests.
+
+        To avoid this situations, this patch adds a new rule to detect if the changes modify
+        any of the w3c-import.log files, and then changes the logic to make the comment only
+        for patches that modify the WPT imported tests but not the w3c-import.log files.
+
+        In order to support this new logic, watchlist rule parsing is improved to support
+        the "and" and "not" operators. Previously it only supported the "or" operator.
+
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py:
+        (WatchListParser._rule_definitions_as_set):
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py:
+        (WatchListParserTest.test_cc_rule_with_undefined_defintion_with_suggestion):
+        (WatchListParserTest):
+        (WatchListParserTest.test_cc_rule_with_complex_logic):
+        * Scripts/webkitpy/common/watchlist/watchlistrule.py:
+        (WatchListRule.__init__):
+        (WatchListRule._match_test_definitions):
+        (WatchListRule.match):
+        * Scripts/webkitpy/common/watchlist/watchlistrule_unittest.py:
+        (WatchListRuleTest.test_complex_definition_or):
+        (WatchListRuleTest):
+        (WatchListRuleTest.test_complex_definition_and):
+        (WatchListRuleTest.test_complex_definition_not):
+        (WatchListRuleTest.test_complex_definition_combined):
+
+2020-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         svn-apply command is too slow with big patches
         https://bugs.webkit.org/show_bug.cgi?id=212766
 

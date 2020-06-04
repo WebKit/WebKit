@@ -50,7 +50,7 @@ class WatchListRuleTest(unittest.TestCase):
         self.assertTrue(rule.match([definition_name]))
         self.assertFalse(rule.match([definition_name + '1']))
 
-    def test_complex_definition(self):
+    def test_complex_definition_or(self):
         definition_name1 = 'definition1'
         definition_name2 = 'definition2'
         definition_name3 = 'definition3'
@@ -61,3 +61,57 @@ class WatchListRuleTest(unittest.TestCase):
         self.assertFalse(rule.match([definition_name1 + '1']))
         self.assertFalse(rule.match([definition_name2 + '1']))
         self.assertFalse(rule.match([definition_name3 + '1']))
+
+    def test_complex_definition_and(self):
+        definition_name1 = 'definition1'
+        definition_name2 = 'definition2'
+        definition_name3 = 'definition3'
+        rule = WatchListRule(definition_name1 + '&' + definition_name2 + '&' + definition_name3, [])
+        self.assertFalse(rule.match([definition_name1]))
+        self.assertFalse(rule.match([definition_name1, definition_name2]))
+        self.assertFalse(rule.match([definition_name1, definition_name3]))
+        self.assertFalse(rule.match([definition_name2]))
+        self.assertFalse(rule.match([definition_name2, definition_name3]))
+        self.assertFalse(rule.match([definition_name3]))
+        self.assertTrue(rule.match([definition_name1, definition_name2, definition_name3]))
+
+    def test_complex_definition_not(self):
+        definition_name1 = 'definition1'
+        definition_name2 = 'definition2'
+        rule = WatchListRule('!' + definition_name1, [])
+        self.assertFalse(rule.match([definition_name1]))
+        self.assertTrue(rule.match([definition_name2]))
+
+    def test_complex_definition_combined(self):
+        definition_name1 = 'definition1'
+        definition_name2 = 'definition2'
+        definition_name3 = 'definition3'
+        definition_name4 = 'definition4'
+        rule1 = WatchListRule(definition_name1 + '&!' + definition_name2, [])
+        self.assertFalse(rule1.match([definition_name1, definition_name2]))
+        self.assertFalse(rule1.match([definition_name2]))
+        self.assertTrue(rule1.match([definition_name1]))
+        rule2 = WatchListRule(definition_name1 + '|' + definition_name2 + '&!' + definition_name3, [])
+        self.assertFalse(rule2.match([definition_name2, definition_name3]))
+        self.assertFalse(rule2.match([definition_name3]))
+        self.assertTrue(rule2.match([definition_name1]))
+        self.assertTrue(rule2.match([definition_name1, definition_name2]))
+        self.assertTrue(rule2.match([definition_name1, definition_name2, definition_name3]))
+        self.assertTrue(rule2.match([definition_name1, definition_name3]))
+        self.assertTrue(rule2.match([definition_name2]))
+        rule3 = WatchListRule(definition_name1 + '|' + definition_name2 + '&!' + definition_name3 + '|!' + definition_name4, [])
+        self.assertFalse(rule3.match([definition_name2, definition_name3, definition_name4]))
+        self.assertFalse(rule3.match([definition_name2, definition_name3, definition_name4]))
+        self.assertFalse(rule3.match([definition_name3, definition_name4]))
+        self.assertFalse(rule3.match([definition_name3, definition_name4]))
+        self.assertFalse(rule3.match([definition_name4]))
+        self.assertTrue(rule3.match([definition_name1]))
+        self.assertTrue(rule3.match([definition_name1, definition_name2, definition_name3, definition_name4]))
+        self.assertTrue(rule3.match([definition_name1, definition_name2, definition_name4]))
+        self.assertTrue(rule3.match([definition_name1, definition_name3, definition_name4]))
+        self.assertTrue(rule3.match([definition_name1, definition_name4]))
+        self.assertTrue(rule3.match([definition_name2]))
+        self.assertTrue(rule3.match([definition_name2, definition_name4]))
+        self.assertTrue(rule3.match([definition_name2, definition_name4]))
+        self.assertTrue(rule3.match([definition_name2, definition_name4]))
+        self.assertTrue(rule3.match([definition_name3]))

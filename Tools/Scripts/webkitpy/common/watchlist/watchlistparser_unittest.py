@@ -280,3 +280,31 @@ class WatchListParserTest(webkitunittest.TestCase):
         OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
                                        expected_logs='In section "CC_RULES", the following definitions are not used and should be removed: WatchList'
                                        + '\n\nPerhaps it should be WatchList1.\n')
+
+    def test_cc_rule_with_complex_logic(self):
+        watch_list = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r".*MyFileName\\.cpp",'
+            '        },'
+            '        "WatchList2": {'
+            '            "filename": r".*MyFileName\\.h",'
+            '        },'
+            '        "WatchList3": {'
+            '            "filename": r".*MyFileName\\.o",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "!WatchList1&!WatchList2|!WatchList3&!WatchListUndefined": ["clopez@igalia.com"]'
+            '     },'
+            '    "MESSAGE_RULES": {'
+            '        "!WatchList1|WatchList2&!WatchList3|!WatchListUndefined": ["clopez@igalia.com"]'
+            '     },'
+            '}')
+
+        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
+                                       expected_logs='In section "CC_RULES", the following definitions are not used and should be removed: WatchListUndefined\n\n' +
+                                       'Perhaps it should be WatchList3 or WatchList2 or WatchList1.\n' +
+                                       'In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchListUndefined\n\n' +
+                                       'Perhaps it should be WatchList3 or WatchList2 or WatchList1.\n')

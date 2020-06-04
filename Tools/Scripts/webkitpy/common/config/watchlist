@@ -380,6 +380,9 @@
         "WebPlatformTests": {
             "filename": r"LayoutTests/imported/w3c/web-platform-tests/((?!-expected\.txt).)*$",
         },
+        "WebPlatformTestsImport": {
+            "filename": r"LayoutTests/imported/w3c/web-platform-tests/.*w3c-import.log$",
+        },
         "WebRTC": {
             "filename": r"Source/ThirdParty/libwebrtc/"
                         r"|Source/WebKit/Shared/*RTC*"
@@ -478,7 +481,7 @@
                    "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
         "WebInspectorProtocol": [ "This patch modifies the inspector protocol. Please ensure that any frontend changes appropriately use feature checks for new protocol features." ],
         "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
-        "WebPlatformTests": [ "This patch modifies the imported WPT tests. Please ensure that any changes on the tests are exported to WPT. Please see https://trac.webkit.org/wiki/WPTExportProcess" ],
+        "WebPlatformTests&!WebPlatformTestsImport": [ "This patch modifies the imported WPT tests. Please ensure that any changes on the tests (not coming from a WPT import) are exported to WPT. Please see https://trac.webkit.org/wiki/WPTExportProcess" ],
         "JSBuiltinsGenerator": [ "This patch modifies the JS builtins code generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-builtins-generator-tests --reset-results`)" ],
         "WasmJSON": [ "This patch modifies one of the wasm.json files. Please ensure that any changes in one have been mirrored to the other. You can find the wasm.json files at \"Source/JavaScriptCore/wasm/wasm.json\" and \"JSTests/wasm/wasm.json\"." ],
     },

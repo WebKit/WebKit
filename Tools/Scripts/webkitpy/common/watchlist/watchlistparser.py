@@ -177,5 +177,6 @@ class WatchListParser(object):
     def _rule_definitions_as_set(self, rules):
         definition_set = set()
         for rule in rules:
-            definition_set = definition_set.union(rule.definitions_to_match)
+            definitions_inside_rule = re.split('&|\|', rule.definitions_to_match.replace('!', ''))
+            definition_set = definition_set.union(definitions_inside_rule)
         return definition_set
