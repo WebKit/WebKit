@@ -1,0 +1,24 @@
+From 516d95bc957cd1aa6c1c546d7a75a17a2b2257ca Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 3 Jun 2020 13:31:39 +0100
+Subject: [PATCH] Pango: Bump to 1.45 master
+
+---
+ elements/components/pango.bst | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/elements/components/pango.bst b/elements/components/pango.bst
+index 0f698d9bc..aeaed84fc 100644
+--- a/elements/components/pango.bst
++++ b/elements/components/pango.bst
+@@ -31,6 +31,4 @@ sources:
+ - kind: git_tag
+   url: gnome:pango.git
+   track: master
+-  track-extra:
+-  - 1.44.7
+-  ref: 1.44.7-0-g9f03d48261cb25e59ba029b194e70881d6ae8f37
++  ref: 1.44.7-90-ge48ae523d07168718815148aafca7ceec05ecff5
+-- 
+2.26.2
+

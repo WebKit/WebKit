@@ -1,3 +1,17 @@
+2020-06-04  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update definitions
+        https://bugs.webkit.org/show_bug.cgi?id=212698
+
+        Reviewed by Žan Doberšek.
+
+        * buildstream/elements/freedesktop-sdk.bst: Update to FDO 19.08.11
+        * buildstream/elements/sdk/gtk.bst: Update GTK4
+        * buildstream/patches/fdo/0001-Pango-Bump-to-1.45-master.patch: Added. Needed for GTK4
+        * buildstream/patches/fdo/0001-Add-Jack.patch: Removed. This will be used when we update to the 20.08 FDO SDK.
+        * buildstream/patches/fdo/0001-components-xdg-desktop-portal.bst-Update-to-1.6.0.patch: Removed. Ditto.
+        * buildstream/patches/fdo/0002-Update-PipeWire-to-0.3.1.patch: Removed. Ditto.
+
 2020-06-03  Tadeu Zagallo  <tzagallo@apple.com>
 
         Disable B3 hoistLoopInvariantValues by default
