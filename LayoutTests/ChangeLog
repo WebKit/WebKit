@@ -1,3 +1,42 @@
+2020-06-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r262363. rdar://problem/63984142
+
+    [iBooks] Empty pages appear in book
+    https://bugs.webkit.org/show_bug.cgi?id=212573
+    <rdar://problem/62912623>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Do not add a page break for orphan content unless the line does not fit anymore.
+    
+    Test: fast/multicol/orphans-ignored.html
+    
+    * rendering/SimpleLineLayoutPagination.cpp:
+    (WebCore::SimpleLineLayout::setPageBreakForLine):
+    (WebCore::SimpleLineLayout::adjustLinePositionsForPagination):
+    
+    LayoutTests:
+    
+    * fast/multicol/orphans-ignored-expected.html: Added.
+    * fast/multicol/orphans-ignored.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262363 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-31  Zalan Bujtas  <zalan@apple.com>
+
+            [iBooks] Empty pages appear in book
+            https://bugs.webkit.org/show_bug.cgi?id=212573
+            <rdar://problem/62912623>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/multicol/orphans-ignored-expected.html: Added.
+            * fast/multicol/orphans-ignored.html: Added.
+
 2020-06-02  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r262279. rdar://problem/63891510
