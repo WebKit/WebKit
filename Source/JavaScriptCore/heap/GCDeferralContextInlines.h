@@ -37,7 +37,7 @@ ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
 
 ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         m_heap.verifyCanGC();
 
     if (UNLIKELY(m_shouldGC))

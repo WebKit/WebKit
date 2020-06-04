@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace JSC {
 
 ALWAYS_INLINE void* LocalAllocator::allocate(Heap& heap, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         heap.verifyCanGC();
     return m_freeList.allocate(
         [&] () -> HeapCell* {

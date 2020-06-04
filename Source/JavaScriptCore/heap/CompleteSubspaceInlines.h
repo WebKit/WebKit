@@ -32,7 +32,7 @@ namespace JSC {
 
 ALWAYS_INLINE void* CompleteSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         vm.heap.verifyCanGC();
 
     if (Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists))

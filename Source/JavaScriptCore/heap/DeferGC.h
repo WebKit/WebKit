@@ -44,7 +44,7 @@ public:
     
     ~DeferGC()
     {
-        if (validateDFGDoesGC)
+        if constexpr (validateDFGDoesGC)
             m_heap.verifyCanGC();
         m_heap.decrementDeferralDepthAndGCIfNeeded();
     }

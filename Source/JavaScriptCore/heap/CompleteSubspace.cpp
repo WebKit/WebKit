@@ -119,7 +119,7 @@ void* CompleteSubspace::allocateSlow(VM& vm, size_t size, GCDeferralContext* def
 
 void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* deferralContext)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         vm.heap.verifyCanGC();
 
     sanitizeStackForVM(vm);
@@ -155,7 +155,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
 
 void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* oldCell, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         vm.heap.verifyCanGC();
 
     // The following conditions are met in Butterfly for example.

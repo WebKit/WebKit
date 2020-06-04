@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
 
 PreciseAllocation* PreciseAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         heap.verifyCanGC();
 
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;
@@ -122,7 +122,7 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 
 PreciseAllocation* PreciseAllocation::createForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         heap.verifyCanGC();
 
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;

@@ -1063,7 +1063,7 @@ void Heap::collect(Synchronousness synchronousness, GCRequest request)
 
 void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         verifyCanGC();
 
     switch (synchronousness) {
@@ -1096,7 +1096,7 @@ void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
 
 void Heap::collectAsync(GCRequest request)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         verifyCanGC();
 
     if (!m_isSafeToCollect)
@@ -1120,7 +1120,7 @@ void Heap::collectAsync(GCRequest request)
 
 void Heap::collectSync(GCRequest request)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         verifyCanGC();
 
     if (!m_isSafeToCollect)
@@ -1783,7 +1783,7 @@ NEVER_INLINE void Heap::resumeTheMutator()
 
 void Heap::stopIfNecessarySlow()
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         verifyCanGC();
 
     while (stopIfNecessarySlow(m_worldState.load())) { }
@@ -1798,7 +1798,7 @@ void Heap::stopIfNecessarySlow()
 
 bool Heap::stopIfNecessarySlow(unsigned oldState)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         verifyCanGC();
 
     RELEASE_ASSERT(oldState & hasAccessBit);
@@ -2600,7 +2600,7 @@ void Heap::reportExternalMemoryVisited(size_t size)
 void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 {
     ASSERT(deferralContext || isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         verifyCanGC();
 
     if (!m_isSafeToCollect)

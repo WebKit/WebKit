@@ -702,9 +702,11 @@ private:
         if (Options::validateAbstractInterpreterState())
             validateAIState(m_node);
 
-        if (validateDFGDoesGC) {
-            bool expectDoesGC = doesGC(m_graph, m_node);
-            m_out.store(m_out.constInt32(DoesGCCheck::encode(expectDoesGC, m_node->index(), m_node->op())), m_out.absolute(vm().heap.addressOfDoesGC()));
+        if constexpr (validateDFGDoesGC) {
+            if (Options::validateDoesGC()) {
+                bool expectDoesGC = doesGC(m_graph, m_node);
+                m_out.store(m_out.constInt32(DoesGCCheck::encode(expectDoesGC, m_node->index(), m_node->op())), m_out.absolute(vm().heap.addressOfDoesGC()));
+            }
         }
 
         switch (m_node->op()) {

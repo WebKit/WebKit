@@ -1,3 +1,37 @@
+2020-06-04  Mark Lam  <mark.lam@apple.com>
+
+        Add Options::validateDoesGC() for turning DoesGC validation on/off.
+        https://bugs.webkit.org/show_bug.cgi?id=212773
+
+        Reviewed by Saam Barati.
+
+        It will default to on if ASSERT_ENABLED because we want testing to be done with
+        the validation on.  When needed, we can turn it off if we need to e.g. to
+        de-clutter disassembly dumps while debugging.
+
+        If Options::validateDoesGC() is false, we turn off JIT code emission for this
+        check, as well as skip the validation checks.  There are still places in C++
+        code that store to DoesGC::m_value without checking Options::validateDoesGC().
+        It doesn't hurt to just let these stores proceed, and performance-wise, it's
+        probably cheaper to just do the store unconditionally than to gate it on a load of
+        Options::validateDoesGC() first.
+
+        Also made it explicit that the check on validateDFGDoesGC is a constexpr check.
+
+        * dfg/DFGDoesGCCheck.cpp:
+        (JSC::DFG::DoesGCCheck::verifyCanGC):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * runtime/OptionsList.h:
+
 2020-06-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl classes should have meaningful @@toStringTag values

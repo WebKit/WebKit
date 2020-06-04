@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -63,7 +63,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     VM& vm, JSGlobalObject* globalObject, JSString* input, const String& inputValue,
     RegExp* regExp, unsigned startOffset, MatchResult& result)
 {
-    if (validateDFGDoesGC)
+    if constexpr (validateDFGDoesGC)
         vm.heap.verifyCanGC();
 
     Vector<int, 32> subpatternResults;

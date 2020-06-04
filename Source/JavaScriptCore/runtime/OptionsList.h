@@ -153,6 +153,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, logCompilationChanges, false, Normal, nullptr) \
     v(Bool, useProbeOSRExit, false, Normal, nullptr) \
     v(Bool, printEachOSRExit, false, Normal, nullptr) \
+    v(Bool, validateDoesGC, ASSERT_ENABLED, Normal, nullptr) \
     v(Bool, validateGraph, false, Normal, nullptr) \
     v(Bool, validateGraphAtEachPhase, false, Normal, nullptr) \
     v(Bool, verboseValidationFailure, false, Normal, nullptr) \
