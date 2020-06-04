@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "BlobBuilder.h"
+#include "EndingType.h"
 
 #include "Blob.h"
 #include "TextEncoding.h"
@@ -40,7 +41,7 @@
 
 namespace WebCore {
 
-BlobBuilder::BlobBuilder(BlobLineEndings endings)
+BlobBuilder::BlobBuilder(EndingType endings)
     : m_endings(endings)
 {
 }
@@ -72,7 +73,7 @@ void BlobBuilder::append(const String& text)
 {
     auto bytes = UTF8Encoding().encode(text, UnencodableHandling::Entities);
 
-    if (m_endings == BlobLineEndings::Native)
+    if (m_endings == EndingType::Native)
         bytes = normalizeLineEndingsToNative(WTFMove(bytes));
 
     if (m_appendableData.isEmpty())

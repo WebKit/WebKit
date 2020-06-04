@@ -1,3 +1,29 @@
+2020-06-04  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Rename BlobLineEndings to EndingType to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=212644
+
+        Reviewed by Sam Weinig.
+
+        By the latest File API spec, the role of `BlobLineEndings` is named as `EndingType`.
+        https://w3c.github.io/FileAPI/#enumdef-endingtype
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/BlobBuilder.cpp:
+        (WebCore::BlobBuilder::BlobBuilder):
+        (WebCore::BlobBuilder::append):
+        * fileapi/BlobBuilder.h:
+        * fileapi/BlobPropertyBag.h:
+        * fileapi/BlobPropertyBag.idl:
+        * fileapi/EndingType.h: Renamed from Source/WebCore/fileapi/BlobLineEndings.h.
+        * fileapi/EndingType.idl: Renamed from Source/WebCore/fileapi/BlobLineEndings.idl.
+
 2020-06-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Validate index parameter in PlatformPasteboard

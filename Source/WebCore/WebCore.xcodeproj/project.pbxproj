@@ -2290,8 +2290,8 @@
 		7C7761AA1F878AA500F869FD /* JSImageBitmapRenderingContextSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7903B61F86FDE600463A70 /* JSImageBitmapRenderingContextSettings.h */; };
 		7C77C3D11DEE472400A50BFA /* BlobPropertyBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D01DEE472400A50BFA /* BlobPropertyBag.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C77C3D51DEF178E00A50BFA /* JSBlobPropertyBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D31DEF178E00A50BFA /* JSBlobPropertyBag.h */; };
-		7C77C3D71DEF850A00A50BFA /* BlobLineEndings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D61DEF850A00A50BFA /* BlobLineEndings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C77C3DC1DEF86D700A50BFA /* JSBlobLineEndings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */; };
+		7C77C3D71DEF850A00A50BFA /* EndingType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D61DEF850A00A50BFA /* EndingType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C77C3DC1DEF86D700A50BFA /* JSEndingType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3DA1DEF86D700A50BFA /* JSEndingType.h */; };
 		7C7903B31F86F95C00463A70 /* ImageBitmapRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */; };
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
 		7C8139A61ED6286A00CE26E8 /* JSDOMAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7617,7 +7617,7 @@
 		41E59400214865AA00D3CB61 /* RTCRtpHeaderExtensionParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpHeaderExtensionParameters.idl; sourceTree = "<group>"; };
 		41E59401214865AB00D3CB61 /* RTCRtpFecParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpFecParameters.idl; sourceTree = "<group>"; };
 		41E9DCE4231973FE00F35949 /* BlobLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobLoader.h; sourceTree = "<group>"; };
-		41E9DCE62319742300F35949 /* BlobLineEndings.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobLineEndings.idl; sourceTree = "<group>"; };
+		41E9DCE62319742300F35949 /* EndingType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EndingType.idl; sourceTree = "<group>"; };
 		41E9DCE82319CA7500F35949 /* NetworkSendQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSendQueue.h; sourceTree = "<group>"; };
 		41E9DCEA2319CAE800F35949 /* NetworkSendQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSendQueue.cpp; sourceTree = "<group>"; };
 		41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDatabaseResource.h; sourceTree = "<group>"; };
@@ -10078,9 +10078,9 @@
 		7C77C3D01DEE472400A50BFA /* BlobPropertyBag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobPropertyBag.h; sourceTree = "<group>"; };
 		7C77C3D21DEF178E00A50BFA /* JSBlobPropertyBag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobPropertyBag.cpp; sourceTree = "<group>"; };
 		7C77C3D31DEF178E00A50BFA /* JSBlobPropertyBag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobPropertyBag.h; sourceTree = "<group>"; };
-		7C77C3D61DEF850A00A50BFA /* BlobLineEndings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobLineEndings.h; sourceTree = "<group>"; };
-		7C77C3D91DEF86D700A50BFA /* JSBlobLineEndings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobLineEndings.cpp; sourceTree = "<group>"; };
-		7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobLineEndings.h; sourceTree = "<group>"; };
+		7C77C3D61DEF850A00A50BFA /* EndingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndingType.h; sourceTree = "<group>"; };
+		7C77C3D91DEF86D700A50BFA /* JSEndingType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEndingType.cpp; sourceTree = "<group>"; };
+		7C77C3DA1DEF86D700A50BFA /* JSEndingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEndingType.h; sourceTree = "<group>"; };
 		7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBitmapRenderingContext.h; sourceTree = "<group>"; };
 		7C7903B11F86F95C00463A70 /* ImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
 		7C7903B21F86F95C00463A70 /* ImageBitmapRenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageBitmapRenderingContext.idl; sourceTree = "<group>"; };
@@ -21914,8 +21914,8 @@
 				2E2D99CC10E2BBDA00496337 /* JSBlob.h */,
 				A15D75171E68F83600A35FBC /* JSBlobCallback.cpp */,
 				A15D75181E68F83600A35FBC /* JSBlobCallback.h */,
-				7C77C3D91DEF86D700A50BFA /* JSBlobLineEndings.cpp */,
-				7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */,
+				7C77C3D91DEF86D700A50BFA /* JSEndingType.cpp */,
+				7C77C3DA1DEF86D700A50BFA /* JSEndingType.h */,
 				7C77C3D21DEF178E00A50BFA /* JSBlobPropertyBag.cpp */,
 				7C77C3D31DEF178E00A50BFA /* JSBlobPropertyBag.h */,
 				BC00F0100E0A189500FD04E3 /* JSFile.cpp */,
@@ -22897,8 +22897,8 @@
 				A15D75121E68F7B100A35FBC /* BlobCallback.cpp */,
 				A15D75131E68F7B100A35FBC /* BlobCallback.h */,
 				A15D75141E68F7B100A35FBC /* BlobCallback.idl */,
-				7C77C3D61DEF850A00A50BFA /* BlobLineEndings.h */,
-				41E9DCE62319742300F35949 /* BlobLineEndings.idl */,
+				7C77C3D61DEF850A00A50BFA /* EndingType.h */,
+				41E9DCE62319742300F35949 /* EndingType.idl */,
 				41E9DCE4231973FE00F35949 /* BlobLoader.h */,
 				7C77C3D01DEE472400A50BFA /* BlobPropertyBag.h */,
 				7C77C3CF1DEE471800A50BFA /* BlobPropertyBag.idl */,
@@ -29817,7 +29817,7 @@
 				2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */,
 				E1D31CDD19196020001005A3 /* BlobDataFileReference.h in Headers */,
 				4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */,
-				7C77C3D71DEF850A00A50BFA /* BlobLineEndings.h in Headers */,
+				7C77C3D71DEF850A00A50BFA /* EndingType.h in Headers */,
 				41E9DCE7231974BF00F35949 /* BlobLoader.h in Headers */,
 				E1C94AF9191303F000D5A893 /* BlobPart.h in Headers */,
 				7C77C3D11DEE472400A50BFA /* BlobPropertyBag.h in Headers */,
@@ -31169,7 +31169,7 @@
 				FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
 				A15D751B1E68F8A300A35FBC /* JSBlobCallback.h in Headers */,
-				7C77C3DC1DEF86D700A50BFA /* JSBlobLineEndings.h in Headers */,
+				7C77C3DC1DEF86D700A50BFA /* JSEndingType.h in Headers */,
 				7C77C3D51DEF178E00A50BFA /* JSBlobPropertyBag.h in Headers */,
 				14DCF3B31B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,

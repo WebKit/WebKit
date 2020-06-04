@@ -762,8 +762,8 @@ set(WebCore_NON_SVG_IDL_FILES
 
     fileapi/Blob.idl
     fileapi/BlobCallback.idl
-    fileapi/BlobLineEndings.idl
     fileapi/BlobPropertyBag.idl
+    fileapi/EndingType.idl
     fileapi/File.idl
     fileapi/FileError.idl
     fileapi/FileList.idl

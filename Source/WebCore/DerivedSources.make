@@ -727,8 +727,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/Blob.idl \
     $(WebCore)/fileapi/BlobCallback.idl \
-    $(WebCore)/fileapi/BlobLineEndings.idl \
     $(WebCore)/fileapi/BlobPropertyBag.idl \
+    $(WebCore)/fileapi/EndingType.idl \
     $(WebCore)/fileapi/File.idl \
     $(WebCore)/fileapi/FileError.idl \
     $(WebCore)/fileapi/FileList.idl \

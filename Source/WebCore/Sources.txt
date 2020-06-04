@@ -2735,7 +2735,7 @@ JSBiquadFilterNode.cpp
 JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp
-JSBlobLineEndings.cpp
+JSEndingType.cpp
 JSBlobPropertyBag.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp

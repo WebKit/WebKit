@@ -23,5 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This is no longer in the FileAPI spec.
-enum BlobLineEndings { "transparent", "native" };
+#pragma once
+
+namespace WebCore {
+
+enum class EndingType {
+    Transparent,
+    Native
+};
+
+}

@@ -197,8 +197,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobLineEndings.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobLineEndings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobPropertyBag.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobPropertyBag.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.cpp
@@ -540,6 +538,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementCSSInlineStyle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementCSSInlineStyle.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEndingType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEndingType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorCallback.cpp

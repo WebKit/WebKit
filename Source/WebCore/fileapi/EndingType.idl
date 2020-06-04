@@ -23,13 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-namespace WebCore {
-
-enum class BlobLineEndings {
-    Transparent,
-    Native
-};
-
-}
+enum EndingType { "transparent", "native" };

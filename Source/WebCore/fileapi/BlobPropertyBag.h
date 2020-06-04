@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "BlobLineEndings.h"
+#include "EndingType.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct BlobPropertyBag {
     String type;
-    BlobLineEndings endings = BlobLineEndings::Transparent;
+    EndingType endings = EndingType::Transparent;
 };
 
 }

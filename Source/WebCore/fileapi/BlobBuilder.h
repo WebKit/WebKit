@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "BlobLineEndings.h"
 #include "BlobPart.h"
+#include "EndingType.h"
 
 namespace JSC {
 class ArrayBuffer;
@@ -44,7 +44,7 @@ class Blob;
 
 class BlobBuilder {
 public:
-    BlobBuilder(BlobLineEndings);
+    BlobBuilder(EndingType);
 
     void append(RefPtr<JSC::ArrayBuffer>&&);
     void append(RefPtr<JSC::ArrayBufferView>&&);
@@ -54,7 +54,7 @@ public:
     Vector<BlobPart> finalize();
 
 private:
-    BlobLineEndings m_endings;
+    EndingType m_endings;
     Vector<BlobPart> m_items;
     Vector<uint8_t> m_appendableData;
 };
