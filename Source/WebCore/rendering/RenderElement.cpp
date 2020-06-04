@@ -2089,6 +2089,11 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded()
     // Invalidate the containing block caches.
     if (is<RenderBlock>(*this))
         downcast<RenderBlock>(*this).resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
+    else {
+        // Relatively positioned inline boxes can have absolutely positioned block children. We need to reset them as well.
+        for (auto& descendant : childrenOfType<RenderBlock>(*this))
+            descendant.resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
+    }
     
     // Adjust the flow tread state on the subtree.
     setFragmentedFlowState(RenderObject::computedFragmentedFlowState(*this));
