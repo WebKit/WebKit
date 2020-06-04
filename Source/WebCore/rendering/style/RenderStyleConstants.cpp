@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,16 @@ TextStream& operator<<(TextStream& ts, ApplePayButtonType playState)
     case ApplePayButtonType::Book: ts << "book"; break;
     case ApplePayButtonType::Subscribe: ts << "subscribe"; break;
 #endif
-
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Reload: ts << "reload"; break;
+    case ApplePayButtonType::AddMoney: ts << "add-money"; break;
+    case ApplePayButtonType::TopUp: ts << "top-up"; break;
+    case ApplePayButtonType::Order: ts << "order"; break;
+    case ApplePayButtonType::Rent: ts << "rent"; break;
+    case ApplePayButtonType::Support: ts << "support"; break;
+    case ApplePayButtonType::Contribute: ts << "contribute"; break;
+    case ApplePayButtonType::Tip: ts << "tip"; break;
+#endif
     }
     return ts;
 }

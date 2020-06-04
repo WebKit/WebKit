@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@nypop.com>.
- * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -5476,7 +5476,32 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonType e)
         m_value.valueID = CSSValueSubscribe;
         break;
 #endif
-
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Reload:
+        m_value.valueID = CSSValueReload;
+        break;
+    case ApplePayButtonType::AddMoney:
+        m_value.valueID = CSSValueAddMoney;
+        break;
+    case ApplePayButtonType::TopUp:
+        m_value.valueID = CSSValueTopUp;
+        break;
+    case ApplePayButtonType::Order:
+        m_value.valueID = CSSValueOrder;
+        break;
+    case ApplePayButtonType::Rent:
+        m_value.valueID = CSSValueRent;
+        break;
+    case ApplePayButtonType::Support:
+        m_value.valueID = CSSValueSupport;
+        break;
+    case ApplePayButtonType::Contribute:
+        m_value.valueID = CSSValueContribute;
+        break;
+    case ApplePayButtonType::Tip:
+        m_value.valueID = CSSValueTip;
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -5502,6 +5527,24 @@ template<> inline CSSPrimitiveValue::operator ApplePayButtonType() const
         return ApplePayButtonType::Book;
     case CSSValueSubscribe:
         return ApplePayButtonType::Subscribe;
+#endif
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    case CSSValueReload:
+        return ApplePayButtonType::Reload;
+    case CSSValueAddMoney:
+        return ApplePayButtonType::AddMoney;
+    case CSSValueTopUp:
+        return ApplePayButtonType::TopUp;
+    case CSSValueOrder:
+        return ApplePayButtonType::Order;
+    case CSSValueRent:
+        return ApplePayButtonType::Rent;
+    case CSSValueSupport:
+        return ApplePayButtonType::Support;
+    case CSSValueContribute:
+        return ApplePayButtonType::Contribute;
+    case CSSValueTip:
+        return ApplePayButtonType::Tip;
 #endif
     default:
         break;

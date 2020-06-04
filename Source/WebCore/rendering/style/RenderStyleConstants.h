@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -1151,6 +1151,16 @@ enum class ApplePayButtonType : uint8_t {
     CheckOut,
     Book,
     Subscribe,
+#endif
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    Reload,
+    AddMoney,
+    TopUp,
+    Order,
+    Rent,
+    Support,
+    Contribute,
+    Tip,
 #endif
 };
 #endif

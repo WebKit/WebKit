@@ -1,62 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Test rendering Apple Pay buttons</title>
-    <style>
-        .apple-pay-button {
-            -webkit-appearance: -apple-pay-button;
-            display: block;
-            float: left;
-        }
-
-        .white {
-            -apple-pay-button-style: white;
-        }
-
-        .white-outline {
-            -apple-pay-button-style: white-outline;
-        }
-
-        .black {
-            -apple-pay-button-style: black;
-        }
-
-        .plain {
-            -apple-pay-button-type: plain;
-        }
-
-        .buy {
-            -apple-pay-button-type: buy;
-        }
-
-        .set-up {
-            -apple-pay-button-type: set-up;
-        }
-
-        .donate {
-            -apple-pay-button-type: donate;
-        }
-        .borderRadiusLarge {
-            border-top-left-radius: 20px/21px;
-            border-top-right-radius: 25px;
-            border-bottom-left-radius: 10px/1px;
-            border-bottom-right-radius: 5px;
-        }
-    </style>
+    <meta charset='utf-8'>
+    <script src='/resources/js-test-pre.js'></script>
+    <meta charset='utf-8'>
 </head>
-<body bgcolor="#E6E6FA">
+<body>
     <script>
-        for (let style of ["white", "white-outline", "black"]) {
-            for (let type of ["plain", "buy", "set-up", "donate"]) {
-                var button = document.createElement("button");
-                button.classList.add("apple-pay-button", style, type, "borderRadiusLarge");
-                var buttonNoRadius = document.createElement("button");
-                buttonNoRadius.classList.add("apple-pay-button", style, type);
-                document.body.appendChild(button);
-                document.body.appendChild(buttonNoRadius);
+        function testButton(style, type, version)
+        {
+            shouldBe(`CSS.supports("-apple-pay-button-style: ${style}")`, 'true');
+
+            supportsVersion = ApplePaySession.supportsVersion(version);
+            shouldBe(`CSS.supports("-apple-pay-button-type: ${type}")`, 'supportsVersion');
+
+            let button = document.createElement('button');
+            button.setAttribute('style', `-webkit-appearance: -apple-pay-button; -apple-pay-button-style: ${style}; -apple-pay-button-type: ${type}`);
+            document.body.appendChild(button);
+
+            computedStyle = getComputedStyle(button);
+            expectedStyle = style;
+            expectedType = supportsVersion ? type : 'plain';
+            shouldBe('computedStyle.getPropertyValue("-webkit-appearance")', '"-apple-pay-button"');
+            shouldBe('computedStyle.getPropertyValue("-apple-pay-button-style")', 'expectedStyle');
+            shouldBe('computedStyle.getPropertyValue("-apple-pay-button-type")', 'expectedType');
+        }
+
+        description('Test Apple Pay button types and styles');
+
+        for (let style of ['white', 'white-outline', 'black']) {
+            for (let type of ['plain', 'buy', 'set-up', 'donate', 'check-out', 'book', 'subscribe']) {
+                testButton(style, type, 4);
+            }
+
+            for (let type of ['reload', 'add-money', 'top-up', 'order', 'rent', 'support', 'contribute', 'tip']) {
+                testButton(style, type, 10);
             }
         }
     </script>
+    <script src="/resources/js-test-post.js"></script>
 </body>
 </html>

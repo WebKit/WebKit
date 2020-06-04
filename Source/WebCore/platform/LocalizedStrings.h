@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2009, 2011, 2012, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -221,6 +221,16 @@ namespace WebCore {
     String AXApplePayCheckOutLabel();
     String AXApplePayBookLabel();
     String AXApplePaySubscribeLabel();
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    String AXApplePayReloadLabel();
+    String AXApplePayAddMoneyLabel();
+    String AXApplePayTopUpLabel();
+    String AXApplePayOrderLabel();
+    String AXApplePayRentLabel();
+    String AXApplePaySupportLabel();
+    String AXApplePayContributeLabel();
+    String AXApplePayTipLabel();
+#endif
 #endif
 
     String AXAutoFillCredentialsLabel();

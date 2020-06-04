@@ -100,6 +100,9 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
+/* Label for the add money with Apple Pay button. */
+"Add money with Apple Pay" = "Add money with Apple Pay";
+
 /* Title for Add to Photos action button */
 "Add to Photos" = "Add to Photos";
 
@@ -225,6 +228,9 @@
 
 /* Continue with Touch ID. */
 "Continue with Touch ID." = "Continue with Touch ID.";
+
+/* Label for the contribute with Apple Pay button. */
+"Contribute with Apple Pay" = "Contribute with Apple Pay";
 
 /* Media Controls context menu item */
 "Controls" = "Controls";
@@ -571,6 +577,9 @@
 /* context menu item for PDF */
 "Open with %@" = "Open with %@";
 
+/* Label for the order with Apple Pay button. */
+"Order with Apple Pay" = "Order with Apple Pay";
+
 /* Undo action name */
 "Outdent (Undo action name)" = "Outdent";
 
@@ -634,8 +643,14 @@
 /* Reload context menu item */
 "Reload" = "Reload";
 
+/* Label for the reload with Apple Pay button. */
+"Reload with Apple Pay" = "Reload with Apple Pay";
+
 /* WKErrorContentRuleListStoreRemoveFailed description */
 "Removing a WKContentRuleList failed" = "Removing a WKContentRuleList failed";
+
+/* Label for the rent with Apple Pay button. */
+"Rent with Apple Pay" = "Rent with Apple Pay";
 
 /* default label for Reset buttons in forms on web pages */
 "Reset" = "Reset";
@@ -802,6 +817,9 @@
 /* Undo action name */
 "Superscript (Undo action name)" = "Superscript";
 
+/* Label for the support with Apple Pay button. */
+"Support with Apple Pay" = "Support with Apple Pay";
+
 /* File Upload alert sheet camera button string for taking only photos */
 "Take Photo (file upload action sheet)" = "Take Photo";
 
@@ -877,6 +895,9 @@
 /* WKErrorAttributedStringContentLoadTimedOut description */
 "Timed out while loading attributed string content" = "Timed out while loading attributed string content";
 
+/* Label for the tip with Apple Pay button. */
+"Tip with Apple Pay" = "Tip with Apple Pay";
+
 /* prompt string in authentication panel */
 "To view this page, you must log in to area “%@” on %@." = "To view this page, you must log in to area “%@” on %@.";
 
@@ -885,6 +906,9 @@
 
 /* prompt string in authentication panel */
 "To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
+
+/* Label for the top up with Apple Pay button. */
+"Top up with Apple Pay" = "Top up with Apple Pay";
 
 /* Transformations context sub-menu item */
 "Transformations" = "Transformations";

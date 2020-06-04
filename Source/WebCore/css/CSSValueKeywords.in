@@ -1356,6 +1356,16 @@ check-out
 book
 subscribe
 #endif
+#if defined(ENABLE_APPLE_PAY_NEW_BUTTON_TYPES) && ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+reload
+add-money
+top-up
+order
+rent
+support
+contribute
+tip
+#endif
 #endif
 
 // font-synthesis

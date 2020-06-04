@@ -1,3 +1,19 @@
+2020-06-03  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add new values for -apple-pay-button-type
+        https://bugs.webkit.org/show_bug.cgi?id=212684
+        <rdar://problem/63908535>
+
+        Reviewed by Anders Carlsson.
+
+        * http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayButton.html:
+        * http/tests/ssl/applepay/ApplePayButtonV4.html: Removed.
+        * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.png: Removed.
+        * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.txt: Removed.
+        * platform/mac/http/tests/ssl/applepay/ApplePayButtonV4-expected.png: Removed.
+        * platform/mac/http/tests/ssl/applepay/ApplePayButtonV4-expected.txt: Removed.
+
 2020-06-02  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/2dcontext from upstream

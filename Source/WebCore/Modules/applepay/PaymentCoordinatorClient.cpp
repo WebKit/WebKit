@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,10 @@ bool PaymentCoordinatorClient::supportsVersion(unsigned version)
     static const unsigned currentVersion = 7;
 #elif !ENABLE(APPLE_PAY_SESSION_V9)
     static const unsigned currentVersion = 8;
-#else
+#elif !ENABLE(APPLE_PAY_SESSION_V10)
     static const unsigned currentVersion = 9;
+#else
+    static const unsigned currentVersion = 10;
 #endif
 
     return version <= currentVersion;

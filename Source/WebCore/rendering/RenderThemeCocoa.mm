@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,6 +98,24 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
         return PKPaymentButtonTypeBook;
     case ApplePayButtonType::Subscribe:
         return PKPaymentButtonTypeSubscribe;
+#endif
+#if HAVE(PASSKIT_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Reload:
+        return PKPaymentButtonTypeReload;
+    case ApplePayButtonType::AddMoney:
+        return PKPaymentButtonTypeAddMoney;
+    case ApplePayButtonType::TopUp:
+        return PKPaymentButtonTypeTopUp;
+    case ApplePayButtonType::Order:
+        return PKPaymentButtonTypeOrder;
+    case ApplePayButtonType::Rent:
+        return PKPaymentButtonTypeRent;
+    case ApplePayButtonType::Support:
+        return PKPaymentButtonTypeSupport;
+    case ApplePayButtonType::Contribute:
+        return PKPaymentButtonTypeContribute;
+    case ApplePayButtonType::Tip:
+        return PKPaymentButtonTypeTip;
 #endif
     }
 }

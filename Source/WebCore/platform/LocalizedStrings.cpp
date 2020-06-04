@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -720,6 +720,41 @@ String AXApplePaySubscribeLabel()
 {
     return WEB_UI_STRING("Subscribe with Apple Pay", "Label for the subcribe with Apple Pay button.");
 }
+
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+String AXApplePayReloadLabel()
+{
+    return WEB_UI_STRING("Reload with Apple Pay", "Label for the reload with Apple Pay button.");
+}
+String AXApplePayAddMoneyLabel()
+{
+    return WEB_UI_STRING("Add money with Apple Pay", "Label for the add money with Apple Pay button.");
+}
+String AXApplePayTopUpLabel()
+{
+    return WEB_UI_STRING("Top up with Apple Pay", "Label for the top up with Apple Pay button.");
+}
+String AXApplePayOrderLabel()
+{
+    return WEB_UI_STRING("Order with Apple Pay", "Label for the order with Apple Pay button.");
+}
+String AXApplePayRentLabel()
+{
+    return WEB_UI_STRING("Rent with Apple Pay", "Label for the rent with Apple Pay button.");
+}
+String AXApplePaySupportLabel()
+{
+    return WEB_UI_STRING("Support with Apple Pay", "Label for the support with Apple Pay button.");
+}
+String AXApplePayContributeLabel()
+{
+    return WEB_UI_STRING("Contribute with Apple Pay", "Label for the contribute with Apple Pay button.");
+}
+String AXApplePayTipLabel()
+{
+    return WEB_UI_STRING("Tip with Apple Pay", "Label for the tip with Apple Pay button.");
+}
+#endif
 #endif
 
 String AXAutoFillCredentialsLabel()

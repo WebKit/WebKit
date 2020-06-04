@@ -1,3 +1,43 @@
+2020-06-03  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add new values for -apple-pay-button-type
+        https://bugs.webkit.org/show_bug.cgi?id=212684
+        <rdar://problem/63908535>
+
+        Reviewed by Anders Carlsson.
+
+        Where available, added new values for -apple-pay-button-type and introduced ApplePaySession v10.
+
+        New test: http/tests/ssl/applepay/ApplePayButton.html
+
+        * Modules/applepay/PaymentCoordinatorClient.cpp:
+        (WebCore::PaymentCoordinatorClient::supportsVersion):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::applePayButtonDescription const):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ApplePayButtonType const):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXApplePayReloadLabel):
+        (WebCore::AXApplePayAddMoneyLabel):
+        (WebCore::AXApplePayTopUpLabel):
+        (WebCore::AXApplePayOrderLabel):
+        (WebCore::AXApplePayRentLabel):
+        (WebCore::AXApplePaySupportLabel):
+        (WebCore::AXApplePayContributeLabel):
+        (WebCore::AXApplePayTipLabel):
+        * platform/LocalizedStrings.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::toPKPaymentButtonType):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2020-06-03  Daniel Bates  <dabates@apple.com>
 
         Inserted text placeholder should vertically align to top and behave like block-level element when it has 0 width

@@ -1138,6 +1138,24 @@ String AccessibilityRenderObject::applePayButtonDescription() const
     case ApplePayButtonType::Subscribe:
         return AXApplePaySubscribeLabel();
 #endif
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Reload:
+        return AXApplePayReloadLabel();
+    case ApplePayButtonType::AddMoney:
+        return AXApplePayAddMoneyLabel();
+    case ApplePayButtonType::TopUp:
+        return AXApplePayTopUpLabel();
+    case ApplePayButtonType::Order:
+        return AXApplePayOrderLabel();
+    case ApplePayButtonType::Rent:
+        return AXApplePayRentLabel();
+    case ApplePayButtonType::Support:
+        return AXApplePaySupportLabel();
+    case ApplePayButtonType::Contribute:
+        return AXApplePayContributeLabel();
+    case ApplePayButtonType::Tip:
+        return AXApplePayTipLabel();
+#endif
     }
 }
 #endif
