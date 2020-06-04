@@ -79,6 +79,8 @@ public:
     JSValueInWrappedObject& cachedData() { return m_cachedData; }
     JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
 
+    size_t memoryCost() const;
+
 private:
     MessageEvent();
     MessageEvent(const AtomString& type, Init&&, IsTrusted);

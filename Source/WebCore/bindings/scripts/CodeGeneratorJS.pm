@@ -4502,6 +4502,7 @@ sub GenerateImplementation
         }
         push(@implContent, "#endif\n") if $conditionalString;
     }
+    push(@implContent, "    vm.heap.reportExtraMemoryAllocated(wrapped().memoryCost());\n") if $interface->extendedAttributes->{ReportExtraMemoryCost};
     push(@implContent, "}\n\n");
 
     unless (ShouldUseGlobalObjectPrototype($interface)) {
@@ -4920,9 +4921,6 @@ END
     // that may be passed through this toJS() function you should use the SkipVTableValidation
     // attribute to $interfaceName.
     static_assert(!std::is_polymorphic<${implType}>::value, "${implType} is polymorphic but the IDL claims it is not");
-END
-        push(@implContent, <<END) if $interface->extendedAttributes->{ReportExtraMemoryCost};
-    globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
 END
 
         push(@implContent, "    return createWrapper<${implType}>(globalObject, WTFMove(impl));\n");

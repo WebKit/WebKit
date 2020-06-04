@@ -36,6 +36,7 @@ typedef (WindowProxy or MessagePort) MessageEventSource;
     Constructor(DOMString type, optional MessageEventInit eventInitDict),
     Exposed=(Window,Worker),
     JSCustomMarkFunction,
+    ReportExtraMemoryCost,
 ] interface MessageEvent : Event {
     readonly attribute USVString origin;
     readonly attribute DOMString lastEventId;

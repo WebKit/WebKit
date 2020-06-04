@@ -110,6 +110,8 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static RefPtr<SerializedScriptValue> decode(Decoder&);
 
+    size_t memoryCost() const { return m_memoryCost; }
+
     WEBCORE_EXPORT ~SerializedScriptValue();
 
 private:
@@ -124,6 +126,8 @@ private:
 #endif
         );
 
+    size_t computeMemoryCost() const;
+
     Vector<unsigned char> m_data;
     std::unique_ptr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     std::unique_ptr<ArrayBufferContentsArray> m_sharedBufferContentsArray;
@@ -135,6 +139,7 @@ private:
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
 #endif
     Vector<String> m_blobURLs;
+    size_t m_memoryCost { 0 };
 };
 
 template<class Encoder>

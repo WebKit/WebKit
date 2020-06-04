@@ -126,6 +126,7 @@ void JSInterfaceName::finishCreation(VM& vm)
 
     static_assert(!std::is_base_of<ActiveDOMObject, InterfaceName>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
+    vm.heap.reportExtraMemoryAllocated(wrapped().memoryCost());
 }
 
 JSObject* JSInterfaceName::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -261,7 +262,6 @@ JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObj
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
-    globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
     return createWrapper<InterfaceName>(globalObject, WTFMove(impl));
 }
 

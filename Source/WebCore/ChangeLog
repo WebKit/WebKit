@@ -1,3 +1,40 @@
+2020-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        MessageEvent should tell its memory cost to GC
+        https://bugs.webkit.org/show_bug.cgi?id=203990
+
+        Reviewed by Mark Lam.
+
+        This patch fixes two issues to make MessageEvent's memoryCost working.
+
+        1. MessageEvent does not have memoryCost function. So even if ArrayBuffer etc. is held as a SerializedScriptValue,
+           it does not communicate memory pressure to GC. This patch adds ReportExtraMemoryCost to MessageEvent.idl and memoryCost
+           function to MessageEvent. And we implement SerializedScriptValue::memoryCost function to obtain rough memory cost
+           for SerializedScriptValue.
+
+        2. IDL code generator puts `reportExtraMemoryAllocated` function call in `toJSNewlyCreated`. However, `toJSNewlyCreated`
+           is not always used when creating JS wrapper. For example, JSMessageEvent can be created from toJSNewlyCreated for MessageEvent.
+           But it can be also be created from toJSNewlyCreated for Event through EventFactory. If the latter path is taken, we won't properly
+           report memory cost even if IDL has ReportExtraMemoryCost. In JSC, we put `reportExtraMemoryAllocated` at the end of JSXXX::finishCreation.
+           IDL code should follow this convention.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::computeMemoryCost const):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::memoryCost const):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceName::finishCreation):
+        (WebCore::toJSNewlyCreated):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::memoryCost const):
+        * dom/MessageEvent.h:
+        * dom/MessageEvent.idl:
+        * html/OffscreenCanvas.h:
+        (WebCore::DetachedOffscreenCanvas::memoryCost const):
+
 2020-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add a way to override the contact AutoFill button image
