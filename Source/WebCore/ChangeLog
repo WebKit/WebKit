@@ -1,3 +1,28 @@
+2020-06-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r262212): [ iOS Debug wk2 ] ASSERTION FAILED: !isSynchronous() || !m_synchronousLoadData->delayedReply in WebKit::NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=212678
+        <rdar://problem/63797758>
+
+        Reviewed by Chris Dumez.
+
+        No new tests, this will fix http/tests/xmlhttprequest/access-control-preflight-credential-sync.html.
+
+        Refactor the bundle identifier setters and getters in
+        RuntimeApplicationChecksCocoa.mm so that a separate function sets
+        an override bundle identifier, and clearing the override identifier
+        does not clear the UI process bundle identifier as well. 
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::bundleIdentifierOverride):
+        (WebCore::bundleIdentifier):
+        (WebCore::applicationBundleIdentifier):
+        (WebCore::setApplicationBundleIdentifier):
+        (WebCore::setApplicationBundleIdentifierOverride):
+        (WebCore::clearApplicationBundleIdentifierTestingOverride):
+        (WebCore::applicationBundleIdentifierOverride): Deleted.
+
 2020-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         MessageEvent should tell its memory cost to GC

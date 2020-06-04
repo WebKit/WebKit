@@ -42,34 +42,49 @@ static bool applicationBundleIdentifierOverrideWasQueried;
 
 // The application bundle identifier gets set to the UIProcess bundle identifier by the WebProcess and
 // the Networking upon initialization. It is unset otherwise.
-static String& applicationBundleIdentifierOverride()
+static String& bundleIdentifierOverride()
 {
-    static NeverDestroyed<String> identifier;
+    static NeverDestroyed<String> identifierOverride;
 #if !ASSERT_MSG_DISABLED
     applicationBundleIdentifierOverrideWasQueried = true;
 #endif
+    return identifierOverride;
+}
+
+static String& bundleIdentifier()
+{
+    static NeverDestroyed<String> identifier;
     return identifier;
 }
 
 String applicationBundleIdentifier()
 {
-    // The override only gets set in WebKit2's WebProcess and NetworkProcess. If unset, we use the main bundle identifier.
-    const auto& identifier = applicationBundleIdentifierOverride();
+    // The override only gets set in WebKitTestRunner. If unset, we use the bundle identifier set
+    // in WebKit2's WebProcess and NetworkProcess. If that is also unset, we use the main bundle identifier.
+    auto identifier = bundleIdentifierOverride();
     ASSERT(identifier.isNull() || RunLoop::isMain());
+    if (identifier.isNull())
+        identifier = bundleIdentifier();
     return identifier.isNull() ? String([[NSBundle mainBundle] bundleIdentifier]) : identifier;
 }
 
-void setApplicationBundleIdentifier(const String& bundleIdentifier)
+void setApplicationBundleIdentifier(const String& identifier)
+{
+    ASSERT(RunLoop::isMain());
+    bundleIdentifier() = identifier;
+}
+
+void setApplicationBundleIdentifierOverride(const String& identifier)
 {
     ASSERT(RunLoop::isMain());
     ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() should not be called before setApplicationBundleIdentifier()");
-    applicationBundleIdentifierOverride() = bundleIdentifier;
+    bundleIdentifierOverride() = identifier;
 }
 
 void clearApplicationBundleIdentifierTestingOverride()
 {
     ASSERT(RunLoop::isMain());
-    applicationBundleIdentifierOverride() = String();
+    bundleIdentifierOverride() = String();
 #if !ASSERT_MSG_DISABLED
     applicationBundleIdentifierOverrideWasQueried = false;
 #endif

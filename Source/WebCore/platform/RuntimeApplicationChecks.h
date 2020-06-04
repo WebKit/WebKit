@@ -44,6 +44,7 @@ bool isInWebProcess();
 bool isInNetworkProcess();
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
+WEBCORE_EXPORT void setApplicationBundleIdentifierOverride(const String&);
 WEBCORE_EXPORT String applicationBundleIdentifier();
 WEBCORE_EXPORT void clearApplicationBundleIdentifierTestingOverride();
 
