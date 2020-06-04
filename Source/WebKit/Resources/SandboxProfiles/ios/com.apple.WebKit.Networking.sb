@@ -507,8 +507,11 @@
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.diagnosticd"))
+;; These are always needed in the Network process:
+(allow mach-lookup
+    (global-name "com.apple.diagnosticd")
+    (global-name "com.apple.aggregated")
+)
 
 (logd-diagnostic-client)
 

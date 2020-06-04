@@ -162,7 +162,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    encoder << diagnosticsExtensionHandle;
+    encoder << diagnosticsExtensionHandles;
     encoder << runningboardExtensionHandle;
     encoder << dynamicMachExtensionHandles;
     encoder << dynamicIOKitExtensionHandles;
@@ -437,11 +437,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    Optional<Optional<SandboxExtension::Handle>> diagnosticsExtensionHandle;
-    decoder >> diagnosticsExtensionHandle;
-    if (!diagnosticsExtensionHandle)
+    Optional<SandboxExtension::HandleArray> diagnosticsExtensionHandles;
+    decoder >> diagnosticsExtensionHandles;
+    if (!diagnosticsExtensionHandles)
         return false;
-    parameters.diagnosticsExtensionHandle = WTFMove(*diagnosticsExtensionHandle);
+    parameters.diagnosticsExtensionHandles = WTFMove(*diagnosticsExtensionHandles);
 
     Optional<Optional<SandboxExtension::Handle>> runningboardExtensionHandle;
     decoder >> runningboardExtensionHandle;

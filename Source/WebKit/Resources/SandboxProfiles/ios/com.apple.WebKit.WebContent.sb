@@ -950,6 +950,7 @@
             "com.apple.mobileassetd.v2"
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
+            "com.apple.osanalytics.osanalyticshelper"
             "com.apple.runningboard"
             "com.apple.tccd"
             "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
