@@ -1,3 +1,20 @@
+2020-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] fast/events/watchos/change-focus-during-change-event.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=212722
+        <rdar://problem/60633339>
+
+        Reviewed by Andy Estes.
+
+        When HAVE(QUICKBOARD_COLLECTION_VIEWS) is enabled, the codepath that's used to simulate interacting with the
+        select menu view controller on watchOS will crash, since it tries to pretend that the user has selected an item
+        in a table view section (`PUICQuickboardListSectionTextOptions`) that only exists when Quickboard collection
+        views are disabled. Fix the crash by adjusting the testing codepath to select the item in the first section when
+        HAVE(QUICKBOARD_COLLECTION_VIEWS) is defined.
+
+        * UIProcess/ios/forms/WKSelectMenuListViewController.mm:
+        (-[WKSelectMenuListViewController selectItemAtIndex:]):
+
 2020-06-03  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Hide the PiP button in fullscreen mode if PiP is disabled in preferences

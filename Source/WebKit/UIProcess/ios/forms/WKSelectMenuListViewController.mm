@@ -276,7 +276,12 @@ typedef NS_ENUM(NSInteger, PUICQuickboardListSection) {
 
 - (void)selectItemAtIndex:(NSInteger)index
 {
-    [self didSelectListItem:index];
+#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
+    NSInteger itemSection = 0;
+#else
+    NSInteger itemSection = PUICQuickboardListSectionTextOptions;
+#endif
+    [self didSelectListItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:itemSection]];
 }
 
 @end
