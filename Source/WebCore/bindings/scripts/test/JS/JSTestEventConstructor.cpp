@@ -180,11 +180,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*lexicalGlobalObject, argument1.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestEventConstructor::create(WTFMove(type), WTFMove(eventInitDict));
+    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
-        setSubclassStructureIfNeeded<TestEventConstructor>(lexicalGlobalObject, callFrame, object);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    setSubclassStructureIfNeeded<TestEventConstructor>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
 

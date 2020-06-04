@@ -172,11 +172,10 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(JSG
     auto testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument2.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestTypedefs::create(WTFMove(hello), testCallbackFunction.releaseNonNull(), testCallbackInterface.releaseNonNull());
+    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestTypedefs>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
-        setSubclassStructureIfNeeded<TestTypedefs>(lexicalGlobalObject, callFrame, object);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    setSubclassStructureIfNeeded<TestTypedefs>(lexicalGlobalObject, callFrame, asObject(jsValue));
+    RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsValue);
 }
 

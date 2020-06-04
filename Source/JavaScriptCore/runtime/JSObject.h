@@ -1331,6 +1331,7 @@ inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStruct
 
 inline JSObject* asObject(JSCell* cell)
 {
+    ASSERT(cell);
     ASSERT(cell->isObject());
     return jsCast<JSObject*>(cell);
 }
