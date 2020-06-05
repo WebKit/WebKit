@@ -1,3 +1,17 @@
+2020-06-05  Jonathan Bedard  <jbedard@apple.com>
+
+        WebCore: Link to framework stubs for watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=212834
+        <rdar://problem/64033712>
+
+        Reviewed by Tim Horton.
+
+        No new tests, no behavior changed.
+
+        * Configurations/Base.xcconfig: Ignore 64 to 32 bit conversion errors for watchOS
+        simulators, add tvOS and watchOS major version macros.
+        * Configurations/WebCore.xcconfig: Link to framework stubs for watchOS and tvOS.
+
 2020-06-05  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for PluginLoadClientPolicy
