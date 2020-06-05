@@ -1,3 +1,10 @@
+2020-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, silence deprecation warning to fix build with latest SDK.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+
 2020-06-05  Andres Gonzalez  <andresg_22@apple.com>
 
         Accessibility isolated tree mode: crashes when navigating websites, com.apple.AppKit: ConvertOutgoingValueForAttribute.

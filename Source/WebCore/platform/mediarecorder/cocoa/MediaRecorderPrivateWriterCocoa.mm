@@ -445,7 +445,9 @@ void MediaRecorderPrivateWriter::stopRecording()
         if (!weakThis)
             return;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [m_writer flush];
+ALLOW_DEPRECATED_DECLARATIONS_END
         [m_writer finishWritingWithCompletionHandler:[this, weakThis = WTFMove(weakThis)]() mutable {
             callOnMainThread([this, weakThis = WTFMove(weakThis)]() mutable {
                 if (!weakThis)
