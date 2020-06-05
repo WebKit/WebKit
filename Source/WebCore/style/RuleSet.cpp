@@ -282,10 +282,9 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, MediaQue
         }
         if (is<StyleRuleMedia>(*rule)) {
             auto& mediaRule = downcast<StyleRuleMedia>(*rule);
-            if (mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries())) {
+            if (mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
                 addChildRules(mediaRule.childRules(), mediaQueryCollector, resolver, mode);
-                mediaQueryCollector.pop(mediaRule.mediaQueries());
-            }
+            mediaQueryCollector.pop(mediaRule.mediaQueries());
             continue;
         }
         if (is<StyleRuleFontFace>(*rule)) {
@@ -322,15 +321,15 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQuerySet* sheetQ
         auto mediaQueryCollector = MediaQueryCollector { evaluator, true };
         if (mediaQueryCollector.pushAndEvaluate(sheetQuery))
             addRulesFromSheet(sheet, mediaQueryCollector, nullptr, AddRulesMode::ResolverMutationScan);
+        mediaQueryCollector.pop(sheetQuery);
         return !mediaQueryCollector.didMutateResolverWithinDynamicMediaQuery;
     }();
 
     auto mediaQueryCollector = MediaQueryCollector { evaluator, canUseDynamicMediaQueryResolution };
 
-    if (mediaQueryCollector.pushAndEvaluate(sheetQuery)) {
+    if (mediaQueryCollector.pushAndEvaluate(sheetQuery))
         addRulesFromSheet(sheet, mediaQueryCollector, &resolver, AddRulesMode::Normal);
-        mediaQueryCollector.pop(sheetQuery);
-    }
+    mediaQueryCollector.pop(sheetQuery);
 
     m_hasViewportDependentMediaQueries = mediaQueryCollector.hasViewportDependentMediaQueries;
 
@@ -350,10 +349,9 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& 
         if (!rule->styleSheet())
             continue;
 
-        if (mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
+        if (mediaQueryCollector.pushAndEvaluate(rule->mediaQueries()))
             addRulesFromSheet(*rule->styleSheet(), mediaQueryCollector, resolver, mode);
-            mediaQueryCollector.pop(rule->mediaQueries());
-        }
+        mediaQueryCollector.pop(rule->mediaQueries());
     }
 
     addChildRules(sheet.childRules(), mediaQueryCollector, resolver, mode);
@@ -508,13 +506,10 @@ bool RuleSet::MediaQueryCollector::pushAndEvaluate(const MediaQuerySet* set)
     if (!dynamicResults.viewport.isEmpty())
         hasViewportDependentMediaQueries = true;
 
-    if (!result)
-        return false;
-
     if (!dynamicResults.isEmpty())
         dynamicContextStack.append({ *set });
 
-    return true;
+    return result;
 }
 
 void RuleSet::MediaQueryCollector::pop(const MediaQuerySet* set)
@@ -522,7 +517,7 @@ void RuleSet::MediaQueryCollector::pop(const MediaQuerySet* set)
     if (!set || dynamicContextStack.isEmpty() || set != &dynamicContextStack.last().set.get())
         return;
 
-    if (!dynamicContextStack.last().affectedRulePositions.isEmpty()) {
+    if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         DynamicMediaQueryRules rules;
         for (auto& context : dynamicContextStack)
             rules.mediaQuerySets.append(context.set.get());

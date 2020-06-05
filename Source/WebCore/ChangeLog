@@ -1,3 +1,32 @@
+2020-06-05  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r253875?): Element styles incorrect after media query evaluation changes
+        https://bugs.webkit.org/show_bug.cgi?id=211505
+        <rdar://problem/62983242>
+
+        Reviewed by Zalan Bujtas.
+
+        If there are keyframe rules in media queries we fall back to wiping the style resolver when
+        something changes. This fallback code didn't work correctly when a rule flipped from matching
+        to non-matching because MediaQueryCollector bailed out and didn't create DynamicMediaQueryRules
+        structure needed to detect something has changed.
+
+        Test: fast/media/media-query-dynamic-with-keyframes.html
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addChildRules):
+        (WebCore::Style::RuleSet::addRulesFromSheet):
+
+        Call both push and pop even when the rule doesn't match.
+
+        (WebCore::Style::RuleSet::MediaQueryCollector::pushAndEvaluate):
+
+        Collect the MediaQuerySet in non-matching case too.
+
+        (WebCore::Style::RuleSet::MediaQueryCollector::pop):
+
+        Record the DynamicMediaQueryRules when resolving all rules statically.
+
 2020-06-05  Youenn Fablet  <youenn@apple.com>
 
         Ad support for media-source stats

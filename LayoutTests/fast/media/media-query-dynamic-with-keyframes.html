@@ -1,0 +1,22 @@
+<iframe id=frame srcdoc="
+<style>
+body { background-color: red }
+
+@media (min-width:400px) {
+    body { background-color: green }
+
+    @keyframes fade {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+}
+</style>
+Test frame
+"></iframe>
+<script>
+frame.onload = () => {
+    frame.width = 100;
+    frame.contentDocument.offsetWidth;
+    frame.width = 500;
+}
+</script>

@@ -1,3 +1,14 @@
+2020-06-05  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r253875?): Element styles incorrect after media query evaluation changes
+        https://bugs.webkit.org/show_bug.cgi?id=211505
+        <rdar://problem/62983242>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/media/media-query-dynamic-with-keyframes-expected.html: Added.
+        * fast/media/media-query-dynamic-with-keyframes.html: Added.
+
 2020-06-05  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r261845): [ Mac wk2 ] inspector/heap/getRemoteObject.html is flaky failing.
