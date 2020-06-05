@@ -1,3 +1,13 @@
+2020-06-05  Peng Liu  <peng.liu6@apple.com>
+
+        Fix a tvOS build failure
+        https://bugs.webkit.org/show_bug.cgi?id=212833
+
+        Reviewed by Jer Noble.
+
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::togglePictureInPicture):
+
 2020-06-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         DOM constructor should only accept Ref<> / ExceptionOr<Ref<>> for creation to ensure toJSNewlyCreated is always returning object

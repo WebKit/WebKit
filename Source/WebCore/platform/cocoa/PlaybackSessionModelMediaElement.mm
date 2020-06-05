@@ -313,6 +313,7 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
 
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     ASSERT(is<HTMLVideoElement>(*m_mediaElement));
     if (!is<HTMLVideoElement>(*m_mediaElement))
         return;
@@ -322,6 +323,7 @@ void PlaybackSessionModelMediaElement::togglePictureInPicture()
         element.setFullscreenMode(MediaPlayerEnums::VideoFullscreenModeNone);
     else
         element.setFullscreenMode(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
+#endif
 }
 
 void PlaybackSessionModelMediaElement::toggleMuted()
