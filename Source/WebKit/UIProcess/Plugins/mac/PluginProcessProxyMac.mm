@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ void PluginProcessProxy::platformGetLaunchOptionsWithAttributes(ProcessLauncher:
     if (PluginProcessManager::singleton().experimentalPlugInSandboxProfilesEnabled())
         launchOptions.extraInitializationData.add("experimental-sandbox-plugin", "1");
 
-    if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed) {
+    if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicy::Unsandboxed) {
         if (!currentProcessIsSandboxed())
             launchOptions.extraInitializationData.add("disable-sandbox", "1");
         else

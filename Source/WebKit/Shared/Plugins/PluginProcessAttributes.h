@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessAttributes_h
-#define PluginProcessAttributes_h
+#pragma once
 
 #include "PluginModuleInfo.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 
-enum PluginProcessType {
-    PluginProcessTypeNormal,
-    PluginProcessTypeSnapshot,
+enum class PluginProcessType : bool {
+    Normal,
+    Snapshot,
 };
 
-enum PluginProcessSandboxPolicy {
-    PluginProcessSandboxPolicyNormal,
-    PluginProcessSandboxPolicyUnsandboxed,
+enum class PluginProcessSandboxPolicy : bool {
+    Normal,
+    Unsandboxed,
 };
 
 struct PluginProcessAttributes {
@@ -47,5 +47,3 @@ struct PluginProcessAttributes {
 };
 
 } // namespace WebKit
-
-#endif // PluginProcessAttributes_h

@@ -1,3 +1,32 @@
+2020-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for PluginProcessType and PluginProcessSandboxPolicy
+        <https://webkit.org/b/212758>
+
+        Reviewed by Darin Adler.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializePluginProcess):
+        * Scripts/webkit/messages.py:
+        * Shared/Plugins/PluginProcessAttributes.h:
+        (WebKit::PluginProcessType): Convert to enum class.
+        (WebKit::PluginProcessSandboxPolicy): Ditto.
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::fetchWebsiteData):
+        (WebKit::PluginProcessManager::deleteWebsiteData):
+        (WebKit::PluginProcessManager::deleteWebsiteDataForHostNames):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptionsWithAttributes):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::canPluginHandleResponse):
+
 2020-06-04  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegate SPI to confirm before opening a PDF

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -384,7 +384,7 @@ static void muteAudio(void)
 void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParameters&& parameters)
 {
     m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);
-    if (parameters.processType == PluginProcessTypeSnapshot)
+    if (parameters.processType == PluginProcessType::Snapshot)
         muteAudio();
 
     [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
