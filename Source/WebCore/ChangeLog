@@ -1,3 +1,24 @@
+2020-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should exclude characters outside of the unicode private use area
+        https://bugs.webkit.org/show_bug.cgi?id=212800
+        <rdar://problem/63736417>
+
+        Reviewed by Sihui Liu.
+
+        Consider characters that fall outside of unicode PUA (in addition to line breaks) as excluded when extracting
+        tokens during text manipulation. In doing this, we also rename a few member variables in `ManipulationUnit` to
+        refer to "token delimiters" rather than line breaks.
+
+        Test: TextManipulation.StartTextManipulationExtractsPrivateUseCharactersAsExcludedTokens
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isInPrivateUseArea):
+        (WebCore::isTokenDelimiter):
+        (WebCore::TextManipulationController::parse):
+        (WebCore::TextManipulationController::observeParagraphs):
+        * editing/TextManipulationController.h:
+
 2020-06-05  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r262366): [ Mac wk1 ] webgl/webgl-backing-store-size-update.html is failing

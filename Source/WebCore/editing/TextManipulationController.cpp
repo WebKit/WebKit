@@ -294,6 +294,16 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     return false;
 }
 
+static bool isInPrivateUseArea(UChar character)
+{
+    return 0xE000 <= character && character <= 0xF8FF;
+}
+
+static bool isTokenDelimiter(UChar character)
+{
+    return isHTMLLineBreak(character) || isInPrivateUseArea(character);
+}
+
 TextManipulationController::ManipulationUnit TextManipulationController::parse(StringView text, Node* textNode)
 {
     Vector<ManipulationToken> tokens;
@@ -302,47 +312,45 @@ TextManipulationController::ManipulationUnit TextManipulationController::parse(S
     size_t startPositionOfCurrentToken = 0;
     bool isNodeExcluded = exclusionRuleMatcher.isExcluded(textNode);
     bool containsOnlyHTMLSpace = true;
-    bool containsLineBreak = false;
-    bool firstTokenContainsLineBreak = false;
-    bool lastTokenContainsLineBreak = false;
+    bool containsTokenDelimiter = false;
+    bool firstTokenContainsDelimiter = false;
+    bool lastTokenContainsDelimiter = false;
 
     size_t index = 0;
     for (; index < text.length(); ++index) {
         auto character = text[index];
-        if (isNotHTMLSpace(character)) {
-            containsOnlyHTMLSpace = false;
-            positionOfLastNonHTMLSpace = index;
-        } else if (isHTMLLineBreak(character)) {
-            containsLineBreak = true;
+        if (isTokenDelimiter(character)) {
+            containsTokenDelimiter = true;
             if (positionOfLastNonHTMLSpace != WTF::notFound && startPositionOfCurrentToken <= positionOfLastNonHTMLSpace) {
                 auto tokenString = text.substring(startPositionOfCurrentToken, positionOfLastNonHTMLSpace + 1 - startPositionOfCurrentToken).toString();
                 tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), isNodeExcluded });
                 startPositionOfCurrentToken = positionOfLastNonHTMLSpace + 1;
             }
 
-            while (index < text.length() && !isNotHTMLSpace(text[index]))
+            while (index < text.length() && (isHTMLSpace(text[index]) || isInPrivateUseArea(text[index])))
                 ++index;
 
             --index;
 
-            auto lineBreakTokenString = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken).toString();
+            auto stringForToken = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken).toString();
             if (tokens.isEmpty())
-                firstTokenContainsLineBreak = true;
-            tokens.append(ManipulationToken { m_tokenIdentifier.generate(), lineBreakTokenString, tokenInfo(textNode), true });
+                firstTokenContainsDelimiter = true;
+            tokens.append(ManipulationToken { m_tokenIdentifier.generate(), stringForToken, tokenInfo(textNode), true });
             startPositionOfCurrentToken = index + 1;
-            lastTokenContainsLineBreak = true;
-
-            continue;
+            lastTokenContainsDelimiter = true;
+        } else if (isNotHTMLSpace(character)) {
+            containsOnlyHTMLSpace = false;
+            positionOfLastNonHTMLSpace = index;
         }
     }
 
     if (startPositionOfCurrentToken < text.length()) {
         auto tokenString = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken).toString();
         tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), isNodeExcluded });
-        lastTokenContainsLineBreak = false;
+        lastTokenContainsDelimiter = false;
     }
 
-    return { WTFMove(tokens), *textNode, containsOnlyHTMLSpace || isNodeExcluded, containsLineBreak, firstTokenContainsLineBreak, lastTokenContainsLineBreak };
+    return { WTFMove(tokens), *textNode, containsOnlyHTMLSpace || isNodeExcluded, containsTokenDelimiter, firstTokenContainsDelimiter, lastTokenContainsDelimiter };
 }
 
 void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& units)
@@ -432,7 +440,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
             continue;
 
         auto unitsInCurrentNode = parse(content.text, contentNode);
-        if (unitsInCurrentNode.firstTokenContainsLineBreak)
+        if (unitsInCurrentNode.firstTokenContainsDelimiter)
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
 
         if (unitsInCurrentParagraph.isEmpty() && unitsInCurrentNode.areAllTokensExcluded)
@@ -440,7 +448,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
         unitsInCurrentParagraph.append(WTFMove(unitsInCurrentNode));
 
-        if (unitsInCurrentNode.lastTokenContainsLineBreak)
+        if (unitsInCurrentNode.lastTokenContainsDelimiter)
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
     }
 

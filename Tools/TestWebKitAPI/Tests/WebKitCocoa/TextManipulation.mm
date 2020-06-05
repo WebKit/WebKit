@@ -843,6 +843,37 @@ TEST(TextManipulation, StartTextManipulationExtractsVisibleLineBreaksInTextAsExc
     EXPECT_STREQ("three four", items[1].tokens[0].content.UTF8String);
 }
 
+TEST(TextManipulation, StartTextManipulationExtractsPrivateUseCharactersAsExcludedTokens)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body>foobarbaz</body>"];
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+
+    auto* item = items.firstObject;
+    EXPECT_EQ(item.tokens.count, 5UL);
+    EXPECT_WK_STREQ("foo", item.tokens[0].content);
+    EXPECT_FALSE(item.tokens[0].isExcluded);
+    EXPECT_WK_STREQ("", item.tokens[1].content);
+    EXPECT_TRUE(item.tokens[1].isExcluded);
+    EXPECT_WK_STREQ("bar", item.tokens[2].content);
+    EXPECT_FALSE(item.tokens[2].isExcluded);
+    EXPECT_WK_STREQ("", item.tokens[3].content);
+    EXPECT_TRUE(item.tokens[3].isExcluded);
+    EXPECT_WK_STREQ("baz", item.tokens[4].content);
+    EXPECT_FALSE(item.tokens[4].isExcluded);
+}
+
 TEST(TextManipulation, StartTextManipulationExtractsValuesByNode)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

@@ -155,8 +155,8 @@ private:
         Ref<Node> node;
         bool areAllTokensExcluded { true };
         bool containsLineBreak { false };
-        bool firstTokenContainsLineBreak { false };
-        bool lastTokenContainsLineBreak { false };
+        bool firstTokenContainsDelimiter { false };
+        bool lastTokenContainsDelimiter { false };
     };
     ManipulationUnit parse(StringView, Node*);
 
