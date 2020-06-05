@@ -1312,6 +1312,7 @@
                 task_restartable_ranges_synchronize
                 task_set_exc_guard_behavior
                 task_set_special_port
+                (when (defined? 'task_threads_from_user) task_threads_from_user)
                 thread_get_state_to_user
                 thread_info
                 thread_policy

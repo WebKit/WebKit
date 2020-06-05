@@ -1,3 +1,15 @@
+2020-06-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix message filter sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=212837
+        <rdar://problem/63830368>
+
+        Reviewed by Darin Adler.
+
+        Add required message to message filter in the iOS WebContent sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-06-05  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r262456?): [macOS] media/picture-in-picture/picture-in-picture-api tests are flaky timeouts
