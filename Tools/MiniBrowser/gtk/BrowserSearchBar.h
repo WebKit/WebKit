@@ -50,7 +50,6 @@ struct _BrowserSearchBarClass {
 GType browser_search_bar_get_type(void);
 
 GtkWidget *browser_search_bar_new(WebKitWebView *);
-void browser_search_bar_add_accelerators(BrowserSearchBar *, GtkAccelGroup *);
 void browser_search_bar_open(BrowserSearchBar *);
 void browser_search_bar_close(BrowserSearchBar *);
 

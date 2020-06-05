@@ -639,16 +639,6 @@ void browser_tab_stop_search(BrowserTab *tab)
 #endif
 }
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
-void browser_tab_add_accelerators(BrowserTab *tab, GtkAccelGroup *accelGroup)
-{
-    g_return_if_fail(BROWSER_IS_TAB(tab));
-    g_return_if_fail(GTK_IS_ACCEL_GROUP(accelGroup));
-
-    browser_search_bar_add_accelerators(tab->searchBar, accelGroup);
-}
-#endif
-
 static gboolean fullScreenMessageTimeoutCallback(BrowserTab *tab)
 {
     gtk_widget_hide(tab->fullScreenMessageLabel);

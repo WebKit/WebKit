@@ -27,7 +27,6 @@
 
 #include "cmakeconfig.h"
 
-#include "BrowserMain.h"
 #include "BrowserWindow.h"
 #include <errno.h>
 #if ENABLE_WEB_AUDIO || ENABLE_VIDEO
@@ -466,25 +465,27 @@ static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, WebKi
     }
 }
 
-static GtkWidget *createWebViewForAutomationInWindowCallback(WebKitAutomationSession* session)
+static GtkWidget *createWebViewForAutomationInWindowCallback(WebKitAutomationSession* session, GtkApplication *application)
 {
-    return GTK_WIDGET(browser_window_get_or_create_web_view_for_automation());
+    GtkWindow *window = gtk_application_get_active_window(application);
+    return BROWSER_IS_WINDOW(window) ? GTK_WIDGET(browser_window_get_or_create_web_view_for_automation(BROWSER_WINDOW(window))) : NULL;
 }
 
-static GtkWidget *createWebViewForAutomationInTabCallback(WebKitAutomationSession* session)
+static GtkWidget *createWebViewForAutomationInTabCallback(WebKitAutomationSession* session, GtkApplication *application)
 {
-    return GTK_WIDGET(browser_window_create_web_view_in_new_tab_for_automation());
+    GtkWindow *window = gtk_application_get_active_window(application);
+    return BROWSER_IS_WINDOW(window) ? GTK_WIDGET(browser_window_create_web_view_in_new_tab_for_automation(BROWSER_WINDOW(window))) : NULL;
 }
 
-static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutomationSession *session)
+static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutomationSession *session, GtkApplication *application)
 {
     WebKitApplicationInfo *info = webkit_application_info_new();
     webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
     webkit_automation_session_set_application_info(session, info);
     webkit_application_info_unref(info);
 
-    g_signal_connect(session, "create-web-view::window", G_CALLBACK(createWebViewForAutomationInWindowCallback), NULL);
-    g_signal_connect(session, "create-web-view::tab", G_CALLBACK(createWebViewForAutomationInTabCallback), NULL);
+    g_signal_connect(session, "create-web-view::window", G_CALLBACK(createWebViewForAutomationInWindowCallback), application);
+    g_signal_connect(session, "create-web-view::tab", G_CALLBACK(createWebViewForAutomationInTabCallback), application);
 }
 
 typedef struct {
@@ -499,55 +500,36 @@ static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResul
     g_main_loop_quit(data->mainLoop);
 }
 
-int main(int argc, char *argv[])
+static void startup(GApplication *application)
 {
-#if ENABLE_DEVELOPER_MODE
-    g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
-#endif
+    const char *actionAccels[] = {
+        "win.reload", "F5", "<Ctrl>R", NULL,
+        "win.reload-no-cache", "<Ctrl>F5", "<Ctrl><Shift>R", NULL,
+        "win.toggle-inspector", "<Ctrl><Shift>I", "F12", NULL,
+        "win.open-private-window", "<Ctrl><Shift>P", NULL,
+        "win.focus-location", "<Ctrl>L", NULL,
+        "win.stop-load", "F6", "Escape", NULL,
+        "win.load-homepage", "<Alt>Home", NULL,
+        "win.zoom-in", "<Ctrl>plus", "<Ctrl>equal", "<Ctrl>KP_Add", NULL,
+        "win.zoom-out", "<Ctrl>minus", "<Ctrl>KP_Subtract", NULL,
+        "win.zoom-default", "<Ctrl>0", "<Ctrl>KP_0", NULL,
+        "win.find", "<Ctrl>F", NULL,
+        "win.new-tab", "<Ctrl>T", NULL,
+        "win.toggle-fullscreen", "F11", NULL,
+        "win.print", "<Ctrl>P", NULL,
+        "win.close", "<Ctrl>W", NULL,
+        "win.quit", "<Ctrl>Q", NULL,
+        "find.next", "F3", "<Ctrl>G", NULL,
+        "find.previous", "<Shift>F3", "<Ctrl><Shift>G", NULL,
+        NULL
+    };
 
-#if GTK_CHECK_VERSION(3, 98, 0)
-    gtk_init();
-#else
-    gtk_init(&argc, &argv);
-#endif
+    for (const gchar **it = actionAccels; it[0]; it += g_strv_length((gchar **)it) + 1)
+        gtk_application_set_accels_for_action(GTK_APPLICATION(application), it[0], &it[1]);
+}
 
-    GOptionContext *context = g_option_context_new(NULL);
-    g_option_context_add_main_entries(context, commandLineOptions, 0);
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    g_option_context_add_group(context, gtk_get_option_group(TRUE));
-#endif
-#if ENABLE_WEB_AUDIO || ENABLE_VIDEO
-    g_option_context_add_group(context, gst_init_get_option_group());
-#endif
-
-    WebKitSettings *webkitSettings = webkit_settings_new();
-    webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);
-    webkit_settings_set_enable_webgl(webkitSettings, TRUE);
-    webkit_settings_set_enable_media_stream(webkitSettings, TRUE);
-    if (!addSettingsGroupToContext(context, webkitSettings))
-        g_clear_object(&webkitSettings);
-
-    GError *error = 0;
-    if (!g_option_context_parse(context, &argc, &argv, &error)) {
-        g_printerr("Cannot parse arguments: %s\n", error->message);
-        g_error_free(error);
-        g_option_context_free(context);
-
-        return 1;
-    }
-    g_option_context_free (context);
-
-    if (printVersion) {
-        g_print("WebKitGTK %u.%u.%u",
-            webkit_get_major_version(),
-            webkit_get_minor_version(),
-            webkit_get_micro_version());
-        if (g_strcmp0(SVN_REVISION, "tarball"))
-            g_print(" (%s)", SVN_REVISION);
-        g_print("\n");
-        return 0;
-    }
-
+static void activate(GApplication *application, WebKitSettings *webkitSettings)
+{
     WebKitWebsiteDataManager *manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(NULL);
     WebKitWebContext *webContext = g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, "process-swap-on-cross-site-navigation-enabled", TRUE,
 #if !GTK_CHECK_VERSION(3, 98, 0)
@@ -611,12 +593,13 @@ int main(int argc, char *argv[])
     }
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
-    g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), NULL);
+    g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), application);
 
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
+    gtk_application_add_window(GTK_APPLICATION(application), GTK_WINDOW(mainWindow));
     if (darkMode)
         g_object_set(gtk_widget_get_settings(GTK_WIDGET(mainWindow)), "gtk-application-prefer-dark-theme", TRUE, NULL);
     if (fullScreen)
@@ -649,16 +632,70 @@ int main(int argc, char *argv[])
         }
     }
 
+    g_clear_object(&webkitSettings);
+    g_object_unref(webContext);
+
     gtk_widget_grab_focus(firstTab);
     gtk_widget_show(GTK_WIDGET(mainWindow));
+}
 
-    g_clear_object(&webkitSettings);
-    g_clear_object(&userContentManager);
+int main(int argc, char *argv[])
+{
+#if ENABLE_DEVELOPER_MODE
+    g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
+#endif
 
-    browser_main();
+#if GTK_CHECK_VERSION(3, 98, 0)
+    gtk_init();
+#else
+    gtk_init(&argc, &argv);
+#endif
 
-    if (privateMode)
-        g_object_unref(webContext);
+    GOptionContext *context = g_option_context_new(NULL);
+    g_option_context_add_main_entries(context, commandLineOptions, 0);
+#if !GTK_CHECK_VERSION(3, 98, 0)
+    g_option_context_add_group(context, gtk_get_option_group(TRUE));
+#endif
+#if ENABLE_WEB_AUDIO || ENABLE_VIDEO
+    g_option_context_add_group(context, gst_init_get_option_group());
+#endif
+
+    WebKitSettings *webkitSettings = webkit_settings_new();
+    webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);
+    webkit_settings_set_enable_webgl(webkitSettings, TRUE);
+    webkit_settings_set_enable_media_stream(webkitSettings, TRUE);
+    if (!addSettingsGroupToContext(context, webkitSettings))
+        g_clear_object(&webkitSettings);
+
+    GError *error = 0;
+    if (!g_option_context_parse(context, &argc, &argv, &error)) {
+        g_printerr("Cannot parse arguments: %s\n", error->message);
+        g_error_free(error);
+        g_option_context_free(context);
+        g_clear_object(&webkitSettings);
+
+        return 1;
+    }
+    g_option_context_free(context);
+
+    if (printVersion) {
+        g_print("WebKitGTK %u.%u.%u",
+            webkit_get_major_version(),
+            webkit_get_minor_version(),
+            webkit_get_micro_version());
+        if (g_strcmp0(SVN_REVISION, "tarball"))
+            g_print(" (%s)", SVN_REVISION);
+        g_print("\n");
+        g_clear_object(&webkitSettings);
+
+        return 0;
+    }
+
+    GtkApplication *application = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+    g_signal_connect(application, "startup", G_CALLBACK(startup), NULL);
+    g_signal_connect(application, "activate", G_CALLBACK(activate), webkitSettings);
+    g_application_run(G_APPLICATION(application), 0, NULL);
+    g_object_unref(application);
 
     return 0;
 }

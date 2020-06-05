@@ -114,14 +114,14 @@ static void searchEntryActivatedCallback(BrowserSearchBar *searchBar)
     searchNext(searchBar);
 }
 
-static void searchPrevButtonClickedCallback(BrowserSearchBar *searchBar)
+static void searchPreviousButtonCallback(GSimpleAction *action, GVariant *parameter, gpointer userData)
 {
-    searchPrevious(searchBar);
+    searchPrevious(BROWSER_SEARCH_BAR(userData));
 }
 
-static void searchNextButtonClickedCallback(BrowserSearchBar *searchBar)
+static void searchNextButtonCallback(GSimpleAction *action, GVariant *parameter, gpointer userData)
 {
-    searchNext(searchBar);
+    searchNext(BROWSER_SEARCH_BAR(userData));
 }
 
 static void searchMenuCheckButtonToggledCallback(BrowserSearchBar *searchBar)
@@ -139,8 +139,18 @@ static void findControllerFoundTextCallback(BrowserSearchBar *searchBar)
     setFailedStyleForEntry(searchBar, FALSE);
 }
 
+static const GActionEntry actions[] = {
+    { "next", searchNextButtonCallback, NULL, NULL, NULL, { 0 } },
+    { "previous", searchPreviousButtonCallback, NULL, NULL, NULL, { 0 } },
+};
+
 static void browser_search_bar_init(BrowserSearchBar *searchBar)
 {
+    GSimpleActionGroup *actionGroup = g_simple_action_group_new();
+    g_action_map_add_action_entries(G_ACTION_MAP(actionGroup), actions, G_N_ELEMENTS(actions), searchBar);
+    gtk_widget_insert_action_group(GTK_WIDGET(searchBar), "find", G_ACTION_GROUP(actionGroup));
+    g_object_unref(actionGroup);
+
     gtk_widget_set_hexpand(GTK_WIDGET(searchBar), TRUE);
 
     GtkToolItem *toolItem = gtk_tool_item_new();
@@ -167,12 +177,14 @@ static void browser_search_bar_init(BrowserSearchBar *searchBar)
 
     searchBar->prevButton = gtk_button_new_from_icon_name("go-up", GTK_ICON_SIZE_SMALL_TOOLBAR);
     GtkButton *button = GTK_BUTTON(searchBar->prevButton);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "find.previous");
     gtk_button_set_relief(button, GTK_RELIEF_NONE);
     gtk_widget_set_focus_on_click(searchBar->prevButton, FALSE);
     gtk_box_pack_start(hBoxButtons, searchBar->prevButton, FALSE, FALSE, 0);
 
     searchBar->nextButton = gtk_button_new_from_icon_name("go-down", GTK_ICON_SIZE_SMALL_TOOLBAR);
     button = GTK_BUTTON(searchBar->nextButton);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "find.next");
     gtk_button_set_relief(button, GTK_RELIEF_NONE);
     gtk_widget_set_focus_on_click(searchBar->nextButton, FALSE);
     gtk_box_pack_start(hBoxButtons, searchBar->nextButton, FALSE, FALSE, 0);
@@ -198,8 +210,6 @@ static void browser_search_bar_init(BrowserSearchBar *searchBar)
     g_signal_connect_swapped(searchBar->entry, "icon-release", G_CALLBACK(searchEntryClearIconReleasedCallback), searchBar);
     g_signal_connect_after(searchBar->entry, "changed", G_CALLBACK(searchEntryChangedCallback), searchBar);
     g_signal_connect_swapped(searchBar->entry, "activate", G_CALLBACK(searchEntryActivatedCallback), searchBar);
-    g_signal_connect_swapped(searchBar->nextButton, "clicked", G_CALLBACK(searchNextButtonClickedCallback), searchBar);
-    g_signal_connect_swapped(searchBar->prevButton, "clicked", G_CALLBACK(searchPrevButtonClickedCallback), searchBar);
     g_signal_connect_swapped(searchBar->caseCheckButton, "toggled", G_CALLBACK(searchMenuCheckButtonToggledCallback), searchBar);
     g_signal_connect_swapped(searchBar->begginigWordCheckButton, "toggled", G_CALLBACK(searchMenuCheckButtonToggledCallback), searchBar);
     g_signal_connect_swapped(searchBar->capitalAsBegginigWordCheckButton, "toggled", G_CALLBACK(searchMenuCheckButtonToggledCallback), searchBar);
@@ -249,18 +259,6 @@ GtkWidget *browser_search_bar_new(WebKitWebView *webView)
     g_signal_connect_swapped(controller, "found-text", G_CALLBACK(findControllerFoundTextCallback), searchBar);
 
     return searchBar;
-}
-
-void browser_search_bar_add_accelerators(BrowserSearchBar *searchBar, GtkAccelGroup *accelGroup)
-{
-    g_return_if_fail(BROWSER_IS_SEARCH_BAR(searchBar));
-    g_return_if_fail(GTK_IS_ACCEL_GROUP(accelGroup));
-
-    gtk_widget_add_accelerator(searchBar->nextButton, "clicked", accelGroup, GDK_KEY_F3, 0, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator(searchBar->nextButton, "clicked", accelGroup, GDK_KEY_G, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-
-    gtk_widget_add_accelerator(searchBar->prevButton, "clicked", accelGroup, GDK_KEY_F3, GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
-    gtk_widget_add_accelerator(searchBar->prevButton, "clicked", accelGroup, GDK_KEY_G, GDK_SHIFT_MASK | GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 }
 
 void browser_search_bar_open(BrowserSearchBar *searchBar)

@@ -51,8 +51,8 @@ void browser_window_append_view(BrowserWindow*, WebKitWebView*);
 void browser_window_load_uri(BrowserWindow*, const char *uri);
 void browser_window_load_session(BrowserWindow *, const char *sessionFile);
 void browser_window_set_background_color(BrowserWindow*, GdkRGBA*);
-WebKitWebView* browser_window_get_or_create_web_view_for_automation(void);
-WebKitWebView *browser_window_create_web_view_in_new_tab_for_automation(void);
+WebKitWebView* browser_window_get_or_create_web_view_for_automation(BrowserWindow*);
+WebKitWebView *browser_window_create_web_view_in_new_tab_for_automation(BrowserWindow*);
 
 G_END_DECLS
 

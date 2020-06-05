@@ -1,3 +1,65 @@
+2020-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser: use GAction API for actions and shortcuts in preparation for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=212740
+
+        Reviewed by Adrian Perez de Castro.
+
+        Make MiniBrowser a GtkApplication and BrowserWindow a GtkApplicationWindow to easily install actions and shortcuts.
+
+        * MiniBrowser/gtk/BrowserMain.c: Removed.
+        * MiniBrowser/gtk/BrowserMain.h: Removed.
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        (searchPreviousButtonCallback):
+        (searchNextButtonCallback):
+        * MiniBrowser/gtk/BrowserSearchBar.h:
+        * MiniBrowser/gtk/BrowserTab.c:
+        * MiniBrowser/gtk/BrowserTab.h:
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (reloadOrStopCallback):
+        (goBackCallback):
+        (goForwardCallback):
+        (settingsCallback):
+        (browserWindowUpdateNavigationMenu):
+        (browserWindowTryCloseCurrentWebView):
+        (browserWindowTryClose):
+        (webViewCreate):
+        (browserWindowUpdateZoomActions):
+        (webViewZoomLevelChanged):
+        (zoomInCallback):
+        (zoomOutCallback):
+        (defaultZoomCallback):
+        (searchCallback):
+        (newTabCallback):
+        (toggleWebInspector):
+        (openPrivateWindow):
+        (focusLocationBar):
+        (reloadPage):
+        (reloadPageIgnoringCache):
+        (stopPageLoad):
+        (loadHomePage):
+        (toggleFullScreen):
+        (printPage):
+        (editingActionCallback):
+        (typingAttributesChanged):
+        (browserWindowFinalize):
+        (browserWindowSetupEditorToolbarItem):
+        (browserWindowSetupToolbarItem):
+        (browserWindowDeleteEvent):
+        (browser_window_new):
+        (browser_window_append_view):
+        (browser_window_get_or_create_web_view_for_automation):
+        (browser_window_create_web_view_in_new_tab_for_automation):
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * MiniBrowser/gtk/main.c:
+        (createWebViewForAutomationInWindowCallback):
+        (createWebViewForAutomationInTabCallback):
+        (automationStartedCallback):
+        (startup):
+        (activate):
+        (main):
+
 2020-06-04  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation: first and last unit in a paragraph should not contain only excluded tokens
