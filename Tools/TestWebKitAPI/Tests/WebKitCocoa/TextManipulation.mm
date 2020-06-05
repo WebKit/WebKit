@@ -243,11 +243,9 @@ TEST(TextManipulation, StartTextManipulationFindAttributeContent)
     EXPECT_STREQ("fruit", items[2].tokens[0].content.UTF8String);
     EXPECT_FALSE(items[2].tokens[0].isExcluded);
 
-    EXPECT_EQ(items[3].tokens.count, 2UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
     EXPECT_STREQ("hello", items[3].tokens[0].content.UTF8String);
     EXPECT_FALSE(items[3].tokens[0].isExcluded);
-    EXPECT_STREQ("[]", items[3].tokens[1].content.UTF8String);
-    EXPECT_TRUE(items[3].tokens[1].isExcluded);
 }
 
 TEST(TextManipulation, StartTextManipulationSupportsLegacyDelegateCallback)
@@ -451,11 +449,9 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForAttri
 
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 2UL);
-    EXPECT_STREQ("hello, ", items[0].tokens[0].content.UTF8String);
-    EXPECT_TRUE(items[0].tokens[0].isExcluded);
-    EXPECT_STREQ("world", items[0].tokens[1].content.UTF8String);
-    EXPECT_FALSE(items[0].tokens[1].isExcluded);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("world", items[0].tokens[0].content.UTF8String);
+    EXPECT_FALSE(items[0].tokens[0].isExcluded);
 }
 
 TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass)
@@ -465,7 +461,7 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass
     [webView _setTextManipulationDelegate:delegate.get()];
 
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
-        "<html><body><span class='someClass exclude'>Message: <b>hello, </b><span>world</span></span></body></html>"];
+        "<html><body>Message: <span class='someClass exclude'><b>hello, </b><span>world</span></span></body></html>"];
 
     auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
@@ -480,13 +476,9 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass
 
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 3UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
     EXPECT_STREQ("Message: ", items[0].tokens[0].content.UTF8String);
-    EXPECT_TRUE(items[0].tokens[0].isExcluded);
-    EXPECT_STREQ("hello, ", items[0].tokens[1].content.UTF8String);
-    EXPECT_TRUE(items[0].tokens[1].isExcluded);
-    EXPECT_STREQ("world", items[0].tokens[2].content.UTF8String);
-    EXPECT_TRUE(items[0].tokens[2].isExcluded);
+    EXPECT_FALSE(items[0].tokens[0].isExcluded);
 }
 
 TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClassAndAttribute)
@@ -513,13 +505,9 @@ TEST(TextManipulation, StartTextManipulationApplyInclusionExclusionRulesForClass
 
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 3UL);
-    EXPECT_STREQ("Message: ", items[0].tokens[0].content.UTF8String);
-    EXPECT_TRUE(items[0].tokens[0].isExcluded);
-    EXPECT_STREQ("hello, ", items[0].tokens[1].content.UTF8String);
-    EXPECT_FALSE(items[0].tokens[1].isExcluded);
-    EXPECT_STREQ("world", items[0].tokens[2].content.UTF8String);
-    EXPECT_TRUE(items[0].tokens[2].isExcluded);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_STREQ("hello, ", items[0].tokens[0].content.UTF8String);
+    EXPECT_FALSE(items[0].tokens[0].isExcluded);
 }
 
 TEST(TextManipulation, StartTextManipulationBreaksParagraphInBetweenListItems)
@@ -1293,10 +1281,10 @@ TEST(TextManipulation, CompleteTextManipulationShouldPreserveSVGAsExcludedTokens
     [webView _setTextManipulationDelegate:delegate.get()];
 
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body>"
-    "<section><div style=\"display: inline-block;\">hello</div>"
-    "<div style=\"display: inline-block;\"><span style=\"display: inline-flex;\">"
-    "<svg viewBox=\"0 0 20 20\" width=\"20\" height=\"20\"><rect width=\"20\" height=\"20\" fill=\"#06f\"></rect></svg>"
-    "</span></div></section><p>world</p></body></html>"];
+    "<section><div style=\"display: inline-block;\">hello"
+    "<span style=\"display: inline-flex;\"><svg viewBox=\"0 0 20 20\" width=\"20\" height=\"20\"><rect width=\"20\" height=\"20\" fill=\"#06f\"></rect></svg></span>"
+    "webkit</div></section>"
+    "<p>world</p></body></html>"];
 
     done = false;
     [webView _startTextManipulationsWithConfiguration:nil completion:^{
@@ -1307,11 +1295,13 @@ TEST(TextManipulation, CompleteTextManipulationShouldPreserveSVGAsExcludedTokens
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 2UL);
     auto *tokens = items[0].tokens;
-    EXPECT_EQ(tokens.count, 2UL);
+    EXPECT_EQ(tokens.count, 3UL);
     EXPECT_STREQ("hello", tokens[0].content.UTF8String);
     EXPECT_FALSE(tokens[0].isExcluded);
     EXPECT_STREQ("[]", tokens[1].content.UTF8String);
     EXPECT_TRUE(tokens[1].isExcluded);
+    EXPECT_STREQ("webkit", tokens[2].content.UTF8String);
+    EXPECT_FALSE(tokens[2].isExcluded);
     
     EXPECT_EQ(items[1].tokens.count, 1UL);
     EXPECT_STREQ("world", items[1].tokens[0].content.UTF8String);
@@ -1321,15 +1311,13 @@ TEST(TextManipulation, CompleteTextManipulationShouldPreserveSVGAsExcludedTokens
     [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[0].identifier, {
         { tokens[0].identifier, @"hey" },
         { tokens[1].identifier, nil },
+        { tokens[2].identifier, @"WebKit" },
     })] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors, nil);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-    EXPECT_WK_STREQ("<section><div style=\"display: inline-block;\">hey</div>"
-    "<div style=\"display: inline-block;\"><span style=\"display: inline-flex;\">"
-    "<svg viewBox=\"0 0 20 20\" width=\"20\" height=\"20\"><rect width=\"20\" height=\"20\" fill=\"#06f\"></rect></svg>"
-    "</span></div></section><p>world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("<section><div style=\"display: inline-block;\">hey<span style=\"display: inline-flex;\"><svg viewBox=\"0 0 20 20\" width=\"20\" height=\"20\"><rect width=\"20\" height=\"20\" fill=\"#06f\"></rect></svg></span>WebKit</div></section><p>world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationShouldPreserveOrderOfBlockImage)
@@ -1395,9 +1383,8 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceAttributeContent)
     EXPECT_EQ(items[2].tokens.count, 1UL);
     EXPECT_STREQ("fruit", items[2].tokens[0].content.UTF8String);
 
-    EXPECT_EQ(items[3].tokens.count, 2UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
     EXPECT_STREQ("hello", items[3].tokens[0].content.UTF8String);
-    EXPECT_STREQ("[]", items[3].tokens[1].content.UTF8String);
 
     done = false;
     [webView _completeTextManipulationForItems:@[
@@ -1475,14 +1462,13 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceTextContentWithMulti
     EXPECT_EQ(items[2].tokens.count, 1UL);
     EXPECT_EQ(items[3].tokens.count, 1UL);
     EXPECT_EQ(items[4].tokens.count, 1UL);
-    EXPECT_EQ(items[5].tokens.count, 2UL);
+    EXPECT_EQ(items[5].tokens.count, 1UL);
     EXPECT_WK_STREQ("This is a test", items[0].tokens[0].content);
     EXPECT_WK_STREQ("Hello world", items[1].tokens[0].content);
     EXPECT_WK_STREQ("Should not be replaced", items[2].tokens[0].content);
     EXPECT_WK_STREQ("label", items[3].tokens[0].content);
     EXPECT_WK_STREQ("image", items[4].tokens[0].content);
     EXPECT_WK_STREQ("Text", items[5].tokens[0].content);
-    EXPECT_WK_STREQ("[]", items[5].tokens[1].content);
 
     auto replacementItems = retainPtr(@[
         createItem(items[0].identifier, { { items[0].tokens[0].identifier, @"Replacement" }, { items[0].tokens[0].identifier, @"title" } }).autorelease(),
@@ -1925,7 +1911,7 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExclusionIsViolated)
     [webView _setTextManipulationDelegate:delegate.get()];
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
-    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = '<p>hi, <em>WebKitten</em></p>'"];
+    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = '<p>hi, <em>WebKitten</em> bye</p>'"];
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
@@ -1940,14 +1926,16 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExclusionIsViolated)
 
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 3UL);
     EXPECT_STREQ("hi, ", items[0].tokens[0].content.UTF8String);
     EXPECT_STREQ("WebKitten", items[0].tokens[1].content.UTF8String);
+    EXPECT_STREQ(" bye", items[0].tokens[2].content.UTF8String);
 
     done = false;
     __block auto item = createItem(items[0].identifier, {
         { items[0].tokens[0].identifier, @"Hello," },
         { items[0].tokens[1].identifier, @"WebKit" },
+        { items[0].tokens[2].identifier, @"Bye" },
     });
     [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors.count, 1UL);
@@ -1958,7 +1946,7 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExclusionIsViolated)
     }];
 
     TestWebKitAPI::Util::run(&done);
-    EXPECT_WK_STREQ("<p>hi, <em>WebKitten</em></p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("<p>hi, <em>WebKitten</em> bye</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationFailWhenExcludedContentAppearsMoreThanOnce)
@@ -1968,7 +1956,7 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExcludedContentAppearsMor
     [webView _setTextManipulationDelegate:delegate.get()];
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
-    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = '<p>hi, <em>WebKitten</em></p>'"];
+    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = '<p>hi, <em>WebKitten</em> bye</p>'"];
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
@@ -1983,15 +1971,17 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExcludedContentAppearsMor
 
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 3UL);
     EXPECT_STREQ("hi, ", items[0].tokens[0].content.UTF8String);
     EXPECT_STREQ("WebKitten", items[0].tokens[1].content.UTF8String);
+    EXPECT_STREQ(" bye", items[0].tokens[2].content.UTF8String);
 
     done = false;
     __block auto item = createItem(items[0].identifier, {
         { items[0].tokens[1].identifier, nil },
         { items[0].tokens[0].identifier, @"Hello," },
         { items[0].tokens[1].identifier, nil },
+        { items[0].tokens[2].identifier, @"Bye" },
     });
     [webView _completeTextManipulationForItems:@[item.get()] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors.count, 1UL);
@@ -2002,7 +1992,7 @@ TEST(TextManipulation, CompleteTextManipulationFailWhenExcludedContentAppearsMor
     }];
 
     TestWebKitAPI::Util::run(&done);
-    EXPECT_WK_STREQ("<p>hi, <em>WebKitten</em></p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("<p>hi, <em>WebKitten</em> bye</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationPreservesExcludedContent)
@@ -2011,7 +2001,7 @@ TEST(TextManipulation, CompleteTextManipulationPreservesExcludedContent)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView _setTextManipulationDelegate:delegate.get()];
 
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p>hi, <em>WebKitten</em></p></body></html>"];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p>hi, <em>WebKitten</em> bye</p></body></html>"];
 
     RetainPtr<_WKTextManipulationConfiguration> configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
     [configuration setExclusionRules:@[
@@ -2026,21 +2016,23 @@ TEST(TextManipulation, CompleteTextManipulationPreservesExcludedContent)
 
     auto *items = [delegate items];
     EXPECT_EQ(items.count, 1UL);
-    EXPECT_EQ(items[0].tokens.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 3UL);
     EXPECT_STREQ("hi, ", items[0].tokens[0].content.UTF8String);
     EXPECT_STREQ("WebKitten", items[0].tokens[1].content.UTF8String);
+    EXPECT_STREQ(" bye", items[0].tokens[2].content.UTF8String);
 
     done = false;
     [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[0].identifier, {
         { items[0].tokens[0].identifier, @"Hello, " },
         { items[0].tokens[1].identifier, nil },
+        { items[0].tokens[2].identifier, @" Bye" },
     })] completion:^(NSArray<NSError *> *errors) {
         EXPECT_EQ(errors, nil);
         done = true;
     }];
 
     TestWebKitAPI::Util::run(&done);
-    EXPECT_WK_STREQ("<p>Hello, <em>WebKitten</em></p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("<p>Hello, <em>WebKitten</em> Bye</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationDoesNotCreateMoreTextManipulationItems)

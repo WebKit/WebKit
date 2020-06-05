@@ -294,12 +294,13 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     return false;
 }
 
-TextManipulationController::ManipulationTokens TextManipulationController::parse(StringView text, Node* textNode)
+TextManipulationController::ManipulationUnit TextManipulationController::parse(StringView text, Node* textNode)
 {
     Vector<ManipulationToken> tokens;
     ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
     size_t positionOfLastNonHTMLSpace = WTF::notFound;
     size_t startPositionOfCurrentToken = 0;
+    bool isNodeExcluded = exclusionRuleMatcher.isExcluded(textNode);
     bool containsOnlyHTMLSpace = true;
     bool containsLineBreak = false;
     bool firstTokenContainsLineBreak = false;
@@ -315,7 +316,7 @@ TextManipulationController::ManipulationTokens TextManipulationController::parse
             containsLineBreak = true;
             if (positionOfLastNonHTMLSpace != WTF::notFound && startPositionOfCurrentToken <= positionOfLastNonHTMLSpace) {
                 auto tokenString = text.substring(startPositionOfCurrentToken, positionOfLastNonHTMLSpace + 1 - startPositionOfCurrentToken).toString();
-                tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), exclusionRuleMatcher.isExcluded(textNode) });
+                tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), isNodeExcluded });
                 startPositionOfCurrentToken = positionOfLastNonHTMLSpace + 1;
             }
 
@@ -337,11 +338,36 @@ TextManipulationController::ManipulationTokens TextManipulationController::parse
 
     if (startPositionOfCurrentToken < text.length()) {
         auto tokenString = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken).toString();
-        tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), exclusionRuleMatcher.isExcluded(textNode) });
+        tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), isNodeExcluded });
         lastTokenContainsLineBreak = false;
     }
 
-    return { WTFMove(tokens), containsOnlyHTMLSpace, containsLineBreak, firstTokenContainsLineBreak, lastTokenContainsLineBreak };
+    return { WTFMove(tokens), *textNode, containsOnlyHTMLSpace || isNodeExcluded, containsLineBreak, firstTokenContainsLineBreak, lastTokenContainsLineBreak };
+}
+
+void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& units)
+{
+    if (units.isEmpty())
+        return;
+
+    size_t index = 0;
+    size_t end = units.size();
+    while (index < units.size() && units[index].areAllTokensExcluded)
+        ++index;
+
+    while (end > 0 && units[end - 1].areAllTokensExcluded)
+        --end;
+
+    if (index == end)
+        return;
+
+    auto startPosition = firstPositionInOrBeforeNode(units.first().node.ptr());
+    auto endPosition = positionAfterNode(units.last().node.ptr());
+    Vector<ManipulationToken> tokens;
+    for (; index < end; ++index)
+        tokens.appendVector(WTFMove(units[index].tokens));
+
+    addItem(ManipulationItemData { startPosition, endPosition, nullptr, nullQName(), WTFMove(tokens) });
 }
 
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
@@ -351,24 +377,20 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
     auto document = makeRefPtr(start.document());
     ASSERT(document);
-    ParagraphContentIterator iterator { start, end };
     // TextIterator's constructor may have updated the layout and executed arbitrary scripts.
     if (document != start.document() || document != end.document())
         return;
 
-    Vector<ManipulationToken> tokensInCurrentParagraph;
-    Position startOfCurrentParagraph;
-    Position endOfCurrentParagraph;
+    Vector<ManipulationUnit> unitsInCurrentParagraph;
     RefPtr<Element> enclosingItemBoundaryElement;
-
+    ParagraphContentIterator iterator { start, end };
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         auto* contentNode = content.node.get();
         ASSERT(contentNode);
 
         if (enclosingItemBoundaryElement && !enclosingItemBoundaryElement->contains(contentNode)) {
-            if (!tokensInCurrentParagraph.isEmpty())
-                addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), std::exchange(tokensInCurrentParagraph, { }) });
+            addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
             enclosingItemBoundaryElement = nullptr;
         }
 
@@ -401,37 +423,28 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         }
 
         if (content.isReplacedContent) {
-            if (!tokensInCurrentParagraph.isEmpty()) {
-                tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), "[]", tokenInfo(content.node.get()), true });
-                endOfCurrentParagraph = positionAfterNode(contentNode);
-            }
+            if (!unitsInCurrentParagraph.isEmpty())
+                unitsInCurrentParagraph.append(ManipulationUnit { { ManipulationToken { m_tokenIdentifier.generate(), "[]", tokenInfo(content.node.get()), true } }, *contentNode });
             continue;
         }
 
         if (!content.isTextContent)
             continue;
 
-        auto tokensInCurrentNode = parse(content.text, contentNode);
-        if (!tokensInCurrentParagraph.isEmpty() && tokensInCurrentNode.firstTokenContainsLineBreak)
-            addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), std::exchange(tokensInCurrentParagraph, { }) });
+        auto unitsInCurrentNode = parse(content.text, contentNode);
+        if (unitsInCurrentNode.firstTokenContainsLineBreak)
+            addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
 
-        if (tokensInCurrentParagraph.isEmpty()) {
-            if (tokensInCurrentNode.containsOnlyHTMLSpace)
+        if (unitsInCurrentParagraph.isEmpty() && unitsInCurrentNode.areAllTokensExcluded)
                 continue;
-            startOfCurrentParagraph = firstPositionInOrBeforeNode(contentNode);
-        }
 
-        tokensInCurrentParagraph.appendVector(tokensInCurrentNode.tokens);
-        endOfCurrentParagraph = positionAfterNode(contentNode);
+        unitsInCurrentParagraph.append(WTFMove(unitsInCurrentNode));
 
-        if (!tokensInCurrentParagraph.isEmpty() && tokensInCurrentNode.lastTokenContainsLineBreak) {
-            ASSERT(!tokensInCurrentParagraph.isEmpty());
-            addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), std::exchange(tokensInCurrentParagraph, { }) });
-        }
+        if (unitsInCurrentNode.lastTokenContainsLineBreak)
+            addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
     }
 
-    if (!tokensInCurrentParagraph.isEmpty())
-        addItem(ManipulationItemData { startOfCurrentParagraph, endOfCurrentParagraph, nullptr, nullQName(), WTFMove(tokensInCurrentParagraph) });
+    addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
 }
 
 void TextManipulationController::didCreateRendererForElement(Element& element)

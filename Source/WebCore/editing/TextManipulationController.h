@@ -150,16 +150,18 @@ private:
         Vector<ManipulationToken> tokens;
     };
 
-    struct ManipulationTokens {
+    struct ManipulationUnit {
         Vector<ManipulationToken> tokens;
-        bool containsOnlyHTMLSpace { true };
+        Ref<Node> node;
+        bool areAllTokensExcluded { true };
         bool containsLineBreak { false };
         bool firstTokenContainsLineBreak { false };
         bool lastTokenContainsLineBreak { false };
     };
-    ManipulationTokens parse(StringView, Node*);
+    ManipulationUnit parse(StringView, Node*);
 
     void addItem(ManipulationItemData&&);
+    void addItemIfPossible(Vector<ManipulationUnit>&&);
     void flushPendingItemsForCallback();
 
     struct NodeInsertion {

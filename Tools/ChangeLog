@@ -1,3 +1,16 @@
+2020-06-04  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation: first and last unit in a paragraph should not contain only excluded tokens
+        https://bugs.webkit.org/show_bug.cgi?id=212759
+
+        Reviewed by Wenson Hsieh.
+
+        Modify existing test for changed behavior that leading and trailing excluded units are not included in paragraph
+        now.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-04  Chris Dumez  <cdumez@apple.com>
 
         UIProcess may crash after its prewarmed WebProcess gets terminated
