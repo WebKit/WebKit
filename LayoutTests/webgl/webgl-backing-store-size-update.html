@@ -3,16 +3,16 @@
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    var canvas = document.querySelector("canvas");
+    const canvas = document.querySelector("canvas");
 
     function draw() {
         // For the purpose of this test, we want the backing store metrics to
         // not match the layout metrics.
-        var scaleFactor = 2;
+        const scaleFactor = 2;
         canvas.width = canvas.clientWidth * scaleFactor;
         canvas.height = canvas.clientHeight * scaleFactor;
 
-        var gl = canvas.getContext("webgl");
+        const gl = canvas.getContext("webgl");
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
     }
@@ -25,14 +25,14 @@
     // size of the backing store.
     canvas.style.width = "50px";
     canvas.style.height = "50px";
-    window.requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
         draw();
         if (window.testRunner) {
             // Need to give the test system at least a frame to paint
             // after the draw() command, because notifyDone forces a
             // dump() and we're inside a rAF (which means it won't
             // do any of the post-layout/drawing work in Page::doAfterUpdateRendering)
-            window.requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
                 testRunner.notifyDone();
             });
         }
