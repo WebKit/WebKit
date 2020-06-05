@@ -1,3 +1,19 @@
+2020-06-04  Chris Dumez  <cdumez@apple.com>
+
+        UIProcess may crash after its prewarmed WebProcess gets terminated
+        https://bugs.webkit.org/show_bug.cgi?id=212790
+        <rdar://problem/63696191>
+
+        Reviewed by Geoffrey Garen.
+
+        Query WebProcessProxy::isDummyProcessProxy() because trying to look up the process
+        in m_dummyProcessProxies. The key for m_dummyProcessProxies is a sessionID but
+        not all processes have a sessionID. In particular, prewarmed web processes have
+        no associated WebsiteDataStore and thus not sessionID.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::disconnectProcess):
+
 2020-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         Reduce telemetry and report generation for WebContent Process sandbox

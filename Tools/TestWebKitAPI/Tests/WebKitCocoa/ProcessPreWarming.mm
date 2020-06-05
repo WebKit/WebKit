@@ -141,3 +141,27 @@ TEST(WKProcessPool, PrewarmedProcessCrash)
     while ([pool _hasPrewarmedWebProcess])
         TestWebKitAPI::Util::sleep(0.01);
 }
+
+TEST(WebKit, TryUsingPrewarmedProcessThatJustCrashed)
+{
+    auto pool = adoptNS([[WKProcessPool alloc] init]);
+
+    EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
+
+    [pool _warmInitialProcess];
+    EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
+
+    // Wait for prewarmed process to finish launching.
+    while (![pool _prewarmedProcessIdentifier])
+        TestWebKitAPI::Util::sleep(0.01);
+
+    // Kill the prewarmed process.
+    kill([pool _prewarmedProcessIdentifier], 9);
+
+    // Try using the prewarmed process right away.
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = pool.get();
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView _test_waitForDidFinishNavigation];
+}

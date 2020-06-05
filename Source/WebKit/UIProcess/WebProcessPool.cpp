@@ -1195,10 +1195,9 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_prewarmedProcess == process) {
         ASSERT(m_prewarmedProcess->isPrewarmed());
         m_prewarmedProcess = nullptr;
-    } else {
-        auto dummyProcessIterator = m_dummyProcessProxies.find(process->sessionID());
-        if (dummyProcessIterator != m_dummyProcessProxies.end() && dummyProcessIterator->value == process)
-            m_dummyProcessProxies.remove(dummyProcessIterator);
+    } else if (process->isDummyProcessProxy()) {
+        auto removedProcess = m_dummyProcessProxies.take(process->sessionID());
+        ASSERT_UNUSED(removedProcess, removedProcess == process);
     }
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
