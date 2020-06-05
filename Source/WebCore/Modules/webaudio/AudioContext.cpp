@@ -118,21 +118,17 @@ bool AudioContext::isSampleRateRangeGood(float sampleRate)
     return sampleRate >= 44100 && sampleRate <= 96000;
 }
 
-#if OS(WINDOWS)
 // Don't allow more than this number of simultaneous AudioContexts talking to hardware.
-constexpr unsigned maxHardwareContexts = 4;
-#endif
+const unsigned MaxHardwareContexts = 4;
 unsigned AudioContext::s_hardwareContextCount = 0;
     
-ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document)
+RefPtr<AudioContext> AudioContext::create(Document& document)
 {
     ASSERT(isMainThread());
-#if OS(WINDOWS)
-    if (s_hardwareContextCount >= maxHardwareContexts)
-        return Exception { QuotaExceededError };
-#endif
+    if (s_hardwareContextCount >= MaxHardwareContexts)
+        return nullptr;
 
-    auto audioContext = adoptRef(*new AudioContext(document));
+    RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document)));
     audioContext->suspendIfNeeded();
     return audioContext;
 }

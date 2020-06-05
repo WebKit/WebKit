@@ -118,12 +118,12 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::
     auto str3 = argument2.value().isUndefined() ? String() : convert<IDLDOMString>(*lexicalGlobalObject, argument2.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestNamedConstructor::createForJSConstructor(WTFMove(str1), WTFMove(str2), WTFMove(str3));
-    static_assert(IsExceptionOr<decltype(object)>::value);
-    static_assert(decltype(object)::ReturnType::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestNamedConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object));
     RETURN_IF_EXCEPTION(throwScope, { });
-    setSubclassStructureIfNeeded<TestNamedConstructor>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestNamedConstructor>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 

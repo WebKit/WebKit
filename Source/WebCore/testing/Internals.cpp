@@ -5138,7 +5138,7 @@ void Internals::videoSampleAvailable(MediaSample& sample)
     
     auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height());
     if (!imageData.hasException())
-        m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
+        m_nextTrackFramePromise->resolve(imageData.releaseReturnValue().releaseNonNull());
     else
         m_nextTrackFramePromise->reject(imageData.exception().code());
     m_nextTrackFramePromise = nullptr;

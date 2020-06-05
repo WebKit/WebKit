@@ -115,10 +115,11 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(JSGloba
     auto* castedThis = jsCast<JSTestNodeConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto object = TestNode::create();
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestNode>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestNode>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestNode>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 

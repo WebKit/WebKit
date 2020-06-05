@@ -39,7 +39,7 @@ public:
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&);
-    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, Optional<unsigned> sh);
+    WEBCORE_EXPORT static ExceptionOr<RefPtr<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, Optional<unsigned> sh);
 
     IntSize size() const { return m_size; }
     int width() const { return m_size.width(); }

@@ -96,10 +96,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     auto sequenceOfStrings = argument0.value().isUndefined() ? Converter<IDLSequence<IDLDOMString>>::ReturnType{ } : convert<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(sequenceOfStrings));
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructorsWithSequence>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructorsWithSequence>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 
@@ -113,10 +114,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     auto string = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructorsWithSequence::create(WTFMove(string));
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructorsWithSequence>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructorsWithSequence>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructorsWithSequence>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 

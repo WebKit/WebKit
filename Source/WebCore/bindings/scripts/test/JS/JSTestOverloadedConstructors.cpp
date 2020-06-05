@@ -97,10 +97,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(JSGlobalObje
     auto arrayBuffer = convert<IDLArrayBuffer>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "arrayBuffer", "TestOverloadedConstructors", nullptr, "ArrayBuffer"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(*arrayBuffer);
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 
@@ -114,10 +115,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(JSGlobalObje
     auto arrayBufferView = convert<IDLArrayBufferView>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "arrayBufferView", "TestOverloadedConstructors", nullptr, "ArrayBufferView"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(arrayBufferView.releaseNonNull());
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 
@@ -131,10 +133,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(JSGlobalObje
     auto blob = convert<IDLInterface<Blob>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "blob", "TestOverloadedConstructors", nullptr, "Blob"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(*blob);
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 
@@ -148,10 +151,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(JSGlobalObje
     auto string = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(WTFMove(string));
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 
@@ -164,10 +168,11 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(JSGlobalObje
     auto longArgs = convertVariadicArguments<IDLLong>(*lexicalGlobalObject, *callFrame, 0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(WTFMove(longArgs));
-    static_assert(decltype(object)::isRef);
     auto jsValue = toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object));
-    setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, asObject(jsValue));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {
+        setSubclassStructureIfNeeded<TestOverloadedConstructors>(lexicalGlobalObject, callFrame, object);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     return JSValue::encode(jsValue);
 }
 

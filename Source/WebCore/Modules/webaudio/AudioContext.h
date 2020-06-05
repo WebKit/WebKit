@@ -97,7 +97,7 @@ class AudioContext
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<AudioContext>> create(Document&);
+    static RefPtr<AudioContext> create(Document&);
 
     virtual ~AudioContext();
 
