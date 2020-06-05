@@ -1,3 +1,12 @@
+2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update WAV baseline for webaudio test
+        https://bugs.webkit.org/show_bug.cgi?id=212212
+
+        Unreviewed gardening.
+
+        * platform/wpe/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav:
+
 2020-06-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for offscreen-canvas (and rename to html/canvas/offscreen)
