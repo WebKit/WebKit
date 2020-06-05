@@ -47,8 +47,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 /*! @abstract A Boolean value indicating whether warnings should be
  shown for suspected fraudulent content such as phishing or malware.
- @discussion The default value is YES. This feature is currently available
- in the following region: China.
+ @discussion The default value is YES.
  */
 @property (nonatomic, getter=isFraudulentWebsiteWarningEnabled) BOOL fraudulentWebsiteWarningEnabled WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
