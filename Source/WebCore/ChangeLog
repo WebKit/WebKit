@@ -1,3 +1,17 @@
+2020-06-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        Unreviewed, reverting r262524.
+
+        Reverting because this commit may have caused issues with
+        other tests.
+
+        Reverted changeset:
+
+        "Release Assert @
+        WebCore::RenderTreeBuilder::RenderTreeBuilder"
+        https://bugs.webkit.org/show_bug.cgi?id=212714
+        https://trac.webkit.org/changeset/262524
+
 2020-06-05  Jonathan Bedard  <jbedard@apple.com>
 
         WebCore: Link to framework stubs for watchOS and tvOS

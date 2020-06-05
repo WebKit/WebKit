@@ -542,6 +542,8 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
 {
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
     Vector<Element*, 30> teardownStack;
 
     auto push = [&] (Element& element) {
