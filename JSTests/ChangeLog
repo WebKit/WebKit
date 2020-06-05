@@ -1,3 +1,13 @@
+2020-06-04  Paulo Matos  <pmatos@igalia.com>
+
+        Skip microbenchmarks/interpreter-wasm.js on MIPS/ARM
+
+        Unreviewed Gardening.
+
+        There's no native wasm support on 32bits atm - skipping.
+
+        * microbenchmarks/interpreter-wasm.js:
+
 2020-06-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl classes should have meaningful @@toStringTag values
