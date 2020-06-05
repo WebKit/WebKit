@@ -28,7 +28,6 @@
 
 #include "ColorComponents.h"
 #include "ColorMatrix.h"
-#include <algorithm>
 
 namespace WebCore {
 
