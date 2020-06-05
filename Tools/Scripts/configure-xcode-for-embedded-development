@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2014-2020 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import errno
+import os
+import pathlib
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+from xml.etree import ElementTree as ET
+
+MISSING_HEADERS = [
+    "usr/include/libxslt",
+    "usr/include/mach/mach_types.defs",
+    "usr/include/mach/machine/machine_types.defs",
+    "usr/include/mach/std_types.defs",
+    "usr/include/objc/Protocol.h",
+    "usr/include/objc/objc-class.h",
+    "usr/include/objc/objc-runtime.h",
+    "usr/include/readline/history.h",
+    "usr/include/readline/readline.h",
+]
+
+MISSING_FRAMEWORKS = [
+    ("AVKit.framework", False),
+    ("AudioToolbox.framework", True),
+    ("AudioUnit.framework", False),
+    ("CFNetwork.framework", True),
+    ("CoreImage.framework", False),
+    ("IOKit.framework", True),
+    ("IOSurface.framework", True),
+    ("LocalAuthentication.framework", False),
+    ("MediaAccessibility.framework", False),
+    ("MediaToolbox.framework", False),
+    ("Metal.framework", True),
+    ("OpenGLES.framework", True),
+    ("QuartzCore.framework", True),
+    ("UIKit.framework", True),
+    ("VideoToolbox.framework", False),
+]
+
+XCSPEC_INFO = [
+    {
+        "id":       "com.apple.package-type.mach-o-executable",
+        "source":   "Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX Package Types.xcspec",
+        "dest":     "../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec"
+    },
+    {
+        "id":       "com.apple.product-type.tool",
+        "source":   "Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX Product Types.xcspec",
+        "dest":     "../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec"
+    },
+]
+
+AVAILABILITY_FILE = pathlib.Path("usr/local/include/AvailabilityProhibitedInternal.h")
+AVAILABILTY_TEXT = """\
+// Handle __IOS_PROHIBITED and friends.
+#undef __OS_AVAILABILITY
+#define __OS_AVAILABILITY(...)
+
+// Take care of {A,S}PI_AVAILABLE{,_BEGIN,_END}
+#undef __API_AVAILABLE_GET_MACRO
+#define __API_AVAILABLE_GET_MACRO(...) __NULL_AVAILABILITY
+
+// Take care of {A,S}PI_DEPRECATED{,WITH_REPLACEMENT}{,_BEGIN,_END}
+#undef __API_DEPRECATED_MSG_GET_MACRO
+#define __API_DEPRECATED_MSG_GET_MACRO(...) __NULL_AVAILABILITY
+
+// Take care of API_UNAVAILABLE{,_BEGIN,_END}
+#undef __API_UNAVAILABLE_GET_MACRO
+#define __API_UNAVAILABLE_GET_MACRO(...) __NULL_AVAILABILITY
+
+#define __NULL_AVAILABILITY(...)
+"""
+
+SDKS_TO_UPDATE = [
+    "iphoneos",
+    "iphonesimulator",
+    "appletvos",
+    "appletvsimulator",
+    "watchos",
+    "watchsimulator",
+]
+
+PLIST_BUDDY_PATH = pathlib.Path("/usr/libexec/PlistBuddy")
+
+
+def xcode_developer_dir():
+    result = subprocess.run(
+        ["xcode-select", "-p"],
+        capture_output=True, encoding="utf-8", check=True,
+    )
+    return pathlib.Path(result.stdout.strip())
+
+
+def sdk_directory(sdk):
+    result = subprocess.run(
+        ["xcrun", "--sdk", sdk, "--show-sdk-path"],
+        capture_output=True, encoding="utf-8", check=True,
+    )
+    return pathlib.Path(result.stdout.strip())
+
+
+def get_and_check_sdk_directories(source_sdk, dest_sdk):
+    source_sdk_path = sdk_directory(source_sdk)
+    dest_sdk_path = sdk_directory(dest_sdk)
+
+    if not source_sdk_path:
+        raise RuntimeError(f"Could not find SDK: {source_sdk}")
+
+    if not dest_sdk_path:
+        raise RuntimeError(f"Could not find SDK: {dest_sdk}")
+
+    print(source_sdk_path)
+    print(dest_sdk_path)
+    return source_sdk_path, dest_sdk_path
+
+
+def do_copy(source_path, dest_path):
+
+    def ensure_parent_exists(path):
+        os.makedirs(path.parent, exist_ok=True)
+
+    def copy_file(source_path, dest_path):
+        print(f"Copying file")
+        print(f"From: {source_path}")
+        print(f"To:   {dest_path}")
+        if dest_path.exists():
+            dest_path.unlink()
+        ensure_parent_exists(dest_path)
+        shutil.copy2(source_path, dest_path)
+
+    def copy_directory(source_path, dest_path):
+        print(f"Copying directory")
+        print(f"From: {source_path}")
+        print(f"To:   {dest_path}")
+        if dest_path.exists():
+            shutil.rmtree(dest_path)
+        ensure_parent_exists(dest_path)
+        shutil.copytree(source_path, dest_path)
+
+    if source_path.is_file():
+        copy_file(source_path, dest_path)
+        return
+
+    if source_path.is_dir():
+        copy_directory(source_path, dest_path)
+        return
+
+    raise RuntimeError(f"{source_path} does not exist")
+
+
+# .tbd files contain information about how to link a product to a
+# library/framework. This information includes the architecture that the
+# library is built for. If we're copying from an SDK that supports one set of
+# architectures to an SDK that supports another set of architectures, we need
+# to adjust that information in the .tbd file.
+#
+# Note that we don't need to be too particular about this. We only need to
+# link; we don't need to run. This allows us to simply specify the full set of
+# architectures for which WebKit is built, regardless of whether the associated
+# library/framework was actually built for all those architectures.
+
+def patch_tbd_architecture(framework_path):
+    for tbd_path in framework_path.glob("*.tbd"):
+        with open(tbd_path, "r") as f:
+            lines = f.readlines()
+
+        modified_lines = []
+        for line in lines:
+            if re.match(".*archs: +\[.*\]", line) is not None:
+                line = re.sub("\[.*\]", "[ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]", line)
+            modified_lines.append(line)
+
+        with open(tbd_path, "w") as f:
+            f.writelines(modified_lines)
+
+
+# Xcode is driven by .xcspec files. These describe many aspects of the system,
+# including what to build and how to build it. These .xcspec files can be
+# global or they can be platform- or SDK-specific. In the case of building
+# products for the embedded systems, there is some information in some macOS
+# .xcspec files that need to be transferred to the embedded platforms. This
+# function finds that information, extracts it from the macOS files, and copies
+# it to the embedded files.
+
+def update_xcspec_files():
+
+    def read_spec(spec_path):
+        """Read a .xcspec file and return its contents as an XML DOM object."""
+
+        result = subprocess.run(
+            [PLIST_BUDDY_PATH, "-x", "-c", "Print", spec_path],
+            capture_output=True, encoding="utf-8", check=True,
+        )
+        return ET.fromstring(result.stdout.strip())
+
+    def find_spec_entry_index(spec, identifier):
+        """Given an XML DOM object representing an .xcspec file, look for an
+        entry that has a key of "Identifier" and a value equal to the given
+        value. If found, return its index in the array of such entries."""
+
+        for index, spec_entry in enumerate(spec.findall("./array/dict")):
+            spec_entry_iter = iter(spec_entry)
+            for key, value in zip(spec_entry_iter, spec_entry_iter):
+                if key.tag == "key" and key.text == "Identifier" and value.tag == "string" and value.text == identifier:
+                    return index
+        return None
+
+    for spec_info in XCSPEC_INFO:
+        identifier = spec_info["id"]
+        source_spec_path = xcode_developer_dir() / spec_info["source"]
+        dest_spec_path = xcode_developer_dir() / spec_info["dest"]
+
+        for path in [source_spec_path, dest_spec_path]:
+            if not path.exists():
+                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
+
+        source_spec_entry_index = find_spec_entry_index(read_spec(source_spec_path), identifier)
+        dest_spec_entry_index = find_spec_entry_index(read_spec(dest_spec_path), identifier)
+
+        if source_spec_entry_index is None:
+            raise RuntimeError(f"Unable to find xcspec entry for {identifier} in {source_spec_path}")
+
+        if dest_spec_entry_index is not None:
+            print(f"xcspec entry for {identifier} already exists in {dest_spec_path}, skipping")
+            return
+
+        result = subprocess.run(
+            [PLIST_BUDDY_PATH, "-x", "-c", f"Print {source_spec_entry_index}", source_spec_path],
+            capture_output=True, encoding="utf-8", check=True,
+        )
+        spec_as_xml_snippet = result.stdout.strip()
+
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8") as temp:
+            temp.write(spec_as_xml_snippet)
+            temp.flush() # It's amazing how important this line is.
+            if not dest_spec_path.exists():
+                print(f"Creating: {dest_spec_path}")
+                subprocess.run([PLIST_BUDDY_PATH, "-c", "clear array", dest_spec_path], capture_output=True, check=True)
+            print(f"Copying:  {identifier}")
+            print(f"From:     {source_spec_path}")
+            print(f"To:       {dest_spec_path}")
+            subprocess.run([PLIST_BUDDY_PATH, "-c", "add 0 dict", dest_spec_path], capture_output=True, check=True)
+            subprocess.run([PLIST_BUDDY_PATH, "-c", f"merge {temp.name} 0", dest_spec_path], capture_output=True, check=True)
+
+
+def copy_missing_headers(source_sdk, dest_sdk):
+    if source_sdk == dest_sdk:
+        return
+    source_sdk_path, dest_sdk_path = get_and_check_sdk_directories(source_sdk, dest_sdk)
+    for missing_header in MISSING_HEADERS:
+        do_copy(source_sdk_path / missing_header, dest_sdk_path / missing_header)
+
+
+def copy_missing_frameworks(source_sdk, dest_sdk):
+    if source_sdk == dest_sdk:
+        return
+    source_sdk_path, dest_sdk_path = get_and_check_sdk_directories(source_sdk, dest_sdk)
+    source_frameworks_path = source_sdk_path / "System" / "Library" / "Frameworks"
+    dest_frameworks_path = dest_sdk_path / "System" / "Library" / "Frameworks"
+    for missing_framework, force in MISSING_FRAMEWORKS:
+        source_framework_path = source_frameworks_path / missing_framework
+        dest_framework_path = dest_frameworks_path / missing_framework
+        if force or not dest_framework_path.exists():
+            do_copy(source_framework_path, dest_framework_path)
+            patch_tbd_architecture(dest_framework_path)
+
+
+# Some functions that WebKit needs to call are marked as "unavailable" on the
+# embedded platforms. Create a stub header that will nullify the effect of the
+# annotations on those functions. Note that there's no guarantee that the
+# resulting product can run -- we just want to build.
+
+def create_availability_header(sdk):
+    sdk_path = sdk_directory(sdk)
+    availability_header_path = sdk_path / AVAILABILITY_FILE
+    print(f"Creating/updating {availability_header_path}")
+    os.makedirs(availability_header_path.parent, exist_ok=True)
+    with open(availability_header_path, "w") as f:
+        f.write(AVAILABILTY_TEXT)
+
+
+def main():
+    if not os.geteuid() == 0 and not os.access(xcode_developer_dir(), os.R_OK | os.W_OK | os.X_OK, effective_ids=True):
+        raise RuntimeError(f"{__file__} must be run as root")
+
+    update_xcspec_files()
+
+    for sdk in SDKS_TO_UPDATE:
+        copy_missing_headers("macosx", sdk)
+        copy_missing_frameworks("iphoneos", sdk)
+        create_availability_header(sdk)
+    return 0
+
+
+if __name__ == "__main__":
+    main()

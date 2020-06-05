@@ -1,3 +1,17 @@
+2020-06-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Generalize configure-xcode-for-ios-development (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=207043
+
+        Rubber-stamped by David Kilzer.
+
+        Patch by Keith Rollin and Jonathan Bedard.
+
+        Replace configure-xcode-for-ios-development with a Python script that works for iOS,
+        watchOS and tvOS.
+
+        * Scripts/configure-xcode-for-embedded-development: Added.
+
 2020-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should exclude characters outside of the unicode private use area
