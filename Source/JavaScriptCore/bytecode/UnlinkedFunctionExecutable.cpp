@@ -58,7 +58,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     ASSERT(isFunctionParseMode(executable->parseMode()));
     Vector<JSTextPosition>* instanceFieldLocations = executable->instanceFieldLocations();
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        vm, source, executable->name(), builtinMode, strictMode, scriptMode, executable->parseMode(), executable->superBinding(), error, nullptr, ConstructorKind::None, DerivedContextType::None, EvalContextType::None, nullptr, instanceFieldLocations);
+        vm, source, executable->name(), builtinMode, strictMode, scriptMode, executable->parseMode(), executable->superBinding(), error, nullptr, ConstructorKind::None, DerivedContextType::None, EvalContextType::None, nullptr, nullptr, instanceFieldLocations);
 
     if (!function) {
         ASSERT(error.isValid());

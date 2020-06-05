@@ -686,6 +686,36 @@ ALWAYS_INLINE BinaryArithProfile JIT::copiedArithProfile(BinaryOp bytecode)
     return arithProfile;
 }
 
+template<typename Op>
+ALWAYS_INLINE ECMAMode JIT::ecmaMode(Op op)
+{
+    return op.m_ecmaMode;
+}
+
+template<>
+ALWAYS_INLINE ECMAMode JIT::ecmaMode<OpPutById>(OpPutById op)
+{
+    return op.m_flags.ecmaMode();
+}
+
+template<>
+ALWAYS_INLINE ECMAMode JIT::ecmaMode<OpPutByValDirect>(OpPutByValDirect op)
+{
+    return op.m_flags.ecmaMode();
+}
+
+template<typename Op>
+PrivateFieldAccessKind JIT::privateFieldAccessKind(Op)
+{
+    return PrivateFieldAccessKind::None;
+}
+
+template<>
+ALWAYS_INLINE PrivateFieldAccessKind JIT::privateFieldAccessKind<OpPutByValDirect>(OpPutByValDirect op)
+{
+    return op.m_flags.privateFieldAccessKind();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

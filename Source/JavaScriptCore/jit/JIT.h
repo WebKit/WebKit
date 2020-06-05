@@ -401,7 +401,14 @@ namespace JSC {
         template<typename Op>
         JumpList emitFloatTypedArrayPutByVal(Op, PatchableJump& badType, TypedArrayType);
 
-        // Identifier check helper for PutByVal.
+        template<typename Op>
+        ECMAMode ecmaMode(Op);
+
+        // Determines the type of private field access for a bytecode.
+        template<typename Op>
+        PrivateFieldAccessKind privateFieldAccessKind(Op);
+
+        // Identifier check helper for GetByVal and PutByVal.
         void emitByValIdentifierCheck(RegisterID cell, RegisterID scratch, CacheableIdentifier, JumpList& slowCases);
 
         template<typename Op>

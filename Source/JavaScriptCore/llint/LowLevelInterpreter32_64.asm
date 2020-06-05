@@ -1597,6 +1597,29 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 
 end)
 
+llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
+
+    # Slow path if the private field is stale
+    get(m_property, t0)
+    loadp OpGetPrivateName::Metadata::m_property[t5], t1
+    bpneq t1, t0, .opGetPrivateNameSlow
+
+    get(m_base, t0)
+    loadi OpGetPrivateName::Metadata::m_structureID[t5], t1
+    loadConstantOrVariablePayload(size, t0, CellTag, t3, .opGetPrivateNameSlow)
+    loadi OpGetPrivateName::Metadata::m_offset[t5], t2
+    bineq JSCell::m_structureID[t3], t1, .opGetPrivateNameSlow
+
+    loadPropertyAtVariableOffset(t2, t3, t0, t1)
+    valueProfile(OpGetPrivateName, m_profile, t5, t0, t1)
+    return(t0, t1)
+
+.opGetPrivateNameSlow:
+    callSlowPath(_llint_slow_path_get_private_name)
+    dispatch()
+end)
+
 
 macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)

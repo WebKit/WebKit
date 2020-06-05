@@ -6,6 +6,7 @@ flags:
   Intl.RelativeTimeFormat: useIntlRelativeTimeFormat
   WeakRef: useWeakRefs
   class-fields-public: usePublicClassFields
+  class-fields-private: usePrivateClassFields
 skip:
   features:
     - SharedArrayBuffer
@@ -14,7 +15,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
 
-    - class-fields-private
     - class-methods-private
     - class-static-fields-public
     - class-static-fields-private

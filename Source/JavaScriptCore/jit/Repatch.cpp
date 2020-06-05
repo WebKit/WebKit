@@ -520,6 +520,10 @@ static auto appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKi
     if (slot.isStrictMode()) {
         if (putKind == Direct)
             return operationPutByIdDirectStrict;
+        if (putKind == DirectPrivateFieldCreate)
+            return operationPutByIdDefinePrivateFieldStrict;
+        if (putKind == DirectPrivateFieldPut)
+            return operationPutByIdPutPrivateFieldStrict;
         return operationPutByIdStrict;
     }
     if (putKind == Direct)
@@ -532,6 +536,10 @@ static auto appropriateOptimizingPutByIdFunction(const PutPropertySlot &slot, Pu
     if (slot.isStrictMode()) {
         if (putKind == Direct)
             return operationPutByIdDirectStrictOptimize;
+        if (putKind == DirectPrivateFieldCreate)
+            return operationPutByIdDefinePrivateFieldStrictOptimize;
+        if (putKind == DirectPrivateFieldPut)
+            return operationPutByIdPutPrivateFieldStrictOptimize;
         return operationPutByIdStrictOptimize;
     }
     if (putKind == Direct)
@@ -625,6 +633,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
                 ObjectPropertyConditionSet conditionSet;
                 if (putKind == NotDirect) {
+                    ASSERT(putKind != DirectPrivateFieldPut && putKind != DirectPrivateFieldCreate);
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, nullptr);
                     if (!cacheStatus)
                         return GiveUpOnCache;
@@ -640,6 +649,13 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
                     }
+                }
+
+                if (putKind == DirectPrivateFieldCreate) {
+                    ASSERT(ident.isPrivateName());
+                    conditionSet = generateConditionsForPropertyMiss(vm, codeBlock, globalObject, newStructure, ident.impl());
+                    if (!conditionSet.isValid())
+                        return GiveUpOnCache;
                 }
 
                 newCase = AccessCase::createTransition(vm, codeBlock, propertyName, offset, oldStructure, newStructure, conditionSet, WTFMove(prototypeAccessChain));

@@ -114,6 +114,7 @@ enum JSTokenType {
     DOUBLE,
     BIGINT,
     IDENT,
+    PRIVATENAME,
     STRING,
     TEMPLATE,
     REGEXP,

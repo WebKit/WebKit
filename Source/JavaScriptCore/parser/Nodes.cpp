@@ -335,7 +335,7 @@ bool PropertyListNode::hasStaticallyNamedProperty(const Identifier& propName)
 bool PropertyListNode::shouldCreateLexicalScopeForClass(PropertyListNode* list)
 {
     while (list) {
-        if (list->m_node->isComputedClassField())
+        if (list->m_node->isComputedClassField() || list->m_node->isPrivate())
             return true;
         list = list->m_next;
     }

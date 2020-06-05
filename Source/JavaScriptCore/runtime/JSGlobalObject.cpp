@@ -294,6 +294,14 @@ static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(target->hasOwnProperty(globalObject, vm.propertyNames->length))));
 }
 
+// FIXME: use a bytecode or intrinsic for creating a private symbol.
+// https://bugs.webkit.org/show_bug.cgi?id=212782
+static EncodedJSValue JSC_HOST_CALL createPrivateSymbol(JSGlobalObject* globalObject, CallFrame*)
+{
+    VM& vm = globalObject->vm();
+    return JSValue::encode(Symbol::create(vm, PrivateSymbolImpl::createNullSymbol().get()));
+}
+
 #if ASSERT_ENABLED
 static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
@@ -1223,6 +1231,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::dateTimeFormat)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), globalFuncDateTimeFormat));
+        });
+
+    // PrivateSymbols / PrivateNames
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::createPrivateSymbol)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), createPrivateSymbol));
         });
 
 #if ENABLE(WEBASSEMBLY) && ENABLE(WEBASSEMBLY_STREAMING_API)

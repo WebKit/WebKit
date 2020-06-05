@@ -4209,7 +4209,7 @@ private:
                     jit.codeBlock(), node->origin.semantic, callSiteIndex,
                     params.unavailableRegisters(), identifier, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), GPRInfo::patchpointScratchRegister, ecmaMode,
-                    node->op() == PutByIdDirect ? Direct : NotDirect);
+                    node->op() == PutByIdDirect ? Direct : NotDirect, PrivateFieldAccessKind::None);
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();

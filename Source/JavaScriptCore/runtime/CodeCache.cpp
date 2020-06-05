@@ -76,7 +76,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
     bool isInsideOrdinaryFunction = executable && executable->isInsideOrdinaryFunction();
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
-        vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType, nullptr, nullptr, isInsideOrdinaryFunction);
+        vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, strictMode, scriptMode, CacheTypes<UnlinkedCodeBlockType>::parseMode, SuperBinding::NotNeeded, error, nullptr, ConstructorKind::None, derivedContextType, evalContextType, nullptr, variablesUnderTDZ, nullptr, isInsideOrdinaryFunction);
     if (!rootNode)
         return nullptr;
 

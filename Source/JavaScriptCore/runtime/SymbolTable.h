@@ -38,7 +38,7 @@
 #include "Watchpoint.h"
 #include <memory>
 #include <wtf/HashTraits.h>
-#include <wtf/text/UniquedStringImpl.h>
+#include <wtf/text/SymbolImpl.h>
 
 namespace JSC {
 
@@ -450,6 +450,8 @@ public:
     typedef HashMap<RefPtr<UniquedStringImpl>, RefPtr<TypeSet>, IdentifierRepHash> UniqueTypeSetMap;
     typedef HashMap<VarOffset, RefPtr<UniquedStringImpl>> OffsetToVariableMap;
     typedef Vector<SymbolTableEntry*> LocalToEntryVec;
+    typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> PrivateNameSet;
+    typedef WTF::IteratorRange<typename PrivateNameSet::iterator> PrivateNameIteratorRange;
 
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -594,7 +596,25 @@ public:
         ConcurrentJSLocker locker(m_lock);
         add(locker, key, std::forward<Entry>(entry));
     }
-    
+
+    bool hasPrivateNames() const { return m_rareData && m_rareData->m_privateNames.size(); }
+    ALWAYS_INLINE PrivateNameIteratorRange privateNames()
+    {
+        // Use of the IteratorRange must be guarded to prevent ASSERT failures in checkValidity().
+        ASSERT(hasPrivateNames());
+        return makeIteratorRange(m_rareData->m_privateNames.begin(), m_rareData->m_privateNames.end());
+    }
+
+    void addPrivateName(UniquedStringImpl* key)
+    {
+        ASSERT(key && !key->isSymbol());
+        if (!m_rareData)
+            m_rareData = WTF::makeUnique<SymbolTableRareData>();
+
+        ASSERT(!m_rareData->m_privateNames.contains(key));
+        m_rareData->m_privateNames.add(key);
+    }
+
     template<typename Entry>
     void set(const ConcurrentJSLocker&, UniquedStringImpl* key, Entry&& entry)
     {
@@ -729,18 +749,21 @@ private:
     ScopeOffset m_maxScopeOffset;
 public:
     mutable ConcurrentJSLock m_lock;
-private:
-    unsigned m_usesNonStrictEval : 1;
-    unsigned m_nestedLexicalScope : 1; // Non-function LexicalScope.
-    unsigned m_scopeType : 3; // ScopeType
-    
+
     struct SymbolTableRareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         UniqueIDMap m_uniqueIDMap;
         OffsetToVariableMap m_offsetToVariableMap;
         UniqueTypeSetMap m_uniqueTypeSetMap;
         WriteBarrier<CodeBlock> m_codeBlock;
+        PrivateNameSet m_privateNames;
     };
+
+private:
+    unsigned m_usesNonStrictEval : 1;
+    unsigned m_nestedLexicalScope : 1; // Non-function LexicalScope.
+    unsigned m_scopeType : 3; // ScopeType
+
     std::unique_ptr<SymbolTableRareData> m_rareData;
 
     WriteBarrier<ScopedArgumentsTable> m_arguments;

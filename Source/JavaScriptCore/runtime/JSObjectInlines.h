@@ -569,4 +569,76 @@ inline JSValue JSObject::get(JSGlobalObject* globalObject, uint64_t propertyName
     return get(globalObject, Identifier::from(globalObject->vm(), propertyName));
 }
 
+JSObject* createInvalidPrivateNameError(JSGlobalObject*);
+JSObject* createRedefinedPrivateNameError(JSGlobalObject*);
+
+ALWAYS_INLINE bool JSObject::getPrivateFieldSlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
+{
+    ASSERT(propertyName.isPrivateName());
+    VM& vm = getVM(globalObject);
+    Structure* structure = object->structure(vm);
+
+    unsigned attributes;
+    PropertyOffset offset = structure->get(vm, propertyName, attributes);
+    if (offset == invalidOffset)
+        return false;
+
+    JSValue value = object->getDirect(offset);
+    ASSERT(value);
+    if (value.isCell()) {
+        JSCell* cell = value.asCell();
+        JSType type = cell->type();
+        UNUSED_PARAM(cell);
+        ASSERT_UNUSED(type, type != GetterSetterType && type != CustomGetterSetterType);
+        // FIXME: For now, private fields do not support getter/setter fields. Later on, we will need to fill in accessor metadata here,
+        // as in JSObject::getOwnNonIndexPropertySlot()
+        // https://bugs.webkit.org/show_bug.cgi?id=194435
+    }
+
+    slot.setValue(object, attributes, value, offset);
+    return true;
+}
+
+inline bool JSObject::getPrivateField(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (!JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
+        throwException(globalObject, scope, createInvalidPrivateNameError(globalObject));
+        RELEASE_AND_RETURN(scope, false);
+    }
+    EXCEPTION_ASSERT(!scope.exception());
+    RELEASE_AND_RETURN(scope, true);
+}
+
+inline void JSObject::putPrivateField(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putSlot)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
+    if (!JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
+        throwException(globalObject, scope, createInvalidPrivateNameError(globalObject));
+        RELEASE_AND_RETURN(scope, void());
+    }
+    EXCEPTION_ASSERT(!scope.exception());
+
+    scope.release();
+    putDirect(vm, propertyName, value, putSlot);
+}
+
+inline void JSObject::definePrivateField(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putSlot)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
+    if (JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
+        throwException(globalObject, scope, createRedefinedPrivateNameError(globalObject));
+        RELEASE_AND_RETURN(scope, void());
+    }
+    EXCEPTION_ASSERT(!scope.exception());
+
+    scope.release();
+    putDirect(vm, propertyName, value, putSlot);
+}
+
 } // namespace JSC

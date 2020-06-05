@@ -60,6 +60,7 @@
 #include "NativeExecutable.h"
 #include "PutByIdFlags.h"
 #include "ProtoCallFrame.h"
+#include "PutByValFlags.h"
 #include "ShadowChicken.h"
 #include "Structure.h"
 #include "StructureChain.h"

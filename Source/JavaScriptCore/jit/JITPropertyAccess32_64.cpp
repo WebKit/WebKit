@@ -455,7 +455,7 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
         base = bytecode.m_base;
         property = bytecode.m_property;
         value = bytecode.m_value;
-        ecmaMode = bytecode.m_ecmaMode;
+        ecmaMode = JIT::ecmaMode(bytecode);
     };
 
     if (isDirect)
@@ -664,7 +664,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident),
         JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2),
-        regT1, bytecode.m_flags.ecmaMode(), direct ? Direct : NotDirect);
+        regT1, bytecode.m_flags.ecmaMode(), direct ? Direct : NotDirect, PrivateFieldAccessKind::None);
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());

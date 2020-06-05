@@ -540,6 +540,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/Operands.h
     bytecode/PropertyCondition.h
     bytecode/PutByIdFlags.h
+    bytecode/PutByValFlags.h
     bytecode/SpeculatedType.h
     bytecode/StructureSet.h
     bytecode/SuperSampler.h

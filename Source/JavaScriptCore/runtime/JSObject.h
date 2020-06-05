@@ -180,6 +180,11 @@ public:
     // being returned. Once this is fixed we should migrate code & remove this method.
     JS_EXPORT_PRIVATE bool getOwnPropertyDescriptor(JSGlobalObject*, PropertyName, PropertyDescriptor&);
 
+    static bool getPrivateFieldSlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    inline bool getPrivateField(JSGlobalObject*, PropertyName, PropertySlot&);
+    inline void putPrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    inline void definePrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+
     unsigned getArrayLength() const
     {
         if (!hasIndexedProperties(indexingType()))

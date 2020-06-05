@@ -324,6 +324,16 @@ JSObject* createTDZError(JSGlobalObject* globalObject)
     return createReferenceError(globalObject, "Cannot access uninitialized variable.");
 }
 
+JSObject* createInvalidPrivateNameError(JSGlobalObject* globalObject)
+{
+    return createTypeError(globalObject, makeString("Cannot access invalid private field"), defaultSourceAppender, TypeNothing);
+}
+
+JSObject* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
+{
+    return createTypeError(globalObject, makeString("Cannot redefine existing private field"), defaultSourceAppender, TypeNothing);
+}
+
 Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope)
 {
     return throwException(globalObject, scope, createOutOfMemoryError(globalObject));

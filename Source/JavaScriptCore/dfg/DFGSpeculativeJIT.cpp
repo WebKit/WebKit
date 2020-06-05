@@ -14381,7 +14381,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     JITPutByIdGenerator gen(
         m_jit.codeBlock(), codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs,
-        scratchGPR, ecmaMode, putKind);
+        scratchGPR, ecmaMode, putKind, PrivateFieldAccessKind::None);
 
     gen.generateFastPath(m_jit);
 

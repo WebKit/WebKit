@@ -1,3 +1,31 @@
+2020-06-05  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Add support for private class fields
+        https://bugs.webkit.org/show_bug.cgi?id=206431
+
+        Reviewed by Saam Barati.
+
+        Expands upon the earlier public fields patch, adding a number of private
+        field tests.
+
+        * stress/class-fields-private-as-function.js: Added.
+        * stress/class-fields-private-cached-bytecode.js: Added.
+        * stress/class-fields-private-freeze-out-of-line.js: Added.
+        * stress/class-fields-private-freeze.js: Added.
+        * stress/class-fields-private-on-proxy.js: Added.
+        * stress/class-fields-private-out-of-line.js: Added.
+        * stress/class-fields-private-prevent-extensions-out-of-line.js: Added.
+        * stress/class-fields-private-prevent-extensions.js: Added.
+        * stress/class-fields-private-seal-out-of-line.js: Added.
+        * stress/class-fields-private-seal.js: Added.
+        * stress/class-fields-private-use-eval.js: Added.
+        * stress/class-fields-stress-instance.js:
+        * stress/optional-chaining-and-private-fields.js: Added.
+        * stress/private-name-access-in-computed-property.js: Added.
+        * stress/put-by-val-direct-addprivate.js: Added.
+        * stress/put-by-val-direct-putprivate.js: Added.
+        * test262/config.yaml:
+
 2020-06-04  Paulo Matos  <pmatos@igalia.com>
 
         Skip microbenchmarks/interpreter-wasm.js on MIPS/ARM

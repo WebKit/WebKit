@@ -1070,6 +1070,64 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_val)
     LLINT_RETURN_PROFILED(getByVal(vm, globalObject, codeBlock, baseValue, subscript, bytecode));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
+{
+    LLINT_BEGIN();
+
+    auto bytecode = pc->as<OpGetPrivateName>();
+    JSValue baseValue = getOperand(callFrame, bytecode.m_base);
+    JSValue subscript = getOperand(callFrame, bytecode.m_property);
+    ASSERT(subscript.isSymbol());
+
+    baseValue.requireObjectCoercible(globalObject);
+    LLINT_CHECK_EXCEPTION();
+    auto property = subscript.toPropertyKey(globalObject);
+    LLINT_CHECK_EXCEPTION();
+    ASSERT(property.isPrivateName());
+
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    asObject(baseValue)->getPrivateField(globalObject, property, slot);
+    LLINT_CHECK_EXCEPTION();
+
+    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable() && !slot.isUnset()) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        {
+            StructureID oldStructureID = metadata.m_structureID;
+            if (oldStructureID) {
+                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* b = baseValue.asCell()->structure(vm);
+
+                if (Structure::shouldConvertToPolyProto(a, b)) {
+                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
+                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                }
+            }
+        }
+
+        JSCell* baseCell = baseValue.asCell();
+        Structure* structure = baseCell->structure(vm);
+        if (slot.isValue()) {
+            // Start out by clearing out the old cache.
+            metadata.m_structureID = 0;
+            metadata.m_offset = 0;
+
+            if (!structure->isUncacheableDictionary()) {
+                {
+                    ConcurrentJSLocker locker(codeBlock->m_lock);
+                    metadata.m_structureID = structure->id();
+                    metadata.m_offset = slot.cachedOffset();
+
+                    //  Update the cached private symbol
+                    metadata.m_property.set(vm, codeBlock, subscript.asCell());
+                }
+                vm.heap.writeBarrier(codeBlock);
+            }
+        }
+    }
+
+    LLINT_RETURN_PROFILED(slot.getValue(globalObject, property));
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
 {
     LLINT_BEGIN();
@@ -1111,10 +1169,22 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     JSValue value = getOperand(callFrame, bytecode.m_value);
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
-    bool isStrictMode = bytecode.m_ecmaMode.isStrict();
+    bool isStrictMode = bytecode.m_flags.ecmaMode().isStrict();
+    bool isPrivateFieldAccess = bytecode.m_flags.isPrivateFieldAccess();
     if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+        ASSERT(!isPrivateFieldAccess);
         baseObject->putDirectIndex(globalObject, *index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         LLINT_END();
+    }
+
+    if (subscript.isDouble()) {
+        ASSERT(!isPrivateFieldAccess);
+        double subscriptAsDouble = subscript.asDouble();
+        uint32_t subscriptAsUInt32 = static_cast<uint32_t>(subscriptAsDouble);
+        if (subscriptAsDouble == subscriptAsUInt32 && isIndex(subscriptAsUInt32)) {
+            baseObject->putDirectIndex(globalObject, subscriptAsUInt32, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            LLINT_END();
+        }
     }
 
     // Don't put to an object if toString threw an exception.
@@ -1122,9 +1192,19 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     if (UNLIKELY(throwScope.exception()))
         LLINT_END();
 
+    ASSERT(property.isPrivateName() == isPrivateFieldAccess);
     if (Optional<uint32_t> index = parseIndex(property))
         baseObject->putDirectIndex(globalObject, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
     else {
+        if (isPrivateFieldAccess) {
+            PutPropertySlot slot(baseObject, isStrictMode);
+            if (bytecode.m_flags.isPrivateFieldAdd())
+                baseObject->definePrivateField(globalObject, property, value, slot);
+            else
+                baseObject->putPrivateField(globalObject, property, value, slot);
+            LLINT_END();    
+        }
+
         PutPropertySlot slot(baseObject, isStrictMode);
         CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, property, value, slot);
     }

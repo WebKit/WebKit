@@ -71,6 +71,7 @@
 #include "PreciseJumpTargets.h"
 #include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
+#include "PutByValFlags.h"
 #include "RegExpPrototype.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
@@ -1264,6 +1265,18 @@ private:
     bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
 };
+
+template<typename Bytecode>
+ECMAMode ecmaMode(Bytecode bytecode)
+{
+    return bytecode.m_ecmaMode;
+}
+
+template<>
+ALWAYS_INLINE ECMAMode ecmaMode<OpPutByValDirect>(OpPutByValDirect bytecode)
+{
+    return bytecode.m_flags.ecmaMode();
+}
 
 BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 {
@@ -8236,7 +8249,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         }
 
         if (compiledAsPutById)
-            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, osrExitIndex, bytecode.m_ecmaMode);
+            handlePutById(base, identifier, identifierNumber, value, putByIdStatus, isDirect, osrExitIndex, ecmaMode(bytecode));
     }
 
     if (!compiledAsPutById) {
@@ -8247,7 +8260,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         addVarArgChild(value);
         addVarArgChild(nullptr); // Leave room for property storage.
         addVarArgChild(nullptr); // Leave room for length.
-        addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+        addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(ecmaMode(bytecode)));
         m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
     }
 }

@@ -181,6 +181,11 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
             for (; iter != end; ++iter)
                 result->m_rareData->m_uniqueTypeSetMap.set(iter->key, iter->value);
         }
+
+        {
+            for (auto name : m_rareData->m_privateNames)
+                result->m_rareData->m_privateNames.add(name);
+        }
     }
     
     return result;

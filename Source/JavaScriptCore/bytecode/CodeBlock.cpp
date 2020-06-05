@@ -1251,6 +1251,19 @@ void CodeBlock::finalizeLLIntInlineCaches()
             metadata.m_offset = 0;
         });
 
+        m_metadata->forEach<OpGetPrivateName>([&] (auto& metadata) {
+            JSCell* property = metadata.m_property.get();
+            StructureID structureID = metadata.m_structureID;
+
+            if ((!property || vm.heap.isMarked(property)) && (!structureID || vm.heap.isMarked(vm.heap.structureIDTable().get(structureID))))
+                return;
+
+            dataLogLnIf(Options::verboseOSR(), "Clearing LLInt private property access.");
+            metadata.m_structureID = 0;
+            metadata.m_offset = 0;
+            metadata.m_property.clear();
+        });
+
         m_metadata->forEach<OpPutById>([&] (auto& metadata) {
             StructureID oldStructureID = metadata.m_oldStructureID;
             StructureID newStructureID = metadata.m_newStructureID;

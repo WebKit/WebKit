@@ -185,6 +185,7 @@ namespace JSC {
         virtual bool isPure(BytecodeGenerator&) const { return false; }        
         virtual bool isConstant() const { return false; }
         virtual bool isLocation() const { return false; }
+        virtual bool isPrivateLocation() const { return false; }
         virtual bool isAssignmentLocation() const { return isLocation(); }
         virtual bool isResolveNode() const { return false; }
         virtual bool isAssignResolveNode() const { return false; }
@@ -721,7 +722,7 @@ namespace JSC {
     enum class ClassElementTag : uint8_t { No, Instance, Static, LastTag };
     class PropertyNode final : public ParserArenaFreeable {
     public:
-        enum Type : uint8_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32 };
+        enum Type : uint8_t { Constant = 1, Getter = 2, Setter = 4, Computed = 8, Shorthand = 16, Spread = 32, Private = 64 };
         enum PutType : uint8_t { Unknown, KnownDirect };
 
         PropertyNode(const Identifier&, ExpressionNode*, Type, PutType, SuperBinding, ClassElementTag);
@@ -740,6 +741,7 @@ namespace JSC {
         bool isClassField() const { return isClassProperty() && !needsSuperBinding(); }
         bool isInstanceClassField() const { return isInstanceClassProperty() && !needsSuperBinding(); }
         bool isOverriddenByDuplicate() const { return m_isOverriddenByDuplicate; }
+        bool isPrivate() const { return m_type & Private; }
         bool hasComputedName() const { return m_expression; }
         bool isComputedClassField() const { return isClassField() && hasComputedName(); }
         void setIsOverriddenByDuplicate() { m_isOverriddenByDuplicate = true; }
@@ -750,7 +752,7 @@ namespace JSC {
         const Identifier* m_name;
         ExpressionNode* m_expression;
         ExpressionNode* m_assign;
-        unsigned m_type : 6;
+        unsigned m_type : 7;
         unsigned m_needsSuperBinding : 1;
         unsigned m_putType : 1;
         static_assert(1 << 2 > static_cast<unsigned>(ClassElementTag::LastTag), "ClassElementTag shouldn't use more than two bits");
@@ -777,6 +779,8 @@ namespace JSC {
         static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
 
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*);
+
+        void emitDeclarePrivateFieldNames(BytecodeGenerator&, RegisterID* scope);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator& generator, RegisterID* dst = nullptr) final
@@ -822,9 +826,30 @@ namespace JSC {
         bool m_subscriptHasAssignments;
     };
 
-    class DotAccessorNode final : public ExpressionNode, public ThrowableExpressionData {
+    enum class DotType { Name, PrivateField };
+    class BaseDotNode : public ExpressionNode {
     public:
-        DotAccessorNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&);
+        BaseDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType);
+
+        ExpressionNode* base() const { return m_base; }
+        const Identifier& identifier() const { return m_ident; }
+        DotType type() const { return m_type; }
+        bool isPrivateField() const { return m_type == DotType::PrivateField; }
+
+        RegisterID* emitGetPropertyValue(BytecodeGenerator&, RegisterID* dst, RegisterID* base, RefPtr<RegisterID>& thisValue);
+        RegisterID* emitGetPropertyValue(BytecodeGenerator&, RegisterID* dst, RegisterID* base);
+        RegisterID* emitPutProperty(BytecodeGenerator&, RegisterID* base, RegisterID* value, RefPtr<RegisterID>& thisValue);
+        RegisterID* emitPutProperty(BytecodeGenerator&, RegisterID* base, RegisterID* value);
+
+    protected:
+        ExpressionNode* m_base;
+        const Identifier& m_ident;
+        DotType m_type;
+    };
+
+    class DotAccessorNode final : public BaseDotNode, public ThrowableExpressionData {
+    public:
+        DotAccessorNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType);
 
         ExpressionNode* base() const { return m_base; }
         const Identifier& identifier() const { return m_ident; }
@@ -833,10 +858,8 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
         bool isLocation() const final { return true; }
+        bool isPrivateLocation() const override { return m_type == DotType::PrivateField; }
         bool isDotAccessorNode() const final { return true; }
-
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
     };
 
     class SpreadExpressionNode final : public ExpressionNode, public ThrowableExpressionData {
@@ -949,9 +972,9 @@ namespace JSC {
         bool m_subscriptHasAssignments;
     };
 
-    class FunctionCallDotNode : public ExpressionNode, public ThrowableSubExpressionData {
+    class FunctionCallDotNode : public BaseDotNode, public ThrowableSubExpressionData {
     public:
-        FunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        FunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) override;
@@ -959,8 +982,6 @@ namespace JSC {
     protected:
         bool isFunctionCall() const override { return true; }
 
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
         ArgumentsNode* m_args;
     };
 
@@ -997,7 +1018,7 @@ namespace JSC {
 
     class CallFunctionCallDotNode final : public FunctionCallDotNode {
     public:
-        CallFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t distanceToInnermostCallOrApply);
+        CallFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t distanceToInnermostCallOrApply);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -1006,7 +1027,7 @@ namespace JSC {
     
     class ApplyFunctionCallDotNode final : public FunctionCallDotNode {
     public:
-        ApplyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t distanceToInnermostCallOrApply);
+        ApplyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, size_t distanceToInnermostCallOrApply);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -1015,7 +1036,7 @@ namespace JSC {
 
     class HasOwnPropertyFunctionCallDotNode final : public FunctionCallDotNode {
     public:
-        HasOwnPropertyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        HasOwnPropertyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -1477,28 +1498,24 @@ namespace JSC {
         bool m_rightHasAssignments : 1;
     };
 
-    class AssignDotNode final : public ExpressionNode, public ThrowableExpressionData {
+    class AssignDotNode final : public BaseDotNode, public ThrowableExpressionData {
     public:
-        AssignDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        AssignDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
         ExpressionNode* m_right;
         bool m_rightHasAssignments;
     };
 
-    class ReadModifyDotNode final : public ExpressionNode, public ThrowableSubExpressionData {
+    class ReadModifyDotNode final : public BaseDotNode, public ThrowableSubExpressionData {
     public:
-        ReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        ReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
         ExpressionNode* m_right;
         Operator m_operator;
         bool m_rightHasAssignments : 1;
@@ -2295,7 +2312,7 @@ namespace JSC {
 
     class DefineFieldNode final : public StatementNode {
     public:
-        enum class Type { Name, ComputedName };
+        enum class Type { Name, PrivateName, ComputedName };
         DefineFieldNode(const JSTokenLocation&, const Identifier*, ExpressionNode*, Type);
 
     private:

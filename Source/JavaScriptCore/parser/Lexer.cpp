@@ -945,10 +945,11 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
             return keyword == RESERVED_IF_STRICT && !strictMode ? IDENT : keyword;
         }
     }
-    
-    bool isPrivateName = m_current == '@' && m_parsingBuiltinFunction;
+
+    bool isPrivateName = m_current == '#';
+    bool isBuiltinName = m_current == '@' && m_parsingBuiltinFunction;
     bool isWellKnownSymbol = false;
-    if (isPrivateName) {
+    if (isBuiltinName) {
         ASSERT(m_parsingBuiltinFunction);
         shift();
         if (m_current == '@') {
@@ -956,8 +957,12 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
             shift();
         }
     }
-    
+
     const LChar* identifierStart = currentSourcePtr();
+
+    if (isPrivateName)
+        shift();
+
     ASSERT(isIdentStart(m_current) || m_current == '\\');
     while (isIdentPart(m_current))
         shift();
@@ -969,7 +974,8 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
     
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         int identifierLength = currentSourcePtr() - identifierStart;
-        if (m_parsingBuiltinFunction && isPrivateName) {
+        ident = makeIdentifier(identifierStart, identifierLength);
+        if (m_parsingBuiltinFunction && isBuiltinName) {
             if (isWellKnownSymbol)
                 ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierStart, identifierLength));
             else
@@ -991,20 +997,21 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
     } else
         tokenData->ident = nullptr;
 
-    if (UNLIKELY((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) && !isPrivateName) {
+    auto identType = isPrivateName ? PRIVATENAME : IDENT;
+    if (UNLIKELY((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) && !isBuiltinName) {
         ASSERT(shouldCreateIdentifier);
         if (remaining < maxTokenLength) {
             const HashTableValue* entry = JSC::mainTable.entry(*ident);
             ASSERT((remaining < maxTokenLength) || !entry);
             if (!entry)
-                return IDENT;
+                return identType;
             JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
-            return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
+            return (token != RESERVED_IF_STRICT) || strictMode ? token : identType;
         }
-        return IDENT;
+        return identType;
     }
 
-    return IDENT;
+    return identType;
 }
 
 template <>
@@ -1021,7 +1028,12 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
         }
     }
 
+    bool isPrivateName = m_current == '#';
     const UChar* identifierStart = currentSourcePtr();
+
+    if (isPrivateName)
+        shift();
+
     UChar orAllChars = 0;
     ASSERT(isSingleCharacterIdentStart(m_current) || U16_IS_SURROGATE(m_current) || m_current == '\\');
     while (isSingleCharacterIdentPart(m_current)) {
@@ -1045,6 +1057,9 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     } else
         tokenData->ident = nullptr;
     
+    if (isPrivateName)
+        return PRIVATENAME;
+
     if (UNLIKELY((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
         if (remaining < maxTokenLength) {
@@ -1069,6 +1084,14 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
     ASSERT(m_buffer16.isEmpty());
     ASSERT(!tokenData->escaped);
 
+    auto identCharsStart = identifierStart;
+    bool isPrivateName = *identifierStart == '#';
+    if (isPrivateName)
+        ++identCharsStart;
+
+    JSTokenType identType = isPrivateName ? PRIVATENAME : IDENT;
+    ASSERT(!isPrivateName || identifierStart != currentSourcePtr());
+
     auto fillBuffer = [&] (bool isStart = false) {
         // \uXXXX unicode characters or Surrogate pairs.
         if (identifierStart != currentSourcePtr())
@@ -1088,7 +1111,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
             if (shouldCreateIdentifier)
                 recordUnicodeCodePoint(character.value());
             identifierStart = currentSourcePtr();
-            return IDENT;
+            return identType;
         }
 
         ASSERT(U16_IS_SURROGATE(m_current));
@@ -1104,10 +1127,10 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
         shift();
         shift();
         identifierStart = currentSourcePtr();
-        return IDENT;
+        return identType;
     };
 
-    JSTokenType type = fillBuffer(identifierStart == currentSourcePtr());
+    JSTokenType type = fillBuffer(identCharsStart == currentSourcePtr());
     if (UNLIKELY(type & ErrorTokenFlag))
         return type;
 
@@ -1140,13 +1163,13 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
         ASSERT(shouldCreateIdentifier);
         const HashTableValue* entry = JSC::mainTable.entry(*ident);
         if (!entry)
-            return IDENT;
+            return identType;
         JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
         if ((token != RESERVED_IF_STRICT) || strictMode)
             return UNEXPECTED_ESCAPE_ERRORTOK;
     }
 
-    return IDENT;
+    return identType;
 }
 
 static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(LChar character)
@@ -2473,14 +2496,21 @@ start:
         m_hasLineTerminatorBeforeToken = true;
         m_lineStart = m_code;
         goto start;
-    case CharacterHash:
+    case CharacterHash: {
         // Hashbang is only permitted at the start of the source text.
-        if (peek(1) == '!' && !currentOffset()) {
+        auto next = peek(1);
+        if (next == '!' && !currentOffset()) {
             shift();
             shift();
             goto inSingleLineComment;
         }
+        // Otherwise, it could be a valid PrivateName.
+        if (Options::usePrivateClassFields() && (isSingleCharacterIdentStart(next) || next == '\\')) {
+            lexerFlags.remove(LexerFlags::DontBuildKeywords);
+            goto parseIdent;
+        }
         goto invalidCharacter;
+    }
     case CharacterPrivateIdentifierStart:
         if (m_parsingBuiltinFunction)
             goto parseIdent;

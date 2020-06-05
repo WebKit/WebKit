@@ -141,6 +141,7 @@ module DSL
 #include "Opcode.h"
 #include "PutByIdStatus.h"
 #include "PutByIdFlags.h"
+#include "PutByValFlags.h"
 #include "ToThisStatus.h"
 
 namespace JSC {

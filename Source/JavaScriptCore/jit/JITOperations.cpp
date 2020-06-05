@@ -697,6 +697,117 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject* globa
         repatchPutByID(globalObject, codeBlock, baseObject, structure, identifier, slot, *stubInfo, Direct);
 }
 
+} // extern "C"
+
+using PutPrivateFieldCallback = std::function<void(VM&, CodeBlock*, Structure*, PutPropertySlot&, const Identifier&)>;
+ALWAYS_INLINE static void putPrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, const PutPrivateFieldCallback& callback = PutPrivateFieldCallback())
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
+    ASSERT(ident.isPrivateName());
+
+    JSObject* baseObject = asObject(baseValue);
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    Structure* oldStructure = baseObject->structure(vm);
+
+    PutPropertySlot putSlot(baseObject, true, codeBlock->putByIdContext());
+    baseObject->putPrivateField(globalObject, ident, value, putSlot);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (callback)
+        callback(vm, codeBlock, oldStructure, putSlot, ident);
+}
+
+ALWAYS_INLINE static void definePrivateField(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier, JSValue value, const PutPrivateFieldCallback& callback = PutPrivateFieldCallback())
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Identifier ident = Identifier::fromUid(vm, identifier.uid());
+    ASSERT(ident.isPrivateName());
+
+    JSObject* baseObject = asObject(baseValue);
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    Structure* oldStructure = baseObject->structure(vm);
+
+    PutPropertySlot putSlot(baseObject, true, codeBlock->putByIdContext());
+    baseObject->definePrivateField(globalObject, ident, value, putSlot);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (callback)
+        callback(vm, codeBlock, oldStructure, putSlot, ident);
+}
+
+extern "C" {
+
+void JIT_OPERATION operationPutByIdDefinePrivateFieldStrict(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue baseValue = JSValue::decode(encodedBase);
+
+    definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value);
+}
+
+void JIT_OPERATION operationPutByIdDefinePrivateFieldStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+{
+    SuperSamplerScope superSamplerScope(false);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+    JSValue value = JSValue::decode(encodedValue);
+    JSObject* baseObject = asObject(JSValue::decode(encodedBase));
+
+    definePrivateField(vm, globalObject, callFrame, baseObject, identifier, value, [=](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+        LOG_IC((ICEvent::OperationPutByIdDefinePrivateFieldFieldStrictOptimize, baseObject->classInfo(vm), ident, putSlot.base() == baseObject));
+
+        ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
+
+        if (stubInfo->considerCachingBy(vm, codeBlock, oldStructure, identifier))
+            repatchPutByID(globalObject, codeBlock, baseObject, oldStructure, identifier, putSlot, *stubInfo, DirectPrivateFieldCreate);
+    });
+}
+
+void JIT_OPERATION operationPutByIdPutPrivateFieldStrict(JSGlobalObject* globalObject, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    JSValue value = JSValue::decode(encodedValue);
+    JSValue baseValue = JSValue::decode(encodedBase);
+
+    putPrivateField(vm, globalObject, callFrame, baseValue, identifier, value);
+}
+
+void JIT_OPERATION operationPutByIdPutPrivateFieldStrictOptimize(JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier)
+{
+    SuperSamplerScope superSamplerScope(false);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+    JSValue value = JSValue::decode(encodedValue);
+    JSObject* baseObject = asObject(JSValue::decode(encodedBase));
+
+    putPrivateField(vm, globalObject, callFrame, baseObject, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
+        LOG_IC((ICEvent::OperationPutByIdPutPrivateFieldFieldStrictOptimize, baseObject->classInfo(vm), ident, putSlot.base() == baseObject));
+
+        ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
+
+        if (stubInfo->considerCachingBy(vm, codeBlock, oldStructure, identifier))
+            repatchPutByID(globalObject, codeBlock, baseObject, oldStructure, identifier, putSlot, *stubInfo, DirectPrivateFieldPut);
+    });
+}
+
 static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue subscript, JSValue value, ByValInfo* byValInfo, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();

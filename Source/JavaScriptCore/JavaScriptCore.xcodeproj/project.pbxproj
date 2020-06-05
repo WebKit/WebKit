@@ -1250,6 +1250,7 @@
 		86704B8712DBA33700A9FE7B /* YarrJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8012DBA33700A9FE7B /* YarrJIT.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8112DBA33700A9FE7B /* YarrParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8312DBA33700A9FE7B /* YarrPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8676C6E82346467E00FAAFF3 /* PutByValFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8676C6E62346450B00FAAFF3 /* PutByValFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868916B0155F286300CB2B9A /* PrivateName.h in Headers */ = {isa = PBXBuildFile; fileRef = 868916A9155F285400CB2B9A /* PrivateName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868921C21F9C0CB7001159F6 /* JSBigInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 868921C11F9C0CB7001159F6 /* JSBigInt.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86976E5E1FA3E8B600E7C4E1 /* BigIntPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 86976E5A1FA3758A00E7C4E1 /* BigIntPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4115,6 +4116,8 @@
 		86704B8112DBA33700A9FE7B /* YarrParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrParser.h; path = yarr/YarrParser.h; sourceTree = "<group>"; };
 		86704B8212DBA33700A9FE7B /* YarrPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrPattern.cpp; path = yarr/YarrPattern.cpp; sourceTree = "<group>"; };
 		86704B8312DBA33700A9FE7B /* YarrPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrPattern.h; path = yarr/YarrPattern.h; sourceTree = "<group>"; };
+		8676C6E62346450B00FAAFF3 /* PutByValFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PutByValFlags.h; sourceTree = "<group>"; };
+		8676C6E7234645B300FAAFF3 /* PutByValFlags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PutByValFlags.cpp; sourceTree = "<group>"; };
 		86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT32_64.cpp; path = dfg/DFGSpeculativeJIT32_64.cpp; sourceTree = "<group>"; };
 		86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT64.cpp; path = dfg/DFGSpeculativeJIT64.cpp; sourceTree = "<group>"; };
 		868916A9155F285400CB2B9A /* PrivateName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateName.h; sourceTree = "<group>"; };
@@ -8405,6 +8408,8 @@
 				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
 				0F93B4A718B92C4D00178A3F /* PutByIdVariant.cpp */,
 				0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */,
+				8676C6E7234645B300FAAFF3 /* PutByValFlags.cpp */,
+				8676C6E62346450B00FAAFF3 /* PutByValFlags.h */,
 				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
 				0F44A7AD20BF685F0022B171 /* RecordedStatuses.cpp */,
 				0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */,
@@ -9341,6 +9346,7 @@
 				C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */,
 				0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */,
 				0F5A1274192D9FDF008764A3 /* DFGDoesGC.h in Headers */,
+				FEC3A3A1248735CA00395B54 /* DFGDoesGCCheck.h in Headers */,
 				0FD81AD3154FB4F000983E72 /* DFGDominators.h in Headers */,
 				0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */,
 				0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */,
@@ -10153,6 +10159,7 @@
 				0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */,
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
 				0F93B4AA18B92C4D00178A3F /* PutByIdVariant.h in Headers */,
+				8676C6E82346467E00FAAFF3 /* PutByValFlags.h in Headers */,
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
@@ -10201,7 +10208,6 @@
 				79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */,
 				0FE050281AA9095600D33B33 /* ScopedArguments.h in Headers */,
 				0FE050291AA9095600D33B33 /* ScopedArgumentsTable.h in Headers */,
-				FEC3A3A1248735CA00395B54 /* DFGDoesGCCheck.h in Headers */,
 				0FE0502B1AA9095600D33B33 /* ScopeOffset.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
 				33111B8B2397256500AA34CE /* Scribble.h in Headers */,

@@ -275,7 +275,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, 
 
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(), propertyName,
-        JSValueRegs(regT0), JSValueRegs(regT1), regT2, bytecode.m_ecmaMode, putKind);
+        JSValueRegs(regT0), JSValueRegs(regT1), regT2, ecmaMode(bytecode), putKind, privateFieldAccessKind(bytecode));
     gen.generateFastPath(*this);
     // IC can write new Structure without write-barrier if a base is cell.
     // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
@@ -305,7 +305,7 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
         base = bytecode.m_base;
         property = bytecode.m_property;
         value = bytecode.m_value;
-        ecmaMode = bytecode.m_ecmaMode;
+        ecmaMode = JIT::ecmaMode(bytecode);
     };
 
     if (isDirect)
@@ -658,8 +658,8 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_codeBlock, *ident),
-        JSValueRegs(regT0), JSValueRegs(regT1), regT2, bytecode.m_flags.ecmaMode(),
-        direct ? Direct : NotDirect);
+        JSValueRegs(regT0), JSValueRegs(regT1), regT2, ecmaMode(bytecode),
+        direct ? Direct : NotDirect, privateFieldAccessKind(bytecode));
     
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -1317,7 +1317,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, 
 
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(), propertyName,
-        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), regT1, bytecode.m_ecmaMode, putKind);
+        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), regT1, ecmaMode(bytecode), putKind, privateFieldAccessKind(bytecode));
     gen.generateFastPath(*this);
     doneCases.append(jump());
 

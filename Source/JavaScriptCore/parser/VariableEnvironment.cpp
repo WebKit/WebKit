@@ -29,6 +29,13 @@
 
 namespace JSC {
 
+VariableEnvironment& VariableEnvironment::operator=(const VariableEnvironment& other)
+{
+    VariableEnvironment env(other);
+    swap(env);
+    return *this;
+}
+
 void VariableEnvironment::markVariableAsCapturedIfDefined(const RefPtr<UniquedStringImpl>& identifier)
 {
     auto findResult = m_map.find(identifier);
@@ -80,6 +87,7 @@ void VariableEnvironment::swap(VariableEnvironment& other)
 {
     m_map.swap(other.m_map);
     m_isEverythingCaptured = other.m_isEverythingCaptured;
+    m_rareData.swap(other.m_rareData);
 }
 
 void VariableEnvironment::markVariableAsImported(const RefPtr<UniquedStringImpl>& identifier)
@@ -100,7 +108,7 @@ CompactVariableEnvironment::CompactVariableEnvironment(const VariableEnvironment
     : m_isEverythingCaptured(env.isEverythingCaptured())
 {
     Vector<std::pair<UniquedStringImpl*, VariableEnvironmentEntry>, 32> sortedEntries;
-    sortedEntries.reserveInitialCapacity(env.size());
+    sortedEntries.reserveInitialCapacity(env.mapSize());
     for (auto& pair : env)
         sortedEntries.append({ pair.key.get(), pair.value });
 

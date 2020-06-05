@@ -298,6 +298,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
 
     case op_yield:
     case op_create_generator_frame_environment:
+    case op_get_private_name: // FIXME: op_get_private_name will need DFG/FTL support to ship class fields. (https://bugs.webkit.org/show_bug.cgi?id=212781)
     case llint_program_prologue:
     case llint_eval_prologue:
     case llint_module_program_prologue:

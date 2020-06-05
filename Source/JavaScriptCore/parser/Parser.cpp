@@ -826,6 +826,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
         TreeExpression node = 0;
         declarations++;
         bool hasInitializer = false;
+
+        failIfTrue(match(PRIVATENAME), "Cannot use a private name to declare a variable");
         if (matchSpecIdentifier()) {
             failIfTrue(match(LET) && (declarationType == DeclarationType::LetDeclaration || declarationType == DeclarationType::ConstDeclaration), 
                 "Cannot use 'let' as an identifier name for a LexicalDeclaration");
@@ -1288,6 +1290,8 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             if (kind == DestructuringKind::DestructureToExpressions)
                 return 0;
             semanticFailureDueToKeyword(destructuringKindToVariableKindName(kind));
+            if (kind != DestructuringKind::DestructureToParameters)
+                failIfTrue(match(PRIVATENAME), "Cannot use a private name as a ", destructuringKindToVariableKindName(kind));
             failWithMessage("Expected a parameter pattern or a ')' in parameter list");
         }
         failIfTrue(match(LET) && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Cannot use 'let' as an identifier name for a LexicalDeclaration");
@@ -2953,6 +2957,19 @@ parseMethod:
             failIfFalse(computedPropertyName, "Cannot parse computed property name");
             handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
             break;
+        case PRIVATENAME: {
+            ASSERT(Options::usePrivateClassFields());
+            JSToken token = m_token;
+            ident = m_token.m_data.ident;
+            failIfTrue(tag == ClassElementTag::Static, "Static class element cannot be private");
+            failIfTrue(isGetter || isSetter, "Cannot parse class method with private name");
+            ASSERT(ident);
+            next();
+            failIfTrue(matchAndUpdate(OPENPAREN, token), "Cannot parse class method with private name");
+            semanticFailIfTrue(classScope->declarePrivateName(*ident) & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare private field twice");
+            type = static_cast<PropertyNode::Type>(type | PropertyNode::Private);
+            break;
+        }
         default:
             if (m_token.m_type & KeywordTokenFlag)
                 goto namedKeyword;
@@ -2968,8 +2985,10 @@ parseMethod:
             failIfFalse(property, "Cannot parse this method");
         } else if (Options::usePublicClassFields() && !match(OPENPAREN) && tag == ClassElementTag::Instance && parseMode == SourceParseMode::MethodMode) {
             ASSERT(!isGetter && !isSetter);
-            if (ident)
+            if (ident) {
                 semanticFailIfTrue(*ident == propertyNames.constructor, "Cannot declare class field named 'constructor'");
+                semanticFailIfTrue(*ident == propertyNames.constructorPrivateField, "Cannot declare private class field named '#constructor'");
+            }
 
             if (computedPropertyName) {
                 ident = &m_parserArena.identifierArena().makeNumericIdentifier(m_vm, numComputedFields++);
@@ -3033,6 +3052,10 @@ parseMethod:
     info.endOffset = tokenLocation().endOffset - 1;
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
+    if (Options::usePrivateClassFields()) {
+        // Fail if there are no parent private name scopes and any used-but-undeclared private names.
+        semanticFailIfFalse(copyUndeclaredPrivateNamesToOuterScope(), "Cannot reference undeclared private names");
+    }
     auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements);
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
@@ -3056,6 +3079,9 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstance
         TreeExpression computedPropertyName = 0;
         DefineFieldNode::Type type = DefineFieldNode::Type::Name;
         switch (m_token.m_type) {
+        case PRIVATENAME:
+            type = DefineFieldNode::Type::PrivateName;
+            FALLTHROUGH;
         case STRING:
         case IDENT:
         namedKeyword:
@@ -3094,6 +3120,9 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseInstance
         TreeExpression initializer = 0;
         if (consume(EQUAL))
             initializer = parseAssignmentExpression(context);
+
+        if (type == DefineFieldNode::Type::PrivateName)
+            currentScope()->useVariable(ident, false);
 
         TreeStatement defineField = context.createDefineField(fieldLocation, ident, initializer, type);
         context.appendStatement(sourceElements, defineField);
@@ -4799,6 +4828,22 @@ static inline void recordCallOrApplyDepth(ParserType*, VM&, Optional<typename Pa
 }
 
 template <typename LexerType>
+bool Parser<LexerType>::usePrivateName(const Identifier* ident)
+{
+    if (m_lexer->isReparsingFunction())
+        return true;
+
+    if (auto maybeCurrent = findPrivateNameScope()) {
+        ScopeRef current = maybeCurrent.value();
+        if (!current->hasPrivateName(*ident))
+            current->usePrivateName(*ident);
+        return true;
+    }
+
+    return false;
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpression(TreeBuilder& context)
 {
     TreeExpression base = 0;
@@ -4999,8 +5044,21 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 m_parserState.nonTrivialExpressionCount++;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
                 nextExpectIdentifier(TreeBuilder::DontBuildKeywords | LexerFlags::IgnoreReservedWords);
+                const Identifier* ident = m_token.m_data.ident;
+                auto type = DotType::Name;
+                if (match(PRIVATENAME)) {
+                    ASSERT(ident);
+                    failIfTrue(baseIsSuper, "Cannot access private names from super");
+                    if (UNLIKELY(currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext))
+                        semanticFailIfFalse(currentScope()->hasPrivateName(*ident), "Cannot reference undeclared private field '", ident->impl(), "'");
+                    semanticFailIfFalse(usePrivateName(ident), "Cannot reference private names outside of class");
+                    m_parserState.lastPrivateName = ident;
+                    currentScope()->useVariable(ident, false);
+                    type = DotType::PrivateField;
+                    m_token.m_type = IDENT;
+                }
                 matchOrFail(IDENT, "Expected a property name after ", optionalChainBase ? "'?.'" : "'.'");
-                base = context.createDotAccess(startLocation, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
+                base = context.createDotAccess(startLocation, base, ident, type, expressionStart, expressionEnd, tokenEndPosition());
                 if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
                     currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
                 next();
@@ -5195,6 +5253,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             break;
         case DELETETOKEN:
             failIfTrueIfStrict(context.isResolve(expr), "Cannot delete unqualified property '", m_parserState.lastIdentifier->impl(), "' in strict mode");
+            semanticFailIfTrue(context.isPrivateLocation(expr), "Cannot delete private field ", m_parserState.lastPrivateName->impl());
             expr = context.makeDeleteNode(location, expr, context.unaryTokenStackLastStart(tokenStackDepth), end, end);
             break;
         default:
@@ -5271,7 +5330,11 @@ template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(W
     case INVALID_PRIVATE_NAME_ERRORTOK:
         out.print("Invalid private name '", getToken(), "'");
         return;
-            
+
+    case PRIVATENAME:
+        out.print("Unexpected private name ", getToken());
+        return;
+
     case AWAIT:
     case IDENT:
         out.print("Unexpected identifier '", getToken(), "'");

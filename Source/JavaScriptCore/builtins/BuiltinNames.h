@@ -169,7 +169,8 @@ namespace JSC {
     macro(webAssemblyCompileStreamingInternal) \
     macro(webAssemblyInstantiateStreamingInternal) \
     macro(instanceFieldInitializer) \
-    macro(hasOwnPropertyFunction) 
+    macro(hasOwnPropertyFunction) \
+    macro(createPrivateSymbol)
 
 namespace Symbols {
 #define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##Symbol;

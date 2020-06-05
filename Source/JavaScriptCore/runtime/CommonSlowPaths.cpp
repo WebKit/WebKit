@@ -1333,6 +1333,28 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
     RETURN_PROFILED(baseValue.get(globalObject, property, slot));
 }
 
+SLOW_PATH_DECL(slow_path_get_private_name)
+{
+    BEGIN();
+
+    auto bytecode = pc->as<OpGetPrivateName>();
+    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    JSValue subscript = GET_C(bytecode.m_property).jsValue();
+    ASSERT(subscript.isSymbol());
+
+    baseValue.requireObjectCoercible(globalObject);
+    CHECK_EXCEPTION();
+    auto property = subscript.toPropertyKey(globalObject);
+    CHECK_EXCEPTION();
+    ASSERT(property.isPrivateName());
+
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
+    asObject(baseValue)->getPrivateField(globalObject, property, slot);
+    CHECK_EXCEPTION();
+
+    RETURN_PROFILED(slot.getValue(globalObject, property));
+}
+
 SLOW_PATH_DECL(slow_path_put_by_id_with_this)
 {
     BEGIN();

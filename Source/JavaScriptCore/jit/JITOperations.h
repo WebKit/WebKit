@@ -188,6 +188,10 @@ void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject*, StructureStub
 void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdDefinePrivateFieldStrict(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdDefinePrivateFieldStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdPutPrivateFieldStrict(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdPutPrivateFieldStrictOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t) WTF_INTERNAL;
 
 void JIT_OPERATION operationPutByValOptimize(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode) WTF_INTERNAL;
 void JIT_OPERATION operationDirectPutByValOptimize(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode) WTF_INTERNAL;

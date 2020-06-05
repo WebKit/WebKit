@@ -209,6 +209,9 @@
     macro(writable) \
     macro(year)
 
+#define JSC_COMMON_IDENTIFIERS_EACH_PRIVATE_FIELD(macro) \
+    macro(constructor)
+
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(await) \
     macro(break) \
@@ -322,6 +325,10 @@ namespace JSC {
 #define JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL(name) const Identifier name##Symbol;
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL
+
+#define JSC_IDENTIFIER_DECLARE_PRIVATE_FIELD_GLOBAL(name) const Identifier name##PrivateField;
+        JSC_COMMON_IDENTIFIERS_EACH_PRIVATE_FIELD(JSC_IDENTIFIER_DECLARE_PRIVATE_FIELD_GLOBAL)
+#undef JSC_IDENTIFIER_DECLARE_PRIVATE_FIELD_GLOBAL
 
         // Callers of this method should make sure that identifiers given to this method 
         // survive the lifetime of CommonIdentifiers and related VM.

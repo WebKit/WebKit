@@ -813,11 +813,14 @@ namespace JSC {
         RegisterID* emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* thisValue, RegisterID* property);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value);
+        RegisterID* emitDirectGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
 
         RegisterID* emitGetInternalField(RegisterID* dst, RegisterID* base, unsigned index);
         RegisterID* emitPutInternalField(RegisterID* base, unsigned index, RegisterID* value);
+        RegisterID* emitDefinePrivateField(RegisterID* base, RegisterID* property, RegisterID* value);
+        RegisterID* emitPrivateFieldPut(RegisterID* base, RegisterID* property, RegisterID* value);
 
         void emitSuperSamplerBegin();
         void emitSuperSamplerEnd();

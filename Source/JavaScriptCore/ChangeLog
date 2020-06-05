@@ -1,3 +1,271 @@
+2020-06-05  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Add support for private class fields
+        https://bugs.webkit.org/show_bug.cgi?id=206431
+
+        Reviewed by Saam Barati.
+
+        Expanding upon the earlier public class fields patch, we implement the remaining (and
+        significant parts) of the instance fields (https://tc39.es/proposal-class-fields/).
+
+        There are a variety of key changes here:
+
+            - Parser now understands the concept of private names (Token PRIVATENAME).
+            - 1 new opcode (op_get_private_name), one changed opcode (op_put_by_val_direct).
+            - A method for creating Symbol objects with a null PrivateSymbolImpl is exposed as a
+              LinkTimeConstant (@createPrivateSymbol).
+            - Null Private Symbols are stored by name (not a valid identifier) in a JSScope, and
+              are loaded from the outer scope whenever they are used by the modified opcodes.
+
+        The changes to op_put_by_val_direct include a new bytecode operand (PutByValFlags) which are
+        used to distinguish between overwriting or defining a new private field. Specifically, when it
+        comes to private field accesses, it's necessary to throw an exception when accessing a field
+        which does not exist, or when attempting to define a private field which has already been
+        defined.
+
+        During the evaluation of a class expression, before the class element list is evaluated (in case
+        any computed property names expressions refer to a new private field), a new PrivateSymbol is
+        created for each individual private field name, and stored in the class lexical scope.
+
+        Private field names are loaded from scope before their use. This prevents multiple evaluations
+        of the same class source from accessing each other's private fields, because the values of the
+        symbols loaded from the class scope would be distinct. This is required by the proposal text,
+        and is the key reason why we use ByVal lookups rather than ById lookups.
+
+        To illustrate, typical private field access will look like:
+
+        <Field Reads>
+        resolve_scope      <scope=>, <currentScope>, "#x", GlobalProperty, 0
+        get_from_scope     <symbol=>, <scope>, "#x", 1050624<DoNotThrowIfNotFound|GlobalProperty|NotInitialization>, 0, 0
+        get_private_name   <value=>, <receiver --- probably 'this'>, <symbol>
+
+        <Field Writes>
+        resolve_scope      <scope=>, <currentScope>, "#x", GlobalProperty, 0
+        get_from_scope     <symbol=>, <scope>, "#x", 1050624<DoNotThrowIfNotFound|GlobalProperty|NotInitialization>, 0, 0
+        put_by_val_direct  <receiver, probably 'this'>, <symbol>, <value>, <PutByValPrivateName>
+
+        <Field Definition>
+        resolve_scope      <scope=>, <currentScope>, "#x", GlobalProperty, 0
+        get_from_scope     <symbol=>, <scope>, "#x", 1050624<DoNotThrowIfNotFound|GlobalProperty|NotInitialization>, 0, 0
+        put_by_val_direct  <receiver, probably 'this'>, <symbol>, <value>, <PutByValPrivateName|PutByValThrowIfExists>
+
+        The feature is currently hidden behind the feature flag JSC::Options::usePrivateClassFields.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/Fits.h:
+        * bytecode/LinkTimeConstant.h:
+        * bytecode/PutByValFlags.cpp: Copied from Source/JavaScriptCore/bytecode/PutKind.h.
+        (WTF::printInternal):
+        * bytecode/PutByValFlags.h: Added.
+        (JSC::PutByValFlags::create):
+        (JSC::PutByValFlags::createDirect):
+        (JSC::PutByValFlags::createDefinePrivateField):
+        (JSC::PutByValFlags::createPutPrivateField):
+        (JSC::PutByValFlags::isDirect const):
+        (JSC::PutByValFlags::ecmaMode const):
+        (JSC::PutByValFlags::privateFieldAccessKind const):
+        (JSC::PutByValFlags::isPrivateFieldAccess const):
+        (JSC::PutByValFlags::isPrivateFieldPut const):
+        (JSC::PutByValFlags::isPrivateFieldAdd const):
+        (JSC::PutByValFlags::PutByValFlags):
+        * bytecode/PutKind.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::emitDirectGetByVal):
+        (JSC::BytecodeGenerator::emitDirectPutByVal):
+        (JSC::BytecodeGenerator::emitDefinePrivateField):
+        (JSC::BytecodeGenerator::emitPrivateFieldPut):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitDeclarePrivateFieldNames):
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::BaseDotNode::emitGetPropertyValue):
+        (JSC::BaseDotNode::emitPutProperty):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitDot):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::DefineFieldNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ecmaMode):
+        (JSC::DFG::ecmaMode<OpPutByValDirect>):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        * generator/DSL.rb:
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITPutByIdGenerator::slowPathFunction):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlines.h:
+        (JSC::JIT::ecmaMode):
+        (JSC::JIT::ecmaMode<OpPutById>):
+        (JSC::JIT::ecmaMode<OpPutByValDirect>):
+        (JSC::JIT::privateFieldAccessKind):
+        (JSC::JIT::privateFieldAccessKind<OpPutByValDirect>):
+        * jit/JITOperations.cpp:
+        (JSC::putPrivateField):
+        (JSC::definePrivateField):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/Repatch.cpp:
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::appropriateOptimizingPutByIdFunction):
+        (JSC::tryCachePutByID):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createDotAccess):
+        (JSC::ASTBuilder::isPrivateLocation):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        (JSC::ASTBuilder::makeAssignNode):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        (JSC::Lexer<CharacterType>::parseIdentifierSlowCase):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/NodeConstructors.h:
+        (JSC::BaseDotNode::BaseDotNode):
+        (JSC::DotAccessorNode::DotAccessorNode):
+        (JSC::FunctionCallDotNode::FunctionCallDotNode):
+        (JSC::CallFunctionCallDotNode::CallFunctionCallDotNode):
+        (JSC::ApplyFunctionCallDotNode::ApplyFunctionCallDotNode):
+        (JSC::HasOwnPropertyFunctionCallDotNode::HasOwnPropertyFunctionCallDotNode):
+        (JSC::AssignDotNode::AssignDotNode):
+        (JSC::ReadModifyDotNode::ReadModifyDotNode):
+        * parser/Nodes.cpp:
+        (JSC::PropertyListNode::shouldCreateLexicalScopeForClass):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isPrivateLocation const):
+        (JSC::BaseDotNode::base const):
+        (JSC::BaseDotNode::identifier const):
+        (JSC::BaseDotNode::type const):
+        (JSC::BaseDotNode::isPrivateField const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseInstanceFieldInitializerSourceElements):
+        (JSC::Parser<LexerType>::usePrivateName):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::Scope::isPrivateNameScope const):
+        (JSC::Scope::setIsPrivateNameScope):
+        (JSC::Scope::hasPrivateName):
+        (JSC::Scope::copyUndeclaredPrivateNamesTo):
+        (JSC::Scope::hasUsedButUndeclaredPrivateNames const):
+        (JSC::Scope::usePrivateName):
+        (JSC::Scope::declarePrivateName):
+        (JSC::Parser::findPrivateNameScope):
+        (JSC::Parser::privateNameScope):
+        (JSC::Parser::copyUndeclaredPrivateNamesToOuterScope):
+        (JSC::Parser::matchAndUpdate):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createDotAccess):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironment::operator=):
+        (JSC::VariableEnvironment::swap):
+        (JSC::CompactVariableEnvironment::CompactVariableEnvironment):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isPrivateName const):
+        (JSC::VariableEnvironmentEntry::setIsPrivateName):
+        (JSC::PrivateNameEntry::PrivateNameEntry):
+        (JSC::PrivateNameEntry::isUsed const):
+        (JSC::PrivateNameEntry::isDeclared const):
+        (JSC::PrivateNameEntry::setIsUsed):
+        (JSC::PrivateNameEntry::setIsDeclared):
+        (JSC::PrivateNameEntry::bits const):
+        (JSC::PrivateNameEntry::operator== const):
+        (JSC::VariableEnvironment::VariableEnvironment):
+        (JSC::VariableEnvironment::size const):
+        (JSC::VariableEnvironment::mapSize const):
+        (JSC::VariableEnvironment::declarePrivateName):
+        (JSC::VariableEnvironment::usePrivateName):
+        (JSC::VariableEnvironment::privateNames const):
+        (JSC::VariableEnvironment::privateNamesSize const):
+        (JSC::VariableEnvironment::hasPrivateName):
+        (JSC::VariableEnvironment::copyPrivateNamesTo const):
+        (JSC::VariableEnvironment::copyUndeclaredPrivateNamesTo const):
+        (JSC::VariableEnvironment::RareData::RareData):
+        (JSC::VariableEnvironment::getOrAddPrivateName):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedOptional::decodeAsPtr const):
+        (JSC::CachedVariableEnvironmentRareData::encode):
+        (JSC::CachedVariableEnvironmentRareData::decode const):
+        (JSC::CachedVariableEnvironment::encode):
+        (JSC::CachedVariableEnvironment::decode const):
+        (JSC::CachedSymbolTableRareData::encode):
+        (JSC::CachedSymbolTableRareData::decode const):
+        (JSC::CachedSymbolTable::encode):
+        (JSC::CachedSymbolTable::decode const):
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInvalidPrivateNameError):
+        (JSC::createRedefinedPrivateNameError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::createPrivateSymbol):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPrivateFieldSlot):
+        (JSC::JSObject::getPrivateField):
+        (JSC::JSObject::putPrivateField):
+        (JSC::JSObject::definePrivateField):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::collectClosureVariablesUnderTDZ):
+        * runtime/OptionsList.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::cloneScopePart):
+        * runtime/SymbolTable.h:
+
 2020-06-05  Paulo Matos  <pmatos@igalia.com>
 
         Fix includes to fix latest non-unified builds breakages

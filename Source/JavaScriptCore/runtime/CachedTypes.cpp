@@ -856,6 +856,12 @@ public:
         else
             encode(encoder, { *source });
     }
+
+    SourceType<T>* decodeAsPtr(Decoder& decoder) const
+    {
+        RELEASE_ASSERT(!this->isEmpty());
+        return this->template buffer<T>()->decode(decoder);
+    }
 };
 
 class CachedSimpleJumpTable : public CachedObject<UnlinkedSimpleJumpTable> {
@@ -1003,23 +1009,45 @@ private:
     unsigned m_needsClassFieldInitializer : 1;
 };
 
+class CachedVariableEnvironmentRareData : public CachedObject<VariableEnvironment::RareData> {
+public:
+    void encode(Encoder& encoder, const VariableEnvironment::RareData& rareData)
+    {
+        m_privateNames.encode(encoder, rareData.m_privateNames);
+    }
+
+    void decode(Decoder& decoder, VariableEnvironment::RareData& rareData) const
+    {
+        m_privateNames.decode(decoder, rareData.m_privateNames);
+    }
+
+private:
+    CachedHashMap<CachedRefPtr<CachedUniquedStringImpl, UniquedStringImpl, WTF::PackedPtrTraits<UniquedStringImpl>>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> m_privateNames;
+};
+
 class CachedVariableEnvironment : public CachedObject<VariableEnvironment> {
 public:
     void encode(Encoder& encoder, const VariableEnvironment& env)
     {
         m_isEverythingCaptured = env.m_isEverythingCaptured;
         m_map.encode(encoder, env.m_map);
+        m_rareData.encode(encoder, env.m_rareData.get());
     }
 
     void decode(Decoder& decoder, VariableEnvironment& env) const
     {
         env.m_isEverythingCaptured = m_isEverythingCaptured;
         m_map.decode(decoder, env.m_map);
+        if (!m_rareData.isEmpty()) {
+            env.m_rareData = WTF::makeUnique<VariableEnvironment::RareData>();
+            m_rareData->decode(decoder, *env.m_rareData);
+        }
     }
 
 private:
     bool m_isEverythingCaptured;
     CachedHashMap<CachedRefPtr<CachedUniquedStringImpl, UniquedStringImpl, WTF::PackedPtrTraits<UniquedStringImpl>>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> m_map;
+    CachedPtr<CachedVariableEnvironmentRareData> m_rareData;
 };
 
 class CachedCompactVariableEnvironment : public CachedObject<CompactVariableEnvironment> {
@@ -1147,6 +1175,22 @@ private:
     intptr_t m_bits;
 };
 
+class CachedSymbolTableRareData : public CachedObject<SymbolTable::SymbolTableRareData> {
+public:
+    void encode(Encoder& encoder, const SymbolTable::SymbolTableRareData& rareData)
+    {
+        m_privateNames.encode(encoder, rareData.m_privateNames);
+    }
+
+    void decode(Decoder& decoder, SymbolTable::SymbolTableRareData& rareData) const
+    {
+        m_privateNames.decode(decoder, rareData.m_privateNames);
+    }
+
+private:
+    CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash> m_privateNames;
+};
+
 class CachedSymbolTable : public CachedObject<SymbolTable> {
 public:
     void encode(Encoder& encoder, const SymbolTable& symbolTable)
@@ -1157,6 +1201,7 @@ public:
         m_nestedLexicalScope = symbolTable.m_nestedLexicalScope;
         m_scopeType = symbolTable.m_scopeType;
         m_arguments.encode(encoder, symbolTable.m_arguments.get());
+        m_rareData.encode(encoder, symbolTable.m_rareData.get());
     }
 
     SymbolTable* decode(Decoder& decoder) const
@@ -1170,6 +1215,11 @@ public:
         ScopedArgumentsTable* scopedArgumentsTable = m_arguments.decode(decoder);
         if (scopedArgumentsTable)
             symbolTable->m_arguments.set(decoder.vm(), symbolTable, scopedArgumentsTable);
+        if (!m_rareData.isEmpty()) {
+            symbolTable->m_rareData = WTF::makeUnique<SymbolTable::SymbolTableRareData>();
+            m_rareData->decode(decoder, *symbolTable->m_rareData);
+        }
+
         return symbolTable;
     }
 
@@ -1180,6 +1230,7 @@ private:
     unsigned m_nestedLexicalScope : 1;
     unsigned m_scopeType : 3;
     CachedPtr<CachedScopedArgumentsTable> m_arguments;
+    CachedPtr<CachedSymbolTableRareData> m_rareData;
 };
 
 class CachedJSValue;
