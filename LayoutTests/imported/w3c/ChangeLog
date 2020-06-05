@@ -1,3 +1,34 @@
+2020-06-05  Sam Weinig  <weinig@apple.com>
+
+        Update WPT tests for css/css-color
+        https://bugs.webkit.org/show_bug.cgi?id=212842
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-color/animation/color-composition-expected.txt: Added.
+        * web-platform-tests/css/css-color/animation/color-composition.html: Added.
+        * web-platform-tests/css/css-color/animation/w3c-import.log:
+        * web-platform-tests/css/css-color/color-initial-canvastext-expected.txt: Added.
+        * web-platform-tests/css/css-color/color-initial-canvastext.html: Added.
+        * web-platform-tests/css/css-color/lab-001.html:
+        * web-platform-tests/css/css-color/lab-002.html:
+        * web-platform-tests/css/css-color/lab-003.html:
+        * web-platform-tests/css/css-color/lab-004.html:
+        * web-platform-tests/css/css-color/lab-005.html:
+        * web-platform-tests/css/css-color/lab-006.html:
+        * web-platform-tests/css/css-color/lab-007.html:
+        * web-platform-tests/css/css-color/lch-001.html:
+        * web-platform-tests/css/css-color/lch-002.html:
+        * web-platform-tests/css/css-color/lch-003.html:
+        * web-platform-tests/css/css-color/lch-004.html:
+        * web-platform-tests/css/css-color/lch-005.html:
+        * web-platform-tests/css/css-color/lch-006.html:
+        * web-platform-tests/css/css-color/lch-007.html:
+        * web-platform-tests/css/css-color/parsing/system-color-valid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/system-color-valid.html: Added.
+        * web-platform-tests/css/css-color/parsing/w3c-import.log:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
 2020-06-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Update WPT tests for offscreen-canvas (and rename to html/canvas/offscreen)
