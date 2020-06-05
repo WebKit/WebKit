@@ -35,13 +35,12 @@
 #import <stdlib.h>
 #import <wtf/RetainPtr.h>
 
-@interface WebGLPrepareDisplayOnWebThreadDelegate : NSObject <UIWebViewDelegate> {
-}
-@end
-
 static bool didFinishLoad = false;
 static bool didFinishPainting = false;
 static bool isReady = false;
+
+@interface WebGLPrepareDisplayOnWebThreadDelegate : NSObject <UIWebViewDelegate>
+@end
 
 @implementation WebGLPrepareDisplayOnWebThreadDelegate
 

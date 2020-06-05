@@ -1,3 +1,15 @@
+2020-06-05  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r262366): [ Mac wk1 ] webgl/webgl-backing-store-size-update.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212647
+        <rdar://problem/63882960>
+
+        Reviewed by Eric Carlson.
+
+        Drive-by comment from Simon. Remove some useless braces.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebGLPrepareDisplayOnWebThread.mm:
+
 2020-06-05  Saam Barati  <sbarati@apple.com>
 
         Try to reduce jetsams further on iOS devices running jsc stress tests

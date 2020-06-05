@@ -78,11 +78,27 @@ namespace {
     };
 }
 
-@implementation WebGLLayer
+@implementation WebGLLayer {
+    float _devicePixelRatio;
+#if USE(OPENGL) || USE(ANGLE)
+    std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
+    std::unique_ptr<WebCore::IOSurface> _drawingBuffer;
+    std::unique_ptr<WebCore::IOSurface> _spareBuffer;
+    WebCore::IntSize _bufferSize;
+    BOOL _usingAlpha;
+#endif
+#if USE(ANGLE)
+    void* _eglDisplay;
+    void* _eglConfig;
+    void* _contentsPbuffer;
+    void* _drawingPbuffer;
+    void* _sparePbuffer;
+    void* _latchedPbuffer;
+#endif
+    BOOL _preparedForDisplay;
+}
 
-@synthesize context=_context;
-
--(id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context
+- (id)initWithGraphicsContextGL:(NakedPtr<WebCore::GraphicsContextGLOpenGL>)context
 {
     _context = context;
     self = [super init];
@@ -204,8 +220,8 @@ static void freeData(void *, const void *data, size_t /* size */)
         [self bindFramebufferToNextAvailableSurface];
     }
 #endif
-
-    _prepared = YES;
+    [self setNeedsDisplay];
+    _preparedForDisplay = YES;
 }
 
 - (void)display
@@ -218,7 +234,7 @@ static void freeData(void *, const void *data, size_t /* size */)
     // This avoids running any OpenGL code in this method.
 
 #if USE(OPENGL) || USE(ANGLE)
-    if (_contentsBuffer && _prepared) {
+    if (_contentsBuffer && _preparedForDisplay) {
         self.contents = _contentsBuffer->asLayerContents();
         [self reloadValueForKeyPath:@"contents"];
     }
@@ -231,7 +247,7 @@ static void freeData(void *, const void *data, size_t /* size */)
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(layer.get());
 
-    _prepared = NO;
+    _preparedForDisplay = NO;
 }
 
 #if USE(ANGLE)

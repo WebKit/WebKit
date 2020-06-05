@@ -8594,8 +8594,8 @@ void Document::prepareCanvasesForDisplayIfNeeded()
         if (!canvas->isInTreeScope())
             continue;
 
-        auto refCountedCanvas = makeRefPtr(canvas);
-        refCountedCanvas->prepareForDisplay();
+        auto protectedCanvas = makeRefPtr(canvas);
+        protectedCanvas->prepareForDisplay();
     }
     m_canvasesNeedingDisplayPreparation.clear();
 }

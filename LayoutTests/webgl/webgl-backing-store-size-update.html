@@ -27,8 +27,15 @@
     canvas.style.height = "50px";
     window.requestAnimationFrame(function() {
         draw();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        if (window.testRunner) {
+            // Need to give the test system at least a frame to paint
+            // after the draw() command, because notifyDone forces a
+            // dump() and we're inside a rAF (which means it won't
+            // do any of the post-layout/drawing work in Page::doAfterUpdateRendering)
+            window.requestAnimationFrame(function() {
+                testRunner.notifyDone();
+            });
+        }
     });
 
 </script>

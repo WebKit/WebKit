@@ -1,3 +1,27 @@
+2020-06-05  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r262366): [ Mac wk1 ] webgl/webgl-backing-store-size-update.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=212647
+        <rdar://problem/63882960>
+
+        Reviewed by Eric Carlson.
+
+        In some unusual cases, specifically WebKit 1, a WebGLLayer could prepareForDisplay
+        but never get told to actually display, producing incorrect results. Fix this by
+        simply calling setNeedsDisplay.
+
+        While here, address some comments from Simon Fraser that were made
+        after r262366.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareCanvasesForDisplayIfNeeded):
+        * platform/graphics/cocoa/WebGLLayer.h: Move the instance variables into the implementation file
+        since they are not exposed as an interface.
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContextGL:]):
+        (-[WebGLLayer prepareForDisplay]):
+        (-[WebGLLayer display]):
+
 2020-06-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, silence deprecation warning to fix build with latest SDK.
