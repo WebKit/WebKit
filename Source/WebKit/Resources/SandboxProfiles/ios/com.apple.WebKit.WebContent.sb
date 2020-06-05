@@ -762,6 +762,7 @@
 (allow file-read*
     (home-literal
         "/Library/Preferences/com.apple.Accessibility.plist"
+        "/Library/Preferences/com.apple.AdLib.plist"
         "/Library/Preferences/com.apple.EmojiPreferences.plist"
         "/Library/Preferences/com.apple.InputModePreferences.plist"
         "/Library/Preferences/com.apple.LaunchServices.plist"
