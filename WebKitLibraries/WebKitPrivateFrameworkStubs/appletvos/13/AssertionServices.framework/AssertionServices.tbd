@@ -1,10 +1,10 @@
 --- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
+archs:           [ x86_64, arm64 ]
 install-name:    '/System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices'
 objc-constraint: none
 platform: tvos
 exports:
-  - archs:           [ x86_64, arm64, arm64e ]
+  - archs:           [ x86_64, arm64 ]
     objc-classes:    [ BKSApplicationStateMonitor, BKSProcessAssertion ]
     symbols:         [ _BKSApplicationStateMostElevatedStateForProcessIDKey, _BKSApplicationStateProcessIDKey ]
 ...

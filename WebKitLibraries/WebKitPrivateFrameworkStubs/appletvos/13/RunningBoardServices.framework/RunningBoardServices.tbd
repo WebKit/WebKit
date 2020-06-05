@@ -1,10 +1,10 @@
 --- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
+archs:           [ x86_64, arm64 ]
 install-name:    '/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices'
 objc-constraint: none
 platform: tvos
 exports:
-  - archs:           [ x86_64, arm64, arm64e ]
+  - archs:           [ x86_64, arm64 ]
     symbols:         [ _RBSProcessTimeLimitationNone ]
     objc-classes:    [ RBSAttribute, RBSDomainAttribute, RBSTarget, RBSAssertion, RBSProcessIdentifier, RBSProcessState, RBSProcessHandle ]
 ...

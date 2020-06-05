@@ -1,5 +1,28 @@
 2020-06-04  Jonathan Bedard  <jbedard@apple.com>
 
+        tvOS: Remove arm64e references in .tbd files
+        https://bugs.webkit.org/show_bug.cgi?id=212792
+        <rdar://problem/64003670>
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/appletvos/13/AppSupport.framework/AppSupport.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/AssertionServices.framework/AssertionServices.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/AuthKit.framework/AuthKit.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/CorePDF.framework/CorePDF.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/CorePrediction.framework/CorePrediction.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/DeviceIdentity.framework/DeviceIdentity.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/FileProvider.framework/FileProvider.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/GraphicsServices.framework/GraphicsServices.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/IOKit.framework/IOKit.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/IOSurfaceAccelerator.framework/IOSurfaceAccelerator.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/LocalAuthentication.framework/LocalAuthentication.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/RunningBoardServices.framework/RunningBoardServices.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd:
+        * WebKitPrivateFrameworkStubs/appletvos/13/URLFormatting.framework/URLFormatting.tbd:
+
+2020-06-04  Jonathan Bedard  <jbedard@apple.com>
+
         Add tvOS framework stubs
         https://bugs.webkit.org/show_bug.cgi?id=212760
         <rdar://problem/63986134>

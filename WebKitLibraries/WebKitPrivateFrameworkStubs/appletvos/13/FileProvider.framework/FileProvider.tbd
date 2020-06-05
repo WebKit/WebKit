@@ -1,9 +1,9 @@
 --- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
+archs:           [ x86_64, arm64 ]
 platform:        tvos
 install-name:    '/System/Library/Frameworks/FileProvider.framework/FileProvider'
 exports:         
-  - archs:           [ x86_64, arm64, arm64e ]
+  - archs:           [ x86_64, arm64 ]
     symbols:         [ '$ld$hide$os10.0$_OBJC_CLASS_$_NSFileProviderExtension', '$ld$hide$os10.0$_OBJC_METACLASS_$_NSFileProviderExtension', 
                        '$ld$hide$os10.1$_OBJC_CLASS_$_NSFileProviderExtension', '$ld$hide$os10.1$_OBJC_METACLASS_$_NSFileProviderExtension', 
                        '$ld$hide$os10.2$_OBJC_CLASS_$_NSFileProviderExtension', '$ld$hide$os10.2$_OBJC_METACLASS_$_NSFileProviderExtension', 

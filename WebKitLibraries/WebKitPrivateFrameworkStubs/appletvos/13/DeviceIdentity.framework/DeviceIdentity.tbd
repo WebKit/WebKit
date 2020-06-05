@@ -1,17 +1,11 @@
 --- !tapi-tbd-v2
 archs:
-  - armv7
-  - armv7s
   - arm64
-  - i386
   - x86_64
 exports:
   -
     archs:
-      - armv7
-      - armv7s
       - arm64
-      - i386
       - x86_64
     symbols:
       - _DeviceIdentityIssueClientCertificateWithCompletion

@@ -1,8 +1,8 @@
 --- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
+archs:           [ x86_64, arm64 ]
 install-name:    '/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit'
 platform: tvos
 exports:
-  - archs:           [ x86_64, arm64, arm64e ]
+  - archs:           [ x86_64, arm64 ]
     objc-classes:    [ AKAuthorizationController ]
 ...
