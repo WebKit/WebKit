@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-void WebPage::updatePreferencesGenerated(const WebPreferencesStore& store)
+void WebPage::updateSettingsGenerated(const WebPreferencesStore& store)
 {
     WebCore::Settings& settings = m_page->settings();
 
@@ -50,7 +50,10 @@ void WebPage::updatePreferencesGenerated(const WebPreferencesStore& store)
 #endif
 <%- end -%>
 <%- end -%>
+}
 
+void WebPage::updatePreferencesGenerated(const WebPreferencesStore& store)
+{
 <%- for @pref in @preferencesBoundToDeprecatedGlobalSettings do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>

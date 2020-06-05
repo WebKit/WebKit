@@ -1,3 +1,21 @@
+2020-06-05  Youenn Fablet  <youenn@apple.com>
+
+        Generate code to set the runtime settings for a service worker process
+        https://bugs.webkit.org/show_bug.cgi?id=212467
+
+        Reviewed by Alex Christensen.
+
+        Split the code generated to handle web preference changes to have one method for process wide flags and one for page settings.
+        Make the process wide flag method static and reuse it in WebSWContextManagerConnection.
+        Covered by existing tests.
+
+        * Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updatePreferencesStore):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+
 2020-06-04  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for PluginProcessType and PluginProcessSandboxPolicy

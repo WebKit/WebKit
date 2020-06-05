@@ -3632,6 +3632,7 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 void WebPage::updatePreferences(const WebPreferencesStore& store)
 {
     updatePreferencesGenerated(store);
+    updateSettingsGenerated(store);
 
     Settings& settings = m_page->settings();
 
