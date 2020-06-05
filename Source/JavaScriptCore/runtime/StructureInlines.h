@@ -465,7 +465,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
     m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
 
-    auto result = table->add(PropertyMapEntry(rep, newOffset, attributes));
+    auto result = table->add(vm, PropertyMapEntry(rep, newOffset, attributes));
     ASSERT_UNUSED(result, result.second);
     ASSERT_UNUSED(result, result.first.first->offset == newOffset);
     auto newMaxOffset = std::max(newOffset, maxOffset());
@@ -507,7 +507,7 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const
     
     PropertyOffset offset = position.first->offset;
 
-    table->remove(position);
+    table->remove(vm, position);
     table->addDeletedOffset(offset);
 
     PropertyOffset newMaxOffset = maxOffset();

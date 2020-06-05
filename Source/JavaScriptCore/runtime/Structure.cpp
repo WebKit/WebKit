@@ -377,14 +377,14 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
         if (structure->isPropertyDeletionTransition()) {
             auto item = table->find(structure->m_transitionPropertyName.get());
             ASSERT(item.first);
-            table->remove(item);
+            table->remove(vm, item);
             table->addDeletedOffset(structure->transitionOffset());
             continue;
         }
         PropertyMapEntry entry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes());
         auto nextOffset = table->nextOffset(structure->inlineCapacity());
         ASSERT_UNUSED(nextOffset, nextOffset == structure->transitionOffset());
-        auto result = table->add(entry);
+        auto result = table->add(vm, entry);
         ASSERT_UNUSED(result, result.second);
         ASSERT_UNUSED(result, result.first.first->offset == nextOffset);
     }

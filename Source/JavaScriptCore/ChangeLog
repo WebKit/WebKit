@@ -1,3 +1,27 @@
+2020-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Report extra memory allocation from PropertyTable
+        https://bugs.webkit.org/show_bug.cgi?id=212793
+
+        Reviewed by Saam Barati.
+
+        This patch adds extra memory reporting from PropertyTable to make GC
+        responsive to the increase of memory in PropertyTable.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::add):
+        (JSC::PropertyTable::remove):
+        (JSC::PropertyTable::rehash):
+        (JSC::PropertyTable::dataSize):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::finishCreation):
+        (JSC::PropertyTable::visitChildren):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+
 2020-06-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r262583.
