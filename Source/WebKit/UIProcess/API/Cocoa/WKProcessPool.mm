@@ -252,13 +252,9 @@ static WKProcessPool *sharedProcessPool;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-static bool isPluginLoadClientPolicyAcceptable(unsigned policy)
+static HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> toPluginLoadClientPoliciesHashMap(NSDictionary* dictionary)
 {
-    return policy <= WebCore::PluginLoadClientPolicyMaximum;
-}
-static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadClientPoliciesHashMap(NSDictionary* dictionary)
-{
-    __block HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies;
+    __block HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies;
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id nsHost, id nsPoliciesForHost, BOOL *stop) {
         if (![nsHost isKindOfClass:[NSString class]]) {
             RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
@@ -270,7 +266,7 @@ static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadCl
         }
 
         String host = (NSString *)nsHost;
-        __block HashMap<String, HashMap<String, uint8_t>> policiesForHost;
+        __block HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>> policiesForHost;
         [nsPoliciesForHost enumerateKeysAndObjectsUsingBlock:^(id nsIdentifier, id nsVersionsToPolicies, BOOL *stop) {
             if (![nsIdentifier isKindOfClass:[NSString class]]) {
                 RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
@@ -282,7 +278,7 @@ static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadCl
             }
 
             String bundleIdentifier = (NSString *)nsIdentifier;
-            __block HashMap<String, uint8_t> versionsToPolicies;
+            __block HashMap<String, WebCore::PluginLoadClientPolicy> versionsToPolicies;
             [nsVersionsToPolicies enumerateKeysAndObjectsUsingBlock:^(id nsVersion, id nsPolicy, BOOL *stop) {
                 if (![nsVersion isKindOfClass:[NSString class]]) {
                     RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
@@ -293,12 +289,12 @@ static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadCl
                     return;
                 }
                 unsigned policy = ((NSNumber *)nsPolicy).unsignedIntValue;
-                if (!isPluginLoadClientPolicyAcceptable(policy)) {
+                if (!WTF::isValidEnum<WebCore::PluginLoadClientPolicy>(policy)) {
                     RELEASE_LOG_ERROR(Plugins, "_resetPluginLoadClientPolicies was called with dictionary in wrong format");
                     return;
                 }
                 String version = (NSString *)nsVersion;
-                versionsToPolicies.add(version, static_cast<uint8_t>(policy));
+                versionsToPolicies.add(version, static_cast<WebCore::PluginLoadClientPolicy>(policy));
             }];
             if (!versionsToPolicies.isEmpty())
                 policiesForHost.add(bundleIdentifier, WTFMove(versionsToPolicies));
@@ -309,7 +305,7 @@ static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadCl
     return pluginLoadClientPolicies;
 }
 
-static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& map)
+static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>& map)
 {
     auto policies = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
     for (auto& hostPair : map) {
@@ -320,7 +316,8 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
             policies.get()[host][bundlerIdentifier] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:bundleIdentifierPair.value.size()]).get();
             for (auto& versionPair : bundleIdentifierPair.value) {
                 NSString *version = versionPair.key;
-                policies.get()[host][bundlerIdentifier][version] = adoptNS([[NSNumber alloc] initWithUnsignedInt:versionPair.value]).get();
+                auto policyValue = static_cast<std::underlying_type_t<WebCore::PluginLoadClientPolicy>>(versionPair.value);
+                policies.get()[host][bundlerIdentifier][version] = adoptNS([[NSNumber alloc] initWithUnsignedInt:policyValue]).get();
             }
         }
     }

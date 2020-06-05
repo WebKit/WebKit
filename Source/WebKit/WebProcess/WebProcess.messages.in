@@ -55,8 +55,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     # Plug-ins.
     DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
     ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)
-    SetPluginLoadClientPolicy(uint8_t policy, String host, String bundleIdentifier, String versionString)
-    ResetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies)
+    SetPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, String host, String bundleIdentifier, String versionString)
+    ResetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies)
     ClearPluginClientPolicies()
     RefreshPlugins()
 

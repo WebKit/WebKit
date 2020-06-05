@@ -243,9 +243,9 @@ public:
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
 
     void setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy, const String& host, const String& bundleIdentifier, const String& versionString);
-    void resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>>&&);
+    void resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>&&);
     void clearPluginClientPolicies();
-    const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& pluginLoadClientPolicies() const { return m_pluginLoadClientPolicies; }
+    const HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>& pluginLoadClientPolicies() const { return m_pluginLoadClientPolicies; }
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
@@ -746,7 +746,7 @@ private:
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    HashMap<String, HashMap<String, HashMap<String, uint8_t>>> m_pluginLoadClientPolicies;
+    HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> m_pluginLoadClientPolicies;
 #endif
 
 #if ENABLE(GAMEPAD)

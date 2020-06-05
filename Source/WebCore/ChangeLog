@@ -1,3 +1,17 @@
+2020-06-05  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for PluginLoadClientPolicy
+        <https://webkit.org/b/212827>
+        <rdar://problem/64030431>
+
+        Reviewed by Alex Christensen.
+
+        * plugins/PluginData.h:
+        (WebCore::PluginLoadClientPolicy):
+        - Make this an enum class.
+        (WTF::EnumTraits<WebCore::PluginLoadClientPolicy>):
+        - Add for use with strongly-typed IPC parameters.
+
 2020-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should exclude characters outside of the unicode private use area

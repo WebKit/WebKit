@@ -1182,7 +1182,7 @@ PluginInfo PDFPlugin::pluginInfo()
     PluginInfo info;
     info.name = builtInPDFPluginName();
     info.isApplicationPlugin = true;
-    info.clientLoadPolicy = PluginLoadClientPolicyUndefined;
+    info.clientLoadPolicy = PluginLoadClientPolicy::Undefined;
     info.bundleIdentifier = "com.apple.webkit.builtinpdfplugin"_s;
 
     MimeClassInfo pdfMimeClassInfo;

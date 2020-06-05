@@ -182,7 +182,7 @@
     pluginInfo.desc = description;
 
     pluginInfo.isApplicationPlugin = false;
-    pluginInfo.clientLoadPolicy = WebCore::PluginLoadClientPolicyUndefined;
+    pluginInfo.clientLoadPolicy = WebCore::PluginLoadClientPolicy::Undefined;
 #if PLATFORM(MAC)
     pluginInfo.bundleIdentifier = self.bundleIdentifier;
     pluginInfo.versionString = self.bundleVersion;

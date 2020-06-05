@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
-    Copyright (C) 2015 Apple Inc. All rights reserved.
+    Copyright (C) 2015-2020 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -33,24 +34,22 @@ namespace WebCore {
 class Page;
 struct PluginInfo;
 
-enum PluginLoadClientPolicy : uint8_t {
+enum class PluginLoadClientPolicy : uint8_t {
     // No client-specific plug-in load policy has been defined. The plug-in should be visible in navigator.plugins and WebKit should synchronously
     // ask the client whether the plug-in should be loaded.
-    PluginLoadClientPolicyUndefined = 0,
+    Undefined = 0,
 
     // The plug-in module should be blocked from being instantiated. The plug-in should be hidden in navigator.plugins.
-    PluginLoadClientPolicyBlock,
+    Block,
 
     // WebKit should synchronously ask the client whether the plug-in should be loaded. The plug-in should be visible in navigator.plugins.
-    PluginLoadClientPolicyAsk,
+    Ask,
 
     // The plug-in module may be loaded if WebKit is not blocking it.
-    PluginLoadClientPolicyAllow,
+    Allow,
 
     // The plug-in module should be loaded irrespective of whether WebKit has asked it to be blocked.
-    PluginLoadClientPolicyAllowAlways,
-
-    PluginLoadClientPolicyMaximum = PluginLoadClientPolicyAllowAlways
+    AllowAlways,
 };
 
 struct MimeClassInfo {
@@ -166,3 +165,18 @@ template<class Encoder> inline void SupportedPluginIdentifier::encode(Encoder& e
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PluginLoadClientPolicy> {
+    using values = EnumValues<
+        WebCore::PluginLoadClientPolicy,
+        WebCore::PluginLoadClientPolicy::Undefined,
+        WebCore::PluginLoadClientPolicy::Block,
+        WebCore::PluginLoadClientPolicy::Ask,
+        WebCore::PluginLoadClientPolicy::Allow,
+        WebCore::PluginLoadClientPolicy::AllowAlways
+    >;
+};
+
+} // namespace WTF

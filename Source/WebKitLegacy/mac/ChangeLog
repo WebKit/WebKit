@@ -1,3 +1,15 @@
+2020-06-05  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for PluginLoadClientPolicy
+        <https://webkit.org/b/212827>
+        <rdar://problem/64030431>
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        - Update for renamed PluginLoadClientPolicy enum.
+
 2020-06-05  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove conditionals for ENABLE_APPLE_PAY_SESSION_V(3|4)

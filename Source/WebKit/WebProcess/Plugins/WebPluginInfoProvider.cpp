@@ -132,10 +132,10 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& pa
         auto& info = plugins.at(i);
 
         // Allow built-in plugins. Also tentatively allow plugins that the client might later selectively permit.
-        if (info.isApplicationPlugin || info.clientLoadPolicy == WebCore::PluginLoadClientPolicyAsk)
+        if (info.isApplicationPlugin || info.clientLoadPolicy == WebCore::PluginLoadClientPolicy::Ask)
             continue;
 
-        if (info.clientLoadPolicy == WebCore::PluginLoadClientPolicyBlock)
+        if (info.clientLoadPolicy == WebCore::PluginLoadClientPolicy::Block)
             plugins.remove(i);
     }
 #endif

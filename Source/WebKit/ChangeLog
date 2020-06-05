@@ -1,3 +1,43 @@
+2020-06-05  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for PluginLoadClientPolicy
+        <https://webkit.org/b/212827>
+        <rdar://problem/64030431>
+
+        Reviewed by Alex Christensen.
+
+        Summary:
+        - Update for renamed PluginLoadClientPolicy enums.
+        - Update to make PluginLoadClientPolicy type work with IPC.
+        - Replace uint8_t with strongly-typed PluginLoadClientPolicy.
+
+        * Scripts/webkit/messages.py:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWKPluginLoadClientPolicy):
+        (WebKit::toPluginLoadClientPolicy):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (toPluginLoadClientPoliciesHashMap):
+        (policiesHashMapToDictionary):
+        (isPluginLoadClientPolicyAcceptable): Delete.
+        - Replace with
+          WTF::isValidEnum<WebCore::PluginLoadClientPolicy>().
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setPluginLoadClientPolicy):
+        (WebKit::WebProcessPool::resetPluginLoadClientPolicies):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pluginInfo):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::webVisiblePluginInfo):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setPluginLoadClientPolicy):
+        (WebKit::WebProcess::resetPluginLoadClientPolicies):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Update header documentation for WKPreferences.fraudulentWebsiteWarningEnabled

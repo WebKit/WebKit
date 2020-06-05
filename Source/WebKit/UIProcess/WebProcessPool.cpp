@@ -2025,14 +2025,18 @@ void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
 {
-    auto& policiesForHost = m_pluginLoadClientPolicies.ensure(host, [] { return HashMap<String, HashMap<String, uint8_t>>(); }).iterator->value;
-    auto& versionsToPolicies = policiesForHost.ensure(bundleIdentifier, [] { return HashMap<String, uint8_t>(); }).iterator->value;
+    auto& policiesForHost = m_pluginLoadClientPolicies.ensure(host, [] {
+        return HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>();
+    }).iterator->value;
+    auto& versionsToPolicies = policiesForHost.ensure(bundleIdentifier, [] {
+        return HashMap<String, WebCore::PluginLoadClientPolicy>();
+    }).iterator->value;
     versionsToPolicies.set(versionString, policy);
 
     sendToAllProcesses(Messages::WebProcess::SetPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString));
 }
 
-void WebProcessPool::resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>>&& pluginLoadClientPolicies)
+void WebProcessPool::resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>>&& pluginLoadClientPolicies)
 {
     m_pluginLoadClientPolicies = WTFMove(pluginLoadClientPolicies);
     sendToAllProcesses(Messages::WebProcess::ResetPluginLoadClientPolicies(m_pluginLoadClientPolicies));

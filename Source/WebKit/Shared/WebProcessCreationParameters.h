@@ -52,6 +52,10 @@
 #include <WebCore/RenderThemeIOS.h>
 #endif
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#include <WebCore/PluginData.h>
+#endif
+
 namespace API {
 class Data;
 }
@@ -159,7 +163,7 @@ struct WebProcessCreationParameters {
     Vector<String> plugInAutoStartOrigins;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies;
+    HashMap<String, HashMap<String, HashMap<String, WebCore::PluginLoadClientPolicy>>> pluginLoadClientPolicies;
 #endif
 
 #if PLATFORM(COCOA)

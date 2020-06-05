@@ -440,15 +440,15 @@ inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModu
 inline WKPluginLoadClientPolicy toWKPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy PluginLoadClientPolicy)
 {
     switch (PluginLoadClientPolicy) {
-    case WebCore::PluginLoadClientPolicyUndefined:
+    case WebCore::PluginLoadClientPolicy::Undefined:
         return kWKPluginLoadClientPolicyUndefined;
-    case WebCore::PluginLoadClientPolicyBlock:
+    case WebCore::PluginLoadClientPolicy::Block:
         return kWKPluginLoadClientPolicyBlock;
-    case WebCore::PluginLoadClientPolicyAsk:
+    case WebCore::PluginLoadClientPolicy::Ask:
         return kWKPluginLoadClientPolicyAsk;
-    case WebCore::PluginLoadClientPolicyAllow:
+    case WebCore::PluginLoadClientPolicy::Allow:
         return kWKPluginLoadClientPolicyAllow;
-    case WebCore::PluginLoadClientPolicyAllowAlways:
+    case WebCore::PluginLoadClientPolicy::AllowAlways:
         return kWKPluginLoadClientPolicyAllowAlways;
     }
 
@@ -477,19 +477,19 @@ inline WebCore::PluginLoadClientPolicy toPluginLoadClientPolicy(WKPluginLoadClie
 {
     switch (pluginLoadClientPolicy) {
     case kWKPluginLoadClientPolicyUndefined:
-        return WebCore::PluginLoadClientPolicyUndefined;
+        return WebCore::PluginLoadClientPolicy::Undefined;
     case kWKPluginLoadClientPolicyBlock:
-        return WebCore::PluginLoadClientPolicyBlock;
+        return WebCore::PluginLoadClientPolicy::Block;
     case kWKPluginLoadClientPolicyAsk:
-        return WebCore::PluginLoadClientPolicyAsk;
+        return WebCore::PluginLoadClientPolicy::Ask;
     case kWKPluginLoadClientPolicyAllow:
-        return WebCore::PluginLoadClientPolicyAllow;
+        return WebCore::PluginLoadClientPolicy::Allow;
     case kWKPluginLoadClientPolicyAllowAlways:
-        return WebCore::PluginLoadClientPolicyAllowAlways;
+        return WebCore::PluginLoadClientPolicy::AllowAlways;
     }
 
     ASSERT_NOT_REACHED();
-    return WebCore::PluginLoadClientPolicyBlock;
+    return WebCore::PluginLoadClientPolicy::Block;
 }
 
 inline WebCore::WebGLLoadPolicy toWebGLLoadPolicy(WKWebGLLoadPolicy webGLLoadPolicy)

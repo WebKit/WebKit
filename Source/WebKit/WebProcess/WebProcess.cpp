@@ -966,14 +966,14 @@ void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const
     parentProcessConnection()->send(Messages::WebProcessProxy::PlugInDidReceiveUserInteraction(plugInOriginHash), 0);
 }
 
-void WebProcess::setPluginLoadClientPolicy(uint8_t policy, const String& host, const String& bundleIdentifier, const String& versionString)
+void WebProcess::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
-    WebPluginInfoProvider::singleton().setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(policy), host, bundleIdentifier, versionString);
+    WebPluginInfoProvider::singleton().setPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString);
 #endif
 }
 
-void WebProcess::resetPluginLoadClientPolicies(const HashMap<WTF::String, HashMap<WTF::String, HashMap<WTF::String, uint8_t>>>& pluginLoadClientPolicies)
+void WebProcess::resetPluginLoadClientPolicies(const HashMap<WTF::String, HashMap<WTF::String, HashMap<WTF::String, WebCore::PluginLoadClientPolicy>>>& pluginLoadClientPolicies)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)
     clearPluginClientPolicies();
@@ -981,7 +981,7 @@ void WebProcess::resetPluginLoadClientPolicies(const HashMap<WTF::String, HashMa
     for (auto& hostPair : pluginLoadClientPolicies) {
         for (auto& bundleIdentifierPair : hostPair.value) {
             for (auto& versionPair : bundleIdentifierPair.value)
-                WebPluginInfoProvider::singleton().setPluginLoadClientPolicy(static_cast<PluginLoadClientPolicy>(versionPair.value), hostPair.key, bundleIdentifierPair.key, versionPair.key);
+                WebPluginInfoProvider::singleton().setPluginLoadClientPolicy(versionPair.value, hostPair.key, bundleIdentifierPair.key, versionPair.key);
         }
     }
 #endif
