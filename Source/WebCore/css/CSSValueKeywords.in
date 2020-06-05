@@ -1351,11 +1351,9 @@ plain
 buy
 set-up
 donate
-#if defined(ENABLE_APPLE_PAY_SESSION_V4) && ENABLE_APPLE_PAY_SESSION_V4
 check-out
 book
 subscribe
-#endif
 #if defined(ENABLE_APPLE_PAY_NEW_BUTTON_TYPES) && ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
 reload
 add-money

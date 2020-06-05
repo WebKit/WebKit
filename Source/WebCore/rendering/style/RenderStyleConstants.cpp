@@ -69,11 +69,9 @@ TextStream& operator<<(TextStream& ts, ApplePayButtonType playState)
     case ApplePayButtonType::Buy: ts << "buy"; break;
     case ApplePayButtonType::SetUp: ts << "setup"; break;
     case ApplePayButtonType::Donate: ts << "donate"; break;
-#if ENABLE(APPLE_PAY_SESSION_V4)
     case ApplePayButtonType::CheckOut: ts << "checkout"; break;
     case ApplePayButtonType::Book: ts << "book"; break;
     case ApplePayButtonType::Subscribe: ts << "subscribe"; break;
-#endif
 #if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
     case ApplePayButtonType::Reload: ts << "reload"; break;
     case ApplePayButtonType::AddMoney: ts << "add-money"; break;

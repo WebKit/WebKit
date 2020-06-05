@@ -91,14 +91,12 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
         return PKPaymentButtonTypeSetUp;
     case ApplePayButtonType::Donate:
         return PKPaymentButtonTypeDonate;
-#if ENABLE(APPLE_PAY_SESSION_V4)
     case ApplePayButtonType::CheckOut:
         return PKPaymentButtonTypeCheckout;
     case ApplePayButtonType::Book:
         return PKPaymentButtonTypeBook;
     case ApplePayButtonType::Subscribe:
         return PKPaymentButtonTypeSubscribe;
-#endif
 #if HAVE(PASSKIT_NEW_BUTTON_TYPES)
     case ApplePayButtonType::Reload:
         return PKPaymentButtonTypeReload;

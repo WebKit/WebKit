@@ -5465,7 +5465,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonType e)
     case ApplePayButtonType::Donate:
         m_value.valueID = CSSValueDonate;
         break;
-#if ENABLE(APPLE_PAY_SESSION_V4)
     case ApplePayButtonType::CheckOut:
         m_value.valueID = CSSValueCheckOut;
         break;
@@ -5475,7 +5474,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonType e)
     case ApplePayButtonType::Subscribe:
         m_value.valueID = CSSValueSubscribe;
         break;
-#endif
 #if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
     case ApplePayButtonType::Reload:
         m_value.valueID = CSSValueReload;
@@ -5520,14 +5518,12 @@ template<> inline CSSPrimitiveValue::operator ApplePayButtonType() const
         return ApplePayButtonType::SetUp;
     case CSSValueDonate:
         return ApplePayButtonType::Donate;
-#if ENABLE(APPLE_PAY_SESSION_V4)
     case CSSValueCheckOut:
         return ApplePayButtonType::CheckOut;
     case CSSValueBook:
         return ApplePayButtonType::Book;
     case CSSValueSubscribe:
         return ApplePayButtonType::Subscribe;
-#endif
 #if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
     case CSSValueReload:
         return ApplePayButtonType::Reload;
