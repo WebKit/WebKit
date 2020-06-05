@@ -1041,3 +1041,5 @@ webkit.org/b/261103 [ Debug ] inspector/page/overrideSetting-ITPDebugModeEnabled
 webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
 
 webkit.org/b/212721 svg/custom/textPath-change-id.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/212824 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ Pass Failure ]
