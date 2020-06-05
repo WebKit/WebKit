@@ -1,3 +1,14 @@
+2020-06-05  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r262456?): [macOS] media/picture-in-picture/picture-in-picture-api tests are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=212762
+
+        Reviewed by Eric Carlson.
+
+        Skip the tests regarding Picture-in-Picture for mac-wk1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-06-05  Tyler Wilcock  <twilco.o@protonmail.com>
 
         CSS Variables: Color on specific `border` properties does not work.

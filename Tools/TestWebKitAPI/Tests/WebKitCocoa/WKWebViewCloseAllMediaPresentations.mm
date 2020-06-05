@@ -27,17 +27,21 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebCore/PictureInPictureSupport.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
 {
+    if (!WebCore::supportsPictureInPicture())
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().preferences._allowsPictureInPictureMediaPlayback = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
 
-    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline></video>"];
+    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline></video>"];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')"];
 
@@ -69,7 +73,7 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
     configuration.get().preferences._fullScreenEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
 
-    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline></video>"];
+    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline></video>"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
 
     __block bool presentationModeChanged = false;

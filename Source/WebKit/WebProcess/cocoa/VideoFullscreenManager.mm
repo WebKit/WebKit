@@ -441,9 +441,7 @@ void VideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
     if (!videoElement)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), videoElement] {
-        videoElement->didBecomeFullscreenElement();
-    });
+    videoElement->didBecomeFullscreenElement();
 
     if (interface->targetIsFullscreen())
         return;

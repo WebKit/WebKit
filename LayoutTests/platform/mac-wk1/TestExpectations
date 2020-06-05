@@ -948,3 +948,9 @@ webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-
 webkit.org/b/212665 svg/custom/textPath-insert-path.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/212828 http/tests/media/reload-after-dialog.html [ Pass Failure ]
+
+# Mac-WK1 does not support Picture-in-Picture
+media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
+media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
+media/presentationmodechanged-fired-once.html [ Skip ]
+media/video-presentation-mode.html [ Skip ]

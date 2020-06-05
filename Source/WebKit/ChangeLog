@@ -1,3 +1,17 @@
+2020-06-05  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r262456?): [macOS] media/picture-in-picture/picture-in-picture-api tests are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=212762
+
+        Reviewed by Eric Carlson.
+
+        The Picture-in-Picture implementation expects the two callbacks HTMLVideoElement::didBecomeFullscreenElement()
+        and HTMLVideoElement::setVideoFullscreenFrame() to come in order. So we need to remove the dispatch_async()
+        and call HTMLVideoElement::didBecomeFullscreenElement() directly.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+
 2020-06-05  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early summer 2020 edition
