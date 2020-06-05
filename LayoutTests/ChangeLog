@@ -1,3 +1,12 @@
+2020-06-05  Jason Lawrence  <lawrence.j@apple.com>
+
+        [ Mojave wk2 Release ] js/dom/unhandled-promise-rejection-console-no-report.html is flaky failing. 
+        https://bugs.webkit.org/show_bug.cgi?id=212851
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-06-05  Sam Weinig  <weinig@apple.com>
 
         Some tests in css/css-color/parsing/system-color-valid.html are failing

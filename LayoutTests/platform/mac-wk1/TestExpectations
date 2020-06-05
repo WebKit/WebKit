@@ -954,3 +954,5 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/presentationmodechanged-fired-once.html [ Skip ]
 media/video-presentation-mode.html [ Skip ]
+
+webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
