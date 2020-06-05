@@ -1141,6 +1141,8 @@
 		41DE7C7C222DA14300532B65 /* StorageQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
+		41E1F342248A69D00022D5DE /* VideoSampleBufferCompressor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */; };
+		41E1F343248A69D40022D5DE /* AudioSampleBufferCompressor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */; };
 		41E9DCE7231974BF00F35949 /* BlobLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9DCE4231973FE00F35949 /* BlobLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41E9DCE92319CA7600F35949 /* NetworkSendQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9DCE82319CA7500F35949 /* NetworkSendQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */; };
@@ -7583,6 +7585,8 @@
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
 		41C7E1081E6AA37C0027B4DE /* CanvasCaptureMediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasCaptureMediaStreamTrack.idl; sourceTree = "<group>"; };
+		41CD6F8923D6E81C00B16421 /* VideoSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSampleBufferCompressor.h; sourceTree = "<group>"; };
+		41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoSampleBufferCompressor.mm; sourceTree = "<group>"; };
 		41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodyConsumer.cpp; sourceTree = "<group>"; };
 		41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodyConsumer.h; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
@@ -7611,6 +7615,8 @@
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CB0FF5986900576B3B /* AbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWorker.h; sourceTree = "<group>"; };
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
+		41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferCompressor.mm; sourceTree = "<group>"; };
+		41E1F33F248A62B60022D5DE /* AudioSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferCompressor.h; sourceTree = "<group>"; };
 		41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerConnectionBackend.cpp; sourceTree = "<group>"; };
 		41E593FD214865A900D3CB61 /* RTCPriorityType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCPriorityType.idl; sourceTree = "<group>"; };
 		41E593FF214865AA00D3CB61 /* RTCRtpEncodingParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpEncodingParameters.idl; sourceTree = "<group>"; };
@@ -19328,8 +19334,12 @@
 		4D3C05D421AF480900F2890A /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				41E1F33F248A62B60022D5DE /* AudioSampleBufferCompressor.h */,
+				41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */,
 				4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h */,
 				4D73F94D218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.mm */,
+				41CD6F8923D6E81C00B16421 /* VideoSampleBufferCompressor.h */,
+				41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -34372,6 +34382,7 @@
 				C90F65551B2253B1002163A1 /* MediaSessionManager.cpp in Sources */,
 				07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */,
 				CDC8B5A6180474F70016E685 /* MediaSourcePrivateAVFObjC.mm in Sources */,
+				41E1F343248A69D40022D5DE /* AudioSampleBufferCompressor.mm in Sources */,
 				4133CB8B20F80E9900E89B11 /* MediaStreamAudioSourceCocoa.cpp in Sources */,
 				CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */,
 				51058ADF1D67C229009A538C /* MockGamepad.cpp in Sources */,
@@ -34752,6 +34763,7 @@
 				DECA804F1F9FED6A00E3B661 /* UnifiedSource270.cpp in Sources */,
 				DECA80501F9FED6A00E3B661 /* UnifiedSource271.cpp in Sources */,
 				DECA80511F9FED6A00E3B661 /* UnifiedSource272.cpp in Sources */,
+				41E1F342248A69D00022D5DE /* VideoSampleBufferCompressor.mm in Sources */,
 				DECA80521F9FED6A00E3B661 /* UnifiedSource273.cpp in Sources */,
 				DECA80531F9FED6A00E3B661 /* UnifiedSource274.cpp in Sources */,
 				DECA80541F9FED6A00E3B661 /* UnifiedSource275.cpp in Sources */,

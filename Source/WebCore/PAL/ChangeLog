@@ -1,3 +1,21 @@
+2020-06-05  youenn fablet  <youenn@apple.com>
+
+        [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=206582
+        <rdar://problem/58985368>
+
+        Reviewed by Eric Carlson.
+
+        Add soft link macros for VideoToolbox and AudioToolbox.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cf/AudioToolboxSoftLink.cpp: Added.
+        * pal/cf/AudioToolboxSoftLink.h: Added.
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/cf/VideoToolboxSoftLink.cpp: Added.
+        * pal/cf/VideoToolboxSoftLink.h: Added.
+
 2020-06-04  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         Unreviewed, reverting r262546.

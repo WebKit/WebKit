@@ -542,6 +542,10 @@
 #define HAVE_OS_SIGNPOST 1
 #endif
 
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || PLATFORM(IOS)) && (defined __has_include && __has_include(<AVFoundation/AVAssetWriter_Private.h>))
+#define HAVE_AVASSETWRITERDELEGATE 1
+#endif
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #define HAVE_SYSTEM_FONT_STYLE_TITLE_0 1
 #define HAVE_SYSTEM_FONT_STYLE_TITLE_4 1

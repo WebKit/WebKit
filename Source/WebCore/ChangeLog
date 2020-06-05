@@ -1,3 +1,95 @@
+2020-06-05  youenn fablet  <youenn@apple.com>
+
+        [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=206582
+        <rdar://problem/58985368>
+
+        Reviewed by Eric Carlson.
+
+        AVAssetWriterDelegate allows to grab recorded data whenever wanted.
+        This delegate requires passing compressed samples to AVAssetWriter.
+        Implement video encoding and audio encoding in dedicated classes and use these classes before adding buffers to AVAssetWriter.
+        These classes are AudioSampleBufferCompressor and VideoSampleBufferCompressor.
+        They support AAC and H264 so far and should be further improved to support more encoding options.
+
+        Instantiate real writer only for platforms supporting AVAssetWriterDelegate, since it is not supported everywhere.
+        The writer, doing the pacakging, is receiving compressed buffer from the audio/video compressors.
+        It then sends data when being request to flush to its delegate, which will send data to the MediaRecorderPrivateWriter.
+        The MediaRecorderPrivateWriter stores the data in a SharedBuffer until MediaRecorder asks for data.
+
+        Note that, whenever we request data, we flush the writer and insert an end of video sample to make sure video data gets flushed.
+        Therefore data should not be requested too fast to get adequate video compression.
+
+        Covered by existing tests.
+
+        * Modules/mediarecorder/MediaRecorderProvider.cpp:
+        (WebCore::MediaRecorderProvider::createMediaRecorderPrivate):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.h: Added.
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm: Added.
+        (WebCore::AudioSampleBufferCompressor::create):
+        (WebCore::AudioSampleBufferCompressor::AudioSampleBufferCompressor):
+        (WebCore::AudioSampleBufferCompressor::~AudioSampleBufferCompressor):
+        (WebCore::AudioSampleBufferCompressor::initialize):
+        (WebCore::AudioSampleBufferCompressor::finish):
+        (WebCore::AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription):
+        (WebCore::AudioSampleBufferCompressor::computeBufferSizeForAudioFormat):
+        (WebCore::AudioSampleBufferCompressor::attachPrimingTrimsIfNeeded):
+        (WebCore::AudioSampleBufferCompressor::gradualDecoderRefreshCount):
+        (WebCore::AudioSampleBufferCompressor::sampleBufferWithNumPackets):
+        (WebCore::AudioSampleBufferCompressor::audioConverterComplexInputDataProc):
+        (WebCore::AudioSampleBufferCompressor::provideSourceDataNumOutputPackets):
+        (WebCore::AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime):
+        (WebCore::AudioSampleBufferCompressor::processSampleBuffer):
+        (WebCore::AudioSampleBufferCompressor::addSampleBuffer):
+        (WebCore::AudioSampleBufferCompressor::getOutputSampleBuffer):
+        (WebCore::AudioSampleBufferCompressor::takeOutputSampleBuffer):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (-[WebAVAssetWriterDelegate initWithWriter:]):
+        (-[WebAVAssetWriterDelegate assetWriter:didProduceFragmentedHeaderData:]):
+        (-[WebAVAssetWriterDelegate assetWriter:didProduceFragmentedMediaData:fragmentedMediaDataReport:]):
+        (-[WebAVAssetWriterDelegate close]):
+        (WebCore::MediaRecorderPrivateWriter::create):
+        (WebCore::MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback):
+        (WebCore::MediaRecorderPrivateWriter::compressedAudioOutputBufferCallback):
+        (WebCore::MediaRecorderPrivateWriter::MediaRecorderPrivateWriter):
+        (WebCore::MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter):
+        (WebCore::MediaRecorderPrivateWriter::initialize):
+        (WebCore::MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::processNewCompressedAudioSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::startAssetWriter):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedSampleBuffers):
+        (WebCore::appendEndsPreviousSampleDurationMarker):
+        (WebCore::MediaRecorderPrivateWriter::appendEndOfVideoSampleDurationIfNeeded):
+        (WebCore::MediaRecorderPrivateWriter::flushCompressedSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::clear):
+        (WebCore::copySampleBufferWithCurrentTimeStamp):
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+        (WebCore::createAudioFormatDescription):
+        (WebCore::createAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        (WebCore::MediaRecorderPrivateWriter::appendData):
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.h: Copied from Source/WebCore/platform/mediarecorder/MediaRecorderPrivateAVFImpl.h.
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm: Added.
+        (WebCore::VideoSampleBufferCompressor::create):
+        (WebCore::VideoSampleBufferCompressor::VideoSampleBufferCompressor):
+        (WebCore::VideoSampleBufferCompressor::~VideoSampleBufferCompressor):
+        (WebCore::VideoSampleBufferCompressor::initialize):
+        (WebCore::VideoSampleBufferCompressor::finish):
+        (WebCore::VideoSampleBufferCompressor::videoCompressionCallback):
+        (WebCore::VideoSampleBufferCompressor::initCompressionSession):
+        (WebCore::VideoSampleBufferCompressor::processSampleBuffer):
+        (WebCore::VideoSampleBufferCompressor::addSampleBuffer):
+        (WebCore::VideoSampleBufferCompressor::getOutputSampleBuffer):
+        (WebCore::VideoSampleBufferCompressor::takeOutputSampleBuffer):
+
 2020-06-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r253875?): Element styles incorrect after media query evaluation changes

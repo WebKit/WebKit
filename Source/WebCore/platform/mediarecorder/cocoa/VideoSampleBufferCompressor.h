@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,48 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "MediaRecorderPrivate.h"
-#include "MediaRecorderPrivateWriterCocoa.h"
+#include <CoreMedia/CoreMedia.h>
+#include <VideoToolbox/VTErrors.h>
+
+typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct OpaqueVTCompressionSession *VTCompressionSessionRef;
 
 namespace WebCore {
 
-class MediaStreamPrivate;
-
-class MediaRecorderPrivateAVFImpl final
-    : public MediaRecorderPrivate {
+class VideoSampleBufferCompressor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<MediaRecorderPrivateAVFImpl> create(MediaStreamPrivate&);
-    ~MediaRecorderPrivateAVFImpl();
+    static std::unique_ptr<VideoSampleBufferCompressor> create(CMVideoCodecType, CMBufferQueueTriggerCallback, void* callbackObject);
+    ~VideoSampleBufferCompressor();
+
+    void finish();
+    void addSampleBuffer(CMSampleBufferRef);
+    CMSampleBufferRef getOutputSampleBuffer();
+    RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
 private:
-    MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&&, String&& audioTrackId, String&& videoTrackId);
+    explicit VideoSampleBufferCompressor(CMVideoCodecType);
 
-    friend std::unique_ptr<MediaRecorderPrivateAVFImpl> std::make_unique<MediaRecorderPrivateAVFImpl>(Ref<MediaRecorderPrivateWriter>&&, String&&, String&&);
+    bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
 
-    // MediaRecorderPrivate
-    void videoSampleAvailable(MediaSample&) final;
-    void fetchData(FetchDataCallback&&) final;
-    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void processSampleBuffer(CMSampleBufferRef);
+    bool initCompressionSession(CMVideoFormatDescriptionRef);
 
-    const String& mimeType();
-    void stopRecording();
+    static void videoCompressionCallback(void *refCon, void*, OSStatus, VTEncodeInfoFlags, CMSampleBufferRef);
 
-    Ref<MediaRecorderPrivateWriter> m_writer;
-    String m_recordedAudioTrackID;
-    String m_recordedVideoTrackID;
+    dispatch_queue_t m_serialDispatchQueue;
+    RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
+    RetainPtr<VTCompressionSessionRef> m_vtSession;
+
+    bool m_isEncoding { false };
+
+    CMVideoCodecType m_outputCodecType;
+    float m_maxKeyFrameIntervalDuration { 2.0 };
+    unsigned m_expectedFrameRate { 30 };
 };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif
