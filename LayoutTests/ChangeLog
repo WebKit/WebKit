@@ -1,5 +1,14 @@
 2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Gardening, update test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=212808
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+
+2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Gardening, remove unneeded baseline after r262527
         https://bugs.webkit.org/show_bug.cgi?id=212804
 

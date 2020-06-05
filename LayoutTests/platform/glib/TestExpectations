@@ -14,6 +14,7 @@
 # (like WebAnimation, PageOverlay, WebGL) will mirror their top-level LayoutTests/
 # folders, but others like CSS and GStreamer may have entries from multiple folders.
 #
+# * Accessibilty
 # * CSS
 # * GStreamer
 # * Perf
@@ -32,6 +33,17 @@
 #
 # * Keep them alphabetically sorted - except for the PASSING/NEEDS TRIAGING sections.
 # * Only PASSING/UNSUPPORTED should have expectations without bug entries.
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# Accessibility-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Accessibility-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +131,10 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-
 webkit.org/b/211692 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.worker.html [ Failure ]
+webkit.org/b/212806 imported/w3c/web-platform-tests/fetch/h1-parsing/resources-with-0x00-in-header.window.html [ Failure ]
+webkit.org/b/212807 imported/w3c/web-platform-tests/fetch/api/basic/header-value-null-byte.any.html [ Failure ]
+webkit.org/b/212807 imported/w3c/web-platform-tests/fetch/api/basic/header-value-null-byte.any.worker.html [ Failure ]
+webkit.org/b/212807 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]
 
 webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navigation/javascript-url-navigation-inherits-csp.html [ Failure ]
 
