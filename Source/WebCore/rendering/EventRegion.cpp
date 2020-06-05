@@ -135,6 +135,10 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
 #else
     UNUSED_PARAM(overrideUserModifyIsEditable);
 #endif
+
+#if !ENABLE(TOUCH_ACTION_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(EDITABLE_REGION)
+    UNUSED_PARAM(style);
+#endif
 }
 
 void EventRegion::translate(const IntSize& offset)

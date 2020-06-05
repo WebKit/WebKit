@@ -3085,6 +3085,7 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
     return paintFlags;
 }
 
+#if ENABLE(TOUCH_ACTION_REGIONS) || ENABLE(WHEEL_EVENT_REGIONS)
 struct PatternDescription {
     ASCIILiteral name;
     FloatSize phase;
@@ -3127,6 +3128,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
 
     return fillPattern;
 };
+#endif
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
 static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize contentOffset, GraphicsContext& destContext)
@@ -3200,7 +3202,9 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
     auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
     context.translate(-contentOffset);
 
+#if ENABLE(TOUCH_ACTION_REGIONS) || ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(EDITABLE_REGION)
     auto visibleDebugOverlayRegions = renderer().settings().visibleDebugOverlayRegions();
+#endif
 
     // The interactive part.
 #if ENABLE(TOUCH_ACTION_REGIONS)

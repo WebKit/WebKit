@@ -1,3 +1,13 @@
+2020-06-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Unreviewed, fix unused parameter warnings in EventRegion.cpp and RenderLayerBacking.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=212823
+
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::unite):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintDebugOverlays):
+
 2020-06-05  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early summer 2020 edition
