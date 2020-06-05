@@ -1485,6 +1485,8 @@ webkit.org/b/199224 editing/pasteboard/copy-paste-across-shadow-boundaries-with-
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
+webkit.org/b/212811 editing/deleting/delete-txt-in-dl-crash.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2884,6 +2886,8 @@ webkit.org/b/211835 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.ht
 webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
 webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
+
+webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

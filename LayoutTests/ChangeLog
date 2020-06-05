@@ -1,5 +1,15 @@
 2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, update test expectations after r262609
+        https://bugs.webkit.org/show_bug.cgi?id=212813
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/w3c-svg-name-calculation-expected.txt: Update after r262500.
+
+2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update test expectations
         https://bugs.webkit.org/show_bug.cgi?id=212810
 
