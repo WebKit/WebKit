@@ -1,3 +1,35 @@
+2020-06-05  Sam Weinig  <weinig@apple.com>
+
+        Some tests in css/css-color/parsing/system-color-valid.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=212703
+
+        Reviewed by Darin Adler.
+
+        Add support for the following system color keywords, added in CSS Color 4 (https://www.w3.org/TR/css-color-4/#css-system-colors):
+            ActiveText (Text in active links)
+                 Implemented identically to -webkit-activelink
+            Canvas (Background of application content or documents)
+                 [NSColor textBackgroundColor] on macOS, Color::white by default.
+            CanvasText (Text in application content or documents)
+                 [NSColor textBackgroundColor] on macOS, Color::black by default.
+            Field
+                 [NSColor controlColor] on macOS, Color::white by default.
+            FieldText
+                 [NSColor controlTextColor] on macOS, Color::black by default.
+            LinkText
+                 [NSColor linkColor] on macOS (when UseSystemAppearance is true), same as -webkit-link (non-visited) by default.
+            VisitedText
+                 [NSColor systemPurpleColor] on macOS (when UseSystemAppearance is true), same as -webkit-link (visited) by default.
+
+        * css/CSSValueKeywords.in:
+        * platform/ThemeTypes.cpp:
+        (WebCore::operator<<):
+        * platform/ThemeTypes.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor const):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2020-06-05  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r262524.

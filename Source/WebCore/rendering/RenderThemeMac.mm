@@ -598,7 +598,12 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return systemAppearanceColor(cache.systemVisitedLinkColor, @selector(systemPurpleColor));
             return systemAppearanceColor(cache.systemLinkColor, @selector(linkColor));
 
+        case CSSValueLinktext:
+            return systemAppearanceColor(cache.systemLinkColor, @selector(linkColor));
+        case CSSValueVisitedtext:
+            return systemAppearanceColor(cache.systemVisitedLinkColor, @selector(systemPurpleColor));
         case CSSValueWebkitActivelink:
+        case CSSValueActivetext:
             // FIXME: Use a semantic system color for this, instead of systemRedColor. <rdar://problem/39256684>
             return systemAppearanceColor(cache.systemActiveLinkColor, @selector(systemRedColor));
 
@@ -651,8 +656,16 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(controlShadowColor);
             case CSSValueButtontext:
                 return @selector(controlTextColor);
+            case CSSValueCanvas:
+                return @selector(textBackgroundColor);
+            case CSSValueCanvastext:
+                return @selector(textColor);
             case CSSValueCaptiontext:
                 return @selector(textColor);
+            case CSSValueField:
+                return @selector(controlColor);
+            case CSSValueFieldtext:
+                return @selector(controlTextColor);
             case CSSValueGraytext:
                 return @selector(disabledControlTextColor);
             case CSSValueHighlighttext:

@@ -195,6 +195,7 @@ transparent
 -webkit-activelink
 activeborder
 activecaption
+activetext
 appworkspace
 background
 buttonface
@@ -202,7 +203,11 @@ buttonhighlight
 buttonshadow
 buttontext
 activebuttontext
+canvas
+canvastext
 captiontext
+field
+fieldtext
 graytext
 highlight
 highlighttext
@@ -211,6 +216,7 @@ inactivecaption
 inactivecaptiontext
 infobackground
 infotext
+linktext
 luminance
 menutext
 scrollbar
@@ -219,6 +225,7 @@ threedface
 threedhighlight
 threedlightshadow
 threedshadow
+visitedtext
 window
 windowframe
 windowtext

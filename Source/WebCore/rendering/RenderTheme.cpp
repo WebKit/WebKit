@@ -1281,7 +1281,12 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueWebkitLink:
         return options.contains(StyleColor::Options::ForVisitedLink) ? SimpleColor { 0xFF551A8B } : SimpleColor { 0xFF0000EE };
     case CSSValueWebkitActivelink:
+    case CSSValueActivetext:
         return SimpleColor { 0xFFFF0000 };
+    case CSSValueLinktext:
+        return SimpleColor { 0xFF0000EE };
+    case CSSValueVisitedtext:
+        return SimpleColor { 0xFF551A8B };
     case CSSValueActiveborder:
         return Color::white;
     case CSSValueActivebuttontext:
@@ -1301,6 +1306,14 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Opti
     case CSSValueButtontext:
         return Color::black;
     case CSSValueCaptiontext:
+        return Color::black;
+    case CSSValueCanvas:
+        return Color::white;
+    case CSSValueCanvastext:
+        return Color::black;
+    case CSSValueField:
+        return Color::white;
+    case CSSValueFieldtext:
         return Color::black;
     case CSSValueGraytext:
         return SimpleColor { 0xFF808080 };

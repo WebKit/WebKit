@@ -144,13 +144,18 @@ TextStream& operator<<(TextStream& ts, ThemeColor themeColor)
     switch (themeColor) {
     case ActiveBorderColor: ts << "active-border-color"; break;
     case ActiveCaptionColor: ts << "active-caption-color"; break;
+    case ActiveTextColor: ts << "active-text-color"; break;
     case AppWorkspaceColor: ts << "app-workspace-color"; break;
     case BackgroundColor: ts << "background-color"; break;
     case ButtonFaceColor: ts << "button-face-color"; break;
     case ButtonHighlightColor: ts << "button-highlight-color"; break;
     case ButtonShadowColor: ts << "button-shadow-color"; break;
     case ButtonTextColor: ts << "button-text-color"; break;
+    case CanvasColor: ts << "canvas-color"; break;
+    case CanvasTextColor: ts << "canvas-text-color"; break;
     case CaptionTextColor: ts << "caption-text-color"; break;
+    case FieldColor: ts << "field-color"; break;
+    case FieldTextColor: ts << "field-text-color"; break;
     case GrayTextColor: ts << "gray-text-color"; break;
     case HighlightColor: ts << "highlight-color"; break;
     case HighlightTextColor: ts << "highlight-text-color"; break;
@@ -159,6 +164,7 @@ TextStream& operator<<(TextStream& ts, ThemeColor themeColor)
     case InactiveCaptionTextColor: ts << "inactive-caption-text-color"; break;
     case InfoBackgroundColor: ts << "info-background-color"; break;
     case InfoTextColor: ts << "info-text-color"; break;
+    case LinkTextColor: ts << "link-text-color"; break;
     case MatchColor: ts << "match-color"; break;
     case MenuTextColor: ts << "menu-text-color"; break;
     case ScrollbarColor: ts << "scrollbar-color"; break;
@@ -167,6 +173,7 @@ TextStream& operator<<(TextStream& ts, ThemeColor themeColor)
     case ThreeDHighlightColor: ts << "threeD-highlight-color"; break;
     case ThreeDLightShadowColor: ts << "threeD-light-shadow-color"; break;
     case ThreeDShadowColor: ts << "threeD-shadow-color"; break;
+    case VisitedTextColor: ts << "visited-text-color"; break;
     case WindowColor: ts << "window-color"; break;
     case WindowFrameColor: ts << "window-frame-color"; break;
     case WindowTextColor: ts << "window-text-color"; break;
