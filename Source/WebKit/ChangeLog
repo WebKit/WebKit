@@ -1,3 +1,17 @@
+2020-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Silence telemetry generated during download operations
+        https://bugs.webkit.org/show_bug.cgi?id=212854
+        <rdar://problem/63909414>
+
+        Reviewed by Per Arne Vollan.
+
+        Remove reporting and telemetry for the 'com.apple.ProgressReporting' service
+        from the Network Process sandbox, since this is a critical part of supplying
+        download status to the WebKit UI.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2020-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r262619, r262625, and r262641.

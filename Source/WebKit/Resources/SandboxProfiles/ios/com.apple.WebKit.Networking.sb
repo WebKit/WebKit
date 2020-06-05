@@ -637,7 +637,7 @@
     (global-name "com.apple.analyticsd"))
 
 ;; For reporting progress for active downloads <rdar://problem/44405661>
-(allow mach-lookup (with report) (with telemetry)
+(allow mach-lookup
     (global-name "com.apple.ProgressReporting"))
 
  ;; <rdar://problem/47598758>
