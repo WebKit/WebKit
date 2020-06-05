@@ -492,9 +492,7 @@ platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm
 
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
-platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm @no-unify
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
-platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm @no-unify
 
 platform/mediasession/mac/MediaSessionInterruptionProviderMac.mm
 

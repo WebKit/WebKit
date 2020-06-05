@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaRecorder.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>
@@ -135,4 +135,4 @@ void RemoteMediaRecorder::stopRecording()
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif

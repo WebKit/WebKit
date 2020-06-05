@@ -36,7 +36,7 @@ using namespace WebCore;
 
 std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream)
 {
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(GPU_PROCESS)
     if (m_useGPUProcess)
         return makeUnique<MediaRecorderPrivate>(stream);
 #endif
