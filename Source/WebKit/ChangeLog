@@ -1,3 +1,14 @@
+2020-06-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix PDF opening after r262592
+        https://bugs.webkit.org/show_bug.cgi?id=212795
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication):
+        As Darin mentioned and I was about to discover, my last-minute switching things around got the boolean condition backwards.
+        We want to do nothing if we're not allowed to open the PDF, and we want to open the PDF if we are allowed to.s
+
 2020-06-05  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for PluginLoadClientPolicy
