@@ -34,6 +34,7 @@
 #import "DataReference.h"
 #import "EditorState.h"
 #import "FontInfo.h"
+#import "FrameInfoData.h"
 #import "InsertTextOptions.h"
 #import "MenuUtilities.h"
 #import "NativeWebKeyboardEvent.h"
@@ -477,12 +478,9 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
     return path;
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& data, const String& pdfUUID)
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&& frameInfo, const IPC::DataReference& data, const String& pdfUUID)
 {
     MESSAGE_CHECK(TemporaryPDFFileMap::isValidKey(pdfUUID));
-
-    // FIXME: Write originatingURLString to the file's originating URL metadata (perhaps FileSystem::setMetadataURL()?).
-    UNUSED_PARAM(originatingURLString);
 
     if (data.isEmpty()) {
         WTFLogAlways("Cannot save empty PDF file to the temporary directory.");
@@ -495,28 +493,32 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
         return;
     }
 
-    NSString *nsPath = pathToPDFOnDisk(sanitizedFilename);
+    auto nsPath = retainPtr(pathToPDFOnDisk(sanitizedFilename));
 
     if (!nsPath)
         return;
 
-    RetainPtr<NSNumber> permissions = adoptNS([[NSNumber alloc] initWithInt:S_IRUSR]);
-    RetainPtr<NSDictionary> fileAttributes = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:permissions.get(), NSFilePosixPermissions, nil]);
-    RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)data.data() length:data.size() freeWhenDone:NO]);
+    auto permissions = adoptNS([[NSNumber alloc] initWithInt:S_IRUSR]);
+    auto fileAttributes = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:permissions.get(), NSFilePosixPermissions, nil]);
+    auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)data.data() length:data.size() freeWhenDone:NO]);
 
-    if (![[NSFileManager defaultManager] createFileAtPath:nsPath contents:nsData.get() attributes:fileAttributes.get()]) {
+    if (![[NSFileManager defaultManager] createFileAtPath:nsPath.get() contents:nsData.get() attributes:fileAttributes.get()]) {
         WTFLogAlways("Cannot create PDF file in the temporary directory (%s).", sanitizedFilename.utf8().data());
         return;
     }
+    auto originatingURLString = frameInfo.request.url().string();
+    FileSystem::setMetadataURL(nsPath.get(), originatingURLString);
 
-    m_temporaryPDFFiles.add(pdfUUID, nsPath);
+    m_temporaryPDFFiles.add(pdfUUID, nsPath.get());
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSWorkspace sharedWorkspace] openFile:nsPath];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    m_uiClient->confirmPDFOpening(*this, WTFMove(frameInfo), [nsPath = WTFMove(nsPath)] (bool allowed) {
+        if (allowed)
+            return;
+        [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:nsPath.get() isDirectory:NO]];
+    });
 }
 
-void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String& pdfUUID)
+void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData&& frameInfo, const String& pdfUUID)
 {
     MESSAGE_CHECK(TemporaryPDFFileMap::isValidKey(pdfUUID));
 
@@ -525,9 +527,11 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
     if (!pdfFilename.endsWithIgnoringASCIICase(".pdf"))
         return;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSWorkspace sharedWorkspace] openFile:pdfFilename];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    m_uiClient->confirmPDFOpening(*this, WTFMove(frameInfo), [pdfFilename = WTFMove(pdfFilename)] (bool allowed) {
+        if (allowed)
+            return;
+        [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:pdfFilename isDirectory:NO]];
+    });
 }
 
 #if ENABLE(PDFKIT_PLUGIN)

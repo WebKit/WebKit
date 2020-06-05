@@ -1,3 +1,32 @@
+2020-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegate SPI to confirm before opening a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=212795
+        <rdar://problem/58715847>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::confirmPDFOpening):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::confirmPDFOpening):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::openWithNativeApplication):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        * WebProcess/WebPage/WebPage.h:
+
 2020-06-04  Chris Dumez  <cdumez@apple.com>
 
         UIProcess may crash after its prewarmed WebProcess gets terminated
