@@ -999,6 +999,7 @@ webkit.org/b/209024 [ Debug ] webgpu/whlsl/vector-compare.html [ Pass Crash ]
 webkit.org/b/209077 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
 
 webkit.org/b/209052 fast/scrolling/mac/absolute-in-overflow-scroll-dynamic.html [ Pass ImageOnlyFailure ]
+webkit.org/b/212667 [ Mojave ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html [ Skip ]
 
 webkit.org/b/210348 fast/scrolling/latching/iframe-latch-small-deltas.html [ Pass Failure ]
 
@@ -1036,8 +1037,6 @@ webkit.org/b/183424 media/video-zoom-controls.html [ Pass Failure ]
 webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
 
 webkit.org/b/261103 [ Debug ] inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
-
-webkit.org/b/212667 [ Mojave Debug ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
 
 webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
 
