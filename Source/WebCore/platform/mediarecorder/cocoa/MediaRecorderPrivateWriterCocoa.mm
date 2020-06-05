@@ -159,7 +159,9 @@ MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 bool MediaRecorderPrivateWriter::initialize()
 {
     NSError *error = nil;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     m_writer = adoptNS([PAL::allocAVAssetWriterInstance() initWithFileType:AVFileTypeMPEG4 error:&error]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "create AVAssetWriter instance failed with error code %ld", (long)error.code);
         return false;
