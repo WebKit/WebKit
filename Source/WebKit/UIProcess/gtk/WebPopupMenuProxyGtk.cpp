@@ -91,6 +91,9 @@ bool WebPopupMenuProxyGtk::activateItemAtPath(GtkTreePath* path)
 
 bool WebPopupMenuProxyGtk::handleKeyPress(unsigned keyval, uint32_t timestamp)
 {
+    if (!m_popup)
+        return false;
+
     if (keyval == GDK_KEY_Escape) {
         hidePopupMenu();
         return true;
