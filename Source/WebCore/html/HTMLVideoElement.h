@@ -133,10 +133,13 @@ private:
 
     unsigned m_lastReportedVideoWidth { 0 };
     unsigned m_lastReportedVideoHeight { 0 };
-
     bool m_isChangingPresentationMode { false };
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_isEnteringOrExitingPictureInPicture { false };
     bool m_isWaitingForPictureInPictureWindowFrame { false };
+#endif
+
 #if ENABLE(PICTURE_IN_PICTURE_API)
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
 #endif
