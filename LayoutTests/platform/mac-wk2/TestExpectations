@@ -887,7 +887,7 @@ webkit.org/b/207117 webgpu/whlsl/nested-loop.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207127 webgpu/whlsl/buffer-vertex.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash ]
+webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash Failure ]
 
 webkit.org/b/207141 [ Release ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]
 
