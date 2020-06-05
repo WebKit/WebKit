@@ -1577,8 +1577,14 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
             return node;
         }
 
-        if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq)
+        if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq) {
+            if (expr->isBaseFuncExprNode()) {
+                auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
+                metadata->setEcmaName(resolve->identifier());
+            } else if (expr->isClassExprNode())
+                static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
             return new (m_parserArena) ShortCircuitReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
+        }
 
         return new (m_parserArena) ReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
     }

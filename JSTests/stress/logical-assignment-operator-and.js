@@ -1680,3 +1680,23 @@ shouldThrowSyntaxError(`"test" &&= 42`);
 shouldThrowSyntaxError(`{} &&= 42`);
 
 shouldThrowSyntaxError(`[] &&= 42`);
+
+
+
+shouldBe(function() {
+    let x = true;
+    x &&= function() {};
+    return x.name;
+}, "x");
+
+shouldBe(function() {
+    let x = true;
+    x &&= () => {};
+    return x.name;
+}, "x");
+
+shouldBe(function() {
+    let x = true;
+    x &&= class {};
+    return x.name;
+}, "x");

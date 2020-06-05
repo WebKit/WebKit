@@ -1681,3 +1681,23 @@ shouldThrowSyntaxError(`"test" ||= 42`);
 shouldThrowSyntaxError(`{} ||= 42`);
 
 shouldThrowSyntaxError(`[] ||= 42`);
+
+
+
+shouldBe(function() {
+    let x = false;
+    x ||= function() {};
+    return x.name;
+}, "x");
+
+shouldBe(function() {
+    let x = false;
+    x ||= () => {};
+    return x.name;
+}, "x");
+
+shouldBe(function() {
+    let x = false;
+    x ||= class {};
+    return x.name;
+}, "x");

@@ -1,3 +1,14 @@
+2020-06-05  Devin Rousso  <drousso@apple.com>
+
+        Logical Assignment: perform NamedEvaluation of anonymous functions
+        https://bugs.webkit.org/show_bug.cgi?id=212679
+
+        Reviewed by Ross Kirsling.
+
+        * stress/logical-assignment-operator-and.js:
+        * stress/logical-assignment-operator-coalesce.js:
+        * stress/logical-assignment-operator-or.js:
+
 2020-06-05  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Add support for private class fields
