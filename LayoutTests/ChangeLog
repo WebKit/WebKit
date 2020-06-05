@@ -1,5 +1,18 @@
 2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, update test expectations after r262612
+        https://bugs.webkit.org/show_bug.cgi?id=212822
+
+        Unreviewed gardening.
+
+        Remove unnecessary baseline and gardened several flaky tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/select/popup-closes-on-blur-expected.txt: Added after r262607.
+
+2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update test expectations after r262609
         https://bugs.webkit.org/show_bug.cgi?id=212813
 
