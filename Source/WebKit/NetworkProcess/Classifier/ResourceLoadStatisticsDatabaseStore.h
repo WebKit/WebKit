@@ -95,7 +95,7 @@ public:
     void classifyPrevalentResources() override;
     void syncStorageIfNeeded() override { };
     void syncStorageImmediately() override { };
-    void runVacuumCommand();
+    void runIncrementalVacuumCommand();
 
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&) override;
 

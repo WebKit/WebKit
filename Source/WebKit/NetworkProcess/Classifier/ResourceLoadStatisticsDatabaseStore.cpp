@@ -1470,10 +1470,10 @@ void ResourceLoadStatisticsDatabaseStore::classifyPrevalentResources()
     reclassifyResources();
 }
 
-void ResourceLoadStatisticsDatabaseStore::runVacuumCommand()
+void ResourceLoadStatisticsDatabaseStore::runIncrementalVacuumCommand()
 {
     ASSERT(!RunLoop::isMain());
-    m_database.runVacuumCommand();
+    m_database.runIncrementalVacuumCommand();
 }
 
 bool ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const TopFrameDomain& topFrameDomain, const SubFrameDomain& subFrameDomain) const

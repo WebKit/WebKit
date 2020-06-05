@@ -738,7 +738,7 @@ void WebResourceLoadStatisticsStore::performDailyTasks()
             m_statisticsStore->calculateAndSubmitTelemetry();
         }
         if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore))
-            downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).runVacuumCommand();
+            downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).runIncrementalVacuumCommand();
     });
 }
 

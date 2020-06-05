@@ -1,3 +1,20 @@
+2020-06-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        ITP SQLite Database should only vacuum once per day
+        https://bugs.webkit.org/show_bug.cgi?id=212712
+        <rdar://problem/63939711>
+
+        Reviewed by Brent Fulgham.
+
+        Followup to https://trac.webkit.org/changeset/262538/webkit. We should
+        run incremental auto vacuum, not a full vacuum, once per-day, because
+        it is less expensive.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+
 2020-06-05  Daniel Bates  <dabates@apple.com>
 
         -_focusTextInputContext should reposition the caret if called for an already focused text input context
