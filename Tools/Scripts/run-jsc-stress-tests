@@ -1142,7 +1142,7 @@ def runWebAssemblyJetStream2
     prepareExtraRelativeFilesWithBaseDirectory(Dir[JETSTREAM2_PATH + "wasm" + "*.wasm"].map { |f| "wasm/" + File.basename(f) }, $collection.dirname, $extraFilesBaseDir.dirname)
 
     run("default-wasm", *FTL_OPTIONS)
-    if $mode != "quick"
+    if $mode != "quick" and !$memoryLimited
         run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + EAGER_OPTIONS))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)

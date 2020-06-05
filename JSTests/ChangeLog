@@ -1,3 +1,18 @@
+2020-06-05  Saam Barati  <sbarati@apple.com>
+
+        Try to reduce jetsams further on iOS devices running jsc stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=212786
+
+        Reviewed by Mark Lam.
+
+        * wasm/references/multitable.js:
+        (string_appeared_here.vm.isMemoryLimited.tableInsanity):
+        (string_appeared_here.vm.isMemoryLimited.):
+        (string_appeared_here.vm.isMemoryLimited):
+        (string_appeared_here.tableInsanity): Deleted.
+        (I32Const.0.GetLocal.0.TableSet.1.End.End.WebAssembly.): Deleted.
+        (I32Const.0.GetLocal.0.TableSet.1.End.End.WebAssembly): Deleted.
+
 2020-06-05  Devin Rousso  <drousso@apple.com>
 
         Logical Assignment: perform NamedEvaluation of anonymous functions

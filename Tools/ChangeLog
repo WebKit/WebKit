@@ -1,3 +1,12 @@
+2020-06-05  Saam Barati  <sbarati@apple.com>
+
+        Try to reduce jetsams further on iOS devices running jsc stress tests
+        https://bugs.webkit.org/show_bug.cgi?id=212786
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-06-05  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r262456?): [macOS] media/picture-in-picture/picture-in-picture-api tests are flaky timeouts
