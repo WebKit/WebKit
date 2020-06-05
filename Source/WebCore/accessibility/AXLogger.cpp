@@ -29,6 +29,9 @@
 #include "config.h"
 #include "AXLogger.h"
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#include "AXIsolatedObject.h"
+#endif
 #include "AXObjectCache.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
@@ -732,7 +735,7 @@ TextStream& operator<<(TextStream& stream, AXIsolatedTree& tree)
 {
     TextStream::GroupScope groupScope(stream);
     stream << "treeID " << tree.treeID();
-    stream.dumpProperty("rootNodeID", tree.m_rootNodeID);
+    stream.dumpProperty("rootNodeID", tree.rootNode()->objectID());
     stream.dumpProperty("focusedNodeID", tree.m_focusedNodeID);
     AXLogger::add(stream, tree.rootNode(), true);
     return stream;

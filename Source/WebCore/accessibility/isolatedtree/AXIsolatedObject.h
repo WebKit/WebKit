@@ -58,7 +58,7 @@ public:
     bool isDetached() const override;
 
     void setParent(AXID);
-    void appendChild(AXID);
+    void setChildrenIDs(Vector<AXID>&&);
 
 private:
     void detachRemoteParts(AccessibilityDetachmentType) override;

@@ -456,10 +456,10 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVa
         m_attributeMap.set(propertyName, value);
 }
 
-void AXIsolatedObject::appendChild(AXID axID)
+void AXIsolatedObject::setChildrenIDs(Vector<AXID>&& childrenIDs)
 {
     ASSERT(isMainThread());
-    m_childrenIDs.append(axID);
+    m_childrenIDs = childrenIDs;
 }
 
 void AXIsolatedObject::setParent(AXID parent)

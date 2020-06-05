@@ -63,7 +63,6 @@ public:
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> focusedNode();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
-    static RefPtr<AXIsolatedObject> nodeInTreeForID(AXIsolatedTreeID, AXID);
     Vector<RefPtr<AXCoreObject>> objectsForIDs(Vector<AXID>) const;
 
     struct NodeChange {
@@ -86,7 +85,7 @@ public:
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
     // Focused node updates in AXObjectCache use setFocusNodeID.
-    void setRootNodeID(AXID);
+    void setRootNode(AXIsolatedObject*);
     void setFocusedNodeID(AXID);
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
@@ -97,6 +96,7 @@ public:
 
 private:
     AXIsolatedTree();
+    void clear();
 
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache();
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
@@ -108,18 +108,21 @@ private:
 
     AXObjectCache* m_axObjectCache { nullptr };
 
-    // Only access on AX thread requesting data.
+    // Only accessed on main thread.
+    HashMap<AXID, Vector<AXID>> m_nodeMap;
+    // Only accessed on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
     // Written to by main thread under lock, accessed and applied by AX thread.
+    RefPtr<AXIsolatedObject> m_rootNode;
     Vector<NodeChange> m_pendingAppends; // Nodes to be added to the tree and platform-wrapped.
     Vector<AXID> m_pendingNodeRemovals; // Nodes to be removed from the tree.
     Vector<AXID> m_pendingSubtreeRemovals; // Nodes whose subtrees are to be removed from the tree.
+    Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates;
     AXID m_pendingFocusedNodeID { InvalidAXID };
     Lock m_changeLogLock;
 
     AXIsolatedTreeID m_treeID;
-    AXID m_rootNodeID { InvalidAXID };
     AXID m_focusedNodeID { InvalidAXID };
 };
 

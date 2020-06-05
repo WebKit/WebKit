@@ -1,3 +1,43 @@
+2020-06-05  Andres Gonzalez  <andresg_22@apple.com>
+
+        AXIsolatedTree::updateChildren should not call nodeForID.
+        https://bugs.webkit.org/show_bug.cgi?id=212794
+
+        Reviewed by Chris Fleizach.
+
+        AXIsolatedTree::updateChildren is executed on the main thread and
+        therfore should not call nodeForID. Since it requires the children IDs
+        for the isolated object whose children are being updated, we need to
+        store those children IDs outside the isolated object. For this reason
+        we added the m_nodeMap member variable which will maintain a map between
+        object ID and its children IDs.
+        In addition, since retrieving the root node happens very often and
+        required also a call to nodeForID, we now store a pointer to the root node instead of its ID, so there is no need to look it up in the reading map.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::operator<<):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::setChildrenIDs):
+        (WebCore::AXIsolatedObject::appendChild): Renamed setChildrenIDs.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::clear):
+        (WebCore::AXIsolatedTree::create):
+        (WebCore::AXIsolatedTree::removeTreeForPageID):
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::createSubtree):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::rootNode):
+        (WebCore::AXIsolatedTree::setRootNode):
+        (WebCore::AXIsolatedTree::removeSubtree):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        (WebCore::AXIsolatedTree::nodeInTreeForID): Deleted, not used.
+        (WebCore::AXIsolatedTree::setRootNodeID): Renamed setRootNode.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase attachIsolatedObject:]):
+
 2020-06-05  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
