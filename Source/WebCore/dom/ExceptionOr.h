@@ -32,8 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
-template<typename ReturnType> class ExceptionOr {
+template<typename T> class ExceptionOr {
 public:
+    using ReturnType = T;
+
     ExceptionOr(Exception&&);
     ExceptionOr(ReturnType&&);
     template<typename OtherType> ExceptionOr(const OtherType&, typename std::enable_if<std::is_scalar<OtherType>::value && std::is_convertible<OtherType, ReturnType>::value>::type* = nullptr);
@@ -48,8 +50,11 @@ private:
     Expected<ReturnType, Exception> m_value;
 };
 
-template<typename ReturnReferenceType> class ExceptionOr<ReturnReferenceType&> {
+template<typename T> class ExceptionOr<T&> {
 public:
+    using ReturnType = T&;
+    using ReturnReferenceType = T;
+
     ExceptionOr(Exception&&);
     ExceptionOr(ReturnReferenceType&);
 
@@ -65,6 +70,8 @@ private:
 
 template<> class ExceptionOr<void> {
 public:
+    using ReturnType = void;
+
     ExceptionOr(Exception&&);
     ExceptionOr() = default;
 

@@ -1,3 +1,63 @@
+2020-06-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        DOM constructor should only accept Ref<> / ExceptionOr<Ref<>> for creation to ensure toJSNewlyCreated is always returning object
+        https://bugs.webkit.org/show_bug.cgi?id=212767
+
+        Reviewed by Darin Adler.
+
+        When using toJSNewlyCreated in DOM constructor, we should ensure that this only returns JSObject* (if exception is not happening) to
+        avoid `isObject()` check after that. However AudioContext and ImageData is not following this and can return nullptr from `create` factory
+        function. We should not allow this.
+
+        In this patch,
+
+        1. AudioContext should throw an error instead of returning null. AudioContext had a limit derived from OS, but this limit is reasonable only
+           in Windows. We should insert `OS(WINDOWS)` around this check, and throw an error instead of returning null.
+
+        2. ImageData::create can return nullptr potentially, and it can be converted to null. This is not acceptable for DOM constructor. We should throw
+           an error if we failed to create ImageData.
+
+        3. We inserted static_asserts in CodeGeneratorJS.pm to ensure that XXX::create only returns Ref<> or ExceptionOr<Ref<>>. This ensures that toJSNewlyCreated
+           will return JSObject*.
+
+        This patch is relanding of the completely same patch since internal build is fixed.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence1):
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence2):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventConstructor::construct):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        * dom/ExceptionOr.h:
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        * html/ImageData.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::videoSampleAvailable):
+
 2020-06-05  Tyler Wilcock  <twilco.o@protonmail.com>
 
         CSS Variables: Color on specific `border` properties does not work.

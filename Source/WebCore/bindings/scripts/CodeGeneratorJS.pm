@@ -7461,6 +7461,12 @@ sub GenerateConstructorDefinition
 
             push(@$outputArray, "    auto object = ${functionString};\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ExecState");
+            if ($interface->extendedAttributes->{ConstructorMayThrowException}) {
+                push(@$outputArray, "    static_assert(IsExceptionOr<decltype(object)>::value);\n");
+                push(@$outputArray, "    static_assert(decltype(object)::ReturnType::isRef);\n");
+            } else {
+                push(@$outputArray, "    static_assert(decltype(object)::isRef);\n");
+            }
 
             my $IDLType = GetIDLType($interface, $interface->type);
             my $implType = GetImplClassName($interface);
@@ -7474,13 +7480,10 @@ sub GenerateConstructorDefinition
             push(@constructionConversionArguments, "WTFMove(object)");
 
             # FIXME: toJSNewlyCreated should return JSObject* instead of JSValue.
-            # But certain constructor can return jsNull() e.g. AudioContext.
             push(@$outputArray, "    auto jsValue = toJSNewlyCreated<${IDLType}>(" . join(", ", @constructionConversionArguments) . ");\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $interface->extendedAttributes->{ConstructorMayThrowException};
-            push(@$outputArray, "    if (auto* object = jsDynamicCast<JSObject*>(vm, jsValue)) {\n");
-            push(@$outputArray, "        setSubclassStructureIfNeeded<${implType}>(lexicalGlobalObject, callFrame, object);\n");
-            push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, { });\n");
-            push(@$outputArray, "    }\n");
+            push(@$outputArray, "    setSubclassStructureIfNeeded<${implType}>(lexicalGlobalObject, callFrame, asObject(jsValue));\n");
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n");
             push(@$outputArray, "    return JSValue::encode(jsValue);\n");
             push(@$outputArray, "}\n\n");
         }

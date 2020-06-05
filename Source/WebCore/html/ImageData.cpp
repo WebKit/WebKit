@@ -77,7 +77,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&
     return adoptRef(*new ImageData(size, WTFMove(byteArray)));
 }
 
-ExceptionOr<RefPtr<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh)
+ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh)
 {
     unsigned length = byteArray->length();
     if (!length || length % 4)
@@ -92,7 +92,10 @@ ExceptionOr<RefPtr<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteAr
     if (sh && sh.value() != height)
         return Exception { IndexSizeError, "sh value is not equal to height"_s };
 
-    return create(IntSize(sw, height), WTFMove(byteArray));
+    auto result = create(IntSize(sw, height), WTFMove(byteArray));
+    if (!result)
+        return Exception { RangeError };
+    return result.releaseNonNull();
 }
 
 ImageData::ImageData(const IntSize& size)
