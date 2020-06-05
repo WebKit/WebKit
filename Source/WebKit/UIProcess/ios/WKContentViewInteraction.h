@@ -361,6 +361,8 @@ struct WKAutoCorrectionData {
     BOOL _textInteractionIsHappening;
     bool _isWaitingOnPositionInformation;
 
+    Optional<WebCore::IntPoint> _pointInsideLastFocusedTextInputContext;
+
     WebCore::PointerID m_commitPotentialTapPointerId;
 
     BOOL _keyboardDidRequestDismissal;

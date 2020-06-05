@@ -934,6 +934,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _textInteractionDidChangeFocusedElement = NO;
     _textInteractionIsHappening = NO;
+    _pointInsideLastFocusedTextInputContext = WTF::nullopt;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform"];
@@ -4290,6 +4291,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
     _textInteractionDidChangeFocusedElement = NO;
     _textInteractionIsHappening = NO;
+    _pointInsideLastFocusedTextInputContext = WTF::nullopt;
     _hasValidPositionInformation = NO;
     _positionInformation = { };
 }
@@ -5161,10 +5163,12 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         completionHandler(nil);
         return;
     }
-    if ([self _isTextInputContextFocused:context]) {
+    WebCore::IntPoint pointInsideTextInputContext { point };
+    if ([self _isTextInputContextFocused:context] && _pointInsideLastFocusedTextInputContext == pointInsideTextInputContext) {
         completionHandler(_focusedElementInformation.isReadOnly ? nil : self);
         return;
     }
+    _pointInsideLastFocusedTextInputContext = pointInsideTextInputContext;
     _usingGestureForSelection = YES;
     auto checkFocusedElement = [weakSelf = WeakObjCPtr<WKContentView> { self }, context = adoptNS([context copy]), completionHandler = makeBlockPtr(completionHandler)] (bool success) {
         auto strongSelf = weakSelf.get();
@@ -5178,7 +5182,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         strongSelf->_usingGestureForSelection = NO;
         completionHandler(isFocused && isEditable ? strongSelf.get() : nil);
     };
-    _page->focusTextInputContextAndPlaceCaret(context._textInputContext, WebCore::IntPoint { point }, WTFMove(checkFocusedElement));
+    _page->focusTextInputContextAndPlaceCaret(context._textInputContext, pointInsideTextInputContext, WTFMove(checkFocusedElement));
 }
 
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler

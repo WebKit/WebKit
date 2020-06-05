@@ -1,3 +1,28 @@
+2020-06-05  Daniel Bates  <dabates@apple.com>
+
+        -_focusTextInputContext should reposition the caret if called for an already focused text input context
+        https://bugs.webkit.org/show_bug.cgi?id=212830
+        <rdar://problem/64032956>
+
+        Reviewed by Wenson Hsieh.
+
+        Update the code based on new feedback: the caret should now be re-positioned when -_focusTextInputContext
+        is called on an already assisted text input context.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _didCommitLoadForMainFrame]): Reset state. See below for why.
+
+        (-[WKContentView _focusTextInputContext:placeCaretAt:completionHandler:]): I cannot simply remove the early
+        return in -_focusTextInputContext that detects if the specified text input context is already focused because
+        it could effect user-visible responsiveness due to an Apple internal client invoking this function more times
+        than necessary with the same point during a text interaction. See <rdar://problem/59430806>. That radar
+        represents a correctness issue. I didn't actually evaluate whether responsiveness is affected by this patch,
+        but I would feel more confident that there would be 0 impact when removing the early branch after that radar
+        is fixed without the need to even perform a responsiveness analysis. Note that there is already a comment about
+        that radar at the top of this function.
+
 2020-06-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix PDF opening after r262592
