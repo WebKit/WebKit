@@ -32,8 +32,7 @@
 #import "Event.h"
 #import "EventListener.h"
 #import "EventNames.h"
-#import "HTMLElement.h"
-#import "HTMLMediaElement.h"
+#import "HTMLVideoElement.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
 #import "MediaSelectionOption.h"
@@ -314,10 +313,15 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
 
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
-    if (m_mediaElement->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
-        m_mediaElement->exitFullscreen();
+    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
+    if (!is<HTMLVideoElement>(*m_mediaElement))
+        return;
+
+    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
+    if (element.fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
+        element.setFullscreenMode(MediaPlayerEnums::VideoFullscreenModeNone);
     else
-        m_mediaElement->enterFullscreen(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
+        element.setFullscreenMode(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
 void PlaybackSessionModelMediaElement::toggleMuted()
