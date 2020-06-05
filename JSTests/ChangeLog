@@ -1,5 +1,18 @@
 2020-06-05  Saam Barati  <sbarati@apple.com>
 
+        Audit safe to execute
+        https://bugs.webkit.org/show_bug.cgi?id=207075
+        <rdar://problem/59085094>
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/licm-dom-jit.js: Added.
+        (assert):
+        (foo):
+        (bar):
+
+2020-06-05  Saam Barati  <sbarati@apple.com>
+
         Try to reduce jetsams further on iOS devices running jsc stress tests
         https://bugs.webkit.org/show_bug.cgi?id=212786
 

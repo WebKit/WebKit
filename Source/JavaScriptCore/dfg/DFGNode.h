@@ -47,6 +47,7 @@
 #include "DFGTransition.h"
 #include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
+#include "DOMJITSignature.h"
 #include "DeleteByIdVariant.h"
 #include "GetByIdVariant.h"
 #include "JSCJSValue.h"
@@ -278,6 +279,7 @@ struct CallDOMGetterData {
     const DOMJIT::GetterSetter* domJIT { nullptr };
     DOMJIT::CallDOMGetterSnippet* snippet { nullptr };
     unsigned identifierNumber { 0 };
+    const ClassInfo* requiredClassInfo { nullptr };
 };
 
 enum class BucketOwnerType : uint32_t {
@@ -2951,6 +2953,7 @@ public:
 
     const ClassInfo* classInfo()
     {
+        ASSERT(hasClassInfo());
         return m_opInfo.as<const ClassInfo*>();
     }
 
@@ -2964,6 +2967,19 @@ public:
     const DOMJIT::Signature* signature()
     {
         return m_opInfo.as<const DOMJIT::Signature*>();
+    }
+
+    const ClassInfo* requiredDOMJITClassInfo()
+    {
+        switch (op()) {
+        case CallDOMGetter:
+            return callDOMGetterData()->requiredClassInfo;
+        case CallDOM:
+            return signature()->classInfo;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return nullptr;
     }
 
     bool hasInternalMethodType() const

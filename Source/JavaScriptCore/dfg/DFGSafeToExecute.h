@@ -183,8 +183,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     // always effectful, we return false for, to make auditing the "return true" cases easier.
 
     switch (node->op()) {
-    // FIXME: Audit these:
-    // https://bugs.webkit.org/show_bug.cgi?id=207075
     case JSConstant:
     case DoubleConstant:
     case Int52Constant:
@@ -213,14 +211,12 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArithSub:
     case ArithNegate:
     case ArithMul:
-    case ArithIMul:
     case ArithDiv:
     case ArithMod:
     case ArithAbs:
     case ArithMin:
     case ArithMax:
     case ArithPow:
-    case ArithRandom:
     case ArithSqrt:
     case ArithFRound:
     case ArithRound:
@@ -228,12 +224,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArithCeil:
     case ArithTrunc:
     case ArithUnary:
-    case TryGetById: // FIXME: Audit this: https://bugs.webkit.org/show_bug.cgi?id=163834
     case CheckStructure:
     case CheckStructureOrEmpty:
     case GetExecutable:
-    case CallDOMGetter:
-    case CallDOM:
     case CheckJSCast:
     case CheckArray:
     case CheckArrayOrEmpty:
@@ -303,8 +296,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case GetPrototypeOf:
-    case StringReplace:
-    case StringReplaceRegExp:
     case GetRegExpObjectLastIndex:
     case MapHash:
     case NormalizeMapKey:
@@ -479,6 +470,20 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
             }
         }
         return true;
+    }
+
+    case CallDOMGetter:
+    case CallDOM: {
+        Node* thisNode = node->child1().node();
+        StructureAbstractValue& structures = state.forNode(thisNode).m_structure;
+        if (!structures.isFinite())
+            return false;
+        bool isSafe = true;
+        const ClassInfo* classInfo = node->requiredDOMJITClassInfo();
+        structures.forEach([&] (RegisteredStructure structure) {
+            isSafe &= structure->classInfo()->isSubClassOf(classInfo);
+        });
+        return isSafe;
     }
 
     case ToThis:
@@ -667,6 +672,11 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case DataViewSet:
     case SetAdd:
     case MapSet:
+    case StringReplaceRegExp:
+    case StringReplace:
+    case ArithRandom:
+    case ArithIMul:
+    case TryGetById:
         return false;
 
     case Inc:

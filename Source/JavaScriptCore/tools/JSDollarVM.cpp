@@ -930,6 +930,99 @@ void DOMJITGetter::finishCreation(VM& vm)
     putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
 }
 
+class DOMJITGetterNoEffects : public DOMJITNode {
+public:
+    DOMJITGetterNoEffects(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    DECLARE_INFO;
+    typedef DOMJITNode Base;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        DollarVMAssertScope assertScope;
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSC::JSType(LastJSCObjectType + 1), StructureFlags), info());
+    }
+
+    static DOMJITGetterNoEffects* create(VM& vm, Structure* structure)
+    {
+        DollarVMAssertScope assertScope;
+        DOMJITGetterNoEffects* getter = new (NotNull, allocateCell<DOMJITGetterNoEffects>(vm.heap)) DOMJITGetterNoEffects(vm, structure);
+        getter->finishCreation(vm);
+        return getter;
+    }
+
+    class DOMJITAttribute : public DOMJIT::GetterSetter {
+    public:
+        ALWAYS_INLINE constexpr DOMJITAttribute()
+            : DOMJIT::GetterSetter(
+                DOMJITGetterNoEffects::customGetter,
+#if ENABLE(JIT)
+                &callDOMGetter,
+#else
+                nullptr,
+#endif
+                SpecInt32Only)
+        {
+        }
+
+#if ENABLE(JIT)
+        static EncodedJSValue JIT_OPERATION slowCall(JSGlobalObject* globalObject, void* pointer)
+        {
+            DollarVMAssertScope assertScope;
+            VM& vm = globalObject->vm();
+            CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+            JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+            return JSValue::encode(jsNumber(static_cast<DOMJITGetterNoEffects*>(pointer)->value()));
+        }
+
+        static Ref<DOMJIT::CallDOMGetterSnippet> callDOMGetter()
+        {
+            DollarVMAssertScope assertScope;
+            Ref<DOMJIT::CallDOMGetterSnippet> snippet = DOMJIT::CallDOMGetterSnippet::create();
+            snippet->effect = DOMJIT::Effect::forRead(DOMJIT::HeapRange(10, 11));
+            snippet->requireGlobalObject = true;
+            snippet->setGenerator([=] (CCallHelpers& jit, SnippetParams& params) {
+                DollarVMAssertScope assertScope;
+                JSValueRegs results = params[0].jsValueRegs();
+                GPRReg domGPR = params[1].gpr();
+                GPRReg globalObjectGPR = params[2].gpr();
+                params.addSlowPathCall(jit.jump(), jit, slowCall, results, globalObjectGPR, domGPR);
+                return CCallHelpers::JumpList();
+
+            });
+            return snippet;
+        }
+#endif
+    };
+
+private:
+    void finishCreation(VM&);
+
+    static EncodedJSValue customGetter(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName)
+    {
+        DollarVMAssertScope assertScope;
+        VM& vm = globalObject->vm();
+        DOMJITNode* thisObject = jsDynamicCast<DOMJITNode*>(vm, JSValue::decode(thisValue));
+        ASSERT(thisObject);
+        return JSValue::encode(jsNumber(thisObject->value()));
+    }
+};
+
+static const DOMJITGetterNoEffects::DOMJITAttribute DOMJITGetterNoEffectsDOMJIT;
+
+void DOMJITGetterNoEffects::finishCreation(VM& vm)
+{
+    DollarVMAssertScope assertScope;
+    Base::finishCreation(vm);
+    const DOMJIT::GetterSetter* domJIT = &DOMJITGetterNoEffectsDOMJIT;
+    auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { DOMJITNode::info(), domJIT });
+    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+}
 
 class DOMJITGetterComplex : public DOMJITNode {
 public:
@@ -1124,7 +1217,7 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-static const DOMJIT::Signature DOMJITFunctionObjectSignature(DOMJITFunctionObject::functionWithoutTypeCheck, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange::top()), SpecInt32Only);
+static const DOMJIT::Signature DOMJITFunctionObjectSignature(DOMJITFunctionObject::functionWithoutTypeCheck, DOMJITFunctionObject::info(), DOMJIT::Effect::forRead(DOMJIT::HeapRange(DOMJIT::HeapRange::ConstExpr, 0, 1)), SpecInt32Only);
 
 void DOMJITFunctionObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -1418,6 +1511,7 @@ const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, &DO
 const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
 #endif
 const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
+const ClassInfo DOMJITGetterNoEffects::s_info = { "DOMJITGetterNoEffects", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterNoEffects) };
 const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
 const ClassInfo DOMJITGetterBaseJSObject::s_info = { "DOMJITGetterBaseJSObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterBaseJSObject) };
 #if ENABLE(JIT)
@@ -2337,6 +2431,16 @@ static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterObject(JSGlobalObj
     return JSValue::encode(result);
 }
 
+static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterNoEffectsObject(JSGlobalObject* globalObject, CallFrame*)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    Structure* structure = DOMJITGetterNoEffects::createStructure(vm, globalObject, jsNull());
+    DOMJITGetterNoEffects* result = DOMJITGetterNoEffects::create(vm, structure);
+    return JSValue::encode(result);
+}
+
 static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterComplexObject(JSGlobalObject* globalObject, CallFrame*)
 {
     DollarVMAssertScope assertScope;
@@ -3068,6 +3172,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createCustomGetterObject", functionCreateCustomGetterObject, 0);
     addFunction(vm, "createDOMJITNodeObject", functionCreateDOMJITNodeObject, 0);
     addFunction(vm, "createDOMJITGetterObject", functionCreateDOMJITGetterObject, 0);
+    addFunction(vm, "createDOMJITGetterNoEffectsObject", functionCreateDOMJITGetterNoEffectsObject, 0);
     addFunction(vm, "createDOMJITGetterComplexObject", functionCreateDOMJITGetterComplexObject, 0);
     addFunction(vm, "createDOMJITFunctionObject", functionCreateDOMJITFunctionObject, 0);
     addFunction(vm, "createDOMJITCheckJSCastObject", functionCreateDOMJITCheckJSCastObject, 0);

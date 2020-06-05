@@ -4040,6 +4040,7 @@ private:
         node->convertToCallDOM(m_graph);
         fixupCheckJSCast(checkSubClass);
         fixupCallDOM(node);
+        RELEASE_ASSERT(node->child1().node() == thisNode);
         return true;
     }
 
