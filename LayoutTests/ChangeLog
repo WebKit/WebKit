@@ -1,3 +1,20 @@
+2020-06-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Update WPT tests for offscreen-canvas (and rename to html/canvas/offscreen)
+        https://bugs.webkit.org/show_bug.cgi?id=212613
+
+        Reviewed by Žan Doberšek.
+
+        Upstream WPT the tests from /offscreen-canvas were moved to /html/canvas/offscreen
+        Remove the old tests and re-import the new ones.
+        Rename paths in TestExpectation files and update baselines.
+
+        * TestExpectations:
+        * gpu-process/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * tests-options.json:
+
 2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update test expectations after r262612

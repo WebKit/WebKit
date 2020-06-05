@@ -1,7 +1,0 @@
-size.attributes.parse.minus
-
-Parsing of non-negative integers
-
-
-FAIL Parsing of non-negative integers Value -100 is outside the range [0, 4294967295]
-

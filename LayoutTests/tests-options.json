@@ -1376,6 +1376,96 @@
     "imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.uncovered.fill.destination-in.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.3arg.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.5arg.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.basic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.destpos.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.destsize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.sourcepos.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.sourcesize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.alpha.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.animated.poster.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.broken.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.canvas.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.clip.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.composite.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.floatsource.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.negativedest.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.negativedir.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.negativesource.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.nonfinite.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.nowrap.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.null.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.path.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.self.1.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.self.2.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.svg.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.transform.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.wrongtype.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerocanvas.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none.https.html": [
         "slow"
     ],

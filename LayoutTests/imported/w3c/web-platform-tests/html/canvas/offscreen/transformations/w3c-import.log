@@ -1,0 +1,61 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.getTransform.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.order.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.order.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.direction.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.direction.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.nonfinite.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.radians.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.radians.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.wrap.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.wrapnegative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.wrapnegative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate.zero.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.basic.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.large.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.large.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.multiple.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.negative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.negative.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.nonfinite.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.zero.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.multiple.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.nonfinite.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.skewed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.skewed.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.identity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.identity.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.multiply.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.multiply.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.nonfinite.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.skewed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.skewed.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.basic.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.nonfinite.worker.js
