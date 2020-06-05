@@ -1,5 +1,17 @@
 2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, update test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=212810
+
+        Unreviewed gardening.
+
+        webrtc/datachannel/gather-candidates-networkprocess-crash.html is a
+        timeout flaky failure.
+
+        * platform/gtk/TestExpectations:
+
+2020-06-05  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Gardening, update test expectations
         https://bugs.webkit.org/show_bug.cgi?id=212808
 
