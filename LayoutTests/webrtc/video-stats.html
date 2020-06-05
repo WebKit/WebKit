@@ -29,6 +29,34 @@ function checkStatsReportIterator(report)
         assert_equals(pair.length, 2);
 }
 
+function getAudioSourceStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "media-source" && statItem.kind === "audio") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function getVideoSourceStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "media-source" && statItem.kind === "video") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
 function getInboundRTPStats(connection)
 {
     return connection.getStats().then((report) => {
@@ -104,13 +132,15 @@ promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true});
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio : true, video: true});
     await new Promise((resolve, reject) => {
         createConnections((connection) => {
             firstConnection = connection;
+            firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
             firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
         }, (connection) => {
             secondConnection = connection;
+            secondConnection.addTrack(localStream.getAudioTracks()[0], localStream);
             secondConnection.addTrack(localStream.getVideoTracks()[0], localStream);
             secondConnection.ontrack = (trackEvent) => {
                 resolve();
@@ -137,10 +167,16 @@ promise_test(async (test) => {
     await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
 
     let types = await getStatsType(firstConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
 
     types = await getStatsType(secondConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
+
+     const audioSourceStats = await getAudioSourceStats(firstConnection);
+     assert_true(!!audioSourceStats, "audio source presence");
+
+     const videoSourceStats = await getVideoSourceStats(firstConnection);
+     assert_true(!!videoSourceStats, "video source presence");
 }, "Basic video stats");
 
 promise_test(async (test) => {

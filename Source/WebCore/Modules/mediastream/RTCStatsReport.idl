@@ -32,17 +32,18 @@
 };
 
 enum RTCStatsType {
+    "candidate-pair",
+    "certificate",
     "codec",
+    "data-channel",
     "inbound-rtp",
+    "local-candidate",
+    "media-source",
     "outbound-rtp",
     "peer-connection",
-    "data-channel",
-    "track",
-    "transport",
-    "candidate-pair",
-    "local-candidate",
     "remote-candidate",
-    "certificate"
+    "track",
+    "transport"
 };
 
 typedef double DOMHighResTimeStamp;
@@ -95,6 +96,7 @@ dictionary RTCOutboundRTPStreamStats : RTCRTPStreamStats {
     double targetBitrate;
     // FIXME 169662: missing roundTripTime
     unsigned long framesEncoded;
+    DOMString mediaSourceId;
 };
 
 [ JSGenerateToJSObject ]
@@ -235,6 +237,29 @@ dictionary RTCPeerConnectionStats : RTCStats {
     unsigned long dataChannelsClosed;
     // unsigned long dataChannelsRequested;
     // unsigned long dataChannelsAccepted;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCMediaSourceStats : RTCStats {
+    required DOMString  trackIdentifier;
+    required DOMString  kind;
+    boolean relayedSource;
+};
+
+dictionary RTCAudioSourceStats : RTCMediaSourceStats {
+    double audioLevel;
+    double totalAudioEnergy;
+    double totalSamplesDuration;
+    double echoReturnLoss;
+    double echoReturnLossEnhancement;
+};
+
+dictionary RTCVideoSourceStats : RTCMediaSourceStats {
+    unsigned long width;
+    unsigned long height;
+    unsigned long bitDepth;
+    unsigned long frames;
+    double framesPerSecond;
 };
 
 // FIXME 169662: missing RTCMediaStreamStats

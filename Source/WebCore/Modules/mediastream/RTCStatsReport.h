@@ -39,17 +39,18 @@ public:
     void initializeMapLike(DOMMapAdapter& adapter) { m_mapInitializer(adapter); }
 
     enum class Type {
+        CandidatePair,
+        Certificate,
         Codec,
+        DataChannel,
         InboundRtp,
+        LocalCandidate,
+        MediaSource,
         OutboundRtp,
         PeerConnection,
-        DataChannel,
-        Track,
-        Transport,
-        CandidatePair,
-        LocalCandidate,
         RemoteCandidate,
-        Certificate
+        Track,
+        Transport
     };
     struct Stats {
         double timestamp;
@@ -100,6 +101,7 @@ public:
         Optional<uint64_t> bytesSent;
         Optional<double> targetBitrate;
         Optional<uint32_t> framesEncoded;
+        String mediaSourceId;
     };
 
     struct MediaStreamTrackStats : Stats {
@@ -231,6 +233,32 @@ public:
 
         Optional<uint32_t> dataChannelsOpened;
         Optional<uint32_t> dataChannelsClosed;
+    };
+
+    struct MediaSourceStats : Stats {
+        String trackIdentifier;
+        String kind;
+        Optional<bool> relayedSource;
+    };
+
+    struct AudioSourceStats : MediaSourceStats {
+        AudioSourceStats() { type = RTCStatsReport::Type::MediaSource; }
+
+        Optional<double> audioLevel;
+        Optional<double> totalAudioEnergy;
+        Optional<double> totalSamplesDuration;
+        Optional<double> echoReturnLoss;
+        Optional<double> echoReturnLossEnhancement;
+    };
+
+    struct VideoSourceStats : MediaSourceStats {
+        VideoSourceStats() { type = RTCStatsReport::Type::MediaSource; }
+
+        Optional<unsigned long> width;
+        Optional<unsigned long> height;
+        Optional<unsigned long> bitDepth;
+        Optional<unsigned long> frames;
+        Optional<double> framesPerSecond;
     };
 
 private:

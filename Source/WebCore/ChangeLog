@@ -1,3 +1,24 @@
+2020-06-05  Youenn Fablet  <youenn@apple.com>
+
+        Ad support for media-source stats
+        https://bugs.webkit.org/show_bug.cgi?id=212702
+
+        Reviewed by Eric Carlson.
+
+        Expose 'media-source' stats which come in audio and video flavours.
+        Covered by updated test.
+
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::AudioSourceStats::AudioSourceStats):
+        (WebCore::RTCStatsReport::VideoSourceStats::VideoSourceStats):
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillRTCMediaSourceStats):
+        (WebCore::fillRTCAudioSourceStats):
+        (WebCore::fillRTCVideoSourceStats):
+        (WebCore::initializeRTCStatsReportBackingMap):
+
 2020-06-04  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation: first and last unit in a paragraph should not contain only excluded tokens
