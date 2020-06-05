@@ -176,18 +176,22 @@ bool CSSProperty::isDescriptorOnly(CSSPropertyID propertyID)
 bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
 {
     switch (propertyID) {
-    case CSSPropertyBorderInlineEndColor:
-    case CSSPropertyBorderInlineEndStyle:
-    case CSSPropertyBorderInlineEndWidth:
-    case CSSPropertyBorderInlineStartColor:
-    case CSSPropertyBorderInlineStartStyle:
-    case CSSPropertyBorderInlineStartWidth:
-    case CSSPropertyBorderBlockStartColor:
-    case CSSPropertyBorderBlockStartStyle:
-    case CSSPropertyBorderBlockStartWidth:
+    case CSSPropertyBorderBlockEnd:
     case CSSPropertyBorderBlockEndColor:
     case CSSPropertyBorderBlockEndStyle:
     case CSSPropertyBorderBlockEndWidth:
+    case CSSPropertyBorderBlockStart:
+    case CSSPropertyBorderBlockStartColor:
+    case CSSPropertyBorderBlockStartStyle:
+    case CSSPropertyBorderBlockStartWidth:
+    case CSSPropertyBorderInlineEnd:
+    case CSSPropertyBorderInlineEndColor:
+    case CSSPropertyBorderInlineEndStyle:
+    case CSSPropertyBorderInlineEndWidth:
+    case CSSPropertyBorderInlineStart:
+    case CSSPropertyBorderInlineStartColor:
+    case CSSPropertyBorderInlineStartStyle:
+    case CSSPropertyBorderInlineStartWidth:
     case CSSPropertyInsetInlineEnd:
     case CSSPropertyInsetInlineStart:
     case CSSPropertyInsetBlockStart:

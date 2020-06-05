@@ -1,3 +1,15 @@
+2020-06-05  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        CSS Variables: Color on specific `border` properties does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=211672
+
+        Reviewed by Antti Koivisto.
+
+        Add test verifying CSS variables work as values in the `border-block-start`, `border-block-end`, `border-inline-start`, and `border-inline-end` properties.
+
+        * fast/borders/logical-border-props-with-variables.html: Added.
+        * fast/borders/logical-border-props-with-variables-expected.html: Added.
+
 2020-06-05  Jacob Uphoff  <jacob_uphoff@apple.com>
 
         [ macOS wk1 ] http/tests/media/reload-after-dialog.html is a flaky failure

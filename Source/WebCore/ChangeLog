@@ -1,3 +1,20 @@
+2020-06-05  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        CSS Variables: Color on specific `border` properties does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=211672
+
+        Reviewed by Antti Koivisto.
+
+        Properly mark CSSPropertyBorderBlockStart, CSSPropertyBorderBlockEnd, CSSPropertyBorderInlineStart, and CSSPropertyBorderInlineEnd as
+        direction-aware properties in CSSProperty::isDirectionAwareProperty.  Also reordered a few properties in this switch so it's more
+        alphabetically ordered.  Prior to this change, CSS variables were not able to be resolved when used in these properties.
+
+        Test: fast/borders/logical-border-props-with-variables.html
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isDirectionAwareProperty):
+        Add CSSPropertyBorderBlockStart, CSSPropertyBorderBlockEnd, CSSPropertyBorderInlineStart, CSSPropertyBorderInlineEnd.
+
 2020-06-05  Andres Gonzalez  <andresg_22@apple.com>
 
         AXIsolatedTree::updateChildren should not call nodeForID.
