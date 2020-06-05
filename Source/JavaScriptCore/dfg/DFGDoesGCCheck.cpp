@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DFGDoesGCCheck.h"
 
-#include "CallFrame.h"
+#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "DFGNodeType.h"
 #include "Heap.h"

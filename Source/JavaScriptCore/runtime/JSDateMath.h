@@ -42,6 +42,7 @@
 
 #pragma once
 
+#include "VMInlines.h"
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
 
