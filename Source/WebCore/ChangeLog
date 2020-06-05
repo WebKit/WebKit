@@ -1,3 +1,23 @@
+2020-06-04  Jack Lee  <shihchieh_lee@apple.com>
+
+        Nullptr crash in DeleteSelectionCommand::doApply() when ending position is disconnected.
+        https://bugs.webkit.org/show_bug.cgi?id=212723
+        <rdar://problem/63866653>
+
+        Reviewed by Geoffrey Garen.
+
+        In this test case, while merging paragraphs after deleting a text element, we need call removeNodeAndPruneAncestors()
+        to remove a BR node. However, the ancestor of BR is also removed. Later we try to insert a node at the parent of the
+        removed ancestor in function DeleteSelectionCommand::doApply().
+
+        For now we just check the parentless inserting position and bail out. The proper fix should be re-designing 
+        removeNodeAndPruneAncestors() or select a different inserting position after removeNodeAndPruneAncestors() is called.
+
+        Test: editing/deleting/delete-txt-in-dl-crash.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+
 2020-06-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PlayStation] Unreviewed revert of build fix. Missing include was not the cause.

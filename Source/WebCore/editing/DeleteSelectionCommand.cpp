@@ -943,6 +943,13 @@ void DeleteSelectionCommand::doApply()
     if (m_needPlaceholder) {
         if (m_sanitizeMarkup)
             removeRedundantBlocks();
+
+        // FIXME (Bug 212723): m_endingPosition becomes disconnected in moveParagraph()
+        // because it is ancestor of the deleted element and gets pruned in removeNodeAndPruneAncestors().
+        // Either removeNodeAndPruneAncestors() should not remove ending position or we should find
+        // a different ending position.
+        if (!m_endingPosition.containerNode() || !m_endingPosition.containerNode()->isConnected())
+            return;
         insertNodeAt(HTMLBRElement::create(document()), m_endingPosition);
     }
 
