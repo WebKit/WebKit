@@ -1,3 +1,22 @@
+2020-06-05  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility isolated tree mode: crashes when navigating websites, com.apple.AppKit: ConvertOutgoingValueForAttribute.
+        https://bugs.webkit.org/show_bug.cgi?id=212829
+        <rdar://problem/63756267>
+
+        Reviewed by Chris Fleizach.
+
+        - [WebAccessibilityObjectWrapper textMarkerRangeFromVisiblePositions] must
+        retrieve an autoreleased id from the main thread.
+        - [WebAccessibilityObjectWrapper textMarkerRangeForSelection] must also
+        retrieve an autoreleased id from the main thread.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper textMarkerRangeFromVisiblePositions:endPosition:]):
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForSelection]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2020-06-05  Jonathan Bedard  <jbedard@apple.com>
 
         WebCore: Guard variable declarations on ENABLE(VIDEO_PRESENTATION_MODE)

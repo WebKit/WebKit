@@ -1284,7 +1284,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
 - (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
 {
-    return Accessibility::retrieveValueFromMainThread<NSAttributedString *>([&startPosition, &endPosition, protectedSelf = retainPtr(self)] () -> id {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&startPosition, &endPosition, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -1881,10 +1881,16 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
 
 - (id)textMarkerRangeForSelection
 {
-    VisibleSelection selection = self.axBackingObject->selection();
-    if (selection.isNone())
-        return nil;
-    return [self textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()];
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
+        auto* backingObject = protectedSelf.get().axBackingObject;
+        if (!backingObject)
+            return nil;
+
+        VisibleSelection selection = backingObject->selection();
+        if (selection.isNone())
+            return nil;
+        return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), selection.visibleStart(), selection.visibleEnd());
+    });
 }
 
 - (id)associatedPluginParent
@@ -2805,11 +2811,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->isList() && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
         return NSAccessibilityVerticalOrientationValue;
 
-    if ([attributeName isEqualToString:@"AXSelectedTextMarkerRange"]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-            return [protectedSelf textMarkerRangeForSelection];
-        });
-    }
+    if ([attributeName isEqualToString:@"AXSelectedTextMarkerRange"])
+        return [self textMarkerRangeForSelection];
 
     if ([attributeName isEqualToString:@"AXStartTextMarker"]) {
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
@@ -4088,10 +4091,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:@"AXTextMarkerRangeForLine"]) {
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&number, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
             auto* backingObject = protectedSelf.get().axBackingObject;
+            if (!backingObject)
+                return nil;
+
             VisiblePositionRange vpRange;
-            if (backingObject && [number unsignedIntegerValue] != NSNotFound)
+            if ([number unsignedIntegerValue] != NSNotFound)
                 vpRange = backingObject->visiblePositionRangeForLine([number unsignedIntValue]);
-            return [protectedSelf textMarkerRangeFromVisiblePositions:vpRange.start endPosition:vpRange.end];
+            return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), vpRange.start, vpRange.end);
         });
     }
 
@@ -4293,9 +4299,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!cache)
                 return nil;
 
-        VisiblePosition visiblePos = visiblePositionForTextMarker(cache, textMarker);
-        VisiblePositionRange vpRange = backingObject->styleRangeForPosition(visiblePos);
-        return [protectedSelf textMarkerRangeFromVisiblePositions:vpRange.start endPosition:vpRange.end];
+            VisiblePosition visiblePos = visiblePositionForTextMarker(cache, textMarker);
+            VisiblePositionRange vpRange = backingObject->styleRangeForPosition(visiblePos);
+            return textMarkerRangeFromVisiblePositions(cache, vpRange.start, vpRange.end);
         });
     }
 
