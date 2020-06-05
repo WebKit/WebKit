@@ -946,3 +946,5 @@ webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
 
 webkit.org/b/212665 svg/custom/textPath-insert-path.svg [ Pass ImageOnlyFailure ]
+
+webkit.org/b/212828 http/tests/media/reload-after-dialog.html [ Pass Failure ]
