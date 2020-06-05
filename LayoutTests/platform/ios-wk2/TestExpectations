@@ -1326,7 +1326,7 @@ webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properti
 
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
 
-webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
+webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Slow Pass Failure ]
 
 webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
@@ -1751,7 +1751,7 @@ webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
 
 webkit.org/b/186045 [ Release ] imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ Pass Failure ]
 
-webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetching.https.html [ Pass Failure ]
-webkit.org/b/212532 http/wpt/service-workers/service-worker-different-process.https.html [ Pass Failure ]
+webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetching.https.html [ Slow Pass Failure ]
+webkit.org/b/212532 http/wpt/service-workers/service-worker-different-process.https.html [ Slow Pass Failure ]
 
 webkit.org/b/212696 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html [ Pass Failure ]
