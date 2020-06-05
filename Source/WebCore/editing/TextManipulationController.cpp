@@ -222,7 +222,7 @@ private:
 
 static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
 {
-    if (input.isSearchField() || equalIgnoringASCIICase(input.attributeWithoutSynchronization(typeAttr), InputTypeNames::text()))
+    if (input.isSearchField() || equalIgnoringASCIICase(input.attributeWithoutSynchronization(HTMLNames::typeAttr), InputTypeNames::text()))
         return !input.lastChangeWasUserEdit();
 
     return input.isTextButton();
@@ -415,7 +415,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
             if (is<HTMLInputElement>(currentElement)) {
                 auto& input = downcast<HTMLInputElement>(currentElement);
                 if (shouldExtractValueForTextManipulation(input))
-                    addItem(ManipulationItemData { { }, { }, makeWeakPtr(currentElement), valueAttr, { ManipulationToken { m_tokenIdentifier.generate(), input.value(), tokenInfo(&currentElement) } } });
+                    addItem(ManipulationItemData { { }, { }, makeWeakPtr(currentElement), HTMLNames::valueAttr, { ManipulationToken { m_tokenIdentifier.generate(), input.value(), tokenInfo(&currentElement) } } });
             }
 
             if (!enclosingItemBoundaryElement && isEnclosingItemBoundaryElement(currentElement))
@@ -465,7 +465,7 @@ void TextManipulationController::didCreateRendererForElement(Element& element)
 using PositionTuple = std::tuple<RefPtr<Node>, unsigned, unsigned>;
 static const PositionTuple makePositionTuple(const Position& position)
 {
-    return { position.anchorNode(), static_cast<unsigned>(position.anchorType()), position.anchorType() == Position::PositionIsOffsetInAnchor ? position.offsetInContainerNode() : 0 }; 
+    return { position.anchorNode(), static_cast<unsigned>(position.anchorType()), position.anchorType() == Position::PositionIsOffsetInAnchor ? position.offsetInContainerNode() : 0 };
 }
 
 static const std::pair<PositionTuple, PositionTuple> makeHashablePositionRange(const VisiblePosition& start, const VisiblePosition& end)
@@ -641,7 +641,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         }
         if (item.attributeName == nullQName())
             element->setTextContent(newValue.toString());
-        else if (item.attributeName == valueAttr && is<HTMLInputElement>(*element))
+        else if (item.attributeName == HTMLNames::valueAttr && is<HTMLInputElement>(*element))
             downcast<HTMLInputElement>(*element).setValue(newValue.toString());
         else
             element->setAttribute(item.attributeName, newValue.toString());

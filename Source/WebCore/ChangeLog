@@ -1,3 +1,23 @@
+2020-06-05  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early summer 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=212819
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * animation/ElementAnimationRareData.cpp: Add missing RenderStyle.h header.
+        * animation/ElementAnimationRareData.h: Add forward declaration for RenderStyle.
+        * editing/TextManipulationController.cpp: Sprinkle missing HTMLNames:: prefixes.
+        (WebCore::shouldExtractValueForTextManipulation):
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::makePositionTuple):
+        (WebCore::TextManipulationController::replace):
+        * platform/graphics/SimpleColor.h: Add missing ColorComponents.h and wtf/text/WTFString.h
+        headers.
+        * workers/service/context/ServiceWorkerThread.cpp: Add missing Logging.h header.
+
 2020-06-05  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove conditionals for ENABLE_APPLE_PAY_SESSION_V(3|4)

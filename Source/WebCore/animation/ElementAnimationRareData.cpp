@@ -29,6 +29,7 @@
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "KeyframeEffectStack.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 

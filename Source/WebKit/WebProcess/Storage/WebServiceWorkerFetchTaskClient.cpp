@@ -30,6 +30,7 @@
 
 #include "DataReference.h"
 #include "FormDataReference.h"
+#include "Logging.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"

@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CSSAnimation;
 class CSSTransition;
+class RenderStyle;
 class WebAnimation;
 
 class ElementAnimationRareData {

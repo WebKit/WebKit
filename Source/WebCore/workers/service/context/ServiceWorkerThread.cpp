@@ -35,6 +35,7 @@
 #include "ExtendableMessageEvent.h"
 #include "JSDOMPromise.h"
 #include "LoaderStrategy.h"
+#include "Logging.h"
 #include "PlatformStrategies.h"
 #include "SWContextManager.h"
 #include "SecurityOrigin.h"

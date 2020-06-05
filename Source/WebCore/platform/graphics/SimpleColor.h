@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "ColorComponents.h"
 #include "ColorUtilities.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
