@@ -119,6 +119,85 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 }
 
 #if ENABLE(BRANCH_COMPACTION)
+#if !CPU(ARM64E) || !ENABLE(FAST_JIT_PERMISSIONS)
+class BranchCompactionLinkBuffer;
+
+using ThreadSpecificBranchCompactionLinkBuffer = ThreadSpecific<BranchCompactionLinkBuffer, WTF::CanBeGCThread::True>;
+
+static ThreadSpecificBranchCompactionLinkBuffer* threadSpecificBranchCompactionLinkBufferPtr;
+
+static ThreadSpecificBranchCompactionLinkBuffer& threadSpecificBranchCompactionLinkBuffer()
+{
+static std::once_flag flag;
+    std::call_once(
+        flag,
+        [] () {
+            threadSpecificBranchCompactionLinkBufferPtr = new ThreadSpecificBranchCompactionLinkBuffer();
+        });
+    return *threadSpecificBranchCompactionLinkBufferPtr;
+}
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
+
+class BranchCompactionLinkBuffer {
+    WTF_MAKE_NONCOPYABLE(BranchCompactionLinkBuffer);
+public:
+    BranchCompactionLinkBuffer()
+    {
+    }
+
+    BranchCompactionLinkBuffer(size_t size)
+    {
+        auto& threadSpecific = threadSpecificBranchCompactionLinkBuffer();
+
+        if (threadSpecific->size() >= size)
+            takeBufferIfLarger(*threadSpecific);
+        else {
+            m_size = size;
+            m_data = static_cast<uint8_t*>(BranchCompactionLinkBufferMalloc::malloc(size));
+        }
+    }
+
+    ~BranchCompactionLinkBuffer()
+    {
+        auto& threadSpecific = threadSpecificBranchCompactionLinkBuffer();
+        threadSpecific->takeBufferIfLarger(*this);
+
+        if (m_data)
+            BranchCompactionLinkBufferMalloc::free(m_data);
+    }
+
+    uint8_t* data()
+    {
+        return m_data;
+    }
+
+private:
+    void takeBufferIfLarger(BranchCompactionLinkBuffer& other)
+    {
+        if (size() >= other.size())
+            return;
+
+        if (m_data)
+            BranchCompactionLinkBufferMalloc::free(m_data);
+
+        m_data = other.m_data;
+        m_size = other.m_size;
+
+        other.m_data = nullptr;
+        other.m_size = 0;
+    }
+
+    size_t size()
+    {
+        return m_size;
+    }
+
+    uint8_t* m_data { nullptr };
+    size_t m_size { 0 };
+};
+#endif
+
 static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_t regionStart, int32_t regionEnd, int32_t offset)
 {
     int32_t ptr = regionStart / sizeof(int32_t);
@@ -146,8 +225,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     ARM64EHash verifyUncompactedHash;
     uint8_t* outData = codeOutData;
 #else
-    AssemblerData outBuffer(m_size);
-    uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.buffer());
+    BranchCompactionLinkBuffer outBuffer(m_size);
+    uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.data());
 #endif
 #if CPU(ARM64)
     RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(outData) == outData);

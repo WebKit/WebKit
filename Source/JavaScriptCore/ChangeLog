@@ -1,3 +1,22 @@
+2020-06-04  Michael Saboff  <msaboff@apple.com>
+
+        Add a Thread Specific Cache for LinkBuffer::CompactAndLinkCode()
+        https://bugs.webkit.org/show_bug.cgi?id=212765
+
+        Reviewed by Saam Barati.
+
+        Added a thread local buffer for CPU types that use a second buffer when compacting.
+        This is very similary to the work done in https://bugs.webkit.org/show_bug.cgi?id=212562.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::threadSpecificBranchCompactionLinkBuffer):
+        (JSC::BranchCompactionLinkBuffer::BranchCompactionLinkBuffer):
+        (JSC::BranchCompactionLinkBuffer::~BranchCompactionLinkBuffer):
+        (JSC::BranchCompactionLinkBuffer::data):
+        (JSC::BranchCompactionLinkBuffer::takeBufferIfLarger):
+        (JSC::BranchCompactionLinkBuffer::size):
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2020-06-04  Mark Lam  <mark.lam@apple.com>
 
         Add Options::validateDoesGC() for turning DoesGC validation on/off.
