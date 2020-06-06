@@ -1,3 +1,66 @@
+2020-06-06  Charlie Turner  <cturner@igalia.com>
+
+        [GTK][WPE][EME] Update WPT and rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=212574
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Updated the encrypted-media directory like so,
+
+        Tools/Scripts/import-w3c-tests -s ~/igalia/sources/wpt/ -d imported/w3c/web-platform-tests/ encrypted-media
+
+        * resources/import-expectations.json:
+        * web-platform-tests/encrypted-media/META.yml: Added.
+        * web-platform-tests/encrypted-media/OWNERS: Removed.
+        * web-platform-tests/encrypted-media/clearkey-check-encryption-scheme.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/clearkey-check-encryption-scheme.https.html: Added.
+        * web-platform-tests/encrypted-media/clearkey-check-status-for-hdcp.https.html: Added.
+        * web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https-expected.txt:
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html: Added.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https-expected.txt.
+        * web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https-expected.txt.
+        * web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/content/w3c-import.log:
+        * web-platform-tests/encrypted-media/drm-check-encryption-scheme.https.html: Added.
+        * web-platform-tests/encrypted-media/drm-check-status-for-hdcp.https.html: Added.
+        * web-platform-tests/encrypted-media/encrypted-media-supported-by-feature-policy.tentative.html: Added.
+        * web-platform-tests/encrypted-media/idlharness.https.html:
+        * web-platform-tests/encrypted-media/polyfill/w3c-import.log:
+        * web-platform-tests/encrypted-media/resources/w3c-import.log:
+        * web-platform-tests/encrypted-media/scripts/check-encryption-scheme.js: Added.
+        (checkEncryptionScheme):
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/check-status-for-hdcp.js: Added.
+        (checkStatusForMinHdcpVersionPolicy):
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/clearkey-update-non-ascii-input.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/generate-request-disallowed-input.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/invalid-license.js:
+        (runTest.):
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-temporary-encrypted-clear-segmented-sources.js: Added.
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-temporary-expired.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/requestmediakeysystemaccess.js:
+        (expect_error):
+        * web-platform-tests/encrypted-media/scripts/setmediakeys.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/syntax-mediakeysession.js:
+        (runTest.func):
+        * web-platform-tests/encrypted-media/scripts/temporary-license-type.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/update-disallowed-input.js:
+        (runTest.):
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/w3c-import.log:
+        * web-platform-tests/encrypted-media/scripts/waiting-for-a-key.js:
+        * web-platform-tests/encrypted-media/util/utils.js:
+        * web-platform-tests/encrypted-media/util/w3c-import.log:
+        * web-platform-tests/encrypted-media/w3c-import.log:
+
 2020-06-05  Sam Weinig  <weinig@apple.com>
 
         Some tests in css/css-color/parsing/system-color-valid.html are failing

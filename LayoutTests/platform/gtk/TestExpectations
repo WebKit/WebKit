@@ -1104,9 +1104,6 @@ editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 # Depends on mac-specific code in TestController.
 webkit.org/b/187550 http/tests/plugins/plugin-allow-then-reload.html [ Failure ]
 
-webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/resources/clearkey-retrieve-destroy-persistent-license.html [ Missing ]
-webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/resources/clearkey-retrieve-persistent-license.html [ Missing ]
-
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
@@ -1157,9 +1154,6 @@ webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
 # Server cookie not handled with platform WebSockets API
 webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Failure ]
-
-webkit.org/b/205857 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
-webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 
 # ch units should be ignored in these tests.
 webkit.org/b/206001 imported/w3c/web-platform-tests/css/css-values/ch-unit-016.html [ ImageOnlyFailure ]
@@ -1434,7 +1428,6 @@ webkit.org/b/186779 http/tests/security/sandboxed-iframe-DENIED-modals.html [ Cr
 
 webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html [ Crash ]
 
-webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash Pass Failure ]
 webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash Pass ]
 webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Crash ]
 
@@ -2110,8 +2103,6 @@ webkit.org/b/190001 transitions/start-transform-transition.html [ Pass Failure ]
 
 webkit.org/b/190703 inspector/worker/console-basic.html [ Failure Pass ]
 webkit.org/b/190703 inspector/worker/debugger-pause.html [ Failure Pass Timeout ]
-
-webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure Pass ]
 
 webkit.org/b/191007 http/tests/media/media-stream/get-display-media-prompt.html [ Crash Pass Timeout ]
 
@@ -2854,7 +2845,6 @@ webkit.org/b/210370 [ Release ] media/track/text-track-cue-is-reachable.html [ P
 
 webkit.org/b/210375 imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Pass Crash ]
 webkit.org/b/210390 storage/domstorage/localstorage/access-storage-after-window-close.html [ Pass Crash ]
 webkit.org/b/210390 storage/domstorage/sessionstorage/blocked-file-access.html [ Pass Crash ]
 webkit.org/b/210390 storage/websql/change-version-handle-reuse.html [ Pass Crash ]
@@ -3196,8 +3186,6 @@ webkit.org/b/188103 imported/w3c/web-platform-tests/mathml/presentation-markup/f
 
 webkit.org/b/188104 webgl/1.0.3/conformance/ogles/GL/vec/vec_009_to_016.html [ Timeout Pass ]
 webkit.org/b/188106 webgl/1.0.3/conformance/ogles/GL/swizzlers/swizzlers_017_to_024.html [ Timeout Pass ]
-
-media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html [ Skip ]
 
 webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
 
@@ -4228,9 +4216,6 @@ webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure 
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 
-# LEGACY_ENCRYPTED_MEDIA is deprecated
-webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html [ Skip ]
-
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 
 webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
@@ -4254,11 +4239,6 @@ webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
 
 webkit.org/b/190990 fast/block/basic/inline-content-with-floating-image.html [ Failure Missing ]
 
-# Regressions from EME enablement
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
-webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
-webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
-webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]
 webkit.org/b/190991 http/tests/navigation/page-cache-mediakeysession.html [ Skip ]
 
 webkit.org/b/191000 imported/w3c/web-platform-tests/shadow-dom/input-element-list.html [ Failure ]

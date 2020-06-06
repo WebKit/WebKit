@@ -318,21 +318,6 @@ inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
 inspector/canvas/updateShader-webgpu.html [ Skip ]
 inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
-# Some imported encrypted media tests have been consistently passing on the bots.
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https.html [ Pass ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Pass ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Pass ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Pass ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Pass ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https.html [ Pass ]
-
-
-# Encrypted WebM is not supported yet.
-webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Skip ]
-webkit.org/b/189200 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Skip ]
-
 # This port doesn't support detecting slow unload handlers.
 Bug(GTK) fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
 Bug(GTK) fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]
@@ -489,8 +474,6 @@ webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors.html [ Failure ]
 
-webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
-
 webkit.org/b/205998 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/masked.html [ ImageOnlyFailure ]
 
 webkit.org/b/206001 imported/w3c/web-platform-tests/css/css-values/ch-unit-016.html [ ImageOnlyFailure ]
@@ -605,10 +588,6 @@ webkit.org/b/207255 webanimations/transform-accelerated-animation-removed-one-fr
 webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window.html [ Failure ]
 
 webkit.org/b/207624 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Failure ]
-
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html [ Failure ]
-webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
 
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
 webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
@@ -1116,7 +1095,6 @@ webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ P
 
 webkit.org/b/192892 http/tests/appcache/deferred-events.html [ Pass Failure ]
 webkit.org/b/192893 http/tests/workers/service/postmessage-after-sw-process-crash.https.html [ Pass Failure ]
-webkit.org/b/192894 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https.html [ Pass Failure ]
 
 webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 
@@ -1863,11 +1841,6 @@ webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
 
-media/encrypted-media [ Pass ]
-media/encrypted-media/encrypted-media-constants.html [ Skip ]
-media/encrypted-media/encrypted-media-is-type-supported.html [ Skip ]
-media/encrypted-media/encrypted-media-session-lifetime.html [ Skip ]
-
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
@@ -2243,9 +2216,6 @@ webkit.org/b/208188 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip
 webkit.org/b/208188 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
-
-webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
-webkit.org/b/210417 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Failure ]
 
 webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
 webkit.org/b/212080 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]

@@ -155,6 +155,83 @@ webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navi
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# EME feature
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# LEGACY_ENCRYPTED_MEDIA is deprecated
+webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html [ Skip ]
+fast/events/webkit-media-key-events-constructor.html [ Skip ]
+
+media/encrypted-media [ Pass ]
+media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html [ Skip ]
+webkit.org/b/205857 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
+webkit.org/b/205857 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
+webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
+webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
+
+webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Pass Crash ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
+webkit.org/b/190991 media/encrypted-media/encrypted-media-session-lifetime.html [ Timeout ]
+# Encrypted WebM is not supported yet.
+webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Skip ]
+
+# Web platform tests
+# Disable and selectively pass, since half the tests require a real DRM system.
+webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/ [ Skip ]
+webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash Pass Failure ]
+webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
+webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-check-status-for-hdcp.https.html [ Failure ]
+webkit.org/b/211375 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html [ Skip ]
+webkit.org/b/210113 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure Pass ]
+webkit.org/b/210264 imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-event.https.html [ Failure Pass ]
+webkit.org/b/210965 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html [ Failure ]
+webkit.org/b/210966 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.https.html [ Crash Pass ]
+webkit.org/b/178707 imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html [ Skip ]
+
+imported/w3c/web-platform-tests/encrypted-media/clearkey-check-encryption-scheme.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-check-initdata-type.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https.html [ Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of EME feature
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # TESTS PASSING
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -213,7 +290,6 @@ imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/i
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
-
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # NEEDS TRIAGING. If unsure, put it in this section.

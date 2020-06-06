@@ -1,3 +1,31 @@
+2020-06-06  Charlie Turner  <cturner@igalia.com>
+
+        [GTK][WPE][EME] Update WPT and rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=212574
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update the WPT tests and adjust GTK and WPE test expectations.  I
+        have noticed some crashes locally on occasion, but they are rare
+        here and I have not at the opportunity to dissect one of them to
+        figure it out.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-status-for-hdcp.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-status-for-hdcp.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub-expected.txt: Removed.
+        * tests-options.json:
+
 2020-06-06  Devin Rousso  <drousso@apple.com>
 
         [ macOS wk2 ] inspector/page/setBootstrapScript-sub-frame.html is flaky failing

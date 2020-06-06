@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/README.md
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-encryption-scheme.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-initdata-type.https.html
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-status-for-hdcp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-event.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html
@@ -31,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https.html
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html
@@ -63,7 +66,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https.html
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-check-encryption-scheme.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-check-initdata-type.https.html
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-check-status-for-hdcp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-events-session-closed-event.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-events.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-expiration.https.html
@@ -115,4 +120,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.https.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-supported-by-feature-policy.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/idlharness.https.html

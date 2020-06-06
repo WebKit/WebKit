@@ -19,6 +19,7 @@
     "paint-timing/resources": "import", 
     "paint-timing/resources/": "import", 
     "resources/testharness.js": "import", 
+    "encrypted-media": "import", 
     "shadow-dom": "import", 
     "tools": "import", 
     "web-animations": "import", 
