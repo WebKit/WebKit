@@ -1,3 +1,28 @@
+2020-06-06  Mark Lam  <mark.lam@apple.com>
+
+        Make CodeBlockHash robust against unreasonably long source code.
+        https://bugs.webkit.org/show_bug.cgi?id=212847
+        <rdar://problem/64024279>
+
+        Reviewed by Saam Barati.
+
+        This patch adds a heuristic to avoid trying to compute the CodeBlockHash on
+        unreasonably long source code strings.  This is done by first applying a length
+        check and, if needed, computing the hash with an alternate method.
+
+        This is OK to do because:
+        1. CodeBlockHash is not a critical hash.
+        2. In practice, reasonable source code are not that long.
+        3. And if they are that long, then we are still diversifying the hash on their
+           length. But if they do collide, it's OK.
+
+        The only invariant here is that we should always produce the same hash for the
+        same source string.  Since the algorithm is deterministic, this invariant is not
+        violated.
+
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::CodeBlockHash):
+
 2020-06-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: unify the naming scheme for agents used by instrumentation

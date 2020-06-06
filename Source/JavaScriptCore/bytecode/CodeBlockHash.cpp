@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,36 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
     : m_hash(0)
 {
     SHA1 sha1;
-    sha1.addBytes(sourceCode.toUTF8());
+
+    // The maxSourceCodeLengthToHash is a heuristic to avoid crashing fuzzers
+    // due to resource exhaustion. This is OK to do because:
+    // 1. CodeBlockHash is not a critical hash.
+    // 2. In practice, reasonable source code are not 500 MB or more long.
+    // 3. And if they are that long, then we are still diversifying the hash on
+    //    their length. But if they do collide, it's OK.
+    // The only invariant here is that we should always produce the same hash
+    // for the same source string. The algorithm below achieves that.
+    ASSERT(sourceCode.length() >= 0);
+    constexpr unsigned maxSourceCodeLengthToHash = 500 * MB;
+    if (static_cast<unsigned>(sourceCode.length()) < maxSourceCodeLengthToHash)
+        sha1.addBytes(sourceCode.toUTF8());
+    else {
+        // Just hash with the length and samples of the source string instead.
+        StringView str = sourceCode.provider()->source();
+        unsigned index = 0;
+        unsigned oldIndex = 0;
+        unsigned length = str.length();
+        unsigned step = (length >> 10) + 1;
+
+        sha1.addBytes(bitwise_cast<uint8_t*>(&length), sizeof(length));
+        do {
+            UChar character = str[index];
+            sha1.addBytes(bitwise_cast<uint8_t*>(&character), sizeof(character));
+            oldIndex = index;
+            index += step;
+        } while (index > oldIndex && index < length);
+    }
+
     SHA1::Digest digest;
     sha1.computeHash(digest);
     m_hash = digest[0] | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24);
