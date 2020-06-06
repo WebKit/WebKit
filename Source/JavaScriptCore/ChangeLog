@@ -1,3 +1,14 @@
+2020-06-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r262523): Fix testb3
+        https://bugs.webkit.org/show_bug.cgi?id=212791
+
+        Reviewed by Mark Lam.
+
+        * b3/testb3_1.cpp:
+        (run):
+        (main):
+
 2020-06-05  Paulo Matos  <pmatos@igalia.com>
 
         Add missing ECMAMode header to fix NonUnified Build

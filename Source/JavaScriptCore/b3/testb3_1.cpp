@@ -777,6 +777,11 @@ void run(const char* filter)
     RUN(testLoadBaseIndexShift2());
     RUN(testLoadBaseIndexShift32());
     RUN(testOptimizeMaterialization());
+
+    // FIXME: Re-enable B3 hoistLoopInvariantValues
+    // https://bugs.webkit.org/show_bug.cgi?id=212651
+    Options::useB3HoistLoopInvariantValues() = true;
+
     RUN(testLICMPure());
     RUN(testLICMPureSideExits());
     RUN(testLICMPureWritesPinned());
@@ -909,6 +914,8 @@ int main(int argc, char** argv)
         usage();
         break;
     }
+
+    JSC::Config::configureForTesting();
 
     WTF::initializeMainThread();
     JSC::initializeThreading();
