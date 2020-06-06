@@ -1,5 +1,16 @@
 2020-06-06  David Kilzer  <ddkilzer@apple.com>
 
+        Follow-up: Use OptionSet<DragOperation> for mask values
+        <https://webkit.org/b/212605>
+        <rdar://problem/64069091>
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::destinationOperationMask const):
+        - Don't compare to anyDragOperation(). Darin suggested this
+          change during patch review, but this use was missed.
+
+2020-06-06  David Kilzer  <ddkilzer@apple.com>
+
         Use OptionSet<DragOperation> for mask values
         <https://webkit.org/b/212605>
 

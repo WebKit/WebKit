@@ -47,8 +47,6 @@ using namespace WebCore;
 static DWORD draggingSourceOperationMaskToDragCursors(OptionSet<DragOperation> operationMask)
 {
     DWORD result = DROPEFFECT_NONE;
-    if (operationMask == anyDragOperation())
-        return DROPEFFECT_COPY | DROPEFFECT_LINK | DROPEFFECT_MOVE; 
     if (operationMask.contains(DragOperationCopy))
         result |= DROPEFFECT_COPY; 
     if (operationMask.contains(DragOperationLink))

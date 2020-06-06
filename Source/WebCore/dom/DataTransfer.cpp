@@ -650,7 +650,7 @@ OptionSet<DragOperation> DataTransfer::sourceOperationMask() const
 OptionSet<DragOperation> DataTransfer::destinationOperationMask() const
 {
     auto operationMask = dragOpFromIEOp(m_dropEffect);
-    ASSERT(operationMask == DragOperationCopy || operationMask.isEmpty() || operationMask == DragOperationLink || operationMask == OptionSet<DragOperation>({ DragOperationGeneric, DragOperationMove }) || operationMask == anyDragOperation());
+    ASSERT(operationMask == DragOperationCopy || operationMask.isEmpty() || operationMask == DragOperationLink || operationMask == OptionSet<DragOperation>({ DragOperationGeneric, DragOperationMove }) || operationMask.containsAll({ DragOperationCopy, DragOperationLink, DragOperationGeneric, DragOperationPrivate, DragOperationMove, DragOperationDelete }));
     return operationMask;
 }
 

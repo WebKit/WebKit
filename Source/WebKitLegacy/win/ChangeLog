@@ -1,5 +1,16 @@
 2020-06-06  David Kilzer  <ddkilzer@apple.com>
 
+        Follow-up: Use OptionSet<DragOperation> for mask values
+        <https://webkit.org/b/212605>
+        <rdar://problem/64069091>
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (draggingSourceOperationMaskToDragCursors):
+        - Don't compare to anyDragOperation().  It's redundant since the
+          code following it will do the same thing.
+
+2020-06-06  David Kilzer  <ddkilzer@apple.com>
+
         Use OptionSet<DragOperation> for mask values
         <https://webkit.org/b/212605>
 
