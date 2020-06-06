@@ -33,7 +33,6 @@
 #include "config.h"
 #include "Performance.h"
 
-#include "CustomHeaderFields.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Event.h"

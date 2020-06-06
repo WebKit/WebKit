@@ -34,7 +34,6 @@
 #include "ContentExtension.h"
 #include "ContentExtensionsDebugging.h"
 #include "ContentRuleListResults.h"
-#include "CustomHeaderFields.h"
 #include "DFABytecodeInterpreter.h"
 #include "Document.h"
 #include "DocumentLoader.h"

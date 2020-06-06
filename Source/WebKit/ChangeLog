@@ -1,3 +1,15 @@
+2020-06-06  Rob Buis  <rbuis@igalia.com>
+
+        Move URL scheme check to NetworkLoadChecker
+        https://bugs.webkit.org/show_bug.cgi?id=191924
+
+        Reviewed by Joseph Pecoraro.
+
+        Reduce includes for CustomHeaderFields, I guess these were needed
+        at some point but not anymore.
+
+        * Shared/WebsitePoliciesData.cpp:
+
 2020-06-06  David Kilzer  <ddkilzer@apple.com>
 
         Use OptionSet<DragOperation> for mask values

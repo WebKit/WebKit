@@ -29,7 +29,6 @@
 #import "config.h"
 #import "Page.h"
 
-#import "CustomHeaderFields.h"
 #import "DocumentLoader.h"
 #import "Frame.h"
 #import "FrameLoader.h"

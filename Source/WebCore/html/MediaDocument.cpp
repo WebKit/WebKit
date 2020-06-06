@@ -30,7 +30,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "CustomHeaderFields.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "Frame.h"

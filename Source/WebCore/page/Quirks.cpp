@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Quirks.h"
 
-#include "CustomHeaderFields.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
 #include "Document.h"

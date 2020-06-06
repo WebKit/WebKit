@@ -29,7 +29,6 @@
 #include "config.h"
 #include "NetscapePlugInStreamLoader.h"
 
-#include "CustomHeaderFields.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"

@@ -28,7 +28,6 @@
 
 #include "ArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/CustomHeaderFields.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 

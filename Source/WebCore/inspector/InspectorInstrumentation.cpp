@@ -34,7 +34,6 @@
 
 #include "CachedResource.h"
 #include "ComputedEffectTiming.h"
-#include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"

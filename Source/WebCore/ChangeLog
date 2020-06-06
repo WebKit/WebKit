@@ -1,3 +1,58 @@
+2020-06-06  Rob Buis  <rbuis@igalia.com>
+
+        Reduce includes for CustomHeaderFields
+        https://bugs.webkit.org/show_bug.cgi?id=212691
+
+        Reviewed by Joseph Pecoraro.
+
+        Reduce includes for CustomHeaderFields, I guess these were needed
+        at some point but not anymore.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        * Modules/applepay/PaymentSession.cpp:
+        * bindings/js/ScriptController.cpp:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        * dom/Document.cpp:
+        * editing/cocoa/EditorCocoa.mm:
+        * editing/cocoa/HTMLConverter.mm:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        * editing/markup.cpp:
+        * history/CachedFrame.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLHtmlElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/ImageDocument.cpp:
+        * html/MediaDocument.cpp:
+        * html/PluginDocument.cpp:
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/XSSAuditor.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        * loader/ApplicationManifestLoader.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/LoadTiming.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoader.cpp:
+        * loader/SubresourceLoader.cpp:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        * loader/icon/IconLoader.cpp:
+        * page/ContextMenuController.cpp:
+        * page/FrameView.cpp:
+        * page/Page.cpp:
+        * page/Performance.cpp:
+        * page/PerformanceNavigation.cpp:
+        * page/Quirks.cpp:
+        * page/UserContentProvider.cpp:
+        * page/csp/ContentSecurityPolicy.cpp:
+        * page/mac/PageMac.mm:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * svg/graphics/SVGImage.cpp:
+        * testing/Internals.cpp:
+
 2020-06-06  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add testing and logging for ApplePaySetup

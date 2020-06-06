@@ -28,7 +28,6 @@
 #include "config.h"
 #include "XSSAuditor.h"
 
-#include "CustomHeaderFields.h"
 #include "DecodeEscapeSequences.h"
 #include "Document.h"
 #include "DocumentLoader.h"
