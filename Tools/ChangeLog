@@ -1,3 +1,15 @@
+2020-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Clear WebPageProxy event state between tests
+        https://bugs.webkit.org/show_bug.cgi?id=212864
+
+        Reviewed by Anders Carlsson.
+
+        Make sure that event state doesn't leak between tests via events queued in WebPageProxy.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2020-06-06  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r262456): [iOS Debug] TestWebKitAPI.WKWebViewCloseAllMediaPresentations.PictureInPicture is frequently timing out

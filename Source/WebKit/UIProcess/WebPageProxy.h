@@ -1532,6 +1532,8 @@ public:
     void didChangeBackgroundColor();
     void didLayoutForCustomContentProvider();
 
+    void clearEventState();
+
     // For testing
     void clearWheelEventTestMonitor();
     void callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&&);

@@ -2887,6 +2887,11 @@ void WKPageClearWheelEventTestMonitor(WKPageRef pageRef)
     toImpl(pageRef)->clearWheelEventTestMonitor();
 }
 
+void WKPageClearEventState(WKPageRef pageRef)
+{
+    toImpl(pageRef)->clearEventState();
+}
+
 void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKPagePostPresentationUpdateFunction callback)
 {
     toImpl(pageRef)->callAfterNextPresentationUpdate([context, callback](WebKit::CallbackBase::Error error) {
