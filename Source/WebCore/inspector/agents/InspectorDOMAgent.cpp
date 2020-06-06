@@ -306,7 +306,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     m_history = makeUnique<InspectorHistory>();
     m_domEditor = makeUnique<DOMEditor>(*m_history);
 
-    m_instrumentingAgents.setInspectorDOMAgent(this);
+    m_instrumentingAgents.setPersistentDOMAgent(this);
     m_document = m_inspectedPage.mainFrame().document();
 
 #if ENABLE(VIDEO)
@@ -330,7 +330,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     setSearchingForNode(ignored, false, nullptr, false);
     hideHighlight(ignored);
 
-    m_instrumentingAgents.setInspectorDOMAgent(nullptr);
+    m_instrumentingAgents.setPersistentDOMAgent(nullptr);
     m_documentRequested = false;
     reset();
 }
@@ -418,7 +418,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
 
     nodesMap->remove(node);
 
-    if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
         cssAgent->didRemoveDOMNode(*node, id);
 
     if (m_childrenRequested.remove(id)) {
@@ -1255,7 +1255,7 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
     RefPtr<Document> document;
 
     if (frameId) {
-        auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+        auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
         if (!pageAgent) {
             errorString = "Page domain must be enabled"_s;
             return;
@@ -1393,7 +1393,7 @@ void InspectorDOMAgent::highlightNodeList(ErrorString& errorString, const JSON::
 
 void InspectorDOMAgent::highlightFrame(ErrorString& errorString, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return;
@@ -1640,7 +1640,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setChildren(WTFMove(children));
     }
 
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (pageAgent) {
         if (auto* frameView = node->document().view())
             value->setFrameId(pageAgent->frameId(&frameView->frame()));
@@ -2356,7 +2356,7 @@ void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomString& nam
     if (!id)
         return;
 
-    if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
         cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeModified(id, name, value);
@@ -2368,7 +2368,7 @@ void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomString& nam
     if (!id)
         return;
 
-    if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
         cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeRemoved(id, name);
@@ -2382,7 +2382,7 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
         if (!id)
             continue;
 
-        if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+        if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
             cssAgent->didModifyDOMAttr(*element);
 
         nodeIds->addItem(id);

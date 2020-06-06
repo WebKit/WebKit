@@ -108,7 +108,7 @@ void WebHeapAgent::enable(ErrorString& errorString)
     InspectorHeapAgent::enable(errorString);
 
     if (auto* consoleAgent = m_instrumentingAgents.webConsoleAgent())
-        consoleAgent->setInspectorHeapAgent(this);
+        consoleAgent->setHeapAgent(this);
 }
 
 void WebHeapAgent::disable(ErrorString& errorString)
@@ -116,7 +116,7 @@ void WebHeapAgent::disable(ErrorString& errorString)
     m_sendGarbageCollectionEventsTask->reset();
 
     if (auto* consoleAgent = m_instrumentingAgents.webConsoleAgent())
-        consoleAgent->setInspectorHeapAgent(nullptr);
+        consoleAgent->setHeapAgent(nullptr);
 
     InspectorHeapAgent::disable(errorString);
 }

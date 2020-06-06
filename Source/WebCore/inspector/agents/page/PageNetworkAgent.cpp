@@ -51,7 +51,7 @@ PageNetworkAgent::~PageNetworkAgent() = default;
 String PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader) {
-        if (auto* pageAgent = m_instrumentingAgents.inspectorPageAgent())
+        if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
             return pageAgent->loaderId(loader);
     }
     return { };
@@ -60,7 +60,7 @@ String PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 String PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
     if (loader) {
-        if (auto* pageAgent = m_instrumentingAgents.inspectorPageAgent())
+        if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
             return pageAgent->frameId(loader->frame());
     }
     return { };
@@ -102,7 +102,7 @@ void PageNetworkAgent::setResourceCachingDisabled(bool disabled)
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(ErrorString& errorString, const String& frameId)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return nullptr;

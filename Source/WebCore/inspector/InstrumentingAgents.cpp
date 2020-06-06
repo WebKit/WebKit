@@ -44,34 +44,11 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
 
 void InstrumentingAgents::reset()
 {
-    m_inspectorAgent = nullptr;
-    m_inspectorPageAgent = nullptr;
-    m_inspectorCSSAgent = nullptr;
-    m_inspectorLayerTreeAgent = nullptr;
-    m_inspectorWorkerAgent = nullptr;
-    m_webConsoleAgent = nullptr;
-    m_inspectorDOMAgent = nullptr;
-    m_inspectorNetworkAgent = nullptr;
-    m_pageRuntimeAgent = nullptr;
-    m_inspectorScriptProfilerAgent = nullptr;
-    m_inspectorTimelineAgent = nullptr;
-    m_trackingInspectorTimelineAgent = nullptr;
-    m_inspectorDOMStorageAgent = nullptr;
-#if ENABLE(RESOURCE_USAGE)
-    m_inspectorCPUProfilerAgent = nullptr;
-    m_inspectorMemoryAgent = nullptr;
-#endif
-    m_inspectorDatabaseAgent = nullptr;
-    m_inspectorApplicationCacheAgent = nullptr;
-    m_webDebuggerAgent = nullptr;
-    m_pageDebuggerAgent = nullptr;
-    m_pageHeapAgent = nullptr;
-    m_inspectorDOMDebuggerAgent = nullptr;
-    m_pageDOMDebuggerAgent = nullptr;
-    m_inspectorCanvasAgent = nullptr;
-    m_persistentInspectorAnimationAgent = nullptr;
-    m_enabledInspectorAnimationAgent = nullptr;
-    m_trackingInspectorAnimationAgent = nullptr;
+#define RESET_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter) \
+    m_##Getter##Name = nullptr; \
+
+FOR_EACH_INSPECTOR_AGENT(RESET_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT)
+#undef RESET_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT
 }
 
 } // namespace WebCore

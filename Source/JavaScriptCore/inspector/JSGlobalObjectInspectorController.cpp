@@ -292,7 +292,7 @@ InspectorDebuggerAgent& JSGlobalObjectInspectorController::ensureDebuggerAgent()
         auto context = jsAgentContext();
         auto debuggerAgent = makeUnique<JSGlobalObjectDebuggerAgent>(context, m_consoleAgent);
         m_debuggerAgent = debuggerAgent.get();
-        m_consoleClient->setInspectorDebuggerAgent(m_debuggerAgent);
+        m_consoleClient->setDebuggerAgent(m_debuggerAgent);
         m_agents.append(WTFMove(debuggerAgent));
     }
     return *m_debuggerAgent;
@@ -331,12 +331,12 @@ void JSGlobalObjectInspectorController::createLazyAgents()
     ensureDebuggerAgent();
 
     auto scriptProfilerAgentPtr = makeUnique<InspectorScriptProfilerAgent>(context);
-    m_consoleClient->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
+    m_consoleClient->setPersistentScriptProfilerAgent(scriptProfilerAgentPtr.get());
     m_agents.append(WTFMove(scriptProfilerAgentPtr));
 
     auto heapAgent = makeUnique<InspectorHeapAgent>(context);
     if (m_consoleAgent)
-        m_consoleAgent->setInspectorHeapAgent(heapAgent.get());
+        m_consoleAgent->setHeapAgent(heapAgent.get());
     m_agents.append(WTFMove(heapAgent));
 
     m_agents.append(makeUnique<JSGlobalObjectAuditAgent>(context));

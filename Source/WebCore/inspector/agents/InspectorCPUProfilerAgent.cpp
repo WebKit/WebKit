@@ -48,7 +48,7 @@ InspectorCPUProfilerAgent::~InspectorCPUProfilerAgent() = default;
 
 void InspectorCPUProfilerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_instrumentingAgents.setInspectorCPUProfilerAgent(this);
+    m_instrumentingAgents.setPersistentCPUProfilerAgent(this);
 }
 
 void InspectorCPUProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
@@ -56,7 +56,7 @@ void InspectorCPUProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
     ErrorString ignored;
     stopTracking(ignored);
 
-    m_instrumentingAgents.setInspectorCPUProfilerAgent(nullptr);
+    m_instrumentingAgents.setPersistentCPUProfilerAgent(nullptr);
 }
 
 void InspectorCPUProfilerAgent::startTracking(ErrorString&)

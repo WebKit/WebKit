@@ -38,7 +38,6 @@
 
 namespace Inspector {
 class InspectorAgent;
-class InspectorDebuggerAgent;
 class InspectorScriptProfilerAgent;
 }
 
@@ -59,13 +58,81 @@ class InspectorNetworkAgent;
 class InspectorPageAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
-class Page;
 class PageDOMDebuggerAgent;
 class PageDebuggerAgent;
 class PageHeapAgent;
 class PageRuntimeAgent;
 class WebConsoleAgent;
 class WebDebuggerAgent;
+
+#define DEFINE_INSPECTOR_AGENT(macro, Class, Name, Getter, Setter) macro(Class, Name, Getter, Setter)
+
+#define DEFINE_INSPECTOR_AGENT_Animation(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorAnimationAgent, AnimationAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_ApplicationCache(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorApplicationCacheAgent, ApplicationCacheAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Canvas(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorCanvasAgent, CanvasAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_CSS(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorCSSAgent, CSSAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_DOM(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorDOMAgent, DOMAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_DOMDebugger(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorDOMDebuggerAgent, DOMDebuggerAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_DOMDebugger_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageDOMDebuggerAgent, PageDOMDebuggerAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_DOMStorage(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorDOMStorageAgent, DOMStorageAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Database(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorDatabaseAgent, DatabaseAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Debugger_Web(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, WebDebuggerAgent, WebDebuggerAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Debugger_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageDebuggerAgent, PageDebuggerAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Heap_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageHeapAgent, PageHeapAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Inspector(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, Inspector::InspectorAgent, InspectorAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_LayerTree(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorLayerTreeAgent, LayerTreeAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Network(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorNetworkAgent, NetworkAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorPageAgent, PageAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Runtime_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageRuntimeAgent, PageRuntimeAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_ScriptProfiler(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, Inspector::InspectorScriptProfilerAgent, ScriptProfilerAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Timeline(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorTimelineAgent, TimelineAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Worker(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorWorkerAgent, WorkerAgent, Getter, Setter)
+
+#if ENABLE(RESOURCE_USAGE)
+#define DEFINE_INSPECTOR_AGENT_CPUProfiler(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorCPUProfilerAgent, CPUProfilerAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Memory(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorMemoryAgent, MemoryAgent, Getter, Setter)
+#else
+#define DEFINE_INSPECTOR_AGENT_CPUProfiler(macro, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Memory(macro, Getter, Setter)
+#endif
+
+// Set when Web Inspector is connected
+#define DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Agent) DEFINE_INSPECTOR_AGENT_##Agent(macro, persistent, Persistent)
+
+// Set when `enable`d, such as if the corresponding tab is visible
+#define DEFINE_ENABLED_INSPECTOR_AGENT(macro, Agent) DEFINE_INSPECTOR_AGENT_##Agent(macro, enabled, Enabled)
+
+// Set when part of a timeline recording.
+#define DEFINE_TRACKING_INSPECTOR_AGENT(macro, Agent) DEFINE_INSPECTOR_AGENT_##Agent(macro, tracking, Tracking)
+
+#define FOR_EACH_INSPECTOR_AGENT(macro) \
+    DEFINE_INSPECTOR_AGENT(macro, WebConsoleAgent, ConsoleAgent, web, Web) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Animation) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, CPUProfiler) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, DOM) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Inspector) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Memory) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, ScriptProfiler) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Worker) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Animation) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, ApplicationCache) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Canvas) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, CSS) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Database) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Debugger_Page) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Debugger_Web) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, DOMDebugger) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, DOMDebugger_Page) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, DOMStorage) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Heap_Page) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, LayerTree) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Memory) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Network) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Page) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Runtime_Page) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Timeline) \
+    DEFINE_TRACKING_INSPECTOR_AGENT(macro, Animation) \
+    DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline) \
 
 class InstrumentingAgents : public RefCounted<InstrumentingAgents> {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
@@ -82,119 +149,23 @@ public:
 
     Inspector::InspectorEnvironment& inspectorEnvironment() const { return m_environment; }
 
-    Inspector::InspectorAgent* inspectorAgent() const { return m_inspectorAgent; }
-    void setInspectorAgent(Inspector::InspectorAgent* agent) { m_inspectorAgent = agent; }
+#define DECLARE_GETTER_SETTER_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter) \
+    Class* Getter##Name() const { return m_##Getter##Name; } \
+    void set##Setter##Name(Class* agent) { m_##Getter##Name = agent; } \
 
-    InspectorPageAgent* inspectorPageAgent() const { return m_inspectorPageAgent; }
-    void setInspectorPageAgent(InspectorPageAgent* agent) { m_inspectorPageAgent = agent; }
-
-    InspectorCanvasAgent* inspectorCanvasAgent() const { return m_inspectorCanvasAgent; }
-    void setInspectorCanvasAgent(InspectorCanvasAgent* agent) { m_inspectorCanvasAgent = agent; }
-
-    InspectorCSSAgent* inspectorCSSAgent() const { return m_inspectorCSSAgent; }
-    void setInspectorCSSAgent(InspectorCSSAgent* agent) { m_inspectorCSSAgent = agent; }
-
-    WebConsoleAgent* webConsoleAgent() const { return m_webConsoleAgent; }
-    void setWebConsoleAgent(WebConsoleAgent* agent) { m_webConsoleAgent = agent; }
-
-    InspectorDOMAgent* inspectorDOMAgent() const { return m_inspectorDOMAgent; }
-    void setInspectorDOMAgent(InspectorDOMAgent* agent) { m_inspectorDOMAgent = agent; }
-
-    InspectorNetworkAgent* inspectorNetworkAgent() const { return m_inspectorNetworkAgent; }
-    void setInspectorNetworkAgent(InspectorNetworkAgent* agent) { m_inspectorNetworkAgent = agent; }
-
-    PageRuntimeAgent* pageRuntimeAgent() const { return m_pageRuntimeAgent; }
-    void setPageRuntimeAgent(PageRuntimeAgent* agent) { m_pageRuntimeAgent = agent; }
-
-    Inspector::InspectorScriptProfilerAgent* inspectorScriptProfilerAgent() const { return m_inspectorScriptProfilerAgent; }
-    void setInspectorScriptProfilerAgent(Inspector::InspectorScriptProfilerAgent* agent) { m_inspectorScriptProfilerAgent = agent; }
-
-    InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
-    void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
-
-    InspectorTimelineAgent* trackingInspectorTimelineAgent() const { return m_trackingInspectorTimelineAgent; }
-    void setTrackingInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_trackingInspectorTimelineAgent = agent; }
-
-    InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
-    void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
-
-#if ENABLE(RESOURCE_USAGE)
-    InspectorCPUProfilerAgent* inspectorCPUProfilerAgent() const { return m_inspectorCPUProfilerAgent; }
-    void setInspectorCPUProfilerAgent(InspectorCPUProfilerAgent* agent) { m_inspectorCPUProfilerAgent = agent; }
-
-    InspectorMemoryAgent* inspectorMemoryAgent() const { return m_inspectorMemoryAgent; }
-    void setInspectorMemoryAgent(InspectorMemoryAgent* agent) { m_inspectorMemoryAgent = agent; }
-#endif
-
-    InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
-    void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
-
-    InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
-    void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
-
-    WebDebuggerAgent* webDebuggerAgent() const { return m_webDebuggerAgent; }
-    void setWebDebuggerAgent(WebDebuggerAgent* agent) { m_webDebuggerAgent = agent; }
-
-    PageDebuggerAgent* pageDebuggerAgent() const { return m_pageDebuggerAgent; }
-    void setPageDebuggerAgent(PageDebuggerAgent* agent) { m_pageDebuggerAgent = agent; }
-
-    PageHeapAgent* pageHeapAgent() const { return m_pageHeapAgent; }
-    void setPageHeapAgent(PageHeapAgent* agent) { m_pageHeapAgent = agent; }
-
-    InspectorDOMDebuggerAgent* inspectorDOMDebuggerAgent() const { return m_inspectorDOMDebuggerAgent; }
-    void setInspectorDOMDebuggerAgent(InspectorDOMDebuggerAgent* agent) { m_inspectorDOMDebuggerAgent = agent; }
-
-    PageDOMDebuggerAgent* pageDOMDebuggerAgent() const { return m_pageDOMDebuggerAgent; }
-    void setPageDOMDebuggerAgent(PageDOMDebuggerAgent* agent) { m_pageDOMDebuggerAgent = agent; }
-
-    InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
-    void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
-
-    InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
-    void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
-
-    InspectorAnimationAgent* persistentInspectorAnimationAgent() const { return m_persistentInspectorAnimationAgent; }
-    void setPersistentInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_persistentInspectorAnimationAgent = agent; }
-
-    InspectorAnimationAgent* enabledInspectorAnimationAgent() const { return m_enabledInspectorAnimationAgent; }
-    void setEnabledInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_enabledInspectorAnimationAgent = agent; }
-
-    InspectorAnimationAgent* trackingInspectorAnimationAgent() const { return m_trackingInspectorAnimationAgent; }
-    void setTrackingInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_trackingInspectorAnimationAgent = agent; }
+FOR_EACH_INSPECTOR_AGENT(DECLARE_GETTER_SETTER_FOR_INSPECTOR_AGENT)
+#undef DECLARE_GETTER_SETTER_FOR_INSPECTOR_AGENT
 
 private:
     InstrumentingAgents(Inspector::InspectorEnvironment&);
 
     Inspector::InspectorEnvironment& m_environment;
 
-    Inspector::InspectorAgent* m_inspectorAgent { nullptr };
-    InspectorPageAgent* m_inspectorPageAgent { nullptr };
-    InspectorCSSAgent* m_inspectorCSSAgent { nullptr };
-    InspectorLayerTreeAgent* m_inspectorLayerTreeAgent { nullptr };
-    InspectorWorkerAgent* m_inspectorWorkerAgent { nullptr };
-    WebConsoleAgent* m_webConsoleAgent { nullptr };
-    InspectorDOMAgent* m_inspectorDOMAgent { nullptr };
-    InspectorNetworkAgent* m_inspectorNetworkAgent { nullptr };
-    PageRuntimeAgent* m_pageRuntimeAgent { nullptr };
-    Inspector::InspectorScriptProfilerAgent* m_inspectorScriptProfilerAgent { nullptr };
-    InspectorTimelineAgent* m_inspectorTimelineAgent { nullptr };
-    InspectorTimelineAgent* m_trackingInspectorTimelineAgent { nullptr };
-    InspectorDOMStorageAgent* m_inspectorDOMStorageAgent { nullptr };
-#if ENABLE(RESOURCE_USAGE)
-    InspectorCPUProfilerAgent* m_inspectorCPUProfilerAgent { nullptr };
-    InspectorMemoryAgent* m_inspectorMemoryAgent { nullptr };
-#endif
-    InspectorDatabaseAgent* m_inspectorDatabaseAgent { nullptr };
-    InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent { nullptr };
-    WebDebuggerAgent* m_webDebuggerAgent { nullptr };
-    PageDebuggerAgent* m_pageDebuggerAgent { nullptr };
-    PageHeapAgent* m_pageHeapAgent { nullptr };
-    InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent { nullptr };
-    PageDOMDebuggerAgent* m_pageDOMDebuggerAgent { nullptr };
-    InspectorCanvasAgent* m_inspectorCanvasAgent { nullptr };
-    InspectorAnimationAgent* m_persistentInspectorAnimationAgent { nullptr };
-    InspectorAnimationAgent* m_enabledInspectorAnimationAgent { nullptr };
-    InspectorAnimationAgent* m_trackingInspectorAnimationAgent { nullptr };
+#define DECLARE_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter) \
+    Class* m_##Getter##Name { nullptr }; \
+
+FOR_EACH_INSPECTOR_AGENT(DECLARE_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT)
+#undef DECLARE_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT
 };
 
 } // namespace WebCore

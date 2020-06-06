@@ -44,8 +44,8 @@ public:
     static bool logToSystemConsole();
     static void setLogToSystemConsole(bool);
 
-    void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_debuggerAgent = agent; }
-    void setInspectorScriptProfilerAgent(InspectorScriptProfilerAgent* agent) { m_scriptProfilerAgent = agent; }
+    void setDebuggerAgent(InspectorDebuggerAgent* agent) { m_debuggerAgent = agent; }
+    void setPersistentScriptProfilerAgent(InspectorScriptProfilerAgent* agent) { m_scriptProfilerAgent = agent; }
 
 private:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<ScriptArguments>&&) final;

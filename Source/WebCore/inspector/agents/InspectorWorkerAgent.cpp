@@ -46,12 +46,12 @@ InspectorWorkerAgent::~InspectorWorkerAgent() = default;
 
 void InspectorWorkerAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
-    m_instrumentingAgents.setInspectorWorkerAgent(this);
+    m_instrumentingAgents.setPersistentWorkerAgent(this);
 }
 
 void InspectorWorkerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    m_instrumentingAgents.setInspectorWorkerAgent(nullptr);
+    m_instrumentingAgents.setPersistentWorkerAgent(nullptr);
 
     ErrorString ignored;
     disable(ignored);

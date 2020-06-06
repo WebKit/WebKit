@@ -175,7 +175,7 @@ void InspectorController::createLazyAgents()
 #endif
 
     auto scriptProfilerAgentPtr = makeUnique<InspectorScriptProfilerAgent>(pageContext);
-    m_instrumentingAgents->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
+    m_instrumentingAgents->setPersistentScriptProfilerAgent(scriptProfilerAgentPtr.get());
     m_agents.append(WTFMove(scriptProfilerAgentPtr));
 
 #if ENABLE(RESOURCE_USAGE)
@@ -420,7 +420,7 @@ InspectorAgent& InspectorController::ensureInspectorAgent()
         auto pageContext = pageAgentContext();
         auto inspectorAgent = makeUnique<InspectorAgent>(pageContext);
         m_inspectorAgent = inspectorAgent.get();
-        m_instrumentingAgents->setInspectorAgent(m_inspectorAgent);
+        m_instrumentingAgents->setPersistentInspectorAgent(m_inspectorAgent);
         m_agents.append(WTFMove(inspectorAgent));
     }
     return *m_inspectorAgent;
@@ -428,24 +428,24 @@ InspectorAgent& InspectorController::ensureInspectorAgent()
 
 InspectorDOMAgent& InspectorController::ensureDOMAgent()
 {
-    if (!m_inspectorDOMAgent) {
+    if (!m_domAgent) {
         auto pageContext = pageAgentContext();
         auto domAgent = makeUnique<InspectorDOMAgent>(pageContext, m_overlay.get());
-        m_inspectorDOMAgent = domAgent.get();
+        m_domAgent = domAgent.get();
         m_agents.append(WTFMove(domAgent));
     }
-    return *m_inspectorDOMAgent;
+    return *m_domAgent;
 }
 
 InspectorPageAgent& InspectorController::ensurePageAgent()
 {
-    if (!m_inspectorPageAgent) {
+    if (!m_pageAgent) {
         auto pageContext = pageAgentContext();
         auto pageAgent = makeUnique<InspectorPageAgent>(pageContext, m_inspectorClient, m_overlay.get());
-        m_inspectorPageAgent = pageAgent.get();
+        m_pageAgent = pageAgent.get();
         m_agents.append(WTFMove(pageAgent));
     }
-    return *m_inspectorPageAgent;
+    return *m_pageAgent;
 }
 
 bool InspectorController::developerExtrasEnabled() const
@@ -478,7 +478,7 @@ void InspectorController::frontendInitialized()
 {
     if (m_pauseAfterInitialization) {
         m_pauseAfterInitialization = false;
-        if (PageDebuggerAgent* debuggerAgent = m_instrumentingAgents->pageDebuggerAgent()) {
+        if (auto* debuggerAgent = m_instrumentingAgents->enabledPageDebuggerAgent()) {
             ErrorString ignored;
             debuggerAgent->pause(ignored);
         }

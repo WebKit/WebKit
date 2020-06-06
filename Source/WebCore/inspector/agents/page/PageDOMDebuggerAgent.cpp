@@ -79,19 +79,19 @@ PageDOMDebuggerAgent::~PageDOMDebuggerAgent() = default;
 
 bool PageDOMDebuggerAgent::enabled() const
 {
-    return m_instrumentingAgents.pageDOMDebuggerAgent() == this && InspectorDOMDebuggerAgent::enabled();
+    return m_instrumentingAgents.enabledPageDOMDebuggerAgent() == this && InspectorDOMDebuggerAgent::enabled();
 }
 
 void PageDOMDebuggerAgent::enable()
 {
-    m_instrumentingAgents.setPageDOMDebuggerAgent(this);
+    m_instrumentingAgents.setEnabledPageDOMDebuggerAgent(this);
 
     InspectorDOMDebuggerAgent::enable();
 }
 
 void PageDOMDebuggerAgent::disable()
 {
-    m_instrumentingAgents.setPageDOMDebuggerAgent(nullptr);
+    m_instrumentingAgents.setEnabledPageDOMDebuggerAgent(nullptr);
 
     m_domBreakpoints.clear();
     m_pauseOnAllAnimationFramesEnabled = false;
@@ -101,7 +101,7 @@ void PageDOMDebuggerAgent::disable()
 
 void PageDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
 {
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -125,7 +125,7 @@ void PageDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId
 
 void PageDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
 {
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -201,7 +201,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
         if (node.contains(nodeWithBreakpoint) && (breakpointTypes & matchBit)) {
             auto eventData = JSON::Object::create();
             descriptionForDOMEvent(*nodeWithBreakpoint, NodeRemoved, false, eventData.get());
-            if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent())
+            if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent())
                 eventData->setInteger("targetNodeId"_s, domAgent->pushNodeToFrontend(&node));
             m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
             return;
@@ -284,7 +284,7 @@ void PageDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointTy
     ASSERT(m_debuggerAgent->breakpointsActive());
     ASSERT(hasBreakpoint(&target, breakpointType));
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
 
     Node* breakpointOwner = &target;
     if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {

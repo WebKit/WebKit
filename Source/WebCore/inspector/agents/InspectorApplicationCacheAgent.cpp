@@ -64,12 +64,12 @@ void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::Di
 
 void InspectorApplicationCacheAgent::enable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorApplicationCacheAgent() == this) {
+    if (m_instrumentingAgents.enabledApplicationCacheAgent() == this) {
         errorString = "ApplicationCache domain already enabled"_s;
         return;
     }
 
-    m_instrumentingAgents.setInspectorApplicationCacheAgent(this);
+    m_instrumentingAgents.setEnabledApplicationCacheAgent(this);
 
     // We need to pass initial navigator.onOnline.
     networkStateChanged();
@@ -77,17 +77,17 @@ void InspectorApplicationCacheAgent::enable(ErrorString& errorString)
 
 void InspectorApplicationCacheAgent::disable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorApplicationCacheAgent() != this) {
+    if (m_instrumentingAgents.enabledApplicationCacheAgent() != this) {
         errorString = "ApplicationCache domain already disabled"_s;
         return;
     }
 
-    m_instrumentingAgents.setInspectorApplicationCacheAgent(nullptr);
+    m_instrumentingAgents.setEnabledApplicationCacheAgent(nullptr);
 }
 
 void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent)
         return;
 
@@ -112,7 +112,7 @@ void InspectorApplicationCacheAgent::networkStateChanged()
 
 void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString& errorString, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return;
@@ -139,7 +139,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString& errorSt
 
 DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(ErrorString& errorString, const String& frameId)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return nullptr;

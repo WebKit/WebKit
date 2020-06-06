@@ -78,7 +78,7 @@ void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::
     if (!m_instrumentingAgents)
         return;
 
-    auto* inspectorAgent = m_instrumentingAgents->inspectorAgent();
+    auto* inspectorAgent = m_instrumentingAgents->persistentInspectorAgent();
     if (!inspectorAgent)
         return;
 
@@ -168,7 +168,7 @@ JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::JSGlobalObject& lexicalGlo
 String CommandLineAPIHost::databaseId(Database& database)
 {
     if (m_instrumentingAgents) {
-        if (auto* databaseAgent = m_instrumentingAgents->inspectorDatabaseAgent())
+        if (auto* databaseAgent = m_instrumentingAgents->enabledDatabaseAgent())
             return databaseAgent->databaseId(database);
     }
     return { };

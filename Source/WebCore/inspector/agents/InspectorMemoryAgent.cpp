@@ -49,32 +49,35 @@ InspectorMemoryAgent::~InspectorMemoryAgent() = default;
 
 void InspectorMemoryAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
+    m_instrumentingAgents.setPersistentMemoryAgent(this);
 }
 
 void InspectorMemoryAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     ErrorString ignored;
     disable(ignored);
+
+    m_instrumentingAgents.setPersistentMemoryAgent(nullptr);
 }
 
 void InspectorMemoryAgent::enable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorMemoryAgent() == this) {
+    if (m_instrumentingAgents.enabledMemoryAgent() == this) {
         errorString = "Memory domain already enabled"_s;
         return;
     }
 
-    m_instrumentingAgents.setInspectorMemoryAgent(this);
+    m_instrumentingAgents.setEnabledMemoryAgent(this);
 }
 
 void InspectorMemoryAgent::disable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorMemoryAgent() != this) {
+    if (m_instrumentingAgents.enabledMemoryAgent() != this) {
         errorString = "Memory domain already disabled"_s;
         return;
     }
 
-    m_instrumentingAgents.setInspectorMemoryAgent(nullptr);
+    m_instrumentingAgents.setEnabledMemoryAgent(nullptr);
 
     m_tracking = false;
 

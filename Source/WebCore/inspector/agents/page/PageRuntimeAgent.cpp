@@ -70,7 +70,7 @@ PageRuntimeAgent::~PageRuntimeAgent() = default;
 
 void PageRuntimeAgent::enable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.pageRuntimeAgent() == this)
+    if (m_instrumentingAgents.enabledPageRuntimeAgent() == this)
         return;
 
     InspectorRuntimeAgent::enable(errorString);
@@ -81,12 +81,12 @@ void PageRuntimeAgent::enable(ErrorString& errorString)
     // can force creation of script state which could result in duplicate notifications.
     reportExecutionContextCreation();
 
-    m_instrumentingAgents.setPageRuntimeAgent(this);
+    m_instrumentingAgents.setEnabledPageRuntimeAgent(this);
 }
 
 void PageRuntimeAgent::disable(ErrorString& errorString)
 {
-    m_instrumentingAgents.setPageRuntimeAgent(nullptr);
+    m_instrumentingAgents.setEnabledPageRuntimeAgent(nullptr);
 
     InspectorRuntimeAgent::disable(errorString);
 }
@@ -99,7 +99,7 @@ void PageRuntimeAgent::frameNavigated(Frame& frame)
 
 void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent)
         return;
 
@@ -134,7 +134,7 @@ void PageRuntimeAgent::unmuteConsole()
 
 void PageRuntimeAgent::reportExecutionContextCreation()
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent)
         return;
 

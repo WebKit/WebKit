@@ -76,12 +76,12 @@ void InspectorLayerTreeAgent::reset()
 
 void InspectorLayerTreeAgent::enable(ErrorString&)
 {
-    m_instrumentingAgents.setInspectorLayerTreeAgent(this);
+    m_instrumentingAgents.setEnabledLayerTreeAgent(this);
 }
 
 void InspectorLayerTreeAgent::disable(ErrorString&)
 {
-    m_instrumentingAgents.setInspectorLayerTreeAgent(nullptr);
+    m_instrumentingAgents.setEnabledLayerTreeAgent(nullptr);
 
     reset();
 }
@@ -110,7 +110,7 @@ void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId
 {
     layers = JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>::create();
 
-    auto* node = m_instrumentingAgents.inspectorDOMAgent()->nodeForId(nodeId);
+    auto* node = m_instrumentingAgents.persistentDOMAgent()->nodeForId(nodeId);
     if (!node) {
         errorString = "Missing node for given nodeId"_s;
         return;
@@ -214,7 +214,7 @@ int InspectorLayerTreeAgent::idForNode(ErrorString& errorString, Node* node)
     if (!node)
         return 0;
 
-    InspectorDOMAgent* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    InspectorDOMAgent* domAgent = m_instrumentingAgents.persistentDOMAgent();
     
     int nodeId = domAgent->boundNodeId(node);
     if (!nodeId)

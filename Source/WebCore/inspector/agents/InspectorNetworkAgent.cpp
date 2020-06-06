@@ -731,7 +731,7 @@ RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInit
         initiatorObject->setLineNumber(document->scriptableDocumentParser()->textPosition().m_line.oneBasedInt());
     }
 
-    auto domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (domAgent && resourceRequest) {
         if (auto inspectorInitiatorNodeIdentifier = resourceRequest->inspectorInitiatorNodeIdentifier()) {
             if (!initiatorObject) {
@@ -805,7 +805,7 @@ void InspectorNetworkAgent::enable(ErrorString&)
 void InspectorNetworkAgent::enable()
 {
     m_enabled = true;
-    m_instrumentingAgents.setInspectorNetworkAgent(this);
+    m_instrumentingAgents.setEnabledNetworkAgent(this);
 
     {
         LockHolder lock(WebSocket::allActiveWebSocketsMutex());
@@ -837,7 +837,7 @@ void InspectorNetworkAgent::disable(ErrorString&)
     m_enabled = false;
     m_interceptionEnabled = false;
     m_intercepts.clear();
-    m_instrumentingAgents.setInspectorNetworkAgent(nullptr);
+    m_instrumentingAgents.setEnabledNetworkAgent(nullptr);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
 

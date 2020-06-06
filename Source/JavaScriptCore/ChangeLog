@@ -1,3 +1,25 @@
+2020-06-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: unify the naming scheme for agents used by instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=212859
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector agents fall into one of three categories:
+         - "persistent" when Web Inspector is connected
+         - "enabled" when that agent is `enable`d, such as if the corresponding tab is visible
+         - "tracking" when that agent is part of a timeline recording.
+
+        The only exception to this is the Console agent, as that exists regardless of whether Web
+        Inspector is connected as it needs to preserve messages logged before Web Inspector connects.
+
+        Also remove the "Inspector" prefix from getter/setter methods as it adds confusion if that
+        agent also has subclasses (e.g. `InspectorRuntimeAgent` and `PageRuntimeAgent`).
+
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/agents/InspectorConsoleAgent.h:
+
 2020-06-05  Michael Saboff  <msaboff@apple.com>
 
         Make FAST_JIT_PERMISSIONS check in LinkBuffer::copyCompactAndLinkCode a runtime check

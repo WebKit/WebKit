@@ -51,7 +51,7 @@ InspectorBrowserAgent::~InspectorBrowserAgent() = default;
 
 bool InspectorBrowserAgent::enabled() const
 {
-    return m_inspectedPage.inspectorController().enabledInspectorBrowserAgent() == this;
+    return m_inspectedPage.inspectorController().enabledBrowserAgent() == this;
 }
 
 void InspectorBrowserAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
@@ -71,7 +71,7 @@ void InspectorBrowserAgent::enable(ErrorString& errorString)
         return;
     }
 
-    m_inspectedPage.inspectorController().setEnabledInspectorBrowserAgent(this);
+    m_inspectedPage.inspectorController().setEnabledBrowserAgent(this);
 
     auto* inspector = m_inspectedPage.inspector();
     ASSERT(inspector);
@@ -85,7 +85,7 @@ void InspectorBrowserAgent::disable(ErrorString& errorString)
         return;
     }
 
-    m_inspectedPage.inspectorController().setEnabledInspectorBrowserAgent(nullptr);
+    m_inspectedPage.inspectorController().setEnabledBrowserAgent(nullptr);
 
     if (auto* inspector = m_inspectedPage.inspector())
         m_inspectedPage.inspectorClient().browserDomainDisabled(m_inspectedPage, *inspector);

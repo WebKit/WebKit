@@ -329,12 +329,12 @@ void InspectorCSSAgent::reset()
 
 void InspectorCSSAgent::enable(ErrorString&)
 {
-    if (m_instrumentingAgents.inspectorCSSAgent() == this)
+    if (m_instrumentingAgents.enabledCSSAgent() == this)
         return;
 
-    m_instrumentingAgents.setInspectorCSSAgent(this);
+    m_instrumentingAgents.setEnabledCSSAgent(this);
 
-    if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent()) {
+    if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         for (auto* document : domAgent->documents())
             activeStyleSheetsUpdated(*document);
     }
@@ -342,7 +342,7 @@ void InspectorCSSAgent::enable(ErrorString&)
 
 void InspectorCSSAgent::disable(ErrorString&)
 {
-    m_instrumentingAgents.setInspectorCSSAgent(nullptr);
+    m_instrumentingAgents.setEnabledCSSAgent(nullptr);
 
     reset();
 }
@@ -406,7 +406,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent)
         return false;
 
@@ -569,7 +569,7 @@ void InspectorCSSAgent::getAllStyleSheets(ErrorString&, RefPtr<JSON::ArrayOf<Ins
 void InspectorCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& result)
 {
     Vector<CSSStyleSheet*> cssStyleSheets;
-    if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent()) {
+    if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         for (auto* document : domAgent->documents())
             collectAllDocumentStyleSheets(*document, cssStyleSheets);
     }
@@ -624,7 +624,7 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString& errorString, const String
     if (!inspectorStyleSheet)
         return;
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -644,7 +644,7 @@ void InspectorCSSAgent::setStyleText(ErrorString& errorString, const JSON::Objec
     if (!inspectorStyleSheet)
         return;
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -668,7 +668,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
     if (!inspectorStyleSheet)
         return;
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -685,7 +685,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
 
 void InspectorCSSAgent::createStyleSheet(ErrorString& errorString, const String& frameId, String* styleSheetId)
 {
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return;
@@ -757,7 +757,7 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleShe
     if (!inspectorStyleSheet)
         return;
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -839,7 +839,7 @@ void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<J
 
 void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const JSON::Array& forcedPseudoClasses)
 {
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;
@@ -871,7 +871,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 {
     return m_nodeToInspectorStyleSheet.ensure(&element, [this, &element] {
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_instrumentingAgents.inspectorPageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
+        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_instrumentingAgents.enabledPageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
         m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
         return inspectorStyleSheet;
     }).iterator->value;
@@ -879,7 +879,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 
 Element* InspectorCSSAgent::elementForId(ErrorString& errorString, int nodeId)
 {
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return nullptr;
@@ -903,7 +903,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     if (!inspectorStyleSheet) {
         String id = String::number(m_lastStyleSheetId++);
         Document* document = styleSheet->ownerDocument();
-        inspectorStyleSheet = InspectorStyleSheet::create(m_instrumentingAgents.inspectorPageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
+        inspectorStyleSheet = InspectorStyleSheet::create(m_instrumentingAgents.enabledPageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
         m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
         m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, inspectorStyleSheet);
         if (m_creatingViaInspectorStyleSheet) {

@@ -345,12 +345,12 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 
 void InspectorPageAgent::enable(ErrorString& errorString)
 {
-    if (m_instrumentingAgents.inspectorPageAgent() == this) {
+    if (m_instrumentingAgents.enabledPageAgent() == this) {
         errorString = "Page domain already enabled"_s;
         return;
     }
 
-    m_instrumentingAgents.setInspectorPageAgent(this);
+    m_instrumentingAgents.setEnabledPageAgent(this);
 
     auto& stopwatch = m_environment.executionStopwatch();
     stopwatch.reset();
@@ -363,7 +363,7 @@ void InspectorPageAgent::enable(ErrorString& errorString)
 
 void InspectorPageAgent::disable(ErrorString&)
 {
-    m_instrumentingAgents.setInspectorPageAgent(nullptr);
+    m_instrumentingAgents.setEnabledPageAgent(nullptr);
 
     ErrorString unused;
     setShowPaintRects(unused, false);
@@ -705,7 +705,7 @@ void InspectorPageAgent::searchInResource(ErrorString& errorString, const String
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
 
     if (optionalRequestId) {
-        if (InspectorNetworkAgent* networkAgent = m_instrumentingAgents.inspectorNetworkAgent()) {
+        if (auto* networkAgent = m_instrumentingAgents.enabledNetworkAgent()) {
             networkAgent->searchInRequest(errorString, *optionalRequestId, query, caseSensitive, isRegex, results);
             return;
         }
@@ -770,7 +770,7 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
         }
     }
 
-    if (InspectorNetworkAgent* networkAgent = m_instrumentingAgents.inspectorNetworkAgent())
+    if (auto* networkAgent = m_instrumentingAgents.enabledNetworkAgent())
         networkAgent->searchOtherRequests(regex, result);
 }
 
@@ -1042,7 +1042,7 @@ void InspectorPageAgent::applyEmulatedMedia(String& media)
 
 void InspectorPageAgent::snapshotNode(ErrorString& errorString, int nodeId, String* outDataURL)
 {
-    InspectorDOMAgent* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    InspectorDOMAgent* domAgent = m_instrumentingAgents.persistentDOMAgent();
     ASSERT(domAgent);
     Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)

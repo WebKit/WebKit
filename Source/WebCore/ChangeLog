@@ -1,3 +1,54 @@
+2020-06-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: unify the naming scheme for agents used by instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=212859
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector agents fall into one of three categories:
+         - "persistent" when Web Inspector is connected
+         - "enabled" when that agent is `enable`d, such as if the corresponding tab is visible
+         - "tracking" when that agent is part of a timeline recording.
+
+        The only exception to this is the Console agent, as that exists regardless of whether Web
+        Inspector is connected as it needs to preserve messages logged before Web Inspector connects.
+
+        Also remove the "Inspector" prefix from getter/setter methods as it adds confusion if that
+        agent also has subclasses (e.g. `InspectorRuntimeAgent` and `PageRuntimeAgent`).
+
+        * inspector/InstrumentingAgents.h:
+        * inspector/InstrumentingAgents.cpp:
+        Use macros to simplify the process of adding an agent.
+
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        * inspector/agents/InspectorLayerTreeAgent.cpp:
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        * inspector/agents/WebDebuggerAgent.cpp:
+        * inspector/agents/WebHeapAgent.cpp:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        * inspector/agents/page/PageHeapAgent.cpp:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        Simple naming changes elided to avoid a long ChangeLog.
+
 2020-06-05  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r256648): Apple Pay <button> elements no longer use the default corner radius on iOS (affects Stripe.js)

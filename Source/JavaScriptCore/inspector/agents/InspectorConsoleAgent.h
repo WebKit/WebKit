@@ -67,7 +67,7 @@ public:
     void getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Protocol::Console::Channel>>&) override;
     void setLoggingChannelLevel(ErrorString&, const String& channel, const String& level) override;
 
-    void setInspectorHeapAgent(InspectorHeapAgent* agent) { m_heapAgent = agent; }
+    void setHeapAgent(InspectorHeapAgent* agent) { m_heapAgent = agent; }
 
     bool enabled() const { return m_enabled; }
     bool developerExtrasEnabled() const;

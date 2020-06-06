@@ -113,10 +113,10 @@ void InspectorCanvasAgent::discardAgent()
 
 void InspectorCanvasAgent::enable(ErrorString&)
 {
-    if (m_instrumentingAgents.inspectorCanvasAgent() == this)
+    if (m_instrumentingAgents.enabledCanvasAgent() == this)
         return;
 
-    m_instrumentingAgents.setInspectorCanvasAgent(this);
+    m_instrumentingAgents.setEnabledCanvasAgent(this);
 
     const auto existsInCurrentPage = [&] (ScriptExecutionContext* scriptExecutionContext) {
         if (!is<Document>(scriptExecutionContext))
@@ -174,7 +174,7 @@ void InspectorCanvasAgent::enable(ErrorString&)
 
 void InspectorCanvasAgent::disable(ErrorString&)
 {
-    m_instrumentingAgents.setInspectorCanvasAgent(nullptr);
+    m_instrumentingAgents.setEnabledCanvasAgent(nullptr);
 
     reset();
 
@@ -193,13 +193,13 @@ void InspectorCanvasAgent::requestNode(ErrorString& errorString, const String& c
         return;
     }
 
-    int documentNodeId = m_instrumentingAgents.inspectorDOMAgent()->boundNodeId(&node->document());
+    int documentNodeId = m_instrumentingAgents.persistentDOMAgent()->boundNodeId(&node->document());
     if (!documentNodeId) {
         errorString = "Document must have been requested"_s;
         return;
     }
 
-    *nodeId = m_instrumentingAgents.inspectorDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, node);
+    *nodeId = m_instrumentingAgents.persistentDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, node);
 }
 
 void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String& canvasId, String* content)
@@ -213,7 +213,7 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
 
 void InspectorCanvasAgent::requestClientNodes(ErrorString& errorString, const String& canvasId, RefPtr<JSON::ArrayOf<int>>& clientNodeIds)
 {
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return;

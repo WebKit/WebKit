@@ -63,17 +63,17 @@ InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent() = default;
 
 bool InspectorDOMDebuggerAgent::enabled() const
 {
-    return m_instrumentingAgents.inspectorDOMDebuggerAgent() == this;
+    return m_instrumentingAgents.enabledDOMDebuggerAgent() == this;
 }
 
 void InspectorDOMDebuggerAgent::enable()
 {
-    m_instrumentingAgents.setInspectorDOMDebuggerAgent(this);
+    m_instrumentingAgents.setEnabledDOMDebuggerAgent(this);
 }
 
 void InspectorDOMDebuggerAgent::disable()
 {
-    m_instrumentingAgents.setInspectorDOMDebuggerAgent(nullptr);
+    m_instrumentingAgents.setEnabledDOMDebuggerAgent(nullptr);
 
     m_listenerBreakpoints.clear();
     m_urlBreakpoints.clear();
@@ -225,7 +225,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEv
         injectedScript.setEventValue(toJS(state, deprecatedGlobalObjectForPrototype(state), event));
     }
 
-    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
 
     bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_pauseOnAllListenersEnabled || m_listenerBreakpoints.contains(event.type());
     if (!shouldPause && domAgent)

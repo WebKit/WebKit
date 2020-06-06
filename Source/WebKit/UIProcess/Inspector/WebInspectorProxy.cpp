@@ -655,13 +655,13 @@ void WebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
 
 void WebInspectorProxy::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
 {
-    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledInspectorBrowserAgent())
+    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledBrowserAgent())
         browserAgent->extensionsEnabled(WTFMove(extensionIDToName));
 }
 
 void WebInspectorProxy::browserExtensionsDisabled(HashSet<String>&& extensionIDs)
 {
-    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledInspectorBrowserAgent())
+    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledBrowserAgent())
         browserAgent->extensionsDisabled(WTFMove(extensionIDs));
 }
 
