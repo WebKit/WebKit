@@ -28,6 +28,7 @@ function test()
 {
     InspectorProtocol.sendCommand("Debugger.enable", {});
     InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+    InspectorProtocol.sendCommand("Debugger.setPauseOnDebuggerStatements", {enabled: true});
 
     let suite = ProtocolTest.createAsyncSuite("PauseInConstructorBeforeSuper");
 
