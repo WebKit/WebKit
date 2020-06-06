@@ -144,7 +144,7 @@ protected:
         ComputedHorizontalMargin computedHorizontalMargin(const Box&, const HorizontalConstraints&) const;
         ComputedVerticalMargin computedVerticalMargin(const Box&, const HorizontalConstraints&) const;
 
-        Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
+        Optional<LayoutUnit> computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
         Optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
 
         Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;

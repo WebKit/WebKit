@@ -1,3 +1,29 @@
+2020-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] FormattingContext::Geometry::computedValue should not try to resolve values when layout is required
+        https://bugs.webkit.org/show_bug.cgi?id=212867
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding min/max/fit-content support.
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::computedValue const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::Geometry::inFlowPositionedPositionOffset const):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedVerticalMargin const):
+        (WebCore::Layout::FormattingContext::Geometry::computedValueIfNotAuto const): Deleted.
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+
 2020-06-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: unify the naming scheme for agents used by instrumentation
