@@ -108,8 +108,8 @@ void Gradient::paint(CGContextRef platformContext)
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {
             switch (m_spreadMethod) {
-            case SpreadMethodRepeat:
-            case SpreadMethodReflect: {
+            case GradientSpreadMethod::Repeat:
+            case GradientSpreadMethod::Reflect: {
                 CGContextStateSaver saveState(platformContext);
 
                 FloatPoint gradientVectorNorm(data.point1 - data.point0);
@@ -132,7 +132,7 @@ void Gradient::paint(CGContextRef platformContext)
 
                     CGFloat gradientStart = point0.x();
                     CGFloat gradientEnd = point1.x();
-                    bool flip = m_spreadMethod == SpreadMethodReflect;
+                    bool flip = m_spreadMethod == GradientSpreadMethod::Reflect;
 
                     // Find first gradient position to the left of the bounding box
                     int n = CGFloor((boundingBox.origin.x - gradientStart) / width);
@@ -148,7 +148,7 @@ void Gradient::paint(CGContextRef platformContext)
 
                         CGContextDrawLinearGradient(platformContext, gradient, left, right, extendOptions);
 
-                        if (m_spreadMethod == SpreadMethodReflect)
+                        if (m_spreadMethod == GradientSpreadMethod::Reflect)
                             flip = !flip;
                     }
 
@@ -157,7 +157,7 @@ void Gradient::paint(CGContextRef platformContext)
 
                 FALLTHROUGH;
             }
-            case SpreadMethodPad:
+            case GradientSpreadMethod::Pad:
                 CGContextDrawLinearGradient(platformContext, gradient, data.point0, data.point1, extendOptions);
             }
         },

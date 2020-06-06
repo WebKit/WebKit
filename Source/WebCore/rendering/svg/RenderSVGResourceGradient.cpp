@@ -247,15 +247,15 @@ GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(
     switch (method) {
     case SVGSpreadMethodUnknown:
     case SVGSpreadMethodPad:
-        return SpreadMethodPad;
+        return GradientSpreadMethod::Pad;
     case SVGSpreadMethodReflect:
-        return SpreadMethodReflect;
+        return GradientSpreadMethod::Reflect;
     case SVGSpreadMethodRepeat:
-        return SpreadMethodRepeat;
+        return GradientSpreadMethod::Repeat;
     }
 
     ASSERT_NOT_REACHED();
-    return SpreadMethodPad;
+    return GradientSpreadMethod::Pad;
 }
 
 }

@@ -73,10 +73,10 @@ enum class BlendMode : uint8_t {
     PlusLighter
 };
 
-enum GradientSpreadMethod {
-    SpreadMethodPad,
-    SpreadMethodReflect,
-    SpreadMethodRepeat
+enum class GradientSpreadMethod : uint8_t {
+    Pad,
+    Reflect,
+    Repeat
 };
 
 enum class InterpolationQuality : uint8_t {
@@ -178,6 +178,15 @@ template<> struct EnumTraits<WebCore::BlendMode> {
     WebCore::BlendMode::Luminosity,
     WebCore::BlendMode::PlusDarker,
     WebCore::BlendMode::PlusLighter
+    >;
+};
+
+template<> struct EnumTraits<WebCore::GradientSpreadMethod> {
+    using values = EnumValues<
+    WebCore::GradientSpreadMethod,
+    WebCore::GradientSpreadMethod::Pad,
+    WebCore::GradientSpreadMethod::Reflect,
+    WebCore::GradientSpreadMethod::Repeat
     >;
 };
 

@@ -217,13 +217,13 @@ cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
     }
 
     switch (m_spreadMethod) {
-    case SpreadMethodPad:
+    case GradientSpreadMethod::Pad:
         cairo_pattern_set_extend(gradient, CAIRO_EXTEND_PAD);
         break;
-    case SpreadMethodReflect:
+    case GradientSpreadMethod::Reflect:
         cairo_pattern_set_extend(gradient, CAIRO_EXTEND_REFLECT);
         break;
-    case SpreadMethodRepeat:
+    case GradientSpreadMethod::Repeat:
         cairo_pattern_set_extend(gradient, CAIRO_EXTEND_REPEAT);
         break;
     }

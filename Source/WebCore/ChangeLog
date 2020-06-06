@@ -1,3 +1,27 @@
+2020-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for GradientSpreadMethod
+        <https://webkit.org/b/212868>
+        <rdar://problem/64069035>
+
+        Reviewed by Anders Carlsson.
+
+        Summary:
+        - Convert GradientSpreadMethod to an enum class.
+        - Add WTF::EnumTraits<AutocapitalizeType> for IPC.
+        - Remove use of decodeEnum() and encodeEnum().
+
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::encode const):
+        (WebCore::Gradient::decode):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::createPlatformGradient):
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+
 2020-06-06  Rob Buis  <rbuis@igalia.com>
 
         Reduce includes for CustomHeaderFields
