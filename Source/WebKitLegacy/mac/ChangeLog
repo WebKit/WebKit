@@ -1,3 +1,14 @@
+2020-06-06  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitLegacy: Link to framework stubs for watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=212855
+        <rdar://problem/64049486>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig: Define tvOS and watchOS major version macros.
+        * Configurations/WebKitLegacy.xcconfig: Link to framework stubs for watchOS and tvOS.
+
 2020-06-05  Jonathan Bedard  <jbedard@apple.com>
 
         WebKitLegacy: Feature guard WebChromeClient declarations
