@@ -1,3 +1,15 @@
+2020-06-05  Peng Liu  <peng.liu6@apple.com>
+
+        HTMLMediaElement::m_waitingToEnterFullscreen is not initialized in the constructor
+        https://bugs.webkit.org/show_bug.cgi?id=212861
+
+        Reviewed by Jer Noble.
+
+        Covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+
 2020-06-05  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for AutocapitalizeType
