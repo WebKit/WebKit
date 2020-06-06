@@ -1,3 +1,33 @@
+2020-06-05  Michael Saboff  <msaboff@apple.com>
+
+        Make FAST_JIT_PERMISSIONS check in LinkBuffer::copyCompactAndLinkCode a runtime check
+        https://bugs.webkit.org/show_bug.cgi?id=212825
+
+        Reviewed by Saam Barati.
+
+        Added useFastJITPermissions() for runtime checks of FAST_JIT_PERMISSIONS
+        including the cases where it is conditional on OS settings. This is now
+        used in a few places to declutter the code.
+
+        When using the fast JIT permissions path, the JIT memory is the direct output
+        of the linking. Modified BranchCompactionLinkBuffer to hold a pointer to that
+        output "buffer" or a temporarily allocated buffer depending on if fast JIT
+        permissions are enabled.
+
+        Broke out the "verify hash" conditionally compiled code with a file local
+        ENABLE_VERIFY_JIT_HASH macro for readability.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::BranchCompactionLinkBuffer::BranchCompactionLinkBuffer):
+        (JSC::BranchCompactionLinkBuffer::~BranchCompactionLinkBuffer):
+        Changed this to use a provided buffer or a malloc'ed buffer. When using
+        a malloc'ed buffer, we put it in a thread local cache.
+
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * jit/ExecutableAllocator.h:
+        (JSC::useFastJITPermissions):
+        (JSC::performJITMemcpy):
+
 2020-06-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put dfgOpNames in __DATA,__const section instead of __DATA,__data

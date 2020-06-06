@@ -119,7 +119,27 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 }
 
 #if ENABLE(BRANCH_COMPACTION)
-#if !CPU(ARM64E) || !ENABLE(FAST_JIT_PERMISSIONS)
+#if CPU(ARM64E)
+#define ENABLE_VERIFY_JIT_HASH 1
+#else
+#define ENABLE_VERIFY_JIT_HASH 0
+#endif
+
+#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
+#   define IF_FAST_JIT_PERMISSIONS(thenStmt) thenStmt
+#   define IF_FAST_JIT_PERMISSIONS_ELSE(thenStmt, elseStmt) thenStmt
+#elif ENABLE(FAST_JIT_PERMISSIONS)
+#   define IF_FAST_JIT_PERMISSIONS(thenStmt) if (useFastJITPermissions()) \
+        thenStmt
+#   define IF_FAST_JIT_PERMISSIONS_ELSE(thenStmt, elseStmt) if (useFastJITPermissions()) \
+            thenStmt; \
+        else \
+            elseStmt
+#else
+#   define IF_FAST_JIT_PERMISSIONS(thenStmt)
+#   define IF_FAST_JIT_PERMISSIONS_ELSE(thenStmt, elseStmt) elseStmt
+#endif
+
 class BranchCompactionLinkBuffer;
 
 using ThreadSpecificBranchCompactionLinkBuffer = ThreadSpecific<BranchCompactionLinkBuffer, WTF::CanBeGCThread::True>;
@@ -146,8 +166,15 @@ public:
     {
     }
 
-    BranchCompactionLinkBuffer(size_t size)
+    BranchCompactionLinkBuffer(size_t size, uint8_t* userBuffer = nullptr)
     {
+        if (userBuffer) {
+            m_data = userBuffer;
+            m_size = size;
+            m_bufferProvided = true;
+            return;
+        }
+
         auto& threadSpecific = threadSpecificBranchCompactionLinkBuffer();
 
         if (threadSpecific->size() >= size)
@@ -160,6 +187,9 @@ public:
 
     ~BranchCompactionLinkBuffer()
     {
+        if (m_bufferProvided)
+            return;
+
         auto& threadSpecific = threadSpecificBranchCompactionLinkBuffer();
         threadSpecific->takeBufferIfLarger(*this);
 
@@ -195,8 +225,8 @@ private:
 
     uint8_t* m_data { nullptr };
     size_t m_size { 0 };
+    bool m_bufferProvided { false };
 };
-#endif
 
 static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_t regionStart, int32_t regionEnd, int32_t offset)
 {
@@ -220,14 +250,15 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     uint8_t* inData = reinterpret_cast<uint8_t*>(m_assemblerStorage.buffer());
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
+
+#if ENABLE(VERIFY_JIT_HASH)
     const uint32_t expectedFinalHash = macroAssembler.m_assembler.buffer().hash().finalHash();
     ARM64EHash verifyUncompactedHash;
-    uint8_t* outData = codeOutData;
-#else
-    BranchCompactionLinkBuffer outBuffer(m_size);
-    uint8_t* outData = reinterpret_cast<uint8_t*>(outBuffer.data());
 #endif
+
+    BranchCompactionLinkBuffer outBuffer(m_size, useFastJITPermissions() ? codeOutData : 0);
+    uint8_t* outData = outBuffer.data();
+
 #if CPU(ARM64)
     RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(outData) == outData);
     RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(codeOutData) == codeOutData);
@@ -237,9 +268,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
 
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-    os_thread_self_restrict_rwx_to_rw();
-#endif
+    IF_FAST_JIT_PERMISSIONS(os_thread_self_restrict_rwx_to_rw());
 
     if (m_shouldPerformBranchCompaction) {
         for (unsigned i = 0; i < jumpCount; ++i) {
@@ -256,7 +285,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             ASSERT(!(writePtr % 2));
             while (copySource != copyEnd) {
                 InstructionType insn = *copySource++;
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
+#if ENABLE(VERIFY_JIT_HASH)
                 static_assert(sizeof(InstructionType) == 4, "");
                 verifyUncompactedHash.update(insn);
 #endif
@@ -305,14 +334,14 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
         for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
             InstructionType insn = *src++;
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
+#if ENABLE(VERIFY_JIT_HASH)
             verifyUncompactedHash.update(insn);
 #endif
             *dst++ = insn;
         }
     }
 
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
+#if ENABLE(VERIFY_JIT_HASH)
     if (verifyUncompactedHash.finalHash() != expectedFinalHash) {
 #ifndef NDEBUG
         dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(verifyUncompactedHash.finalHash()))), " ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(expectedFinalHash))));
@@ -327,40 +356,32 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     for (unsigned i = 0; i < jumpCount; ++i) {
         uint8_t* location = codeOutData + jumpsToLink[i].from();
         uint8_t* target = codeOutData + jumpsToLink[i].to() - executableOffsetFor(jumpsToLink[i].to());
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-        MacroAssembler::link<memcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
-#else
-        MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
-#endif
+        IF_FAST_JIT_PERMISSIONS_ELSE(MacroAssembler::link<memcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target), \
+            MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target));
     }
 
     size_t compactSize = writePtr + initialSize - readPtr;
     if (!m_executableMemory) {
         size_t nopSizeInBytes = initialSize - compactSize;
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-        Assembler::fillNops<memcpy>(outData + compactSize, nopSizeInBytes);
-#else
-        Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes);
-#endif
+        IF_FAST_JIT_PERMISSIONS_ELSE(Assembler::fillNops<memcpy>(outData + compactSize, nopSizeInBytes), \
+            Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes));
     }
 
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-    os_thread_self_restrict_rwx_to_rx();
-#endif
+    IF_FAST_JIT_PERMISSIONS(os_thread_self_restrict_rwx_to_rx());
 
     if (m_executableMemory) {
         m_size = compactSize;
         m_executableMemory->shrink(m_size);
     }
 
-#if !CPU(ARM64E) || !ENABLE(FAST_JIT_PERMISSIONS)
-    ASSERT(codeOutData != outData);
-    performJITMemcpy(codeOutData, outData, m_size);
-#else
-    ASSERT(codeOutData == outData);
-    if (UNLIKELY(Options::dumpJITMemoryPath()))
-        dumpJITMemory(outData, outData, m_size);
-#endif
+    if (useFastJITPermissions()) {
+        ASSERT(codeOutData == outData);
+        if (UNLIKELY(Options::dumpJITMemoryPath()))
+            dumpJITMemory(outData, outData, m_size);
+    } else {
+        ASSERT(codeOutData != outData);
+        performJITMemcpy(codeOutData, outData, m_size);
+    }
 
     jumpsToLink.clear();
 

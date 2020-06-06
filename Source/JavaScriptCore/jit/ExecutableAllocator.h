@@ -113,6 +113,17 @@ JS_EXPORT_PRIVATE bool isJITPC(void* pc);
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
+static ALWAYS_INLINE bool useFastJITPermissions()
+{
+#if ENABLE(FAST_JIT_PERMISSIONS) && !ENABLE(SEPARATED_WX_HEAP)
+    return true;
+#elif ENABLE(FAST_JIT_PERMISSIONS)
+    return g_jscConfig.useFastPermisionsJITCopy;
+#else
+    return false;
+#endif
+}
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -126,9 +137,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
         if (UNLIKELY(Options::dumpJITMemoryPath()))
             dumpJITMemory(dst, src, n);
 #if ENABLE(FAST_JIT_PERMISSIONS)
-#if ENABLE(SEPARATED_WX_HEAP)
-        if (g_jscConfig.useFastPermisionsJITCopy)
-#endif
+        if (useFastJITPermissions())
         {
             os_thread_self_restrict_rwx_to_rw();
             memcpy(dst, src, n);
