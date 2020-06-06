@@ -16,6 +16,11 @@ media/ios [ Pass ]
 quicklook [ Pass ]
 swipe [ Pass ]
 
+fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
+fast/css/appearance-apple-pay-button-default-corners.html [ Pass ]
+fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
+
 fast/css/ios [ Pass ]
 fast/media/ios [ Pass ]
 

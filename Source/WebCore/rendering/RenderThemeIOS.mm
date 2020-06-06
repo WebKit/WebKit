@@ -545,9 +545,22 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) cons
     return { 0, 0, 0, 0 };
 }
 
+static inline bool canAdjustBorderRadiusForAppearance(ControlPart appearance)
+{
+    switch (appearance) {
+    case NoControlPart:
+#if ENABLE(APPLE_PAY)
+    case ApplePayButtonPart:
+#endif
+        return false;
+    default:
+        return true;
+    };
+}
+
 void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
-    if (style.appearance() == NoControlPart || style.backgroundLayers().hasImage())
+    if (!canAdjustBorderRadiusForAppearance(style.appearance()) || style.backgroundLayers().hasImage())
         return;
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.

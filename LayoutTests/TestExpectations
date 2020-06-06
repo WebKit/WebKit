@@ -205,6 +205,7 @@ media/deactivate-audio-session.html [ Skip ]
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 fast/css/appearance-apple-pay-button.html [ Skip ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Skip ]
+fast/css/appearance-apple-pay-button-default-corners.html [ Skip ]
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Skip ]
 http/tests/ssl/applepay/ [ Skip ]
 

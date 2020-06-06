@@ -1,3 +1,20 @@
+2020-06-05  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r256648): Apple Pay <button> elements no longer use the default corner radius on iOS (affects Stripe.js)
+        https://bugs.webkit.org/show_bug.cgi?id=212860
+        <rdar://problem/64054728>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestExpectations: Skipped fast/css/appearance-apple-pay-button-default-corners.html.
+        * fast/css/appearance-apple-pay-button-default-corners-expected-mismatch.html: Renamed from
+        LayoutTests/http/tests/ssl/applepay/ApplePayButtonCornerRadius-expected-mismatch.html.
+        * fast/css/appearance-apple-pay-button-default-corners.html: Renamed from
+        LayoutTests/http/tests/ssl/applepay/ApplePayButtonCornerRadius.html.
+        * platform/ios/TestExpectations: Un-skipped tests that pass in platform/mac/.
+        * platform/mac/TestExpectations: Un-skipped
+        fast/css/appearance-apple-pay-button-default-corners.html.
+
 2020-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r262619, r262625, and r262641.

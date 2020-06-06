@@ -1,3 +1,36 @@
+2020-06-05  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r256648): Apple Pay <button> elements no longer use the default corner radius on iOS (affects Stripe.js)
+        https://bugs.webkit.org/show_bug.cgi?id=212860
+        <rdar://problem/64054728>
+
+        Reviewed by Wenson Hsieh.
+
+        As part of drawing iOS native form controls, RenderThemeIOS applies a round border to
+        un-styled <button> elements in RenderThemeIOS::adjustRoundBorderRadius. Prior to r256648,
+        this adjusted border radius would be ignored by RenderThemeCocoa::paintApplePayButton when
+        painting <button> elements with the ApplePayButtonPart appearance, but now it's respected.
+        Apple Pay <button>s with default width and height previously had a 4px corner radius but now
+        have a 15px corner radius.
+
+        Fixed the issue by skipping RenderThemeIOS::adjustRoundBorderRadius for elements with the
+        ApplePayButtonPart appearance so that the correct border radius adjustment can be made by
+        RenderThemeCocoa::adjustApplePayButtonStyle.
+
+        Four existing tests were skipped on iOS that would have caught this; un-skipped them.
+
+        Un-skipped tests:   fast/css/appearance-apple-pay-button.html
+                            fast/css/appearance-apple-pay-button-border-radius.html
+                            fast/css/appearance-apple-pay-button-default-corners.html
+                            fast/css/getComputedStyle/computed-style-apple-pay-button.html
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::canAdjustBorderRadiusForAppearance): Added a helper to check if border radius can
+        be adjusted for a given ControlPart. Added ApplePayButtonPart to the list of appearances
+        where border radius cannot be adjusted.
+        (WebCore::RenderThemeIOS::adjustRoundBorderRadius): Changed to call
+        canAdjustBorderRadiusForAppearance.
+
 2020-06-05  Peng Liu  <peng.liu6@apple.com>
 
         HTMLMediaElement::m_waitingToEnterFullscreen is not initialized in the constructor
