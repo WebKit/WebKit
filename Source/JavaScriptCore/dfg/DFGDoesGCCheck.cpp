@@ -28,6 +28,7 @@
 
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
+#include "DFGGraph.h"
 #include "DFGNodeType.h"
 #include "Heap.h"
 #include "Options.h"
@@ -38,8 +39,6 @@ namespace JSC {
 namespace DFG {
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
-
-extern const char* dfgOpNames[];
 
 void DoesGCCheck::verifyCanGC(VM& vm)
 {
@@ -66,7 +65,7 @@ void DoesGCCheck::verifyCanGC(VM& vm)
                 RELEASE_ASSERT_NOT_REACHED();
             }
         } else
-            dataLog(" @ D@", nodeIndex(), " ", DFG::dfgOpNames[nodeOp()]);
+            dataLog(" @ D@", nodeIndex(), " ", DFG::Graph::opName(static_cast<DFG::NodeType>(nodeOp())));
 
         CallFrame* callFrame = vm.topCallFrame;
         if (callFrame) {

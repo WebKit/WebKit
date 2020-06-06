@@ -280,7 +280,6 @@ namespace JSC  {
         }
 
         void dump(PrintStream&);
-        JS_EXPORT_PRIVATE const char* describeFrame();
 
     private:
 
