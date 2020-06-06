@@ -633,7 +633,7 @@ bool HTMLFormControlElement::shouldAutocorrect() const
 AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 {
     AutocapitalizeType type = HTMLElement::autocapitalizeType();
-    if (type == AutocapitalizeTypeDefault) {
+    if (type == AutocapitalizeType::Default) {
         if (RefPtr<HTMLFormElement> form = this->form())
             return form->autocapitalizeType();
     }

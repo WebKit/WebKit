@@ -83,21 +83,21 @@ void InputMethodState::setPurposeForInputElement(WebCore::HTMLInputElement& elem
         purpose = Purpose::Digits;
 }
 
-void InputMethodState::addHintsForAutocapitalizeType(AutocapitalizeType autocapitalizeType)
+void InputMethodState::addHintsForAutocapitalizeType(WebCore::AutocapitalizeType autocapitalizeType)
 {
     switch (autocapitalizeType) {
-    case AutocapitalizeTypeDefault:
+    case WebCore::AutocapitalizeType::Default:
         break;
-    case AutocapitalizeTypeNone:
+    case WebCore::AutocapitalizeType::None:
         hints.add(InputMethodState::Hint::Lowercase);
         break;
-    case AutocapitalizeTypeWords:
+    case WebCore::AutocapitalizeType::Words:
         hints.add(InputMethodState::Hint::UppercaseWords);
         break;
-    case AutocapitalizeTypeSentences:
+    case WebCore::AutocapitalizeType::Sentences:
         hints.add(InputMethodState::Hint::UppercaseSentences);
         break;
-    case AutocapitalizeTypeAllCharacters:
+    case WebCore::AutocapitalizeType::AllCharacters:
         hints.add(InputMethodState::Hint::UppercaseChars);
         break;
     }

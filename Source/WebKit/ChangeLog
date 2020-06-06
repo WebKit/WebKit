@@ -1,3 +1,30 @@
+2020-06-05  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for AutocapitalizeType
+        <https://webkit.org/b/212846>
+        <rdar://problem/64042825>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Move AutocapitalizeType into WebCore namespace.
+        - Convert AutocapitalizeType to an enum class.
+        - Add WTF::EnumTraits<AutocapitalizeType> for IPC.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        - Stop using decodeEnum() and encodeEnum() now that
+          WTF::EnumTraits<AutocapitalizeType> exists.
+        * Shared/FocusedElementInformation.h:
+        * Shared/glib/InputMethodState.cpp:
+        (WebKit::InputMethodState::addHintsForAutocapitalizeType):
+        * Shared/glib/InputMethodState.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toUITextAutocapitalize):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2020-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Silence telemetry generated during download operations

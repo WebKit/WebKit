@@ -1,5 +1,21 @@
 2020-06-05  David Kilzer  <ddkilzer@apple.com>
 
+        [IPC] Adopt enum class for AutocapitalizeType
+        <https://webkit.org/b/212846>
+        <rdar://problem/64042825>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Move AutocapitalizeType into WebCore namespace.
+        - Convert AutocapitalizeType to an enum class.
+        - Add WTF::EnumTraits<AutocapitalizeType> for IPC.
+
+        * DOM/DOMHTML.mm:
+        (webAutocapitalizeType):
+
+2020-06-05  David Kilzer  <ddkilzer@apple.com>
+
         [IPC] Adopt enum class for PluginLoadClientPolicy
         <https://webkit.org/b/212827>
         <rdar://problem/64030431>

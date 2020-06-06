@@ -64,7 +64,7 @@ struct InputMethodState {
 
     void setPurposeOrHintForInputMode(WebCore::InputMode);
     void setPurposeForInputElement(WebCore::HTMLInputElement&);
-    void addHintsForAutocapitalizeType(AutocapitalizeType);
+    void addHintsForAutocapitalizeType(WebCore::AutocapitalizeType);
 
     void encode(IPC::Encoder&) const;
     static Optional<InputMethodState> decode(IPC::Decoder&);

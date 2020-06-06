@@ -76,7 +76,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << previousNodeRect;
     encoder << isAutocorrect;
     encoder << isRTL;
-    encoder.encodeEnum(autocapitalizeType);
+    encoder << autocapitalizeType;
     encoder.encodeEnum(elementType);
     encoder.encodeEnum(inputMode);
     encoder.encodeEnum(enterKeyHint);
@@ -154,7 +154,7 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
     if (!decoder.decode(result.isRTL))
         return false;
 
-    if (!decoder.decodeEnum(result.autocapitalizeType))
+    if (!decoder.decode(result.autocapitalizeType))
         return false;
 
     if (!decoder.decodeEnum(result.elementType))

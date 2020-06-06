@@ -221,18 +221,18 @@
 
 @end
 
-static WebAutocapitalizeType webAutocapitalizeType(AutocapitalizeType type)
+static WebAutocapitalizeType webAutocapitalizeType(WebCore::AutocapitalizeType type)
 {
     switch (type) {
-    case AutocapitalizeTypeDefault:
+    case WebCore::AutocapitalizeType::Default:
         return WebAutocapitalizeTypeDefault;
-    case AutocapitalizeTypeNone:
+    case WebCore::AutocapitalizeType::None:
         return WebAutocapitalizeTypeNone;
-    case AutocapitalizeTypeWords:
+    case WebCore::AutocapitalizeType::Words:
         return WebAutocapitalizeTypeWords;
-    case AutocapitalizeTypeSentences:
+    case WebCore::AutocapitalizeType::Sentences:
         return WebAutocapitalizeTypeSentences;
-    case AutocapitalizeTypeAllCharacters:
+    case WebCore::AutocapitalizeType::AllCharacters:
         return WebAutocapitalizeTypeAllCharacters;
     }
 }

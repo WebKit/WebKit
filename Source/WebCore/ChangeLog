@@ -1,3 +1,23 @@
+2020-06-05  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for AutocapitalizeType
+        <https://webkit.org/b/212846>
+        <rdar://problem/64042825>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Move AutocapitalizeType into WebCore namespace.
+        - Convert AutocapitalizeType to an enum class.
+        - Add WTF::EnumTraits<AutocapitalizeType> for IPC.
+
+        * html/Autocapitalize.cpp:
+        (WebCore::autocapitalizeTypeForAttributeValue):
+        (WebCore::stringForAutocapitalizeType):
+        * html/AutocapitalizeTypes.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::autocapitalizeType const):
+
 2020-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r262619, r262625, and r262641.

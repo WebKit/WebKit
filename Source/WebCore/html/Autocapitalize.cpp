@@ -36,39 +36,39 @@ AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString& attribu
 {
     // Omitted / missing values are the Default state.
     if (attributeValue.isEmpty())
-        return AutocapitalizeTypeDefault;
+        return AutocapitalizeType::Default;
 
     if (equalLettersIgnoringASCIICase(attributeValue, "on") || equalLettersIgnoringASCIICase(attributeValue, "sentences"))
-        return AutocapitalizeTypeSentences;
+        return AutocapitalizeType::Sentences;
     if (equalLettersIgnoringASCIICase(attributeValue, "off") || equalLettersIgnoringASCIICase(attributeValue, "none"))
-        return AutocapitalizeTypeNone;
+        return AutocapitalizeType::None;
     if (equalLettersIgnoringASCIICase(attributeValue, "words"))
-        return AutocapitalizeTypeWords;
+        return AutocapitalizeType::Words;
     if (equalLettersIgnoringASCIICase(attributeValue, "characters"))
-        return AutocapitalizeTypeAllCharacters;
+        return AutocapitalizeType::AllCharacters;
 
     // Unrecognized values fall back to "on".
-    return AutocapitalizeTypeSentences;
+    return AutocapitalizeType::Sentences;
 }
 
 const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
 {
     switch (type) {
-    case AutocapitalizeTypeDefault:
+    case AutocapitalizeType::Default:
         return nullAtom();
-    case AutocapitalizeTypeNone: {
+    case AutocapitalizeType::None: {
         static MainThreadNeverDestroyed<const AtomString> valueNone("none", AtomString::ConstructFromLiteral);
         return valueNone;
     }
-    case AutocapitalizeTypeSentences: {
+    case AutocapitalizeType::Sentences: {
         static MainThreadNeverDestroyed<const AtomString> valueSentences("sentences", AtomString::ConstructFromLiteral);
         return valueSentences;
     }
-    case AutocapitalizeTypeWords: {
+    case AutocapitalizeType::Words: {
         static MainThreadNeverDestroyed<const AtomString> valueWords("words", AtomString::ConstructFromLiteral);
         return valueWords;
     }
-    case AutocapitalizeTypeAllCharacters: {
+    case AutocapitalizeType::AllCharacters: {
         static MainThreadNeverDestroyed<const AtomString> valueAllCharacters("characters", AtomString::ConstructFromLiteral);
         return valueAllCharacters;
     }

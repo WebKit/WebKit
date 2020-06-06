@@ -3226,13 +3226,13 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             information.shouldSynthesizeKeyEventsForEditing = focusedHTMLElement.document().settings().syntheticEditingCommandsEnabled();
         } else {
             information.isAutocorrect = true;
-            information.autocapitalizeType = AutocapitalizeTypeDefault;
+            information.autocapitalizeType = WebCore::AutocapitalizeType::Default;
         }
         information.isReadOnly = false;
     }
 
     if (focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() && isTransparentOrFullyClipped(*focusedElement)) {
-        information.autocapitalizeType = AutocapitalizeTypeNone;
+        information.autocapitalizeType = WebCore::AutocapitalizeType::None;
         information.isAutocorrect = false;
     }
 

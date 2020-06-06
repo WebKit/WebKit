@@ -4844,18 +4844,18 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
 // end of UITextInput protocol implementation
 
-static UITextAutocapitalizationType toUITextAutocapitalize(AutocapitalizeType webkitType)
+static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::AutocapitalizeType webkitType)
 {
     switch (webkitType) {
-    case AutocapitalizeTypeDefault:
+    case WebCore::AutocapitalizeType::Default:
         return UITextAutocapitalizationTypeSentences;
-    case AutocapitalizeTypeNone:
+    case WebCore::AutocapitalizeType::None:
         return UITextAutocapitalizationTypeNone;
-    case AutocapitalizeTypeWords:
+    case WebCore::AutocapitalizeType::Words:
         return UITextAutocapitalizationTypeWords;
-    case AutocapitalizeTypeSentences:
+    case WebCore::AutocapitalizeType::Sentences:
         return UITextAutocapitalizationTypeSentences;
-    case AutocapitalizeTypeAllCharacters:
+    case WebCore::AutocapitalizeType::AllCharacters:
         return UITextAutocapitalizationTypeAllCharacters;
     }
 

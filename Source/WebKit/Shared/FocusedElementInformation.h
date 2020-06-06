@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,7 +116,7 @@ struct FocusedElementInformation {
     bool allowsUserScaling { false };
     bool allowsUserScalingIgnoringAlwaysScalable { false };
     bool insideFixedPosition { false };
-    AutocapitalizeType autocapitalizeType { AutocapitalizeTypeDefault };
+    WebCore::AutocapitalizeType autocapitalizeType { WebCore::AutocapitalizeType::Default };
     InputType elementType { InputType::None };
     WebCore::InputMode inputMode { WebCore::InputMode::Unspecified };
     WebCore::EnterKeyHint enterKeyHint { WebCore::EnterKeyHint::Unspecified };
@@ -153,4 +153,4 @@ struct FocusedElementInformation {
 };
 #endif
 
-}
+} // namespace WebKit
