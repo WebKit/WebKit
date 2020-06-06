@@ -1,3 +1,14 @@
+2020-06-05  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitLegacy: Feature guard WebChromeClient declarations
+        https://bugs.webkit.org/show_bug.cgi?id=212857
+        <rdar://problem/64050523>
+
+        Unreviewed build fix.
+
+        * WebCoreSupport/WebChromeClient.h: m_mockVideoPresentationModeEnabled declaration
+        should be guarded on ENABLE(VIDEO_PRESENTATION_MODE).
+
 2020-06-05  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for AutocapitalizeType
