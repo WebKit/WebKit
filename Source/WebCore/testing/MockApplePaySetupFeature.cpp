@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    ActiveDOMObject,
-    Conditional=APPLE_PAY_SETUP,
-    Constructor(ApplePaySetupConfiguration configuration),
-    ConstructorCallWith=ScriptExecutionContext,
-    EnabledBySetting=ApplePay,
-    SecureContext,
-] interface ApplePaySetup {
-    [CallWith=Document] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
-    [CallWith=Document] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
-};
+#include "config.h"
+#include "MockApplePaySetupFeature.h"
+
+#if ENABLE(APPLE_PAY_SETUP)
+
+namespace WebCore {
+
+Ref<MockApplePaySetupFeature> MockApplePaySetupFeature::create(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)
+{
+    return adoptRef(*new MockApplePaySetupFeature(state, type, supportsInstallments));
+}
+
+MockApplePaySetupFeature::MockApplePaySetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)
+    : ApplePaySetupFeature()
+    , m_state(state)
+    , m_type(type)
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    , m_supportsInstallments(supportsInstallments)
+#endif
+{
+    UNUSED_PARAM(supportsInstallments);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY_SETUP)

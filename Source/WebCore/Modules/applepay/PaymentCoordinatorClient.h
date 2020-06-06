@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePaySetupFeatureWebCore.h"
-#include "ApplePaySetupWebCore.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -39,6 +38,7 @@ namespace WebCore {
 class Document;
 class PaymentMerchantSession;
 class PaymentMethodUpdate;
+struct ApplePaySetupConfiguration;
 struct PaymentAuthorizationResult;
 struct ShippingContactUpdate;
 struct ShippingMethodUpdate;
@@ -71,8 +71,8 @@ public:
     virtual bool isAlwaysOnLoggingAllowed() const { return false; }
 
 #if ENABLE(APPLE_PAY_SETUP)
-    virtual void getSetupFeatures(const ApplePaySetup::Configuration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler) { completionHandler({ }); }
-    virtual void beginApplePaySetup(const ApplePaySetup::Configuration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
+    virtual void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler) { completionHandler({ }); }
+    virtual void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void endApplePaySetup() { }
 #endif
 

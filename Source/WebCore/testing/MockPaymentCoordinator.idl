@@ -35,12 +35,16 @@
     void acceptPayment();
     void cancelPayment();
 
+    [Conditional=APPLE_PAY_SETUP] void addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, boolean supportsInstallments);
+
     readonly attribute ApplePayLineItem total;
     readonly attribute sequence<ApplePayLineItem> lineItems;
     readonly attribute sequence<MockPaymentError> errors;
     readonly attribute sequence<ApplePayShippingMethod> shippingMethods;
     readonly attribute MockPaymentContactFields requiredBillingContactFields;
     readonly attribute MockPaymentContactFields requiredShippingContactFields;
+
+    [Conditional=APPLE_PAY_SETUP] readonly attribute ApplePaySetupConfiguration setupConfiguration;
 
     attribute boolean supportsUnrestrictedApplePay;
 

@@ -44,7 +44,9 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayRequestBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySession.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySessionError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySetup.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePaySetupConfiguration.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeature.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeatureState.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySetupFeatureType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingContactUpdate.idl
@@ -1136,6 +1138,7 @@ $(PROJECT_DIR)/testing/InternalsMapLike.idl
 $(PROJECT_DIR)/testing/InternalsSetLike.idl
 $(PROJECT_DIR)/testing/MallocStatistics.idl
 $(PROJECT_DIR)/testing/MemoryInfo.idl
+$(PROJECT_DIR)/testing/MockApplePaySetupFeature.idl
 $(PROJECT_DIR)/testing/MockCDMFactory.idl
 $(PROJECT_DIR)/testing/MockContentFilterSettings.idl
 $(PROJECT_DIR)/testing/MockPageOverlay.idl
@@ -1187,5 +1190,3 @@ $(PROJECT_DIR)/xml/XPathResult.idl
 $(PROJECT_DIR)/xml/XSLTProcessor.idl
 $(PROJECT_DIR)/xml/xmlattrs.in
 $(PROJECT_DIR)/xml/xmlnsattrs.in
-ApplePaySetup.idl
-ApplePaySetupFeature.idl

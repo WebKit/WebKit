@@ -647,7 +647,9 @@ WHLSLStandardLibraryFunctionMap.cpp
     JSApplePaySession.cpp
     JSApplePaySessionError.cpp
     JSApplePaySetup.cpp
+    JSApplePaySetupConfiguration.cpp
     JSApplePaySetupFeature.cpp
+    JSApplePaySetupFeatureState.cpp
     JSApplePaySetupFeatureType.cpp
     JSApplePayShippingContactSelectedEvent.cpp
     JSApplePayShippingContactUpdate.cpp

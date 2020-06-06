@@ -1,3 +1,55 @@
+2020-06-06  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add testing and logging for ApplePaySetup
+        https://bugs.webkit.org/show_bug.cgi?id=211972
+        <rdar://problem/63291965>
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/ssl/applepay/ApplePaySetup.https.html
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/applepay/ApplePaySetup.cpp:
+        (WebCore::ApplePaySetup::getSetupFeatures):
+        (WebCore::ApplePaySetup::begin):
+        (WebCore::ApplePaySetup::ApplePaySetup):
+        (WebCore::ApplePaySetup::stop):
+        * Modules/applepay/ApplePaySetup.idl:
+        * Modules/applepay/ApplePaySetupConfiguration.h: Copied from Source/WebCore/Modules/applepay/ApplePaySetupFeatureType.idl.
+        * Modules/applepay/ApplePaySetupConfiguration.idl: Copied from Source/WebCore/Modules/applepay/ApplePaySetupFeatureType.idl.
+        * Modules/applepay/ApplePaySetupFeature.idl:
+        * Modules/applepay/ApplePaySetupFeature.mm:
+        (WebCore::ApplePaySetupFeature::state const):
+        * Modules/applepay/ApplePaySetupFeatureState.h: Copied from Source/WebCore/Modules/applepay/ApplePaySetupFeatureType.idl.
+        * Modules/applepay/ApplePaySetupFeatureState.idl: Copied from Source/WebCore/Modules/applepay/ApplePaySetupFeatureType.idl.
+        * Modules/applepay/ApplePaySetupFeatureType.idl:
+        * Modules/applepay/ApplePaySetupFeatureWebCore.h:
+        * Modules/applepay/ApplePaySetupWebCore.h:
+        (WebCore::ApplePaySetup::create):
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::setApplePayIsActiveIfAllowed const):
+        (WebCore::PaymentCoordinator::getSetupFeatures):
+        (WebCore::PaymentCoordinator::beginApplePaySetup):
+        (WebCore::PaymentCoordinator::endApplePaySetup):
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        (WebCore::PaymentCoordinatorClient::getSetupFeatures):
+        (WebCore::PaymentCoordinatorClient::beginApplePaySetup):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/MockApplePaySetupFeature.cpp: Copied from Source/WebCore/Modules/applepay/ApplePaySetupFeatureWebCore.h.
+        (WebCore::MockApplePaySetupFeature::create):
+        (WebCore::MockApplePaySetupFeature::MockApplePaySetupFeature):
+        * testing/MockApplePaySetupFeature.h: Copied from Source/WebCore/Modules/applepay/ApplePaySetupFeatureWebCore.h.
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::addSetupFeature):
+        (WebCore::MockPaymentCoordinator::getSetupFeatures):
+        (WebCore::MockPaymentCoordinator::beginApplePaySetup):
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.idl:
+
 2020-06-06  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: Use OptionSet<DragOperation> for mask values
