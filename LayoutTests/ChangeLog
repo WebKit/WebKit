@@ -1,3 +1,15 @@
+2020-06-06  Devin Rousso  <drousso@apple.com>
+
+        [ macOS wk2 ] inspector/page/setBootstrapScript-sub-frame.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=207053
+        <rdar://problem/59064908>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/page/setBootstrapScript-sub-frame.html:
+
+        * platform/mac/TestExpectations:
+
 2020-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         fast/scrolling/latching/iframe-latch-small-deltas.html is flakey

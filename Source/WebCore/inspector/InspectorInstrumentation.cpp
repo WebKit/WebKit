@@ -720,6 +720,9 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
             enabledPageHeapAgent->mainFrameNavigated();
     }
 
+    if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->frameNavigated(frame);
+
     if (auto* pageRuntimeAgent = instrumentingAgents.enabledPageRuntimeAgent())
         pageRuntimeAgent->frameNavigated(frame);
 
@@ -731,9 +734,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
 
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didCommitLoad(frame.document());
-
-    if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
-        pageAgent->frameNavigated(frame);
 
     if (frame.isMainFrame()) {
         if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())

@@ -29,7 +29,8 @@ function test()
 
             let {frame} = frameWasAddedEvent.data;
 
-            await frame.awaitEvent(WI.Frame.Event.PageExecutionContextChanged);
+            if (!frame.pageExecutionContext)
+                await frame.awaitEvent(WI.Frame.Event.PageExecutionContextChanged);
 
             let {result} = await RuntimeAgent.evaluate.invoke({
                 expression: `window.valueFromBootstrapScript`,
