@@ -7289,7 +7289,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
         if (started) {
             // A client of the Objective C SPI or UIKit might have prevented the drag from beginning entirely in the UI process, in which case
             // we need to balance the `dragstart` event with a `dragend`.
-            _page->dragEnded(positionForDragEnd, positionForDragEnd, WebCore::DragOperationNone);
+            _page->dragEnded(positionForDragEnd, positionForDragEnd, { });
         }
     }
 }
@@ -7307,15 +7307,31 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
         *outGlobalPoint = locationInContentView;
 }
 
-static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperation operation)
+static UIDropOperation dropOperationForWebCoreDragOperation(Optional<WebCore::DragOperation> operation)
 {
-    if (operation & WebCore::DragOperationMove)
-        return UIDropOperationMove;
-
-    if (operation & WebCore::DragOperationCopy)
-        return UIDropOperationCopy;
-
+    if (operation) {
+        if (*operation == WebCore::DragOperationMove)
+            return UIDropOperationMove;
+        if (*operation == WebCore::DragOperationCopy)
+            return UIDropOperationCopy;
+    }
     return UIDropOperationCancel;
+}
+
+static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDropOperation dropOperation)
+{
+    switch (dropOperation) {
+    case UIDropOperationCancel:
+        return WTF::nullopt;
+    case UIDropOperationForbidden:
+        return WebCore::DragOperationPrivate;
+    case UIDropOperationCopy:
+        return WebCore::DragOperationCopy;
+    case UIDropOperationMove:
+        return WebCore::DragOperationMove;
+    }
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
 }
 
 - (WebCore::DragData)dragDataForDropSession:(id <UIDropSession>)session dragDestinationAction:(WKDragDestinationAction)dragDestinationAction
@@ -7324,7 +7340,9 @@ static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperati
     CGPoint client;
     [self computeClientAndGlobalPointsForDropSession:session outClientPoint:&client outGlobalPoint:&global];
 
-    WebCore::DragOperation dragOperationMask = static_cast<WebCore::DragOperation>(session.allowsMoveOperation ? WebCore::DragOperationEvery : (WebCore::DragOperationEvery & ~WebCore::DragOperationMove));
+    auto dragOperationMask = WebCore::anyDragOperation();
+    if (!session.allowsMoveOperation)
+        dragOperationMask.remove(WebCore::DragOperationMove);
     return { session, WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), dragOperationMask, WebCore::DragApplicationNone, WebKit::coreDragDestinationActionMask(dragDestinationAction) };
 }
 
@@ -7428,7 +7446,8 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     CGPoint client;
     [self computeClientAndGlobalPointsForDropSession:dropSession outClientPoint:&client outGlobalPoint:&global];
     [self cleanUpDragSourceSessionState];
-    _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), _page->currentDragOperation());
+    auto currentDragOperation = _page->currentDragOperation();
+    _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), currentDragOperation ? *currentDragOperation : OptionSet<WebCore::DragOperation>({ }));
 }
 
 - (void)_didChangeDragCaretRect:(CGRect)previousRect currentRect:(CGRect)rect
@@ -8017,7 +8036,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
             RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session);
             // The lift was canceled, so -dropInteraction:sessionDidEnd: will never be invoked. This is the last chance to clean up.
             [protectedSelf cleanUpDragSourceSessionState];
-            page->dragEnded(positionForDragEnd, positionForDragEnd, WebCore::DragOperationNone);
+            page->dragEnded(positionForDragEnd, positionForDragEnd, { });
         }
 #if !RELEASE_LOG_DISABLED
         else
@@ -8052,7 +8071,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         return;
 
     [self cleanUpDragSourceSessionState];
-    _page->dragEnded(WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), operation);
+    _page->dragEnded(WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd()), coreDragOperationForUIDropOperation(operation));
 }
 
 - (UITargetedDragPreview *)dragInteraction:(UIDragInteraction *)interaction previewForCancellingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview
@@ -8271,7 +8290,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     CGPoint client;
     [self computeClientAndGlobalPointsForDropSession:session outClientPoint:&client outGlobalPoint:&global];
     [self cleanUpDragSourceSessionState];
-    _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), WebCore::DragOperationNone);
+    _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), { });
 }
 
 #endif

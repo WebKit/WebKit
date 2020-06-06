@@ -1,3 +1,105 @@
+2020-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Use OptionSet<DragOperation> for mask values
+        <https://webkit.org/b/212605>
+
+        Reviewed by Darin Adler.
+
+        In broad strokes:
+        - Replace use of DragOperation with OptionSet<DragOperation> or
+          Optional<DragOperation>.
+        - Rename function parameters and local variables to denote use
+          of mask values.
+        - Remove DragOperationNone enum value.
+        - Replace DragOperationEvery enum value with anyDragOperation().
+
+        * Platform/spi/ios/UIKitSPI.h:
+        (UIDragOperation):
+        - Remove unused (and misnamed) UIDragOperation enum typedef.
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        - Add support for WebCore::DragOperation enum.
+        * Shared/API/Cocoa/_WKDragActionsInternal.h:
+        (WebKit::coreDragOperationMask): Add conversion function.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+        - Update to encode/decode OptionSet<DragOperation>.
+
+        * UIProcess/API/gtk/DragSource.h:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DragSourceGtk3.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DragSourceGtk4.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DropTarget.h:
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::didPerformAction):
+        (WebKit::DropTarget::leaveTimerFired):
+        * UIProcess/API/gtk/DropTargetGtk4.cpp:
+        (WebKit::DropTarget::DropTarget):
+        (WebKit::DropTarget::didPerformAction):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::startDrag):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (WebKit::PageClientImpl::startDrag):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseStartDrag):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        (webkitWebViewBaseStartDrag):
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::sendDragEndToPage):
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::kit): Add conversion function.
+        (WebKit::WebViewImpl::draggingUpdated):
+        (WebKit::WebViewImpl::draggingExited):
+        (WebKit::WebViewImpl::performDragOperation):
+        - Make use of coreDragOperationMask() conversion function.
+        * UIProcess/PageClient.h:
+        (WebKit::WebViewImpl::startDrag):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        - Remove MESSAGE_CHECK now that we're using the actual type.
+        (WebKit::WebPageProxy::startDrag):
+        (WebKit::WebPageProxy::dragEnded):
+        (WebKit::WebPageProxy::resetCurrentDragInformation):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        (WebKit::WebPageProxy::dragEnded):
+        (WebKit::WebPageProxy::startDrag):
+        (WebKit::WebPageProxy::currentDragOperation const):
+        * UIProcess/WebPageProxy.messages.in:
+        (WebPageProxy::DidPerformDragControllerAction):
+        (WebPageProxy::StartDrag):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleDragStartRequest:]):
+        (dropOperationForWebCoreDragOperation):
+        (coreDragOperationForUIDropOperation): Add conversion function.
+        - Note that this was not being converted from UIDropOperation to
+          WebCore::DragOperation previously, and UIDropOperationMove
+          (0x3) was not being properly converted to DragOperationMove
+          (0x16).
+        (-[WKContentView dragDataForDropSession:dragDestinationAction:]):
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dropInteraction:sessionDidEnd:]):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::dragEnded):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::dragEnded):
+        * WebProcess/WebPage/WebPage.messages.in:
+        (WebPage::PerformDragControllerAction):
+        (WebPage::DragEnded):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+
 2020-06-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: unify the naming scheme for agents used by instrumentation

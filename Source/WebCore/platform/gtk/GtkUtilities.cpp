@@ -149,49 +149,40 @@ unsigned stateModifierForGdkButton(unsigned button)
     return 1 << (8 + button - 1);
 }
 
-DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction)
+OptionSet<DragOperation> gdkDragActionToDragOperation(GdkDragAction gdkAction)
 {
-    // We have no good way to detect DragOperationEvery other than
-    // to use it when all applicable flags are on.
-    if (gdkAction & GDK_ACTION_COPY
-        && gdkAction & GDK_ACTION_MOVE
-        && gdkAction & GDK_ACTION_LINK)
-        return DragOperationEvery;
-
-    unsigned action = DragOperationNone;
+    OptionSet<DragOperation> action;
     if (gdkAction & GDK_ACTION_COPY)
-        action |= DragOperationCopy;
+        action.add(DragOperationCopy);
     if (gdkAction & GDK_ACTION_MOVE)
-        action |= DragOperationMove;
+        action.add(DragOperationMove);
     if (gdkAction & GDK_ACTION_LINK)
-        action |= DragOperationLink;
+        action.add(DragOperationLink);
 
-    return static_cast<DragOperation>(action);
+    return action;
 }
 
-GdkDragAction dragOperationToGdkDragActions(DragOperation coreAction)
+GdkDragAction dragOperationToGdkDragActions(OptionSet<DragOperation> coreAction)
 {
     unsigned gdkAction = 0;
-    if (coreAction == DragOperationNone)
-        return static_cast<GdkDragAction>(gdkAction);
 
-    if (coreAction & DragOperationCopy)
+    if (coreAction.contains(DragOperationCopy))
         gdkAction |= GDK_ACTION_COPY;
-    if (coreAction & DragOperationMove)
+    if (coreAction.contains(DragOperationMove))
         gdkAction |= GDK_ACTION_MOVE;
-    if (coreAction & DragOperationLink)
+    if (coreAction.contains(DragOperationLink))
         gdkAction |= GDK_ACTION_LINK;
 
     return static_cast<GdkDragAction>(gdkAction);
 }
 
-GdkDragAction dragOperationToSingleGdkDragAction(DragOperation coreAction)
+GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOperation> coreAction)
 {
-    if (coreAction == DragOperationEvery || coreAction & DragOperationCopy)
+    if (coreAction.contains(DragOperationCopy))
         return GDK_ACTION_COPY;
-    if (coreAction & DragOperationMove)
+    if (coreAction.contains(DragOperationMove))
         return GDK_ACTION_MOVE;
-    if (coreAction & DragOperationLink)
+    if (coreAction.contains(DragOperationLink))
         return GDK_ACTION_LINK;
     return static_cast<GdkDragAction>(0);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,10 +64,10 @@ bool DragController::isCopyKeyDown(const DragData& dragData)
     return dragData.flags() & DragApplicationIsCopyKeyDown;
 }
     
-DragOperation DragController::dragOperation(const DragData& dragData)
+Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     if (dragData.flags() & DragApplicationIsModal)
-        return DragOperationNone;
+        return WTF::nullopt;
 
     bool mayContainURL;
     if (canLoadDataFromDraggingPasteboard())
@@ -76,12 +76,12 @@ DragOperation DragController::dragOperation(const DragData& dragData)
         mayContainURL = dragData.containsURLTypeIdentifier();
 
     if (!mayContainURL && !dragData.containsPromise())
-        return DragOperationNone;
+        return WTF::nullopt;
 
     if (!m_documentUnderMouse || (!(dragData.flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
         return DragOperationCopy;
 
-    return DragOperationNone;
+    return WTF::nullopt;
 }
 
 const IntSize& DragController::maxDragImageSize()

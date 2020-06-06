@@ -2334,7 +2334,7 @@ static bool targetIsFrame(Node* target, Frame*& frame)
     return true;
 }
 
-static DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation)
+static Optional<DragOperation> convertDropZoneOperationToDragOperation(const String& dragOperation)
 {
     if (dragOperation == "copy")
         return DragOperationCopy;
@@ -2342,21 +2342,22 @@ static DragOperation convertDropZoneOperationToDragOperation(const String& dragO
         return DragOperationMove;
     if (dragOperation == "link")
         return DragOperationLink;
-    return DragOperationNone;
+    return WTF::nullopt;
 }
 
-static String convertDragOperationToDropZoneOperation(DragOperation operation)
+static String convertDragOperationToDropZoneOperation(Optional<DragOperation> operation)
 {
-    switch (operation) {
-    case DragOperationCopy:
-        return "copy"_s;
-    case DragOperationMove:
-        return "move"_s;
-    case DragOperationLink:
-        return "link"_s;
-    default:
-        return "copy"_s;
+    if (operation) {
+        switch (*operation) {
+        case DragOperationMove:
+            return "move"_s;
+        case DragOperationLink:
+            return "link"_s;
+        default:
+            break;
+        }
     }
+    return "copy"_s;
 }
 
 static bool hasDropZoneType(DataTransfer& dataTransfer, const String& keyword)
@@ -2376,15 +2377,14 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
     for (; element; element = element->parentElement()) {
         SpaceSplitString keywords(element->attributeWithoutSynchronization(webkitdropzoneAttr), true);
         bool matched = false;
-        DragOperation dragOperation = DragOperationNone;
+        Optional<DragOperation> dragOperation;
         for (unsigned i = 0, size = keywords.size(); i < size; ++i) {
-            DragOperation op = convertDropZoneOperationToDragOperation(keywords[i]);
-            if (op != DragOperationNone) {
-                if (dragOperation == DragOperationNone)
-                    dragOperation = op;
+            if (auto operationFromKeyword = convertDropZoneOperationToDragOperation(keywords[i])) {
+                if (!dragOperation)
+                    dragOperation = operationFromKeyword;
             } else
                 matched = matched || hasDropZoneType(dataTransfer, keywords[i].string());
-            if (matched && dragOperation != DragOperationNone)
+            if (matched && dragOperation)
                 break;
         }
         if (matched) {
@@ -2395,20 +2395,19 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
     return false;
 }
 
-EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent& event,
-    std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
+EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
-    auto dataTransfer = DataTransfer::createForUpdatingDropTarget(target.document(), WTFMove(pasteboard), sourceOperation, draggingFiles);
+    auto dataTransfer = DataTransfer::createForUpdatingDropTarget(target.document(), WTFMove(pasteboard), sourceOperationMask, draggingFiles);
     bool accept = dispatchDragEvent(eventType, target, event, dataTransfer.get());
     if (!accept)
         accept = findDropZone(target, dataTransfer);
     dataTransfer->makeInvalidForSecurity();
     if (accept && !dataTransfer->dropEffectIsUninitialized())
-        return { true, dataTransfer->destinationOperation() };
+        return { true, dataTransfer->destinationOperationMask() };
     return { accept, WTF::nullopt };
 }
 
-EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, const std::function<std::unique_ptr<Pasteboard>()>& makePasteboard, DragOperation sourceOperation, bool draggingFiles)
+EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, const std::function<std::unique_ptr<Pasteboard>()>& makePasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
     Ref<Frame> protectedFrame(m_frame);
     if (!m_frame.view())
@@ -2438,19 +2437,19 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
         Frame* targetFrame;
         if (targetIsFrame(newTarget.get(), targetFrame)) {
             if (targetFrame)
-                response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
+                response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperationMask, draggingFiles);
         } else if (newTarget) {
             // As per section 7.9.4 of the HTML 5 spec., we must always fire a drag event before firing a dragenter, dragleave, or dragover event.
             dispatchEventToDragSourceElement(eventNames().dragEvent, event);
-            response = dispatchDragEnterOrDragOverEvent(eventNames().dragenterEvent, *newTarget, event, makePasteboard(), sourceOperation, draggingFiles);
+            response = dispatchDragEnterOrDragOverEvent(eventNames().dragenterEvent, *newTarget, event, makePasteboard(), sourceOperationMask, draggingFiles);
         }
 
         if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
             // FIXME: Recursing again here doesn't make sense if the newTarget and m_dragTarget were in the same frame.
             if (targetFrame)
-                response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
+                response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperationMask, draggingFiles);
         } else if (m_dragTarget) {
-            auto dataTransfer = DataTransfer::createForUpdatingDropTarget(m_dragTarget->document(), makePasteboard(), sourceOperation, draggingFiles);
+            auto dataTransfer = DataTransfer::createForUpdatingDropTarget(m_dragTarget->document(), makePasteboard(), sourceOperationMask, draggingFiles);
             dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, dataTransfer.get());
             dataTransfer->makeInvalidForSecurity();
         }
@@ -2464,12 +2463,12 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
         Frame* targetFrame;
         if (targetIsFrame(newTarget.get(), targetFrame)) {
             if (targetFrame)
-                response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
+                response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperationMask, draggingFiles);
         } else if (newTarget) {
             // Note, when dealing with sub-frames, we may need to fire only a dragover event as a drag event may have been fired earlier.
             if (!m_shouldOnlyFireDragOverEvent)
                 dispatchEventToDragSourceElement(eventNames().dragEvent, event);
-            response = dispatchDragEnterOrDragOverEvent(eventNames().dragoverEvent, *newTarget, event, makePasteboard(), sourceOperation, draggingFiles);
+            response = dispatchDragEnterOrDragOverEvent(eventNames().dragoverEvent, *newTarget, event, makePasteboard(), sourceOperationMask, draggingFiles);
             m_shouldOnlyFireDragOverEvent = false;
         }
     }
@@ -2477,25 +2476,25 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
     return response;
 }
 
-void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
+void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
     Ref<Frame> protectedFrame(m_frame);
 
     Frame* targetFrame;
     if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
         if (targetFrame)
-            targetFrame->eventHandler().cancelDragAndDrop(event, WTFMove(pasteboard), sourceOperation, draggingFiles);
+            targetFrame->eventHandler().cancelDragAndDrop(event, WTFMove(pasteboard), sourceOperationMask, draggingFiles);
     } else if (m_dragTarget) {
         dispatchEventToDragSourceElement(eventNames().dragEvent, event);
 
-        auto dataTransfer = DataTransfer::createForUpdatingDropTarget(m_dragTarget->document(), WTFMove(pasteboard), sourceOperation, draggingFiles);
+        auto dataTransfer = DataTransfer::createForUpdatingDropTarget(m_dragTarget->document(), WTFMove(pasteboard), sourceOperationMask, draggingFiles);
         dispatchDragEvent(eventNames().dragleaveEvent, *m_dragTarget, event, dataTransfer.get());
         dataTransfer->makeInvalidForSecurity();
     }
     clearDragState();
 }
 
-bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
+bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, std::unique_ptr<Pasteboard>&& pasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
 {
     Ref<Frame> protectedFrame(m_frame);
 
@@ -2503,9 +2502,9 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, std::uniq
     bool preventedDefault = false;
     if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
         if (targetFrame)
-            preventedDefault = targetFrame->eventHandler().performDragAndDrop(event, WTFMove(pasteboard), sourceOperation, draggingFiles);
+            preventedDefault = targetFrame->eventHandler().performDragAndDrop(event, WTFMove(pasteboard), sourceOperationMask, draggingFiles);
     } else if (m_dragTarget) {
-        auto dataTransfer = DataTransfer::createForDrop(m_dragTarget->document(), WTFMove(pasteboard), sourceOperation, draggingFiles);
+        auto dataTransfer = DataTransfer::createForDrop(m_dragTarget->document(), WTFMove(pasteboard), sourceOperationMask, draggingFiles);
         preventedDefault = dispatchDragEvent(eventNames().dropEvent, *m_dragTarget, event, dataTransfer);
         dataTransfer->makeInvalidForSecurity();
     }
@@ -3729,13 +3728,13 @@ void EventHandler::didStartDrag()
 #endif
 }
 
-void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation, MayExtendDragSession mayExtendDragSession)
+void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, OptionSet<DragOperation> dragOperationMask, MayExtendDragSession mayExtendDragSession)
 {
     // Send a hit test request so that RenderLayer gets a chance to update the :hover and :active pseudoclasses.
     prepareMouseEvent(OptionSet<HitTestRequest::RequestType> { HitTestRequest::Release, HitTestRequest::DisallowUserAgentShadowContent }, event);
 
     if (shouldDispatchEventsToDragSourceElement()) {
-        dragState().dataTransfer->setDestinationOperation(operation);
+        dragState().dataTransfer->setDestinationOperationMask(dragOperationMask);
         dispatchEventToDragSourceElement(eventNames().dragendEvent, event);
     }
     invalidateDataTransfer();
@@ -3865,7 +3864,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     // Once we're past the hysteresis point, we don't want to treat this gesture as a click
     invalidateClick();
     
-    DragOperation srcOp = DragOperationNone;      
+    OptionSet<DragOperation> sourceOperationMask;
     
     // This does work only if we missed a dragEnd. Do it anyway, just to make sure the old dataTransfer gets numbed.
     // FIXME: Consider doing this earlier in this function as the earliest point we're sure it would be safe to drop an old drag.
@@ -3901,7 +3900,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
 
         if (m_mouseDownMayStartDrag) {
             // Gather values from DHTML element, if it set any.
-            srcOp = dragState().dataTransfer->sourceOperation();
+            sourceOperationMask = dragState().dataTransfer->sourceOperationMask();
             
             // Yuck, a draggedImage:moveTo: message can be fired as a result of kicking off the
             // drag with dragImage! Because of that dumb reentrancy, we may think we've not
@@ -3912,7 +3911,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     
     if (m_mouseDownMayStartDrag) {
         Page* page = m_frame.page();
-        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownContentsPosition, hasNonDefaultPasteboardData);
+        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), sourceOperationMask, event.event(), m_mouseDownContentsPosition, hasNonDefaultPasteboardData);
         // In WebKit2 we could re-enter this code and start another drag.
         // On OS X this causes problems with the ownership of the pasteboard and the promised types.
         if (m_didStartDrag) {

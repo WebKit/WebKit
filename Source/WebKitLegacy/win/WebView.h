@@ -555,7 +555,7 @@ private:
 
     void performLayeredWindowUpdate();
 
-    WebCore::DragOperation keyStateToDragOperation(DWORD grfKeyState) const;
+    OptionSet<WebCore::DragOperation> keyStateToDragOperation(DWORD grfKeyState) const;
 
     // FIXME: This variable is part of a workaround. The drop effect (pdwEffect) passed to Drop is incorrect. 
     // We set this variable in DragEnter and DragOver so that it can be used in Drop to set the correct drop effect. 

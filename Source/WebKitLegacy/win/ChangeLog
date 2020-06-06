@@ -1,3 +1,28 @@
+2020-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Use OptionSet<DragOperation> for mask values
+        <https://webkit.org/b/212605>
+
+        Reviewed by Darin Adler.
+
+        In broad strokes:
+        - Replace use of DragOperation with OptionSet<DragOperation> or
+          Optional<DragOperation>.
+        - Rename function parameters and local variables to denote use
+          of mask values.
+        - Remove DragOperationNone enum value.
+        - Replace DragOperationEvery enum value with anyDragOperation().
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (draggingSourceOperationMaskToDragCursors):
+        (WebDragClient::startDrag):
+        * WebView.cpp:
+        (dragOperationToDragCursor):
+        (WebView::keyStateToDragOperation const):
+        (WebView::DragLeave):
+        * WebView.h:
+        (WebView::keyStateToDragOperation const):
+
 2020-06-01  David Kilzer  <ddkilzer@apple.com>
 
         Don't use casts to convert between WebCore::DragDestinationAction and {Web,WK}DragDestinationAction types

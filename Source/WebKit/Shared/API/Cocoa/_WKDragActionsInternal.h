@@ -40,4 +40,24 @@ inline OptionSet<WebCore::DragDestinationAction> coreDragDestinationActionMask(W
     return result;
 }
 
+#if USE(APPKIT)
+inline OptionSet<WebCore::DragOperation> coreDragOperationMask(NSDragOperation operation)
+{
+    OptionSet<WebCore::DragOperation> result;
+    if (operation & NSDragOperationCopy)
+        result.add(WebCore::DragOperationCopy);
+    if (operation & NSDragOperationLink)
+        result.add(WebCore::DragOperationLink);
+    if (operation & NSDragOperationGeneric)
+        result.add(WebCore::DragOperationGeneric);
+    if (operation & NSDragOperationPrivate)
+        result.add(WebCore::DragOperationPrivate);
+    if (operation & NSDragOperationMove)
+        result.add(WebCore::DragOperationMove);
+    if (operation & NSDragOperationDelete)
+        result.add(WebCore::DragOperationDelete);
+    return result;
+}
+#endif // USE(APPKIT)
+
 } // namespace WebKit

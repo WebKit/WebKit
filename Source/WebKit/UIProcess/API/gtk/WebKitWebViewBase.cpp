@@ -2061,13 +2061,13 @@ void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase* webViewBase, const IntRe
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, SelectionData&& selectionData, DragOperation dragOperation, RefPtr<ShareableBitmap>&& image)
+void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, SelectionData&& selectionData, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& image)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->dragSource)
         priv->dragSource = makeUnique<DragSource>(GTK_WIDGET(webViewBase));
 
-    priv->dragSource->begin(WTFMove(selectionData), dragOperation, WTFMove(image));
+    priv->dragSource->begin(WTFMove(selectionData), dragOperationMask, WTFMove(image));
 
 #if !USE(GTK4)
     // A drag starting should prevent a double-click from happening. This might

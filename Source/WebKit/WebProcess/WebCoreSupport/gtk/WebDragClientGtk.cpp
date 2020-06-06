@@ -75,7 +75,7 @@ void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame&)
 
     m_page->willStartDrag();
 
-    m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperation(), handle));
+    m_page->send(Messages::WebPageProxy::StartDrag(dataTransfer.pasteboard().selectionData(), dataTransfer.sourceOperationMask(), handle));
 }
 
 }; // namespace WebKit.

@@ -52,7 +52,7 @@ public:
     explicit DragSource(GtkWidget*);
     ~DragSource();
 
-    void begin(WebCore::SelectionData&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&&);
+    void begin(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&&);
 
 private:
     GtkWidget* m_webView { nullptr };

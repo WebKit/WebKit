@@ -60,17 +60,20 @@ typedef enum {
     DragSourceActionAny          = UINT_MAX
 } DragSourceAction;
 
-// Matches NSDragOperation.
-typedef enum {
-    DragOperationNone    = 0,
+// See NSDragOperation, _UIDragOperation and UIDropOperation.
+enum DragOperation {
     DragOperationCopy    = 1,
     DragOperationLink    = 2,
     DragOperationGeneric = 4,
     DragOperationPrivate = 8,
     DragOperationMove    = 16,
     DragOperationDelete  = 32,
-    DragOperationEvery   = UINT_MAX
-} DragOperation;
+};
+
+constexpr OptionSet<DragOperation> anyDragOperation()
+{
+    return { DragOperationCopy, DragOperationLink, DragOperationGeneric, DragOperationPrivate, DragOperationMove, DragOperationDelete };
+}
 
 enum class MayExtendDragSession : bool { No, Yes };
 enum class HasNonDefaultPasteboardData : bool { No, Yes };
@@ -93,12 +96,36 @@ template<> struct EnumTraits<WebCore::DragHandlingMethod> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::DragOperation> {
+    using values = EnumValues<
+        WebCore::DragOperation,
+        WebCore::DragOperationCopy,
+        WebCore::DragOperationLink,
+        WebCore::DragOperationGeneric,
+        WebCore::DragOperationPrivate,
+        WebCore::DragOperationMove,
+        WebCore::DragOperationDelete
+    >;
+};
+
 template<> struct OptionSetTraits<WebCore::DragDestinationAction> {
     using values = OptionSetValues<
         WebCore::DragDestinationAction,
         WebCore::DragDestinationAction::DHTML,
         WebCore::DragDestinationAction::Edit,
         WebCore::DragDestinationAction::Load
+    >;
+};
+
+template<> struct OptionSetTraits<WebCore::DragOperation> {
+    using values = OptionSetValues<
+        WebCore::DragOperation,
+        WebCore::DragOperationCopy,
+        WebCore::DragOperationLink,
+        WebCore::DragOperationGeneric,
+        WebCore::DragOperationPrivate,
+        WebCore::DragOperationMove,
+        WebCore::DragOperationDelete
     >;
 };
 

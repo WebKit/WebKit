@@ -589,6 +589,92 @@ static OptionSet<WebCore::DragDestinationAction> coreDragDestinationActionMask(W
         result.add(WebCore::DragDestinationAction::Load);
     return result;
 }
+
+#if !USE(APPKIT)
+// See <UIKit/UIDragging_Private.h>.
+typedef NS_OPTIONS(NSUInteger, _UIDragOperation) {
+    _UIDragOperationNone = 0,
+    _UIDragOperationCopy = 1,
+    _UIDragOperationMove = 16,
+};
+#endif
+
+OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation operation)
+{
+    OptionSet<WebCore::DragOperation> result;
+
+#if USE(APPKIT)
+    if (operation & NSDragOperationCopy)
+        result.add(WebCore::DragOperationCopy);
+    if (operation & NSDragOperationLink)
+        result.add(WebCore::DragOperationLink);
+    if (operation & NSDragOperationGeneric)
+        result.add(WebCore::DragOperationGeneric);
+    if (operation & NSDragOperationPrivate)
+        result.add(WebCore::DragOperationPrivate);
+    if (operation & NSDragOperationMove)
+        result.add(WebCore::DragOperationMove);
+    if (operation & NSDragOperationDelete)
+        result.add(WebCore::DragOperationDelete);
+#else
+    if (operation & _UIDragOperationCopy)
+        result.add(WebCore::DragOperationCopy);
+    if (operation & _UIDragOperationMove)
+        result.add(WebCore::DragOperationMove);
+#endif // USE(APPKIT)
+
+    return result;
+}
+
+#if USE(APPKIT)
+static NSDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
+{
+    if (!dragOperation)
+        return NSDragOperationNone;
+
+    switch (*dragOperation) {
+    case WebCore::DragOperationCopy:
+        return NSDragOperationCopy;
+    case WebCore::DragOperationLink:
+        return NSDragOperationLink;
+    case WebCore::DragOperationGeneric:
+        return NSDragOperationGeneric;
+    case WebCore::DragOperationPrivate:
+        return NSDragOperationPrivate;
+    case WebCore::DragOperationMove:
+        return NSDragOperationMove;
+    case WebCore::DragOperationDelete:
+        return NSDragOperationDelete;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NSDragOperationNone;
+}
+#else
+static _UIDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
+{
+    if (!dragOperation)
+        return _UIDragOperationNone;
+
+    switch (*dragOperation) {
+    case WebCore::DragOperationCopy:
+        return _UIDragOperationCopy;
+    case WebCore::DragOperationLink:
+        return _UIDragOperationNone;
+    case WebCore::DragOperationGeneric:
+        return _UIDragOperationMove;
+    case WebCore::DragOperationPrivate:
+        return _UIDragOperationNone;
+    case WebCore::DragOperationMove:
+        return _UIDragOperationMove;
+    case WebCore::DragOperationDelete:
+        return _UIDragOperationNone;
+    }
+
+    ASSERT_NOT_REACHED();
+    return _UIDragOperationNone;
+}
+#endif // USE(APPKIT)
 #endif // ENABLE(DRAG_SUPPORT)
 
 WebCore::FindOptions coreOptions(WebFindOptions options)
@@ -1923,7 +2009,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (WebCore::DragData)dragDataForSession:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
-    auto dragOperationMask = static_cast<WebCore::DragOperation>(operation);
+    auto dragOperationMask = coreDragOperationMask(operation);
     auto dragDestinationActionMask = coreDragDestinationActionMask([self dragDestinationActionMaskForSession:session]);
     return { session, WebCore::roundedIntPoint(clientPosition), WebCore::roundedIntPoint(globalPosition), dragOperationMask, WebCore::DragApplicationNone, dragDestinationActionMask };
 }
@@ -1932,14 +2018,14 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
-    return _private->page->dragController().dragEntered(dragData);
+    return kit(_private->page->dragController().dragEntered(dragData));
 }
 
 - (uint64_t)_updatedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
-    return _private->page->dragController().dragUpdated(dragData);
+    return kit(_private->page->dragController().dragUpdated(dragData));
 }
 
 - (void)_exitedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
@@ -6748,8 +6834,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
 
-    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo], [self actionMaskForDraggingInfo:draggingInfo]);
-    return core(self)->dragController().dragEntered(dragData);
+    WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo], [self actionMaskForDraggingInfo:draggingInfo]);
+    return kit(core(self)->dragController().dragEntered(dragData));
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
@@ -6761,8 +6847,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
 
-    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo], [self actionMaskForDraggingInfo:draggingInfo]);
-    return page->dragController().dragUpdated(dragData);
+    WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo], [self actionMaskForDraggingInfo:draggingInfo]);
+    return kit(page->dragController().dragUpdated(dragData));
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
@@ -6773,7 +6859,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
-    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+    WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     page->dragController().dragExited(dragData);
 }
 
@@ -6786,7 +6872,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
-    auto* dragData = new WebCore::DragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+    auto* dragData = new WebCore::DragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
 
     NSArray* types = draggingInfo.draggingPasteboard.types;
     if (![types containsObject:WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {

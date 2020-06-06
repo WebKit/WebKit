@@ -942,7 +942,7 @@ static NSURL *createUniqueWebDataURL();
 }
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
-- (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
+- (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)dragOperationMask
 {
     if (!_private->coreFrame)
         return;
@@ -952,7 +952,7 @@ static NSURL *createUniqueWebDataURL();
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
         WebCore::LeftButton, WebCore::PlatformEvent::MouseMoved, 0, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
-    _private->coreFrame->eventHandler().dragSourceEndedAt(event, (WebCore::DragOperation)operation);
+    _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 

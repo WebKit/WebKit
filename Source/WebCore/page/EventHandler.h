@@ -163,11 +163,11 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     struct DragTargetResponse {
         bool accept { false };
-        Optional<DragOperation> operation;
+        Optional<OptionSet<DragOperation>> operationMask;
     };
-    DragTargetResponse updateDragAndDrop(const PlatformMouseEvent&, const std::function<std::unique_ptr<Pasteboard>()>&, DragOperation sourceOperation, bool draggingFiles);
-    void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, DragOperation, bool draggingFiles);
-    bool performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, DragOperation, bool draggingFiles);
+    DragTargetResponse updateDragAndDrop(const PlatformMouseEvent&, const std::function<std::unique_ptr<Pasteboard>()>&, OptionSet<DragOperation>, bool draggingFiles);
+    void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
+    bool performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
     RefPtr<Element> draggedElement() const;
 #endif
@@ -268,7 +268,7 @@ public:
     
     WEBCORE_EXPORT void didStartDrag();
     WEBCORE_EXPORT void dragCancelled();
-    WEBCORE_EXPORT void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation, MayExtendDragSession = MayExtendDragSession::No);
+    WEBCORE_EXPORT void dragSourceEndedAt(const PlatformMouseEvent&, OptionSet<DragOperation>, MayExtendDragSession = MayExtendDragSession::No);
 #endif
 
     void focusDocumentView();
@@ -416,7 +416,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     bool dispatchDragEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent&, DataTransfer&);
-    DragTargetResponse dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&& , DragOperation, bool draggingFiles);
+    DragTargetResponse dispatchDragEnterOrDragOverEvent(const AtomString& eventType, Element& target, const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&& , OptionSet<DragOperation>, bool draggingFiles);
     void invalidateDataTransfer();
 
     bool handleDrag(const MouseEventWithHitTestResults&, CheckDragHysteresis);

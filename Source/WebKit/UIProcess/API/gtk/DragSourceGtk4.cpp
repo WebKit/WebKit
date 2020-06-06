@@ -44,7 +44,7 @@ DragSource::~DragSource()
 {
 }
 
-void DragSource::begin(SelectionData&& selectionData, DragOperation operation, RefPtr<ShareableBitmap>&& image)
+void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image)
 {
     if (m_drag) {
         gdk_drag_drop_done(m_drag.get(), FALSE);
@@ -89,7 +89,7 @@ void DragSource::begin(SelectionData&& selectionData, DragOperation operation, R
     auto* surface = gtk_native_get_surface(gtk_widget_get_native(m_webView));
     auto* device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(m_webView)));
     GRefPtr<GdkContentProvider> provider = adoptGRef(gdk_content_provider_new_union(providers.data(), providers.size()));
-    m_drag = adoptGRef(gdk_drag_begin(surface, device, provider.get(), dragOperationToGdkDragActions(operation), 0, 0));
+    m_drag = adoptGRef(gdk_drag_begin(surface, device, provider.get(), dragOperationToGdkDragActions(operationMask), 0, 0));
     g_signal_connect(m_drag.get(), "dnd-finished", G_CALLBACK(+[](GdkDrag* gtkDrag, gpointer userData) {
         auto& drag = *static_cast<DragSource*>(userData);
         if (drag.m_drag.get() != gtkDrag)

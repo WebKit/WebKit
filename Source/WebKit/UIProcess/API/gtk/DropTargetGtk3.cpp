@@ -217,7 +217,7 @@ void DropTarget::didPerformAction()
     ASSERT(page);
 
     auto operation = page->currentDragOperation();
-    if (operation == m_operation)
+    if ((!operation && !m_operation) || *operation == *m_operation)
         return;
 
     m_operation = operation;
@@ -229,7 +229,7 @@ void DropTarget::leaveTimerFired()
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), DragOperationNone);
+    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), { });
     page->dragExited(dragData);
     page->resetCurrentDragInformation();
 

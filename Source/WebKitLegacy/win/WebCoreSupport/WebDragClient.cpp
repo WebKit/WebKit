@@ -44,18 +44,18 @@
 
 using namespace WebCore;
 
-static DWORD draggingSourceOperationMaskToDragCursors(DragOperation op)
+static DWORD draggingSourceOperationMaskToDragCursors(OptionSet<DragOperation> operationMask)
 {
     DWORD result = DROPEFFECT_NONE;
-    if (op == DragOperationEvery)
+    if (operationMask == anyDragOperation())
         return DROPEFFECT_COPY | DROPEFFECT_LINK | DROPEFFECT_MOVE; 
-    if (op & DragOperationCopy)
+    if (operationMask.contains(DragOperationCopy))
         result |= DROPEFFECT_COPY; 
-    if (op & DragOperationLink)
+    if (operationMask.contains(DragOperationLink))
         result |= DROPEFFECT_LINK; 
-    if (op & DragOperationMove)
+    if (operationMask.contains(DragOperationMove))
         result |= DROPEFFECT_MOVE;
-    if (op & DragOperationGeneric)
+    if (operationMask.contains(DragOperationGeneric))
         result |= DROPEFFECT_MOVE;
     return result;
 }
@@ -152,7 +152,7 @@ void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame& 
             }
         }
 
-        DWORD okEffect = draggingSourceOperationMaskToDragCursors(m_webView->page()->dragController().sourceDragOperation());
+        DWORD okEffect = draggingSourceOperationMaskToDragCursors(m_webView->page()->dragController().sourceDragOperationMask());
         DWORD effect = DROPEFFECT_NONE;
         COMPtr<IWebUIDelegate> ui;
         HRESULT hr = E_NOTIMPL;
@@ -164,7 +164,7 @@ void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame& 
         if (hr == E_NOTIMPL)
             hr = DoDragDrop(dataObject.get(), source.get(), okEffect, &effect);
 
-        DragOperation operation = DragOperationNone;
+        OptionSet<DragOperation> operation;
         if (hr == DRAGDROP_S_DROP) {
             if (effect & DROPEFFECT_COPY)
                 operation = DragOperationCopy;

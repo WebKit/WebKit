@@ -106,7 +106,7 @@ DragSource::~DragSource()
     g_signal_handlers_disconnect_by_data(m_webView, this);
 }
 
-void DragSource::begin(SelectionData&& selectionData, DragOperation operation, RefPtr<ShareableBitmap>&& image)
+void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image)
 {
     if (m_drag) {
         gtk_drag_cancel(m_drag.get());
@@ -129,7 +129,7 @@ void DragSource::begin(SelectionData&& selectionData, DragOperation operation, R
     if (m_selectionData->canSmartReplace())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, DragTargetType::SmartPaste);
 
-    m_drag = gtk_drag_begin_with_coordinates(m_webView, list.get(), dragOperationToGdkDragActions(operation), GDK_BUTTON_PRIMARY, nullptr, -1, -1);
+    m_drag = gtk_drag_begin_with_coordinates(m_webView, list.get(), dragOperationToGdkDragActions(operationMask), GDK_BUTTON_PRIMARY, nullptr, -1, -1);
     if (image) {
         RefPtr<cairo_surface_t> imageSurface(image->createCairoSurface());
         // Use the center of the drag image as hotspot.

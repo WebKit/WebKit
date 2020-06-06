@@ -3913,7 +3913,7 @@ void WebViewImpl::draggedImage(NSImage *, CGPoint endPoint, NSDragOperation oper
     sendDragEndToPage(endPoint, operation);
 }
 
-void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation operation)
+void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation dragOperationMask)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSPoint windowImageLoc = [[m_view window] convertScreenToBase:NSPointFromCGPoint(endPoint)];
@@ -3923,7 +3923,7 @@ void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation operation)
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     m_ignoresMouseDraggedEvents = true;
 
-    m_page->dragEnded(WebCore::IntPoint(windowMouseLoc), WebCore::IntPoint(WebCore::globalPoint(windowMouseLoc, [m_view window])), operation);
+    m_page->dragEnded(WebCore::IntPoint(windowMouseLoc), WebCore::IntPoint(WebCore::globalPoint(windowMouseLoc, [m_view window])), coreDragOperationMask(dragOperationMask));
 }
 
 static WebCore::DragApplicationFlags applicationFlagsForDrag(NSView *view, id <NSDraggingInfo> draggingInfo)
@@ -3947,7 +3947,7 @@ NSDragOperation WebViewImpl::draggingEntered(id <NSDraggingInfo> draggingInfo)
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
     auto dragDestinationActionMask = coreDragDestinationActionMask([m_view _web_dragDestinationActionForDraggingInfo:draggingInfo]);
-    auto dragOperationMask = static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask);
+    auto dragOperationMask = coreDragOperationMask(draggingInfo.draggingSourceOperationMask);
     WebCore::DragData dragData(draggingInfo, client, global, dragOperationMask, applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo), dragDestinationActionMask);
 
     m_page->resetCurrentDragInformation();
@@ -3956,18 +3956,42 @@ NSDragOperation WebViewImpl::draggingEntered(id <NSDraggingInfo> draggingInfo)
     return NSDragOperationCopy;
 }
 
+static NSDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
+{
+    if (!dragOperation)
+        return NSDragOperationNone;
+
+    switch (*dragOperation) {
+    case WebCore::DragOperationCopy:
+        return NSDragOperationCopy;
+    case WebCore::DragOperationLink:
+        return NSDragOperationLink;
+    case WebCore::DragOperationGeneric:
+        return NSDragOperationGeneric;
+    case WebCore::DragOperationPrivate:
+        return NSDragOperationPrivate;
+    case WebCore::DragOperationMove:
+        return NSDragOperationMove;
+    case WebCore::DragOperationDelete:
+        return NSDragOperationDelete;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NSDragOperationNone;
+}
+
 NSDragOperation WebViewImpl::draggingUpdated(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
     auto dragDestinationActionMask = coreDragDestinationActionMask([m_view _web_dragDestinationActionForDraggingInfo:draggingInfo]);
-    auto dragOperationMask = static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask);
+    auto dragOperationMask = coreDragOperationMask(draggingInfo.draggingSourceOperationMask);
     WebCore::DragData dragData(draggingInfo, client, global, dragOperationMask, applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo), dragDestinationActionMask);
     m_page->dragUpdated(dragData, draggingInfo.draggingPasteboard.name);
 
     NSInteger numberOfValidItemsForDrop = m_page->currentDragNumberOfFilesToBeAccepted();
 
-    if (m_page->currentDragOperation() == WebCore::DragOperationNone)
+    if (!m_page->currentDragOperation())
         numberOfValidItemsForDrop = m_initialNumberOfValidItemsForDrop;
 
     NSDraggingFormation draggingFormation = NSDraggingFormationNone;
@@ -3979,14 +4003,14 @@ NSDragOperation WebViewImpl::draggingUpdated(id <NSDraggingInfo> draggingInfo)
     if (draggingInfo.draggingFormation != draggingFormation)
         [draggingInfo setDraggingFormation:draggingFormation];
 
-    return m_page->currentDragOperation();
+    return kit(m_page->currentDragOperation());
 }
 
 void WebViewImpl::draggingExited(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
-    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo));
+    WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo));
     m_page->dragExited(dragData, draggingInfo.draggingPasteboard.name);
     m_page->resetCurrentDragInformation();
     draggingInfo.numberOfValidItemsForDrop = m_initialNumberOfValidItemsForDrop;
@@ -4002,7 +4026,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
-    WebCore::DragData *dragData = new WebCore::DragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo));
+    WebCore::DragData *dragData = new WebCore::DragData(draggingInfo, client, global, coreDragOperationMask(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo));
 
     NSArray *types = draggingInfo.draggingPasteboard.types;
     SandboxExtension::Handle sandboxExtensionHandle;

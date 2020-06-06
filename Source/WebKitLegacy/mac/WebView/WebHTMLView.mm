@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -4229,6 +4229,25 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 #endif
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+
+static NSDragOperation kit(OptionSet<WebCore::DragOperation> operationMask)
+{
+    NSDragOperation result = NSDragOperationNone;
+    if (operationMask.contains(WebCore::DragOperationCopy))
+        result |= NSDragOperationCopy;
+    if (operationMask.contains(WebCore::DragOperationLink))
+        result |= NSDragOperationLink;
+    if (operationMask.contains(WebCore::DragOperationGeneric))
+        result |= NSDragOperationGeneric;
+    if (operationMask.contains(WebCore::DragOperationPrivate))
+        result |= NSDragOperationPrivate;
+    if (operationMask.contains(WebCore::DragOperationMove))
+        result |= NSDragOperationMove;
+    if (operationMask.contains(WebCore::DragOperationDelete))
+        result |= NSDragOperationDelete;
+    return result;
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)dragImage:(NSImage *)dragImage
                at:(NSPoint)at
@@ -4280,7 +4299,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!page)
         return NSDragOperationNone;
 
-    return (NSDragOperation)page->dragController().sourceDragOperation();
+    return kit(page->dragController().sourceDragOperationMask());
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -4386,7 +4405,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!page)
         return NSDragOperationNone;
 
-    return (NSDragOperation)page->dragController().sourceDragOperation();
+    return kit(page->dragController().sourceDragOperationMask());
 }
 
 - (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation

@@ -80,7 +80,7 @@ private:
     Optional<WebCore::IntPoint> m_position;
     unsigned m_dataRequestCount { 0 };
     Optional<WebCore::SelectionData> m_selectionData;
-    WebCore::DragOperation m_operation { WebCore::DragOperationNone };
+    Optional<WebCore::DragOperation> m_operation;
 #if USE(GTK4)
     GRefPtr<GCancellable> m_cancellable;
 #else

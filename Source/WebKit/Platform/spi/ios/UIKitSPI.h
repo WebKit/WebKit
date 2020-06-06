@@ -1025,12 +1025,6 @@ CGFloat UIRoundToScreenScale(CGFloat value, UIScreen *);
 
 WTF_EXTERN_C_END
 
-typedef NS_OPTIONS(NSUInteger, UIDragOperation)
-{
-    UIDragOperationNone = 0,
-    UIDragOperationEvery = NSUIntegerMax,
-};
-
 @interface UIDragInteraction ()
 @property (nonatomic, assign, getter=_liftDelay, setter=_setLiftDelay:) NSTimeInterval liftDelay;
 - (void)_setAllowsPointerDragBeforeLiftDelay:(BOOL)allowsPointerDragBeforeLiftDelay;

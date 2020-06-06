@@ -2424,11 +2424,9 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 #endif
 }
 
-void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect)
+void WebPageProxy::didPerformDragControllerAction(Optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect)
 {
-    MESSAGE_CHECK(m_process, dragOperation <= DragOperationDelete);
-
-    m_currentDragOperation = static_cast<DragOperation>(dragOperation);
+    m_currentDragOperation = dragOperation;
     m_currentDragHandlingMethod = dragHandlingMethod;
     m_currentDragIsOverFileInput = mouseIsOverFileInput;
     m_currentDragNumberOfFilesToBeAccepted = numberOfItemsToBeAccepted;
@@ -2438,20 +2436,20 @@ void WebPageProxy::didPerformDragControllerAction(uint64_t dragOperation, WebCor
 }
 
 #if PLATFORM(GTK)
-void WebPageProxy::startDrag(SelectionData&& selectionData, uint64_t dragOperation, const ShareableBitmap::Handle& dragImageHandle)
+void WebPageProxy::startDrag(SelectionData&& selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, const ShareableBitmap::Handle& dragImageHandle)
 {
     RefPtr<ShareableBitmap> dragImage = !dragImageHandle.isNull() ? ShareableBitmap::create(dragImageHandle) : nullptr;
-    pageClient().startDrag(WTFMove(selectionData), static_cast<WebCore::DragOperation>(dragOperation), WTFMove(dragImage));
+    pageClient().startDrag(WTFMove(selectionData), dragOperationMask, WTFMove(dragImage));
 
     didStartDrag();
 }
 #endif
 
-void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t operation)
+void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
 {
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::DragEnded(clientPosition, globalPosition, operation));
+    send(Messages::WebPage::DragEnded(clientPosition, globalPosition, dragOperationMask));
     setDragCaretRect({ });
 }
 
@@ -2482,7 +2480,7 @@ void WebPageProxy::didEndDragging()
 
 void WebPageProxy::resetCurrentDragInformation()
 {
-    m_currentDragOperation = WebCore::DragOperationNone;
+    m_currentDragOperation = WTF::nullopt;
     m_currentDragHandlingMethod = DragHandlingMethod::None;
     m_currentDragIsOverFileInput = false;
     m_currentDragNumberOfFilesToBeAccepted = 0;

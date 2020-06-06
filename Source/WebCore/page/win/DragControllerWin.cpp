@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,13 +42,15 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
-DragOperation DragController::dragOperation(const DragData& dragData)
+Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
-    //FIXME: to match the macos behaviour we should return DragOperationNone
-    //if we are a modal window, we are the drag source, or the window is an attached sheet
-    //If this can be determined from within WebCore operationForDrag can be pulled into 
-    //WebCore itself
-    return dragData.containsURL() && !m_didInitiateDrag ? DragOperationCopy : DragOperationNone;
+    // FIXME: To match the macOS behaviour we should return WTF::nullopt.
+    // If we are a modal window, we are the drag source, or the window is an attached sheet.
+    // If this can be determined from within WebCore operationForDrag can be pulled into
+    // WebCore itself.
+    if (dragData.containsURL() && !m_didInitiateDrag)
+        return DragOperationCopy;
+    return WTF::nullopt;
 }
 
 bool DragController::isCopyKeyDown(const DragData&)

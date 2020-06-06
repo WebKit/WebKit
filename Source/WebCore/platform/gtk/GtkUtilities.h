@@ -51,8 +51,8 @@ String defaultGtkSystemFont();
 
 WEBCORE_EXPORT unsigned stateModifierForGdkButton(unsigned button);
 
-WEBCORE_EXPORT DragOperation gdkDragActionToDragOperation(GdkDragAction);
-WEBCORE_EXPORT GdkDragAction dragOperationToGdkDragActions(DragOperation);
-WEBCORE_EXPORT GdkDragAction dragOperationToSingleGdkDragAction(DragOperation);
+WEBCORE_EXPORT OptionSet<DragOperation> gdkDragActionToDragOperation(GdkDragAction);
+WEBCORE_EXPORT GdkDragAction dragOperationToGdkDragActions(OptionSet<DragOperation>);
+WEBCORE_EXPORT GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOperation>);
 
 } // namespace WebCore

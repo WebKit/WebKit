@@ -5842,38 +5842,42 @@ HRESULT WebView::visibleContentRect(_Out_ LPRECT rect)
     return S_OK;
 }
 
-static DWORD dragOperationToDragCursor(DragOperation op) {
-    DWORD res = DROPEFFECT_NONE;
-    if (op & DragOperationCopy) 
-        res = DROPEFFECT_COPY;
-    else if (op & DragOperationLink) 
-        res = DROPEFFECT_LINK;
-    else if (op & DragOperationMove) 
-        res = DROPEFFECT_MOVE;
-    else if (op & DragOperationGeneric) 
-        res = DROPEFFECT_MOVE; //This appears to be the Firefox behaviour
-    return res;
+static DWORD dragOperationToDragCursor(Optional<DragOperation> operation)
+{
+    if (!operation)
+        return DROPEFFECT_NONE;
+
+    DWORD result = DROPEFFECT_NONE;
+    if (*operation == DragOperationCopy)
+        result = DROPEFFECT_COPY;
+    else if (*operation == DragOperationLink)
+        result = DROPEFFECT_LINK;
+    else if (*operation == DragOperationMove)
+        result = DROPEFFECT_MOVE;
+    else if (*operation == DragOperationGeneric)
+        result = DROPEFFECT_MOVE; // This appears to be the Firefox behaviour.
+    return result;
 }
 
-DragOperation WebView::keyStateToDragOperation(DWORD grfKeyState) const
+OptionSet<DragOperation> WebView::keyStateToDragOperation(DWORD grfKeyState) const
 {
     if (!m_page)
-        return DragOperationNone;
+        return { };
 
     // Conforms to Microsoft's key combinations as documented for 
     // IDropTarget::DragOver. Note, grfKeyState is the current 
     // state of the keyboard modifier keys on the keyboard. See:
     // <http://msdn.microsoft.com/en-us/library/ms680129(VS.85).aspx>.
-    DragOperation operation = m_page->dragController().sourceDragOperation();
+    auto operationMask = m_page->dragController().sourceDragOperationMask();
 
     if ((grfKeyState & (MK_CONTROL | MK_SHIFT)) == (MK_CONTROL | MK_SHIFT))
-        operation = DragOperationLink;
+        operationMask = { DragOperationLink };
     else if ((grfKeyState & MK_CONTROL) == MK_CONTROL)
-        operation = DragOperationCopy;
+        operationMask = { DragOperationCopy };
     else if ((grfKeyState & MK_SHIFT) == MK_SHIFT)
-        operation = DragOperationGeneric;
+        operationMask = { DragOperationGeneric };
 
-    return operation;
+    return operationMask;
 }
 
 HRESULT WebView::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
@@ -5919,8 +5923,7 @@ HRESULT WebView::DragLeave()
         m_dropTargetHelper->DragLeave();
 
     if (m_dragData) {
-        DragData data(m_dragData.get(), IntPoint(), IntPoint(), 
-            DragOperationNone);
+        DragData data(m_dragData.get(), IntPoint(), IntPoint(), { });
         m_page->dragController().dragExited(data);
         m_dragData = 0;
     }

@@ -1,3 +1,14 @@
+2020-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Use OptionSet<DragOperation> for mask values
+        <https://webkit.org/b/212605>
+
+        Reviewed by Darin Adler.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::OptionSet):
+        - Add constructor for OptionSet(Optional).
+
 2020-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r262619, r262625, and r262641.

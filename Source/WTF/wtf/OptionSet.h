@@ -30,6 +30,7 @@
 #include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Optional.h>
 
 namespace WTF {
 
@@ -163,6 +164,11 @@ public:
             ASSERT(isValidOptionSetEnum(option));
             m_storage |= static_cast<StorageType>(option);
         }
+    }
+
+    constexpr OptionSet(Optional<E> optional)
+        : m_storage(optional ? static_cast<StorageType>(*optional) : 0)
+    {
     }
 
     constexpr StorageType toRaw() const { return m_storage; }

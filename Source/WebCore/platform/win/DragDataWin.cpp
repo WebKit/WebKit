@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Baidu Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@
 namespace WebCore {
 
 DragData::DragData(const DragDataMap& data, const IntPoint& clientPosition, const IntPoint& globalPosition,
-    DragOperation sourceOperationMask, DragApplicationFlags flags)
+    OptionSet<DragOperation> sourceOperationMask, DragApplicationFlags flags)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)

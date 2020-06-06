@@ -1531,7 +1531,7 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
 {
     encoder << dragData.clientPosition();
     encoder << dragData.globalPosition();
-    encoder.encodeEnum(dragData.draggingSourceOperationMask());
+    encoder << dragData.draggingSourceOperationMask();
     encoder.encodeEnum(dragData.flags());
 #if PLATFORM(COCOA)
     encoder << dragData.pasteboardName();
@@ -1550,8 +1550,8 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
     if (!decoder.decode(globalPosition))
         return false;
 
-    DragOperation draggingSourceOperationMask;
-    if (!decoder.decodeEnum(draggingSourceOperationMask))
+    OptionSet<DragOperation> draggingSourceOperationMask;
+    if (!decoder.decode(draggingSourceOperationMask))
         return false;
 
     DragApplicationFlags applicationFlags;

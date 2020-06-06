@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 #ifdef __cplusplus
 
 #import <WebCore/AlternativeTextClient.h>
+#import <WebCore/DragActions.h>
 #import <WebCore/FindOptions.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/HTMLMediaElementEnums.h>
@@ -89,7 +90,17 @@ class WebSelectionServiceController;
 
 #ifdef __cplusplus
 
-WebCore::FindOptions coreOptions(WebFindOptions options);
+#if ENABLE(DRAG_SUPPORT)
+#if USE(APPKIT)
+using CocoaDragOperation = NSDragOperation;
+#else
+using CocoaDragOperation = uint64_t;
+#endif
+
+OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation);
+#endif // ENABLE(DRAG_SUPPORT)
+
+WebCore::FindOptions coreOptions(WebFindOptions);
 
 OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones);
 WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);

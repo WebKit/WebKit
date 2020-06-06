@@ -320,9 +320,9 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void PageClientImpl::startDrag(SelectionData&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
+void PageClientImpl::startDrag(SelectionData&& selection, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& dragImage)
 {
-    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(selection), dragOperation, WTFMove(dragImage));
+    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(selection), dragOperationMask, WTFMove(dragImage));
 }
 
 void PageClientImpl::didPerformDragControllerAction()

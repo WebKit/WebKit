@@ -209,6 +209,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DictationContext',
         'WebCore::DocumentIdentifier',
         'WebCore::DocumentOrWorkerIdentifier',
+        'WebCore::DragOperation',  # FIXME: Remove after converting WebCore::DragOperation to enum class.
         'WebCore::FetchIdentifier',
         'WebCore::FrameIdentifier',
         'WebCore::LibWebRTCSocketIdentifier',
@@ -590,6 +591,7 @@ def headers_for_type(type):
         'WebCore::DocumentOrWorkerIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebKit::DocumentEditingContextRequest': ['"DocumentEditingContext.h"'],
         'WebCore::DragHandlingMethod': ['<WebCore/DragActions.h>'],
+        'WebCore::DragOperation': ['<WebCore/DragActions.h>'],
         'WebCore::ExceptionDetails': ['<WebCore/JSDOMExceptionHandling.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],
         'WebCore::ShareDataWithParsedURL': ['<WebCore/ShareData.h>'],

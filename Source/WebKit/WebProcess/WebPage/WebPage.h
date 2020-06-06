@@ -899,7 +899,7 @@ public:
     void restoreSelectionInFocusedEditableElement();
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(GTK)
-    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebCore::SelectionData&&, uint32_t flags);
+    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData&&, uint32_t flags);
 #endif
 
 #if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK)
@@ -907,7 +907,7 @@ public:
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-    void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation);
+    void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation>);
 
     void willPerformLoadDragDestinationAction();
     void mayPerformUploadDragDestinationAction();

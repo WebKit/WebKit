@@ -208,7 +208,7 @@ void DragController::dragEnded()
     client().dragEnded();
 }
 
-DragOperation DragController::dragEntered(const DragData& dragData)
+Optional<DragOperation> DragController::dragEntered(const DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
@@ -224,7 +224,7 @@ void DragController::dragExited(const DragData& dragData)
     m_fileInputElementUnderMouse = nullptr;
 }
 
-DragOperation DragController::dragUpdated(const DragData& dragData)
+Optional<DragOperation> DragController::dragUpdated(const DragData& dragData)
 {
     return dragEnteredOrUpdated(dragData);
 }
@@ -278,7 +278,7 @@ bool DragController::performDragOperation(const DragData& dragData)
     m_documentUnderMouse = nullptr;
     clearDragCaret();
 
-    if (operationForLoad(dragData) == DragOperationNone)
+    if (!operationForLoad(dragData))
         return false;
 
     auto urlString = dragData.asURL();
@@ -304,21 +304,21 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
     m_documentUnderMouse = newDocument;
 }
 
-DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
+Optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
     m_dragDestinationActionMask = dragData.dragDestinationActionMask();
     if (m_dragDestinationActionMask.isEmpty()) {
         clearDragCaret(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
-        return DragOperationNone;
+        return WTF::nullopt;
     }
 
-    DragOperation dragOperation = DragOperationNone;
+    Optional<DragOperation> dragOperation;
     m_dragHandlingMethod = tryDocumentDrag(dragData, m_dragDestinationActionMask, dragOperation);
     if (m_dragHandlingMethod == DragHandlingMethod::None && (m_dragDestinationActionMask.contains(DragDestinationAction::Load))) {
         dragOperation = operationForLoad(dragData);
-        if (dragOperation != DragOperationNone)
+        if (dragOperation)
             m_dragHandlingMethod = DragHandlingMethod::PageLoad;
     } else if (m_dragHandlingMethod == DragHandlingMethod::SetColor)
         dragOperation = DragOperationCopy;
@@ -388,7 +388,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
 
 #endif
 
-DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, OptionSet<DragDestinationAction> destinationActionMask, DragOperation& dragOperation)
+DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, OptionSet<DragDestinationAction> destinationActionMask, Optional<DragOperation>& dragOperation)
 {
     if (!m_documentUnderMouse)
         return DragHandlingMethod::None;
@@ -458,7 +458,7 @@ DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, Opt
                 m_numberOfItemsToBeAccepted = 1;
             
             if (!m_numberOfItemsToBeAccepted)
-                dragOperation = DragOperationNone;
+                dragOperation = WTF::nullopt;
             m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(m_numberOfItemsToBeAccepted);
         } else {
             // We are not over a file input element. The dragged item(s) will loaded into the view,
@@ -489,7 +489,7 @@ DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootVi
     return m_dragSourceAction;
 }
 
-DragOperation DragController::operationForLoad(const DragData& dragData)
+Optional<DragOperation> DragController::operationForLoad(const DragData& dragData)
 {
     Document* document = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
@@ -504,7 +504,7 @@ DragOperation DragController::operationForLoad(const DragData& dragData)
     }
 
     if (document && (m_didInitiateDrag || (is<PluginDocument>(*document) && !pluginDocumentAcceptsDrags) || document->hasEditableStyle()))
-        return DragOperationNone;
+        return WTF::nullopt;
     return dragOperation(dragData);
 }
 
@@ -693,28 +693,28 @@ bool DragController::canProcessDrag(const DragData& dragData)
     return true;
 }
 
-static DragOperation defaultOperationForDrag(DragOperation srcOpMask)
+static Optional<DragOperation> defaultOperationForDrag(OptionSet<DragOperation> sourceOperationMask)
 {
     // This is designed to match IE's operation fallback for the case where
     // the page calls preventDefault() in a drag event but doesn't set dropEffect.
-    if (srcOpMask == DragOperationEvery)
+    if (sourceOperationMask.containsAll({ DragOperationCopy, DragOperationLink, DragOperationGeneric, DragOperationPrivate, DragOperationMove, DragOperationDelete }))
         return DragOperationCopy;
-    if (srcOpMask == DragOperationNone)
-        return DragOperationNone;
-    if (srcOpMask & DragOperationMove)
+    if (sourceOperationMask.isEmpty())
+        return WTF::nullopt;
+    if (sourceOperationMask.contains(DragOperationMove))
         return DragOperationMove;
-    if (srcOpMask & DragOperationGeneric)
+    if (sourceOperationMask.contains(DragOperationGeneric))
         return DragController::platformGenericDragOperation();
-    if (srcOpMask & DragOperationCopy)
+    if (sourceOperationMask.contains(DragOperationCopy))
         return DragOperationCopy;
-    if (srcOpMask & DragOperationLink)
+    if (sourceOperationMask.contains(DragOperationLink))
         return DragOperationLink;
     
     // FIXME: Does IE really return "generic" even if no operations were allowed by the source?
     return DragOperationGeneric;
 }
 
-bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& operation)
+bool DragController::tryDHTMLDrag(const DragData& dragData, Optional<DragOperation>& operation)
 {
     ASSERT(m_documentUnderMouse);
     Ref<Frame> mainFrame(m_page.mainFrame());
@@ -722,17 +722,19 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& opera
     if (!viewProtector)
         return false;
 
-    DragOperation sourceOperation = dragData.draggingSourceOperationMask();
-    auto targetResponse = mainFrame->eventHandler().updateDragAndDrop(createMouseEvent(dragData), [&dragData]() { return Pasteboard::createForDragAndDrop(dragData); }, sourceOperation, dragData.containsFiles());
+    auto sourceOperationMask = dragData.draggingSourceOperationMask();
+    auto targetResponse = mainFrame->eventHandler().updateDragAndDrop(createMouseEvent(dragData), [&dragData]() {
+        return Pasteboard::createForDragAndDrop(dragData);
+    }, sourceOperationMask, dragData.containsFiles());
     if (!targetResponse.accept)
         return false;
 
-    if (!targetResponse.operation)
-        operation = defaultOperationForDrag(sourceOperation);
-    else if (!(sourceOperation & targetResponse.operation.value())) // The element picked an operation which is not supported by the source
-        operation = DragOperationNone;
+    if (!targetResponse.operationMask)
+        operation = defaultOperationForDrag(sourceOperationMask);
+    else if (!sourceOperationMask.containsAny(targetResponse.operationMask.value())) // The element picked an operation which is not supported by the source.
+        operation = WTF::nullopt;
     else
-        operation = targetResponse.operation.value();
+        operation = defaultOperationForDrag(targetResponse.operationMask.value());
 
     return true;
 }
@@ -956,7 +958,7 @@ Optional<HitTestResult> DragController::hitTestResultForDragStart(Frame& source,
     return { hitTestResult };
 }
 
-bool DragController::startDrag(Frame& src, const DragState& state, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData hasData)
+bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<DragOperation> sourceOperationMask, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData hasData)
 {
     if (!state.source)
         return false;
@@ -972,7 +974,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     IntPoint mouseDraggedPoint = src.view()->windowToContents(dragEvent.position());
 
     m_draggingImageURL = URL();
-    m_sourceDragOperation = srcOp;
+    m_sourceDragOperationMask = sourceOperationMask;
 
     DragImage dragImage;
     IntPoint dragLoc(0, 0);
@@ -995,7 +997,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         // Selection, image, and link drags receive a default set of allowed drag operations that
         // follows from:
         // http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430
-        m_sourceDragOperation = static_cast<DragOperation>(m_sourceDragOperation | DragOperationGeneric | DragOperationCopy);
+        m_sourceDragOperationMask.add({ DragOperationGeneric, DragOperationCopy });
     }
 
     ASSERT(state.source);

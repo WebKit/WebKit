@@ -100,7 +100,7 @@ private:
     void selectionDidChange() override;
     RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&) override;
 #if ENABLE(DRAG_SUPPORT)
-    void startDrag(WebCore::SelectionData&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage) override;
+    void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage) override;
     void didPerformDragControllerAction() override;
 #endif
 
