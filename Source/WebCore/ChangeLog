@@ -1,3 +1,41 @@
+2020-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for width: min/max-content
+        https://bugs.webkit.org/show_bug.cgi?id=212869
+
+        Reviewed by Antti Koivisto.
+
+        Use the existing intrinsic width logic to compute min/max-content width. 
+
+        Test: fast/layoutformattingcontext/min-max-content-width-simple.html
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedWidthValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedWidth):
+        (WebCore::Layout::FormattingContext::Geometry::fixedValue const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinWidth):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedMinWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxWidth const): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry const): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin const): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin const): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::computedColumnWidth):
+        (WebCore::Layout::TableFormattingContext::Geometry::computedColumnWidth const): Deleted.
+
 2020-06-06  Devin Rousso  <drousso@apple.com>
 
         [ macOS wk2 ] inspector/page/setBootstrapScript-sub-frame.html is flaky failing

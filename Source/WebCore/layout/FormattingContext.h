@@ -131,7 +131,7 @@ protected:
         ContentWidthAndMargin floatingWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
         ContentHeightAndMargin inlineReplacedHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverrideVerticalValues&) const;
-        ContentWidthAndMargin inlineReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverrideHorizontalValues&) const;
+        ContentWidthAndMargin inlineReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverrideHorizontalValues&);
 
         LayoutSize inFlowPositionedPositionOffset(const Box&, const HorizontalConstraints&) const;
 
@@ -150,8 +150,8 @@ protected:
         Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
         Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
 
-        Optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth) const;
-        Optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth) const;
+        Optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth);
+        Optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth);
 
         FormattingContext::IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, IntrinsicWidthConstraints) const;
 
@@ -161,7 +161,7 @@ protected:
         ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<EscapeReason> = WTF::nullopt);
 
         Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
-        Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
+        Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth);
 
     protected:
         friend class FormattingContext;
@@ -173,13 +173,13 @@ protected:
 
     private:
         VerticalGeometry outOfFlowReplacedVerticalGeometry(const ReplacedBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideVerticalValues&) const;
-        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const ReplacedBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideHorizontalValues&) const;
+        HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const ReplacedBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideHorizontalValues&);
 
         VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const OverrideVerticalValues&) const;
         HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
         ContentHeightAndMargin floatingReplacedHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideVerticalValues&) const;
-        ContentWidthAndMargin floatingReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&) const;
+        ContentWidthAndMargin floatingReplacedWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
         ContentWidthAndMargin floatingNonReplacedWidthAndMargin(const Box&, const HorizontalConstraints&, const OverrideHorizontalValues&);
 
@@ -188,6 +188,9 @@ protected:
 
         enum class HeightType { Min, Max, Normal };
         Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<LayoutUnit> containingBlockHeight) const;
+
+        enum class WidthType { Min, Max, Normal };
+        Optional<LayoutUnit> computedWidthValue(const Box&, WidthType, LayoutUnit containingBlockWidth);
 
         const FormattingContext& m_formattingContext;
     };

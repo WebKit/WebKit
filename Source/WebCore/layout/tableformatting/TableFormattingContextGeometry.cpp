@@ -90,7 +90,7 @@ Edges TableFormattingContext::Geometry::computedCellBorder(const TableGrid::Cell
     return border;
 }
 
-Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const ContainerBox& columnBox) const
+Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const ContainerBox& columnBox)
 {
     // Check both style and <col>'s width attribute.
     // FIXME: Figure out what to do with calculated values, like <col style="width: 10%">.
