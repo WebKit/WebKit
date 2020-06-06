@@ -1,3 +1,13 @@
+2020-06-06  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r262456): [iOS Debug] TestWebKitAPI.WKWebViewCloseAllMediaPresentations.PictureInPicture is frequently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=212777
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        Disable the PictureInPicture test for old iOS devices.
+
 2020-06-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] TestWebKitAPI.WKWebsiteDataStore.RemoveAndFetchData is failing

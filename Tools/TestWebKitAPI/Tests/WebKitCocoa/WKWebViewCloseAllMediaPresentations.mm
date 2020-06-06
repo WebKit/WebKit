@@ -32,6 +32,9 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+// We can enable the test for old iOS versions after <rdar://problem/63572534> is fixed.
+#if ENABLE(VIDEO_PRESENTATION_MODE) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000))
+
 TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
 {
     if (!WebCore::supportsPictureInPicture())
@@ -41,7 +44,7 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     configuration.get().preferences._allowsPictureInPictureMediaPlayback = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
 
-    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline></video>"];
+    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')"];
 
@@ -65,6 +68,8 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('video').webkitPresentationMode"].UTF8String, "inline");
 }
 
+#endif
+
 #if ENABLE(FULLSCREEN_API)
 
 TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
@@ -73,7 +78,7 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
     configuration.get().preferences._fullScreenEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
 
-    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline></video>"];
+    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
 
     __block bool presentationModeChanged = false;
