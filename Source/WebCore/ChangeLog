@@ -1,3 +1,18 @@
+2020-06-06  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r262364): Disney Plus crashes playing videos
+        https://bugs.webkit.org/show_bug.cgi?id=212862
+        <rdar://problem/64044841>
+
+        Reviewed by Eric Carlson.
+
+        In r262364, we specified an incorrect number size for CFNumberGetValue, which nevertheless
+        worked fine in debug builds, but overwrote stack data in release builds, leading to a crash when
+        the returned pointer was ref()d. The correct size for a FourCharCode is a
+        kCFNumberSInt32Type, not a kCFNumberLongType.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
 2020-06-06  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for GradientSpreadMethod

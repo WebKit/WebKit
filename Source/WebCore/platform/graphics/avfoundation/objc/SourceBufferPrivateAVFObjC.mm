@@ -417,7 +417,7 @@ private:
             CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::get_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() : CFSTR("CommonEncryptionOriginalFormat");
             CFTypeRef originalFormat = CMFormatDescriptionGetExtension(description, originalFormatKey);
             if (originalFormat && CFGetTypeID(originalFormat) == CFNumberGetTypeID())
-                CFNumberGetValue((CFNumberRef)originalFormat, kCFNumberLongType, &codec);
+                CFNumberGetValue((CFNumberRef)originalFormat, kCFNumberSInt32Type, &codec);
             m_codec = AtomString(reinterpret_cast<LChar*>(&codec), 4);
         }
     }
