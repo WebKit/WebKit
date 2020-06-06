@@ -7,5 +7,5 @@ Tests for the Page.overrideSetting command.
 == Running test suite: Page.overrideSetting
 -- Running test case: Page.overrideSetting.ITPDebugModeEnabled
 Enabling ITP debug mode...
-PASS: Should broadcast at least one console message.
+PASS: Should broadcast at least three console messages.
 

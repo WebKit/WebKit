@@ -11,12 +11,17 @@ function test()
         name: "Page.overrideSetting.ITPDebugModeEnabled",
         description: "Test that changing whether ITP debug mode is enabled has an effect.",
         test(resolve, reject) {
+            let messageCount = 0;
+
             let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
                 let {message} = event.data;
                 if (message.source !== WI.ConsoleMessage.MessageSource.ITPDebug)
                     return;
 
-                InspectorTest.pass("Should broadcast at least one console message.");
+                if (++messageCount < 3)
+                    return;
+
+                InspectorTest.pass("Should broadcast at least three console messages.");
 
                 WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
                 resolve();

@@ -1,5 +1,19 @@
 2020-06-06  Devin Rousso  <drousso@apple.com>
 
+        (r261103) [ Mac WK2 ] inspector/page/overrideSetting-ITPDebugModeEnabled.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=211791
+        <rdar://problem/63147694>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/page/overrideSetting-ITPDebugModeEnabled.html:
+        * inspector/page/overrideSetting-ITPDebugModeEnabled-expected.txt:
+        Wait for three console messages instead of one, as we know there should be at least three.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-06-06  Devin Rousso  <drousso@apple.com>
+
         [ macOS ] inspector/debugger/break-in-constructor-before-super.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=210062
         <rdar://problem/61351481>

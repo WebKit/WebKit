@@ -1036,8 +1036,6 @@ webkit.org/b/183424 media/video-zoom-controls.html [ Pass Failure ]
 
 webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
 
-webkit.org/b/261103 [ Debug ] inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
-
 webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
 
 webkit.org/b/212721 svg/custom/textPath-change-id.svg [ Pass ImageOnlyFailure ]
