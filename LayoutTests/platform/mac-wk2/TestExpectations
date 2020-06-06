@@ -1001,8 +1001,6 @@ webkit.org/b/209077 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure
 webkit.org/b/209052 fast/scrolling/mac/absolute-in-overflow-scroll-dynamic.html [ Pass ImageOnlyFailure ]
 webkit.org/b/212667 [ Mojave ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-hovered.html [ Skip ]
 
-webkit.org/b/210348 fast/scrolling/latching/iframe-latch-small-deltas.html [ Pass Failure ]
-
 webkit.org/b/209148 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Pass Failure ]
 webkit.org/b/209148 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Pass Failure ]
 webkit.org/b/209148 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Pass Failure ]

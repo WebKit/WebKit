@@ -1,3 +1,18 @@
+2020-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/scrolling/latching/iframe-latch-small-deltas.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=210348
+        <rdar://problem/61594742>
+
+        Reviewed by Anders Carlsson.
+
+        This test needs to use ' eventSender.monitorWheelEvents({ resetLatching: false });' so that it
+        waits for the events from the last non-momentum scroll without resetting latching.
+
+        * fast/scrolling/latching/iframe-latch-small-deltas-expected.txt:
+        * fast/scrolling/latching/iframe-latch-small-deltas.html:
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-06  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add testing and logging for ApplePaySetup

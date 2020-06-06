@@ -49,6 +49,7 @@
             shouldBe('iframeTarget.contentWindow.pageYOffset', '500');
             shouldBe('window.pageYOffset', '200');
 
+            eventSender.monitorWheelEvents({ resetLatching: false });
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 1, 'changed', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'changed', 'none');
