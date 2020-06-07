@@ -1,3 +1,33 @@
+2020-06-07  James Darpinian  <jdarpinian@chromium.org>
+
+        [ANGLE - iOS] fast/canvas/webgl/uninitialized-test.html is still failing
+        https://bugs.webkit.org/show_bug.cgi?id=212249
+
+        Reviewed by Dean Jackson.
+
+        copyTexImage2D is broken in some way on iOS. Work around it by reimplementing
+        it with ANGLE's BlitGL class.
+
+        * include/platform/FeaturesGL.h:
+        * src/libANGLE/renderer/gl/BlitGL.cpp:
+        (rx::BlitGL::blitColorBufferWithShader):
+        * src/libANGLE/renderer/gl/BlitGL.h:
+        * src/libANGLE/renderer/gl/TextureGL.cpp:
+        (rx::TextureGL::copyImage):
+        (rx::TextureGL::copySubImage):
+        * src/libANGLE/renderer/gl/renderergl_utils.cpp:
+        (rx::nativegl_gl::InitializeFeatures):
+        * src/tests/gl_tests/CopyTexImageTest.cpp:
+        * src/tests/gl_tests/TextureTest.cpp:
+        * src/tests/test_utils/angle_test_configs.cpp:
+        (angle::operator<<):
+        * src/tests/test_utils/angle_test_configs.h:
+        (angle::WithEmulateCopyTexImage2DFromRenderbuffers):
+        * util/EGLPlatformParameters.h:
+        (EGLPlatformParameters::tie const):
+        * util/EGLWindow.cpp:
+        (EGLWindow::initializeDisplay):
+
 2020-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Work around broken system version macro

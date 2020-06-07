@@ -219,6 +219,14 @@ inline PlatformParameters WithAllocateNonZeroMemory(const PlatformParameters &pa
     return allocateNonZero;
 }
 
+inline PlatformParameters WithEmulateCopyTexImage2DFromRenderbuffers(
+    const PlatformParameters &params)
+{
+    PlatformParameters p                                   = params;
+    p.eglParameters.emulateCopyTexImage2DFromRenderbuffers = EGL_TRUE;
+    return p;
+}
+
 inline PlatformParameters WithRobustness(const PlatformParameters &params)
 {
     PlatformParameters withRobustness       = params;

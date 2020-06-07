@@ -72,6 +72,24 @@ class BlitGL : angle::NonCopyable
                                             GLenum filter,
                                             bool writeAlpha);
 
+    angle::Result blitColorBufferWithShader(const gl::Context *context,
+                                            const gl::Framebuffer *source,
+                                            const GLuint destFramebuffer,
+                                            const gl::Rectangle &sourceArea,
+                                            const gl::Rectangle &destArea,
+                                            GLenum filter,
+                                            bool writeAlpha);
+
+    angle::Result blitColorBufferWithShader(const gl::Context *context,
+                                            const gl::Framebuffer *source,
+                                            const GLuint destTexture,
+                                            const gl::TextureTarget destTarget,
+                                            const size_t destLevel,
+                                            const gl::Rectangle &sourceArea,
+                                            const gl::Rectangle &destArea,
+                                            GLenum filter,
+                                            bool writeAlpha);
+
     angle::Result copySubTexture(const gl::Context *context,
                                  TextureGL *source,
                                  size_t sourceLevel,

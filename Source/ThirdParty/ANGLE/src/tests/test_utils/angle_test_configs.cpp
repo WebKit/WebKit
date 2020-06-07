@@ -204,6 +204,11 @@ std::ostream &operator<<(std::ostream &stream, const PlatformParameters &pp)
         stream << "_AllocateNonZeroMemory";
     }
 
+    if (pp.eglParameters.emulateCopyTexImage2DFromRenderbuffers == EGL_TRUE)
+    {
+        stream << "_EmulateCopyTexImage2DFromRenderbuffers";
+    }
+
     return stream;
 }
 

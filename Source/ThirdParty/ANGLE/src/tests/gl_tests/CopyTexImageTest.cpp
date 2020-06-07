@@ -895,7 +895,12 @@ ANGLE_INSTANTIATE_TEST(CopyTexImageTest,
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN(),
-                       ES3_VULKAN());
+                       ES3_VULKAN(),
+                       WithEmulateCopyTexImage2DFromRenderbuffers(ES2_OPENGL()),
+                       WithEmulateCopyTexImage2DFromRenderbuffers(ES2_OPENGLES()));
 
-ANGLE_INSTANTIATE_TEST_ES3(CopyTexImageTestES3);
+ANGLE_INSTANTIATE_TEST(CopyTexImageTestES3,
+                       ANGLE_ALL_TEST_PLATFORMS_ES3,
+                       WithEmulateCopyTexImage2DFromRenderbuffers(ES3_OPENGL()),
+                       WithEmulateCopyTexImage2DFromRenderbuffers(ES3_OPENGLES()));
 }  // namespace angle

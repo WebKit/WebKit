@@ -442,6 +442,11 @@ struct FeaturesGL : FeatureSetBase
     Feature disableSemaphoreFd = {"disable_semaphore_fd", FeatureCategory::OpenGLWorkarounds,
                                   "Disable GL_EXT_semaphore_fd extension", &members,
                                   "https://crbug.com/1046462"};
+
+    Feature emulateCopyTexImage2DFromRenderbuffers = {
+        "emulate_copyteximage2d_from_renderbuffers", FeatureCategory::OpenGLWorkarounds,
+        "CopyTexImage2D spuriously returns errors on iOS when copying from renderbuffers.",
+        &members, "https://anglebug.com/4674"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

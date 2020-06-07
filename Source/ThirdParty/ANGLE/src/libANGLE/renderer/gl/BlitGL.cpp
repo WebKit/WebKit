@@ -395,7 +395,48 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
 
 angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
                                                 const gl::Framebuffer *source,
+                                                const GLuint destTexture,
+                                                const gl::TextureTarget destTarget,
+                                                const size_t destLevel,
+                                                const gl::Rectangle &sourceAreaIn,
+                                                const gl::Rectangle &destAreaIn,
+                                                GLenum filter,
+                                                bool writeAlpha)
+{
+    ANGLE_TRY(initializeResources(context));
+    mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mScratchFBO);
+    ANGLE_GL_TRY(context, mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                           ToGLenum(destTarget), destTexture,
+                                                           static_cast<GLint>(destLevel)));
+    GLenum status = ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
+    if (status != GL_FRAMEBUFFER_COMPLETE)
+    {
+        return angle::Result::Stop;
+    }
+    angle::Result result = blitColorBufferWithShader(context, source, mScratchFBO, sourceAreaIn,
+                                                     destAreaIn, filter, writeAlpha);
+    // Unbind the texture from the the scratch framebuffer.
+    ANGLE_GL_TRY(context, mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                              GL_RENDERBUFFER, 0));
+    return result;
+}
+
+angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
+                                                const gl::Framebuffer *source,
                                                 const gl::Framebuffer *dest,
+                                                const gl::Rectangle &sourceAreaIn,
+                                                const gl::Rectangle &destAreaIn,
+                                                GLenum filter,
+                                                bool writeAlpha)
+{
+    const FramebufferGL *destGL = GetImplAs<FramebufferGL>(dest);
+    return blitColorBufferWithShader(context, source, destGL->getFramebufferID(), sourceAreaIn,
+                                     destAreaIn, filter, writeAlpha);
+}
+
+angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
+                                                const gl::Framebuffer *source,
+                                                const GLuint destFramebuffer,
                                                 const gl::Rectangle &sourceAreaIn,
                                                 const gl::Rectangle &destAreaIn,
                                                 GLenum filter,
@@ -505,8 +546,7 @@ angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
     ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->multiplyAlphaLocation, 0));
     ANGLE_GL_TRY(context, mFunctions->uniform1i(blitProgram->unMultiplyAlphaLocation, 0));
 
-    const FramebufferGL *destGL = GetImplAs<FramebufferGL>(dest);
-    mStateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, destGL->getFramebufferID());
+    mStateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, destFramebuffer);
 
     mStateManager->bindVertexArray(mVAO, 0);
     ANGLE_GL_TRY(context, mFunctions->drawArrays(GL_TRIANGLES, 0, 3));

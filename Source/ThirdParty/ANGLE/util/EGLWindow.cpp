@@ -191,6 +191,11 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
         disabledFeatureOverrides.push_back("allocate_non_zero_memory");
     }
 
+    if (params.emulateCopyTexImage2DFromRenderbuffers == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("emulate_copyteximage2d_from_renderbuffers");
+    }
+
     if (!disabledFeatureOverrides.empty())
     {
         if (strstr(extensionString, "EGL_ANGLE_feature_control") == nullptr)
