@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "TrackPrivateBaseGStreamer.h"
 
@@ -175,4 +175,4 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

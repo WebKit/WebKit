@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "TextTrack.h"
 #include "TextTrackLoader.h"
@@ -76,4 +76,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LoadableTextTrack)
     static bool isType(const WebCore::TextTrack& track) { return track.trackType() == WebCore::TextTrack::TrackElement; }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

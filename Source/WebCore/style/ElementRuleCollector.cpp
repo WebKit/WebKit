@@ -335,7 +335,7 @@ void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRe
     ASSERT(element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent);
 
     auto& rules = *matchRequest.ruleSet;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     // FXIME: WebVTT should not be done by styling UA shadow trees like this.
     if (element().isWebVTTElement())
         collectMatchingRulesForList(rules.cuePseudoRules(), matchRequest);

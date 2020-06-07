@@ -4593,8 +4593,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             return { };
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, inputSourceImageRect, depth, unpackImageHeight);
         return { };
-#endif // ENABLE(VIDEO)
     }
+#endif // ENABLE(VIDEO)
     );
 
     return WTF::visit(visitor, source);
@@ -5012,7 +5012,9 @@ bool WebGLRenderingContextBase::validateTexFuncParameters(const char* functionNa
     // temporary data based on this combination, so it must be legal.
     if (sourceType == SourceHTMLImageElement
         || sourceType == SourceHTMLCanvasElement
+#if ENABLE(VIDEO)
         || sourceType == SourceHTMLVideoElement
+#endif
         || sourceType == SourceImageData
         || sourceType == SourceImageBitmap) {
         if (!validateTexImageSourceFormatAndType(functionName, functionType, internalformat, format, type))

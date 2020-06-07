@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioMediaStreamTrackRenderer.h"
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM)
 
 #include "Logging.h"
 
@@ -73,4 +73,4 @@ WTFLogChannel& AudioMediaStreamTrackRenderer::logChannel() const
 
 }
 
-#endif // ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM)

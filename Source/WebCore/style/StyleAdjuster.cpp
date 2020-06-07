@@ -607,6 +607,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
+#if ENABLE(VIDEO)
     if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
         if (is<HTMLDivElement>(m_element) && style.display() == DisplayType::None) {
             static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile", AtomString::ConstructFromLiteral);
@@ -620,6 +621,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             }
         }
     }
+#endif
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

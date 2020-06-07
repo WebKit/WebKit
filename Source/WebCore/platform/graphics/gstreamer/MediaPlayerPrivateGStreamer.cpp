@@ -44,15 +44,12 @@
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
-
-#if ENABLE(VIDEO_TRACK)
 #include "AudioTrackPrivateGStreamer.h"
 #include "InbandMetadataTextTrackPrivateGStreamer.h"
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "TextCombinerGStreamer.h"
 #include "TextSinkGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
-#endif // ENABLE(VIDEO_TRACK)
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
@@ -95,13 +92,12 @@
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
 #include <gst/mpegts/mpegts.h>
 #undef GST_USE_UNSTABLE_API
-#endif // ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER_MPEGTS)
 
-#if ENABLE(VIDEO_TRACK)
 #define CREATE_TRACK(type, Type) G_STMT_START {                         \
         m_has##Type = true;                                             \
         if (!useMediaSource) {                                          \
@@ -115,11 +111,6 @@
             m_player->add##Type##Track(*track);                         \
         }                                                               \
     } G_STMT_END
-#else
-#define CREATE_TRACK(type, Type) G_STMT_START { \
-        m_has##Type## = true;                   \
-    } G_STMT_END
-#endif // ENABLE(VIDEO_TRACK)
 
 #if USE(GSTREAMER_GL)
 #include "GLVideoSinkGStreamer.h"
@@ -224,7 +215,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     GST_DEBUG_OBJECT(pipeline(), "Disposing player");
     m_isPlayerShuttingDown.store(true);
 
-#if ENABLE(VIDEO_TRACK)
     for (auto& track : m_audioTracks.values())
         track->disconnect();
 
@@ -233,7 +223,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
     for (auto& track : m_videoTracks.values())
         track->disconnect();
-#endif
+
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
@@ -1053,7 +1043,6 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
         return;
     }
 
-#if ENABLE(VIDEO_TRACK)
     Vector<String> validVideoStreams;
     for (unsigned i = 0; i < numTracks; ++i) {
         GRefPtr<GstPad> pad;
@@ -1080,7 +1069,6 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     }
 
     purgeInvalidVideoTracks(validVideoStreams);
-#endif
 
     m_player->mediaEngineUpdated();
 }
@@ -1129,7 +1117,6 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
         return;
     }
 
-#if ENABLE(VIDEO_TRACK)
     Vector<String> validAudioStreams;
     for (unsigned i = 0; i < numTracks; ++i) {
         GRefPtr<GstPad> pad;
@@ -1156,12 +1143,10 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
     }
 
     purgeInvalidAudioTracks(validAudioStreams);
-#endif
 
     m_player->mediaEngineUpdated();
 }
 
-#if ENABLE(VIDEO_TRACK)
 void MediaPlayerPrivateGStreamer::textChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
     player->m_notifier->notify(MainThreadNotification::TextChanged, [player] {
@@ -1252,7 +1237,6 @@ void MediaPlayerPrivateGStreamer::newTextSample()
     } else
         GST_WARNING("Unable to handle sample with no stream start event.");
 }
-#endif
 
 MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
 {
@@ -1551,11 +1535,9 @@ void MediaPlayerPrivateGStreamer::updateTracks(GRefPtr<GstStreamCollection>&& st
         else if (type & GST_STREAM_TYPE_VIDEO)
             CREATE_TRACK(video, Video);
         else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
-#if ENABLE(VIDEO_TRACK)
             auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
             m_textTracks.add(streamId, track.copyRef());
             m_player->addTextTrack(track.get());
-#endif
         } else
             GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
     }
@@ -1997,7 +1979,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 m_player->requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), missingPluginCallback.get());
             }
         }
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if USE(GSTREAMER_MPEGTS)
         else if (GstMpegtsSection* section = gst_message_parse_mpegts_section(message)) {
             processMpegTsSection(section);
             gst_mpegts_section_unref(section);
@@ -2059,11 +2041,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
-#if ENABLE(VIDEO_TRACK)
     case GST_MESSAGE_TOC:
         processTableOfContents(message);
         break;
-#endif
     case GST_MESSAGE_TAG: {
         GstTagList* tags = nullptr;
         GUniqueOutPtr<gchar> tag;
@@ -2161,7 +2141,7 @@ void MediaPlayerPrivateGStreamer::updateBufferingStatus(GstBufferingMode mode, d
     }
 }
 
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if USE(GSTREAMER_MPEGTS)
 void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section)
 {
     ASSERT(section);
@@ -2214,7 +2194,6 @@ void MediaPlayerPrivateGStreamer::processMpegTsSection(GstMpegtsSection* section
 }
 #endif
 
-#if ENABLE(VIDEO_TRACK)
 void MediaPlayerPrivateGStreamer::processTableOfContents(GstMessage* message)
 {
     if (m_chaptersTrack)
@@ -2283,7 +2262,6 @@ void MediaPlayerPrivateGStreamer::purgeInvalidTextTracks(Vector<String> validTra
         return !validTrackIds.contains(keyAndValue.key);
     });
 }
-#endif
 
 void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, GstElement* element, MediaPlayerPrivateGStreamer* player)
 {
@@ -2807,7 +2785,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
         g_signal_connect_swapped(m_pipeline.get(), "audio-changed", G_CALLBACK(audioChangedCallback), this);
     }
 
-#if ENABLE(VIDEO_TRACK)
     if (m_isLegacyPlaybin)
         g_signal_connect_swapped(m_pipeline.get(), "text-changed", G_CALLBACK(textChangedCallback), this);
 
@@ -2830,7 +2807,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
     g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
 
     g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), nullptr);
-#endif
 
     g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), "audio-sink", createAudioSink(), nullptr);
 

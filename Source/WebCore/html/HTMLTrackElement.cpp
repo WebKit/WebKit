@@ -27,7 +27,7 @@
 #include "config.h"
 #include "HTMLTrackElement.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "ContentSecurityPolicy.h"
 #include "Event.h"

@@ -26,7 +26,7 @@
 #ifndef AudioTrackPrivateAVFObjC_h
 #define AudioTrackPrivateAVFObjC_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "AudioTrackPrivateAVF.h"
 
@@ -82,7 +82,7 @@ private:
 
 }
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)
 
 
 #endif // AudioTrackPrivateAVFObjC_h

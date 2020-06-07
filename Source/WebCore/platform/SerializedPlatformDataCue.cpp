@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SerializedPlatformDataCue.h"
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
+#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
 
 namespace WebCore {
 

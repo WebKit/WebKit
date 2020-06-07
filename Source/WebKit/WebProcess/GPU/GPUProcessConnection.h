@@ -59,7 +59,7 @@ public:
     void setAuditToken(Optional<audit_token_t> auditToken) { m_auditToken = auditToken; }
     Optional<audit_token_t> auditToken() const { return m_auditToken; }
 #endif
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
 #endif
 
@@ -94,7 +94,7 @@ private:
 #if HAVE(AUDIT_TOKEN)
     Optional<audit_token_t> m_auditToken;
 #endif
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
 };

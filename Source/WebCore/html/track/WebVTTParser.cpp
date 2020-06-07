@@ -31,10 +31,9 @@
  */
 
 #include "config.h"
-
-#if ENABLE(VIDEO_TRACK)
-
 #include "WebVTTParser.h"
+
+#if ENABLE(VIDEO)
 
 #include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"

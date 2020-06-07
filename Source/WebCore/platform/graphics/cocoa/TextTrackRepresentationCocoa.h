@@ -26,7 +26,7 @@
 #ifndef TextTrackRepresentationCocoa_h
 #define TextTrackRepresentationCocoa_h
 
-#if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
+#if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO)
 
 #include "GenericTaskQueue.h"
 #include "TextTrackRepresentation.h"
@@ -62,6 +62,6 @@ private:
 
 }
 
-#endif // (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO_TRACK)
+#endif // (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO)
 
 #endif // TextTrackRepresentationCocoa_h

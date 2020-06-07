@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRenderer.h"
 #include "Logging.h"
@@ -68,4 +68,4 @@ private:
 
 }
 
-#endif // ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM)

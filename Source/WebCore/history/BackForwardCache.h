@@ -64,7 +64,7 @@ public:
 
     void markPagesForDeviceOrPageScaleChanged(Page&);
     void markPagesForContentsSizeChanged(Page&);
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     void markPagesForCaptionPreferencesChanged();
 #endif
 

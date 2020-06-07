@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "DocumentFragment.h"
 #include "HTMLElement.h"

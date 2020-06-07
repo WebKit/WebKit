@@ -1078,8 +1078,6 @@ String clickToExitFullScreenText()
     return WEB_UI_STRING("Click to Exit Full Screen", "Message to display in browser window when in webkit full screen mode.");
 }
 
-#if ENABLE(VIDEO_TRACK)
-
 String textTrackSubtitlesText()
 {
     return WEB_UI_STRING("Subtitles", "Menu section heading for subtitles");
@@ -1105,9 +1103,7 @@ String audioTrackNoLabelText()
     return WEB_UI_STRING_KEY("Unknown", "Unknown (audio track)", "Menu item label for an audio track that has no other name");
 }
 
-#endif
-
-#if ENABLE(VIDEO_TRACK) && USE(CF)
+#if USE(CF)
 
 String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language)
 {

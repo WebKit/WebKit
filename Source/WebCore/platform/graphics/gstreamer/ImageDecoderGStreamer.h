@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && ENABLE(VIDEO)
 
 #include "GRefPtrGStreamer.h"
 #include "ImageDecoder.h"

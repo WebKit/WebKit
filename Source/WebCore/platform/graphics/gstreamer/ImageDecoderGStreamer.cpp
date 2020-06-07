@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ImageDecoderGStreamer.h"
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && ENABLE(VIDEO)
 
 #include "FloatSize.h"
 #include "GStreamerCommon.h"

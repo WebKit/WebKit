@@ -32,7 +32,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "BufferedLineReader.h"
 #include "DocumentFragment.h"
@@ -203,4 +203,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

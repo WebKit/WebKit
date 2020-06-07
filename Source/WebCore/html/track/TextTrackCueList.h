@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "TextTrackCue.h"
 
@@ -64,4 +64,4 @@ inline unsigned TextTrackCueList::length() const
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

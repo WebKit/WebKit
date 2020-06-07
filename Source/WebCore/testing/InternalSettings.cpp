@@ -66,7 +66,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_imagesEnabled(settings.areImagesEnabled())
     , m_preferMIMETypeForImages(settings.preferMIMETypeForImages())
     , m_minimumDOMTimerInterval(settings.minimumDOMTimerInterval())
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     , m_shouldDisplaySubtitles(settings.shouldDisplaySubtitles())
     , m_shouldDisplayCaptions(settings.shouldDisplayCaptions())
     , m_shouldDisplayTextDescriptions(settings.shouldDisplayTextDescriptions())
@@ -170,7 +170,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setImagesEnabled(m_imagesEnabled);
     settings.setPreferMIMETypeForImages(m_preferMIMETypeForImages);
     settings.setMinimumDOMTimerInterval(m_minimumDOMTimerInterval);
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
     settings.setShouldDisplayCaptions(m_shouldDisplayCaptions);
     settings.setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
@@ -502,7 +502,7 @@ ExceptionOr<void> InternalSettings::setShouldDisplayTrackKind(const String& kind
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     auto& captionPreferences = m_page->group().captionPreferences();
     if (equalLettersIgnoringASCIICase(kind, "subtitles"))
         captionPreferences.setUserPrefersSubtitles(enabled);
@@ -523,7 +523,7 @@ ExceptionOr<bool> InternalSettings::shouldDisplayTrackKind(const String& kind)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     auto& captionPreferences = m_page->group().captionPreferences();
     if (equalLettersIgnoringASCIICase(kind, "subtitles"))
         return captionPreferences.userPrefersSubtitles();

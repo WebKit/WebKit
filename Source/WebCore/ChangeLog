@@ -1,3 +1,315 @@
+2020-06-07  Philippe Normand  <pnormand@igalia.com>
+
+        Remove ENABLE_VIDEO_TRACK ifdef guards
+        https://bugs.webkit.org/show_bug.cgi?id=212568
+
+        Reviewed by Youenn Fablet.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        * Modules/mediasource/AudioTrackMediaSource.h:
+        * Modules/mediasource/AudioTrackMediaSource.idl:
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/TextTrackMediaSource.h:
+        * Modules/mediasource/TextTrackMediaSource.idl:
+        * Modules/mediasource/VideoTrackMediaSource.h:
+        * Modules/mediasource/VideoTrackMediaSource.idl:
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::requestPictureInPicture):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioTrackCustom.cpp:
+        * bindings/js/JSAudioTrackListCustom.cpp:
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        * bindings/js/JSTextTrackCustom.cpp:
+        * bindings/js/JSTextTrackListCustom.cpp:
+        * bindings/js/JSTrackCustom.cpp:
+        * bindings/js/JSTrackCustom.h:
+        * bindings/js/JSVideoTrackCustom.cpp:
+        * bindings/js/JSVideoTrackListCustom.cpp:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::selectorText const):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesLangPseudoClass):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/SelectorPseudoElementTypeMap.in:
+        * css/parser/CSSParserSelector.h:
+        (WebCore::CSSParserSelector::needsImplicitShadowCombinatorForMatching const):
+        (WebCore::CSSParserSelector::isPseudoElementCueFunction const):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * dom/Node.h:
+        * history/BackForwardCache.cpp:
+        * history/BackForwardCache.h:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::as const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay const):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+        (WebCore::HTMLMediaElement::configureTextTracks):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::syncTextTrackBounds):
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer):
+        (WebCore::HTMLMediaElement::hasClosedCaptions const):
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::bufferingPolicy const):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLTagNames.in:
+        * html/HTMLTrackElement.cpp:
+        * html/HTMLTrackElement.h:
+        * html/HTMLTrackElement.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncParameters):
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        * html/shadow/MediaControlTextTrackContainerElement.h:
+        * html/track/AudioTrack.cpp:
+        * html/track/AudioTrack.h:
+        * html/track/AudioTrack.idl:
+        * html/track/AudioTrackList.cpp:
+        * html/track/AudioTrackList.h:
+        * html/track/AudioTrackList.idl:
+        * html/track/DataCue.cpp:
+        * html/track/DataCue.h:
+        * html/track/DataCue.idl:
+        * html/track/InbandDataTextTrack.cpp:
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.cpp:
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandTextTrack.cpp:
+        * html/track/InbandTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.cpp:
+        * html/track/TextTrack.h:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.cpp:
+        * html/track/TextTrackCue.h:
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackCueGeneric.cpp:
+        * html/track/TextTrackCueGeneric.h:
+        * html/track/TextTrackCueGeneric.idl:
+        * html/track/TextTrackCueList.cpp:
+        * html/track/TextTrackCueList.h:
+        * html/track/TextTrackCueList.idl:
+        * html/track/TextTrackList.cpp:
+        * html/track/TextTrackList.h:
+        * html/track/TextTrackList.idl:
+        * html/track/TrackBase.cpp:
+        * html/track/TrackBase.h:
+        * html/track/TrackEvent.cpp:
+        * html/track/TrackEvent.h:
+        * html/track/TrackEvent.idl:
+        * html/track/TrackListBase.cpp:
+        * html/track/TrackListBase.h:
+        * html/track/VTTCue.cpp:
+        * html/track/VTTCue.h:
+        * html/track/VTTCue.idl:
+        * html/track/VTTRegion.cpp:
+        * html/track/VTTRegion.h:
+        * html/track/VTTRegion.idl:
+        * html/track/VTTRegionList.cpp:
+        * html/track/VTTRegionList.h:
+        * html/track/VTTRegionList.idl:
+        * html/track/VideoTrack.cpp:
+        * html/track/VideoTrack.h:
+        * html/track/VideoTrack.idl:
+        * html/track/VideoTrackList.cpp:
+        * html/track/VideoTrackList.h:
+        * html/track/VideoTrackList.idl:
+        * html/track/WebVTTElement.cpp:
+        * html/track/WebVTTElement.h:
+        * html/track/WebVTTParser.cpp:
+        * html/track/WebVTTParser.h:
+        * html/track/WebVTTToken.h:
+        * html/track/WebVTTTokenizer.cpp:
+        * html/track/WebVTTTokenizer.h:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::resourceTypeFromAsAttribute):
+        (WebCore::createLinkPreloadResourceClient):
+        (WebCore::LinkLoader::isSupportedType):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::ContentExtensions::toResourceType):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * loader/TextTrackLoader.cpp:
+        * loader/TextTrackLoader.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent const):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+        (WebCore::destinationForType):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedTextTrack.cpp:
+        * loader/cache/CachedTextTrack.h:
+        * page/CaptionUserPreferences.cpp:
+        * page/CaptionUserPreferences.h:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/CaptionUserPreferencesMediaAF.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        (WebCore::Page::setUserInterfaceLayoutDirection):
+        (WebCore::Page::doAfterUpdateRendering):
+        (WebCore::Page::forEachMediaElement):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        * page/PageGroup.h:
+        * page/Settings.yaml:
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType):
+        * platform/SerializedPlatformDataCue.cpp:
+        * platform/graphics/AudioTrackPrivate.h:
+        * platform/graphics/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoder::supportsMediaType):
+        * platform/graphics/InbandGenericCue.cpp:
+        * platform/graphics/InbandGenericCue.h:
+        * platform/graphics/InbandTextTrackPrivate.h:
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::textTrackRepresentationBoundsChanged):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::tracksChanged):
+        * platform/graphics/TextTrackRepresentation.cpp:
+        * platform/graphics/TextTrackRepresentation.h:
+        * platform/graphics/TrackPrivateBase.cpp:
+        * platform/graphics/TrackPrivateBase.h:
+        * platform/graphics/VideoTrackPrivate.h:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        * platform/graphics/avfoundation/AudioTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        * platform/graphics/avfoundation/VideoTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp:
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.h:
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamer):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h:
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::newTextSample):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::purgeInvalidTextTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        * platform/graphics/gstreamer/TextCombinerGStreamer.h:
+        * platform/graphics/gstreamer/TextSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/TextSinkGStreamer.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        * platform/mac/SerializedPlatformDataCueMac.h:
+        * platform/mac/SerializedPlatformDataCueMac.mm:
+        * platform/mediastream/AudioMediaStreamTrackRenderer.cpp:
+        * platform/mediastream/AudioMediaStreamTrackRenderer.h:
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        * platform/mediastream/AudioTrackPrivateMediaStream.h:
+        * platform/mediastream/VideoTrackPrivateMediaStream.h:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h:
+        * rendering/RenderVTTCue.cpp:
+        * rendering/RenderVTTCue.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingShadowPseudoElementRules):
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::addMatch):
+        * style/RuleData.cpp:
+        (WebCore::Style::determinePropertyWhitelistType):
+        * style/RuleData.h:
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+        (WebCore::Style::RuleSet::traverseRuleDatas):
+        (WebCore::Style::RuleSet::hasShadowPseudoElementRules const):
+        (WebCore::Style::RuleSet::shrinkToFit):
+        * style/RuleSet.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjustForSiteSpecificQuirks const):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShouldDisplayTrackKind):
+        (WebCore::InternalSettings::shouldDisplayTrackKind):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::userPreferredAudioCharacteristics const):
+        (WebCore::Internals::setUserPreferredAudioCharacteristic):
+        (WebCore::Internals::captionsStyleSheetOverride):
+        (WebCore::Internals::setCaptionsStyleSheetOverride):
+        (WebCore::Internals::setPrimaryAudioTrackLanguageOverride):
+        (WebCore::Internals::setCaptionDisplayMode):
+        (WebCore::Internals::textTrackBCP47Language):
+        (WebCore::Internals::getCurrentMediaControlsStatusForElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Crash when running web-apis data collection

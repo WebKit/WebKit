@@ -249,7 +249,7 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
         return PseudoId::ScrollbarTrackPiece;
     case PseudoElementResizer:
         return PseudoId::Resizer;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     case PseudoElementCue:
 #endif
     case PseudoElementSlotted:
@@ -509,7 +509,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassFocusWithin:
                 builder.appendLiteral(":focus-within");
                 break;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
             case CSSSelector::PseudoClassFuture:
                 builder.appendLiteral(":future");
                 break;
@@ -619,7 +619,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassOutOfRange:
                 builder.appendLiteral(":out-of-range");
                 break;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
             case CSSSelector::PseudoClassPast:
                 builder.appendLiteral(":past");
                 break;
@@ -698,7 +698,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 if (cs->value() == "placeholder")
                     builder.appendLiteral("::-webkit-input-placeholder");
                 break;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
             case CSSSelector::PseudoElementCue: {
                 if (auto* selectorList = cs->selectorList()) {
                     builder.appendLiteral("::cue(");

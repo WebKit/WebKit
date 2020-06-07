@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioTrackPrivateMediaStream.h"
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRenderer.h"
 #include "Logging.h"
@@ -156,4 +156,4 @@ void AudioTrackPrivateMediaStream::stopRenderer()
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM)

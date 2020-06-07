@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InbandWebVTTTextTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 [
-    Conditional=MEDIA_SOURCE&VIDEO_TRACK,
+    Conditional=MEDIA_SOURCE,
 ]
 partial interface VideoTrack {
     readonly attribute SourceBuffer? sourceBuffer;

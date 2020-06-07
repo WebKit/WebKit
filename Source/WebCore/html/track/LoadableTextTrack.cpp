@@ -27,7 +27,7 @@
 #include "config.h"
 #include "LoadableTextTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "HTMLTrackElement.h"
 #include "TextTrackCueList.h"

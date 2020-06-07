@@ -498,10 +498,6 @@
 #define ENABLE_VIDEO 0
 #endif
 
-#if !defined(ENABLE_VIDEO_TRACK)
-#define ENABLE_VIDEO_TRACK 0
-#endif
-
 #if !defined(ENABLE_DATACUE_VALUE)
 #define ENABLE_DATACUE_VALUE 0
 #endif
@@ -873,10 +869,6 @@
 
 
 /* Asserts, invariants for macro definitions */
-
-#if ENABLE(VIDEO_TRACK) && !ENABLE(VIDEO)
-#error "ENABLE(VIDEO_TRACK) requires ENABLE(VIDEO)"
-#endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT) && !ENABLE(VIDEO)
 #error "ENABLE(MEDIA_CONTROLS_SCRIPT) requires ENABLE(VIDEO)"

@@ -1,3 +1,14 @@
+2020-06-07  Philippe Normand  <pnormand@igalia.com>
+
+        Remove ENABLE_VIDEO_TRACK ifdef guards
+        https://bugs.webkit.org/show_bug.cgi?id=212568
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/PlatformEnable.h: Remove ENABLE_VIDEO_TRACK, which is now enabled by
+        default under the ENABLE_VIDEO guard.
+        * wtf/PlatformEnableCocoa.h: Ditto.
+
 2020-06-06  David Kilzer  <ddkilzer@apple.com>
 
         Use OptionSet<DragOperation> for mask values

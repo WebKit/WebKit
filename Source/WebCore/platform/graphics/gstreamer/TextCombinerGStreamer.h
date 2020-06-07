@@ -23,10 +23,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextCombinerGStreamer_h
-#define TextCombinerGStreamer_h
+#pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <glib-object.h>
 #include <gst/gst.h>
@@ -62,5 +61,4 @@ struct _WebKitTextCombinerClass {
 
 GstElement* webkitTextCombinerNew();
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
-#endif
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

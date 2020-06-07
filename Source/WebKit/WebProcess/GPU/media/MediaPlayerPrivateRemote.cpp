@@ -1008,7 +1008,6 @@ void MediaPlayerPrivateRemote::setShouldContinueAfterKeyNeeded(bool should)
 }
 #endif
 
-#if ENABLE(VIDEO_TRACK)
 bool MediaPlayerPrivateRemote::requiresTextTrackRepresentation() const
 {
     notImplemented();
@@ -1029,7 +1028,6 @@ void MediaPlayerPrivateRemote::tracksChanged()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::TracksChanged(), m_id);
 }
-#endif
 
 void MediaPlayerPrivateRemote::beginSimulatedHDCPError()
 {

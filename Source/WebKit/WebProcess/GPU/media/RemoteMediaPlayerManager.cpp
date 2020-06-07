@@ -267,7 +267,7 @@ void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
 
     RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(settings.useGPUProcessForMedia() ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (settings.useGPUProcessForMedia()) {
         WebCore::SampleBufferDisplayLayer::setCreator([](auto& client) {
             return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client);

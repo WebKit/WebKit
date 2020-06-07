@@ -35,6 +35,7 @@
 #include "CachedSVGDocument.h"
 #include "CachedSVGFont.h"
 #include "CachedScript.h"
+#include "CachedTextTrack.h"
 #include "CachedXSLStyleSheet.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -85,10 +86,6 @@
 
 #if ENABLE(APPLICATION_MANIFEST)
 #include "CachedApplicationManifest.h"
-#endif
-
-#if ENABLE(VIDEO_TRACK)
-#include "CachedTextTrack.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -144,10 +141,8 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
 #endif
     case CachedResource::Type::LinkPrefetch:
         return new CachedResource(WTFMove(request), CachedResource::Type::LinkPrefetch, sessionID, cookieJar);
-#if ENABLE(VIDEO_TRACK)
     case CachedResource::Type::TextTrackResource:
         return new CachedTextTrack(WTFMove(request), sessionID, cookieJar);
-#endif
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
         return new CachedApplicationManifest(WTFMove(request), sessionID, cookieJar);
@@ -227,7 +222,7 @@ ResourceErrorOr<CachedResourceHandle<CachedFont>> CachedResourceLoader::requestF
     return castCachedResourceTo<CachedFont>(requestResource(CachedResource::Type::FontResource, WTFMove(request)));
 }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 ResourceErrorOr<CachedResourceHandle<CachedTextTrack>> CachedResourceLoader::requestTextTrack(CachedResourceRequest&& request)
 {
     return castCachedResourceTo<CachedTextTrack>(requestResource(CachedResource::Type::TextTrackResource, WTFMove(request)));
@@ -364,7 +359,7 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
     case CachedResource::Type::LinkPrefetch:
         return MixedContentChecker::ContentType::Active;
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
         return MixedContentChecker::ContentType::Active;
 #endif
@@ -400,7 +395,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
                 return false;
         }
         break;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
 #endif
     case CachedResource::Type::MediaResource:
@@ -468,7 +463,7 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
             return false;
         break;
     case CachedResource::Type::MediaResource:
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
 #endif
         if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url, redirectResponseReceived))
@@ -765,7 +760,7 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type)
     case CachedResource::Type::XSLStyleSheet:
         return FetchOptions::Destination::Xslt;
 #endif
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
         return FetchOptions::Destination::Track;
 #endif

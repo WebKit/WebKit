@@ -1924,7 +1924,7 @@ void WebPreferences::didRemoveFromWebView()
 
 HRESULT WebPreferences::shouldDisplaySubtitles(_Out_ BOOL* enabled)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (!enabled)
         return E_POINTER;
 
@@ -1937,7 +1937,7 @@ HRESULT WebPreferences::shouldDisplaySubtitles(_Out_ BOOL* enabled)
 
 HRESULT WebPreferences::setShouldDisplaySubtitles(BOOL enabled)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     setBoolValue(WebKitShouldDisplaySubtitlesPreferenceKey, enabled);
     return S_OK;
 #else
@@ -1947,7 +1947,7 @@ HRESULT WebPreferences::setShouldDisplaySubtitles(BOOL enabled)
 
 HRESULT WebPreferences::shouldDisplayCaptions(_Out_ BOOL* enabled)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (!enabled)
         return E_POINTER;
 
@@ -1960,7 +1960,7 @@ HRESULT WebPreferences::shouldDisplayCaptions(_Out_ BOOL* enabled)
 
 HRESULT WebPreferences::setShouldDisplayCaptions(BOOL enabled)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     setBoolValue(WebKitShouldDisplayCaptionsPreferenceKey, enabled);
     return S_OK;
 #else
@@ -1970,7 +1970,7 @@ HRESULT WebPreferences::setShouldDisplayCaptions(BOOL enabled)
 
 HRESULT WebPreferences::shouldDisplayTextDescriptions(_Out_ BOOL* enabled)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (!enabled)
         return E_POINTER;
 
@@ -1983,7 +1983,7 @@ HRESULT WebPreferences::shouldDisplayTextDescriptions(_Out_ BOOL* enabled)
 
 HRESULT WebPreferences::setShouldDisplayTextDescriptions(BOOL enabled)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     setBoolValue(WebKitShouldDisplayTextDescriptionsPreferenceKey, enabled);
     return S_OK;
 #else

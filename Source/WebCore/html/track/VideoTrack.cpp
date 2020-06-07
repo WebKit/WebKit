@@ -32,7 +32,7 @@
 #include "config.h"
 #include "VideoTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
 #include "VideoTrackList.h"

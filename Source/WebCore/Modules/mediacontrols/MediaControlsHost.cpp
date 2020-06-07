@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(VIDEO)
+
 #include "MediaControlsHost.h"
 
 #include "CaptionUserPreferences.h"
@@ -318,3 +320,5 @@ bool MediaControlsHost::compactMode() const
 }
 
 }
+
+#endif // ENABLE(VIDEO)

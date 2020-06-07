@@ -244,9 +244,7 @@ String HTMLLinkElement::as() const
         || (RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled()
             && (equalLettersIgnoringASCIICase(as, "video")
                 || equalLettersIgnoringASCIICase(as, "audio")))
-#if ENABLE(VIDEO_TRACK)
         || equalLettersIgnoringASCIICase(as, "track")
-#endif
         || equalLettersIgnoringASCIICase(as, "font"))
         return as.convertToASCIILowercase();
     return String();

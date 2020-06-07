@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteSampleBufferDisplayLayerManager.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "Decoder.h"
 #include "RemoteSampleBufferDisplayLayer.h"
@@ -63,4 +63,4 @@ void RemoteSampleBufferDisplayLayerManager::releaseLayer(SampleBufferDisplayLaye
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

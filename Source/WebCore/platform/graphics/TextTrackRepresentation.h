@@ -26,7 +26,7 @@
 #ifndef TextTrackRepresentation_h
 #define TextTrackRepresentation_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "PlatformLayer.h"
 #include <wtf/Forward.h>

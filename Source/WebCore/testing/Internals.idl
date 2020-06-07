@@ -631,12 +631,12 @@ enum CompositingPolicy {
 
     DOMString getImageSourceURL(Element element);
 
-    [Conditional=VIDEO_TRACK, MayThrowException] DOMString captionsStyleSheetOverride();
-    [Conditional=VIDEO_TRACK, MayThrowException] void setCaptionsStyleSheetOverride(DOMString override);
-    [Conditional=VIDEO_TRACK, MayThrowException] void setPrimaryAudioTrackLanguageOverride(DOMString language);
-    [Conditional=VIDEO_TRACK, MayThrowException] void setCaptionDisplayMode(DOMString mode);
-    [Conditional=VIDEO_TRACK] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
-    [Conditional=VIDEO_TRACK, MayThrowException] DOMString textTrackBCP47Language(TextTrack track);
+    [Conditional=VIDEO, MayThrowException] DOMString captionsStyleSheetOverride();
+    [Conditional=VIDEO, MayThrowException] void setCaptionsStyleSheetOverride(DOMString override);
+    [Conditional=VIDEO, MayThrowException] void setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO, MayThrowException] void setCaptionDisplayMode(DOMString mode);
+    [Conditional=VIDEO] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
+    [Conditional=VIDEO, MayThrowException] DOMString textTrackBCP47Language(TextTrack track);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
      endTimes);

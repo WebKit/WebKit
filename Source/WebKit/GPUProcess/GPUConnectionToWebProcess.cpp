@@ -236,7 +236,6 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
     return *m_remoteMediaRecorderManager;
 }
 
-#if ENABLE(VIDEO_TRACK)
 RemoteAudioMediaStreamTrackRendererManager& GPUConnectionToWebProcess::audioTrackRendererManager()
 {
     if (!m_audioTrackRendererManager)
@@ -252,7 +251,6 @@ RemoteSampleBufferDisplayLayerManager& GPUConnectionToWebProcess::sampleBufferDi
 
     return *m_sampleBufferDisplayLayerManager;
 }
-#endif
 #endif
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -379,7 +377,6 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         mediaRecorderManager().didReceiveRemoteMediaRecorderMessage(connection, decoder);
         return true;
     }
-#if ENABLE(VIDEO_TRACK)
     if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRendererManager::messageReceiverName()) {
         audioTrackRendererManager().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
@@ -396,7 +393,6 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
         return true;
     }
-#endif
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecsProxy::messageReceiverName()) {

@@ -595,9 +595,7 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         break;
 #endif
     case CachedResource::Type::LinkPrefetch:
-#if ENABLE(VIDEO_TRACK)
     case CachedResource::Type::TextTrackResource:
-#endif
         resourceType = DiagnosticLoggingKeys::otherKey();
         break;
     }

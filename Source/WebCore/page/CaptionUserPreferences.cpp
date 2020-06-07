@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CaptionUserPreferences.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "AudioTrackList.h"
 #include "DOMWrapperWorld.h"
@@ -418,4 +418,4 @@ String CaptionUserPreferences::primaryAudioTrackLanguageOverride() const
     
 }
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

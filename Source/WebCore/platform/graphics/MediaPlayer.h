@@ -232,7 +232,6 @@ public:
     virtual bool mediaPlayerShouldUsePersistentCache() const { return true; }
     virtual const String& mediaPlayerMediaCacheDirectory() const { return emptyString(); }
 
-#if ENABLE(VIDEO_TRACK)
     virtual void mediaPlayerDidAddAudioTrack(AudioTrackPrivate&) { }
     virtual void mediaPlayerDidAddTextTrack(InbandTextTrackPrivate&) { }
     virtual void mediaPlayerDidAddVideoTrack(VideoTrackPrivate&) { }
@@ -241,9 +240,8 @@ public:
     virtual void mediaPlayerDidRemoveVideoTrack(VideoTrackPrivate&) { }
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
-#endif
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(AVF_CAPTIONS)
     virtual Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources() { return { }; }
 #endif
 
@@ -537,7 +535,6 @@ public:
     CachedResourceLoader* cachedResourceLoader();
     RefPtr<PlatformMediaResourceLoader> createResourceLoader();
 
-#if ENABLE(VIDEO_TRACK)
     void addAudioTrack(AudioTrackPrivate&);
     void addTextTrack(InbandTextTrackPrivate&);
     void addVideoTrack(VideoTrackPrivate&);
@@ -549,9 +546,8 @@ public:
     void setTextTrackRepresentation(TextTrackRepresentation*);
     void syncTextTrackBounds();
     void tracksChanged();
-#endif
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged();
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources();
 #endif

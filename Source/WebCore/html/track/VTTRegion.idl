@@ -25,7 +25,7 @@
  */
 
 [
-    Conditional=VIDEO_TRACK,
+    Conditional=VIDEO,
     Constructor(),
     ConstructorCallWith=ScriptExecutionContext,
     JSGenerateToNativeObject,

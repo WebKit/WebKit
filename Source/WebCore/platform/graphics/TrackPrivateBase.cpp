@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TrackPrivateBase.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "Logging.h"
 #include <wtf/LoggerHelper.h>

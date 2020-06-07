@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 #include "RenderVTTCue.h"
 
 #include "RenderInline.h"

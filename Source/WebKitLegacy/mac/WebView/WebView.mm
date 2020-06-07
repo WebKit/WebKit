@@ -3214,7 +3214,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setServiceControlsEnabled([preferences serviceControlsEnabled]);
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     settings.setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
     settings.setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
     settings.setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
@@ -3345,7 +3345,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setPictureInPictureAPIEnabled(preferences.pictureInPictureAPIEnabled);
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     settings.setGenericCueAPIEnabled(preferences.genericCueAPIEnabled);
 #endif
 

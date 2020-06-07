@@ -26,7 +26,7 @@
 #import "config.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#if ENABLE(MEDIA_SOURCE)
 
 #import "AVTrackPrivateAVFObjCImpl.h"
 #import "SourceBufferPrivateAVFObjC.h"

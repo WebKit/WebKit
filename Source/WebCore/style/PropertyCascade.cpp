@@ -98,7 +98,7 @@ static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
     return false;
 }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 static inline bool isValidCueStyleProperty(CSSPropertyID id)
 {
     switch (id) {
@@ -261,7 +261,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         }
         CSSPropertyID propertyID = current.id();
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
         if (propertyWhitelistType == PropertyWhitelistCue && !isValidCueStyleProperty(propertyID))
             continue;
 #endif

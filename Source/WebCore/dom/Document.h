@@ -1106,8 +1106,10 @@ public:
     void suspend(ReasonForSuspension);
     void resume(ReasonForSuspension);
 
+#if ENABLE(VIDEO)
     void registerMediaElement(HTMLMediaElement&);
     void unregisterMediaElement(HTMLMediaElement&);
+#endif
 
     bool audioPlaybackRequiresUserGesture() const;
     bool videoPlaybackRequiresUserGesture() const;
@@ -1121,7 +1123,7 @@ public:
 
     void storageBlockingStateDidChange();
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     void registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement&);
     void unregisterForCaptionPreferencesChangedCallbacks(HTMLMediaElement&);
     void captionPreferencesChanged();
@@ -1836,7 +1838,7 @@ private:
     HashSet<HTMLMediaElement*> m_mediaElements;
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     HashSet<HTMLMediaElement*> m_captionPreferencesChangedElements;
     WeakPtr<HTMLMediaElement> m_mediaElementShowingTextTrack;
 #endif

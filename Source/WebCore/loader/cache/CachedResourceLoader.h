@@ -97,7 +97,7 @@ public:
     ResourceErrorOr<CachedResourceHandle<CachedXSLStyleSheet>> requestXSLStyleSheet(CachedResourceRequest&&);
 #endif
     ResourceErrorOr<CachedResourceHandle<CachedResource>> requestLinkResource(CachedResource::Type, CachedResourceRequest&&);
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     ResourceErrorOr<CachedResourceHandle<CachedTextTrack>> requestTextTrack(CachedResourceRequest&&);
 #endif
 #if ENABLE(APPLICATION_MANIFEST)

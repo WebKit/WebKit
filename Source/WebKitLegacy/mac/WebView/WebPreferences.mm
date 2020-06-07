@@ -615,7 +615,7 @@ public:
         @NO, WebKitPictureInPictureAPIEnabledKey,
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
         @NO, WebKitGenericCueAPIEnabledKey,
 #endif
 

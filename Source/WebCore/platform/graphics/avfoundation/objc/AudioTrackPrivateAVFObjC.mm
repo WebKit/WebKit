@@ -28,7 +28,7 @@
 #import "AVTrackPrivateAVFObjCImpl.h"
 #import "MediaSelectionGroupAVFObjC.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 namespace WebCore {
 

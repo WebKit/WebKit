@@ -428,7 +428,6 @@ bool RemoteMediaPlayerProxy::mediaPlayerRenderingCanBeAccelerated()
     return m_renderingCanBeAccelerated;
 }
 
-#if ENABLE(VIDEO_TRACK)
 void RemoteMediaPlayerProxy::mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate& track)
 {
 #if !RELEASE_LOG_DISABLED
@@ -511,7 +510,6 @@ void RemoteMediaPlayerProxy::textTrackSetMode(TrackPrivateRemoteIdentifier track
 
     ASSERT_NOT_REACHED();
 }
-#endif
 
 void RemoteMediaPlayerProxy::mediaPlayerResourceNotSupported()
 {
@@ -651,7 +649,7 @@ bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) c
     return false;
 }
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(AVF_CAPTIONS)
 Vector<RefPtr<PlatformTextTrack>> RemoteMediaPlayerProxy::outOfBandTrackSources()
 {
     notImplemented();
@@ -823,7 +821,7 @@ void RemoteMediaPlayerProxy::applicationDidBecomeActive()
 
 void RemoteMediaPlayerProxy::notifyTrackModeChanged()
 {
-#if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(AVF_CAPTIONS)
     m_player->notifyTrackModeChanged();
 #endif
 }

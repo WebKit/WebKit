@@ -356,7 +356,7 @@ void BackForwardCache::markPagesForContentsSizeChanged(Page& page)
     }
 }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 void BackForwardCache::markPagesForCaptionPreferencesChanged()
 {
     for (auto& item : m_items) {

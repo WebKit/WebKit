@@ -27,7 +27,7 @@
 #include "config.h"
 #include "InbandDataTextTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "DataCue.h"
 #include "HTMLMediaElement.h"

@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=VIDEO_TRACK,
+    Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction

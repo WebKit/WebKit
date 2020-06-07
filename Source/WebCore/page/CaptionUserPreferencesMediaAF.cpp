@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #if !USE(DIRECT2D)
 
@@ -891,4 +891,4 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
 #endif
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

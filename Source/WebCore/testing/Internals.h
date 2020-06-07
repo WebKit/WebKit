@@ -111,7 +111,7 @@ class WebGLRenderingContext;
 class WindowProxy;
 class XMLHttpRequest;
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 class TextTrackCueGeneric;
 #endif
 
@@ -614,12 +614,9 @@ public:
     ExceptionOr<void> setCaptionsStyleSheetOverride(const String&);
     ExceptionOr<void> setPrimaryAudioTrackLanguageOverride(const String&);
     ExceptionOr<void> setCaptionDisplayMode(const String&);
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
     ExceptionOr<String> textTrackBCP47Language(TextTrack&);
-#endif
-
-#if ENABLE(VIDEO)
     Ref<TimeRanges> createTimeRanges(Float32Array& startTimes, Float32Array& endTimes);
     double closestTimeToTimeRanges(double time, TimeRanges&);
 #endif

@@ -34,7 +34,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
 #include <gst/mpegts/mpegts.h>
 #undef GST_USE_UNSTABLE_API
@@ -250,7 +250,7 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
                 gst_allocator_set_default(GST_ALLOCATOR(g_object_new(gst_allocator_fast_malloc_get_type(), nullptr)));
         }
 
-#if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
+#if USE(GSTREAMER_MPEGTS)
         if (isGStreamerInitialized)
             gst_mpegts_initialize();
 #endif

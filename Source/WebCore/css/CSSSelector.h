@@ -160,7 +160,7 @@ namespace WebCore {
 #endif
             PseudoClassInRange,
             PseudoClassOutOfRange,
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
             PseudoClassFuture,
             PseudoClassPast,
 #endif
@@ -179,7 +179,7 @@ namespace WebCore {
             PseudoElementUnknown = 0,
             PseudoElementAfter,
             PseudoElementBefore,
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
             PseudoElementCue,
 #endif
             PseudoElementFirstLetter,

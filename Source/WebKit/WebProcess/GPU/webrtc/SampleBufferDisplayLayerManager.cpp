@@ -29,7 +29,7 @@
 #include "Decoder.h"
 #include <WebCore/IntSize.h>
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 namespace WebKit {
 using namespace WebCore;

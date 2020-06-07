@@ -32,7 +32,7 @@
 #include "config.h"
 #include "VTTRegion.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "DOMRect.h"
 #include "DOMTokenList.h"

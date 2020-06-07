@@ -31,7 +31,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "InputStreamPreprocessor.h"
 #include "WebVTTToken.h"
@@ -52,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

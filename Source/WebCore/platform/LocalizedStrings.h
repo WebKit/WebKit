@@ -301,7 +301,6 @@ namespace WebCore {
 
     String clickToExitFullScreenText();
 
-#if ENABLE(VIDEO_TRACK)
     String textTrackSubtitlesText();
     String textTrackOffMenuItemText();
     String textTrackAutomaticMenuItemText();
@@ -315,7 +314,6 @@ namespace WebCore {
     String easyReaderTrackMenuItemText(const String&);
     String forcedTrackMenuItemText(const String&);
     String audioDescriptionTrackSuffixText(const String&);
-#endif
 #endif
 
     String snapshottedPlugInLabelTitle();

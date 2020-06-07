@@ -238,14 +238,12 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebRTCMDNSICECandidatesEnabled(enabled);
 #endif
 
-#if ENABLE(VIDEO_TRACK)
     if (preference == "WebKitGenericCueAPIEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::genericCueAPIEnabledKey(), enabled);
         for (auto* page : pages)
             page->settings().setGenericCueAPIEnabled(enabled);
         return;
     }
-#endif
 
 #if ENABLE(GPU_PROCESS)
     if (preference == "WebKitUseGPUProcessForMedia" || preference == "WebKitCaptureAudioInGPUProcessEnabledKey") {

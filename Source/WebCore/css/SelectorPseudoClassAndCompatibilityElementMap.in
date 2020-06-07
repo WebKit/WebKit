@@ -86,7 +86,7 @@ window-inactive
 picture-in-picture
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 future
 past
 #endif

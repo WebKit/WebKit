@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "InbandTextTrackPrivateClient.h"
 
@@ -131,5 +131,5 @@ template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::Kind> {
 
 } // namespace WTF
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)
 

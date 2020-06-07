@@ -102,7 +102,7 @@ void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned se
     const CSSSelector* customPseudoElementSelector = nullptr;
     const CSSSelector* slottedPseudoElementSelector = nullptr;
     const CSSSelector* partPseudoElementSelector = nullptr;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     const CSSSelector* cuePseudoElementSelector = nullptr;
 #endif
     const CSSSelector* selector = ruleData.selector();
@@ -141,7 +141,7 @@ void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned se
             case CSSSelector::PseudoElementPart:
                 partPseudoElementSelector = selector;
                 break;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
             case CSSSelector::PseudoElementCue:
                 cuePseudoElementSelector = selector;
                 break;
@@ -185,7 +185,7 @@ void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned se
         selector = selector->tagHistory();
     } while (selector);
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (cuePseudoElementSelector) {
         m_cuePseudoRules.append(ruleData);
         return;
@@ -386,7 +386,7 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseMap(m_tagLowercaseLocalNameRules);
     traverseMap(m_shadowPseudoElementRules);
     traverseVector(m_linkPseudoClassRules);
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     traverseVector(m_cuePseudoRules);
 #endif
     traverseVector(m_hostPseudoClassRules);
@@ -458,7 +458,7 @@ bool RuleSet::hasShadowPseudoElementRules() const
 {
     if (!m_shadowPseudoElementRules.isEmpty())
         return true;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (!m_cuePseudoRules.isEmpty())
         return true;
 #endif
@@ -479,7 +479,7 @@ void RuleSet::shrinkToFit()
     shrinkMapVectorsToFit(m_tagLowercaseLocalNameRules);
     shrinkMapVectorsToFit(m_shadowPseudoElementRules);
     m_linkPseudoClassRules.shrinkToFit();
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     m_cuePseudoRules.shrinkToFit();
 #endif
     m_hostPseudoClassRules.shrinkToFit();

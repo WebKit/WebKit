@@ -227,11 +227,9 @@ private:
 
     MediaTime getStartDate() const final;
 
-#if ENABLE(VIDEO_TRACK)
     bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
-#endif
 
     void setAVPlayerItem(AVPlayerItem *);
 
@@ -280,10 +278,8 @@ private:
     void setCurrentTextTrack(InbandTextTrackPrivateAVF*) final;
     InbandTextTrackPrivateAVF* currentTextTrack() const final { return m_currentTextTrack; }
 
-#if ENABLE(VIDEO_TRACK)
     void updateAudioTracks();
     void updateVideoTracks();
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool hasVideo() const final;
@@ -354,12 +350,10 @@ private:
 
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 
-#if ENABLE(VIDEO_TRACK)
     Vector<RefPtr<AudioTrackPrivateAVFObjC>> m_audioTracks;
     Vector<RefPtr<VideoTrackPrivateAVFObjC>> m_videoTracks;
     RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
     RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
-#endif
 
     InbandTextTrackPrivateAVF* m_currentTextTrack { nullptr };
 

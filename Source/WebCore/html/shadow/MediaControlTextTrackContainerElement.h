@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-#if ENABLE(VIDEO_TRACK)
-
 class HTMLMediaElement;
 class VTTCue;
 
@@ -106,8 +104,6 @@ private:
     bool m_fontSizeIsImportant { false };
     bool m_needsGenerateTextTrackRepresentation { false };
 };
-
-#endif
 
 } // namespace WebCore
 

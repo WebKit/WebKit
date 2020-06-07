@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InbandGenericCue.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 
 namespace WebCore {

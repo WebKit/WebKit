@@ -30,7 +30,7 @@ namespace Style {
 enum PropertyWhitelistType {
     PropertyWhitelistNone   = 0,
     PropertyWhitelistMarker,
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     PropertyWhitelistCue
 #endif
 };

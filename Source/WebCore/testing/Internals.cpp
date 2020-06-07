@@ -238,15 +238,12 @@
 #include "MockCDMFactory.h"
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 #include "CaptionUserPreferences.h"
+#include "HTMLMediaElement.h"
 #include "PageGroup.h"
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
-#endif
-
-#if ENABLE(VIDEO)
-#include "HTMLMediaElement.h"
 #include "TimeRanges.h"
 #endif
 
@@ -511,12 +508,6 @@ void Internals::resetToConsistentState(Page& page)
     overrideUserPreferredLanguages(Vector<String>());
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(false);
     WebCore::DeprecatedGlobalSettings::setUsesMockScrollAnimator(false);
-#if ENABLE(VIDEO_TRACK)
-    page.group().captionPreferences().setTestingMode(true);
-    page.group().captionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
-    page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
-    page.group().captionPreferences().setTestingMode(false);
-#endif
     if (!page.mainFrame().editor().isContinuousSpellCheckingEnabled())
         page.mainFrame().editor().toggleContinuousSpellChecking();
     if (page.mainFrame().editor().isOverwriteModeEnabled())
@@ -524,6 +515,10 @@ void Internals::resetToConsistentState(Page& page)
     page.mainFrame().loader().clearTestingOverrides();
     page.applicationCacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
+    page.group().captionPreferences().setTestingMode(true);
+    page.group().captionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
+    page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
+    page.group().captionPreferences().setTestingMode(false);
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
     PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
 #endif
@@ -546,7 +541,9 @@ void Internals::resetToConsistentState(Page& page)
     page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::Unknown);
 #endif
 
+#if ENABLE(VIDEO)
     MediaResourceLoader::recordResponsesForTesting();
+#endif
 
     page.setShowAllPlugins(false);
     page.setLowPowerModeEnabledOverrideForTesting(WTF::nullopt);
@@ -589,7 +586,7 @@ Internals::Internals(Document& document)
     , m_orientationNotifier(0)
 #endif
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (document.page())
         document.page()->group().captionPreferences().setTestingMode(true);
 #endif
@@ -2158,7 +2155,7 @@ Vector<String> Internals::userPreferredAudioCharacteristics() const
     Document* document = contextDocument();
     if (!document || !document->page())
         return Vector<String>();
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     return document->page()->group().captionPreferences().preferredAudioCharacteristics();
 #else
     return Vector<String>();
@@ -2170,7 +2167,7 @@ void Internals::setUserPreferredAudioCharacteristic(const String& characteristic
     Document* document = contextDocument();
     if (!document || !document->page())
         return;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     document->page()->group().captionPreferences().setPreferredAudioCharacteristic(characteristic);
 #else
     UNUSED_PARAM(characteristic);
@@ -3809,7 +3806,7 @@ ExceptionOr<String> Internals::captionsStyleSheetOverride()
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     return document->page()->group().captionPreferences().captionsStyleSheetOverride();
 #else
     return String { emptyString() };
@@ -3822,7 +3819,7 @@ ExceptionOr<void> Internals::setCaptionsStyleSheetOverride(const String& overrid
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     document->page()->group().captionPreferences().setCaptionsStyleSheetOverride(override);
 #else
     UNUSED_PARAM(override);
@@ -3836,7 +3833,7 @@ ExceptionOr<void> Internals::setPrimaryAudioTrackLanguageOverride(const String& 
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     document->page()->group().captionPreferences().setPrimaryAudioTrackLanguageOverride(language);
 #else
     UNUSED_PARAM(language);
@@ -3850,7 +3847,7 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     auto& captionPreferences = document->page()->group().captionPreferences();
 
     if (equalLettersIgnoringASCIICase(mode, "automatic"))
@@ -3869,7 +3866,7 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     return { };
 }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double endTime, String text)
 {
     Document* document = contextDocument();
@@ -3882,9 +3879,6 @@ ExceptionOr<String> Internals::textTrackBCP47Language(TextTrack& track)
 {
     return String { track.validBCP47Language() };
 }
-#endif
-
-#if ENABLE(VIDEO)
 
 Ref<TimeRanges> Internals::createTimeRanges(Float32Array& startTimes, Float32Array& endTimes)
 {
@@ -4675,7 +4669,12 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
 
 String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement& mediaElement)
 {
+#if ENABLE(VIDEO)
     return mediaElement.getCurrentMediaControlsStatus();
+#else
+    UNUSED_PARAM(mediaElement);
+    return { };
+#endif
 }
 
 #if !PLATFORM(COCOA)

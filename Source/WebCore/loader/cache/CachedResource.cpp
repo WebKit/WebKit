@@ -102,7 +102,7 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
         return ResourceLoadPriority::VeryLow;
     case Type::LinkPrefetch:
         return ResourceLoadPriority::VeryLow;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     case Type::TextTrackResource:
         return ResourceLoadPriority::Low;
 #endif

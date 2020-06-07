@@ -77,7 +77,7 @@ void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::Messa
 {
 }
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerManager()
 {
     if (!m_sampleBufferDisplayLayerManager)
@@ -118,12 +118,12 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
             captureManager->didReceiveMessageFromGPUProcess(connection, decoder);
         return true;
     }
-#if ENABLE(VIDEO_TRACK)
+
     if (decoder.messageReceiverName() == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
         sampleBufferDisplayLayerManager().didReceiveLayerMessage(connection, decoder);
         return true;
     }
-#endif // ENABLE(VIDEO_TRACK)
+
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     if (decoder.messageReceiverName() == Messages::LibWebRTCCodecs::messageReceiverName()) {

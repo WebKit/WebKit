@@ -32,7 +32,7 @@
 #include "config.h"
 #include "AudioTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
 #include <wtf/NeverDestroyed.h>

@@ -318,16 +318,16 @@ backspaceKeyNavigationEnabled:
   initial: true
 shouldDisplaySubtitles:
   initial: false
-  conditional: VIDEO_TRACK
+  conditional: VIDEO
 shouldDisplayCaptions:
   initial: false
-  conditional: VIDEO_TRACK
+  conditional: VIDEO
 shouldDisplayTextDescriptions:
   initial: false
-  conditional: VIDEO_TRACK
+  conditional: VIDEO
 genericCueAPIEnabled:
   initial: false
-  conditional: VIDEO_TRACK
+  conditional: VIDEO
 useGPUProcessForMedia:
   initial: false
   conditional: GPU_PROCESS

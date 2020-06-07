@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SerializedPlatformDataCueMac.h"
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
+#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
 
 #import "JSDOMConvertBufferSource.h"
 #import <AVFoundation/AVMetadataItem.h>

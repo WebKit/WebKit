@@ -32,7 +32,7 @@
 #include "config.h"
 #include "VTTCue.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"

@@ -77,14 +77,12 @@ public:
     double timestampOffset() const;
     ExceptionOr<void> setTimestampOffset(double);
 
-#if ENABLE(VIDEO_TRACK)
     VideoTrackList& videoTracks();
     VideoTrackList* videoTracksIfExists() const { return m_videoTracks.get(); }
     AudioTrackList& audioTracks();
     AudioTrackList* audioTracksIfExists() const { return m_audioTracks.get(); }
     TextTrackList& textTracks();
     TextTrackList* textTracksIfExists() const { return m_textTracks.get(); }
-#endif
 
     double appendWindowStart() const;
     ExceptionOr<void> setAppendWindowStart(double);

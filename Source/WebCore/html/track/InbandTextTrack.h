@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "InbandTextTrackPrivateClient.h"
 #include "TextTrack.h"
@@ -94,4 +94,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrack)
     static bool isType(const WebCore::TextTrack& track) { return track.isInband(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)

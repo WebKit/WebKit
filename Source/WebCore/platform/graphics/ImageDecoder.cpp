@@ -38,7 +38,7 @@
 #include "ImageDecoderAVFObjC.h"
 #endif
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && ENABLE(VIDEO)
 #include "ImageDecoderGStreamer.h"
 #endif
 
@@ -53,7 +53,7 @@ RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mime
         return ImageDecoderAVFObjC::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
 #endif
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && ENABLE(VIDEO)
     if (ImageDecoderGStreamer::canDecodeType(mimeType))
         return ImageDecoderGStreamer::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
 #endif
@@ -85,7 +85,7 @@ bool ImageDecoder::supportsMediaType(MediaType type)
         return true;
 #endif
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && ENABLE(VIDEO)
     if (ImageDecoderGStreamer::supportsMediaType(type))
         return true;
 #endif

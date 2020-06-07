@@ -5165,7 +5165,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setFixedFontFamily(toAtomString(str));
     str.clear();
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     hr = preferences->shouldDisplaySubtitles(&enabled);
     if (FAILED(hr))
         return hr;

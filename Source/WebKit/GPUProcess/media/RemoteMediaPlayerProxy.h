@@ -245,7 +245,7 @@ private:
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(AVF_CAPTIONS)
     Vector<RefPtr<WebCore::PlatformTextTrack>> outOfBandTrackSources() final;
 #endif
 

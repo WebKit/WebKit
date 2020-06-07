@@ -109,10 +109,10 @@ typedef (
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
 
-    [Conditional=VIDEO_TRACK, MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
-    [Conditional=VIDEO_TRACK, ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
-    [Conditional=VIDEO_TRACK, ImplementedAs=ensureTextTracks] readonly attribute TextTrackList textTracks;
-    [Conditional=VIDEO_TRACK, ImplementedAs=ensureVideoTracks] readonly attribute VideoTrackList videoTracks;
+    [MayThrowException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
+    [ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
+    [ImplementedAs=ensureTextTracks] readonly attribute TextTrackList textTracks;
+    [ImplementedAs=ensureVideoTracks] readonly attribute VideoTrackList videoTracks;
 
     [Reflect] attribute DOMString mediaGroup;
 

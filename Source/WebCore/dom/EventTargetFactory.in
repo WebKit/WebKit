@@ -6,7 +6,7 @@ AbortSignal
 ApplePaySession conditional=APPLE_PAY
 AudioNode conditional=WEB_AUDIO
 AudioContext conditional=WEB_AUDIO
-AudioTrackList conditional=VIDEO_TRACK
+AudioTrackList conditional=VIDEO
 Clipboard
 DedicatedWorkerGlobalScope
 DOMApplicationCache
@@ -46,10 +46,10 @@ ServiceWorkerRegistration conditional=SERVICE_WORKER
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
-TextTrack conditional=VIDEO_TRACK
-TextTrackCue conditional=VIDEO_TRACK
-TextTrackList conditional=VIDEO_TRACK
-VideoTrackList conditional=VIDEO_TRACK
+TextTrack conditional=VIDEO
+TextTrackCue conditional=VIDEO
+TextTrackList conditional=VIDEO
+VideoTrackList conditional=VIDEO
 VisualViewport
 WebAnimation
 WebGPUDevice conditional=WEBGPU

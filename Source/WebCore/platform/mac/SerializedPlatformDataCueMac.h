@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(DATACUE_VALUE)
+#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
 
 #include "SerializedPlatformDataCue.h"
 

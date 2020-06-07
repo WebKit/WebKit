@@ -310,7 +310,7 @@
 #include "TouchEvent.h"
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 #include "CaptionUserPreferences.h"
 #endif
 
@@ -5493,7 +5493,7 @@ void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 #endif
 }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 void Document::registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement& element)
 {

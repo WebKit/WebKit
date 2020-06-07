@@ -64,8 +64,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlTextTrackContainerElement);
 
 using namespace HTMLNames;
 
-#if ENABLE(VIDEO_TRACK)
-
 Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document, HTMLMediaElement& mediaElement)
 {
     auto element = adoptRef(*new MediaControlTextTrackContainerElement(document, mediaElement));
@@ -478,8 +476,6 @@ WTFLogChannel& MediaControlTextTrackContainerElement::logChannel() const
     return LogMedia;
 }
 #endif // !RELEASE_LOG_DISABLED
-
-#endif // ENABLE(VIDEO_TRACK)
 
 // ----------------------------
 

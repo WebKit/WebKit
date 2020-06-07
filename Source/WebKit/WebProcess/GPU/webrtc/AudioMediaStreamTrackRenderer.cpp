@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioMediaStreamTrackRenderer.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "GPUProcessConnection.h"
 #include "RemoteAudioMediaStreamTrackRendererManagerMessages.h"
@@ -111,4 +111,4 @@ void AudioMediaStreamTrackRenderer::storageChanged(SharedMemory* storage)
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

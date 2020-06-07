@@ -553,9 +553,6 @@ my @features = (
     { option => "video-presentation-mode", desc => "Toggle Video presentation mode support",
       define => "ENABLE_VIDEO_PRESENTATION_MODE", value => \$videoPresentationModeSupport },
 
-    { option => "video-track", desc => "Toggle Video Track support",
-      define => "ENABLE_VIDEO_TRACK", value => \$videoTrackSupport },
-
     { option => "video-uses-element-fullscreen", desc => "Toggle video element fullscreen support",
       define => "ENABLE_VIDEO_USES_ELEMENT_FULLSCREEN", value => \$videoUsesElementFullscreenSupport },
 

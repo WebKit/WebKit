@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SampleBufferDisplayLayer.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "GPUProcessConnection.h"
 #include "LayerHostingContext.h"

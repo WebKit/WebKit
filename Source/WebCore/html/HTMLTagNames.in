@@ -135,7 +135,7 @@ thead interfaceName=HTMLTableSectionElement
 time
 title
 tr interfaceName=HTMLTableRowElement
-track wrapperOnlyIfMediaIsAvailable, conditional=VIDEO_TRACK
+track wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement

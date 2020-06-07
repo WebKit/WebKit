@@ -198,7 +198,7 @@ public:
     bool isAfterPseudoElement() const { return pseudoId() == PseudoId::After; }
     PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleResolveCallbacks()) ? customPseudoId() : PseudoId::None; }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     virtual bool isWebVTTElement() const { return false; }
 #endif
     bool isStyledElement() const { return getFlag(IsHTMLFlag) || getFlag(IsSVGFlag) || getFlag(IsMathMLFlag); }

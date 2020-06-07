@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=VIDEO_TRACK,
+    Conditional=VIDEO,
     ImplementationLacksVTable,
 ] interface TextTrackCueList {
     readonly attribute unsigned long length;

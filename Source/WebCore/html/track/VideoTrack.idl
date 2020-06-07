@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=VIDEO_TRACK,
+    Conditional=VIDEO,
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction
 ] interface VideoTrack {

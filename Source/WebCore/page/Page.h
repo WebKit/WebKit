@@ -590,7 +590,7 @@ public:
 
     void hiddenPageCSSAnimationSuspensionStateChanged();
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     void captionPreferencesChanged();
 #endif
 

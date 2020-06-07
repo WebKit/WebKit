@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioTrackPrivate.h"
 #include "MediaStreamTrackPrivate.h"
@@ -113,4 +113,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrackPrivateMediaStream)
     static bool isType(const WebCore::AudioTrackPrivate& track) { return track.isBackedByMediaStreamTrack(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM)

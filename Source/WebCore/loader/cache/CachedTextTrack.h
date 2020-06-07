@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
-
 #include "CachedResource.h"
 
 namespace WebCore {
@@ -46,5 +44,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedTextTrack, CachedResource::Type::TextTrackResource)
-
-#endif // ENABLE(VIDEO_TRACK)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioTrackPrivateMediaSourceAVFObjC.h"
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#if ENABLE(MEDIA_SOURCE)
 
 #include "AVTrackPrivateAVFObjCImpl.h"
 #include "SourceBufferPrivateAVFObjC.h"

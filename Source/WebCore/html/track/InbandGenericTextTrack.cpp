@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InbandGenericTextTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"

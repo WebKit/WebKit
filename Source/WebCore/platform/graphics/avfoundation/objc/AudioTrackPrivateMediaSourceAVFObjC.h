@@ -27,7 +27,7 @@
 
 #include "AudioTrackPrivateAVF.h"
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#if ENABLE(MEDIA_SOURCE)
 
 OBJC_CLASS AVAssetTrack;
 
@@ -63,4 +63,4 @@ private:
 
 }
 
-#endif // ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#endif // ENABLE(MEDIA_SOURCE)

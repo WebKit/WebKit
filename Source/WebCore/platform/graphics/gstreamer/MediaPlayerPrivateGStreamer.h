@@ -32,6 +32,7 @@
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
+#include "TrackPrivateBaseGStreamer.h"
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
@@ -41,11 +42,8 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
-
-#if ENABLE(VIDEO_TRACK)
-#include "TrackPrivateBaseGStreamer.h"
 #include <wtf/text/AtomStringHash.h>
-#endif
+
 typedef struct _GstMpegtsSection GstMpegtsSection;
 
 #if USE(GSTREAMER_GL)
@@ -251,9 +249,7 @@ protected:
         AudioChanged = 1 << 2,
         VolumeChanged = 1 << 3,
         MuteChanged = 1 << 4,
-#if ENABLE(VIDEO_TRACK)
         TextChanged = 1 << 5,
-#endif
         SizeChanged = 1 << 6,
         StreamCollectionChanged = 1 << 7
     };
@@ -310,11 +306,8 @@ protected:
     void notifyPlayerOfVideo();
     void notifyPlayerOfVideoCaps();
     void notifyPlayerOfAudio();
-
-#if ENABLE(VIDEO_TRACK)
     void notifyPlayerOfText();
     void newTextSample();
-#endif
 
     void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
@@ -325,10 +318,8 @@ protected:
     static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
     static void videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer*);
     static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
-#if ENABLE(VIDEO_TRACK)
     static void textChangedCallback(MediaPlayerPrivateGStreamer*);
     static GstFlowReturn newTextSampleCallback(MediaPlayerPrivateGStreamer*);
-#endif
 
     void timeChanged();
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
@@ -438,7 +429,6 @@ private:
     void updateBufferingStatus(GstBufferingMode, double percentage);
     void updateMaxTimeLoaded(double percentage);
 
-#if ENABLE(VIDEO_TRACK)
 #if USE(GSTREAMER_MPEGTS)
     void processMpegTsSection(GstMpegtsSection*);
 #endif
@@ -449,7 +439,7 @@ private:
     void purgeInvalidAudioTracks(Vector<String> validTrackIds);
     void purgeInvalidVideoTracks(Vector<String> validTrackIds);
     void purgeInvalidTextTracks(Vector<String> validTrackIds);
-#endif
+
     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags seekType);
 
     String engineDescription() const override { return "GStreamer"; }
@@ -474,10 +464,8 @@ private:
 #endif
 
     Atomic<bool> m_isPlayerShuttingDown;
-#if ENABLE(VIDEO_TRACK)
     GRefPtr<GstElement> m_textAppSink;
     GRefPtr<GstPad> m_textAppSinkPad;
-#endif
     GstStructure* m_mediaLocations { nullptr };
     int m_mediaLocationCurrentIndex { 0 };
     bool m_isPlaybackRatePaused { false };
@@ -528,7 +516,6 @@ private:
     GRefPtr<GstElement> m_autoAudioSink;
     GRefPtr<GstElement> m_downloadBuffer;
     Vector<RefPtr<MediaPlayerRequestInstallMissingPluginsCallback>> m_missingPluginCallbacks;
-#if ENABLE(VIDEO_TRACK)
     HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
     HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
     HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
@@ -536,7 +523,6 @@ private:
 #if USE(GSTREAMER_MPEGTS)
     HashMap<AtomString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
 #endif
-#endif // ENABLE(VIDEO_TRACK)
     virtual bool isMediaSource() const { return false; }
 
     uint64_t m_httpResponseTotalSize { 0 };

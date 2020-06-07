@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class Page;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 class CaptionUserPreferences;
 #endif
 
@@ -53,7 +53,7 @@ public:
     const String& name() { return m_name; }
     unsigned identifier() { return m_identifier; }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     WEBCORE_EXPORT void captionPreferencesChanged();
     WEBCORE_EXPORT CaptionUserPreferences& captionPreferences();
 #endif
@@ -64,7 +64,7 @@ private:
 
     unsigned m_identifier;
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     std::unique_ptr<CaptionUserPreferences> m_captionPreferences;
 #endif
 };

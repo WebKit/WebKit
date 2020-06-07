@@ -27,7 +27,7 @@ enum AutoKeyword { "auto" };
 typedef (double or AutoKeyword) LineAndPositionSetting;
 
 [
-    Conditional=VIDEO_TRACK,
+    Conditional=VIDEO,
     Constructor(double startTime, double endTime, DOMString text),
     ConstructorCallWith=Document,
     JSGenerateToJSObject,

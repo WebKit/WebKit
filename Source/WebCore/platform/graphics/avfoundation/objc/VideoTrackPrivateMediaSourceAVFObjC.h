@@ -29,7 +29,7 @@
 #include "IntSize.h"
 #include "VideoTrackPrivateAVF.h"
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#if ENABLE(MEDIA_SOURCE)
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItemTrack;
@@ -70,6 +70,6 @@ private:
 
 }
 
-#endif // ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#endif // ENABLE(MEDIA_SOURCE)
 
 #endif

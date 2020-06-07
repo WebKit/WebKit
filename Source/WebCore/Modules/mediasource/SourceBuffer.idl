@@ -49,9 +49,9 @@
     attribute double timestampOffset;
 
     // Track support
-    [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
-    [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
-    [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
+    readonly attribute AudioTrackList audioTracks;
+    readonly attribute VideoTrackList videoTracks;
+    readonly attribute TextTrackList textTracks;
 
     attribute double appendWindowStart;
     attribute unrestricted double appendWindowEnd;

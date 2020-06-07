@@ -1029,7 +1029,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return isInRange(element);
         case CSSSelector::PseudoClassOutOfRange:
             return isOutOfRange(element);
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
         case CSSSelector::PseudoClassFuture:
             return matchesFutureCuePseudoClass(element);
         case CSSSelector::PseudoClassPast:
@@ -1088,7 +1088,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
     if (selector.match() == CSSSelector::PseudoElement) {
         switch (selector.pseudoElementType()) {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
         case CSSSelector::PseudoElementCue: {
             LocalContext subcontext(context);
 

@@ -43,7 +43,7 @@
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 #include "TextTrackCue.h"
 #endif
 
@@ -140,7 +140,7 @@ static bool computeContainsUncommonAttributeSelector(const CSSSelector& rootSele
 static inline PropertyWhitelistType determinePropertyWhitelistType(const CSSSelector* selector)
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
         if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
             return PropertyWhitelistCue;
 #endif

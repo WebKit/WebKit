@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaSelectionGroupAVFObjC.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>

@@ -153,7 +153,7 @@ void CachedPage::restore(Page& page)
 
     page.setNeedsRecalcStyleInAllFrames();
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (m_needsCaptionPreferencesChanged)
         page.captionPreferencesChanged();
 #endif
@@ -173,7 +173,7 @@ void CachedPage::clear()
     ASSERT(m_cachedMainFrame);
     m_cachedMainFrame->clear();
     m_cachedMainFrame = nullptr;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     m_needsCaptionPreferencesChanged = false;
 #endif
     m_needsDeviceOrPageScaleChanged = false;

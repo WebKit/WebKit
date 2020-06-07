@@ -25,7 +25,7 @@
  */
 
 [
-    Conditional=VIDEO_TRACK,
+    Conditional=VIDEO,
     Constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
     Constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type),
     ConstructorCallWith=Document

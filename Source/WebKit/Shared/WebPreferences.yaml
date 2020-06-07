@@ -355,17 +355,17 @@ CaretBrowsingEnabled:
 ShouldDisplaySubtitles:
   type: bool
   defaultValue: false
-  condition: ENABLE(VIDEO_TRACK)
+  condition: ENABLE(VIDEO)
 
 ShouldDisplayCaptions:
   type: bool
   defaultValue: false
-  condition: ENABLE(VIDEO_TRACK)
+  condition: ENABLE(VIDEO)
 
 ShouldDisplayTextDescriptions:
   type: bool
   defaultValue: false
-  condition: ENABLE(VIDEO_TRACK)
+  condition: ENABLE(VIDEO)
 
 NotificationsEnabled:
   type: bool
@@ -1548,7 +1548,7 @@ CSSShadowPartsEnabled:
 GenericCueAPIEnabled:
   type: bool
   defaultValue: true
-  condition: ENABLE(VIDEO_TRACK)
+  condition: ENABLE(VIDEO)
   humanReadableName: "Generic Text Track Cue API"
   humanReadableDescription: "Enable Generic Text Track Cue API"
   category: experimental

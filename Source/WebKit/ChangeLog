@@ -1,3 +1,51 @@
+2020-06-07  Philippe Normand  <pnormand@igalia.com>
+
+        Remove ENABLE_VIDEO_TRACK ifdef guards
+        https://bugs.webkit.org/show_bug.cgi?id=212568
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::textTrackSetMode):
+        (WebKit::RemoteMediaPlayerProxy::notifyTrackModeChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.messages.in:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.cpp:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in:
+        * Shared/WebPreferences.yaml:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::tracksChanged):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.h:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2020-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         Clear WebPageProxy event state between tests

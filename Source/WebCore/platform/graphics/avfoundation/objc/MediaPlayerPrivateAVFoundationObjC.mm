@@ -1911,8 +1911,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateRotationSession()
     m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(finalTransform), naturalSize, kCVPixelFormatType_32BGRA, ImageRotationSessionVT::IsCGImageCompatible::Yes);
 }
 
-#if ENABLE(VIDEO_TRACK)
-
 template <typename RefT, typename PassRefT>
 void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* trackType, Vector<RefT>& oldItems, RefT (*itemFactory)(AVPlayerItemTrack*), MediaPlayer* player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT))
 {
@@ -2072,8 +2070,6 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
 {
     m_videoLayerManager->setTextTrackRepresentation(representation);
 }
-
-#endif // ENABLE(VIDEO_TRACK)
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 

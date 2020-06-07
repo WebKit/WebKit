@@ -28,7 +28,9 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
+#include "AudioTrack.h"
 #include "AutoplayEvent.h"
+#include "CaptionUserPreferences.h"
 #include "DeferrableTask.h"
 #include "GenericEventQueue.h"
 #include "HTMLElement.h"
@@ -39,17 +41,12 @@
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "MediaSessionIdentifier.h"
+#include "TextTrack.h"
+#include "VideoTrack.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/WeakPtr.h>
-
-#if ENABLE(VIDEO_TRACK)
-#include "AudioTrack.h"
-#include "CaptionUserPreferences.h"
-#include "TextTrack.h"
-#include "VideoTrack.h"
-#endif
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
 #include "AudioSession.h"
@@ -106,10 +103,8 @@ template<typename, typename> class PODInterval;
 class RemotePlayback;
 #endif
 
-#if ENABLE(VIDEO_TRACK)
 using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
-#endif
 
 using MediaProvider = Optional<Variant<
 #if ENABLE(MEDIA_STREAM)
@@ -129,11 +124,9 @@ class HTMLMediaElement
     , private MediaPlayerClient
     , private MediaProducer
     , private VisibilityChangeClient
-#if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
     , private VideoTrackClient
-#endif
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
     , private AudioSession::MutedStateObserver
 #endif
@@ -333,7 +326,6 @@ public:
 
     bool shouldForceControlsDisplay() const;
 
-#if ENABLE(VIDEO_TRACK)
     ExceptionOr<TextTrack&> addTextTrack(const String& kind, const String& label, const String& language);
 
     AudioTrackList& ensureAudioTracks();
@@ -399,7 +391,6 @@ public:
     using HTMLMediaElementEnums::TextTrackVisibilityCheckType;
     void textTrackReadyStateChanged(TextTrack*);
     void updateTextTrackRepresentationImageIfNeeded();
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
@@ -788,7 +779,6 @@ private:
 
     URL selectNextSourceChild(ContentType*, String* keySystem, InvalidURLAction);
 
-#if ENABLE(VIDEO_TRACK)
     bool ignoreTrackDisplayUpdateRequests() const;
     void beginIgnoringTrackDisplayUpdateRequests();
     void endIgnoringTrackDisplayUpdateRequests();
@@ -803,7 +793,6 @@ private:
     bool textTracksAreReady() const;
     void configureTextTrackDisplay(TextTrackVisibilityCheckType = CheckTextTrackVisibility);
     void updateTextTrackDisplay();
-#endif
 
     // These "internal" functions do not check user gesture restrictions.
     void playInternal();
@@ -1114,7 +1103,6 @@ private:
     bool m_isScrubbingRemotely : 1;
     bool m_waitingToEnterFullscreen : 1;
 
-#if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
@@ -1137,7 +1125,6 @@ private:
     int m_ignoreTrackDisplayUpdate { 0 };
 
     bool m_requireCaptionPreferencesChangedCallbacks { false };
-#endif
 
 #if ENABLE(WEB_AUDIO)
     // This is a weak reference, since m_audioSourceNode holds a reference to us.

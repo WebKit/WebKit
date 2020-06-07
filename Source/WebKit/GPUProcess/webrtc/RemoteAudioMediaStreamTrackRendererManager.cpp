@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "Decoder.h"
 #include "RemoteAudioMediaStreamTrackRenderer.h"
@@ -57,5 +57,4 @@ void RemoteAudioMediaStreamTrackRendererManager::releaseRenderer(AudioMediaStrea
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
-
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

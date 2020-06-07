@@ -322,12 +322,10 @@ private:
     void setShouldContinueAfterKeyNeeded(bool) final;
 #endif
 
-#if ENABLE(VIDEO_TRACK)
     bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(WebCore::TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
     void tracksChanged() final;
-#endif
 
     void beginSimulatedHDCPError() final;
     void endSimulatedHDCPError() final;

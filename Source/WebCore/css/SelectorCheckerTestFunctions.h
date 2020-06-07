@@ -39,7 +39,7 @@
 #include "HTMLAttachmentElement.h"
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 #include "WebVTTElement.h"
 #endif
 
@@ -184,7 +184,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
 ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<AtomString>& argumentList)
 {
     AtomString language;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
     if (is<WebVTTElement>(element))
         language = downcast<WebVTTElement>(element).language();
     else
@@ -423,7 +423,7 @@ ALWAYS_INLINE bool matchesPictureInPicturePseudoClass(const Element& element)
 
 #endif
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element& element)
 {

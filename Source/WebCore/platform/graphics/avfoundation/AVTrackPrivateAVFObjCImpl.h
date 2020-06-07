@@ -26,7 +26,7 @@
 #ifndef AVTrackPrivateAVFObjCImpl_h
 #define AVTrackPrivateAVFObjCImpl_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "AudioTrackPrivate.h"
 #include "VideoTrackPrivate.h"
@@ -80,6 +80,6 @@ private:
 
 }
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO)
 
 #endif

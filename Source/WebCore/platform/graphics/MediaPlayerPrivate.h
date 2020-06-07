@@ -239,12 +239,10 @@ public:
     virtual void setShouldContinueAfterKeyNeeded(bool) { }
 #endif
 
-#if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }
     virtual void syncTextTrackBounds() { };
     virtual void tracksChanged() { };
-#endif
 
 #if USE(GSTREAMER)
     virtual void simulateAudioInterruption() { }

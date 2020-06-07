@@ -23,10 +23,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextSinkGStreamer_h
-#define TextSinkGStreamer_h
+#pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <glib-object.h>
 #include <gst/app/gstappsink.h>
@@ -61,5 +60,4 @@ struct _WebKitTextSinkClass {
 
 GstElement* webkitTextSinkNew();
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
-#endif
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

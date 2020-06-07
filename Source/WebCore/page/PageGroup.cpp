@@ -36,7 +36,7 @@
 #include <JavaScriptCore/StructureInlines.h>
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 #if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include "CaptionUserPreferencesMediaAF.h"
 #else
@@ -101,7 +101,7 @@ void PageGroup::removePage(Page& page)
     m_pages.remove(&page);
 }
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 void PageGroup::captionPreferencesChanged()
 {
     for (auto& page : m_pages)

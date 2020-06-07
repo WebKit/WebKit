@@ -176,7 +176,7 @@ private:
         bool m_imagesEnabled;
         bool m_preferMIMETypeForImages;
         Seconds m_minimumDOMTimerInterval;
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
         bool m_shouldDisplaySubtitles;
         bool m_shouldDisplayCaptions;
         bool m_shouldDisplayTextDescriptions;

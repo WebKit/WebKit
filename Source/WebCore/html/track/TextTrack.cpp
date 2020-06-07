@@ -32,7 +32,7 @@
 #include "config.h"
 #include "TextTrack.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO)
 
 #include "DataCue.h"
 #include "Document.h"
