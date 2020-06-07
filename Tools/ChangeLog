@@ -1,3 +1,22 @@
+2020-06-07  Caio Lima  <ticaiolima@gmail.com>
+
+        Allow run-jsc-stress-tests still run if some of the remote hosts are not available
+        https://bugs.webkit.org/show_bug.cgi?id=201426
+
+        Reviewed by Saam Barati.
+
+        This patch allows run-jsc-stress-tests to keep on running if some of
+        the remote hosts are not available. To do this, we created a new
+        function `checkAndPrepareRemoteHosts` that is responsible to check the
+        connection and read/write permissions of given remote hosts list. It
+        filters out every unavailable remote host.
+        These checks and filter happen in the beginning of the script and is
+        excuted only once, in the beggining of the script. It means that if
+        some remote device becomes unavailable after the check and preparation
+        is done, the script execution will be interupted.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-06-07  Philippe Normand  <pnormand@igalia.com>
 
         Remove ENABLE_VIDEO_TRACK ifdef guards
