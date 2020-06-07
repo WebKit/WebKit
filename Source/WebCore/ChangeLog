@@ -1,5 +1,20 @@
 2020-06-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Height percentage] Skip anonymous wrappers when searching for fixed height
+        https://bugs.webkit.org/show_bug.cgi?id=212881
+
+        Reviewed by Antti Koivisto.
+
+        When the block level box is a direct child of an inline level box (<span><div></div></span>) and we wrap it into a continuation,
+        the containing block (anonymous wrapper) is not the box we need to check for fixed height.
+
+        Test: fast/layoutformattingcontext/height-precentage-with-anonymous-wrapper.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedHeightValue const):
+
+2020-06-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Intrinsic width computation should take min/max-width into account.
         https://bugs.webkit.org/show_bug.cgi?id=212876
 

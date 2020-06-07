@@ -76,9 +76,18 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeightValue(const Box&
         if (layoutState().inQuirksMode())
             containingBlockHeight = formattingContext().quirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
         else {
-            auto containingBlockHeightFromStyle = layoutBox.containingBlock().style().logicalHeight();
-            if (containingBlockHeightFromStyle.isFixed())
-                containingBlockHeight = LayoutUnit { containingBlockHeightFromStyle.value() };
+            auto nonAnonymousContainingBlockLogicalHeight = [&] {
+                // When the block level box is a direct child of an inline level box (<span><div></div></span>) and we wrap it into a continuation,
+                // the containing block (anonymous wrapper) is not the box we need to check for fixed height.
+                auto& initialContainingBlock = layoutBox.initialContainingBlock();
+                for (auto* containingBlock = &layoutBox.containingBlock(); containingBlock != &initialContainingBlock; containingBlock = &containingBlock->containingBlock()) {
+                    if (containingBlock->isAnonymous())
+                        continue;
+                    return containingBlock->style().logicalHeight();
+                }
+                return initialContainingBlock.style().logicalHeight();
+            };
+            containingBlockHeight = fixedValue(nonAnonymousContainingBlockLogicalHeight());
         }
     }
 
