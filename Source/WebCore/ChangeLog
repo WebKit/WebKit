@@ -1,5 +1,19 @@
 2020-06-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Intrinsic width computation should take min/max-width into account.
+        https://bugs.webkit.org/show_bug.cgi?id=212876
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/min-max-content-width-simple2.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedWidthValue): Address Sam's post-landing comment.
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+
+2020-06-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Pass in the element attributes to Layout::ReplacedBox
         https://bugs.webkit.org/show_bug.cgi?id=212879
 

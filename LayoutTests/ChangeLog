@@ -1,3 +1,13 @@
+2020-06-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Intrinsic width computation should take min/max-width into account.
+        https://bugs.webkit.org/show_bug.cgi?id=212876
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/min-max-content-width-simple2-expected.html: Added.
+        * fast/layoutformattingcontext/min-max-content-width-simple2.html: Added.
+
 2020-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Crash when running web-apis data collection

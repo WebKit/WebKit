@@ -1,0 +1,13 @@
+<!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+.shrinkToFit {
+  border: 1px solid green;
+  font-size: 10px;
+  font-family: Ahem;
+  color: white;
+  position: absolute;
+}
+</style>
+<body>
+<div class=shrinkToFit><div style="width: min-content">min content width</div></div>
+<div class=shrinkToFit style="margin-top: 32px;"><div style="width: max-content">max content width</div></div>

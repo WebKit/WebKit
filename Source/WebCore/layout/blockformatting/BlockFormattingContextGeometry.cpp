@@ -296,13 +296,14 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
     };
 
     auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
-        auto& style = layoutBox.style();
-        if (auto width = fixedValue(style.logicalWidth()))
-            return { *width, *width };
-
+        auto logicalWidth = layoutBox.style().logicalWidth();
         // Minimum/maximum width can't be depending on the containing block's width.
-        if (!style.logicalWidth().isAuto())
+        auto needsResolvedContainingBlockWidth = logicalWidth.isCalculated() || logicalWidth.isPercent() || logicalWidth.isRelative();
+        if (needsResolvedContainingBlockWidth)
             return { };
+
+        if (auto width = fixedValue(logicalWidth))
+            return { *width, *width };
 
         if (layoutBox.isReplacedBox()) {
             auto& replacedBox = downcast<ReplacedBox>(layoutBox);
@@ -316,8 +317,14 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
         if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild())
             return { };
 
-        if (layoutBox.establishesFormattingContext())
-            return LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
+        if (layoutBox.establishesFormattingContext()) {
+            auto intrinsicWidthConstraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
+            if (logicalWidth.isMinContent())
+                return { intrinsicWidthConstraints.minimum, intrinsicWidthConstraints.minimum };
+            if (logicalWidth.isMaxContent())
+                return { intrinsicWidthConstraints.maximum, intrinsicWidthConstraints.maximum };
+            return intrinsicWidthConstraints;
+        }
 
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
         auto& formattingState = layoutState().formattingStateForBox(layoutBox);

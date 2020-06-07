@@ -106,23 +106,16 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedWidthValue(const Box& 
 
     auto width = [&] {
         auto& style = layoutBox.style();
-        auto width = style.logicalWidth();  
-
         switch (widthType) {
         case WidthType::Normal:
-            width = style.logicalWidth();
-            break;
+            return style.logicalWidth();
         case WidthType::Min:
-            width = style.logicalMinWidth();
-            break;
+            return style.logicalMinWidth();
         case WidthType::Max:
-            width = style.logicalMaxWidth();
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+            return style.logicalMaxWidth();
         }
-        return width;
+        ASSERT_NOT_REACHED();
+        return style.logicalWidth();
     }();
     if (auto computedValue = this->computedValue(width, containingBlockWidth))
         return computedValue;
