@@ -1,3 +1,14 @@
+2020-06-07  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] HAVE(PAYMENT_METHOD_BILLING_ADDRESS) should be true on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=212877
+        <rdar://problem/64080998>
+
+        Reviewed by Sam Weinig.
+
+        * platform/ios-wk2/TestExpectations: Unskipped
+        http/tests/ssl/applepay/ApplePayBillingAddress.html on iOS.
+
 2020-06-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Height percentage] Skip anonymous wrappers when searching for fixed height

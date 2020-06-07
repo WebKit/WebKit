@@ -43,6 +43,8 @@ fast/viewport/ios/viewport-fit-contain.html [ Skip ]
 fast/viewport/ios/viewport-fit-cover.html [ Skip ]
 fast/viewport/ios/viewport-fit-auto.html [ Skip ]
 
+http/tests/ssl/applepay/ApplePayBillingAddress.html [ Pass ]
+
 http/tests/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
