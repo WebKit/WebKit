@@ -1,3 +1,9 @@
+2020-06-06  Andy Estes  <aestes@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r262196. rdar://problem/63951363
