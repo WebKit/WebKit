@@ -90,7 +90,7 @@ private:
     void buildTableStructure(const RenderTable& tableRenderer, ContainerBox& tableWrapperBox);
     Box* createLayoutBox(const ContainerBox& parentContainer, const RenderObject& childRenderer);
 
-    Box& createReplacedBox(RenderStyle&&);
+    Box& createReplacedBox(Optional<Box::ElementAttributes>, RenderStyle&&);
     Box& createTextBox(String text, bool canUseSimplifiedTextMeasuring, RenderStyle&&);
     Box& createLineBreakBox(bool isOptional, RenderStyle&&);
     ContainerBox& createContainer(Optional<Box::ElementAttributes>, RenderStyle&&);

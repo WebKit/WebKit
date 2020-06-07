@@ -40,7 +40,7 @@ namespace Layout {
 class ReplacedBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(ReplacedBox);
 public:
-    ReplacedBox(RenderStyle&&);
+    ReplacedBox(Optional<ElementAttributes>, RenderStyle&&);
     virtual ~ReplacedBox() = default;
 
     void setCachedImage(CachedImage& cachedImage) { m_cachedImage = &cachedImage; }
