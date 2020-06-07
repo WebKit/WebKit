@@ -1,3 +1,19 @@
+2020-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Crash when running web-apis data collection
+        https://bugs.webkit.org/show_bug.cgi?id=212458
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/dom-attribute-getter-setter.html
+
+        For properties using DOMAttribute property attribute in the table, code generator must use DOMAttributeGetterSetter instead of CustomGetterSetter.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+
 2020-06-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for width: min/max-content

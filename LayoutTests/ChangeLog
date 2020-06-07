@@ -1,3 +1,13 @@
+2020-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Crash when running web-apis data collection
+        https://bugs.webkit.org/show_bug.cgi?id=212458
+
+        Reviewed by Mark Lam.
+
+        * js/dom/dom-attribute-getter-setter-expected.txt: Added.
+        * js/dom/dom-attribute-getter-setter.html: Added.
+
 2020-06-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for width: min/max-content

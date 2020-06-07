@@ -4334,7 +4334,13 @@ sub GenerateImplementation
                 push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
                 push(@implContent, "    // Adding back attribute, but as readonly, after removing the read-write variant above. \n");
                 push(@implContent, "    if (!${runtimeEnableConditionalString})\n");
-                push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
+                if (IsAcceleratedDOMAttribute($interface, $attribute)) {
+                    my $classForThis = "${className}::info()";
+                    push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), JSC::DOMAttributeGetterSetter::create(vm, $getter, $setter, JSC::DOMAttributeAnnotation { $classForThis, nullptr }), attributesForStructure($jscAttributes));\n");
+                } else {
+                    assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
+                    push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
+                }
                 push(@implContent, "#endif\n") if $conditionalString;
             }
         }
@@ -4459,6 +4465,7 @@ sub GenerateImplementation
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, "    if (${runtimeEnableConditionalString})\n");
+        assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
         push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
         push(@implContent, "#endif\n") if $conditionalString;
     }
@@ -4474,6 +4481,7 @@ sub GenerateImplementation
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
 
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+        assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
         push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));\n");
         push(@implContent, "#endif\n") if $conditionalString;
     }
