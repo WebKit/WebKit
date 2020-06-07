@@ -1,3 +1,18 @@
+2020-06-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Checksum for generated files should be emitted at the end of the files
+        https://bugs.webkit.org/show_bug.cgi?id=212875
+
+        Reviewed by Mark Lam.
+
+        If the offlineasm file generation is interrupted in the middle of the generation, it already emitted checksum.
+        So next file generation can accept this broken file as a result of offlineasm and skip file generation.
+        We should emit checksum at the end of files. For now, this patch takes a quick way: just iterating lines, getting
+        a last line and use it for checksum comparison.
+
+        * generator/GeneratedFile.rb:
+        * offlineasm/asm.rb:
+
 2020-06-06  Mark Lam  <mark.lam@apple.com>
 
         Make CodeBlockHash robust against unreasonably long source code.
