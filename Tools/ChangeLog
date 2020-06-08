@@ -1,3 +1,10 @@
+2020-06-08  Sam Weinig  <weinig@apple.com>
+
+        Fix test results after r262733.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-06-08  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for DragOperation

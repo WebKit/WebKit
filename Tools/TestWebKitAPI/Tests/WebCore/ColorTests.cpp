@@ -220,15 +220,15 @@ TEST(Color, Luminance)
     EXPECT_EQ(c.blueComponent(), 160);
 
     auto cLigtened = Color(c).lighten().toSRGBASimpleColorLossy();
-    EXPECT_FLOAT_EQ(Color(cLigtened).luminance(), 0.29229724);
+    EXPECT_FLOAT_EQ(Color(cLigtened).luminance(), 0.29168808);
     EXPECT_EQ(cLigtened.redComponent(), 130);
     EXPECT_EQ(cLigtened.greenComponent(), 137);
-    EXPECT_EQ(cLigtened.blueComponent(), 245);
+    EXPECT_EQ(cLigtened.blueComponent(), 244);
 
     auto cDarken = Color(c).darken().toSRGBASimpleColorLossy();
-    EXPECT_FLOAT_EQ(Color(cDarken).luminance(), 0.026288476);
+    EXPECT_FLOAT_EQ(Color(cDarken).luminance(), 0.027006727);
     EXPECT_EQ(cDarken.redComponent(), 40);
-    EXPECT_EQ(cDarken.greenComponent(), 42);
+    EXPECT_EQ(cDarken.greenComponent(), 43);
     EXPECT_EQ(cDarken.blueComponent(), 76);
 }
 
