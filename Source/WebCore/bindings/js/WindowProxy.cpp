@@ -98,7 +98,6 @@ JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
     VM& vm = world.vm();
 
     Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame->window(), world));
-    Strong<JSWindowProxy> jsWindowProxy2(jsWindowProxy);
     m_jsWindowProxies->add(&world, jsWindowProxy);
     world.didCreateWindowProxy(this);
     return *jsWindowProxy.get();

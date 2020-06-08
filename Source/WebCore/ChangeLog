@@ -1,3 +1,13 @@
+2020-06-08  Devin Rousso  <drousso@apple.com>
+
+        Remove unnecessary variable in `WindowProxy::createJSWindowProxy`
+        https://bugs.webkit.org/show_bug.cgi?id=212929
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::createJSWindowProxy):
+
 2020-06-08  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Release Assert @ WebCore::RenderTreeBuilder::RenderTreeBuilder
