@@ -59,6 +59,9 @@ class AbstractRebaseliningCommand(Command):
         help=('Do not optimize/de-dup the expectations after rebaselining (default is to de-dup automatically). '
               'You can use "webkit-patch optimize-baselines" to optimize separately.'))
 
+    update_expectations_option = optparse.make_option('--update-expectations', dest='update_expectations', action='store_true',
+                                                      default=False, help=('Update test expectations.'))
+
     platform_options = factory.platform_options(use_globs=True)
 
     results_directory_option = optparse.make_option("--results-directory", help="Local results directory to use")
@@ -80,6 +83,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
             self.no_optimize_option,
             self.results_directory_option,
             self.suffixes_option,
+            self.update_expectations_option,
             optparse.make_option("--builder", help="Builder to pull new baselines from"),
             optparse.make_option("--move-overwritten-baselines-to", action="append", default=[],
                 help="Platform to move existing baselines to before rebaselining. This is for bringing up new ports."),
@@ -183,7 +187,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
         _log.debug("Retrieving %s." % source_baseline)
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
-    def _rebaseline_test_and_update_expectations(self, options):
+    def _rebaseline_tests(self, options):
         if options.results_directory:
             results_url = 'file://' + options.results_directory
         else:
@@ -191,10 +195,11 @@ class RebaselineTest(AbstractRebaseliningCommand):
         self._baseline_suffix_list = options.suffixes.split(',')
         for suffix in self._baseline_suffix_list:
             self._rebaseline_test(options.builder, options.test, options.move_overwritten_baselines_to, suffix, results_url)
-        self._update_expectations_file(options.builder, options.test)
 
     def execute(self, options, args, tool):
-        self._rebaseline_test_and_update_expectations(options)
+        self._rebaseline_tests(options)
+        if options.update_expectations:
+            self._update_expectations_file(options.builder, options.test)
         print(json.dumps(self._scm_changes))
 
 
@@ -246,6 +251,8 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
                         cmd_line.extend(['--move-overwritten-baselines-to', platform])
                 if options.results_directory:
                     cmd_line.extend(['--results-directory', options.results_directory])
+                if options.update_expectations:
+                    cmd_line.extend(['--update-expectations', options.update_expectations and 'True' or 'False'])
                 if options.verbose:
                     cmd_line.append('--verbose')
                 commands.append(tuple([cmd_line, cwd]))
@@ -310,6 +317,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         super(RebaselineExpectations, self).__init__(options=[
             self.move_overwritten_baselines_option,
             self.no_optimize_option,
+            self.update_expectations_option,
             ] + self.platform_options)
         self._test_list = None
 
@@ -357,8 +365,9 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
 
         self._rebaseline(options, self._test_list)
 
-        for port_name in port_names:
-            self._update_expectations_files(port_name)
+        if options.update_expectations:
+            for port_name in port_names:
+                self._update_expectations_files(port_name)
 
 
 class Rebaseline(AbstractParallelRebaselineCommand):
@@ -370,6 +379,7 @@ class Rebaseline(AbstractParallelRebaselineCommand):
         super(Rebaseline, self).__init__(options=[
             self.move_overwritten_baselines_option,
             self.no_optimize_option,
+            self.update_expectations_option,
             # FIXME: should we support the platform options in addition to (or instead of) --builders?
             self.suffixes_option,
             optparse.make_option("--builders", default=None, action="append", help="Comma-separated-list of builders to pull new baselines from (can also be provided multiple times)"),

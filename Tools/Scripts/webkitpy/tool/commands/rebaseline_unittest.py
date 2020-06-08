@@ -79,7 +79,7 @@ class TestRebaselineTest(_BaseTestCase):
     def setUp(self):
         super(TestRebaselineTest, self).setUp()
         self.options = MockOptions(builder="Apple Lion Release WK1 (Tests)", test="userscripts/another-test.html", suffixes="txt",
-                                   move_overwritten_baselines_to=None, results_directory=None)
+                                   move_overwritten_baselines_to=None, results_directory=None, update_expectations=True)
 
     def test_baseline_directory(self):
         command = self.command
@@ -106,7 +106,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write("userscripts/another-test.html", "Dummy test contents")
 
         self.options.suffixes = "png,wav,txt"
-        self.command._rebaseline_test_and_update_expectations(self.options)
+        self.command._rebaseline_tests(self.options)
 
         self.assertEquals(
             sorted(self.tool.web.urls_fetched), [
@@ -124,7 +124,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write("userscripts/another-test.html", "Dummy test contents")
 
         self.options.suffixes = 'png,wav,txt'
-        self.command._rebaseline_test_and_update_expectations(self.options)
+        self.command._rebaseline_tests(self.options)
 
         self.assertEquals(
             sorted(self.tool.web.urls_fetched), [
@@ -140,7 +140,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write("userscripts/another-test.html", "Dummy test contents")
 
         self.options.suffixes = 'png,wav,txt'
-        self.command._rebaseline_test_and_update_expectations(self.options)
+        self.command._rebaseline_tests(self.options)
 
         self.assertEquals(
             sorted(self.tool.web.urls_fetched), [
@@ -159,7 +159,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
     def test_rebaseline_test_with_results_directory(self):
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         self.options.results_directory = '/tmp'
-        self.command._rebaseline_test_and_update_expectations(self.options)
+        self.command._rebaseline_tests(self.options)
         self.assertEquals(self.tool.web.urls_fetched, ['file:///tmp/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_and_print_scm_changes(self):
@@ -218,9 +218,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
                 "MOCK SnowLeopard": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier"])},
             }
 
-            options = MockOptions(optimize=True, builder="MOCK SnowLeopard", suffixes="txt",
-                move_overwritten_baselines_to=["test-mac-leopard"], verbose=True, test="failures/expected/image.html",
-                results_directory=None)
+            options = MockOptions(optimize=True, builder="MOCK SnowLeopard", suffixes="txt", move_overwritten_baselines_to=["test-mac-leopard"],
+                                  verbose=True, test="failures/expected/image.html", results_directory=None, update_expectations=True)
 
             oc.capture_output()
             self.command.execute(options, [], self.tool)
@@ -250,28 +249,28 @@ class TestRebaselineJson(_BaseTestCase):
         super(TestRebaselineJson, self).tearDown()
 
     def test_rebaseline_all(self):
-        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False, results_directory=None)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False, results_directory=None, update_expectations=True)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
 
     def test_rebaseline_debug(self):
-        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False, results_directory=None)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False, results_directory=None, update_expectations=True)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
 
     def test_no_optimize(self):
-        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False, results_directory=None)
+        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False, results_directory=None, update_expectations=True)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
 
         # Note that we have only one run_in_parallel() call
-        self.assertEqual(self.tool.executive.calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html', '--verbose']]])
+        self.assertEqual(self.tool.executive.calls, [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)',
+                         '--test', 'user-scripts/another-test.html', '--update-expectations', 'True', '--verbose']]])
 
     def test_results_directory(self):
-        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False, results_directory='/tmp')
+        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False, results_directory='/tmp', update_expectations=True)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
 
         # Note that we have only one run_in_parallel() call
-        self.assertEqual(self.tool.executive.calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html', '--results-directory', '/tmp', '--verbose']]])
+        self.assertEqual(self.tool.executive.calls, [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder',
+                         '--test', 'user-scripts/another-test.html', '--results-directory', '/tmp', '--update-expectations', 'True', '--verbose']]])
 
 
 class TestRebaseline(_BaseTestCase):
@@ -296,14 +295,14 @@ class TestRebaseline(_BaseTestCase):
                 "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
             }
             oc.capture_output()
-            self.command.execute(MockOptions(optimize=False, builders=None, suffixes="txt,png", verbose=True, move_overwritten_baselines=False), [], self.tool)
+            self.command.execute(MockOptions(optimize=False, builders=None, suffixes="txt,png", verbose=True, move_overwritten_baselines=False, update_expectations=True), [], self.tool)
         finally:
             oc.restore_output()
             builders._exact_matches = old_exact_matches
 
         calls = list(filter(lambda x: x[0] not in ['perl', '/usr/bin/xcrun', '/usr/bin/ulimit'], self.tool.executive.calls))
-        self.assertEqual(calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html', '--verbose']]])
+        self.assertEqual(calls, [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder',
+                         '--test', 'mock/path/to/test.html', '--update-expectations', 'True', '--verbose']]])
 
 
 class TestRebaselineExpectations(_BaseTestCase):
@@ -312,7 +311,7 @@ class TestRebaselineExpectations(_BaseTestCase):
     def setUp(self):
         super(TestRebaselineExpectations, self).setUp()
         self.options = MockOptions(optimize=False, builders=None, suffixes=['txt'], verbose=False, platform=None,
-                                   move_overwritten_baselines=False, results_directory=None)
+                                   move_overwritten_baselines=False, results_directory=None, update_expectations=True)
 
     def test_rebaseline_expectations(self):
         self._zero_out_test_expectations()

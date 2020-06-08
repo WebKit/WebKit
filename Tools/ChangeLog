@@ -1,3 +1,33 @@
+2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [webkitpy] Make 'webkit-path rebaseline' to not update expectations file by default
+        https://bugs.webkit.org/show_bug.cgi?id=212835
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        `webkit-patch rebaseline` let us add or update a test baseline
+        from a test bot. By default, the command also updates the
+        corresponding expectations file. This update is actually a brand-new
+        generation of an expectations file based on the results of the bot,
+        which in most cases messes up the current contents of the file.
+
+        This patch makes the default to not update the expectations file and
+        adds a new option '--update-expectations' to explicitly request an
+        update.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (RebaselineTest.__init__):
+        (RebaselineTest._rebaseline_tests):
+        (RebaselineTest.execute):
+        (AbstractParallelRebaselineCommand._rebaseline_commands):
+        (RebaselineExpectations.__init__):
+        (RebaselineExpectations.execute):
+        (Rebaseline.__init__):
+        (RebaselineTest._rebaseline_test_and_update_expectations): Deleted.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.setUp):
+
 2020-06-08  Youenn Fablet  <youenn@apple.com>
 
         File URLs with hostnames are misleading
