@@ -26,10 +26,10 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 #import <CoreLocation/CoreLocation.h>
-#import <CoreMotion/CoreMotion.h>
 #import <wtf/WeakHashSet.h>
 
 constexpr float kMotionUpdateInterval = 1.0f / 60.0f;
+@class CMMotionManager;
 
 namespace WebCore {
 class DeviceMotionClientIOS;

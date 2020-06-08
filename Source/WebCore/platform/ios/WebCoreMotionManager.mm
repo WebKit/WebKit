@@ -33,8 +33,8 @@
 #import "WebCoreObjCExtras.h"
 #import "WebCoreThreadRun.h"
 #import <CoreLocation/CoreLocation.h>
-#import <CoreMotion/CoreMotion.h>
 #import <objc/objc-runtime.h>
+#import <pal/spi/cocoa/CoreMotionSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/SoftLinking.h>
 

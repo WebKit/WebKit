@@ -1,3 +1,15 @@
+2020-06-08  Jonathan Bedard  <jbedard@apple.com>
+
+        WebCore: Add tvOS and watchOS SPI headers
+        https://bugs.webkit.org/show_bug.cgi?id=212853
+        <rdar://problem/64048485>
+
+        Reviewed by Andy Estes.
+
+        * PAL.xcodeproj/project.pbxproj: Add CoreMotionSPI.h.
+        * pal/spi/cf/CFNetworkSPI.h: CFNetwork SPI should be available on watchOS and tvOS.
+        * pal/spi/cocoa/CoreMotionSPI.h: Added.
+
 2020-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove ENABLE_APPLE_PAY_SETUP, ENABLE_APPLE_PAY_SESSION_V7, and HAVE_PASSKIT_PAYMENT_SETUP

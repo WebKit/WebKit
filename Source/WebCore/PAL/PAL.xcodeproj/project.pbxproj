@@ -173,6 +173,7 @@
 		A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */; };
 		A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */; };
 		A3C66CDD1F462D6A009E6EE9 /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C66CDB1F462D6A009E6EE9 /* SessionID.h */; };
+		ABCA536824895DB900361BFF /* CoreMotionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = ABCA536724895DB900361BFF /* CoreMotionSPI.h */; };
 		C15CBB3523F3548A00300CC7 /* NSUserDefaultsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */; };
 		CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */; };
 		CDACB361238742740018D7CE /* MediaToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */; };
@@ -359,6 +360,7 @@
 		A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemSleepListenerMac.mm; sourceTree = "<group>"; };
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
+		ABCA536724895DB900361BFF /* CoreMotionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMotionSPI.h; sourceTree = "<group>"; };
 		C037494124127CCB00D9A36E /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
 		C138EA1A2436447200656DF1 /* CoreServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreServicesSPI.h; sourceTree = "<group>"; };
 		C15CBB3223F34A1200300CC7 /* NSUserDefaultsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSUserDefaultsSPI.h; sourceTree = "<group>"; };
@@ -442,6 +444,7 @@
 				0C2DA1221F3BEB4900DBC317 /* AVKitSPI.h */,
 				0C2DA1231F3BEB4900DBC317 /* CFNSURLConnectionSPI.h */,
 				7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */,
+				ABCA536724895DB900361BFF /* CoreMotionSPI.h */,
 				C138EA1A2436447200656DF1 /* CoreServicesSPI.h */,
 				0C2DA1241F3BEB4900DBC317 /* CoreTextSPI.h */,
 				0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */,
@@ -766,6 +769,7 @@
 				0C2DA11E1F3BE9E000DBC317 /* CoreGraphicsSPI.h in Headers */,
 				0CF99CA91F738437007EE793 /* CoreMediaSoftLink.h in Headers */,
 				0C2DA0721F33CA8400DBC317 /* CoreMediaSPI.h in Headers */,
+				ABCA536824895DB900361BFF /* CoreMotionSPI.h in Headers */,
 				0C2DA1401F3BEB4900DBC317 /* CoreTextSPI.h in Headers */,
 				1CCEE4F520D871930047B097 /* CoreUISPI.h in Headers */,
 				0C5AF9191F43A4C7002EAC02 /* CoreUISPI.h in Headers */,
@@ -980,7 +984,6 @@
 				44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */,
 				5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */,
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
-				41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */,
 				CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
@@ -994,6 +997,7 @@
 				A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */,
 				2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */,
 				07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */,
+				41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */,
 				A10826FA1F576292004772AC /* WebPanel.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
