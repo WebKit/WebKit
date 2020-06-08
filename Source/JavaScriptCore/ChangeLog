@@ -1,3 +1,26 @@
+2020-06-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.stringify should throw stack overflow error
+        https://bugs.webkit.org/show_bug.cgi?id=143511
+
+        Reviewed by Ross Kirsling and Mark Lam.
+
+        This change adds m_holderStack.size() check, reusing the limit of JSON.parse,
+        and throws StackOverflowError if exceeded, aligning JSC with V8 and SpiderMonkey.
+        Even with all the cyclic structure checks in place, excess is possible due to
+        very deeply nested object, user-provided "toJSON" method or functional replacer.
+
+        While Stringifier::appendStringifiedValue() and Holder::appendNextProperty()
+        mutually call each other, recursion is avoided by !holderStackWasEmpty check and
+        do/while loop at the end of appendStringifiedValue(), as well as cyclic structure
+        check as per spec [1].
+
+        [1]: https://tc39.es/ecma262/#sec-serializejsonobject (step 1)
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::walk):
+
 2020-06-08  Jonathan Bedard  <jbedard@apple.com>
 
         JavaScriptCore: Fix PLATFORM(TVOS) macro

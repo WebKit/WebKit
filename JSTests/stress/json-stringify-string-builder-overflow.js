@@ -3,26 +3,12 @@
 //@ skip if $architecture != "arm64" and $architecture != "x86-64"
 //@ runDefault if !$memoryLimited
 
+var longString = "x".repeat(2 ** 30);
+var arr = Array(4).fill(longString);
+
 var exception;
 try {
-    var str = JSON.stringify({
-        'a1': {
-            'a2': {
-                'a3': {
-                    'a4': {
-                        'a5': {
-                            'a6': 'AAAAAAAAAA'
-                        }
-                    }
-                }
-            }
-        }
-    }, function (key, value) {
-        var val = {
-            'A': true,
-        };
-        return val;
-    }, 1);
+    JSON.stringify(arr);
 } catch (e) {
     exception = e;
 }

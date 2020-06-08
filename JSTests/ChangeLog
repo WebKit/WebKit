@@ -1,3 +1,13 @@
+2020-06-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.stringify should throw stack overflow error
+        https://bugs.webkit.org/show_bug.cgi?id=143511
+
+        Reviewed by Ross Kirsling and Mark Lam.
+
+        * stress/json-stringify-stack-overflow.js: Added.
+        * stress/json-stringify-string-builder-overflow.js:
+
 2020-06-05  Saam Barati  <sbarati@apple.com>
 
         Audit safe to execute
