@@ -7587,6 +7587,8 @@
 		41C7E1051E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasCaptureMediaStreamTrack.cpp; sourceTree = "<group>"; };
 		41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasCaptureMediaStreamTrack.h; sourceTree = "<group>"; };
 		41C7E1081E6AA37C0027B4DE /* CanvasCaptureMediaStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasCaptureMediaStreamTrack.idl; sourceTree = "<group>"; };
+		41CD6F8923D6E81C00B16421 /* VideoSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSampleBufferCompressor.h; sourceTree = "<group>"; };
+		41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoSampleBufferCompressor.mm; sourceTree = "<group>"; };
 		41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodyConsumer.cpp; sourceTree = "<group>"; };
 		41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodyConsumer.h; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
@@ -7615,6 +7617,8 @@
 		41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CB0FF5986900576B3B /* AbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWorker.h; sourceTree = "<group>"; };
 		41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AbstractWorker.idl; sourceTree = "<group>"; };
+		41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleBufferCompressor.mm; sourceTree = "<group>"; };
+		41E1F33F248A62B60022D5DE /* AudioSampleBufferCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleBufferCompressor.h; sourceTree = "<group>"; };
 		41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerConnectionBackend.cpp; sourceTree = "<group>"; };
 		41E593FD214865A900D3CB61 /* RTCPriorityType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCPriorityType.idl; sourceTree = "<group>"; };
 		41E593FF214865AA00D3CB61 /* RTCRtpEncodingParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpEncodingParameters.idl; sourceTree = "<group>"; };
@@ -19356,8 +19360,12 @@
 		4D3C05D421AF480900F2890A /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				41E1F33F248A62B60022D5DE /* AudioSampleBufferCompressor.h */,
+				41E1F33D248A62B60022D5DE /* AudioSampleBufferCompressor.mm */,
 				4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h */,
 				4D73F94D218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.mm */,
+				41CD6F8923D6E81C00B16421 /* VideoSampleBufferCompressor.h */,
+				41CD6F8B23D6E81D00B16421 /* VideoSampleBufferCompressor.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -34312,7 +34320,6 @@
 				C1F7B7312448F2AC00124557 /* AGXCompilerService.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
-				41E1F343248A69D40022D5DE /* AudioSampleBufferCompressor.mm in Sources */,
 				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,
 				CD8A7BBB197735FE00CBD643 /* AudioSourceProviderAVFObjC.mm in Sources */,
 				CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */,
@@ -35029,7 +35036,6 @@
 				7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */,
 				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
 				52D5A18F1C54592300DE34A3 /* VideoLayerManagerObjC.mm in Sources */,
-				41E1F342248A69D00022D5DE /* VideoSampleBufferCompressor.mm in Sources */,
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,
 				CD8B5A42180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.mm in Sources */,
 				26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */,

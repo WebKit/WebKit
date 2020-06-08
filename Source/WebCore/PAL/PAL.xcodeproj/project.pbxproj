@@ -119,6 +119,9 @@
 		2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E1342CA215AA10A007199D2 /* UIKitSoftLink.h */; };
 		2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */; };
 		31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31308B1320A21705003FB929 /* SystemPreviewSPI.h */; };
+		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
+		416E995423DAE6BE00E871CB /* AudioToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E995223DAE6BE00E871CB /* AudioToolboxSoftLink.h */; };
+		41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */; };
 		442956CD218A72DF0080DB54 /* RevealSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 442956CC218A72DE0080DB54 /* RevealSPI.h */; };
 		4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */; };
 		4450FCA021F5F602004DFA56 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */; };
@@ -300,6 +303,10 @@
 		2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIKitSoftLink.mm; sourceTree = "<group>"; };
 		31308B1320A21705003FB929 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
 		37119A7820CCB5FF002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
+		416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioToolboxSoftLink.cpp; sourceTree = "<group>"; };
+		416E995223DAE6BE00E871CB /* AudioToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSoftLink.h; sourceTree = "<group>"; };
+		416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoToolboxSoftLink.cpp; sourceTree = "<group>"; };
+		416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoToolboxSoftLink.h; sourceTree = "<group>"; };
 		442956CC218A72DE0080DB54 /* RevealSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevealSPI.h; sourceTree = "<group>"; };
 		4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookSoftLink.mm; sourceTree = "<group>"; };
 		4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
@@ -541,8 +548,12 @@
 		0CF99CA51F73841C007EE793 /* cf */ = {
 			isa = PBXGroup;
 			children = (
+				416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */,
+				416E995223DAE6BE00E871CB /* AudioToolboxSoftLink.h */,
 				0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */,
 				0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */,
+				416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */,
+				416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -735,6 +746,7 @@
 				293EE4A924154F8F0047493D /* AccessibilitySupportSoftLink.h in Headers */,
 				57FD318B22B35989008D0E8B /* AppSSOSoftLink.h in Headers */,
 				576CA9D622B854AB0030143C /* AppSSOSPI.h in Headers */,
+				416E995423DAE6BE00E871CB /* AudioToolboxSoftLink.h in Headers */,
 				2D02E93C2056FAA700A13797 /* AudioToolboxSPI.h in Headers */,
 				572A107822B456F500F410C8 /* AuthKitSPI.h in Headers */,
 				077E87B2226A460300A2AFF0 /* AVFoundationSoftLink.h in Headers */,
@@ -953,6 +965,7 @@
 			files = (
 				293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */,
 				57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */,
+				416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */,
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
 				0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */,
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
@@ -967,6 +980,7 @@
 				44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */,
 				5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */,
 				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
+				41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */,
 				CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,

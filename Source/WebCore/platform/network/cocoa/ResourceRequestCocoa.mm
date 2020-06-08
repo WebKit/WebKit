@@ -36,6 +36,7 @@
 #import <Foundation/Foundation.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {

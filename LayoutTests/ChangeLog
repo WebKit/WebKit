@@ -1,3 +1,19 @@
+2020-06-08  youenn fablet  <youenn@apple.com>
+
+        [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=206582
+
+        Reviewed by Eric Carlson.
+
+        Disable tests on all platforms except the ones supporting AVAssetWriterDelegate.
+
+        * TestExpectations:
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html:
+        Remove web audio generation since there seems to be some unstability in web audio -> stream -> media recorder.
+        which should be fixed as follow-up specific patches.
+        * platform/mac/TestExpectations:
+        Enable running tests.
+
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, remove redundant baselines

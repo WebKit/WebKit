@@ -24,7 +24,9 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+
+#include "AudioStreamDescription.h"
 
 #include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
@@ -35,10 +37,16 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#include <CoreAudio/CoreAudioTypes.h>
+#include <CoreMedia/CMTime.h>
+
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+typedef struct opaqueCMBufferQueueTriggerToken *CMBufferQueueTriggerToken;
 
 OBJC_CLASS AVAssetWriter;
 OBJC_CLASS AVAssetWriterInput;
+OBJC_CLASS WebAVAssetWriterDelegate;
 
 namespace WTF {
 class MediaTime;
@@ -46,51 +54,73 @@ class MediaTime;
 
 namespace WebCore {
 
+class AudioSampleBufferCompressor;
 class AudioStreamDescription;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
+class VideoSampleBufferCompressor;
 
-class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter> {
+class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter, WeakPtrFactoryInitialization::Eager> {
 public:
     static RefPtr<MediaRecorderPrivateWriter> create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack);
     static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, int width, int height);
     ~MediaRecorderPrivateWriter();
-    
-    bool setupWriter();
-    bool setVideoInput(int width, int height);
-    bool setAudioInput();
+
     void appendVideoSampleBuffer(CMSampleBufferRef);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
     void fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&)>&&);
 
+    void appendData(const char*, size_t);
+    void appendData(Ref<SharedBuffer>&&);
+
 private:
-    MediaRecorderPrivateWriter(RetainPtr<AVAssetWriter>&&, String&& path);
+    MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
     void clear();
 
-    RetainPtr<AVAssetWriter> m_writer;
-    RetainPtr<AVAssetWriterInput> m_videoInput;
-    RetainPtr<AVAssetWriterInput> m_audioInput;
+    bool initialize();
 
-    String m_path;
-    Lock m_videoLock;
-    Lock m_audioLock;
-    BinarySemaphore m_finishWritingSemaphore;
-    BinarySemaphore m_finishWritingAudioSemaphore;
-    BinarySemaphore m_finishWritingVideoSemaphore;
+    static void compressedVideoOutputBufferCallback(void*, CMBufferQueueTriggerToken);
+    static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);
+
+    void startAssetWriter();
+    void appendCompressedSampleBuffers();
+
+    bool appendCompressedAudioSampleBuffer();
+    bool appendCompressedVideoSampleBuffer();
+
+    void processNewCompressedAudioSampleBuffers();
+    void processNewCompressedVideoSampleBuffers();
+
+    void flushCompressedSampleBuffers(CompletionHandler<void()>&&);
+    void appendEndOfVideoSampleDurationIfNeeded(CompletionHandler<void()>&&);
+
     bool m_hasStartedWriting { false };
     bool m_isStopped { false };
-    bool m_isFirstAudioSample { true };
-    dispatch_queue_t m_audioPullQueue;
-    dispatch_queue_t m_videoPullQueue;
-    Deque<RetainPtr<CMSampleBufferRef>> m_videoBufferPool;
-    Deque<RetainPtr<CMSampleBufferRef>> m_audioBufferPool;
+
+    RetainPtr<AVAssetWriter> m_writer;
 
     bool m_isStopping { false };
     RefPtr<SharedBuffer> m_data;
     CompletionHandler<void(RefPtr<SharedBuffer>&&)> m_fetchDataCompletionHandler;
+
+    bool m_hasAudio;
+    bool m_hasVideo;
+
+    RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
+    std::unique_ptr<AudioSampleBufferCompressor> m_audioCompressor;
+    RetainPtr<AVAssetWriterInput> m_audioAssetWriterInput;
+
+    RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription;
+    std::unique_ptr<VideoSampleBufferCompressor> m_videoCompressor;
+    RetainPtr<AVAssetWriterInput> m_videoAssetWriterInput;
+    CMTime m_lastVideoPresentationTime;
+    CMTime m_lastVideoDecodingTime;
+    bool m_hasEncodedVideoSamples { false };
+
+    RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)

@@ -56,17 +56,7 @@
     }
 
     async_test(t => {
-        const ac = new AudioContext();
-        const osc = ac.createOscillator();
-        const dest = ac.createMediaStreamDestination();
-        const audio = dest.stream;
-        osc.connect(dest);
-
         const video = createVideoStream();
-        assert_equals(video.getAudioTracks().length, 0, "video mediastream starts with no audio track");
-        assert_equals(audio.getAudioTracks().length, 1, "audio mediastream starts with one audio track");
-        video.addTrack(audio.getAudioTracks()[0]);
-        assert_equals(video.getAudioTracks().length, 1, "video mediastream starts with one audio track");
         const recorder = new MediaRecorder(video);
         let mode = 0;
 

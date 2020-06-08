@@ -573,7 +573,6 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(MEDIA_STREAM)
     RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(false);
     WebCore::MediaRecorder::setCustomPrivateRecorderCreator(nullptr);
-    page.mediaRecorderProvider().setUseGPUProcess(true);
 #endif
 
     HTMLCanvasElement::setMaxPixelMemoryForTesting(0); // This means use the default value.

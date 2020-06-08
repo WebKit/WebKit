@@ -21,7 +21,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 
 messages -> RemoteMediaRecorderManager NotRefCounted {
     CreateRecorder(WebKit::MediaRecorderIdentifier id, bool hasAudio, int width, int height) -> (Optional<WebCore::ExceptionData> creationError) Async
