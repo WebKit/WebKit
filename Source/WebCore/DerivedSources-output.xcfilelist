@@ -2198,6 +2198,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRInputSourceEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRInputSourceEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRInputSourcesChangeEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRInputSourcesChangeEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRInteractionMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRInteractionMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRReferenceSpaceEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRReferenceSpaceEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRReferenceSpaceType.cpp

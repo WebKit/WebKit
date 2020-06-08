@@ -1,3 +1,17 @@
+2020-06-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use usual promise in readableStreamTee
+        https://bugs.webkit.org/show_bug.cgi?id=212715
+
+        Reviewed by Mark Lam.
+
+        The spec[1] is organized to be OK to use usual promises here. This patch uses usual promises instead of internal ones.
+
+        [1]: https://streams.spec.whatwg.org/#readable-stream-tee
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamTee):
+
 2020-06-08  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for DragOperation

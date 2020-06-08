@@ -440,6 +440,7 @@ $(PROJECT_DIR)/Modules/webxr/XRFrameRequestCallback.idl
 $(PROJECT_DIR)/Modules/webxr/XRHandedness.idl
 $(PROJECT_DIR)/Modules/webxr/XRInputSourceEvent.idl
 $(PROJECT_DIR)/Modules/webxr/XRInputSourcesChangeEvent.idl
+$(PROJECT_DIR)/Modules/webxr/XRInteractionMode.idl
 $(PROJECT_DIR)/Modules/webxr/XRReferenceSpaceEvent.idl
 $(PROJECT_DIR)/Modules/webxr/XRReferenceSpaceType.idl
 $(PROJECT_DIR)/Modules/webxr/XRRenderStateInit.idl
