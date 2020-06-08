@@ -1,3 +1,24 @@
+2020-06-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] CFPrefs synchronization does not always work for global preference changes
+        https://bugs.webkit.org/show_bug.cgi?id=212783
+
+        Reviewed by Tim Horton.
+
+        In CFPrefs direct mode, synchronization of global preference changes from the UI process to the WebContent process does not always work.
+        This is caused by the KVO notification being sent to all or some of the NSUserDefault objects, which leads us to believe a non-global
+        preference was changed. Since a global preference change always leads to some NSUserDefaults object receiving the notification, we can
+        work around this by checking if the preference being changed really belongs to the domain of the NSUserDefaults object, or if it is a
+        global preference. Also, stop creating NSUserDefaults object for the global domain, since this is an error according to the docs.
+
+        API test: WebKit.GlobalPreferenceChangesUsingDefaultsWrite
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::notifyPreferencesChanged):
+
 2020-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Hit-testing on icloud.com is offset after closing a tab

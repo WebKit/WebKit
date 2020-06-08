@@ -903,15 +903,6 @@ static const WTF::String& userAccentColorPreferenceKey()
 }
 #endif
 
-static bool shouldWriteToAppDomainForPreferenceKey(const String& key)
-{
-#if USE(APPKIT)
-    return key == userAccentColorPreferenceKey();
-#else
-    return false;
-#endif
-}
-
 static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 {
 #if USE(APPKIT)
@@ -923,22 +914,19 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 #endif
 }
 
+static void setPreferenceValue(const String& domain, const String& key, id value)
+{
+    if (domain.isEmpty()) {
+        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+        ASSERT([[[NSUserDefaults standardUserDefaults] objectForKey:key] isEqual:value]);
+    } else
+        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+}
+
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
 {
-    // FIXME (212627): In the case of global preference changes, the domain that we are notified in is
-    // not the correct domain to write to; it is an arbitrary domain affected by the global change.
-    // Work around this by writing to the app's domain in cases where we know that is OK
-    // (because the code that uses the default in the Web Content process reads from
-    // -standardUserDefaults, not from a specific domain). PreferenceObserver needs to be fixed
-    // to find the correct domain, but we currently have no mechanism to do so.
-    RetainPtr<NSUserDefaults> defaults;
-    if (shouldWriteToAppDomainForPreferenceKey(key))
-        defaults = [NSUserDefaults standardUserDefaults];
-    else
-        defaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:domain]);
-
     if (!encodedValue.hasValue()) {
-        [defaults setObject:nil forKey:key];
+        setPreferenceValue(domain, key, nil);
         dispatchSimulatedNotificationsForPreferenceChange(key);
         return;
     }
@@ -951,7 +939,7 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
     ASSERT(!err);
     if (err)
         return;
-    [defaults setObject:object forKey:key];
+    setPreferenceValue(domain, key, object);
     dispatchSimulatedNotificationsForPreferenceChange(key);
 }
 

@@ -33,7 +33,7 @@
 
 #import <wtf/ObjCRuntimeExtras.h>
 
-static bool done = false;
+static bool receivedPreferenceNotification = false;
 
 @interface WKTestPreferenceObserver : WKPreferenceObserver
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue;
@@ -42,13 +42,14 @@ static bool done = false;
 @implementation WKTestPreferenceObserver
 - (void)preferenceDidChange:(NSString *)domain key:(NSString *)key encodedValue:(NSString *)encodedValue
 {
-    done = true;
+    receivedPreferenceNotification = true;
     [super preferenceDidChange:domain key:key encodedValue:encodedValue];
 }
 @end
 
 static const CFStringRef testKey = CFSTR("testkey");
-static const CFStringRef testDomain = CFSTR("kCFPreferencesAnyApplication");
+static const CFStringRef globalDomain = CFSTR("kCFPreferencesAnyApplication");
+static const CFStringRef testDomain = CFSTR("com.apple.avfoundation");
 
 static void waitForPreferenceSynchronization()
 {
@@ -61,7 +62,7 @@ static void waitForPreferenceSynchronization()
 
 TEST(WebKit, PreferenceObserver)
 {
-    done = false;
+    receivedPreferenceNotification = false;
 
     CFPreferencesSetAppValue(testKey, CFSTR("1"), testDomain);
 
@@ -69,12 +70,12 @@ TEST(WebKit, PreferenceObserver)
 
     CFPreferencesSetAppValue(testKey, CFSTR("2"), testDomain);
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
 }
 
 TEST(WebKit, PreferenceObserverArray)
 {
-    done = false;
+    receivedPreferenceNotification = false;
 
     NSArray *array = @[@1, @2, @3];
 
@@ -86,21 +87,28 @@ TEST(WebKit, PreferenceObserverArray)
     NSArray *changedArray = @[@3, @2, @1];
     [userDefaults.get() setObject:changedArray forKey:(NSString *)testKey];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
 }
 
 TEST(WebKit, PreferenceChanges)
 {
+    CFPreferencesSetAppValue(testKey, CFSTR("0"), testDomain);
+
     auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+    
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    receivedPreferenceNotification = false;
 
     CFPreferencesSetAppValue(testKey, CFSTR("1"), testDomain);
 
     EXPECT_EQ(1, CFPreferencesGetAppIntegerValue(testKey, testDomain, nullptr));
 
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
-    configuration.get().processPool = (WKProcessPool *)context.get();
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
 
     auto preferenceValue = [&] {
         waitForPreferenceSynchronization();
@@ -110,7 +118,48 @@ TEST(WebKit, PreferenceChanges)
 
     EXPECT_EQ(preferenceValue(), 1);
 
+    receivedPreferenceNotification = false;
+
     CFPreferencesSetAppValue(testKey, CFSTR("2"), testDomain);
+
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
+
+    EXPECT_EQ(preferenceValue(), 2);
+}
+
+TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
+{
+    system([NSString stringWithFormat:@"defaults write %@ %@ 0", (__bridge id)globalDomain, (__bridge id)testKey].UTF8String);
+    
+    auto observer = adoptNS([[WKTestPreferenceObserver alloc] init]);
+    
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    receivedPreferenceNotification = false;
+
+    system([NSString stringWithFormat:@"defaults write %@ %@ 1", (__bridge id)globalDomain, (__bridge id)testKey].UTF8String);
+
+    EXPECT_EQ(1, CFPreferencesGetAppIntegerValue(testKey, globalDomain, nullptr));
+
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
+
+    auto preferenceValue = [&] {
+        waitForPreferenceSynchronization();
+        NSString *js = [NSString stringWithFormat:@"window.internals.readPreferenceInteger(\"%@\",\"%@\")", (NSString *)globalDomain, (NSString *)testKey];
+        return [webView stringByEvaluatingJavaScript:js].intValue;
+    };
+
+    EXPECT_EQ(preferenceValue(), 1);
+
+    receivedPreferenceNotification = false;
+
+    system([NSString stringWithFormat:@"defaults write %@ %@ 2", (__bridge id)globalDomain, (__bridge id)testKey].UTF8String);
+
+    TestWebKitAPI::Util::run(&receivedPreferenceNotification);
 
     EXPECT_EQ(preferenceValue(), 2);
 }
@@ -263,16 +312,18 @@ TEST(WebKit, PreferenceChangesDate)
 }
 
 static IMP sharedInstanceMethodOriginal = nil;
+static bool sharedInstanceCalled = false;
 
 static WKPreferenceObserver *sharedInstanceMethodOverride(id self, SEL selector)
 {
-    done = true;
-    return wtfCallIMP<WKPreferenceObserver *>(sharedInstanceMethodOriginal, self, selector);
+    WKPreferenceObserver *observer = wtfCallIMP<WKPreferenceObserver *>(sharedInstanceMethodOriginal, self, selector);
+    sharedInstanceCalled = true;
+    return observer;
 }
 
 TEST(WebKit, PreferenceObserverStartedOnActivation)
 {
-    done = false;
+    sharedInstanceCalled = false;
     Method sharedInstanceMethod = class_getClassMethod(objc_getClass("WKPreferenceObserver"), @selector(sharedInstance));
     ASSERT(sharedInstanceMethod);
     sharedInstanceMethodOriginal = method_setImplementation(sharedInstanceMethod, (IMP)sharedInstanceMethodOverride);
@@ -287,7 +338,7 @@ TEST(WebKit, PreferenceObserverStartedOnActivation)
 
     [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationDidBecomeActiveNotification object:NSApp userInfo:nil];
 
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&sharedInstanceCalled);
 }
 
 #endif // WK_HAVE_C_SPI

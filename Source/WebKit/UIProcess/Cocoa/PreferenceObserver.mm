@@ -68,7 +68,16 @@
             encodedString = [data base64EncodedStringWithOptions:0];
         }
 
-        if (m_observer)
+        if (!m_observer)
+            return;
+        
+        auto globalValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+        auto domainValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, (__bridge CFStringRef)m_suiteName, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+        
+        if (globalValue && [newValue isEqual:(__bridge id)globalValue.get()])
+            [m_observer preferenceDidChange:nil key:key encodedValue:encodedString];
+
+        if (domainValue && [newValue isEqual:(__bridge id)domainValue.get()])
             [m_observer preferenceDidChange:m_suiteName key:key encodedValue:encodedString];
     }
 }
@@ -118,7 +127,6 @@
         @"com.apple.mediaremote",
         @"com.apple.preferences.sounds",
         @"com.apple.voiceservices",
-        @"kCFPreferencesAnyApplication",
 #else
         @"com.apple.CoreGraphics",
         @"com.apple.HIToolbox",
@@ -131,7 +139,6 @@
         @"com.apple.mediaaccessibility",
         @"com.apple.speech.voice.prefs",
         @"com.apple.universalaccess",
-        @"kCFPreferencesAnyApplication",
 #endif
     };
 
