@@ -38,10 +38,8 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
 OBJC_CLASS PKPaymentSetupViewController;
 OBJC_CLASS UIViewController;
-#endif
 
 namespace IPC {
 class Connection;
@@ -132,13 +130,11 @@ private:
     void abortPaymentSession();
     void cancelPaymentSession();
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
     void getSetupFeatures(const PaymentSetupConfiguration&, CompletionHandler<void(const PaymentSetupFeatures&)>&&);
     void beginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
     void endApplePaySetup();
     void platformBeginApplePaySetup(const PaymentSetupConfiguration&, const PaymentSetupFeatures&, CompletionHandler<void(bool)>&&);
     void platformEndApplePaySetup();
-#endif
 
     bool canBegin() const;
     bool canCancel() const;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_SETUP)
+#if ENABLE(APPLE_PAY)
 
 #include "ApplePaySetupConfiguration.h"
 #include <WebCore/ActiveDOMObject.h>
@@ -70,4 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_SETUP)
+#endif // ENABLE(APPLE_PAY)

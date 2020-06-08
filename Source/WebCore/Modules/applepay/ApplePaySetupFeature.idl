@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=APPLE_PAY_SETUP,
+    Conditional=APPLE_PAY,
     EnabledBySetting=ApplePay,
     ExportMacro=WEBCORE_EXPORT,
     SecureContext,

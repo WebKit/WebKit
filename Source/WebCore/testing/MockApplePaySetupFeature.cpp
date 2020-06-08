@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MockApplePaySetupFeature.h"
 
-#if ENABLE(APPLE_PAY_SETUP)
+#if ENABLE(APPLE_PAY)
 
 namespace WebCore {
 
@@ -48,4 +48,4 @@ MockApplePaySetupFeature::MockApplePaySetupFeature(ApplePaySetupFeatureState sta
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_SETUP)
+#endif // ENABLE(APPLE_PAY)

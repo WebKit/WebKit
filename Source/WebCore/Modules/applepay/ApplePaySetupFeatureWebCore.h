@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_SETUP)
+#if ENABLE(APPLE_PAY)
 
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -66,4 +66,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_SETUP)
+#endif // ENABLE(APPLE_PAY)

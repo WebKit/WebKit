@@ -28,23 +28,20 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "APIUIClient.h"
+#import "ApplePayPaymentSetupFeaturesWebKit.h"
+#import "PaymentSetupConfigurationWebKit.h"
 #import "WKPaymentAuthorizationDelegate.h"
+#import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxy.h"
 #import "WebPaymentCoordinatorProxyMessages.h"
+#import "WebProcessProxy.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
-
-#if HAVE(PASSKIT_PAYMENT_SETUP)
-#import "APIUIClient.h"
-#import "ApplePayPaymentSetupFeaturesWebKit.h"
-#import "PaymentSetupConfigurationWebKit.h"
-#import "WebPageProxy.h"
-#import "WebProcessProxy.h"
-#endif
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
@@ -301,8 +298,6 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const Op
     m_authorizationPresenter->completePaymentMethodSelection(update);
 }
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
-
 void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, Messages::WebPaymentCoordinatorProxy::GetSetupFeatures::AsyncReply&& reply)
 {
 #if PLATFORM(MAC)
@@ -401,8 +396,6 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 }
 
 #endif // PLATFORM(MAC)
-
-#endif // HAVE(PASSKIT_PAYMENT_SETUP)
 
 } // namespace WebKit
 

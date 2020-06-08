@@ -38,11 +38,10 @@ messages -> WebPaymentCoordinatorProxy NotRefCounted {
     CompletePaymentSession(Optional<WebCore::PaymentAuthorizationResult> result)
     AbortPaymentSession()
     CancelPaymentSession()
-#if HAVE(PASSKIT_PAYMENT_SETUP)
+
     GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features) Async
     BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result) Async
     EndApplePaySetup()
-#endif
 }
 
 #endif

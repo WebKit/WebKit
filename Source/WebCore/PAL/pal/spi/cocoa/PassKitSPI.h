@@ -93,15 +93,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)paymentAuthorizationController:(PKPaymentAuthorizationController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
 @end
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
-
 @class PKPaymentSetupRequest;
 
 @interface PKPaymentSetupViewController : UIViewController
 - (instancetype)initWithPaymentSetupRequest:(PKPaymentSetupRequest *)paymentSetupRequest;
 @end
-
-#endif
 
 NS_ASSUME_NONNULL_END
 
@@ -291,8 +287,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol PKPaymentAuthorizationViewControllerPrivateDelegate;
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
-
 @class PKPaymentSetupConfiguration;
 @class PKPaymentSetupFeature;
 @class PKPaymentSetupRequest;
@@ -341,8 +335,6 @@ typedef NS_OPTIONS(NSInteger, PKPaymentSetupFeatureSupportedOptions) {
 @property (nonatomic, strong) PKPaymentSetupConfiguration *configuration;
 @property (nonatomic, strong) NSArray <PKPaymentSetupFeature *> *paymentSetupFeatures;
 @end
-
-#endif
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 

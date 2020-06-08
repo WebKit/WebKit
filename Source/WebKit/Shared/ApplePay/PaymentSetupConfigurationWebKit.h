@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
+#if ENABLE(APPLE_PAY)
 
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -61,5 +61,5 @@ private:
 
 } // namespace WebKit
 
-#endif // HAVE(PASSKIT_PAYMENT_SETUP)
+#endif // ENABLE(APPLE_PAY)
 

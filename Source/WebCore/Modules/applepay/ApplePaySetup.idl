@@ -25,7 +25,7 @@
 
 [
     ActiveDOMObject,
-    Conditional=APPLE_PAY_SETUP,
+    Conditional=APPLE_PAY,
     Constructor(ApplePaySetupConfiguration configuration),
     ConstructorCallWith=ScriptExecutionContext,
     EnabledBySetting=ApplePay,

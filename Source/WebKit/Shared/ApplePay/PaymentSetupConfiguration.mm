@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PaymentSetupConfigurationWebKit.h"
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
+#if ENABLE(APPLE_PAY)
 
 #import "ArgumentCodersCocoa.h"
 #import "Decoder.h"
@@ -102,4 +102,4 @@ Optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::Decod
 
 } // namespace WebKitAdditions
 
-#endif // HAVE(PASSKIT_PAYMENT_SETUP)
+#endif // ENABLE(APPLE_PAY)

@@ -222,8 +222,6 @@ bool WebPaymentCoordinator::remoteUIEnabled() const
 }
 #endif
 
-#if ENABLE(APPLE_PAY_SETUP)
-
 void WebPaymentCoordinator::getSetupFeatures(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&& completionHandler)
 {
     m_webPage.sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::GetSetupFeatures(PaymentSetupConfiguration { configuration, url }), WTFMove(completionHandler));
@@ -238,8 +236,6 @@ void WebPaymentCoordinator::endApplePaySetup()
 {
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::EndApplePaySetup());
 }
-
-#endif // ENABLE(APPLE_PAY_SETUP)
 
 }
 

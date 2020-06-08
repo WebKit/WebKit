@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ApplePayPaymentSetupFeaturesWebKit.h"
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
+#if ENABLE(APPLE_PAY)
 
 #import "ArgumentCodersCocoa.h"
 #import "Decoder.h"
@@ -92,4 +92,4 @@ PaymentSetupFeatures::operator Vector<Ref<WebCore::ApplePaySetupFeature>>() cons
 
 } // namespace WebKit
 
-#endif // HAVE(PASSKIT_PAYMENT_SETUP)
+#endif // ENABLE(APPLE_PAY)

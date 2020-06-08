@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ApplePaySetupFeatureWebCore.h"
 
-#if ENABLE(APPLE_PAY_SETUP)
+#if ENABLE(APPLE_PAY)
 
 #import "ApplePaySetupFeatureState.h"
 #import "ApplePaySetupFeatureTypeWebCore.h"
@@ -77,4 +77,4 @@ ApplePaySetupFeature::ApplePaySetupFeature(PKPaymentSetupFeature *feature)
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_SETUP)
+#endif // ENABLE(APPLE_PAY)

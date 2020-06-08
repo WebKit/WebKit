@@ -70,11 +70,9 @@ public:
 
     virtual bool isAlwaysOnLoggingAllowed() const { return false; }
 
-#if ENABLE(APPLE_PAY_SETUP)
     virtual void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler) { completionHandler({ }); }
     virtual void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void endApplePaySetup() { }
-#endif
 
 protected:
     virtual ~PaymentCoordinatorClient() = default;

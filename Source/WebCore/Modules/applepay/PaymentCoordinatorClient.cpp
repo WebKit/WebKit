@@ -34,9 +34,7 @@ bool PaymentCoordinatorClient::supportsVersion(unsigned version)
 {
     ASSERT(version > 0);
 
-#if !ENABLE(APPLE_PAY_SESSION_V7)
-    static const unsigned currentVersion = 6;
-#elif !ENABLE(APPLE_PAY_SESSION_V8)
+#if !ENABLE(APPLE_PAY_SESSION_V8)
     static const unsigned currentVersion = 7;
 #elif !ENABLE(APPLE_PAY_SESSION_V9)
     static const unsigned currentVersion = 8;

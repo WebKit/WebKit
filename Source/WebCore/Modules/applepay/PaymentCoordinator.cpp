@@ -299,8 +299,6 @@ Expected<void, ExceptionDetails> PaymentCoordinator::shouldAllowUserAgentScripts
     return makeUnexpected(ExceptionDetails { m_client.userAgentScriptsBlockedErrorMessage() });
 }
 
-#if ENABLE(APPLE_PAY_SETUP)
-
 void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("getSetupFeatures()");
@@ -328,8 +326,6 @@ void PaymentCoordinator::endApplePaySetup()
     RELEASE_LOG_IF_ALLOWED("endApplePaySetup()");
     m_client.endApplePaySetup();
 }
-
-#endif
 
 } // namespace WebCore
 

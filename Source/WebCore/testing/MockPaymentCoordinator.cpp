@@ -232,8 +232,6 @@ void MockPaymentCoordinator::paymentCoordinatorDestroyed()
     delete this;
 }
 
-#if ENABLE(APPLE_PAY_SETUP)
-
 void MockPaymentCoordinator::addSetupFeature(ApplePaySetupFeatureState state, ApplePaySetupFeatureType type, bool supportsInstallments)
 {
     m_setupFeatures.append(MockApplePaySetupFeature::create(state, type, supportsInstallments));
@@ -251,8 +249,6 @@ void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration
     m_setupConfiguration = configuration;
     completionHandler(true);
 }
-
-#endif
 
 } // namespace WebCore
 

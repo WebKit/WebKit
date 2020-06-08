@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=APPLE_PAY_SETUP,
+    Conditional=APPLE_PAY,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
 ] dictionary ApplePaySetupConfiguration {

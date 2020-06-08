@@ -1,3 +1,38 @@
+2020-06-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Remove ENABLE_APPLE_PAY_SETUP, ENABLE_APPLE_PAY_SESSION_V7, and HAVE_PASSKIT_PAYMENT_SETUP
+        https://bugs.webkit.org/show_bug.cgi?id=212883
+        <rdar://problem/64090763>
+
+        Reviewed by Youenn Fablet.
+
+        These macros evaluate to true whenever ENABLE(APPLE_PAY) is true on platforms supported by
+        trunk WebKit, so we can either remove them or replace them with ENABLE(APPLE_PAY).
+
+        * Modules/applepay/ApplePaySetup.cpp:
+        * Modules/applepay/ApplePaySetup.idl:
+        * Modules/applepay/ApplePaySetupConfiguration.h:
+        * Modules/applepay/ApplePaySetupConfiguration.idl:
+        * Modules/applepay/ApplePaySetupFeature.idl:
+        * Modules/applepay/ApplePaySetupFeature.mm:
+        * Modules/applepay/ApplePaySetupFeatureState.h:
+        * Modules/applepay/ApplePaySetupFeatureState.idl:
+        * Modules/applepay/ApplePaySetupFeatureType.idl:
+        * Modules/applepay/ApplePaySetupFeatureTypeWebCore.h:
+        * Modules/applepay/ApplePaySetupFeatureWebCore.h:
+        * Modules/applepay/ApplePaySetupWebCore.h:
+        * Modules/applepay/PaymentCoordinator.cpp:
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.cpp:
+        (WebCore::PaymentCoordinatorClient::supportsVersion):
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        (WebCore::PaymentCoordinatorClient::endApplePaySetup):
+        * testing/MockApplePaySetupFeature.cpp:
+        * testing/MockApplePaySetupFeature.h:
+        * testing/MockPaymentCoordinator.cpp:
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.idl:
+
 2020-06-08  Antti Koivisto  <antti@apple.com>
 
         Pseudo-elements (::after) in shadow roots don't animate

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(PASSKIT_PAYMENT_SETUP)
+#if ENABLE(APPLE_PAY)
 
 OBJC_CLASS PKPaymentSetupFeature;
 
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebKit
 
-#endif // HAVE(PASSKIT_PAYMENT_SETUP)
+#endif // ENABLE(APPLE_PAY)

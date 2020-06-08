@@ -87,11 +87,9 @@ public:
     bool shouldEnableApplePayAPIs(Document&) const;
     WEBCORE_EXPORT Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
 
-#if ENABLE(APPLE_PAY_SETUP)
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);
     void endApplePaySetup();
-#endif
 
 private:
     bool setApplePayIsActiveIfAllowed(Document&) const;
