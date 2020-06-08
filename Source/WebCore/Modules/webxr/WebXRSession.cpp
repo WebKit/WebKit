@@ -191,11 +191,11 @@ void WebXRSession::scheduleAnimation()
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrsession-requestanimationframe
-XRFrameRequestCallback::Id WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&& callback)
+XRFrameRequestCallback::Identifier WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&& callback)
 {
     // 1. Let session be the target XRSession object.
     // 2. Increment session's animation frame callback identifier by one.
-    XRFrameRequestCallback::Id newId = ++m_nextCallbackId;
+    XRFrameRequestCallback::Identifier newId = ++m_nextCallbackId;
 
     // 3. Append callback to session's list of animation frame callbacks, associated with session's
     // animation frame callback identifier's current value.
@@ -209,7 +209,7 @@ XRFrameRequestCallback::Id WebXRSession::requestAnimationFrame(Ref<XRFrameReques
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrsession-cancelanimationframe
-void WebXRSession::cancelAnimationFrame(int callbackId)
+void WebXRSession::cancelAnimationFrame(XRFrameRequestCallback::Identifier callbackId)
 {
     // 1. Let session be the target XRSession object.
     // 2. Find the entry in session's list of animation frame callbacks or session's list of

@@ -71,8 +71,8 @@ public:
     void updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
 
-    XRFrameRequestCallback::Id requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
-    void cancelAnimationFrame(int handle);
+    XRFrameRequestCallback::Identifier requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
+    void cancelAnimationFrame(XRFrameRequestCallback::Identifier handle);
 
     void end(EndPromise&&);
 
@@ -109,7 +109,7 @@ private:
     RefPtr<WebXRRenderState> m_activeRenderState;
     RefPtr<WebXRRenderState> m_pendingRenderState;
 
-    XRFrameRequestCallback::Id m_nextCallbackId { 0 };
+    XRFrameRequestCallback::Identifier m_nextCallbackId { 0 };
     Vector<Ref<XRFrameRequestCallback>> m_callbacks;
     Vector<Ref<XRFrameRequestCallback>> m_runningCallbacks;
 
