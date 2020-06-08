@@ -1,4 +1,4 @@
-//@ skip if $model == "Apple Watch Series 3" or $model == "Apple Watch Series 4" or (not $jitTests and $architecture =~ /(^arm$)|mips/ and $hostOS == "linux") # added by mark-jsc-stress-test.py
+//@ skip if not $jitTests
 function doTest(max) {
     let sum = 0
     for (let i=0; i<max; ++i) {

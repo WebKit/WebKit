@@ -1,3 +1,25 @@
+2020-06-08  Keith Miller  <keith_miller@apple.com>
+
+        Fix tests that time out on Series 4 Watch
+        https://bugs.webkit.org/show_bug.cgi?id=212911
+
+        Reviewed by Saam Barati.
+
+        Simplify some logic about when to skip microbenchmarks to $jitTests.
+        Also reduce iteration count for
+        dont-range-based-iterate-vector-that-is-mutated.js
+
+        Also, mark wasm tests as not run on watch.
+
+        * microbenchmarks/bit-test-constant.js:
+        * microbenchmarks/bit-test-nonconstant.js:
+        * microbenchmarks/interpreter-wasm.js:
+        * microbenchmarks/memcpy-typed-loop-large.js:
+        * microbenchmarks/memcpy-typed-loop-small.js:
+        * microbenchmarks/mul-immediate-sub.js:
+        * stress/dont-range-based-iterate-vector-that-is-mutated.js:
+        * stress/sampling-profiler-richards.js:
+
 2020-06-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.stringify should throw stack overflow error

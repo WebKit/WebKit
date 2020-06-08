@@ -11,6 +11,6 @@ function foo(arr1, arr2) {
 
 let arr1 = new Int32Array(100);
 
-for (let i = 0; i < 10000000; i++) {
+for (let i = 0; i < 10000; i++) {
     foo(arr1, arr1);
 }
