@@ -1,3 +1,16 @@
+2020-06-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r262685.
+        https://bugs.webkit.org/show_bug.cgi?id=212914
+
+        caused flakey crashes in an iOS test
+
+        Reverted changeset:
+
+        "Clear WebPageProxy event state between tests"
+        https://bugs.webkit.org/show_bug.cgi?id=212864
+        https://trac.webkit.org/changeset/262685
+
 2020-06-08  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Unify rounding / clamping conversions between 0-1 float components and 0-255 byte components

@@ -7684,7 +7684,13 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
-    clearEventState();
+    m_mouseEventQueue.clear();
+    m_keyEventQueue.clear();
+    m_wheelEventQueue.clear();
+    m_currentlyProcessedWheelEvents.clear();
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    m_touchEventQueue.clear();
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     invalidateAllAttachments();
@@ -7699,22 +7705,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.
     m_process->processTerminated();
-}
-
-void WebPageProxy::clearEventState()
-{
-    m_mouseEventQueue.clear();
-    m_keyEventQueue.clear();
-    m_wheelEventQueue.clear();
-    m_currentlyProcessedWheelEvents.clear();
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-    m_gestureEventQueue.clear();
-#endif
-
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    m_touchEventQueue.clear();
-#endif
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)

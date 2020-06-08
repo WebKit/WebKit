@@ -1074,7 +1074,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKPageSetCustomBackingScaleFactor(m_mainWebView->page(), 0);
 
     WKPageClearWheelEventTestMonitor(m_mainWebView->page());
-    WKPageClearEventState(m_mainWebView->page());
 
     WKPageSetMuted(m_mainWebView->page(), true);
 

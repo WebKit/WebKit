@@ -152,7 +152,6 @@ WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKTypeRef sessionSt
 WK_EXPORT double WKPageGetBackingScaleFactor(WKPageRef page);
 WK_EXPORT void WKPageSetCustomBackingScaleFactor(WKPageRef page, double customScaleFactor);
 WK_EXPORT void WKPageClearWheelEventTestMonitor(WKPageRef page);
-WK_EXPORT void WKPageClearEventState(WKPageRef page);
 
 WK_EXPORT bool WKPageSupportsTextZoom(WKPageRef page);
 WK_EXPORT double WKPageGetTextZoomFactor(WKPageRef page);
