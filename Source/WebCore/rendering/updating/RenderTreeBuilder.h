@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreePosition.h"
+#include "RenderWidget.h"
 
 namespace WebCore {
 
@@ -126,6 +127,7 @@ private:
     FullScreen& fullScreenBuilder() { return *m_fullScreenBuilder; }
 #endif
 
+    WidgetHierarchyUpdatesSuspensionScope m_widgetHierarchyUpdatesSuspensionScope;
     RenderView& m_view;
     RenderTreeBuilder* m_previous { nullptr };
     static RenderTreeBuilder* s_current;
