@@ -1,5 +1,16 @@
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
+        Gardening, remove tests passing after r262716
+        https://bugs.webkit.org/show_bug.cgi?id=212923
+
+        Unreviewed gardening.
+
+        Several css-grid tests marked as failure are passing in all platforms after r262716.
+
+        * TestExpectations:
+
+2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Gardening, update expectations after 262724
         https://bugs.webkit.org/show_bug.cgi?id=212926
 
