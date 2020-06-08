@@ -181,7 +181,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
 
 DragOperation DragController::platformGenericDragOperation()
 {
-    return DragOperationMove;
+    return DragOperation::Move;
 }
 
 #endif
@@ -321,7 +321,7 @@ Optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData& dra
         if (dragOperation)
             m_dragHandlingMethod = DragHandlingMethod::PageLoad;
     } else if (m_dragHandlingMethod == DragHandlingMethod::SetColor)
-        dragOperation = DragOperationCopy;
+        dragOperation = DragOperation::Copy;
 
     updateSupportedTypeIdentifiersForDragHandlingMethod(m_dragHandlingMethod, dragData);
     return dragOperation;
@@ -422,7 +422,7 @@ DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, Opt
 
     if (destinationActionMask.contains(DragDestinationAction::Edit) && canProcessDrag(dragData)) {
         if (dragData.containsColor()) {
-            dragOperation = DragOperationGeneric;
+            dragOperation = DragOperation::Generic;
             return DragHandlingMethod::SetColor;
         }
 
@@ -444,7 +444,7 @@ DragHandlingMethod DragController::tryDocumentDrag(const DragData& dragData, Opt
             clearDragCaret();
 
         Frame* innerFrame = element->document().frame();
-        dragOperation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
+        dragOperation = dragIsMove(innerFrame->selection(), dragData) ? DragOperation::Move : DragOperation::Copy;
 
         unsigned numberOfFiles = dragData.numberOfFiles();
         if (m_fileInputElementUnderMouse) {
@@ -697,21 +697,21 @@ static Optional<DragOperation> defaultOperationForDrag(OptionSet<DragOperation> 
 {
     // This is designed to match IE's operation fallback for the case where
     // the page calls preventDefault() in a drag event but doesn't set dropEffect.
-    if (sourceOperationMask.containsAll({ DragOperationCopy, DragOperationLink, DragOperationGeneric, DragOperationPrivate, DragOperationMove, DragOperationDelete }))
-        return DragOperationCopy;
+    if (sourceOperationMask.containsAll({ DragOperation::Copy, DragOperation::Link, DragOperation::Generic, DragOperation::Private, DragOperation::Move, DragOperation::Delete }))
+        return DragOperation::Copy;
     if (sourceOperationMask.isEmpty())
         return WTF::nullopt;
-    if (sourceOperationMask.contains(DragOperationMove))
-        return DragOperationMove;
-    if (sourceOperationMask.contains(DragOperationGeneric))
+    if (sourceOperationMask.contains(DragOperation::Move))
+        return DragOperation::Move;
+    if (sourceOperationMask.contains(DragOperation::Generic))
         return DragController::platformGenericDragOperation();
-    if (sourceOperationMask.contains(DragOperationCopy))
-        return DragOperationCopy;
-    if (sourceOperationMask.contains(DragOperationLink))
-        return DragOperationLink;
+    if (sourceOperationMask.contains(DragOperation::Copy))
+        return DragOperation::Copy;
+    if (sourceOperationMask.contains(DragOperation::Link))
+        return DragOperation::Link;
     
     // FIXME: Does IE really return "generic" even if no operations were allowed by the source?
-    return DragOperationGeneric;
+    return DragOperation::Generic;
 }
 
 bool DragController::tryDHTMLDrag(const DragData& dragData, Optional<DragOperation>& operation)
@@ -997,7 +997,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         // Selection, image, and link drags receive a default set of allowed drag operations that
         // follows from:
         // http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430
-        m_sourceDragOperationMask.add({ DragOperationGeneric, DragOperationCopy });
+        m_sourceDragOperationMask.add({ DragOperation::Generic, DragOperation::Copy });
     }
 
     ASSERT(state.source);

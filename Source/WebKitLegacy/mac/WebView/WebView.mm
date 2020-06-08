@@ -605,22 +605,22 @@ OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation opera
 
 #if USE(APPKIT)
     if (operation & NSDragOperationCopy)
-        result.add(WebCore::DragOperationCopy);
+        result.add(WebCore::DragOperation::Copy);
     if (operation & NSDragOperationLink)
-        result.add(WebCore::DragOperationLink);
+        result.add(WebCore::DragOperation::Link);
     if (operation & NSDragOperationGeneric)
-        result.add(WebCore::DragOperationGeneric);
+        result.add(WebCore::DragOperation::Generic);
     if (operation & NSDragOperationPrivate)
-        result.add(WebCore::DragOperationPrivate);
+        result.add(WebCore::DragOperation::Private);
     if (operation & NSDragOperationMove)
-        result.add(WebCore::DragOperationMove);
+        result.add(WebCore::DragOperation::Move);
     if (operation & NSDragOperationDelete)
-        result.add(WebCore::DragOperationDelete);
+        result.add(WebCore::DragOperation::Delete);
 #else
     if (operation & _UIDragOperationCopy)
-        result.add(WebCore::DragOperationCopy);
+        result.add(WebCore::DragOperation::Copy);
     if (operation & _UIDragOperationMove)
-        result.add(WebCore::DragOperationMove);
+        result.add(WebCore::DragOperation::Move);
 #endif // USE(APPKIT)
 
     return result;
@@ -633,17 +633,17 @@ static NSDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
         return NSDragOperationNone;
 
     switch (*dragOperation) {
-    case WebCore::DragOperationCopy:
+    case WebCore::DragOperation::Copy:
         return NSDragOperationCopy;
-    case WebCore::DragOperationLink:
+    case WebCore::DragOperation::Link:
         return NSDragOperationLink;
-    case WebCore::DragOperationGeneric:
+    case WebCore::DragOperation::Generic:
         return NSDragOperationGeneric;
-    case WebCore::DragOperationPrivate:
+    case WebCore::DragOperation::Private:
         return NSDragOperationPrivate;
-    case WebCore::DragOperationMove:
+    case WebCore::DragOperation::Move:
         return NSDragOperationMove;
-    case WebCore::DragOperationDelete:
+    case WebCore::DragOperation::Delete:
         return NSDragOperationDelete;
     }
 
@@ -657,17 +657,17 @@ static _UIDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
         return _UIDragOperationNone;
 
     switch (*dragOperation) {
-    case WebCore::DragOperationCopy:
+    case WebCore::DragOperation::Copy:
         return _UIDragOperationCopy;
-    case WebCore::DragOperationLink:
+    case WebCore::DragOperation::Link:
         return _UIDragOperationNone;
-    case WebCore::DragOperationGeneric:
+    case WebCore::DragOperation::Generic:
         return _UIDragOperationMove;
-    case WebCore::DragOperationPrivate:
+    case WebCore::DragOperation::Private:
         return _UIDragOperationNone;
-    case WebCore::DragOperationMove:
+    case WebCore::DragOperation::Move:
         return _UIDragOperationMove;
-    case WebCore::DragOperationDelete:
+    case WebCore::DragOperation::Delete:
         return _UIDragOperationNone;
     }
 

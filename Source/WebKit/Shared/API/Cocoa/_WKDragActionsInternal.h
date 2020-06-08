@@ -45,17 +45,17 @@ inline OptionSet<WebCore::DragOperation> coreDragOperationMask(NSDragOperation o
 {
     OptionSet<WebCore::DragOperation> result;
     if (operation & NSDragOperationCopy)
-        result.add(WebCore::DragOperationCopy);
+        result.add(WebCore::DragOperation::Copy);
     if (operation & NSDragOperationLink)
-        result.add(WebCore::DragOperationLink);
+        result.add(WebCore::DragOperation::Link);
     if (operation & NSDragOperationGeneric)
-        result.add(WebCore::DragOperationGeneric);
+        result.add(WebCore::DragOperation::Generic);
     if (operation & NSDragOperationPrivate)
-        result.add(WebCore::DragOperationPrivate);
+        result.add(WebCore::DragOperation::Private);
     if (operation & NSDragOperationMove)
-        result.add(WebCore::DragOperationMove);
+        result.add(WebCore::DragOperation::Move);
     if (operation & NSDragOperationDelete)
-        result.add(WebCore::DragOperationDelete);
+        result.add(WebCore::DragOperation::Delete);
     return result;
 }
 #endif // USE(APPKIT)

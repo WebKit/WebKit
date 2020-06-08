@@ -47,13 +47,13 @@ using namespace WebCore;
 static DWORD draggingSourceOperationMaskToDragCursors(OptionSet<DragOperation> operationMask)
 {
     DWORD result = DROPEFFECT_NONE;
-    if (operationMask.contains(DragOperationCopy))
+    if (operationMask.contains(DragOperation::Copy))
         result |= DROPEFFECT_COPY; 
-    if (operationMask.contains(DragOperationLink))
+    if (operationMask.contains(DragOperation::Link))
         result |= DROPEFFECT_LINK; 
-    if (operationMask.contains(DragOperationMove))
+    if (operationMask.contains(DragOperation::Move))
         result |= DROPEFFECT_MOVE;
-    if (operationMask.contains(DragOperationGeneric))
+    if (operationMask.contains(DragOperation::Generic))
         result |= DROPEFFECT_MOVE;
     return result;
 }
@@ -165,11 +165,11 @@ void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame& 
         OptionSet<DragOperation> operation;
         if (hr == DRAGDROP_S_DROP) {
             if (effect & DROPEFFECT_COPY)
-                operation = DragOperationCopy;
+                operation = DragOperation::Copy;
             else if (effect & DROPEFFECT_LINK)
-                operation = DragOperationLink;
+                operation = DragOperation::Link;
             else if (effect & DROPEFFECT_MOVE)
-                operation = DragOperationMove;
+                operation = DragOperation::Move;
         }
         frame.eventHandler().dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
     }

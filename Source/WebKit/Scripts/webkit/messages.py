@@ -209,7 +209,6 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DictationContext',
         'WebCore::DocumentIdentifier',
         'WebCore::DocumentOrWorkerIdentifier',
-        'WebCore::DragOperation',  # FIXME: Remove after converting WebCore::DragOperation to enum class.
         'WebCore::FetchIdentifier',
         'WebCore::FrameIdentifier',
         'WebCore::LibWebRTCSocketIdentifier',

@@ -5848,13 +5848,13 @@ static DWORD dragOperationToDragCursor(Optional<DragOperation> operation)
         return DROPEFFECT_NONE;
 
     DWORD result = DROPEFFECT_NONE;
-    if (*operation == DragOperationCopy)
+    if (*operation == DragOperation::Copy)
         result = DROPEFFECT_COPY;
-    else if (*operation == DragOperationLink)
+    else if (*operation == DragOperation::Link)
         result = DROPEFFECT_LINK;
-    else if (*operation == DragOperationMove)
+    else if (*operation == DragOperation::Move)
         result = DROPEFFECT_MOVE;
-    else if (*operation == DragOperationGeneric)
+    else if (*operation == DragOperation::Generic)
         result = DROPEFFECT_MOVE; // This appears to be the Firefox behaviour.
     return result;
 }
@@ -5871,11 +5871,11 @@ OptionSet<DragOperation> WebView::keyStateToDragOperation(DWORD grfKeyState) con
     auto operationMask = m_page->dragController().sourceDragOperationMask();
 
     if ((grfKeyState & (MK_CONTROL | MK_SHIFT)) == (MK_CONTROL | MK_SHIFT))
-        operationMask = { DragOperationLink };
+        operationMask = { DragOperation::Link };
     else if ((grfKeyState & MK_CONTROL) == MK_CONTROL)
-        operationMask = { DragOperationCopy };
+        operationMask = { DragOperation::Copy };
     else if ((grfKeyState & MK_SHIFT) == MK_SHIFT)
-        operationMask = { DragOperationGeneric };
+        operationMask = { DragOperation::Generic };
 
     return operationMask;
 }

@@ -3962,17 +3962,17 @@ static NSDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
         return NSDragOperationNone;
 
     switch (*dragOperation) {
-    case WebCore::DragOperationCopy:
+    case WebCore::DragOperation::Copy:
         return NSDragOperationCopy;
-    case WebCore::DragOperationLink:
+    case WebCore::DragOperation::Link:
         return NSDragOperationLink;
-    case WebCore::DragOperationGeneric:
+    case WebCore::DragOperation::Generic:
         return NSDragOperationGeneric;
-    case WebCore::DragOperationPrivate:
+    case WebCore::DragOperation::Private:
         return NSDragOperationPrivate;
-    case WebCore::DragOperationMove:
+    case WebCore::DragOperation::Move:
         return NSDragOperationMove;
-    case WebCore::DragOperationDelete:
+    case WebCore::DragOperation::Delete:
         return NSDragOperationDelete;
     }
 

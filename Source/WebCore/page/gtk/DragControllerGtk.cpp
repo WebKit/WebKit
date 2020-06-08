@@ -54,7 +54,7 @@ Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     // FIXME: This logic is incomplete
     if (dragData.containsURL())
-        return DragOperationCopy;
+        return DragOperation::Copy;
 
     return WTF::nullopt;
 }

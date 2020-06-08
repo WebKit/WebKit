@@ -1,3 +1,18 @@
+2020-06-08  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for DragOperation
+        <https://webkit.org/b/212870>
+        <rdar://problem/64069940>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (draggingSourceOperationMaskToDragCursors):
+        (WebDragClient::startDrag):
+        * WebView.cpp:
+        (dragOperationToDragCursor):
+        (WebView::keyStateToDragOperation const):
+
 2020-06-07  Philippe Normand  <pnormand@igalia.com>
 
         Remove ENABLE_VIDEO_TRACK ifdef guards

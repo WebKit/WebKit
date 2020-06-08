@@ -2337,11 +2337,11 @@ static bool targetIsFrame(Node* target, Frame*& frame)
 static Optional<DragOperation> convertDropZoneOperationToDragOperation(const String& dragOperation)
 {
     if (dragOperation == "copy")
-        return DragOperationCopy;
+        return DragOperation::Copy;
     if (dragOperation == "move")
-        return DragOperationMove;
+        return DragOperation::Move;
     if (dragOperation == "link")
-        return DragOperationLink;
+        return DragOperation::Link;
     return WTF::nullopt;
 }
 
@@ -2349,9 +2349,9 @@ static String convertDragOperationToDropZoneOperation(Optional<DragOperation> op
 {
     if (operation) {
         switch (*operation) {
-        case DragOperationMove:
+        case DragOperation::Move:
             return "move"_s;
-        case DragOperationLink:
+        case DragOperation::Link:
             return "link"_s;
         default:
             break;

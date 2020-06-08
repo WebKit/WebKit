@@ -49,7 +49,7 @@ Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
     // If this can be determined from within WebCore operationForDrag can be pulled into
     // WebCore itself.
     if (dragData.containsURL() && !m_didInitiateDrag)
-        return DragOperationCopy;
+        return DragOperation::Copy;
     return WTF::nullopt;
 }
 

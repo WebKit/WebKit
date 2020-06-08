@@ -4233,17 +4233,17 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 static NSDragOperation kit(OptionSet<WebCore::DragOperation> operationMask)
 {
     NSDragOperation result = NSDragOperationNone;
-    if (operationMask.contains(WebCore::DragOperationCopy))
+    if (operationMask.contains(WebCore::DragOperation::Copy))
         result |= NSDragOperationCopy;
-    if (operationMask.contains(WebCore::DragOperationLink))
+    if (operationMask.contains(WebCore::DragOperation::Link))
         result |= NSDragOperationLink;
-    if (operationMask.contains(WebCore::DragOperationGeneric))
+    if (operationMask.contains(WebCore::DragOperation::Generic))
         result |= NSDragOperationGeneric;
-    if (operationMask.contains(WebCore::DragOperationPrivate))
+    if (operationMask.contains(WebCore::DragOperation::Private))
         result |= NSDragOperationPrivate;
-    if (operationMask.contains(WebCore::DragOperationMove))
+    if (operationMask.contains(WebCore::DragOperation::Move))
         result |= NSDragOperationMove;
-    if (operationMask.contains(WebCore::DragOperationDelete))
+    if (operationMask.contains(WebCore::DragOperation::Delete))
         result |= NSDragOperationDelete;
     return result;
 }

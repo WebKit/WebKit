@@ -7310,9 +7310,9 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 static UIDropOperation dropOperationForWebCoreDragOperation(Optional<WebCore::DragOperation> operation)
 {
     if (operation) {
-        if (*operation == WebCore::DragOperationMove)
+        if (*operation == WebCore::DragOperation::Move)
             return UIDropOperationMove;
-        if (*operation == WebCore::DragOperationCopy)
+        if (*operation == WebCore::DragOperation::Copy)
             return UIDropOperationCopy;
     }
     return UIDropOperationCancel;
@@ -7324,11 +7324,11 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
     case UIDropOperationCancel:
         return WTF::nullopt;
     case UIDropOperationForbidden:
-        return WebCore::DragOperationPrivate;
+        return WebCore::DragOperation::Private;
     case UIDropOperationCopy:
-        return WebCore::DragOperationCopy;
+        return WebCore::DragOperation::Copy;
     case UIDropOperationMove:
-        return WebCore::DragOperationMove;
+        return WebCore::DragOperation::Move;
     }
     ASSERT_NOT_REACHED();
     return WTF::nullopt;
@@ -7342,7 +7342,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
 
     auto dragOperationMask = WebCore::anyDragOperation();
     if (!session.allowsMoveOperation)
-        dragOperationMask.remove(WebCore::DragOperationMove);
+        dragOperationMask.remove(WebCore::DragOperation::Move);
     return { session, WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), dragOperationMask, WebCore::DragApplicationNone, WebKit::coreDragDestinationActionMask(dragDestinationAction) };
 }
 

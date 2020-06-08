@@ -153,11 +153,11 @@ OptionSet<DragOperation> gdkDragActionToDragOperation(GdkDragAction gdkAction)
 {
     OptionSet<DragOperation> action;
     if (gdkAction & GDK_ACTION_COPY)
-        action.add(DragOperationCopy);
+        action.add(DragOperation::Copy);
     if (gdkAction & GDK_ACTION_MOVE)
-        action.add(DragOperationMove);
+        action.add(DragOperation::Move);
     if (gdkAction & GDK_ACTION_LINK)
-        action.add(DragOperationLink);
+        action.add(DragOperation::Link);
 
     return action;
 }
@@ -166,11 +166,11 @@ GdkDragAction dragOperationToGdkDragActions(OptionSet<DragOperation> coreAction)
 {
     unsigned gdkAction = 0;
 
-    if (coreAction.contains(DragOperationCopy))
+    if (coreAction.contains(DragOperation::Copy))
         gdkAction |= GDK_ACTION_COPY;
-    if (coreAction.contains(DragOperationMove))
+    if (coreAction.contains(DragOperation::Move))
         gdkAction |= GDK_ACTION_MOVE;
-    if (coreAction.contains(DragOperationLink))
+    if (coreAction.contains(DragOperation::Link))
         gdkAction |= GDK_ACTION_LINK;
 
     return static_cast<GdkDragAction>(gdkAction);
@@ -178,11 +178,11 @@ GdkDragAction dragOperationToGdkDragActions(OptionSet<DragOperation> coreAction)
 
 GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOperation> coreAction)
 {
-    if (coreAction.contains(DragOperationCopy))
+    if (coreAction.contains(DragOperation::Copy))
         return GDK_ACTION_COPY;
-    if (coreAction.contains(DragOperationMove))
+    if (coreAction.contains(DragOperation::Move))
         return GDK_ACTION_MOVE;
-    if (coreAction.contains(DragOperationLink))
+    if (coreAction.contains(DragOperation::Link))
         return GDK_ACTION_LINK;
     return static_cast<GdkDragAction>(0);
 }
