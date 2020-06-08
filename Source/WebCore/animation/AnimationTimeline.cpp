@@ -37,6 +37,7 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "PseudoElement.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "StylePropertyShorthand.h"
@@ -210,7 +211,7 @@ void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element, 
     }
 }
 
-static bool shouldConsiderAnimation(Element& element, const Animation& animation)
+static bool shouldConsiderAnimation(Element& elementOrPseudoElement, const Animation& animation)
 {
     if (!animation.isValidAnimation())
         return false;
@@ -220,6 +221,8 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
     auto& name = animation.name();
     if (name == animationNameNone || name.isEmpty())
         return false;
+
+    auto& element = is<PseudoElement>(elementOrPseudoElement) ? *downcast<PseudoElement>(elementOrPseudoElement).hostElement() : elementOrPseudoElement;
 
     if (auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal()))
         return styleScope->resolver().isAnimationNameValid(name);

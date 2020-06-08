@@ -1,3 +1,14 @@
+2020-06-08  Antti Koivisto  <antti@apple.com>
+
+        Pseudo-elements (::after) in shadow roots don't animate
+        https://bugs.webkit.org/show_bug.cgi?id=173027
+        <rdar://problem/42842994>
+
+        Reviewed by Antoine Quint.
+
+        * animations/keyframe-pseudo-shadow-expected.html: Added.
+        * animations/keyframe-pseudo-shadow.html: Added.
+
 2020-06-08  Youenn Fablet  <youenn@apple.com>
 
         Use one audio unit for all MediaStreamTracks of a given process

@@ -1,3 +1,19 @@
+2020-06-08  Antti Koivisto  <antti@apple.com>
+
+        Pseudo-elements (::after) in shadow roots don't animate
+        https://bugs.webkit.org/show_bug.cgi?id=173027
+        <rdar://problem/42842994>
+
+        Reviewed by Antoine Quint.
+
+        Test: animations/keyframe-pseudo-shadow.html
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::shouldConsiderAnimation):
+
+        We should use the actual element instead of the PseudoElement when calling Style::Scope::forOrdinal.
+        The keyframe code that computes the style already does this correctly.
+
 2020-06-08  Youenn Fablet  <youenn@apple.com>
 
         Use one audio unit for all tracks of a given process
