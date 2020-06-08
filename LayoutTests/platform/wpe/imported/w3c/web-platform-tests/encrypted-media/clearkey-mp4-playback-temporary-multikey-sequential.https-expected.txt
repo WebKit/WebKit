@@ -1,3 +1,0 @@
-
-Pass	org.w3.clearkey, successful playback, temporary, mp4, multiple keys, sequential 
-
