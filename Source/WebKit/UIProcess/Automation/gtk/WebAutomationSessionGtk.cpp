@@ -99,6 +99,22 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     }
 }
+
+OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+{
+    OptionSet<WebEvent::Modifier> webModifiers;
+
+    if (modifiers & GDK_META_MASK)
+        webModifiers.add(WebEvent::Modifier::AltKey);
+    if (modifiers & GDK_CONTROL_MASK)
+        webModifiers.add(WebEvent::Modifier::ControlKey);
+    if (modifiers & GDK_SHIFT_MASK)
+        webModifiers.add(WebEvent::Modifier::ShiftKey);
+    if (modifiers & GDK_LOCK_MASK)
+        webModifiers.add(WebEvent::Modifier::CapsLockKey);
+
+    return webModifiers;
+}
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)

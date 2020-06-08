@@ -225,6 +225,25 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
+
+OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+{
+    OptionSet<WebEvent::Modifier> webModifiers;
+
+    if (modifiers & NSEventModifierFlagCommand)
+        webModifiers.add(WebEvent::Modifier::MetaKey);
+    if (modifiers & NSEventModifierFlagOption)
+        webModifiers.add(WebEvent::Modifier::AltKey);
+    if (modifiers & NSEventModifierFlagControl)
+        webModifiers.add(WebEvent::Modifier::ControlKey);
+    if (modifiers & NSEventModifierFlagShift)
+        webModifiers.add(WebEvent::Modifier::ShiftKey);
+    if (modifiers & NSEventModifierFlagCapsLock)
+        webModifiers.add(WebEvent::Modifier::CapsLockKey);
+
+    return webModifiers;
+}
+
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)

@@ -1,5 +1,31 @@
 2020-06-07  Lauro Moura  <lmoura@igalia.com>
 
+        [WebDriver] Allow platform-dependent modifier keys conversion to WebEvent::Modifier
+        https://bugs.webkit.org/show_bug.cgi?id=212848
+
+        Reviewed by Brian Burg.
+
+        WebEvent::Modifier flags does not map directly to the platform flags,
+        so we can't directly convert the modifier flags to the OptionSet.
+
+        Covered by existing WebDriver tests.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::simulateMouseInteraction): Use
+        platform-specific method to convert the modifiers.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp: Added
+        conversion from GDK modifier mask to WebEvent::Modifier.
+        (WebKit::WebAutomationSession::platformWebModifiersFromRaw):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm: Added
+        conversion from NSModifierFlag to WebEvent::Modifier.
+        (WebKit::WebAutomationSession::platformWebModifiersFromRaw):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp: Added
+        conversion from wpe_input_keyboard_modifier to WebEvent::Modifier.
+        (WebKit::WebAutomationSession::platformWebModifiersFromRaw):
+
+2020-06-07  Lauro Moura  <lmoura@igalia.com>
+
         [WPE] Behave like GDK_CURRENT_TIME when the timestamp is zero
         https://bugs.webkit.org/show_bug.cgi?id=212797
 

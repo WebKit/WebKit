@@ -122,6 +122,24 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     }
 }
+
+OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(unsigned modifiers)
+{
+    OptionSet<WebEvent::Modifier> webModifiers;
+
+    if (modifiers & wpe_input_keyboard_modifier_shift)
+        webModifiers.add(WebEvent::Modifier::AltKey);
+    if (modifiers & wpe_input_keyboard_modifier_meta)
+        webModifiers.add(WebEvent::Modifier::MetaKey);
+    if (modifiers & wpe_input_keyboard_modifier_control)
+        webModifiers.add(WebEvent::Modifier::ControlKey);
+    if (modifiers & wpe_input_keyboard_modifier_shift)
+        webModifiers.add(WebEvent::Modifier::ShiftKey);
+    // WPE has no Caps Lock modifier.
+
+    return webModifiers;
+}
+
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
