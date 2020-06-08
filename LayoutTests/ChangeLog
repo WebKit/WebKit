@@ -1,5 +1,16 @@
 2020-06-08  Youenn Fablet  <youenn@apple.com>
 
+        Missing WebRTC Metrics in iOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=212668
+        <rdar://problem/63902458>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-stats-expected.txt:
+        * webrtc/video-stats.html:
+
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
         Add missed WebRTC media-source and remote-inbound-rtp stats
         https://bugs.webkit.org/show_bug.cgi?id=206645
         <rdar://problem/58833958>

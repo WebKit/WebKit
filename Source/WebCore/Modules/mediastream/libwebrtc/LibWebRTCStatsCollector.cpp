@@ -457,6 +457,15 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
         stats.localCertificateId = fromStdString(*rtcStats.local_certificate_id);
     if (rtcStats.remote_certificate_id.is_defined())
         stats.remoteCertificateId = fromStdString(*rtcStats.remote_certificate_id);
+
+    if (rtcStats.dtls_state.is_defined())
+        stats.dtlsState = fromStdString(*rtcStats.dtls_state);
+    if (rtcStats.tls_version.is_defined())
+        stats.tlsVersion = fromStdString(*rtcStats.tls_version);
+    if (rtcStats.dtls_cipher.is_defined())
+        stats.dtlsCipher = fromStdString(*rtcStats.dtls_cipher);
+    if (rtcStats.srtp_cipher.is_defined())
+        stats.srtpCipher = fromStdString(*rtcStats.srtp_cipher);
 }
 
 static inline void fillRTCPeerConnectionStats(RTCStatsReport::PeerConnectionStats& stats, const webrtc::RTCPeerConnectionStats& rtcStats)

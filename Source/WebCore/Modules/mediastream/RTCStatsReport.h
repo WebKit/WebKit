@@ -318,6 +318,10 @@ public:
         String selectedCandidatePairId;
         String localCertificateId;
         String remoteCertificateId;
+        String dtlsState;
+        String tlsVersion;
+        String dtlsCipher;
+        String srtpCipher;
     };
 
     struct PeerConnectionStats : Stats {

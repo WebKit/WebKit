@@ -319,14 +319,17 @@ dictionary RTCTransportStats : RTCStats {
     unsigned long long bytesReceived;
     DOMString rtcpTransportStatsId;
     // RTCIceRole iceRole;
-    // RTCDtlsTransportState dtlsState;
+    // DOMString iceLocalUsernameFragment;
+    required DOMString dtlsState;
+    // RTCIceTransportState iceState;
     DOMString selectedCandidatePairId;
     DOMString localCertificateId;
     DOMString remoteCertificateId;
-    // DOMString tlsVersion;
-    // DOMString dtlsCipher;
-    // DOMString srtpCipher;
+    DOMString tlsVersion;
+    DOMString dtlsCipher;
+    DOMString srtpCipher;
     // DOMString tlsGroup;
+    // unsigned long selectedCandidatePairChanges;
 };
 
 [ JSGenerateToJSObject ]

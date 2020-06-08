@@ -85,6 +85,20 @@ function getOutboundRTPStats(connection)
     });
 }
 
+function getStatsOfType(connection, type)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === type) {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
 function testTimestampDifference(timeStampDifference, numberOfFrames)
 {
     // Let's ensure timestamp is not in microseconds but milliseconds.
@@ -217,6 +231,18 @@ promise_test(async (test) => {
     assert_false(!!outstats);
     assert_true(!!instats);
 }, "Receiver stats");
+
+promise_test(async (test) => {
+    const report = await secondConnection.getReceivers()[0].getStats();
+    let stats = await getStatsOfType(secondConnection, "transport");
+
+    assert_equals(stats.dtlsState, "connected");
+    assert_true(!!stats.dtlsCipher, "dtlsCipher");
+    assert_true(!!stats.srtpCipher, "srtpCipher");
+    assert_true(!!stats.tlsVersion, "tlsVersion");
+    assert_true(!!stats.bytesReceived, "bytesReceived");
+    assert_true(!!stats.bytesSent, "bytesSent");
+}, "Transport stats");
 
 promise_test(async (test) => {
     let instats1, instats2;
