@@ -1,3 +1,13 @@
+2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Remove test failures passing after r262707
+        https://bugs.webkit.org/show_bug.cgi?id=212924
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-06-08  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Unify rounding / clamping conversions between 0-1 float components and 0-255 byte components

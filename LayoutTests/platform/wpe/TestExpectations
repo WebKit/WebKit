@@ -1410,8 +1410,6 @@ webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 
 webkit.org/b/208934 inspector/console/console-screenshot.html [ Timeout ]
 
-webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.html [ Timeout ]
-
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
@@ -1971,8 +1969,6 @@ webkit.org/b/188659 fast/masking/clip-path-selection.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-CSS-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-JavaScript-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-image-from-local.html [ Failure ]
-
-webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
 
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]

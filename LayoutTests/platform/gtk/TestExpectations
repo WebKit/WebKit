@@ -3234,8 +3234,6 @@ webkit.org/b/205112 media/remoteplayback-watch-disableremoteplayback.html [ Time
 
 webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 
-webkit.org/b/206148 http/tests/local/file-url-host.html [ Timeout ]
-
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Timeout Pass ]
 
@@ -3290,8 +3288,6 @@ webkit.org/b/210796 http/tests/resourceLoadStatistics/telemetry-generation-advan
 webkit.org/b/210796 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Failure Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Timeout Pass ]
 webkit.org/b/210796 http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction-database.html [ Timeout Pass ]
-
-webkit.org/b/211107 fast/dom/set-document-location-host-to-unaccepted-values.html [ Timeout ]
 
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-cookie-blocking-between-each-other.html [ Skip ]
 webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html [ Skip ]
@@ -3922,9 +3918,6 @@ webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure
 webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
-
-# Failing since a new URLParser has been enabled on r207162
-webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
 
 # Crash is bug #186251
 webkit.org/b/163383 accessibility/meter-element.html [ Failure Crash ]
