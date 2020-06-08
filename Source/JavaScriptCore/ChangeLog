@@ -1,3 +1,17 @@
+2020-06-08  Keith Miller  <keith_miller@apple.com>
+
+        Removed unneeded POINTER_WIDTH macro from b3
+        https://bugs.webkit.org/show_bug.cgi?id=212927
+
+        Reviewed by Yusuke Suzuki.
+
+        C++20 has real constexpr functions so we don't need the
+        POINTER_WIDTH macro anymore.
+
+        * b3/B3Width.h:
+        (JSC::B3::pointerWidth):
+        * b3/air/opcode_generator.rb:
+
 2020-06-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.stringify should throw stack overflow error
