@@ -1,3 +1,21 @@
+2020-06-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        ResourceLoadStatisticsDatabaseStore::domainIDFromString failed, error message: bad parameter or other API misuse
+        https://bugs.webkit.org/show_bug.cgi?id=212916
+        <rdar://problem/64127238>
+
+        Reviewed by Sihui Liu.
+
+        Make sure m_domainIDFromStringStatement is accessed in a separate
+        scope in ensureResourceStatisticsForRegistrableDomain() so it will be
+        reset before being used again.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+        Add debug assert to ensure that tests catch this case.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain const):
+
 2020-06-08  Chris Dumez  <cdumez@apple.com>
 
         Turn some WebPageProxy logging into error logging

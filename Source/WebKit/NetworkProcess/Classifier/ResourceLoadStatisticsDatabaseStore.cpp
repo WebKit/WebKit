@@ -751,6 +751,7 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
     if (!scopedStatement
         || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::domainIDFromString failed, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
         return WTF::nullopt;
     }
     
@@ -2206,18 +2207,20 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const To
 std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, Optional<unsigned>> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
 {
     ASSERT(!RunLoop::isMain());
-    
-    auto scopedStatement = this->scopedStatement(m_domainIDFromStringStatement, domainIDFromStringQuery, "ensureResourceStatisticsForRegistrableDomain"_s);
-    if (!scopedStatement
-        || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain failed, error message: %{private}s", this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return { AddedRecord::No, 0 };
-    }
-    
-    if (scopedStatement->step() == SQLITE_ROW) {
-        unsigned domainID = scopedStatement->getColumnInt(0);
-        return { AddedRecord::No, domainID };
+
+    {
+        auto scopedStatement = this->scopedStatement(m_domainIDFromStringStatement, domainIDFromStringQuery, "ensureResourceStatisticsForRegistrableDomain"_s);
+        if (!scopedStatement
+            || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
+            RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain failed, error message: %{private}s", this, m_database.lastErrorMsg());
+            ASSERT_NOT_REACHED();
+            return { AddedRecord::No, 0 };
+        }
+
+        if (scopedStatement->step() == SQLITE_ROW) {
+            unsigned domainID = scopedStatement->getColumnInt(0);
+            return { AddedRecord::No, domainID };
+        }
     }
 
     ResourceLoadStatistics newObservation(domain);
