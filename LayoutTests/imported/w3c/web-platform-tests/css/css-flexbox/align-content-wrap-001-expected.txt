@@ -1,44 +1,16 @@
 
 PASS .default, .verticalWriting 1 
-FAIL .default, .verticalWriting 2 assert_equals: 
-<div class="default" style="align-content: flex-end">
-<div data-offset-y="50">This text should be at the bottom of its container</div>
-</div>
-offsetTop expected 50 but got 0
-FAIL .default, .verticalWriting 3 assert_equals: 
-<div class="default" style="align-content: center">
-<div data-offset-y="25">This text should be centered in its container</div>
-</div>
-offsetTop expected 25 but got 0
+PASS .default, .verticalWriting 2 
+PASS .default, .verticalWriting 3 
 PASS .default, .verticalWriting 4 
-FAIL .default, .verticalWriting 5 assert_equals: 
-<div class="default" style="align-content: space-around">
-<div data-offset-y="25">This text should be centered in its container</div>
-</div>
-offsetTop expected 25 but got 0
-FAIL .default, .verticalWriting 6 assert_equals: 
-<div class="default" style="align-content: space-evenly">
-<div data-offset-y="25">This text should be centered in its container</div>
-</div>
-offsetTop expected 25 but got 0
+PASS .default, .verticalWriting 5 
+PASS .default, .verticalWriting 6 
 PASS .default, .verticalWriting 7 
 PASS .default, .verticalWriting 8 
-FAIL .default, .verticalWriting 9 assert_equals: 
-<div class="verticalWriting" style="align-content: flex-end">
-<div data-offset-x="50">This text should be at the right of its container</div>
-</div>
-offsetLeft expected 50 but got 0
-FAIL .default, .verticalWriting 10 assert_equals: 
-<div class="verticalWriting" style="align-content: center">
-<div data-offset-x="25">This text should be centered in its container</div>
-</div>
-offsetLeft expected 25 but got 0
+PASS .default, .verticalWriting 9 
+PASS .default, .verticalWriting 10 
 PASS .default, .verticalWriting 11 
-FAIL .default, .verticalWriting 12 assert_equals: 
-<div class="verticalWriting" style="align-content: space-around">
-<div data-offset-x="25">This text should be centered in its container</div>
-</div>
-offsetLeft expected 25 but got 0
+PASS .default, .verticalWriting 12 
 PASS .default, .verticalWriting 13 
 Test that we honor align-content even in single-line flex containers
 

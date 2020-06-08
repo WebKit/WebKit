@@ -1,3 +1,16 @@
+2020-06-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] align-content should apply even when there's just a single line
+        https://bugs.webkit.org/show_bug.cgi?id=209871
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Mark as PASSing 15 subtests that are now working as expected.
+
+        * web-platform-tests/css/css-flexbox/align-content-wrap-001-expected.txt: Remove FAIL results.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-002-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-003-expected.txt: Ditto.
+
 2020-06-06  Charlie Turner  <cturner@igalia.com>
 
         [GTK][WPE][EME] Update WPT and rebaseline

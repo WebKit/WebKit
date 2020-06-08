@@ -1,3 +1,32 @@
+2020-06-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] align-content should apply even when there's just a single line
+        https://bugs.webkit.org/show_bug.cgi?id=209871
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The 'align-content' property should have no effect on single line flex containers according to
+        the specs https://drafts.csswg.org/css-flexbox/#propdef-align-content. The current code was not
+        differentiating between single-line containers and multi-line containers with just 1 line.
+
+        Also in order not to introduce regressions and properly support replaced elements as flex items
+        we replaced the computation of child's width for 'flex-direction:column' by a direct call to
+        computeLogicalWidthForFragment() which already properly handles all the cases. It used to be
+        just the shrink-to-fit computation but that was not enough for replaced elements for example or
+        elements with min/max-size restrictions.
+
+        Several align-content-wrap-* subtests are working now. Updated expectations.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::initialAlignContentOffset): Removed check for #lines <= 1, as it is incorrect because it
+        is true for multi-line containers with just 1 line.
+        (WebCore::RenderFlexibleBox::alignFlexLines): Use isMultiline() instead of "#lines == 1".
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalWidth const): Replace shrink-to-fit computation
+        by a call computeLogicalWidthForFragment().
+        (WebCore::RenderFlexibleBox::repositionLogicalHeightDependentFlexItems): Use the whole crossAxisExtent
+        for single line containers. Moved from alignFlexLines() as it fits much better here.
+
+
 2020-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove ENABLE_APPLE_PAY_SETUP, ENABLE_APPLE_PAY_SESSION_V7, and HAVE_PASSKIT_PAYMENT_SETUP

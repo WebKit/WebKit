@@ -359,6 +359,11 @@ void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& p
 void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(Vector<LineContext>& lineContexts)
 {
     LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? 0_lu : lineContexts[0].crossAxisOffset;
+    // If we have a single line flexbox, the line height is all the available space. For flex-direction: row,
+    // this means we need to use the height, so we do this after calling updateLogicalHeight.
+    if (!isMultiline() && !lineContexts.isEmpty())
+        lineContexts[0].crossAxisExtent = crossAxisContentExtent();
+
     alignFlexLines(lineContexts);
     
     alignChildren(lineContexts);
@@ -466,12 +471,19 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
 {
     // This should only be called if the logical width is the cross size
     ASSERT(hasOrthogonalFlow(child));
-    // If our height is auto, make sure that our returned height is unaffected by
-    // earlier layouts by returning the shrink-to-fit size.
-    if (!crossAxisLengthIsDefinite(child, child.style().logicalWidth()))
-        return std::min(child.maxPreferredLogicalWidth(), std::max(child.minPreferredLogicalWidth(), contentLogicalWidth()));
+    if (crossAxisLengthIsDefinite(child, child.style().logicalWidth()))
+        return child.logicalWidth();
 
-    return child.logicalWidth();
+    // Temporarily clear potential overrides to compute the logical width otherwise it'll return the override size.
+    bool childHasOverrideWidth = child.hasOverrideContentLogicalWidth();
+    auto overrideWidth = childHasOverrideWidth ? child.overrideContentLogicalWidth() : -1_lu;
+    if (childHasOverrideWidth)
+        const_cast<RenderBox*>(&child)->clearOverrideContentLogicalWidth();
+    LogicalExtentComputedValues values;
+    child.computeLogicalWidthInFragment(values);
+    if (childHasOverrideWidth)
+        const_cast<RenderBox*>(&child)->setOverrideContentLogicalWidth(overrideWidth);
+    return values.m_extent;
 }
 
 LayoutUnit RenderFlexibleBox::crossAxisIntrinsicExtentForChild(const RenderBox& child) const
@@ -1689,8 +1701,6 @@ void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, La
     
 static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition alignContent, ContentDistribution alignContentDistribution, unsigned numberOfLines)
 {
-    if (numberOfLines <= 1)
-        return 0_lu;
     if (alignContent == ContentPosition::FlexEnd)
         return availableFreeSpace;
     if (alignContent == ContentPosition::Center)
@@ -1725,17 +1735,11 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
     
 void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
 {
+    if (lineContexts.isEmpty() || !isMultiline())
+        return;
+
     ContentPosition position = style().resolvedAlignContentPosition(contentAlignmentNormalBehavior());
     ContentDistribution distribution = style().resolvedAlignContentDistribution(contentAlignmentNormalBehavior());
-    
-    // If we have a single line flexbox or a multiline line flexbox with only one
-    // flex line, the line height is all the available space. For
-    // flex-direction: row, this means we need to use the height, so we do this
-    // after calling updateLogicalHeight.
-    if (lineContexts.size() == 1) {
-        lineContexts[0].crossAxisExtent = crossAxisContentExtent();
-        return;
-    }
     
     if (position == ContentPosition::FlexStart)
         return;

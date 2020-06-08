@@ -1,3 +1,21 @@
+2020-06-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] align-content should apply even when there's just a single line
+        https://bugs.webkit.org/show_bug.cgi?id=209871
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations:
+        * css3/flexbox/alignContent-applies-with-flexWrap-wrap-with-single-line-expected.txt: Removed.
+        * css3/flexbox/alignContent-applies-with-flexWrap-wrap-with-single-line.html: Replaced by
+        WPT's align-content-wrap-001.html.
+        * css3/flexbox/flexbox-wordwrap-expected.txt: Removed.
+        * css3/flexbox/flexbox-wordwrap.html: Replaced by WPT's align-content-wrap-002.html.
+        * css3/flexbox/multiline-align-content-expected.txt: Removed.
+        * css3/flexbox/multiline-align-content.html: Replaced by WPT's align-content-wrap-003.html.
+        * platform/ios/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+        Updated expectations.
+
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update test expectations after r262708

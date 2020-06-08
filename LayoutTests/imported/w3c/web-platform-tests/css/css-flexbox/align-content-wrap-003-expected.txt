@@ -17,21 +17,9 @@ PASS .flexbox 15
 PASS .flexbox 16 
 PASS .flexbox 17 
 PASS .flexbox 18 
-FAIL .flexbox 19 assert_equals: 
-<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-between; height: 30px">
-  <div data-offset-x="0" data-offset-y="0" data-expected-height="10"></div>
-</div>
-height expected 10 but got 30
-FAIL .flexbox 20 assert_equals: 
-<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-around; height: 30px">
-  <div data-offset-x="0" data-offset-y="10" data-expected-height="10"></div>
-</div>
-height expected 10 but got 30
-FAIL .flexbox 21 assert_equals: 
-<div data-expected-height="30" class="flexbox horizontal" style="align-content: space-evenly; height: 30px">
-  <div data-offset-x="0" data-offset-y="10" data-expected-height="10"></div>
-</div>
-height expected 10 but got 30
+PASS .flexbox 19 
+PASS .flexbox 20 
+PASS .flexbox 21 
 PASS .flexbox 22 
 PASS .flexbox 23 
 PASS .flexbox 24 
@@ -51,21 +39,9 @@ PASS .flexbox 37
 PASS .flexbox 38 
 PASS .flexbox 39 
 PASS .flexbox 40 
-FAIL .flexbox 41 assert_equals: 
-<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-between; width: 30px">
-  <div data-offset-x="20" data-offset-y="0" data-expected-width="10"></div>
-</div>
-width expected 10 but got 30
-FAIL .flexbox 42 assert_equals: 
-<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-around; width: 30px">
-  <div data-offset-x="10" data-offset-y="0" data-expected-width="10"></div>
-</div>
-width expected 10 but got 30
-FAIL .flexbox 43 assert_equals: 
-<div data-expected-width="30" class="flexbox vertical-rl" style="align-content: space-evenly; width: 30px">
-  <div data-offset-x="10" data-offset-y="0" data-expected-width="10"></div>
-</div>
-width expected 10 but got 30
+PASS .flexbox 41 
+PASS .flexbox 42 
+PASS .flexbox 43 
 PASS .flexbox 44 
 Test to make sure that align-content works properly.
 
