@@ -654,6 +654,12 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         }
     }
 
+    if (!newRequest.url().host().isEmpty() && SecurityOrigin::shouldIgnoreHost(newRequest.url())) {
+        auto url = newRequest.url();
+        url.setHostAndPort({ });
+        newRequest.setURL(WTFMove(url));
+    }
+
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
         return completionHandler(WTFMove(newRequest));

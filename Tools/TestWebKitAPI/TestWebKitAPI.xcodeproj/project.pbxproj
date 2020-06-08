@@ -230,6 +230,7 @@
 		4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */; };
 		414AD6862285D1C000777F2D /* StorageQuota.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414AD6852285D1B000777F2D /* StorageQuota.mm */; };
 		41661C662355E85E00D33C27 /* getUserMedia-webaudio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 41661C652355D98B00D33C27 /* getUserMedia-webaudio.html */; };
+		41848F4424891879000E2588 /* open-window-with-file-url-with-host.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 41848F4324891815000E2588 /* open-window-with-file-url-with-host.html */; };
 		41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41882F0221010A70002FF288 /* ProcessPreWarming.mm */; };
 		44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */; };
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
@@ -1491,6 +1492,7 @@
 				CEA6CF2819CCF69D0064F5A7 /* open-and-close-window.html in Copy Resources */,
 				7CCB99231D3B4A46003922F6 /* open-multiple-external-url.html in Copy Resources */,
 				468BC45522653A1000A36C96 /* open-window-then-write-to-it.html in Copy Resources */,
+				41848F4424891879000E2588 /* open-window-with-file-url-with-host.html in Copy Resources */,
 				931C281E22BC579A001D98C4 /* opendatabase-always-exists.html in Copy Resources */,
 				290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */,
 				0F340779230382870060A1A0 /* overflow-scroll.html in Copy Resources */,
@@ -1878,6 +1880,7 @@
 		4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		414AD6852285D1B000777F2D /* StorageQuota.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = StorageQuota.mm; sourceTree = "<group>"; };
 		41661C652355D98B00D33C27 /* getUserMedia-webaudio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "getUserMedia-webaudio.html"; sourceTree = "<group>"; };
+		41848F4324891815000E2588 /* open-window-with-file-url-with-host.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "open-window-with-file-url-with-host.html"; sourceTree = "<group>"; };
 		41882F0221010A70002FF288 /* ProcessPreWarming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessPreWarming.mm; sourceTree = "<group>"; };
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
@@ -4148,6 +4151,7 @@
 				4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */,
 				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
 				468BC454226539C800A36C96 /* open-window-then-write-to-it.html */,
+				41848F4324891815000E2588 /* open-window-with-file-url-with-host.html */,
 				83148B08202AC76800BADE99 /* override-builtins-test.html */,
 				0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,

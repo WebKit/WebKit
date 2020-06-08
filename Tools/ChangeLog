@@ -1,3 +1,16 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        File URLs with hostnames are misleading
+        https://bugs.webkit.org/show_bug.cgi?id=212739
+        <rdar://problem/63754917>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/open-window-with-file-url-with-host.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/OpenAndCloseWindow.mm:
+        (TEST):
+
 2020-06-07  Caio Lima  <ticaiolima@gmail.com>
 
         Allow run-jsc-stress-tests still run if some of the remote hosts are not available

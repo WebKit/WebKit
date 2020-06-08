@@ -1,3 +1,19 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        File URLs with hostnames are misleading
+        https://bugs.webkit.org/show_bug.cgi?id=212739
+        <rdar://problem/63754917>
+
+        Reviewed by Alex Christensen.
+
+        Showing a file URL like file://example.org/test is misleading to users.
+        To prevent this, we just do a redirection to the same file URL with an empty host.
+        Remove the port at the same time.
+        Covered by added API test.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+
 2020-06-08  Rob Buis  <rbuis@igalia.com>
 
         Simplify fallback content handling in FrameLoader
