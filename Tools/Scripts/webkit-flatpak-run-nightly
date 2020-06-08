@@ -1,0 +1,184 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2020 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import argparse
+import os
+import sys
+import shlex
+import tempfile
+import time
+import subprocess
+import urllib.request
+from html.parser import HTMLParser
+
+REPO = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
+USER_DIR = os.path.expanduser("~/.cache/wk-nightly")
+
+def spinning_cursor():
+    while True:
+        for cursor in '|/-\\':
+            yield cursor
+
+# FIXME: Might be worth adding some JSON file listing builds on the servers.
+class MyHTMLParser(HTMLParser):
+    builds = []
+    def handle_starttag(self, tag, attrs):
+        if tag != "a":
+            return
+        for (name, value) in attrs:
+            if name == "href" and (value.startswith("release") or value.startswith("debug")):
+                self.builds.append(value)
+
+def flatpak(*args, env=None, stdout=None):
+    cmd_env = os.environ.copy()
+    if env:
+        cmd_env.update(env)
+    cmd_env["FLATPAK_USER_DIR"] = USER_DIR
+    return subprocess.call(("flatpak",) + args, env=cmd_env, stdout=stdout)
+
+def ensure_sdk(build_type):
+    if not os.path.isdir(USER_DIR):
+        flatpak("remote-add", "--user", "webkit-nightly", REPO)
+        flatpak("install", "--user", "-y", "org.webkit.Platform")
+    else:
+        flatpak("update", "--user", "-y")
+    if (build_type == "Debug") and (flatpak("info", "org.webkit.Sdk.Debug", stdout=subprocess.DEVNULL) >= 1):
+        flatpak("install", "--user", "-y", "org.webkit.Sdk")
+        flatpak("install", "--user", "-y", "org.webkit.Sdk.Debug")
+
+def get_build_path(platform, build_type, build_number):
+    dirname = f"{platform}-{build_type}-b{build_number}"
+    return os.path.join(tempfile.gettempdir(), dirname)
+
+def ensure_extracted_build(args):
+    build_type = args.build_type.lower()
+    if args.build_number:
+        path = get_build_path(args.platform, build_type, args.build_number)
+        if os.path.isdir(path):
+            return path
+
+    url = f"https://{args.platform}-{build_type}.igalia.com/built-products/"
+    with urllib.request.urlopen(url) as page_fd:
+        parser = MyHTMLParser()
+        parser.feed(page_fd.read().decode("utf-8"))
+        try:
+            latest = parser.builds[-1]
+        except IndexError:
+            print(f"No build found in {url}")
+            return ""
+        if args.build_number:
+            try:
+                build = [b for b in parser.builds if b.endswith(f"b{args.build_number}.zip")][0]
+            except IndexError:
+                print(f"Build {args.build_number} not found. Falling back to latest: {latest}")
+                build = latest
+        else:
+            build = latest
+        print(f"Downloading build {build} from {url}")
+        # Transform release_r262694_b34448.zip to 34448
+        build_number = int(os.path.splitext(build)[0].split("_")[2][1:])
+        with urllib.request.urlopen(f"{url}/{build}") as zip_fd:
+            with tempfile.NamedTemporaryFile() as zip_file:
+                data = zip_fd.read(8192)
+                spinner = spinning_cursor()
+                while data:
+                    zip_file.write(data)
+                    sys.stdout.write(next(spinner))
+                    sys.stdout.flush()
+                    data = zip_fd.read(8192)
+                    sys.stdout.write('\b')
+
+                path = get_build_path(args.platform, build_type, build_number)
+                print(f"Extracting build to {path}")
+                os.system(f"unzip -qq -o {zip_file.name} -d {path}")
+                return path
+
+def run(path, build_type, args):
+    env = {
+        "FLATPAK_BWRAP": os.path.realpath(__file__),
+        "WEBKIT_BUILD_DIR_BIND_MOUNT": f"/app/webkit/WebKitBuild/{build_type}:{path}",
+    }
+    flatpak("run", "--die-with-parent", "--user",
+            f"--env=PATH=/app/webkit/WebKitBuild/{build_type}/bin:/usr/bin",
+            "--device=dri",
+            "--share=ipc",
+            "--share=network",
+            "--socket=pulseaudio",
+            "--socket=system-bus",
+            "--socket=wayland",
+            "--socket=x11",
+            "--system-talk-name=org.a11y.Bus",
+            "--system-talk-name=org.freedesktop.GeoClue2",
+            "--talk-name=org.a11y.Bus",
+            "--talk-name=org.freedesktop.Flatpak",
+            "--talk-name=org.gtk.vfs",
+            "--talk-name=org.gtk.vfs.*",
+            f"--command={args[0]}", "org.webkit.Platform", *args[1:], env=env)
+
+def main(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build-number", type=int, help="Download a specific build (default: latest)",
+                        action='store', dest='build_number')
+    parser.add_argument("-p", action="store", dest="path", help="Reuse previously downloaded build from given path")
+    type_group = parser.add_mutually_exclusive_group()
+    type_group.add_argument("--debug", help="Download a debug build, also installs Sdk debug symbols.",
+                            dest='build_type', action="store_const", const="Debug")
+    type_group.add_argument("--release", help="Download a release build.",
+                            dest='build_type', action="store_const", const="Release")
+    platform_group = parser.add_mutually_exclusive_group()
+    platform_group.add_argument('--gtk', action='store_const', dest='platform', const='webkitgtk',
+                                help='Download and run GTK port build artefacts')
+    platform_group.add_argument('--wpe', action='store_const', dest='platform', const='wpewebkit',
+                                help=('Download and run WPE port build artefacts'))
+    parser.add_argument("command", nargs=argparse.REMAINDER, help="Command to execute (example: MiniBrowser, jsc)")
+    parsed, _ = parser.parse_known_args(args=args)
+    if not parsed.platform:
+        parsed.platform = "webkitgtk"
+    if not parsed.build_type:
+        parsed.build_type = "Release"
+
+    ensure_sdk(parsed.build_type)
+    if not parsed.path:
+        parsed.path = ensure_extracted_build(parsed)
+
+    if parsed.path:
+        run(parsed.path, parsed.build_type, parsed.command)
+
+def bwrap_main(args):
+    bind_mounts = {
+        "/run/shm": "/dev/shm",
+    }
+
+    build_path = os.environ.get("WEBKIT_BUILD_DIR_BIND_MOUNT")
+    if build_path:
+        dest, src = build_path.split(":")
+        bind_mounts[dest] = src
+
+    bwrap_args = ["bwrap", ]
+    for dst, src in bind_mounts.items():
+        bwrap_args.extend(["--bind", src, dst])
+
+    os.execvpe(bwrap_args[0], bwrap_args + args, os.environ)
+
+if __name__ == "__main__":
+    ld_library_path = os.environ.get("LD_LIBRARY_PATH", "")
+    if ld_library_path.startswith("/app") or "WEBKIT_BUILD_DIR_BIND_MOUNT" in os.environ:
+        bwrap_main(sys.argv[1:])
+    else:
+        main(sys.argv[1:])

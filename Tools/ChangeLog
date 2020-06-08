@@ -1,3 +1,31 @@
+2020-06-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add flatpak-run-nightly
+        https://bugs.webkit.org/show_bug.cgi?id=212882
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This new script is able to download WPE and GTK builds from the Igalia servers and run the
+        corresponding binaries (like MiniBrowser, jsc) within the Flatpak SDK.
+
+        Unzipped builds will be saved in /tmp and can be reused in further runs (by providing the
+        path with the -p argument).
+
+        Example:
+        $ webkit-flatpak-run-nightly --wpe MiniBrowser https://webkit.org
+        <SDK installs to ~/.cache/wk-nightly>
+        Downloading build release_r262699_b33885.zip from https://wpewebkit-release.igalia.com/built-products/
+        Extracting build to /tmp/wpewebkit-release-b33885
+        <MiniBrowser starts>
+
+        $ webkit-flatpak-run-nightly --wpe -p /tmp/wpewebkit-release-b33885 jsc
+        Looking for updates…
+        Nothing to do.
+        >>> 2+2
+        4
+
+        * Scripts/webkit-flatpak-run-nightly: Added.
+
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [webkitpy] Make 'webkit-path rebaseline' to not update expectations file by default
