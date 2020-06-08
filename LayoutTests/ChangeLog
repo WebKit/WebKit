@@ -1,3 +1,15 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        Add missed WebRTC media-source and remote-inbound-rtp stats
+        https://bugs.webkit.org/show_bug.cgi?id=206645
+        <rdar://problem/58833958>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-stats.html:
+        qpSum is no longer guaranteed to be there.
+        Also, we loop over stats to ensure we get all of them.
+
 2020-06-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for min/max-width/height

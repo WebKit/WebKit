@@ -152,25 +152,36 @@ promise_test(async (test) => {
     let stats = await getOutboundRTPStats(firstConnection);
     assert_true(!!stats, "outbound-rtp stats should not be null");
     assert_true(Number.isInteger(stats.framesEncoded), "framesEncoded should be an integer");
-    assert_true(Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
+    assert_true(!stats.qpSum || Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
     assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
     statsFirstConnection = stats;
 
     stats = await getInboundRTPStats(secondConnection);
     assert_true(!!stats, "inbound-rtp stats should not be null");
     assert_true(Number.isInteger(stats.framesDecoded), "framesDecoded should be an integer");
-    assert_true(Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
+    assert_true(!stats.qpSum || Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
     assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
     statsSecondConnection = stats;
 
     await checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
     await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
 
-    let types = await getStatsType(firstConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
+    let types;
+    do {
+        types = await getStatsType(firstConnection);
+        if (types.length != 12)
+            types = undefined;
+    } while(!types);
 
-    types = await getStatsType(secondConnection);
-    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "track", "transport"]);
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "track", "transport"], "first connection");
+
+    do {
+        types = await getStatsType(secondConnection);
+        if (types.length != 12)
+            types = undefined;
+    } while(!types);
+
+    assert_array_equals(types, ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "track", "transport"], "second connection");
 
      const audioSourceStats = await getAudioSourceStats(firstConnection);
      assert_true(!!audioSourceStats, "audio source presence");

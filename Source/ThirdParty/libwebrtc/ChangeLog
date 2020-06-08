@@ -1,3 +1,15 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        Add missed WebRTC media-source and remote-inbound-rtp stats
+        https://bugs.webkit.org/show_bug.cgi?id=206645
+        <rdar://problem/58833958>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2020-06-05  Youenn Fablet  <youenn@apple.com>
 
         Ad support for media-source stats

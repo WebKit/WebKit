@@ -1,3 +1,34 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        Add missed WebRTC media-source and remote-inbound-rtp stats
+        https://bugs.webkit.org/show_bug.cgi?id=206645
+        <rdar://problem/58833958>
+
+        Reviewed by Eric Carlson.
+
+        Update stats according latest spec and webrtc backend.
+        We still expose obsolete trackId for consistency with existing WPT tests.
+        Covered by existing and updated tests.
+
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats):
+        (WebCore::RTCStatsReport::RemoteInboundRtpStreamStats::RemoteInboundRtpStreamStats):
+        (WebCore::RTCStatsReport::OutboundRtpStreamStats::OutboundRtpStreamStats):
+        (WebCore::RTCStatsReport::InboundRTPStreamStats::InboundRTPStreamStats): Deleted.
+        (WebCore::RTCStatsReport::OutboundRTPStreamStats::OutboundRTPStreamStats): Deleted.
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillRtpStreamStats):
+        (WebCore::fillReceivedRtpStreamStats):
+        (WebCore::fillInboundRtpStreamStats):
+        (WebCore::fillRemoteInboundRtpStreamStats):
+        (WebCore::fillSentRtpStreamStats):
+        (WebCore::fillOutboundRtpStreamStats):
+        (WebCore::initializeRTCStatsReportBackingMap):
+        (WebCore::fillRTCRTPStreamStats): Deleted.
+        (WebCore::fillInboundRTPStreamStats): Deleted.
+        (WebCore::fillOutboundRTPStreamStats): Deleted.
+
 2020-06-08  Jonathan Bedard  <jbedard@apple.com>
 
         WebCore: Add tvOS and watchOS SPI headers

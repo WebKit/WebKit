@@ -49,6 +49,7 @@ public:
         OutboundRtp,
         PeerConnection,
         RemoteCandidate,
+        RemoteInboundRtp,
         Track,
         Transport
     };
@@ -58,50 +59,141 @@ public:
         String id;
     };
 
-    struct RTCRTPStreamStats : Stats {
-        Optional<uint32_t> ssrc;
-        bool isRemote { false };
+    struct RtpStreamStats : Stats {
+        uint32_t ssrc { 0 };
+        String kind;
         String mediaType;
-
-        String trackId;
         String transportId;
         String codecId;
-        Optional<uint32_t> firCount;
-        Optional<uint32_t> pliCount;
-        Optional<uint32_t> nackCount;
-        Optional<uint32_t> sliCount;
-        Optional<uint64_t> qpSum;
     };
 
-    struct InboundRTPStreamStats : RTCRTPStreamStats {
-        InboundRTPStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
-
-        Optional<uint32_t> packetsReceived;
-        Optional<uint64_t> bytesReceived;
-        Optional<uint32_t> packetsLost;
+    struct ReceivedRtpStreamStats : RtpStreamStats {
+        Optional<uint64_t> packetsReceived;
+        Optional<int64_t> packetsLost;
         Optional<double> jitter;
-        Optional<double> fractionLost;
-        Optional<uint32_t> packetsDiscarded;
-        Optional<uint32_t> packetsRepaired;
-        Optional<uint32_t> burstPacketsLost;
-        Optional<uint32_t> burstPacketsDiscarded;
+        Optional<uint64_t> packetsDiscarded;
+        Optional<uint64_t> packetsRepaired;
+        Optional<uint64_t> burstPacketsLost;
+        Optional<uint64_t> burstPacketsDiscarded;
         Optional<uint32_t> burstLossCount;
         Optional<uint32_t> burstDiscardCount;
         Optional<double> burstLossRate;
         Optional<double> burstDiscardRate;
         Optional<double> gapLossRate;
         Optional<double> gapDiscardRate;
-        Optional<uint32_t> framesDecoded;
+        Optional<uint32_t> framesDropped;
+        Optional<uint32_t> partialFramesLost;
+        Optional<uint32_t> fullFramesLost;
     };
 
-    struct OutboundRTPStreamStats : RTCRTPStreamStats {
-        OutboundRTPStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
+    struct InboundRtpStreamStats : ReceivedRtpStreamStats {
+        InboundRtpStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
+        String receiverId;
+        String remoteId;
+        Optional<uint32_t> framesDecoded;
+        Optional<uint32_t> keyFramesDecoded;
+        Optional<uint32_t> frameWidth;
+        Optional<uint32_t> frameHeight;
+        Optional<uint32_t> frameBitDepth;
+        Optional<double> framesPerSecond;
+        Optional<uint64_t> qpSum;
+        Optional<double> totalDecodeTime;
+        Optional<double> totalInterFrameDelay;
+        Optional<double> totalSquaredInterFrameDelay;
+        Optional<bool>  voiceActivityFlag;
+        Optional<double> lastPacketReceivedTimestamp;
+        Optional<double> averageRtcpInterval;
+        Optional<uint64_t> headerBytesReceived;
+        Optional<uint64_t> fecPacketsReceived;
+        Optional<uint64_t> fecPacketsDiscarded;
+        Optional<uint64_t> bytesReceived;
+        Optional<uint64_t> packetsFailedDecryption;
+        Optional<uint64_t> packetsDuplicated;
+        Optional<uint32_t> nackCount;
+        Optional<uint32_t> firCount;
+        Optional<uint32_t> pliCount;
+        Optional<uint32_t> sliCount;
+        Optional<double> estimatedPlayoutTimestamp;
+        Optional<double> jitterBufferDelay;
+        Optional<uint64_t> jitterBufferEmittedCount;
+        Optional<uint64_t> totalSamplesReceived;
+        Optional<uint64_t> samplesDecodedWithSilk;
+        Optional<uint64_t> samplesDecodedWithCelt;
+        Optional<uint64_t> concealedSamples;
+        Optional<uint64_t> silentConcealedSamples;
+        Optional<uint64_t> concealmentEvents;
+        Optional<uint64_t> insertedSamplesForDeceleration;
+        Optional<uint64_t> removedSamplesForAcceleration;
+        Optional<double> audioLevel;
+        Optional<double> totalAudioEnergy;
+        Optional<double> totalSamplesDuration;
+        Optional<uint32_t> framesReceived;
+
+        String trackId;
+    };
+
+    struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
+        RemoteInboundRtpStreamStats() { type = RTCStatsReport::Type::RemoteInboundRtp; }
+
+        String localId;
+        Optional<double> roundTripTime;
+        Optional<double> totalRoundTripTime;
+        Optional<double> fractionLost;
+        Optional<uint64_t> reportsReceived;
+        Optional<uint64_t> roundTripTimeMeasurements;
+    };
+
+    struct SentRtpStreamStats : RtpStreamStats {
         Optional<uint32_t> packetsSent;
         Optional<uint64_t> bytesSent;
-        Optional<double> targetBitrate;
-        Optional<uint32_t> framesEncoded;
+    };
+
+    struct OutboundRtpStreamStats : SentRtpStreamStats {
+        OutboundRtpStreamStats() { type = RTCStatsReport::Type::OutboundRtp; }
+
+        Optional<uint32_t> rtxSsrc;
         String mediaSourceId;
+        String senderId;
+        String remoteId;
+        String rid;
+        Optional<double> lastPacketSentTimestamp;
+        Optional<uint64_t> headerBytesSent;
+        Optional<uint32_t> packetsDiscardedOnSend;
+        Optional<uint64_t> bytesDiscardedOnSend;
+        Optional<uint32_t> fecPacketsSent;
+        Optional<uint64_t> retransmittedPacketsSent;
+        Optional<uint64_t> retransmittedBytesSent;
+        Optional<double> targetBitrate;
+        Optional<uint64_t> totalEncodedBytesTarget;
+        Optional<uint32_t> frameWidth;
+        Optional<uint32_t> frameHeight;
+        Optional<uint32_t> frameBitDepth;
+        Optional<double> framesPerSecond;
+        Optional<uint32_t> framesSent;
+        Optional<uint32_t> hugeFramesSent;
+        Optional<uint32_t> framesEncoded;
+        Optional<uint32_t> keyFramesEncoded;
+        Optional<uint32_t> framesDiscardedOnSend;
+        Optional<uint64_t> qpSum;
+        Optional<uint64_t> totalSamplesSent;
+        Optional<uint64_t> samplesEncodedWithSilk;
+        Optional<uint64_t> samplesEncodedWithCelt;
+        Optional<bool> voiceActivityFlag;
+        Optional<double> totalEncodeTime;
+        Optional<double> totalPacketSendDelay;
+        Optional<double> averageRtcpInterval;
+        // Optional<RTCQualityLimitationReason qualityLimitationReason;
+        // Optional<record<DOMString, double> qualityLimitationDurations;
+        Optional<uint32_t> qualityLimitationResolutionChanges;
+        // Optional<record<USVString, unsigned long long> perDscpPacketsSent;
+        Optional<uint32_t> nackCount;
+        Optional<uint32_t> firCount;
+        Optional<uint32_t> pliCount;
+        Optional<uint32_t> sliCount;
+        // DOMString encoderImplementation;
+
+        String trackId;
     };
 
     struct MediaStreamTrackStats : Stats {
