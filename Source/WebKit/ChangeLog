@@ -1,3 +1,20 @@
+2020-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Turn some WebPageProxy logging into error logging
+        https://bugs.webkit.org/show_bug.cgi?id=212922
+        <rdar://problem/63894722>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+        (WebKit::WebPageProxy::tryReloadAfterProcessTermination):
+        (WebKit::WebPageProxy::didExceedInactiveMemoryLimitWhileActive):
+        (WebKit::WebPageProxy::didExceedBackgroundCPULimitWhileInForeground):
+
 2020-06-08  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for DragOperation
