@@ -1,3 +1,19 @@
+2020-06-08  Richard Houle  <rhoule@apple.com>
+
+        Links in NSAttributedString passed to -[WKWebView _showSafeBrowsingWarningWithURL:title:warning:details:completionHandler:] are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=212801
+        <rdar://problem/63027631>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]): Call the new detailsWithLinks
+        implementation, asserting if an URL is non nil.
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:details:completionHandler:]): Ditto.
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:detailsWithLinks:completionHandler:]): Pass the URL to
+        the completion handler when appropriate.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2020-06-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Adopt read-only mode for preferences in the WebContent process
