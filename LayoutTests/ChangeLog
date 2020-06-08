@@ -1,5 +1,17 @@
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Gardening, update expectations after 262724
+        https://bugs.webkit.org/show_bug.cgi?id=212926
+
+        Unreviewed gardening.
+
+        Add failure to test expectationd and remove failing test that is
+        passing since r262466.
+
+        * platform/gtk/TestExpectations:
+
+2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK][WPE] Remove test failures passing after r262707
         https://bugs.webkit.org/show_bug.cgi?id=212924
 
