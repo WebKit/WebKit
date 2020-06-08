@@ -1,3 +1,21 @@
+2020-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Hit-testing on icloud.com is offset after closing a tab
+        https://bugs.webkit.org/show_bug.cgi?id=212890
+        <rdar://problem/58775297>
+
+        Reviewed by Simon Fraser.
+
+        Add a new API test to verify that the scroll position doesn't get stuck at -30px after shifting both the top
+        content inset and top obscured inset by 30px. See WebKit ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/overflow-hidden.html: Added.
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (-[ScrollViewDelegate scrollViewDidScroll:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-06-08  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add flatpak-run-nightly

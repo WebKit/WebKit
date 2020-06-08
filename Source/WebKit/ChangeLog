@@ -1,3 +1,50 @@
+2020-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Hit-testing on icloud.com is offset after closing a tab
+        https://bugs.webkit.org/show_bug.cgi?id=212890
+        <rdar://problem/58775297>
+
+        Reviewed by Simon Fraser.
+
+        After tapping to create a new tab on the icloud.com settings page (with no other tabs open) and then closing the
+        new tab, all hit-testing on the page is offset by -33px until the page is reloaded. This bug appears to be a
+        corner case triggered by a combination of the following three changes:
+
+        - <https://trac.webkit.org/r170463>
+        - <https://trac.webkit.org/r245006>
+        - <rdar://problem/53660458> (which is an iOS-specific Safari change)
+
+        We start on icloud.com's settings page. When closing the newly created tab, Safari hides the tab bar, causing
+        both the top content inset and top obscured inset to decrease by 33 points. When applying the top content inset
+        change, Safari (after <rdar://problem/53660458>) temporarily sets `_automaticContentOffsetAdjustmentEnabled` on
+        `WKScrollView` to `NO`, which means that the scroll view doesn't automatically adjust its content offset to -70;
+        instead, it remains at -103 (the content offset when the tab bar is shown).
+
+        Because of this, during the next remote layer tree commit where the content size changes,
+        `-_setContentSizePreservingContentOffsetDuringRubberband:` will believe that we're currently rubber-banding by
+        33px, and therefore try to adjust the content offset of the scroll view to be -103 instead of allowing it to be
+        adjusted back to -70 (see r170463 and `-_restoreContentOffsetWithRubberbandAmount:`).
+
+        This results in the scroll position on the page (`document.scrollingElement.scrollTop`) reporting -33, even
+        though the top of the page is flush with the bottom of Safari's browser chrome. Finally, because `WKScrollView`
+        is made unscrollable due to `overflow: hidden;` (r245006), we end up permanently stuck in this state until the
+        next page load, rather than the next remote layer tree commit that causes any scrolling.
+
+        To fix this, add an additional restriction on the rubberbanding offset restoration code in
+        `-_setContentSizePreservingContentOffsetDuringRubberband:`, such that we only try to preserve the current
+        rubberbanded offset if we're actually rubberbanding (that is, dragging or bouncing against the edge of the
+        scroll view). Note that when rubberbanding against the top of the scroll view on iPad using a trackpad, the
+        `-isDragging` property is also true, which matches behavior when panning via touch.
+
+        Test: ScrollViewInsetTests.ChangeInsetWithoutAutomaticAdjustmentWhileWebProcessIsUnresponsive
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _setContentSizePreservingContentOffsetDuringRubberband:]):
+
+        Also, split out the `CGSizeEqualToSize(currentContentSize, contentSize)` case into a separate early return that
+        skips the call to `-setContentSize:` altogether.
+
 2020-06-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Remove -respondsToSelector: check before calling -[PKPaymentRequest setBoundInterfaceIdentifier:]

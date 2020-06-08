@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+    function hangFor(ms) {
+        const startTime = Date.now();
+        while (1) {
+            if (Date.now() - startTime > ms)
+                break;
+        }
+    }
+
+    function setBodyHeight(height) {
+        document.body.style.height = `${height}px`;
+    }
+    </script>
+    <style>
+        html, body {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+</body>
+</html>

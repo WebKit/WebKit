@@ -32,6 +32,23 @@
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/Vector.h>
+
+@interface ScrollViewDelegate : NSObject<UIScrollViewDelegate> {
+    @public Vector<CGPoint> _contentOffsetHistory;
+}
+@end
+
+@implementation ScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    auto contentOffset = scrollView.contentOffset;
+    if (_contentOffsetHistory.isEmpty() || !CGPointEqualToPoint(_contentOffsetHistory.last(), contentOffset))
+        _contentOffsetHistory.append(contentOffset);
+}
+
+@end
 
 @interface AsyncPolicyDelegateForInsetTest : NSObject<WKNavigationDelegate> {
     @public bool _navigationComplete;
@@ -204,6 +221,42 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrashWithAsyncPolicyD
     EXPECT_EQ(initialContentOffset.y, contentOffsetAfterCrash.y);
     EXPECT_EQ(0, initialContentOffset.x);
     EXPECT_EQ(-400, initialContentOffset.y);
+}
+
+TEST(ScrollViewInsetTests, ChangeInsetWithoutAutomaticAdjustmentWhileWebProcessIsUnresponsive)
+{
+    constexpr CGFloat initialTopInset = 100;
+    constexpr CGFloat updatedTopInset = 70;
+
+    auto scrollViewDelegate = adoptNS([[ScrollViewDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView scrollView].scrollEnabled = NO;
+    [webView scrollView].delegate = scrollViewDelegate.get();
+    [webView _setObscuredInsets:UIEdgeInsetsMake(initialTopInset, 0, 0, 0)];
+    [webView scrollView].contentInset = UIEdgeInsetsMake(initialTopInset, 0, 0, 0);
+    [webView synchronouslyLoadTestPageNamed:@"overflow-hidden"];
+
+    UIWindow *window = [webView window];
+    [webView evaluateJavaScript:@"setBodyHeight(2000); hangFor(500)" completionHandler:nil];
+    [webView removeFromSuperview];
+
+    __block bool done = false;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [window addSubview:webView.get()];
+        [webView _setObscuredInsets:UIEdgeInsetsMake(updatedTopInset, 0, 0, 0)];
+        [[webView scrollView] _setAutomaticContentOffsetAdjustmentEnabled:NO];
+        [webView scrollView].contentInset = UIEdgeInsetsMake(updatedTopInset, 0, 0, 0);
+        [[webView scrollView] _setAutomaticContentOffsetAdjustmentEnabled:YES];
+        done = true;
+    });
+
+    TestWebKitAPI::Util::run(&done);
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(2U, scrollViewDelegate->_contentOffsetHistory.size());
+    EXPECT_EQ(-100, scrollViewDelegate->_contentOffsetHistory.first().y);
+    EXPECT_EQ(-70, scrollViewDelegate->_contentOffsetHistory.last().y);
+    EXPECT_EQ(0, [[webView stringByEvaluatingJavaScript:@"document.scrollingElement.scrollTop"] intValue]);
 }
 
 } // namespace TestWebKitAPI
