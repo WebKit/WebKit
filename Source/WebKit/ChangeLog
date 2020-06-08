@@ -1,5 +1,18 @@
 2020-06-08  Andy Estes  <aestes@apple.com>
 
+        [Apple Pay] Remove -respondsToSelector: check before calling -[PKPaymentRequest setBoundInterfaceIdentifier:]
+        https://bugs.webkit.org/show_bug.cgi?id=212884
+        <rdar://problem/64090963>
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Relied on the definition of
+        HAVE_PASSKIT_BOUND_INTERFACE_IDENTIFIER to ensure that PKPaymentRequest will respond to
+        -setBoundInterfaceIdentifier:.
+
+2020-06-08  Andy Estes  <aestes@apple.com>
+
         [Apple Pay] Remove ENABLE_APPLE_PAY_SETUP, ENABLE_APPLE_PAY_SESSION_V7, and HAVE_PASSKIT_PAYMENT_SETUP
         https://bugs.webkit.org/show_bug.cgi?id=212883
         <rdar://problem/64090763>

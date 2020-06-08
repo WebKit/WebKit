@@ -50,13 +50,6 @@
 @property (nonatomic, strong) NSURL *thumbnailURL;
 @end
 
-#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
-// FIXME: Remove once rdar://problem/48041516 is widely available in SDKs.
-@interface PKPaymentRequest (Staging)
-@property (nonatomic, copy) NSString *boundInterfaceIdentifier;
-@end
-#endif
-
 namespace WebKit {
 
 static void finishCreating(PKPaymentRequest *platformRequest, const WebCore::ApplePaySessionPaymentRequest& request)
@@ -247,9 +240,8 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
 
 #if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
-    // FIXME: Remove -respondsToSelector: check once rdar://problem/48041516 is widely available in SDKs.
     auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this);
-    if (!boundInterfaceIdentifier.isEmpty() && [result respondsToSelector:@selector(setBoundInterfaceIdentifier:)])
+    if (!boundInterfaceIdentifier.isEmpty())
         [result setBoundInterfaceIdentifier:boundInterfaceIdentifier];
 #endif
 
