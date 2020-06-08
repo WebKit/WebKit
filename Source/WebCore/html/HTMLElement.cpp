@@ -1073,9 +1073,9 @@ static Optional<SimpleColor> parseLegacyColorValue(StringView string)
     ASSERT(blueIndex >= componentLength * 2);
     ASSERT_WITH_SECURITY_IMPLICATION(blueIndex + 1 < digitBuffer.size());
 
-    int redValue = toASCIIHexValue(digitBuffer[redIndex], digitBuffer[redIndex + 1]);
-    int greenValue = toASCIIHexValue(digitBuffer[greenIndex], digitBuffer[greenIndex + 1]);
-    int blueValue = toASCIIHexValue(digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);
+    uint8_t redValue = toASCIIHexValue(digitBuffer[redIndex], digitBuffer[redIndex + 1]);
+    uint8_t greenValue = toASCIIHexValue(digitBuffer[greenIndex], digitBuffer[greenIndex + 1]);
+    uint8_t blueValue = toASCIIHexValue(digitBuffer[blueIndex], digitBuffer[blueIndex + 1]);
     return makeSimpleColor(redValue, greenValue, blueValue);
 }
 

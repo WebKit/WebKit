@@ -78,8 +78,7 @@ static SimpleColor makeSimpleColorFromCGColor(CGColorRef color)
         ASSERT_NOT_REACHED();
     }
 
-    static const double scaleFactor = nextafter(256.0, 0.0);
-    return makeSimpleColor(r * scaleFactor, g * scaleFactor, b * scaleFactor, a * scaleFactor);
+    return makeSimpleColorFromFloats(r, g, b, a);
 }
 
 Color::Color(CGColorRef color)

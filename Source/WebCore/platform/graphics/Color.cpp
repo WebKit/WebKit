@@ -105,11 +105,8 @@ Color Color::lighten() const
     // Hardcode this common case for speed.
     if (!isExtended() && asSimple() == black)
         return lightenedBlack;
-    
-    const float scaleFactor = nextafterf(256.0f, 0.0f);
 
     auto [r, g, b, a] = toSRGBAComponentsLossy();
-
     float v = std::max({ r, g, b });
 
     if (v == 0.0f)
@@ -117,12 +114,7 @@ Color Color::lighten() const
 
     float multiplier = std::min(1.0f, v + 0.33f) / v;
 
-    return makeSimpleColor(
-        static_cast<int>(multiplier * r * scaleFactor),
-        static_cast<int>(multiplier * g * scaleFactor),
-        static_cast<int>(multiplier * b * scaleFactor),
-        alpha()
-    );
+    return makeSimpleColorFromFloats(multiplier * r, multiplier * g, multiplier * b, a);
 }
 
 Color Color::darken() const
@@ -131,19 +123,12 @@ Color Color::darken() const
     if (!isExtended() && asSimple() == white)
         return darkenedWhite;
     
-    const float scaleFactor = nextafterf(256.0f, 0.0f);
-
     auto [r, g, b, a] = toSRGBAComponentsLossy();
 
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
-    return makeSimpleColor(
-        static_cast<int>(multiplier * r * scaleFactor),
-        static_cast<int>(multiplier * g * scaleFactor),
-        static_cast<int>(multiplier * b * scaleFactor),
-        alpha()
-    );
+    return makeSimpleColorFromFloats(multiplier * r, multiplier * g, multiplier * b, a);
 }
 
 bool Color::isDark() const
@@ -225,41 +210,14 @@ Color Color::blendWithWhite() const
     return result;
 }
 
-Color Color::colorWithAlphaMultipliedBy(float amount) const
-{
-    float newAlpha = amount * alphaAsFloat();
-    return colorWithAlpha(newAlpha);
-}
-
-Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(float amount) const
-{
-    float newAlpha = amount * alphaAsFloat();
-    return colorWithAlphaUsingAlternativeRounding(newAlpha);
-}
-
 Color Color::colorWithAlpha(float alpha) const
 {
     if (isExtended())
         return asExtended().colorWithAlpha(alpha);
 
-    // FIXME: This is where this function differs from colorWithAlphaUsingAlternativeRounding.
-    uint8_t newAlpha = alpha * 0xFF;
+    Color result = asSimple().colorWithAlpha(convertToComponentByte(alpha));
 
-    Color result = asSimple().colorWithAlpha(newAlpha);
-    if (isSemantic())
-        result.tagAsSemantic();
-    return result;
-}
-
-Color Color::colorWithAlphaUsingAlternativeRounding(float alpha) const
-{
-    if (isExtended())
-        return asExtended().colorWithAlpha(alpha);
-
-    // FIXME: This is where this function differs from colorWithAlphaUsing.
-    uint8_t newAlpha = scaleRoundAndClampColorChannel(alpha);
-
-    Color result = asSimple().colorWithAlpha(newAlpha);
+    // FIXME: Why is preserving the semantic bit desired and/or correct here?
     if (isSemantic())
         result.tagAsSemantic();
     return result;
@@ -269,7 +227,7 @@ Color Color::invertedColorWithAlpha(float alpha) const
 {
     if (isExtended())
         return asExtended().invertedColorWithAlpha(alpha);
-    return asSimple().invertedColorWithAlpha(scaleRoundAndClampColorChannel(alpha));
+    return asSimple().invertedColorWithAlpha(convertToComponentByte(alpha));
 }
 
 Color Color::semanticColor() const
@@ -290,7 +248,7 @@ std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() c
 SimpleColor Color::toSRGBASimpleColorLossy() const
 {
     if (isExtended())
-        return makeSimpleColor(toSRGBAComponentsLossy());
+        return makeSimpleColor(asExtended().toSRGBAComponentsLossy());
     return asSimple();
 }
 

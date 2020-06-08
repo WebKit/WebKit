@@ -1,3 +1,14 @@
+2020-06-08  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Unify rounding / clamping conversions between 0-1 float components and 0-255 byte components
+        https://bugs.webkit.org/show_bug.cgi?id=212871
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (scrollViewBackgroundColor):
+        Replaces uses of colorWithAlphaUsingAlternativeRounding() with colorWithAlpha().
+
 2020-06-08  Richard Houle  <rhoule@apple.com>
 
         Links in NSAttributedString passed to -[WKWebView _showSafeBrowsingWarningWithURL:title:warning:details:completionHandler:] are ignored

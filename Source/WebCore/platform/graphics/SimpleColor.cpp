@@ -67,34 +67,13 @@ SimpleColor makeUnpremultipliedSimpleColor(SimpleColor pixelColor)
     return pixelColor;
 }
 
-SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a)
-{
-    return makeSimpleColor(
-        scaleRoundAndClampColorChannel(r),
-        scaleRoundAndClampColorChannel(g),
-        scaleRoundAndClampColorChannel(b),
-        scaleRoundAndClampColorChannel(a)
-    );
-}
-
-SimpleColor makeSimpleColorFromHSLA(float hue, float saturation, float lightness, float alpha)
-{
-    auto [r, g, b, a] = hslToSRGB({ hue, saturation, lightness, alpha });
-    return makeSimpleColor(
-        round(r * 255.0f),
-        round(g * 255.0f),
-        round(b * 255.0f),
-        round(a * 255.0f)
-    );
-}
-
 SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a)
 {
-    double colors = 1 - k;
-    int r = static_cast<int>(nextafter(256, 0) * (colors * (1 - c)));
-    int g = static_cast<int>(nextafter(256, 0) * (colors * (1 - m)));
-    int b = static_cast<int>(nextafter(256, 0) * (colors * (1 - y)));
-    return makeSimpleColor(r, g, b, static_cast<float>(nextafter(256, 0) * a));
+    float colors = 1 - k;
+    float r = colors * (1.0f - c);
+    float g = colors * (1.0f - m);
+    float b = colors * (1.0f - y);
+    return makeSimpleColorFromFloats(r, g, b, a);
 }
 
 String SimpleColor::serializationForHTML() const

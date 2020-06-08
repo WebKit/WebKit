@@ -78,7 +78,7 @@ static void prepareCairoContextSource(cairo_t* cr, cairo_pattern_t* pattern, cai
     } else {
         // Solid color source
         if (globalAlpha < 1)
-            setSourceRGBAFromColor(cr, color.colorWithAlphaMultipliedByUsingAlternativeRounding(globalAlpha));
+            setSourceRGBAFromColor(cr, color.colorWithAlphaMultipliedBy(globalAlpha));
         else
             setSourceRGBAFromColor(cr, color);
     }

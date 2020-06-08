@@ -94,7 +94,7 @@ Color SVGStopElement::stopColorIncludingOpacity() const
     auto& svgStyle = style.svgStyle();
     auto stopColor = style.colorResolvingCurrentColor(svgStyle.stopColor());
 
-    return stopColor.colorWithAlphaMultipliedByUsingAlternativeRounding(svgStyle.stopOpacity());
+    return stopColor.colorWithAlphaMultipliedBy(svgStyle.stopOpacity());
 }
 
 }

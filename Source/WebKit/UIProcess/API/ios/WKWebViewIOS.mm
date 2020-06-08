@@ -513,7 +513,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     if (zoomScale < minimumZoomScale) {
         CGFloat slope = 12;
         CGFloat opacity = std::max<CGFloat>(1 - slope * (minimumZoomScale - zoomScale), 0);
-        color = color.colorWithAlphaUsingAlternativeRounding(opacity);
+        color = color.colorWithAlpha(opacity);
     }
 
     return color;

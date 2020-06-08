@@ -1,5 +1,151 @@
 2020-06-08  Sam Weinig  <weinig@apple.com>
 
+        Extended Color: Unify rounding / clamping conversions between 0-1 float components and 0-255 byte components
+        https://bugs.webkit.org/show_bug.cgi?id=212871
+
+        Reviewed by Simon Fraser.
+        
+        Unify all conversions of 0.0f - 1.0f float based color components to 0-255 int based color components
+        to use the new convertToComponentByte() function which scales, rounds (using lroundf) and clamps the
+        value. For consistency, a convertToComponentFloat() function, which just scales down an int based value
+        to a float based value, is also added.
+        
+        - Removes *UsingAlternativeRounding variants (actually, we now only have this variant) for color functions
+          which allowed callers to pick from truncation vs. rounding when overriding alpha.
+        - Replaces all uses of scaleRoundAndClampColorChannel() with convertToComponentByte() (really just a rename).
+        - Replaces uses of nextafter(256, 0) based conversions with convertToComponentByte().
+        
+        Also:
+        - Moves roundAndClampColorChannel() functions to SVGAnimationAdditiveValueFunctionImpl.h, which was
+          the only places they were used.
+        - Removes areEssentiallyEqual() overload taking ColorComponents<float>. It was ununsed.
+        - Removes makeSimpleColorFromHSLA(...) and just inlines makeSimpleColor(hslToSRGB(...)) which now
+          does the same thing.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::clampRGBComponent):
+        Use convertPrescaledToComponentByte() to round and clamp the components.
+
+        (WebCore::CSSPropertyParserHelpers::parseRGBParameters):
+        Use uint8_t more consistently now that helpers ensure that is the return type
+        of conversion functions.
+
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        Switch to using makeSimpleColor(hslToSRGB(...)) directly.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        Switch to using makeSimpleColor(hslToSRGB(...)) directly.
+
+        * html/HTMLElement.cpp:
+        (WebCore::parseLegacyColorValue):
+        Use uint8_t since that is what toASCIIHexValue() returns.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2DBase::setFillStyle):
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        Replaces uses of colorWithAlphaUsingAlternativeRounding() with colorWithAlpha().
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        Use convertToComponentByte() rather than a simple truncating cast.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::light const):
+        (WebCore::Color::dark const):
+        Use makeSimpleColorFromFloats() rather than nextafterf(256.0f, 0.0f) conversion.
+
+        (WebCore::Color::colorWithAlpha const):
+        (WebCore::Color::invertedColorWithAlpha const):
+        Use convertToComponentByte() for alpha conversion.
+        
+        (WebCore::Color::toSRGBASimpleColorLossy const):
+        Call asExtended().toSRGBAComponentsLossy() directly to avoid unnecessary branch.
+        
+        (WebCore::Color::colorWithAlphaMultipliedBy const): Deleted.
+        (WebCore::Color::colorWithAlphaMultipliedByUsingAlternativeRounding const): Deleted.
+        (WebCore::Color::colorWithAlphaUsingAlternativeRounding const): Deleted.
+        Remove UsingAlternativeRounding variants.
+
+        * platform/graphics/Color.h:
+        (WebCore::Color::alpha const):
+        Use convertToComponentByte() for alpha conversion.
+
+        (WebCore::Color::invertedColorWithAlpha const):
+        Add an overload taking an Optional<float> for consistency.
+
+        (WebCore::Color::colorWithAlphaMultipliedBy const):
+        (WebCore::Color::colorWithAlpha const):
+        Simplify by inlining all variants except the main colorWithAlpha().
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::areEssentiallyEqual): Deleted.
+        Remove unused function.
+
+        * platform/graphics/ColorUtilities.h:
+        (WebCore::convertPrescaledToComponentByte):
+        Added. Useful for callers who already have prescaled values but need rounding/clamping.
+
+        (WebCore::convertToComponentByte):
+        Added. Bottleneck for float to byte based color component conversions.
+        (WebCore::convertToComponentFloat):
+        Added. Bottleneck for byte to float based color component conversions.
+
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::makeSimpleColorFromCMYKA):
+        Use makeSimpleColorFromFloats() rather than nextafterf(256.0f, 0.0f) conversion. Eventually,
+        when we probably want this to go away and store CMYKA colors as ExtendedColors with their own
+        color space. 
+
+        (WebCore::makeSimpleColorFromFloats): 
+        Moved to header.
+
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::alphaComponentAsFloat const):
+        Use convertToComponentFloat().
+
+        (WebCore::SimpleColor::asSRGBFloatComponents const):
+        Use convertToComponentFloat().
+
+        (WebCore::makeSimpleColor):
+        Avoid unncessary clamping of the alpha component by calling constructor directly.
+
+        (WebCore::makeSimpleColorFromFloats):
+        Inlined. Calls convertToComponentByte now rather than the older (identical) scaleRoundAndClampColorChannel().
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::prepareCairoContextSource):
+        Replaces use of colorWithAlphaMultipliedByUsingAlternativeRounding with colorWithAlphaMultipliedBy().
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::makeSimpleColorFromCGColor):
+        Use makeSimpleColorFromFloats() rather than nextafter(256.0, 0.0) conversion.
+
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::platformApplySoftware):
+        Replaces use of colorWithAlphaMultipliedByUsingAlternativeRounding with colorWithAlphaMultipliedBy().
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        Use makeSimpleColorFromFloats() rather than nextafter(256.0, 0.0) conversion.
+
+        * platform/ios/ColorIOS.mm:
+        (WebCore::colorFromUIColor):
+        Use makeSimpleColorFromFloats() rather than nextafter(256.0, 0.0) conversion.
+
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity const):
+        Replaces use of colorWithAlphaMultipliedByUsingAlternativeRounding with colorWithAlphaMultipliedBy().
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationColorFunction::roundAndClampColorChannel):
+        Moved from ColorUtilities.h as this was the only use.
+
+2020-06-08  Sam Weinig  <weinig@apple.com>
+
         Extended Color: Replace uses of differenceSquared() with luminance based computations
         https://bugs.webkit.org/show_bug.cgi?id=212872
 

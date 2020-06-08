@@ -114,6 +114,16 @@ public:
     }
 
 private:
+    inline uint8_t roundAndClampColorChannel(int value)
+    {
+        return std::clamp(value, 0, 255);
+    }
+
+    inline uint8_t roundAndClampColorChannel(float value)
+    {
+        return std::clamp(std::roundf(value), 0.0f, 255.0f);
+    }
+
     void addFromAndToValues(SVGElement*) override
     {
         auto simpleFrom = m_from.toSRGBASimpleColorLossy();

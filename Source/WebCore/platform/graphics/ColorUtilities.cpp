@@ -31,14 +31,6 @@
 
 namespace WebCore {
 
-bool areEssentiallyEqual(const ColorComponents<float>& a, const ColorComponents<float>& b)
-{
-    return WTF::areEssentiallyEqual(a[0], b[0])
-        && WTF::areEssentiallyEqual(a[1], b[1])
-        && WTF::areEssentiallyEqual(a[2], b[2])
-        && WTF::areEssentiallyEqual(a[3], b[3]);
-}
-
 // These are the standard sRGB <-> linearRGB conversion functions (https://en.wikipedia.org/wiki/SRGB).
 float linearToRGBColorComponent(float c)
 {

@@ -517,13 +517,13 @@ RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createValue(url.toString(), CSSUnitType::CSS_URI);
 }
 
-static int clampRGBComponent(const CSSPrimitiveValue& value)
+static uint8_t clampRGBComponent(const CSSPrimitiveValue& value)
 {
     double result = value.doubleValue();
     if (value.isPercentage())
         result = result / 100.0 * 255.0;
 
-    return clampTo<int>(round(result), 0, 255);
+    return convertPrescaledToComponentByte(result);
 }
 
 static Color parseRGBParameters(CSSParserTokenRange& range)
@@ -551,7 +551,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
         return true;
     };
 
-    int colorArray[3];
+    uint8_t colorArray[3];
     colorArray[0] = clampRGBComponent(*colorParameter);
     for (int i = 1; i < 3; i++) {
         if (i == 1)
@@ -573,7 +573,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
         return consumeSlashIncludingWhitespace(args);
     };
 
-    int alphaComponent = 255;
+    uint8_t alphaComponent = 255;
     if (consumeAlphaSeparator()) {
         double alpha;
         if (!consumeNumberRaw(args, alpha)) {
@@ -582,9 +582,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
                 return Color();
             alpha = alphaPercent->doubleValue() / 100.0;
         }
-
-        // W3 standard stipulates a 2.55 alpha value multiplication factor.
-        alphaComponent = static_cast<int>(lroundf(clampTo<double>(alpha, 0.0, 1.0) * 255.0f));
+        alphaComponent = convertToComponentByte(alpha);
     };
 
     if (!args.atEnd())
@@ -642,7 +640,7 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return Color();
 
-    return makeSimpleColorFromHSLA(static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha));
+    return makeSimpleColor(hslToSRGB({ static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) }));
 }
 
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)

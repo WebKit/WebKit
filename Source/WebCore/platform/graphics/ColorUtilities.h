@@ -51,21 +51,19 @@ float contrastRatio(const ColorComponents<float>& sRGBCompontentsA, const ColorC
 
 ColorComponents<float> premultiplied(const ColorComponents<float>& sRGBCompontents);
 
-bool areEssentiallyEqual(const ColorComponents<float>&, const ColorComponents<float>&);
-
-inline uint8_t roundAndClampColorChannel(int value)
+inline uint8_t convertPrescaledToComponentByte(float f)
 {
-    return std::clamp(value, 0, 255);
+    return std::clamp(static_cast<int>(std::lroundf(f)), 0, 255);
 }
 
-inline uint8_t roundAndClampColorChannel(float value)
+inline uint8_t convertToComponentByte(float f)
 {
-    return std::clamp(std::round(value), 0.f, 255.f);
+    return std::clamp(static_cast<int>(std::lroundf(f * 255.0f)), 0, 255);
 }
 
-inline uint8_t scaleRoundAndClampColorChannel(float f)
+constexpr float convertToComponentFloat(uint8_t byte)
 {
-    return std::clamp(static_cast<int>(lroundf(255.0f * f)), 0, 255);
+    return byte / 255.0f;
 }
 
 constexpr uint16_t fastMultiplyBy255(uint16_t value)
@@ -81,6 +79,5 @@ constexpr uint16_t fastDivideBy255(uint16_t value)
     uint16_t remainder = value - (approximation * 255) + 1;
     return approximation + (remainder >> 8);
 }
-
 
 } // namespace WebCore

@@ -122,7 +122,7 @@ public:
     bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asSimple().isOpaque(); }
     bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asSimple().isVisible(); }
 
-    int alpha() const { return isExtended() ? asExtended().alpha() * 255 : asSimple().alphaComponent(); }
+    uint8_t alpha() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asSimple().alphaComponent(); }
     float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : asSimple().alphaComponentAsFloat(); }
 
     unsigned hash() const;
@@ -148,18 +148,17 @@ public:
     Color blend(const Color&) const;
     Color blendWithWhite() const;
 
+    Color invertedColorWithAlpha(Optional<float> alpha) const;
     Color invertedColorWithAlpha(float alpha) const;
 
+    Color colorWithAlphaMultipliedBy(Optional<float>) const;
     Color colorWithAlphaMultipliedBy(float) const;
-    Color colorWithAlpha(float) const;
 
-    // FIXME: Remove the need for AlternativeRounding variants by settling on a rounding behavior.
-    Color colorWithAlphaMultipliedByUsingAlternativeRounding(Optional<float>) const;
-    Color colorWithAlphaMultipliedByUsingAlternativeRounding(float) const;
-    Color colorWithAlphaUsingAlternativeRounding(Optional<float>) const;
-    WEBCORE_EXPORT Color colorWithAlphaUsingAlternativeRounding(float) const;
+    Color colorWithAlpha(Optional<float>) const;
+    WEBCORE_EXPORT Color colorWithAlpha(float) const;
 
     Color opaqueColor() const { return colorWithAlpha(1.0f); }
+
     Color semanticColor() const;
 
     // True if the color originated from a CSS semantic color name.
@@ -289,14 +288,24 @@ inline unsigned Color::hash() const
     return WTF::intHash(m_colorData.simpleColorAndFlags);
 }
 
-inline Color Color::colorWithAlphaMultipliedByUsingAlternativeRounding(Optional<float> alpha) const
+inline Color Color::invertedColorWithAlpha(Optional<float> alpha) const
 {
-    return alpha ? colorWithAlphaMultipliedByUsingAlternativeRounding(alpha.value()) : *this;
+    return alpha ? invertedColorWithAlpha(alpha.value()) : *this;
 }
 
-inline Color Color::colorWithAlphaUsingAlternativeRounding(Optional<float> alpha) const
+inline Color Color::colorWithAlphaMultipliedBy(float amount) const
 {
-    return alpha ? colorWithAlphaUsingAlternativeRounding(alpha.value()) : *this;
+    return colorWithAlpha(amount * alphaAsFloat());
+}
+
+inline Color Color::colorWithAlphaMultipliedBy(Optional<float> alpha) const
+{
+    return alpha ? colorWithAlphaMultipliedBy(alpha.value()) : *this;
+}
+
+inline Color Color::colorWithAlpha(Optional<float> alpha) const
+{
+    return alpha ? colorWithAlpha(alpha.value()) : *this;
 }
 
 inline const ExtendedColor& Color::asExtended() const

@@ -375,7 +375,7 @@ void CanvasRenderingContext2DBase::setStrokeStyle(CanvasStyle style)
         return;
 
     if (style.isCurrentColor())
-        style = CanvasStyle(currentColor(canvasBase()).colorWithAlphaUsingAlternativeRounding(style.overrideAlpha()));
+        style = CanvasStyle(currentColor(canvasBase()).colorWithAlpha(style.overrideAlpha()));
     else
         checkOrigin(style.canvasPattern().get());
 
@@ -398,7 +398,7 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
         return;
 
     if (style.isCurrentColor())
-        style = CanvasStyle(currentColor(canvasBase()).colorWithAlphaUsingAlternativeRounding(style.overrideAlpha()));
+        style = CanvasStyle(currentColor(canvasBase()).colorWithAlpha(style.overrideAlpha()));
     else
         checkOrigin(style.canvasPattern().get());
 
@@ -1302,7 +1302,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
         if (!color.isValid())
             return;
     }
-    setShadow(FloatSize(width, height), blur, color.colorWithAlphaUsingAlternativeRounding(alpha));
+    setShadow(FloatSize(width, height), blur, color.colorWithAlpha(alpha));
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float grayLevel, float alpha)

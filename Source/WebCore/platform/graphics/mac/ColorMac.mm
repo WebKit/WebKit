@@ -88,8 +88,7 @@ static SimpleColor makeSimpleColorFromNSColor(NSColor *color)
     [rgbColor getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    static const double scaleFactor = nextafter(256.0, 0.0);
-    return makeSimpleColor(scaleFactor * redComponent, scaleFactor * greenComponent, scaleFactor * blueComponent, scaleFactor * alpha);
+    return makeSimpleColorFromFloats(redComponent, greenComponent, blueComponent, alpha);
 }
 
 Color colorFromNSColor(NSColor *color)

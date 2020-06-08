@@ -47,8 +47,7 @@ Color colorFromUIColor(UIColor *color)
 
     [color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
 
-    static const double scaleFactor = nextafter(256.0, 0.0);
-    return makeSimpleColor(scaleFactor * redComponent, scaleFactor * greenComponent, scaleFactor * blueComponent, scaleFactor * alpha);
+    return makeSimpleColorFromFloats(redComponent, greenComponent, blueComponent, alpha);
 }
 
 } // namespace WebCore

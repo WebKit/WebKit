@@ -149,7 +149,7 @@ static Color parseColor(const JSON::Object* colorObject)
     else if (a > 1)
         a = 1;
 
-    return makeSimpleColor(r, g, b, static_cast<int>(a * 255));
+    return makeSimpleColor(r, g, b, convertToComponentByte(a));
 }
 
 static Color parseConfigColor(const String& fieldName, const JSON::Object* configObject)

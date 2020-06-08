@@ -63,7 +63,7 @@ void FEFlood::platformApplySoftware()
     if (!resultImage)
         return;
 
-    auto color = floodColor().colorWithAlphaMultipliedByUsingAlternativeRounding(floodOpacity());
+    auto color = floodColor().colorWithAlphaMultipliedBy(floodOpacity());
     resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
 }
 
