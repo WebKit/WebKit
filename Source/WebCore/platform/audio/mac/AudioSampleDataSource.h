@@ -81,6 +81,8 @@ public:
     void setLogger(Ref<const Logger>&&, const void*);
 #endif
 
+    static constexpr float EquivalentToMaxVolume = 0.95;
+
 private:
     AudioSampleDataSource(size_t, LoggerHelper&);
 

@@ -503,6 +503,7 @@ platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify
 
 platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp
+platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/mac/AVCaptureDeviceManager.mm @no-unify
 platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
 platform/mediastream/mac/MockRealtimeVideoSourceMac.mm

@@ -1,3 +1,61 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        Use one audio unit for all tracks of a given process
+        https://bugs.webkit.org/show_bug.cgi?id=212406
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, we were creating one audio unit per track to render.
+        This is potentially inefficient as this requires to IPC on iOS each audio data.
+        Instead, we could have one single remote unit that will receive the mixed content of all tracks.
+        For that purpose, introduce AudioMediaStreamTrackRendererUnit as a singleton.
+
+        AudioMediaStreamTrackRendererCocoa will just register/unregister sources to AudioMediaStreamTrackRendererUnit.
+        AudioMediaStreamTrackRendererUnit will then start/stop as needed and do the mixing.
+
+        This requires a change in AudioSampleDataSource to support mixing in case track volumes are different.
+        If we have to mix and with different volumes, we first pull the samples in a scratch buffer, apply volume and then mix it with the other tracks.
+
+        In the future, we might also do the audio rendering with the CoreAudioSharedUnit directly so as to improve as much as possible echo cancellation.
+
+        Interruption is handled by the fact that all tracks should stop playing, thus stop their renderer, thus unregister themselves from the renderer unit.
+        it might be more future proof to add the unit as an interruption observer as a follow-up.
+
+        Manually tested plus LayoutTests/webrtc/multi-audio.html
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/mac/AudioSampleBufferList.cpp:
+        (WebCore::mixBuffers):
+        (WebCore::AudioSampleBufferList::mixFrom):
+        * platform/audio/mac/AudioSampleBufferList.h:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::start):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::stop):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::clear):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::setVolume):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::createAudioUnit): Deleted.
+        (WebCore::AudioMediaStreamTrackRendererCocoa::render): Deleted.
+        (WebCore::AudioMediaStreamTrackRendererCocoa::inputProc): Deleted.
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h:
+        (): Deleted.
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp: Added.
+        (WebCore::AudioMediaStreamTrackRendererUnit::singleton):
+        (WebCore::AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit):
+        (WebCore::AudioMediaStreamTrackRendererUnit::addSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::removeSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::createAudioUnitIfNeeded):
+        (WebCore::AudioMediaStreamTrackRendererUnit::start):
+        (WebCore::AudioMediaStreamTrackRendererUnit::stop):
+        (WebCore::AudioMediaStreamTrackRendererUnit::formatDescription):
+        (WebCore::AudioMediaStreamTrackRendererUnit::createAudioUnit):
+        (WebCore::AudioMediaStreamTrackRendererUnit::render):
+        (WebCore::AudioMediaStreamTrackRendererUnit::inputProc):
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.h: Copied from Source/WebCore/platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h.
+
 2020-06-08  youenn fablet  <youenn@apple.com>
 
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder

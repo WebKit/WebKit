@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioMediaStreamTrackRenderer.h"
-#include "Logging.h"
-#include <wtf/WeakPtr.h>
-
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,22 +37,35 @@ class AudioSampleDataSource;
 class AudioSampleBufferList;
 class CAAudioStreamDescription;
 
-class AudioMediaStreamTrackRendererCocoa : public AudioMediaStreamTrackRenderer, public CanMakeWeakPtr<AudioMediaStreamTrackRendererCocoa, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+class AudioMediaStreamTrackRendererUnit {
 public:
-    AudioMediaStreamTrackRendererCocoa();
-    ~AudioMediaStreamTrackRendererCocoa();
+    static AudioMediaStreamTrackRendererUnit& singleton();
+
+    AudioMediaStreamTrackRendererUnit() = default;
+    ~AudioMediaStreamTrackRendererUnit();
+
+    static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
+
+    void start();
+    void stop();
+
+    void addSource(Ref<AudioSampleDataSource>&&);
+    void removeSource(AudioSampleDataSource&);
+
+    CAAudioStreamDescription* formatDescription();
 
 private:
-    // AudioMediaStreamTrackRenderer
-    void pushSamples(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
-    void start() final;
-    void stop() final;
-    void clear() final;
-    void setVolume(float) final;
+    void createAudioUnitIfNeeded();
+    OSStatus render(UInt32 sampleCount, AudioBufferList&, UInt32 inBusNumber, const AudioTimeStamp&, AudioUnitRenderActionFlags&);
 
+    AudioComponentInstance m_remoteIOUnit { nullptr };
     std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
-    RefPtr<AudioSampleDataSource> m_dataSource;
+    HashSet<Ref<AudioSampleDataSource>> m_sources;
+    Vector<Ref<AudioSampleDataSource>> m_sourcesCopy;
+    Vector<Ref<AudioSampleDataSource>> m_renderSources;
+    bool m_shouldUpdateRenderSources { false };
+    Lock m_sourcesLock;
+    bool m_isStarted { false };
 };
 
 }

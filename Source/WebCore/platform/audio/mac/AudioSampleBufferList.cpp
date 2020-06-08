@@ -103,6 +103,51 @@ void AudioSampleBufferList::applyGain(float gain)
     applyGain(m_bufferList.get(), gain, m_internalFormat->format());
 }
 
+static void mixBuffers(WebAudioBufferList& destinationBuffer, const AudioBufferList& sourceBuffer, AudioStreamDescription::PCMFormat format, size_t frameCount)
+{
+    for (uint32_t i = 0; i < destinationBuffer.bufferCount(); i++) {
+        switch (format) {
+        case AudioStreamDescription::Int16: {
+            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 2);
+            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 2);
+
+            auto* destination = static_cast<int16_t*>(destinationBuffer.buffer(i)->mData);
+            auto* source = static_cast<int16_t*>(sourceBuffer.mBuffers[i].mData);
+            for (size_t i = 0; i < frameCount; i++)
+                destination[i] += source[i];
+            break;
+        }
+        case AudioStreamDescription::Int32: {
+            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 4);
+            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 4);
+
+            auto* destination = static_cast<int32_t*>(destinationBuffer.buffer(i)->mData);
+            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            break;
+        }
+        case AudioStreamDescription::Float32: {
+            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 4);
+            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 4);
+
+            auto* destination = static_cast<float*>(destinationBuffer.buffer(i)->mData);
+            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            break;
+        }
+        case AudioStreamDescription::Float64: {
+            ASSERT(frameCount <= destinationBuffer.buffer(i)->mDataByteSize / 8);
+            ASSERT(frameCount <= sourceBuffer.mBuffers[i].mDataByteSize / 8);
+
+            auto* destination = static_cast<double*>(destinationBuffer.buffer(i)->mData);
+            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceBuffer.mBuffers[i].mData), 1, destination, 1, frameCount);
+            break;
+        }
+        case AudioStreamDescription::None:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+}
+
 OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, size_t frameCount)
 {
     ASSERT(source.streamDescription() == streamDescription());
@@ -118,37 +163,7 @@ OSStatus AudioSampleBufferList::mixFrom(const AudioSampleBufferList& source, siz
 
     m_sampleCount = frameCount;
 
-    auto& sourceBuffer = source.bufferList();
-    for (uint32_t i = 0; i < m_bufferList->bufferCount(); i++) {
-        switch (m_internalFormat->format()) {
-        case AudioStreamDescription::Int16: {
-            int16_t* destination = static_cast<int16_t*>(m_bufferList->buffer(i)->mData);
-            int16_t* source = static_cast<int16_t*>(sourceBuffer.buffer(i)->mData);
-            for (size_t i = 0; i < frameCount; i++)
-                destination[i] += source[i];
-            break;
-        }
-        case AudioStreamDescription::Int32: {
-            int32_t* destination = static_cast<int32_t*>(m_bufferList->buffer(i)->mData);
-            vDSP_vaddi(destination, 1, reinterpret_cast<int32_t*>(sourceBuffer.buffer(i)->mData), 1, destination, 1, frameCount);
-            break;
-        }
-        case AudioStreamDescription::Float32: {
-            float* destination = static_cast<float*>(m_bufferList->buffer(i)->mData);
-            vDSP_vadd(destination, 1, reinterpret_cast<float*>(sourceBuffer.buffer(i)->mData), 1, destination, 1, frameCount);
-            break;
-        }
-        case AudioStreamDescription::Float64: {
-            double* destination = static_cast<double*>(m_bufferList->buffer(i)->mData);
-            vDSP_vaddD(destination, 1, reinterpret_cast<double*>(sourceBuffer.buffer(i)->mData), 1, destination, 1, frameCount);
-            break;
-        }
-        case AudioStreamDescription::None:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
+    mixBuffers(bufferList(), source.bufferList(), m_internalFormat->format(), frameCount);
     return 0;
 }
 
@@ -189,6 +204,17 @@ OSStatus AudioSampleBufferList::copyTo(AudioBufferList& buffer, size_t frameCoun
         memcpy(destination, sourceData, frameCount * m_internalFormat->bytesPerPacket());
     }
 
+    return 0;
+}
+
+OSStatus AudioSampleBufferList::mixFrom(const AudioBufferList& source, size_t frameCount)
+{
+    if (frameCount > m_sampleCount)
+        return kAudio_ParamError;
+    if (source.mNumberBuffers > m_bufferList->bufferCount())
+        return kAudio_ParamError;
+
+    mixBuffers(bufferList(), source, m_internalFormat->format(), frameCount);
     return 0;
 }
 

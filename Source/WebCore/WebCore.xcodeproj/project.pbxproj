@@ -7347,6 +7347,8 @@
 		41024FC823CF254F00FDF98E /* SampleBufferDisplayLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SampleBufferDisplayLayer.cpp; sourceTree = "<group>"; };
 		410626A72280A22A006D1B59 /* JSAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		4107908A1FC3E4F20061B27A /* ClientOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientOrigin.h; sourceTree = "<group>"; };
+		41087F01248E59C800680E91 /* AudioMediaStreamTrackRendererUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMediaStreamTrackRendererUnit.cpp; sourceTree = "<group>"; };
+		41087F03248E59C900680E91 /* AudioMediaStreamTrackRendererUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererUnit.h; sourceTree = "<group>"; };
 		410938282347799A009428BA /* JSAbortControllerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortControllerCustom.cpp; sourceTree = "<group>"; };
 		4109382C2347850E009428BA /* JSAbortSignalCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortSignalCustom.cpp; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
@@ -16607,6 +16609,8 @@
 			children = (
 				416A069323CCAA9400347109 /* AudioMediaStreamTrackRendererCocoa.cpp */,
 				416A069223CCAA9300347109 /* AudioMediaStreamTrackRendererCocoa.h */,
+				41087F01248E59C800680E91 /* AudioMediaStreamTrackRendererUnit.cpp */,
+				41087F03248E59C900680E91 /* AudioMediaStreamTrackRendererUnit.h */,
 				070363DA181A1CDC00C074A5 /* AVCaptureDeviceManager.h */,
 				070363DB181A1CDC00C074A5 /* AVCaptureDeviceManager.mm */,
 				070363DE181A1CDC00C074A5 /* AVVideoCaptureSource.h */,

@@ -1,3 +1,13 @@
+2020-06-08  Youenn Fablet  <youenn@apple.com>
+
+        Use one audio unit for all MediaStreamTracks of a given process
+        https://bugs.webkit.org/show_bug.cgi?id=212406
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/multi-audio-expected.txt: Added.
+        * webrtc/multi-audio.html: Added.
+
 2020-06-08  youenn fablet  <youenn@apple.com>
 
         [Cocoa] Use AVAssetWriterDelegate to implement MediaRecorder
