@@ -3093,7 +3093,7 @@ static EncodedJSValue JSC_HOST_CALL functionAssertEnabled(JSGlobalObject*, CallF
 
 static EncodedJSValue JSC_HOST_CALL functionIsMemoryLimited(JSGlobalObject*, CallFrame*)
 {
-#if PLATFORM(IOS) || PLATFORM(TVOS) || PLATFORM(WATCHOS)
+#if PLATFORM(IOS) || PLATFORM(APPLETV) || PLATFORM(WATCHOS)
     return JSValue::encode(jsBoolean(true));
 #else
     return JSValue::encode(jsBoolean(false));

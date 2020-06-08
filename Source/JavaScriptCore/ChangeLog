@@ -1,3 +1,14 @@
+2020-06-08  Jonathan Bedard  <jbedard@apple.com>
+
+        JavaScriptCore: Fix PLATFORM(TVOS) macro
+        https://bugs.webkit.org/show_bug.cgi?id=212900
+        <rdar://problem/64118879>
+
+        Unreviewed build fix.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionIsMemoryLimited): PLATFORM(TVOS) should be PLATFORM(APPLETV).
+
 2020-06-07  Philippe Normand  <pnormand@igalia.com>
 
         Remove ENABLE_VIDEO_TRACK ifdef guards
