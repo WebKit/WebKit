@@ -1,5 +1,17 @@
 2020-06-08  Lauro Moura  <lmoura@igalia.com>
 
+        [WebDriver][GTK][WPE] Fix overwritten expectations.
+
+        WPE's set_window_rect/set.py expectations were in a block after the
+        existing ones from other ports, overwriting them. This commit now
+        merges them to be in a single block.
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
+2020-06-08  Lauro Moura  <lmoura@igalia.com>
+
         [WebDriver][GTK] Update test expectations after modifier fix
 
         Unreviewed test gardening.

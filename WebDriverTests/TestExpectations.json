@@ -514,7 +514,9 @@
             }
         }
     },
+
     "imported/w3c/webdriver/tests/set_window_rect/set.py": {
+        "expected": { "wpe": { "status": ["SKIP"] } },
         "subtests": {
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
@@ -524,6 +526,10 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/set_window_rect/user_prompts.py" : {
+        "expected": { "wpe": { "status": ["SKIP"] } }
+    },
+
     "imported/w3c/webdriver/tests/is_element_enabled/enabled.py": {
         "subtests": {
             "test_xml_always_not_enabled": {
@@ -559,14 +565,6 @@
         "expected": { "wpe": { "status": ["SKIP"] } }
     },
     "imported/w3c/webdriver/tests/minimize_window/minimize.py" : {
-        "expected": { "wpe": { "status": ["SKIP"] } }
-    },
-
-
-    "imported/w3c/webdriver/tests/set_window_rect/user_prompts.py" : {
-        "expected": { "wpe": { "status": ["SKIP"] } }
-    },
-    "imported/w3c/webdriver/tests/set_window_rect/set.py" : {
         "expected": { "wpe": { "status": ["SKIP"] } }
     }
 }
