@@ -1,3 +1,11 @@
+2020-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix branch build after r262552
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+        The branch WTF::URL has an operator NSURL * and an operator NSString *, so we need to specify which to use.
+
 2020-06-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r262171. rdar://problem/63950945
