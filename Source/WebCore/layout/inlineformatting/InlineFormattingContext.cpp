@@ -288,17 +288,30 @@ void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, cons
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    ContentWidthAndMargin contentWidthAndMargin;
-    // FIXME: Add support for min/max-width.
-    auto usedWidth = OverrideHorizontalValues { };
-    if (layoutBox.isFloatingPositioned())
-        contentWidthAndMargin = geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
-    else if (layoutBox.isInlineBlockBox())
-        contentWidthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, horizontalConstraints, usedWidth);
-    else if (layoutBox.isReplacedBox())
-        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, usedWidth);
-    else
+    auto compute = [&](Optional<LayoutUnit> usedWidth) {
+        if (layoutBox.isFloatingPositioned())
+            return geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+        if (layoutBox.isInlineBlockBox())
+            return geometry().inlineBlockWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+        if (layoutBox.isReplacedBox())
+            return geometry().inlineReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedWidth, { } });
         ASSERT_NOT_REACHED();
+        return ContentWidthAndMargin { };
+    };
+
+    auto contentWidthAndMargin = compute({ });
+
+    auto availableWidth = horizontalConstraints.logicalWidth;
+    if (auto maxWidth = geometry().computedMaxWidth(layoutBox, availableWidth)) {
+        auto maxWidthAndMargin = compute(maxWidth);
+        if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
+            contentWidthAndMargin = maxWidthAndMargin;
+    }
+
+    auto minWidth = geometry().computedMinWidth(layoutBox, availableWidth).valueOr(0);
+    auto minWidthAndMargin = compute(minWidth);
+    if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
+        contentWidthAndMargin = minWidthAndMargin;
 
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
@@ -308,18 +321,29 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
 
 void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    ContentHeightAndMargin contentHeightAndMargin;
-    // FIXME: Add min/max-height support.
-    auto usedHeight = OverrideVerticalValues { };
-    if (layoutBox.isFloatingPositioned())
-        contentHeightAndMargin = geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
-    else if (layoutBox.isInlineBlockBox())
-        contentHeightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, horizontalConstraints, usedHeight);
-    else if (layoutBox.isReplacedBox())
-        contentHeightAndMargin = geometry().inlineReplacedHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, usedHeight);
-    else
+    auto compute = [&](Optional<LayoutUnit> usedHeight) {
+        if (layoutBox.isFloatingPositioned())
+            return geometry().floatingHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
+        if (layoutBox.isInlineBlockBox())
+            return geometry().inlineBlockHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
+        if (layoutBox.isReplacedBox())
+            return geometry().inlineReplacedHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedHeight });
         ASSERT_NOT_REACHED();
+        return ContentHeightAndMargin { };
+    };
 
+    auto contentHeightAndMargin = compute({ });
+    if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
+        auto maxHeightAndMargin = compute(maxHeight);
+        if (contentHeightAndMargin.contentHeight > maxHeightAndMargin.contentHeight)
+            contentHeightAndMargin = maxHeightAndMargin;
+    }
+
+    if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
+        auto minHeightAndMargin = compute(minHeight);
+        if (contentHeightAndMargin.contentHeight < minHeightAndMargin.contentHeight)
+            contentHeightAndMargin = minHeightAndMargin;
+    }
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
     displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin, { } });

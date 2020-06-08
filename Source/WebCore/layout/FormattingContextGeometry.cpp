@@ -111,7 +111,7 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedHeight(const Box& layo
 Optional<LayoutUnit> FormattingContext::Geometry::computedWidthValue(const Box& layoutBox, WidthType widthType, LayoutUnit containingBlockWidth)
 {
     // Applies to: all elements except non-replaced inlines (out-of-flow check is required for positioned <br> as for some reason we don't blockify them).
-    ASSERT(layoutBox.isReplacedBox() || !layoutBox.isInlineLevelBox() || layoutBox.isOutOfFlowPositioned());
+    ASSERT(!layoutBox.isInlineBox() || layoutBox.isOutOfFlowPositioned());
 
     auto width = [&] {
         auto& style = layoutBox.style();
