@@ -1078,15 +1078,6 @@ void FrameLoader::setOpener(Frame* opener)
         m_frame.document()->initSecurityContext();
 }
 
-// FIXME: This does not belong in FrameLoader!
-void FrameLoader::handleFallbackContent()
-{
-    HTMLFrameOwnerElement* owner = m_frame.ownerElement();
-    if (!is<HTMLObjectElement>(owner))
-        return;
-    downcast<HTMLObjectElement>(*owner).renderFallbackContent();
-}
-
 void FrameLoader::provisionalLoadStarted()
 {
     if (m_stateMachine.firstLayoutDone())
@@ -2362,12 +2353,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
         checkCompleted();
 }
 
-bool FrameLoader::isHostedByObjectElement() const
-{
-    HTMLFrameOwnerElement* owner = m_frame.ownerElement();
-    return owner && owner->hasTagName(objectTag);
-}
-
 bool FrameLoader::isReplacing() const
 {
     return m_loadType == FrameLoadType::Replace;
@@ -3135,8 +3120,11 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
     // FIXME: Don't want to do this if an entirely new load is going, so should check
     // that both data sources on the frame are either this or nil.
     stop();
-    if (m_client->shouldFallBack(error))
-        handleFallbackContent();
+    if (m_client->shouldFallBack(error)) {
+        HTMLFrameOwnerElement* owner = m_frame.ownerElement();
+        if (is<HTMLObjectElement>(owner))
+            downcast<HTMLObjectElement>(*owner).renderFallbackContent();
+    }
 
     if (m_state == FrameStateProvisional && m_provisionalDocumentLoader) {
         if (m_submittedFormURL == m_provisionalDocumentLoader->originalRequestCopy().url())

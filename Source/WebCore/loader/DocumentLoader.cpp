@@ -54,6 +54,7 @@
 #include "FrameTree.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLObjectElement.h"
 #include "HTTPHeaderNames.h"
 #include "HistoryItem.h"
 #include "HistoryController.h"
@@ -1007,14 +1008,13 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     if (m_response.isInHTTPFamily()) {
         int status = m_response.httpStatusCode(); // Status may be zero when loading substitute data, in particular from a WebArchive.
         if (status && (status < 200 || status >= 300)) {
-            bool hostedByObject = frameLoader()->isHostedByObjectElement();
-
-            frameLoader()->handleFallbackContent();
-            // object elements are no longer rendered after we fallback, so don't
-            // keep trying to process data from their load
-
-            if (hostedByObject)
+            auto* owner = m_frame->ownerElement();
+            if (is<HTMLObjectElement>(owner)) {
+                downcast<HTMLObjectElement>(*owner).renderFallbackContent();
+                // object elements are no longer rendered after we fallback, so don't
+                // keep trying to process data from their load
                 cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
+            }
         }
     }
 

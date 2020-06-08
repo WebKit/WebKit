@@ -1,3 +1,23 @@
+2020-06-08  Rob Buis  <rbuis@igalia.com>
+
+        Simplify fallback content handling in FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=212880
+
+        Reviewed by Youenn Fablet.
+
+        Simplify fallback content handling in FrameLoader, this can be inlined
+        and some HTMLObjectElement checks can be combined.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::handleFallbackContent): Deleted.
+        (WebCore::FrameLoader::isHostedByObjectElement const): Deleted.
+        * loader/FrameLoader.h:
+        * loader/HistoryController.cpp:
+        (WebCore::FrameLoader::HistoryController::createItemTree):
+
 2020-06-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Height percentage] Skip anonymous wrappers when searching for fixed height
