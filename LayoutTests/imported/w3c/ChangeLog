@@ -1,3 +1,16 @@
+2020-06-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Add missing interfaces from the AR module
+        https://bugs.webkit.org/show_bug.cgi?id=212826
+
+        Reviewed by Youenn Fablet.
+
+        Added expectations.
+
+        * web-platform-tests/webxr/ar-module/idlharness.https.window-expected.txt: Added.
+        * web-platform-tests/webxr/ar-module/xrDevice_isSessionSupported_immersive-ar.https-expected.txt: Added.
+        * web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https-expected.txt: Added.
+
 2020-06-01  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] align-content should apply even when there's just a single line

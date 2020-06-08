@@ -23,38 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebXR,
-    Conditional=WEBXR,
-    ActiveDOMObject,
-    SecureContext,
-    Exposed=Window,
-    InterfaceName=XRSession
-] interface WebXRSession : EventTarget {
-    // Attributes
-    readonly attribute XRInteractionMode interactionMode;
-    readonly attribute XREnvironmentBlendMode environmentBlendMode;
-    readonly attribute XRVisibilityState visibilityState;
-    [SameObject] readonly attribute WebXRRenderState renderState;
-    [SameObject] readonly attribute WebXRInputSourceArray inputSources;
+#pragma once
 
-    // Methods
-    void updateRenderState(optional XRRenderStateInit stateInit);
-    [NewObject] Promise<WebXRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
+#if ENABLE(WEBXR)
 
-    unsigned long requestAnimationFrame(XRFrameRequestCallback callback);
-    void cancelAnimationFrame(unsigned long handle);
+namespace WebCore {
 
-    Promise<void> end();
-
-    // Events
-    attribute EventHandler onend;
-    attribute EventHandler onselect;
-    attribute EventHandler oninputsourceschange;
-    attribute EventHandler onselectstart;
-    attribute EventHandler onselectend;
-    attribute EventHandler onsqueeze;
-    attribute EventHandler onsqueezestart;
-    attribute EventHandler onsqueezeend;
-    attribute EventHandler onvisibilitychange;
+enum class XRInteractionMode {
+    ScreenSpace,
+    WorldSpace
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBXR)

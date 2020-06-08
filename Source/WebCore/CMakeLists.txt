@@ -1224,6 +1224,7 @@ if (ENABLE_WEBXR)
         Modules/webxr/XRHandedness.idl
         Modules/webxr/XRInputSourceEvent.idl
         Modules/webxr/XRInputSourcesChangeEvent.idl
+        Modules/webxr/XRInteractionMode.idl
         Modules/webxr/XRReferenceSpaceEvent.idl
         Modules/webxr/XRReferenceSpaceType.idl
         Modules/webxr/XRRenderStateInit.idl

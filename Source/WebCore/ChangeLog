@@ -1,3 +1,27 @@
+2020-06-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Add missing interfaces from the AR module
+        https://bugs.webkit.org/show_bug.cgi?id=212826
+
+        Reviewed by Youenn Fablet.
+
+        Added the XRInteractionMode partial interface from the WebXR AR module spec. This spec
+        https://immersive-web.github.io/webxr-ar-module/ expands the WebXR Device API with
+        functionality available in AR hardware.
+
+        Some WebXR wpt tests are now passing.
+
+        * CMakeLists.txt: Added new files.
+        * DerivedSources.make: Ditto.
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::interactionMode const): Added.
+        * Modules/webxr/WebXRSession.h: Added interactionMode attribute and getter;
+        * Modules/webxr/WebXRSession.idl: Added interactionMode attribute;
+        * Modules/webxr/XRInteractionMode.h: Added.
+        * Modules/webxr/XRInteractionMode.idl: Added.
+        * Sources.txt: Added new files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
 2020-05-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Pass an unsigned long to cancelAnimationCallback() as handle

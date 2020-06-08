@@ -516,6 +516,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webxr/XRHandedness.idl \
     $(WebCore)/Modules/webxr/XRInputSourceEvent.idl \
     $(WebCore)/Modules/webxr/XRInputSourcesChangeEvent.idl \
+    $(WebCore)/Modules/webxr/XRInteractionMode.idl \
     $(WebCore)/Modules/webxr/XRReferenceSpaceEvent.idl \
     $(WebCore)/Modules/webxr/XRReferenceSpaceType.idl \
     $(WebCore)/Modules/webxr/XRRenderStateInit.idl \

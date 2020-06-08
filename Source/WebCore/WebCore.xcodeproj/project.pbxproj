@@ -4783,6 +4783,7 @@
 		E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A560EEECDE400F61213 /* JSWorkerNavigator.h */; };
 		E1284AE110447D4500EAEB52 /* PageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284AE010447D4500EAEB52 /* PageTransitionEvent.h */; };
 		E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */; };
+		E12A9F4A248A99E2003F06C8 /* XRInteractionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E12A9F48248A99E0003F06C8 /* XRInteractionMode.h */; };
 		E12DE7181E4B74A600F9ACCF /* GridTrackSizingAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E12DE7161E4B748700F9ACCF /* GridTrackSizingAlgorithm.h */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F5AA12EE343F004EC58D /* IntRectHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15189,6 +15190,8 @@
 		E1284AE910447DEE00EAEB52 /* PageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageTransitionEvent.cpp; sourceTree = "<group>"; };
 		E1284BAF10449FFA00EAEB52 /* JSPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPageTransitionEvent.h; sourceTree = "<group>"; };
 		E1284BB010449FFA00EAEB52 /* JSPageTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPageTransitionEvent.cpp; sourceTree = "<group>"; };
+		E12A9F46248A99DF003F06C8 /* XRInteractionMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRInteractionMode.idl; sourceTree = "<group>"; };
+		E12A9F48248A99E0003F06C8 /* XRInteractionMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRInteractionMode.h; sourceTree = "<group>"; };
 		E12DE7151E4B748700F9ACCF /* GridTrackSizingAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridTrackSizingAlgorithm.cpp; sourceTree = "<group>"; };
 		E12DE7161E4B748700F9ACCF /* GridTrackSizingAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTrackSizingAlgorithm.h; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
@@ -27537,6 +27540,8 @@
 				E1EE8B152412B17000E794D6 /* XRInputSourcesChangeEvent.cpp */,
 				E1EE8AF92412B17000E794D6 /* XRInputSourcesChangeEvent.h */,
 				E1EE8AE42412B17000E794D6 /* XRInputSourcesChangeEvent.idl */,
+				E12A9F48248A99E0003F06C8 /* XRInteractionMode.h */,
+				E12A9F46248A99DF003F06C8 /* XRInteractionMode.idl */,
 				E1EE8B162412B17000E794D6 /* XRPose.idl */,
 				E1EE8AF62412B17000E794D6 /* XRReferenceSpace.idl */,
 				E1EE8AF32412B17000E794D6 /* XRReferenceSpaceEvent.cpp */,
@@ -33897,6 +33902,7 @@
 				E1EE8B922413195000E794D6 /* XRHandedness.h in Headers */,
 				E1EE8B9F2413195000E794D6 /* XRInputSourceEvent.h in Headers */,
 				E1EE8B992413195000E794D6 /* XRInputSourcesChangeEvent.h in Headers */,
+				E12A9F4A248A99E2003F06C8 /* XRInteractionMode.h in Headers */,
 				E1EE8B842413191F00E794D6 /* XRReferenceSpaceEvent.h in Headers */,
 				E1EE8B772413191F00E794D6 /* XRReferenceSpaceType.h in Headers */,
 				E1EE8B792413191F00E794D6 /* XRRenderStateInit.h in Headers */,

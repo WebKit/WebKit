@@ -3609,6 +3609,7 @@ JSXRFrameRequestCallback.cpp
 JSXRHandedness.cpp
 JSWebXRInputSource.cpp
 JSWebXRInputSourceArray.cpp
+JSXRInteractionMode.cpp
 JSXRInputSourceEvent.cpp
 JSXRInputSourcesChangeEvent.cpp
 JSWebXRPose.cpp

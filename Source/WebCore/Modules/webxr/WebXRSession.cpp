@@ -66,6 +66,11 @@ XREnvironmentBlendMode WebXRSession::environmentBlendMode() const
     return m_environmentBlendMode;
 }
 
+XRInteractionMode WebXRSession::interactionMode() const
+{
+    return m_interactionMode;
+}
+
 XRVisibilityState WebXRSession::visibilityState() const
 {
     return m_visibilityState;
