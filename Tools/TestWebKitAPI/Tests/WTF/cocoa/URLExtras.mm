@@ -205,7 +205,7 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
     EXPECT_TRUE(encodedHostName == nil);
 
     WTF::URL url2(URL(), utf16String(u"http://\u2267\u222E\uFE63"));
-    EXPECT_STREQ([[url2 absoluteString] UTF8String], "http://%E2%89%A7%E2%88%AE%EF%B9%A3");
+    EXPECT_STREQ([[(NSURL *)url2 absoluteString] UTF8String], "http://%E2%89%A7%E2%88%AE%EF%B9%A3");
 }
 
 TEST(WTF_URLExtras, URLExtras_Nil)
