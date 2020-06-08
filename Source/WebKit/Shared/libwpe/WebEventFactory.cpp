@@ -63,6 +63,10 @@ WallTime wallTimeForEventTime(uint64_t msTimeStamp)
     static WallTime firstEventWallTime;
     static std::once_flag once;
 
+    // Fallback for zero timestamps.
+    if (!msTimeStamp)
+        return WallTime::now();
+
     std::call_once(once, [msTimeStamp]() {
         firstEventTimeStamp = msTimeStamp;
         firstEventWallTime = WallTime::now();
