@@ -1,3 +1,11 @@
+2020-06-08  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][GTK] Update test expectations after modifier fix
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-05-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: stop using GdkEvent API in preparation for GTK4

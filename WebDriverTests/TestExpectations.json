@@ -209,12 +209,6 @@
     },
     "imported/w3c/webdriver/tests/perform_actions/pointer_contextmenu.py": {
         "subtests": {
-            "test_control_click[\\ue009-ctrlKey]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_control_click[\\ue051-ctrlKey]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
             "test_release_control_click": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             }
