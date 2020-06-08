@@ -1805,8 +1805,8 @@ void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const Box
     ASSERT(style == BorderStyle::Inset || style == BorderStyle::Outset);
 
     // This values were derived empirically.
-    constexpr SimpleColor baseDarkColor { 0xFF202020 };
-    constexpr SimpleColor baseLightColor { 0xFFEBEBEB };
+    constexpr float baseDarkColorLuminance { 0.014443844f }; // Luminance of SimpleColor { 0xFF202020 }
+    constexpr float baseLightColorLuminance { 0.83077f }; // Luminance of SimpleColor { 0xFFEBEBEB }
 
     enum Operation { Darken, Lighten };
 
@@ -1814,11 +1814,11 @@ void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const Box
 
     // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
     if (operation == Darken) {
-        if (differenceSquared(color, Color::black) > differenceSquared(baseDarkColor, Color::black))
-            color = color.dark();
+        if (color.luminance() > baseDarkColorLuminance)
+            color = color.darken();
     } else {
-        if (differenceSquared(color, Color::white) > differenceSquared(baseLightColor, Color::white))
-            color = color.light();
+        if (color.luminance() < baseLightColorLuminance)
+            color = color.lighten();
     }
 }
 

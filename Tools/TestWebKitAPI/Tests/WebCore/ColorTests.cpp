@@ -207,4 +207,29 @@ TEST(Color, Validity)
     EXPECT_EQ(simpleOtherValidColor.alphaComponent(), 4);
 }
 
+TEST(Color, Luminance)
+{
+    EXPECT_FLOAT_EQ(Color(Color::black).luminance(), 0);
+    EXPECT_FLOAT_EQ(Color(Color::white).luminance(), 1);
+
+    auto c = makeSimpleColor(85, 90, 160);
+    EXPECT_FLOAT_EQ(Color(c).luminance(), 0.11781692);
+
+    EXPECT_EQ(c.redComponent(), 85);
+    EXPECT_EQ(c.greenComponent(), 90);
+    EXPECT_EQ(c.blueComponent(), 160);
+
+    auto cLigtened = Color(c).lighten().toSRGBASimpleColorLossy();
+    EXPECT_FLOAT_EQ(Color(cLigtened).luminance(), 0.29229724);
+    EXPECT_EQ(cLigtened.redComponent(), 130);
+    EXPECT_EQ(cLigtened.greenComponent(), 137);
+    EXPECT_EQ(cLigtened.blueComponent(), 245);
+
+    auto cDarken = Color(c).darken().toSRGBASimpleColorLossy();
+    EXPECT_FLOAT_EQ(Color(cDarken).luminance(), 0.026288476);
+    EXPECT_EQ(cDarken.redComponent(), 40);
+    EXPECT_EQ(cDarken.greenComponent(), 42);
+    EXPECT_EQ(cDarken.blueComponent(), 76);
+}
+
 } // namespace TestWebKitAPI

@@ -1,3 +1,63 @@
+2020-06-08  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Replace uses of differenceSquared() with luminance based computations
+        https://bugs.webkit.org/show_bug.cgi?id=212872
+
+        Reviewed by Darin Adler.
+
+        Replace all uses of differenceSquared() with luminance based comparisons. This is
+        possible because all of the uses of differenceSquared() were about identifying a
+        distance from black or white to determine relative brightness. It is more accurate
+        to do this in terms of luminance, and has the added benefit of being something that
+        is expressible in all colorspaces (since luminance is defined as the Y-component 
+        of the XYZ colorspace which all colorspaces are convertable to). 
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lighten const):
+        Renamed Color::light() to Color::lighten(), which makes more sense. The algorithm
+        used should be updated at some point to also use luminance, but is unchanged for
+        now.
+
+        (WebCore::Color::darken const):
+        Renamed Color::dark() to Color::darken(), which makes more sense. The algorithm
+        used should be updated at some point to also use luminance, but is unchanged for
+        now.
+
+        (WebCore::Color::luminance const):
+        Added. Converts to sRGB for now, but can be updated to work with other color spaces
+        when needed.
+
+        * platform/graphics/Color.h:
+        Removed differenceSquared.
+
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::luminance):
+        Updated to use the standard conversion to linear-sRGB. While there are certainly
+        some places that specify a 0.03928 cutoff, the much more accepted value (and value
+        specified by the IEC) is 0.04045, which we use for all other gamma correction.
+        (See https://entropymine.com/imageworsener/srgbformula/ or https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB)
+        for more information on this).
+
+        Also added a FIXME about how in the future we can avoid hardcoding the specific values
+        multiple times by extracting them from the linear-sRGB to XYZ matrix.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::calculateBorderStyleColor):
+        Use luminance, rather than distance as a better comparison for whether the color
+        is too dark or too light for modification.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::disabledTextColor const):
+        Use luminance, rather than distance as a better comparison for whether the color
+        is too dark or too light for modification. Also us the contrastRatio utility
+        function to determine illegibility issues due to contrast, picking a new minimum
+        that roughly matches the old one based fast/forms/input-disabled-color.html
+
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::adjustColorForVisibilityOnBackground):
+        Use luminance, rather than distance as a better comparison for whether the color
+        is too dark or too light for modification.
+
 2020-06-08  Youenn Fablet  <youenn@apple.com>
 
         Missing WebRTC Metrics in iOS Safari

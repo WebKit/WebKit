@@ -147,23 +147,14 @@ float lightness(const ColorComponents<float>& sRGBCompontents)
     return 0.5f * (max + min);
 }
 
-// This is similar to sRGBToLinearColorComponent but for some reason
-// https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-// doesn't use the standard sRGB -> linearRGB threshold of 0.04045.
-static float sRGBToLinearColorComponentForLuminance(float c)
-{
-    if (c <= 0.03928f)
-        return c / 12.92f;
-
-    return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
-}
-
 float luminance(const ColorComponents<float>& sRGBComponents)
 {
-    // Values from https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-    return 0.2126f * sRGBToLinearColorComponentForLuminance(sRGBComponents[0])
-        + 0.7152f * sRGBToLinearColorComponentForLuminance(sRGBComponents[1])
-        + 0.0722f * sRGBToLinearColorComponentForLuminance(sRGBComponents[2]);
+    // NOTE: This is the equivilent of `linearSRGBToXYZ(rgbToLinearComponents(sRGBComponents))[1]`
+    // FIMXE: If we can generalize ColorMatrix a bit more, it might be nice to write this as:
+    //      auto linearSRGBComponents = rgbToLinearComponents(sRGBComponents);
+    //      return linearSRGBComponents * linearSRGBToXYZMatrix.row(1);
+    auto [r, g, b, a] = rgbToLinearComponents(sRGBComponents);
+    return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 }
 
 float contrastRatio(const ColorComponents<float>& componentsA, const ColorComponents<float>& componentsB)

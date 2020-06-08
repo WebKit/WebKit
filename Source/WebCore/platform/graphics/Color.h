@@ -135,10 +135,13 @@ public:
     // This will convert non-sRGB colorspace colors into sRGB.
     WEBCORE_EXPORT ColorComponents<float> toSRGBAComponentsLossy() const;
 
-    Color light() const;
-    Color dark() const;
+    WEBCORE_EXPORT Color lighten() const;
+    WEBCORE_EXPORT Color darken() const;
 
-    bool isDark() const;
+    WEBCORE_EXPORT float luminance() const;
+
+    // FIXME: Replace remaining uses with luminance.
+    WEBCORE_EXPORT bool isDark() const;
     WEBCORE_EXPORT float lightness() const;
 
     // This is an implementation of Porter-Duff's "source-over" equation
@@ -201,7 +204,6 @@ public:
     friend bool operator==(const Color& a, const Color& b);
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
     friend bool extendedColorsEqual(const Color&, const Color&);
-    friend int differenceSquared(const Color&, const Color&);
 
     static bool isBlackColor(const Color&);
     static bool isWhiteColor(const Color&);
@@ -243,8 +245,6 @@ bool extendedColorsEqual(const Color&, const Color&);
 
 Color blend(const Color& from, const Color& to, double progress);
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress);
-
-int differenceSquared(const Color&, const Color&);
 
 #if USE(CG)
 WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);

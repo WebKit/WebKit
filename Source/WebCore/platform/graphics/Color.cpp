@@ -38,22 +38,6 @@ namespace WebCore {
 static constexpr SimpleColor lightenedBlack { 0xFF545454 };
 static constexpr SimpleColor darkenedWhite { 0xFFABABAB };
 
-int differenceSquared(const Color& c1, const Color& c2)
-{
-    // FIXME: ExtendedColor - needs to handle color spaces.
-    // FIXME: This should probably return a floating point number, but many of the call
-    // sites have picked comparison values based on feel. We'd need to break out
-    // our logarithm tables to change them :)
-
-    auto [c1Red, c1Blue, c1Green, c1Alpha] = c1.toSRGBASimpleColorLossy();
-    auto [c2Red, c2Blue, c2Green, c2Alpha] = c2.toSRGBASimpleColorLossy();
-
-    int dR = c1Red - c2Red;
-    int dG = c1Green - c2Green;
-    int dB = c1Blue - c2Blue;
-    return dR * dR + dG * dG + dB * dB;
-}
-
 Color::Color(const Color& other)
     : m_colorData(other.m_colorData)
 {
@@ -116,7 +100,7 @@ String Color::nameForRenderTreeAsText() const
     return asSimple().serializationForRenderTreeAsText();
 }
 
-Color Color::light() const
+Color Color::lighten() const
 {
     // Hardcode this common case for speed.
     if (!isExtended() && asSimple() == black)
@@ -141,7 +125,7 @@ Color Color::light() const
     );
 }
 
-Color Color::dark() const
+Color Color::darken() const
 {
     // Hardcode this common case for speed.
     if (!isExtended() && asSimple() == white)
@@ -174,6 +158,12 @@ float Color::lightness() const
 {
     // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.
     return WebCore::lightness(toSRGBAComponentsLossy());
+}
+
+float Color::luminance() const
+{
+    // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for luminance (e.g. convertToXYZ(c).yComponent()).
+    return WebCore::luminance(toSRGBAComponentsLossy());
 }
 
 Color Color::blend(const Color& source) const

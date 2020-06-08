@@ -71,12 +71,9 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
     if (textColorIsLegibleAgainstBackgroundColor(textColor, backgroundColor))
         return textColor;
 
-    int distanceFromWhite = differenceSquared(textColor, Color::white);
-    int distanceFromBlack = differenceSquared(textColor, Color::black);
-    if (distanceFromWhite < distanceFromBlack)
-        return textColor.dark();
-
-    return textColor.light();
+    if (textColor.luminance() > 0.5)
+        return textColor.darken();
+    return textColor.lighten();
 }
 
 TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
