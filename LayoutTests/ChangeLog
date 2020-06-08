@@ -1,3 +1,18 @@
+2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Gardening, update test expectations after r262708
+        https://bugs.webkit.org/show_bug.cgi?id=212901
+
+        Unreviewed gardening.
+
+        - Moved common baseline to glib.
+        - Removed redudant WPE baseline.
+        - Added flaky failure to test expectations.
+
+        * platform/glib/imported/w3c/web-platform-tests/encoding/single-byte-decoder-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/encoding/single-byte-decoder-expected.txt.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-expected.txt: Removed.
+
 2020-06-08  Jason Lawrence  <lawrence.j@apple.com>
 
         (r261056) [ Mac WK2 ] fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html is a flaky timeout

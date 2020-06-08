@@ -1,8 +1,0 @@
-
-FAIL ':in-range' matches all elements that are candidates for constraint validation, have range limitations, and that are neither suffering from an underflow nor suffering from an overflow assert_array_equals: lengths differ, expected 10 got 5
-FAIL ':out-of-range' matches all elements that are candidates for constraint validation, have range limitations, and that are either suffering from an underflow or suffering from an overflow assert_array_equals: lengths differ, expected 12 got 2
-FAIL ':in-range' update number1's value < min assert_array_equals: lengths differ, expected 9 got 4
-FAIL ':out-of-range' update number1's value < min assert_array_equals: lengths differ, expected 13 got 3
-FAIL ':in-range' update number3's min < value assert_array_equals: lengths differ, expected 10 got 5
-FAIL ':out-of-range' update number3's min < value assert_array_equals: lengths differ, expected 12 got 2
-                                                   

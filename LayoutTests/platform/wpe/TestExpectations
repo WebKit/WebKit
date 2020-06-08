@@ -1346,6 +1346,8 @@ webkit.org/b/212158 imported/blink/fast/text/international/repaint-glyph-bounds.
 
 webkit.org/b/212352 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Failure ]
 
+webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
