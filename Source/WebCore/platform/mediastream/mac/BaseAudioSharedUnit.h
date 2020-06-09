@@ -43,6 +43,7 @@ class PlatformAudioData;
 
 class BaseAudioSharedUnit {
 public:
+    BaseAudioSharedUnit();
     virtual ~BaseAudioSharedUnit() = default;
 
     void startProducingData();

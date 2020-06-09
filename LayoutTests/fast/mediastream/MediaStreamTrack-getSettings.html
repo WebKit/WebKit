@@ -54,6 +54,11 @@
                 debug('According to the spec: "[every setting] MUST be a member of the set defined for that property by getCapabilities()"<br>');
                 checkTrackSettings(stream.getVideoTracks()[0]);
                 checkTrackSettings(stream.getAudioTracks()[0]);
+
+                debug('Validate sampleRate constraints appears correctly in track settings');
+                stream = await navigator.mediaDevices.getUserMedia({audio: { sampleRate : 48000 } });
+                listTrackSettings(stream.getAudioTracks()[0]);
+
                 finishJSTest();
             }
 

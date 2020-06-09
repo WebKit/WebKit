@@ -1,3 +1,16 @@
+2020-06-09  Youenn Fablet  <youenn@apple.com>
+
+        Fix two MediaStream tests
+        https://bugs.webkit.org/show_bug.cgi?id=208926
+        <rdar://problem/60329008>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStreamTrack-getSettings-expected.txt:
+        * fast/mediastream/MediaStreamTrack-getSettings.html:
+        * platform/mac-wk2/TestExpectations:
+        Unskip tests.
+
 2020-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Table][Floats] Multi-pass table layout needs clean floating state

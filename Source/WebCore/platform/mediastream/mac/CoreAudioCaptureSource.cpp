@@ -158,7 +158,6 @@ CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
 CoreAudioSharedUnit::CoreAudioSharedUnit()
     : m_verifyCapturingTimer(*this, &CoreAudioSharedUnit::verifyIsCapturing)
 {
-    setSampleRate(AudioSession::sharedSession().sampleRate());
 }
 
 void CoreAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID)
@@ -591,12 +590,6 @@ OSStatus CoreAudioSharedUnit::defaultOutputDevice(uint32_t* deviceID)
 
 static CaptureSourceOrError initializeCoreAudioCaptureSource(Ref<CoreAudioCaptureSource>&& source, const MediaConstraints* constraints)
 {
-#if PLATFORM(IOS_FAMILY)
-    // We ensure that we unsuspend ourselves on the constructor as a capture source
-    // is created when getUserMedia grants access which only happens when the process is foregrounded.
-    CoreAudioSharedUnit::singleton().prepareForNewCapture();
-#endif
-
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return WTFMove(result->badConstraint);
@@ -618,15 +611,17 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
         return { };
 
     auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), 0));
+
+    // We ensure that we unsuspend ourselves on the constructor as a capture source
+    // is created when getUserMedia grants access which only happens when the process is foregrounded.
+    source->unit().prepareForNewCapture();
 #endif
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
 CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, String&& label, String&& hashSalt, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit)
 {
-    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), WTFMove(label), WTFMove(hashSalt), 0));
-
-    source->m_overrideUnit = &overrideUnit;
+    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), WTFMove(label), WTFMove(hashSalt), 0, &overrideUnit));
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
@@ -692,9 +687,10 @@ void CoreAudioCaptureSourceFactory::devicesChanged(const Vector<CaptureDevice>& 
     CoreAudioSharedUnit::unit().devicesChanged(devices);
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t captureDeviceID)
+CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t captureDeviceID, BaseAudioSharedUnit* overrideUnit)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt))
     , m_captureDeviceID(captureDeviceID)
+    , m_overrideUnit(overrideUnit)
 {
     auto& unit = this->unit();
     initializeEchoCancellation(unit.enableEchoCancellation());

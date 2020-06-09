@@ -1,3 +1,36 @@
+2020-06-09  Youenn Fablet  <youenn@apple.com>
+
+        Fix two MediaStream tests
+        https://bugs.webkit.org/show_bug.cgi?id=208926
+        <rdar://problem/60329008>
+
+        Reviewed by Eric Carlson.
+
+        Previously, the mock capture sample rate was the one of the mock audio shared unit, which is the sample rate of the audio session by default.
+        This sample rate may change according the bots.
+        For that reason, explicitly set the mock shared unit sample rate to the default sample rate of the device, just before creating the source.
+        MediaConstraints may still apply after this step.
+
+        Fix an issue where we would use the real core audio unit in CoreAudioCaptureSource constructor.
+        We now pass the unit override if any in constructor.
+
+        Covered by unflaked tests.
+
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::BaseAudioSharedUnit):
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::initializeCoreAudioCaptureSource):
+        (WebCore::CoreAudioSharedUnit::CoreAudioSharedUnit):
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSource::createForTesting):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        (WebCore::MockRealtimeAudioSource::create):
+        (WebCore::MockAudioSharedUnit::MockAudioSharedUnit):
+        Do not disable echo cancellation to mimick what the real unit is doing.
+
 2020-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Table][Floats] Multi-pass table layout needs clean floating state

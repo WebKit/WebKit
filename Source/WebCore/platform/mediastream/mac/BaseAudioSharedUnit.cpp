@@ -36,6 +36,11 @@
 
 namespace WebCore {
 
+BaseAudioSharedUnit::BaseAudioSharedUnit()
+    : m_sampleRate(AudioSession::sharedSession().sampleRate())
+{
+}
+
 void BaseAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
 {
     auto locker = holdLock(m_clientsLock);

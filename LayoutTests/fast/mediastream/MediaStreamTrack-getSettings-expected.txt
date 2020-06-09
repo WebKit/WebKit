@@ -27,6 +27,13 @@ PASS "deviceId" in track.getCapabilities() is true
 PASS "echoCancellation" in track.getCapabilities() is true
 PASS "sampleRate" in track.getCapabilities() is true
 PASS "volume" in track.getCapabilities() is true
+Validate sampleRate constraints appears correctly in track settings
+audio track settings:
+  settings.deviceId = <UUID>
+  settings.echoCancellation = true
+  settings.sampleRate = 48000
+  settings.volume = 1
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

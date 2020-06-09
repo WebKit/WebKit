@@ -89,12 +89,12 @@ static void addHum(float amplitude, float frequency, float sampleRate, uint64_t 
 
 CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
 {
-#ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
         return { "No mock microphone device"_s };
-#endif
+
+    MockAudioSharedUnit::singleton().setSampleRate(WTF::get<MockMicrophoneProperties>(device->properties).defaultSampleRate);
     return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID),  WTFMove(name), WTFMove(hashSalt), constraints, MockAudioSharedUnit::singleton());
 }
 
@@ -108,8 +108,6 @@ MockAudioSharedUnit::MockAudioSharedUnit()
     : m_timer(RunLoop::current(), this, &MockAudioSharedUnit::tick)
     , m_workQueue(WorkQueue::create("MockAudioSharedUnit Capture Queue"))
 {
-    setSampleRate(AudioSession::sharedSession().sampleRate());
-    setEnableEchoCancellation(false);
 }
 
 bool MockAudioSharedUnit::hasAudioUnit() const

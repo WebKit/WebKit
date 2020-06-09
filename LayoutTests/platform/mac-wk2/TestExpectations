@@ -823,10 +823,6 @@ webkit.org/b/183878 media/modern-media-controls/tracks-panel/tracks-panel-up-cli
 
 webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
 
-webkit.org/b/194916 fast/mediastream/MediaStream-video-element.html [ Pass Failure ]
-
-webkit.org/b/196400 fast/mediastream/MediaStreamTrack-getSettings.html [ Pass Failure ]
-
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
 
 webkit.org/b/187391 accessibility/mac/async-increment-decrement-action.html [ Skip ]
