@@ -385,8 +385,6 @@ webkit.org/b/169918 compositing/hidpi-transform-with-render-layer-on-fractional-
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/masks/mask-with-preserve-3d.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/overlap-blending/nested-non-overlap-clipping.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
