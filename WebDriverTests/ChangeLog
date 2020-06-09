@@ -1,5 +1,13 @@
 2020-06-08  Lauro Moura  <lmoura@igalia.com>
 
+        [WebDriver][WPE] Gardening most of the remaining WPE failures.
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
+2020-06-08  Lauro Moura  <lmoura@igalia.com>
+
         [WebDriver][GTK][WPE] Fix overwritten expectations.
 
         WPE's set_window_rect/set.py expectations were in a block after the

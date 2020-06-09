@@ -214,6 +214,19 @@
             }
         }
     },
+
+    "imported/w3c/webdriver/tests/perform_actions/pointer_dblclick.py": {
+        "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
+    },
+
+    "imported/w3c/webdriver/tests/perform_actions/pointer_pause_dblclick.py": {
+        "subtests": {
+            "test_dblclick_with_pause_after_second_pointerdown": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/perform_actions/key_events.py": {
         "subtests": {
             "test_modifier_key_sends_correct_events[\\ue009-CONTROL]": {
@@ -320,6 +333,18 @@
             }
         }
     },
+
+    "imported/w3c/webdriver/tests/perform_actions/key_modifiers.py": {
+        "subtests": {
+            "test_shift_modifier_generates_capital_letters[\\ue008]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212953"}}
+            },
+            "test_shift_modifier_generates_capital_letters[\\ue050]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212953"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/release_actions/sequence.py": {
         "subtests": {
             "test_release_char_sequence_sends_keyup_events_in_reverse": {
@@ -327,6 +352,9 @@
             },
             "test_release_mouse_sequence_resets_dblclick_state": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_no_release_mouse_sequence_keeps_dblclick_state": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
             }
         }
     },
@@ -350,6 +378,15 @@
             }
         }
     },
+
+    "imported/w3c/webdriver/tests/element_clear/clear.py": {
+        "subtests": {
+            "test_input[color-#ff0000-#000000]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/180645"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/element_click/interactability.py": {
         "subtests": {
             "test_element_intercepted_no_pointer_events": {
@@ -504,6 +541,53 @@
             }
         }
     },
+
+    "imported/w3c/webdriver/tests/new_window/new.py": {
+        "subtests": {
+            "test_type_with_null_value": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212949"}}
+            },
+            "test_type_with_unknown_value": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212949"}}
+            }
+        }
+    },
+
+    "imported/w3c/webdriver/tests/new_window/new_tab.py": {
+        "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/212949"}}
+    },
+
+    "imported/w3c/webdriver/tests/new_window/new_window.py": {
+        "subtests": {
+            "test_type_with_window": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212949"}}
+            }
+        }
+    },
+
+    "imported/w3c/webdriver/tests/new_window/user_prompts.py": {
+        "subtests": {
+            "test_accept[capabilities0-alert-None]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_accept[capabilities0-confirm-True]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_accept[capabilities0-prompt-]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_dismiss[capabilities0-alert-None]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_dismiss[capabilities0-confirm-False]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_dismiss[capabilities0-prompt-None]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/get_element_tag_name/user_prompts.py": {
         "subtests": {
             "test_handle_prompt_dismiss": {
