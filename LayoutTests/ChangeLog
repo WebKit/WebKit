@@ -1,3 +1,14 @@
+2020-06-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Import some grid tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=212920
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The imported tests fail only for WebKitGtk+ platform.
+
+        * platform/gtk/TestExpectations: Added Failure entries,
+
 2020-06-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Gardening, clean up failures filed under bug 186638

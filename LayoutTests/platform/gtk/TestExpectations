@@ -3959,6 +3959,13 @@ webkit.org/b/209720 fast/css-generated-content/initial-letter-pagination-raised-
 webkit.org/b/209720 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 webkit.org/b/209720 fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
 
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-001.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-002.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-003.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-004.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-005.html [ Failure ]
+webkit.org/b/209282 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-006.html [ Failure ]
+
 webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
