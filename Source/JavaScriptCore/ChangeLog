@@ -1,3 +1,14 @@
+2020-06-09  Jonathan Bedard  <jbedard@apple.com>
+
+        JavaScriptCore: Support tvOS and watchOS builds with the public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=212788
+        <rdar://problem/64000087>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig: Link to tvOS and watchOS framework stubs.
+        * Configurations/JavaScriptCore.xcconfig: Use iOS flags for all embedded platforms.
+
 2020-06-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink __DATA,(__data,__bss,__common) more
