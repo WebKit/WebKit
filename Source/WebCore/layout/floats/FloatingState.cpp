@@ -61,6 +61,14 @@ FloatingState::FloatingState(LayoutState& layoutState, const ContainerBox& forma
 void FloatingState::append(FloatItem floatItem)
 {
     ASSERT(is<ContainerBox>(*m_formattingContextRoot));
+#if ASSERT_ENABLED
+    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+        // The integration codepath does not construct a layout box for the float item.
+        ASSERT(m_floats.findMatching([&] (auto& entry) {
+            return entry.floatBox() == floatItem.floatBox();
+        }) == notFound);
+    }
+#endif
 
     if (m_floats.isEmpty())
         return m_floats.append(floatItem);

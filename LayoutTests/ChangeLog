@@ -1,3 +1,13 @@
+2020-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Table][Floats] Multi-pass table layout needs clean floating state
+        https://bugs.webkit.org/show_bug.cgi?id=212889
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/float-inside-table-cell-simple-expected.html: Added.
+        * fast/layoutformattingcontext/float-inside-table-cell-simple.html: Added.
+
 2020-06-09  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement functions to use ResourceLoadStatistics.

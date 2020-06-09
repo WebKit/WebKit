@@ -28,7 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingState.h"
 #include "DisplayBox.h"
+#include "FloatingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
@@ -259,9 +261,13 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellDisplayBox.setContentBoxWidth(availableSpaceForContent);
 
     if (cellBox.hasInFlowOrFloatingChild()) {
-        auto invalidationState = InvalidationState { };
         auto constraintsForCellContent = geometry().constraintsForInFlowContent(cellBox);
         constraintsForCellContent.vertical.logicalHeight = usedCellHeight;
+        auto invalidationState = InvalidationState { };
+        // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell
+        // multiple times as part of the multi-pass table algorithm.
+        auto& floatingStateForCellContent = layoutState().ensureBlockFormattingState(cellBox).floatingState();
+        floatingStateForCellContent.clear();
         LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);
     }
     cellDisplayBox.setContentBoxHeight(geometry().cellHeigh(cellBox));

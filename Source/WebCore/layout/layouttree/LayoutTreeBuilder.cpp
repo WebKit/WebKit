@@ -278,14 +278,17 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
         }
 
         if (is<RenderTableCell>(renderer)) {
-            auto& cellElement = downcast<HTMLTableCellElement>(*renderer.element());
-            auto rowSpan = cellElement.rowSpan();
-            if (rowSpan > 1)
-                childLayoutBox->setRowSpan(rowSpan);
+            auto* tableCellElement = renderer.element();
+            if (is<HTMLTableCellElement>(tableCellElement)) {
+                auto& cellElement = downcast<HTMLTableCellElement>(*tableCellElement);
+                auto rowSpan = cellElement.rowSpan();
+                if (rowSpan > 1)
+                    childLayoutBox->setRowSpan(rowSpan);
 
-            auto columnSpan = cellElement.colSpan();
-            if (columnSpan > 1)
-                childLayoutBox->setColumnSpan(columnSpan);
+                auto columnSpan = cellElement.colSpan();
+                if (columnSpan > 1)
+                    childLayoutBox->setColumnSpan(columnSpan);
+            }
         }
 
         if (childRenderer.isAnonymous())

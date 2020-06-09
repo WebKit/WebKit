@@ -62,6 +62,7 @@ public:
     public:
         FloatItem(const Box&, Display::Box absoluteDisplayBox);
 
+        // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
         FloatItem(Position, Display::Box absoluteDisplayBox);
 
@@ -72,6 +73,9 @@ public:
         UsedHorizontalMargin horizontalMargin() const { return m_absoluteDisplayBox.horizontalMargin(); }
         PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
 
+#if ASSERT_ENABLED
+        const Box* floatBox() const { return m_layoutBox.get(); }
+#endif
     private:
         WeakPtr<const Box> m_layoutBox;
         Position m_position;

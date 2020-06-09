@@ -1,3 +1,24 @@
+2020-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Table][Floats] Multi-pass table layout needs clean floating state
+        https://bugs.webkit.org/show_bug.cgi?id=212889
+
+        Reviewed by Antti Koivisto.
+
+        When laying out the cell content multiple times to accommodate flex table layout,
+        the float state needs be cleared to avoid having redundant float content.
+
+        Test: fast/layoutformattingcontext/float-inside-table-cell-simple.html
+
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::append):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::floatBox const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+
 2020-06-09  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement functions to use ResourceLoadStatistics.
