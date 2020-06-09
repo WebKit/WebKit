@@ -1,3 +1,20 @@
+2020-06-09  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKit: Support watchOS and tvOS in xcconfigs
+        https://bugs.webkit.org/show_bug.cgi?id=212977
+        <rdar://problem/64170532>
+
+        Reviewed by Tim Horton.
+
+        No new tests, behavior unchanged.
+
+        * Configurations/Base.xcconfig: Add tvOS and watchOS major version macros.
+        * Configurations/BaseTarget.xcconfig: Include tvOS and watchOS framework stubs.
+        * Configurations/BaseXPCService.xcconfig: Generalize excluded files for all embedded platforms.
+        * Configurations/GPUService.xcconfig: Generalize INFOPLIST for embedded platforms.
+        * Configurations/NetworkService.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+
 2020-06-09  Alex Christensen  <achristensen@webkit.org>
 
         Expose PDF file URL in shouldAllowPDFToOpenFromFrame SPI

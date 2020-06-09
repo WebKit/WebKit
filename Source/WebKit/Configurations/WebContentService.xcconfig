@@ -29,7 +29,7 @@ PRODUCT_NAME_Normal = com.apple.WebKit.WebContent;
 PRODUCT_NAME_Development = com.apple.WebKit.WebContent.Development;
 
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
-INFOPLIST_FILE[sdk=iphone*] = WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist;
+INFOPLIST_FILE[sdk=embedded*] = WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist;
 
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
