@@ -402,7 +402,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow (with telemetry)
+                (allow
                     iokit-external-method)
             )
         )
