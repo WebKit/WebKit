@@ -8,6 +8,16 @@ function test()
     let suite = InspectorTest.createSyncSuite("Set");
 
     suite.addTestCase({
+        name: "Set.prototype.find",
+        test() {
+            let set = new Set(["a", "b"]);
+            InspectorTest.expectEqual(set.find((item) => item === "b"), "b", "Set can find a item it holds.");
+            InspectorTest.expectEqual(set.find((item) => typeof item === "string"), "a", "Set finds the first item if the given predicate matches multiple items.");
+            InspectorTest.expectEqual(set.find((item) => typeof item === "number"), undefined, "Set returns 'undefined' when attempting to find an item if the given predicate doesn't match anything.");
+        },
+    });
+
+    suite.addTestCase({
         name: "Set.prototype.pushAll",
         test() {
             function test(iterable) {

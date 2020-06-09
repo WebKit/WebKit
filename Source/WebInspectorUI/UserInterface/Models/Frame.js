@@ -361,30 +361,22 @@ WI.Frame = class Frame extends WI.Object
         this.dispatchEventToListeners(WI.Frame.Event.AllChildFramesRemoved);
     }
 
-    resourceForURL(url, recursivelySearchChildFrames)
+    resourcesForURL(url, recursivelySearchChildFrames)
     {
-        var resource = this._resourceCollection.resourceForURL(url);
-        if (resource)
-            return resource;
+        let resources = this._resourceCollection.resourcesForURL(url);
 
         // Check the main resources of the child frames for the requested URL.
         for (let childFrame of this._childFrameCollection) {
-            resource = childFrame.mainResource;
-            if (resource.url === url)
-                return resource;
+            if (childFrame.mainResource.url === url)
+                resources.add(childFrame.mainResource);
         }
 
-        if (!recursivelySearchChildFrames)
-            return null;
-
-        // Recursively search resources of child frames.
-        for (let childFrame of this._childFrameCollection) {
-            resource = childFrame.resourceForURL(url, true);
-            if (resource)
-                return resource;
+        if (recursivelySearchChildFrames) {
+            for (let childFrame of this._childFrameCollection)
+                resources.addAll(childFrame.resourcesForURL(url, recursivelySearchChildFrames));
         }
 
-        return null;
+        return resources;
     }
 
     resourceCollectionForType(type)

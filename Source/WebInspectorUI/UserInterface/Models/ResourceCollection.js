@@ -31,7 +31,7 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
         super();
 
         this._resourceType = resourceType || null;
-        this._resourceURLMap = new Map;
+        this._resourceURLMap = new Multimap;
         this._resourcesTypeMap = new Map;
     }
 
@@ -59,9 +59,9 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
         return object.type === this._resourceType;
     }
 
-    resourceForURL(url)
+    resourcesForURL(url)
     {
-        return this._resourceURLMap.get(url) || null;
+        return this._resourceURLMap.get(url) || new Set;
     }
 
     resourceCollectionForType(type)
@@ -114,7 +114,7 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
 
     _associateWithResource(resource)
     {
-        this._resourceURLMap.set(resource.url, resource);
+        this._resourceURLMap.add(resource.url, resource);
 
         if (!this._resourceType) {
             let resourcesCollectionForType = this.resourceCollectionForType(resource.type);
@@ -138,7 +138,7 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
             resourcesCollectionForType.remove(resource);
         }
 
-        this._resourceURLMap.delete(resource.url);
+        this._resourceURLMap.delete(resource.url, resource);
     }
 
     _resourceURLDidChange(event)
@@ -153,8 +153,8 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
         if (!oldURL)
             return;
 
-        this._resourceURLMap.set(resource.url, resource);
-        this._resourceURLMap.delete(oldURL);
+        this._resourceURLMap.add(resource.url, resource);
+        this._resourceURLMap.delete(oldURL, resource);
     }
 
     _resourceTypeDidChange(event)

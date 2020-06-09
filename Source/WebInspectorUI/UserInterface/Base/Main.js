@@ -1106,9 +1106,9 @@ WI.openURL = function(url, frame, options = {})
     let simplifiedURL = removeURLFragment(url);
     if (frame) {
         // WI.Frame.resourceForURL does not check the main resource, only sub-resources. So check both.
-        resource = frame.url === simplifiedURL ? frame.mainResource : frame.resourceForURL(simplifiedURL, searchChildFrames);
+        resource = frame.url === simplifiedURL ? frame.mainResource : frame.resourcesForURL(simplifiedURL, searchChildFrames).firstValue;
     } else if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
-        resource = WI.mainTarget.resourceCollection.resourceForURL(removeURLFragment(url));
+        resource = WI.mainTarget.resourceCollection.resourcesForURL(removeURLFragment(url)).firstValue;
 
     if (resource) {
         // Context menu selections may go through this code path; don't clobber the previously-set hint.
@@ -3060,7 +3060,7 @@ WI.linkifyElement = function(linkElement, sourceCodeLocation, options = {}) {
 
 WI.sourceCodeForURL = function(url)
 {
-    var sourceCode = WI.networkManager.resourceForURL(url);
+    let sourceCode = WI.networkManager.resourcesForURL(url).firstValue;
     if (!sourceCode) {
         sourceCode = WI.debuggerManager.scriptsForURL(url, WI.assumingMainTarget())[0];
         if (sourceCode)

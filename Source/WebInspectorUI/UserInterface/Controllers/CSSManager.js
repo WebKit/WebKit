@@ -615,13 +615,10 @@ WI.CSSManager = class CSSManager extends WI.Object
                 return;
 
             if (!styleSheet.isInspectorStyleSheet()) {
-                representedObject = representedObject.parentFrame.resourceForURL(representedObject.url);
-                if (!representedObject)
-                    return;
-
                 // Only try to update stylesheet resources. Other resources, like documents, can contain
                 // multiple stylesheets and we don't have the source ranges to update those.
-                if (representedObject.type !== WI.Resource.Type.StyleSheet)
+                representedObject = representedObject.parentFrame.resourcesForURL(representedObject.url).find((resource) => resource.type === WI.Resource.Type.StyleSheet);
+                if (!representedObject)
                     return;
             }
 

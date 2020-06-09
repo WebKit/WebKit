@@ -857,7 +857,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         case InspectorBackend.Enum.Timeline.EventType.EvaluateScript:
             if (!sourceCodeLocation) {
                 var mainFrame = WI.networkManager.mainFrame;
-                var scriptResource = mainFrame.url === recordPayload.data.url ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.url, true);
+                const recursivelySearchChildFrames = true;
+                let scriptResource = mainFrame.url === recordPayload.data.url ? mainFrame.mainResource : mainFrame.resourcesForURL(recordPayload.data.url, recursivelySearchChildFrames).lastValue;
                 if (scriptResource) {
                     // The lineNumber is 1-based, but we expect 0-based.
                     let lineNumber = recordPayload.data.lineNumber - 1;
@@ -907,7 +908,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             if (!sourceCodeLocation) {
                 var mainFrame = WI.networkManager.mainFrame;
-                var scriptResource = mainFrame.url === recordPayload.data.scriptName ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.scriptName, true);
+                const recursivelySearchChildFrames = true;
+                let scriptResource = mainFrame.url === recordPayload.data.scriptName ? mainFrame.mainResource : mainFrame.resourcesForURL(recordPayload.data.scriptName, recursivelySearchChildFrames).lastValue;
                 if (scriptResource) {
                     // The lineNumber is 1-based, but we expect 0-based.
                     let lineNumber = recordPayload.data.scriptLine - 1;

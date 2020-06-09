@@ -101,10 +101,12 @@ WI.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WI.DetailsSideb
 
     _mouseWasClicked(event)
     {
+        let parentFrame = null;
+
         if (this._domNode && this._domNode.ownerDocument) {
-            var mainResource = WI.networkManager.resourceForURL(this._domNode.ownerDocument.documentURL);
+            let mainResource = WI.networkManager.resourcesForURL(this._domNode.ownerDocument.documentURL).firstValue;
             if (mainResource)
-                var parentFrame = mainResource.parentFrame;
+                parentFrame = mainResource.parentFrame;
         }
 
         const options = {

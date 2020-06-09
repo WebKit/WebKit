@@ -71,16 +71,16 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         // Try to use the node to find the frame which has the correct resource first.
         if (documentNode) {
-            let mainResource = WI.networkManager.resourceForURL(documentNode.documentURL);
+            let mainResource = WI.networkManager.resourcesForURL(documentNode.documentURL).firstValue;
             if (mainResource) {
                 let parentFrame = mainResource.parentFrame;
-                sourceCode = parentFrame.resourceForURL(sourceURL);
+                sourceCode = parentFrame.resourcesForURL(sourceURL).firstValue;
             }
         }
 
         // If that didn't find the resource, then search all frames.
         if (!sourceCode)
-            sourceCode = WI.networkManager.resourceForURL(sourceURL);
+            sourceCode = WI.networkManager.resourcesForURL(sourceURL).firstValue;
 
         if (!sourceCode)
             return null;

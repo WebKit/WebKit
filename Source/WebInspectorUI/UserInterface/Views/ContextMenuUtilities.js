@@ -208,7 +208,7 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
         });
     }
 
-    if (WI.networkManager.resourceForURL(url)) {
+    if (WI.networkManager.resourcesForURL(url).size) {
         if (!WI.isShowingSourcesTab()) {
             contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
                 showResourceWithOptions({preferredTabType: WI.SourcesTabContentView.Type});

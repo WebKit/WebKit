@@ -461,15 +461,17 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         return true;
     }
 
-    resourceForURL(url)
+    resourcesForURL(url)
     {
-        if (!this._mainFrame)
-            return null;
+        let resources = new Set;
+        if (this._mainFrame) {
+            if (this._mainFrame.mainResource.url === url)
+                resources.add(this._mainFrame.mainResource);
 
-        if (this._mainFrame.mainResource.url === url)
-            return this._mainFrame.mainResource;
-
-        return this._mainFrame.resourceForURL(url, true);
+            const recursivelySearchChildFrames = true;
+            resources.addAll(this._mainFrame.resourcesForURL(url, recursivelySearchChildFrames));
+        }
+        return resources;
     }
 
     adoptOrphanedResourcesForTarget(target)
@@ -809,7 +811,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!resource) {
             var frame = this.frameForIdentifier(frameIdentifier);
             if (frame)
-                resource = frame.resourceForURL(response.url);
+                resource = frame.resourcesForURL(response.url).firstValue;
 
             // If we find the resource this way we had marked it earlier as finished via Page.getResourceTree.
             // Associate the resource with the requestIdentifier so it can be found in future loading events.
@@ -1083,7 +1085,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!url || isNaN(lineNumber) || lineNumber < 0)
             return null;
 
-        var sourceCode = WI.networkManager.resourceForURL(url);
+        let sourceCode = WI.networkManager.resourcesForURL(url).firstValue;
         if (!sourceCode)
             sourceCode = WI.debuggerManager.scriptsForURL(url, WI.mainTarget)[0];
 

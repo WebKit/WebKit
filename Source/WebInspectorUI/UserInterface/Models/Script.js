@@ -283,16 +283,20 @@ WI.Script = class Script extends WI.SourceCode
         if (this._target && this._target !== WI.mainTarget)
             resolver = this._target.resourceCollection;
 
+        function isScriptResource(item) {
+            return item.type === WI.Resource.Type.Document || item.type === WI.Resource.Type.Script;
+        }
+
         try {
             // Try with the Script's full URL.
-            let resource = resolver.resourceForURL(this._url);
+            let resource = resolver.resourcesForURL(this._url).find(isScriptResource);
             if (resource)
                 return resource;
 
             // Try with the Script's full decoded URL.
             let decodedURL = decodeURI(this._url);
             if (decodedURL !== this._url) {
-                resource = resolver.resourceForURL(decodedURL);
+                resource = resolver.resourcesForURL(decodedURL).find(isScriptResource);
                 if (resource)
                     return resource;
             }
@@ -300,7 +304,7 @@ WI.Script = class Script extends WI.SourceCode
             // Next try removing any fragment in the original URL.
             let urlWithoutFragment = removeURLFragment(this._url);
             if (urlWithoutFragment !== this._url) {
-                resource = resolver.resourceForURL(urlWithoutFragment);
+                resource = resolver.resourcesForURL(urlWithoutFragment).find(isScriptResource);
                 if (resource)
                     return resource;
             }
@@ -308,7 +312,7 @@ WI.Script = class Script extends WI.SourceCode
             // Finally try removing any fragment in the decoded URL.
             let decodedURLWithoutFragment = removeURLFragment(decodedURL);
             if (decodedURLWithoutFragment !== decodedURL) {
-                resource = resolver.resourceForURL(decodedURLWithoutFragment);
+                resource = resolver.resourcesForURL(decodedURLWithoutFragment).find(isScriptResource);
                 if (resource)
                     return resource;
             }

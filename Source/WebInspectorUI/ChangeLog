@@ -1,3 +1,62 @@
+2020-06-09  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow multiple resources for a given URL
+        https://bugs.webkit.org/show_bug.cgi?id=212852
+
+        Reviewed by Brian Burg.
+
+        Previously, when a new resource is added with a URL that matches an existing resource, any
+        `resourceForURL` call with that URL will return the new resource instead of the old one. Now
+        that there is a `Multimap` of URL to resource, it is possible to pick which resource is used
+        instead of always using the newest one.
+
+        * UserInterface/Models/ResourceCollection.js:
+        (WI.ResourceCollection):
+        (WI.ResourceCollection.prototype.resourcesForURL): Added.
+        (WI.ResourceCollection.prototype._associateWithResource):
+        (WI.ResourceCollection.prototype._disassociateWithResource):
+        (WI.ResourceCollection.prototype._resourceURLDidChange):
+        (WI.ResourceCollection.prototype.resourceForURL): Deleted.
+        * UserInterface/Models/Frame.js:
+        (WI.Frame.prototype.resourcesForURL): Added.
+        (WI.Frame.prototype.resourceForURL): Deleted.
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.resourcesForURL): Added.
+        (WI.NetworkManager.prototype.resourceRequestDidReceiveResponse):
+        (WI.NetworkManager.prototype._initiatorSourceCodeLocationFromPayload):
+        (WI.NetworkManager.prototype.resourceForURL): Deleted.
+
+        * UserInterface/Models/Script.js:
+        (WI.Script.prototype._resolveResource):
+        (WI.Script.prototype._resolveResource.isScriptResource): Added.
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype._updateResourceContent.fetchedStyleSheetContent):
+        * UserInterface/Base/Utilities.js:
+        (Set.prototype.find): Added.
+        Add utility for finding an item in a `Set` to avoid having to `Array.from`.
+
+        * UserInterface/Base/Main.js:
+        (WI.openURL):
+        (WI.sourceCodeForURL):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._processRecord):
+        * UserInterface/Models/CallFrame.js:
+        (WI.CallFrame.fromPayload):
+        * UserInterface/Models/ConsoleMessage.js:
+        (WI.ConsoleMessage.prototype.get sourceCodeLocation):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype.createSourceCodeLocation):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeFromPayload):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForURL):
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        (WI.DOMDetailsSidebarPanel.prototype._mouseWasClicked):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        Use the `firstValue` instead of the implicit `lastValue` to match existing nearby usage of
+        `WI.DebuggerManager.prototype.scriptsForURL`, which explicitly chooses the first script.
+
 2020-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Work around broken system version macro

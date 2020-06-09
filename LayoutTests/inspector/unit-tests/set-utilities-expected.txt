@@ -1,5 +1,10 @@
 
 == Running test suite: Set
+-- Running test case: Set.prototype.find
+PASS: Set can find a item it holds.
+PASS: Set finds the first item if the given predicate matches multiple items.
+PASS: Set returns 'undefined' when attempting to find an item if the given predicate doesn't match anything.
+
 -- Running test case: Set.prototype.pushAll
 Array:
 [1,2] => [1,2,"a1","a2"]
