@@ -232,7 +232,40 @@ class Plan
         end
         @additionalEnv = []
     end
-    
+
+    def timeoutMonitorAddon
+        # In case the JSC timeout handler is not working, add a timeout monitor in the script
+        interval = 30 # Seconds
+        timeout = ENV['JSCTEST_timeout'].to_i + 10 # Let jsc timeout handler trigger first
+        if !timeout
+            timeout = interval
+        end
+        if timeout < interval
+            interval = timeout
+        end
+        script = %Q[
+(
+    ((count_down = #{timeout}))
+    while ((count_down > 0)); do
+        if [ "$count_down" -gt #{interval} ]
+        then
+            sleep #{interval}
+        else
+            sleep count_down
+        fi
+        pgrep -P $$ 1>/dev/null || exit 0
+        ((count_down -= #{interval}))
+    done
+    echo "#{Shellwords.shellescape(@name)} has timed out, killing with timeout monitor"
+    kill -s SIGTERM $$
+    sleep 5 
+    pgrep -P 1>/dev/null $$ && kill -s SIGKILL $$
+    echo FAIL: #{Shellwords.shellescape(@name)} ; touch #{failFile} ;
+) &
+]
+        return script
+    end
+
     def shellCommand
         # It's important to remember that the test is actually run in a subshell, so if we change directory
         # in the subshell when we return we will be in our original directory. This is nice because we don't
@@ -288,7 +321,8 @@ class Plan
                 outp.puts "START_TIME=$SECONDS"
             end
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            cmd  = "(" + shellCommand + " || (echo $? > #{failFile})) 2>&1 "
+            cmd = timeoutMonitorAddon
+            cmd += "(" + shellCommand + " || (echo $? > #{failFile})) 2>&1 "
             cmd += @outputHandler.call(@name)
             if $verbosity >= 3
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
