@@ -132,7 +132,7 @@ public:
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
-    static const AtomString& initialLocale() { return nullAtom(); }
+    static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
 
 private:
     RefCountedArray<AtomString> m_families { 1 };

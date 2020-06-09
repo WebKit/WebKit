@@ -28,7 +28,6 @@
 
 #include "SystemFontDatabaseCoreText.h"
 #include <mutex>
-#include <wtf/Language.h>
 
 namespace WebCore {
 
@@ -145,54 +144,23 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
 
 #endif // USE(PLATFORM_SYSTEM_FALLBACK_LIST)
 
-static String computeSpecializedChineseLocale()
-{
-    const Vector<String>& preferredLanguages = userPreferredLanguages();
-    for (auto& language : preferredLanguages) {
-        if (equalIgnoringASCIICase(language, "zh") || startsWithLettersIgnoringASCIICase(language, "zh-"))
-            return language;
-    }
-    return "zh-hans"_str; // We have no signal. Pick one option arbitrarily.
-}
-
-static String& cachedSpecializedChineseLocale()
-{
-    static NeverDestroyed<String> specializedChineseLocale;
-    return specializedChineseLocale.get();
-}
-
-static void languageChanged(void*)
-{
-    cachedSpecializedChineseLocale() = computeSpecializedChineseLocale();
-}
-
 AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomString& locale, const AtomString& familyName)
 {
     ASSERT((locale.isNull() && script == USCRIPT_COMMON) || !locale.isNull());
     if (script == USCRIPT_COMMON)
         return nullAtom();
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        static char dummy;
-        addLanguageChangeObserver(&dummy, &languageChanged); // We will never remove the observer, so all we need is a non-null pointer.
-        languageChanged(nullptr);
-    });
-
-    // FIXME: Delete this once <rdar://problem/47682577> is fixed.
-    auto& usedLocale = script == USCRIPT_HAN ? cachedSpecializedChineseLocale() : locale.string();
-
     // FIXME: Use the system font database to handle standardFamily
     if (familyName == serifFamily)
-        return SystemFontDatabaseCoreText::singleton().serifFamily(usedLocale);
+        return SystemFontDatabaseCoreText::singleton().serifFamily(locale.string());
     if (familyName == sansSerifFamily)
-        return SystemFontDatabaseCoreText::singleton().sansSerifFamily(usedLocale);
+        return SystemFontDatabaseCoreText::singleton().sansSerifFamily(locale.string());
     if (familyName == cursiveFamily)
-        return SystemFontDatabaseCoreText::singleton().cursiveFamily(usedLocale);
+        return SystemFontDatabaseCoreText::singleton().cursiveFamily(locale.string());
     if (familyName == fantasyFamily)
-        return SystemFontDatabaseCoreText::singleton().fantasyFamily(usedLocale);
+        return SystemFontDatabaseCoreText::singleton().fantasyFamily(locale.string());
     if (familyName == monospaceFamily)
-        return SystemFontDatabaseCoreText::singleton().monospaceFamily(usedLocale);
+        return SystemFontDatabaseCoreText::singleton().monospaceFamily(locale.string());
 
     return nullAtom();
 }

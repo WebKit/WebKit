@@ -440,7 +440,7 @@ float FontCascade::widthForSimpleText(StringView text) const
         glyphBuffer.add(glyph, &font, glyphWidth);
     }
     if (hasKerningOrLigatures) {
-        font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().locale());
+        font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale());
         // This is needed only to match the result of the slow path. Same glyph widths but different floating point arithmentics can
         // produce different run width.
         float runWidthDifferenceWithTransformApplied = -runWidth;

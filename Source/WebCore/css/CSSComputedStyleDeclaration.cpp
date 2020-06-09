@@ -2954,9 +2954,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyListStyleType:
             return cssValuePool.createValue(style.listStyleType());
         case CSSPropertyWebkitLocale:
-            if (style.locale().isNull())
+            if (style.specifiedLocale().isNull())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
-            return cssValuePool.createValue(style.locale(), CSSUnitType::CSS_STRING);
+            return cssValuePool.createValue(style.specifiedLocale(), CSSUnitType::CSS_STRING);
         case CSSPropertyMarginTop:
             return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
         case CSSPropertyMarginRight: {

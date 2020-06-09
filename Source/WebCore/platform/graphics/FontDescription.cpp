@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 - 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 
 #include "FontCascadeDescription.h"
 #include "LocaleToScriptMapping.h"
+#include <wtf/Language.h>
 
 namespace WebCore {
 
@@ -65,10 +66,42 @@ FontDescription::FontDescription()
 {
 }
 
-void FontDescription::setLocale(const AtomString& locale)
+static AtomString computeSpecializedChineseLocale()
 {
-    m_locale = locale;
-    m_script = localeToScriptCodeForFontSelection(m_locale);
+    for (auto& language : userPreferredLanguages()) {
+        if (startsWithLettersIgnoringASCIICase(language, "zh-"))
+            return language;
+    }
+    return AtomString("zh-hans", AtomString::ConstructFromLiteral); // We have no signal. Pick one option arbitrarily.
+}
+
+static AtomString& cachedSpecializedChineseLocale()
+{
+    static NeverDestroyed<AtomString> specializedChineseLocale;
+    return specializedChineseLocale.get();
+}
+
+static void fontDescriptionLanguageChanged(void*)
+{
+    cachedSpecializedChineseLocale() = computeSpecializedChineseLocale();
+}
+
+static const AtomString& specializedChineseLocale()
+{
+    auto& locale = cachedSpecializedChineseLocale();
+    if (cachedSpecializedChineseLocale().isNull()) {
+        static char forNonNullPointer;
+        addLanguageChangeObserver(&forNonNullPointer, &fontDescriptionLanguageChanged); // We will never remove the observer, so all we need is a non-null pointer.
+        fontDescriptionLanguageChanged(nullptr);
+    }
+    return locale;
+}
+
+void FontDescription::setSpecifiedLocale(const AtomString& locale)
+{
+    m_specifiedLocale = locale;
+    m_script = localeToScriptCodeForFontSelection(m_specifiedLocale);
+    m_locale = m_script == USCRIPT_HAN ? specializedChineseLocale() : m_specifiedLocale;
 }
 
 #if !PLATFORM(COCOA)

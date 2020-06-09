@@ -113,7 +113,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
-    font->applyTransforms(*glyphBuffer, lastGlyphCount, m_enableKerning, m_requiresShaping, m_font->fontDescription().locale());
+    font->applyTransforms(*glyphBuffer, lastGlyphCount, m_enableKerning, m_requiresShaping, m_font->fontDescription().computedLocale());
     glyphBufferSize = glyphBuffer->size();
 
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)

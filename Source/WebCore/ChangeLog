@@ -1,3 +1,96 @@
+2020-06-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        lang=zh needs to defer to system preferences to know whether it should be simplified or traditional
+        https://bugs.webkit.org/show_bug.cgi?id=212626
+        <rdar://problem/60227623>
+
+        Reviewed by Darin Adler.
+
+        If the content says lang="zh" font-family: sans-serif, we have no signal for whether
+        the content should be traditional or simplified. In this case, we should pick based
+        on system preferences to make it more likely that we get the right answer.
+
+        This is actually what some Cocoa platform text functions were doing, but not all of them.
+        We need to do it at our level in WebKit to make sure that all our calls to the platform
+        have consistent behavior. Also, we can cache the result at our level, which is more
+        performant than if the platform cached it at each platform entry point.
+
+        We already started consulting with system preferences to make this decision in r189038.
+        This patch extends that and fixes it to throughout WebKit.
+
+        This doesn't expose any new fingerprinting data, because this information was already
+        exposed (e.g. by drawing fallback fonts to the canvas and then reading back the pixels).
+
+        Tests: fast/text/locale-getComputedStyle.html
+               fast/text/international/generic-font-family-language-traditional.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSFontSelector.cpp:
+        (WebCore::resolveGenericFamily):
+        * css/CSSProperties.json:
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::wordBreakBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::systemFallbackFontForCharacter const):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+        * platform/graphics/FontCascadeDescription.cpp:
+        * platform/graphics/FontCascadeDescription.h:
+        (WebCore::FontCascadeDescription::initialSpecifiedLocale):
+        (WebCore::FontCascadeDescription::initialLocale): Deleted.
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::computeSpecializedChineseLocale):
+        (WebCore::cachedSpecializedChineseLocale):
+        (WebCore::fontDescriptionLanguageChanged):
+        (WebCore::specializedChineseLocale):
+        (WebCore::FontDescription::setSpecifiedLocale):
+        (WebCore::FontDescription::setLocale): Deleted.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::computedLocale const):
+        (WebCore::FontDescription::specifiedLocale const):
+        (WebCore::FontDescription::operator== const):
+        (WebCore::FontDescription::encode const):
+        (WebCore::FontDescription::decode):
+        (WebCore::FontDescription::locale const): Deleted.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontDescription::platformResolveGenericFamily):
+        (WebCore::computeSpecializedChineseLocale): Deleted.
+        (WebCore::cachedSpecializedChineseLocale): Deleted.
+        (WebCore::languageChanged): Deleted.
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::systemFontParameters):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::computeText const):
+        * rendering/RenderText.cpp:
+        (WebCore::maxWordFragmentWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::applyTextTransform):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::paintApplePayButton):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragmentIterator):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::computedLocale const):
+        (WebCore::RenderStyle::specifiedLocale const):
+        (WebCore::RenderStyle::locale const): Deleted.
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueWebkitLocale):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2020-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for empty table

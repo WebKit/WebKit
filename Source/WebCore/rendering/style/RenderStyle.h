@@ -593,7 +593,8 @@ public:
     short hyphenationLimitAfter() const { return m_rareInheritedData->hyphenationLimitAfter; }
     short hyphenationLimitLines() const { return m_rareInheritedData->hyphenationLimitLines; }
     const AtomString& hyphenationString() const { return m_rareInheritedData->hyphenationString; }
-    const AtomString& locale() const { return fontDescription().locale(); }
+    const AtomString& computedLocale() const { return fontDescription().computedLocale(); }
+    const AtomString& specifiedLocale() const { return fontDescription().specifiedLocale(); }
     BorderFit borderFit() const { return static_cast<BorderFit>(m_rareNonInheritedData->borderFit); }
     Resize resize() const { return static_cast<Resize>(m_rareNonInheritedData->resize); }
     ColumnAxis columnAxis() const { return static_cast<ColumnAxis>(m_rareNonInheritedData->multiCol->axis); }

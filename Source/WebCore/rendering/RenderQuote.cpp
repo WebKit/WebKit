@@ -380,7 +380,7 @@ String RenderQuote::computeText() const
     case QuoteType::CloseQuote:
         if (const QuotesData* quotes = style().quotes())
             return isOpenQuote ? quotes->openQuote(m_depth).impl() : quotes->closeQuote(m_depth).impl();
-        if (const QuotesForLanguage* quotes = quotesForLanguage(style().locale()))
+        if (const QuotesForLanguage* quotes = quotesForLanguage(style().specifiedLocale()))
             return stringForQuoteCharacter(isOpenQuote ? (m_depth ? quotes->open2 : quotes->open1) : (m_depth ? quotes->close2 : quotes->close1));
         // FIXME: Should the default be the quotes for "en" rather than straight quotes?
         return m_depth ? apostropheString() : quotationMarkString();

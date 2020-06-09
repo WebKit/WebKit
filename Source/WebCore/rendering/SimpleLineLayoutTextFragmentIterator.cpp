@@ -50,11 +50,11 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , keepAllWordsForCJK(style.wordBreak() == WordBreak::KeepAll)
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? TabSize(0) : style.tabSize())
-    , shouldHyphenate(style.hyphens() == Hyphens::Auto && canHyphenate(style.locale()))
+    , shouldHyphenate(style.hyphens() == Hyphens::Auto && canHyphenate(style.computedLocale()))
     , hyphenStringWidth(shouldHyphenate ? font.width(TextRun(String(style.hyphenString()))) : 0)
     , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
     , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
-    , locale(style.locale())
+    , locale(style.computedLocale())
 {
     if (style.hyphenationLimitLines() > -1)
         hyphenLimitLines = style.hyphenationLimitLines();
@@ -63,7 +63,7 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
 TextFragmentIterator::TextFragmentIterator(const RenderBlockFlow& flow)
     : m_flowContents(flow)
     , m_currentSegment(m_flowContents.begin())
-    , m_lineBreakIterator(m_currentSegment->text, flow.style().locale())
+    , m_lineBreakIterator(m_currentSegment->text, flow.style().computedLocale())
     , m_style(flow.style())
 {
 }

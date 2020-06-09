@@ -289,7 +289,7 @@ LineBreaker::WordBreakRule LineBreaker::wordBreakBehavior(const RenderStyle& sty
     if (style.overflowWrap() == OverflowWrap::Break && !m_hasWrapOpportunityAtPreviousPosition)
         return WordBreakRule::AtArbitraryPosition;
 
-    if (!n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.locale()))
+    if (!n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.computedLocale()))
         return WordBreakRule::OnlyHyphenationAllowed;
 
     return WordBreakRule::NoBreak;
@@ -339,7 +339,7 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
             return { };
         // Adjust before index to accommodate the limit-after value (it's the last potential hyphen location in this run).
         auto hyphenBefore = std::min(leftSideLength, runLength - limitAfter) + 1;
-        unsigned hyphenLocation = lastHyphenLocation(StringView(inlineTextItem.inlineTextBox().content()).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
+        unsigned hyphenLocation = lastHyphenLocation(StringView(inlineTextItem.inlineTextBox().content()).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.computedLocale());
         if (!hyphenLocation || hyphenLocation < limitBefore)
             return { };
         // hyphenLocation is relative to the start of this InlineItemText.

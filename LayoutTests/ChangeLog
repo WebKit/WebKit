@@ -1,3 +1,16 @@
+2020-06-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        lang=zh needs to defer to system preferences to know whether it should be simplified or traditional
+        https://bugs.webkit.org/show_bug.cgi?id=212626
+        <rdar://problem/60227623>
+
+        Reviewed by Darin Adler.
+
+        Make sure the new locale isn't exposed.
+
+        * fast/text/locale-getComputedStyle-expected.txt: Added.
+        * fast/text/locale-getComputedStyle.html: Added.
+
 2020-06-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for empty table

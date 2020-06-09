@@ -63,7 +63,7 @@ RenderStyle resolveForDocument(const Document& document)
     documentStyle.setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
     documentStyle.setPageScaleTransform(renderView.frame().frameScaleFactor());
     FontCascadeDescription documentFontDescription = documentStyle.fontDescription();
-    documentFontDescription.setLocale(document.contentLanguage());
+    documentFontDescription.setSpecifiedLocale(document.contentLanguage());
     documentStyle.setFontDescription(WTFMove(documentFontDescription));
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
@@ -108,7 +108,7 @@ RenderStyle resolveForDocument(const Document& document)
     const Settings& settings = renderView.frame().settings();
 
     FontCascadeDescription fontDescription;
-    fontDescription.setLocale(document.contentLanguage());
+    fontDescription.setSpecifiedLocale(document.contentLanguage());
     fontDescription.setRenderingMode(settings.fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setShouldAllowUserInstalledFonts(settings.shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);

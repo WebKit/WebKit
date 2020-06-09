@@ -751,9 +751,9 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 
     FontCascadeDescription fontDescription = builderState.style().fontDescription();
     if (primitiveValue.valueID() == CSSValueAuto)
-        fontDescription.setLocale(nullAtom());
+        fontDescription.setSpecifiedLocale(nullAtom());
     else
-        fontDescription.setLocale(primitiveValue.stringValue());
+        fontDescription.setSpecifiedLocale(primitiveValue.stringValue());
     builderState.setFontDescription(WTFMove(fontDescription));
 }
 

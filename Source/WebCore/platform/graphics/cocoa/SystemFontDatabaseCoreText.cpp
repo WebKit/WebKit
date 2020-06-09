@@ -183,7 +183,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::computeCascad
 SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::systemFontParameters(const FontDescription& description, const AtomString& familyName, SystemFontKind systemFontKind, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     CascadeListParameters result;
-    result.locale = description.locale();
+    result.locale = description.computedLocale();
     result.size = description.computedSize();
     result.italic = isItalic(description.italic());
     result.allowUserInstalledFonts = allowUserInstalledFonts;
