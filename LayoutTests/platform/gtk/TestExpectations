@@ -1253,12 +1253,6 @@ webkit.org/b/207624 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/207625 compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Failure ]
 webkit.org/b/207625 compositing/backing/transition-extent.html [ Failure ]
 
-# Failing since deferred async loading enabled until document is loaded enabled.
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure Pass ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
-
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
 
 webkit.org/b/208123 http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html [ Failure ]
@@ -1975,8 +1969,6 @@ webkit.org/b/183036 fast/events/message-port.html [ Timeout Pass ]
 
 webkit.org/b/183188 imported/blink/svg/as-image/image-change-with-equal-sizes.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
-
 webkit.org/b/183609 [ Release ] inspector/unit-tests/throttler.html [ Pass Failure ]
 
 webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
@@ -2005,7 +1997,6 @@ webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-padding.html
 webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Failure Timeout Pass ]
 webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 fast/selectors/hover-invalidation-descendant-dynamic.html [ Failure Pass ]
@@ -4466,15 +4457,6 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-con
 # Bug in iOS, probably will require a baseline once it's fixed.
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
 
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html [ Failure Pass ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
-
 webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
 webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
 webkit.org/b/203676 svg/custom/pointer-events-path.svg [ Failure ]
@@ -4526,7 +4508,6 @@ imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ Pass ]
 

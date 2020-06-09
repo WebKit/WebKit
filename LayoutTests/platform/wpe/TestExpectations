@@ -587,10 +587,6 @@ webkit.org/b/207258 imported/w3c/web-platform-tests/html/infrastructure/safe-pas
 
 webkit.org/b/207624 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Failure ]
 
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
-webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure ]
-
 webkit.org/b/208120 fast/mediastream/media-element-current-time.html [ Failure ]
 
 webkit.org/b/208121 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Failure ]
@@ -2169,15 +2165,6 @@ webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-dat
 
 # Bug in iOS, probably will require a baseline once it's fixed.
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
-
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
 
 webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
 webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]

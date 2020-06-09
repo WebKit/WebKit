@@ -153,6 +153,25 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failu
 # WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
+
+webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
+
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html [ Failure Pass ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
+
+# Failing since deferred async loading enabled until document is loaded enabled.
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure Pass ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure ]
+webkit.org/b/208104 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
+
 webkit.org/b/211692 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.html [ Failure ]
 webkit.org/b/212217 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-escape.tentative.any.worker.html [ Failure ]
@@ -164,6 +183,8 @@ webkit.org/b/212807 imported/w3c/web-platform-tests/xhr/headers-normalize-respon
 webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navigation/javascript-url-navigation-inherits-csp.html [ Failure ]
 
 webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
+
+webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
