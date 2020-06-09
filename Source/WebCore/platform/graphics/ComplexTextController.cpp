@@ -150,11 +150,18 @@ void ComplexTextController::finishConstruction()
     adjustGlyphsAndAdvances();
 
     if (!m_isLTROnly) {
-        m_runIndices.reserveInitialCapacity(m_complexTextRuns.size());
+        unsigned length = m_complexTextRuns.size();
+        m_runIndices.reserveInitialCapacity(length);
+        for (unsigned i = 0; i < length; ++i)
+            m_runIndices.uncheckedAppend(length - i - 1);
+        std::sort(m_runIndices.data(), m_runIndices.data() + length,
+            [this](auto a, auto b) {
+                return stringBegin(*m_complexTextRuns[a]) < stringBegin(*m_complexTextRuns[b]);
+            });
 
-        m_glyphCountFromStartToIndex.reserveInitialCapacity(m_complexTextRuns.size());
+        m_glyphCountFromStartToIndex.reserveInitialCapacity(length);
         unsigned glyphCountSoFar = 0;
-        for (unsigned i = 0; i < m_complexTextRuns.size(); ++i) {
+        for (unsigned i = 0; i < length; ++i) {
             m_glyphCountFromStartToIndex.uncheckedAppend(glyphCountSoFar);
             glyphCountSoFar += m_complexTextRuns[i]->glyphCount();
         }
@@ -507,30 +514,6 @@ unsigned ComplexTextController::indexOfCurrentRun(unsigned& leftmostGlyph)
         for (unsigned i = 0; i < m_currentRun; ++i)
             leftmostGlyph += m_complexTextRuns[i]->glyphCount();
         return m_currentRun;
-    }
-
-    if (m_runIndices.isEmpty()) {
-        unsigned firstRun = 0;
-        unsigned firstRunOffset = stringBegin(*m_complexTextRuns[0]);
-        for (unsigned i = 1; i < runCount; ++i) {
-            unsigned offset = stringBegin(*m_complexTextRuns[i]);
-            if (offset < firstRunOffset) {
-                firstRun = i;
-                firstRunOffset = offset;
-            }
-        }
-        m_runIndices.uncheckedAppend(firstRun);
-    }
-
-    while (m_runIndices.size() <= m_currentRun) {
-        unsigned offset = stringEnd(*m_complexTextRuns[m_runIndices.last()]);
-
-        for (unsigned i = 0; i < runCount; ++i) {
-            if (offset == stringBegin(*m_complexTextRuns[i])) {
-                m_runIndices.uncheckedAppend(i);
-                break;
-            }
-        }
     }
 
     unsigned currentRunIndex = m_runIndices[m_currentRun];
