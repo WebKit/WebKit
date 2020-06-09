@@ -1,3 +1,17 @@
+2020-06-09  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: [Safari Mojave for High Sierra] Accessing some of the featured pages on apple.com causes the webpage to crash
+        https://bugs.webkit.org/show_bug.cgi?id=212940
+
+        Reviewed by Tim Horton.
+
+        The code to use the singleton for a SwitchingGPUClient was assuming it
+        has always been set, which was not the case when
+        ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) was not true.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm: Set the singleton unconditionally.
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2020-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r260820): [macCatalyst] Web process crashes when uploading a file

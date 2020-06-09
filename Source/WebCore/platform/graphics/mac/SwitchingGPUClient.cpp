@@ -30,10 +30,9 @@ namespace WebCore {
 
 SwitchingGPUClient* SwitchingGPUClient::m_singleton = nullptr;
 
-SwitchingGPUClient& SwitchingGPUClient::singleton()
+SwitchingGPUClient* SwitchingGPUClient::singletonIfExists()
 {
-    ASSERT(m_singleton);
-    return *m_singleton;
+    return m_singleton;
 }
 
 void SwitchingGPUClient::setSingleton(SwitchingGPUClient& singleton)

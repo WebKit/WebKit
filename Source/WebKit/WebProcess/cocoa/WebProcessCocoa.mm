@@ -502,8 +502,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     RELEASE_ASSERT(retval == kCGErrorSuccess);
     // Make sure that we close any WindowServer connections after checking in with Launch Services.
     CGSShutdownServerConnections();
-
-    SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
 #else
 
     if (![NSApp isRunning]) {
@@ -512,6 +510,8 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
         launchServicesCheckIn();
     }
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+
+    SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
 #endif // PLATFORM(MAC)
 
     if (parameters.extraInitializationData.get("inspector-process"_s) == "1")

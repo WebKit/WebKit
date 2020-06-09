@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SwitchingGPUClient {
 public:
-    WEBCORE_EXPORT static SwitchingGPUClient& singleton();
+    WEBCORE_EXPORT static SwitchingGPUClient* singletonIfExists();
     WEBCORE_EXPORT static void setSingleton(SwitchingGPUClient&);
 
     virtual ~SwitchingGPUClient() = default;

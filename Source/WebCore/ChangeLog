@@ -1,3 +1,23 @@
+2020-06-09  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: [Safari Mojave for High Sierra] Accessing some of the featured pages on apple.com causes the webpage to crash
+        https://bugs.webkit.org/show_bug.cgi?id=212940
+        rdar://63839405
+
+        Reviewed by Tim Horton.
+
+        The code to use the singleton for a SwitchingGPUClient was assuming it
+        has always been set, which was not the case when
+        ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING) was not true.
+
+        * platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp: Check the state of the
+        singleton before calling it.
+        (WebCore::GraphicsContextGLOpenGLManager::updateHighPerformanceState):
+        (WebCore::GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired):
+        * platform/graphics/mac/SwitchingGPUClient.h: Return a pointer to the singleton which
+        will allow the code to check for its existence.
+        (WebCore::SwitchingGPUClient::singletonIfExists):
+
 2020-06-09  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Streamline SimpleColor premulitply/unpremultiply code
