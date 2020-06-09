@@ -1,3 +1,24 @@
+2020-06-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r260820): [macCatalyst] Web process crashes when uploading a file
+        https://bugs.webkit.org/show_bug.cgi?id=212976
+        <rdar://problem/64033186>
+
+        Reviewed by Tim Horton.
+
+        On Mac Catalyst, we attempt to take a sandbox extension for `com.apple.frontboard.systemappservices` when
+        uploading a file; this service does not exist in Catalyst, and we consequently encounter a release assertion
+        under `WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon`.
+
+        Fix this by introducing `HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)`, and using it to guard codepaths that attempt to
+        grab a mach extension to this service. (As a followup, we should consider adopting this in other places that
+        currently reference `com.apple.frontboard.systemappservices`).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+
 2020-06-09  Jonathan Bedard  <jbedard@apple.com>
 
         WebKit: Support watchOS and tvOS in xcconfigs
