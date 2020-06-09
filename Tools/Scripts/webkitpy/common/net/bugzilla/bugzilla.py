@@ -140,11 +140,11 @@ class BugzillaQueries(object):
 
     # This is kinda a hack.  There is probably a better way to get this information from bugzilla.
     def _parse_result_count(self, results_page):
-        result_count_text = BeautifulSoup(results_page).find(attrs={'class': 'bz_result_count'}).string
-        if result_count_text is None:
+        result_count_text = BeautifulSoup(results_page).find(attrs={'class': 'bz_result_count'})
+        if result_count_text is None or result_count_text.string is None:
             _log.warn("BeautifulSoup returned None while finding class: bz_result_count in:\n{}".format(results_page))
             return 0
-        result_count_parts = result_count_text.strip().split(" ")
+        result_count_parts = result_count_text.string.strip().split(" ")
         if result_count_parts[0] == "Zarro":
             return 0
         if result_count_parts[0] == "One":

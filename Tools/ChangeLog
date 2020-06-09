@@ -1,3 +1,14 @@
+2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [webkitpy] Check 'bug-search' returns a non null result before parsing
+        https://bugs.webkit.org/show_bug.cgi?id=212906
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries._parse_result_count): Check quick-search query
+        response is non-null and a non-empty text.
+
 2020-06-08  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Rename Color::lighten() and Color::darken() to Color::lightened() and Color::darkened()
