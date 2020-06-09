@@ -44,7 +44,7 @@
 
 namespace Inspector {
 
-const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
+const char* const InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 
 // Objects created and retained by evaluating breakpoint actions are put into object groups
 // according to the breakpoint action identifier assigned by the frontend. A breakpoint may

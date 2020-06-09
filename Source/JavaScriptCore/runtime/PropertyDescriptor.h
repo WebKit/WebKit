@@ -27,6 +27,7 @@
 
 #include "DefinePropertyAttributes.h"
 #include "JSCJSValue.h"
+#include "PropertySlot.h"
 
 namespace JSC {
 
@@ -82,7 +83,8 @@ public:
     unsigned attributesOverridingCurrent(const PropertyDescriptor& current) const;
 
 private:
-    JS_EXPORT_PRIVATE static unsigned defaultAttributes;
+    static constexpr unsigned defaultAttributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
+
     bool operator==(const PropertyDescriptor&) { return false; }
     enum { WritablePresent = 1, EnumerablePresent = 2, ConfigurablePresent = 4};
     // May be a getter/setter

@@ -31,7 +31,6 @@
 #include "JSCJSValueInlines.h"
 
 namespace JSC {
-unsigned PropertyDescriptor::defaultAttributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
 
 bool PropertyDescriptor::writable() const
 {

@@ -65,6 +65,7 @@ public:
     // ensures that we only use the size class approach if it means being able to pack two things
     // into one block.
     static constexpr size_t largeCutoff = (blockPayload / 2) & ~(sizeStep - 1);
+    static_assert(largeCutoff <= UINT32_MAX);
 
     // We have an extra size class for size zero.
     static constexpr size_t numSizeClasses = largeCutoff / sizeStep + 1;
@@ -175,7 +176,7 @@ public:
     
     void dumpBits(PrintStream& = WTF::dataFile());
     
-    JS_EXPORT_PRIVATE static std::array<size_t, numSizeClasses> s_sizeClassForSizeStep;
+    JS_EXPORT_PRIVATE static std::array<unsigned, numSizeClasses> s_sizeClassForSizeStep;
     
 private:
     friend class CompleteSubspace;

@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-const char* VisitRaceKey::m_deletedValueRaceName = "deleted value";
+const char* const VisitRaceKey::m_deletedValueRaceName = "deleted value";
 
 void VisitRaceKey::dump(PrintStream& out) const
 {

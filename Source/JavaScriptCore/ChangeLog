@@ -1,3 +1,24 @@
+2020-06-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink __DATA,(__data,__bss,__common) more
+        https://bugs.webkit.org/show_bug.cgi?id=212863
+
+        Reviewed by Sam Weinig.
+
+        1. Use `unsigned` instead of `size_t` in GC size-class array. We know that this number never exceeds largeCutoff,
+           which must be much maller than UINT32_MAX.
+        2. Add missing const to various variables to put them DATA,__const instead of DATA,__data etc.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::initializeSizeClassForStepSize):
+        * heap/MarkedSpace.h:
+        * heap/VisitRaceKey.cpp:
+        * heap/VisitRaceKey.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * runtime/PropertyDescriptor.cpp:
+        * runtime/PropertyDescriptor.h:
+
 2020-06-08  Keith Miller  <keith_miller@apple.com>
 
         Removed unneeded POINTER_WIDTH macro from b3

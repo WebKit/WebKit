@@ -79,7 +79,7 @@ public:
     }
 
 private:
-    static const char* m_deletedValueRaceName;
+    static const char* const m_deletedValueRaceName;
     
     JSCell* m_cell { nullptr };
     const char* m_raceName { nullptr };

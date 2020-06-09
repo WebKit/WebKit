@@ -55,7 +55,7 @@ class JS_EXPORT_PRIVATE InspectorDebuggerAgent : public InspectorAgentBase, publ
 public:
     ~InspectorDebuggerAgent() override;
 
-    static const char* backtraceObjectGroup;
+    static const char* const backtraceObjectGroup;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
