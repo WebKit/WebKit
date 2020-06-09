@@ -1,3 +1,28 @@
+2020-06-09  Frank Yang  <guowei_yang@apple.com>
+
+        WebKit Crashes when SVG Filter Logging is Turned On
+        https://bugs.webkit.org/show_bug.cgi?id=212415
+
+        Reviewed by Darin Adler.
+
+        No new tests are required because this is just 
+        fixing a simple pointer access inside logging code
+
+        * html/ImageData.cpp:
+        (WebCore::operator<<): Overloaded << operator to print the 
+               address of pixel data it stores
+        * html/ImageData.h: Declare overloaded << operator
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::imageBufferResult): Modified logging code
+               so that it does a null check by calling ValueOrNull on 
+               m_premultipliedImageResult and m_unmultipliedImageResult
+        (WebCore::FilterEffect::copyUnmultipliedResult):  Modified logging code
+               so that it does a null check by calling ValueOrNull on
+               m_premultipliedImageResult and m_unmultipliedImageResult
+        (WebCore::FilterEffect::copyPremultipliedResult):  Modified logging code
+               so that it does a null check by calling ValueOrNull on
+               m_premultipliedImageResult and m_unmultipliedImageResult
+
 2020-06-09  Dean Jackson  <dino@apple.com>
 
         REGRESSION: [Safari Mojave for High Sierra] Accessing some of the featured pages on apple.com causes the webpage to crash

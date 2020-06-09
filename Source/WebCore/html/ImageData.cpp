@@ -116,5 +116,11 @@ Ref<ImageData> ImageData::deepClone() const
     return adoptRef(*new ImageData(m_size, Uint8ClampedArray::create(m_data->data(), m_data->length())));
 }
 
+TextStream& operator<<(TextStream& ts, const ImageData& imageData)
+{
+    // Print out the address of the pixel data array
+    return ts << imageData.data();
+}
+
 }
 

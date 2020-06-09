@@ -266,7 +266,7 @@ void FilterEffect::clearResultsRecursive()
 
 ImageBuffer* FilterEffect::imageBufferResult()
 {
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult->data() << " m_unmultipliedImageResult " << m_unmultipliedImageResult->data());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << ValueOrNull(m_premultipliedImageResult.get()) << " m_unmultipliedImageResult " << ValueOrNull(m_unmultipliedImageResult.get()));
 
     if (!hasResult())
         return nullptr;
@@ -439,7 +439,7 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
 {
     ASSERT(hasResult());
     
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyUnmultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult->data() << " m_unmultipliedImageResult " << m_unmultipliedImageResult->data());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyUnmultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << ValueOrNull(m_premultipliedImageResult.get()) << " m_unmultipliedImageResult " << ValueOrNull(m_unmultipliedImageResult.get()));
 
     if (!m_unmultipliedImageResult) {
         // We prefer a conversion from the image buffer.
@@ -465,7 +465,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
 {
     ASSERT(hasResult());
 
-    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyPremultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult->data() << " m_unmultipliedImageResult " << m_unmultipliedImageResult->data());
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyPremultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << ValueOrNull(m_premultipliedImageResult.get()) << " m_unmultipliedImageResult " << ValueOrNull(m_unmultipliedImageResult.get()));
 
     if (!m_premultipliedImageResult) {
         // We prefer a conversion from the image buffer.

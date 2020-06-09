@@ -57,4 +57,6 @@ private:
     Ref<Uint8ClampedArray> m_data;
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ImageData&);
+
 } // namespace WebCore
