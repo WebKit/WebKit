@@ -61,6 +61,7 @@ public:
     void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
     Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
+    bool isEmpty() const { return m_slotMap.isEmpty(); }
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:

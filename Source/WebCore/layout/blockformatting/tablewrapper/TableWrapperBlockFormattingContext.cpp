@@ -73,8 +73,10 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
     computeWidthAndMarginForTableBox(tableBox, constraints.horizontal);
     computeStaticHorizontalPosition(tableBox, constraints.horizontal);
 
-    auto invalidationState = InvalidationState { };
-    LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(tableBox));
+    if (tableBox.hasChild()) {
+        auto invalidationState = InvalidationState { };
+        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(tableBox));
+    }
 
     computeHeightAndMarginForTableBox(tableBox, constraints);
 }
@@ -82,66 +84,75 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
 void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
 {
     ASSERT(tableBox.isTableBox());
-    if (tableBox.style().borderCollapse() == BorderCollapse::Collapse) {
-        // UAs must compute an initial left and right border width for the table by examining
-        // the first and last cells in the first row of the table.
-        // The left border width of the table is half of the first cell's collapsed left border,
-        // and the right border width of the table is half of the last cell's collapsed right border.
-        // The top border width of the table is computed by examining all cells who collapse their top
-        // borders with the top border of the table. The top border width of the table is equal to half of the
-        // maximum collapsed top border. The bottom border width is computed by examining all cells whose bottom borders collapse
-        // with the bottom of the table. The bottom border width is equal to half of the maximum collapsed bottom border.
-        auto& grid = layoutState().establishedTableFormattingState(tableBox).tableGrid();
-        auto tableBorder = geometry().computedBorder(tableBox);
-
-        auto& firstColumnFirstRowBox = grid.slot({ 0 , 0 })->cell().box();
-        auto leftBorder = std::max(tableBorder.horizontal.left, geometry().computedBorder(firstColumnFirstRowBox).horizontal.left);
-
-        auto& lastColumnFirstRow = grid.slot({ grid.columns().size() - 1, 0 })->cell().box();
-        auto rightBorder = std::max(tableBorder.horizontal.right, geometry().computedBorder(lastColumnFirstRow).horizontal.right);
-
-        auto topBorder = tableBorder.vertical.top;
-        auto bottomBorder = tableBorder.vertical.bottom;
-        auto lastRowIndex = grid.rows().size() - 1;
-        for (size_t columnIndex = 0; columnIndex < grid.columns().size(); ++columnIndex) {
-            auto& boxInFirstRox = grid.slot({ columnIndex, 0 })->cell().box();
-            auto& boxInLastRow = grid.slot({ columnIndex, lastRowIndex })->cell().box();
-
-            topBorder = std::max(topBorder, geometry().computedBorder(boxInFirstRox).vertical.top);
-            bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
-        }
-
-        topBorder = std::max(topBorder, geometry().computedBorder(*tableBox.firstChild()).vertical.top);
-        for (auto& section : childrenOfType<ContainerBox>(tableBox)) {
-            auto horiztonalBorder = geometry().computedBorder(section).horizontal;
-            leftBorder = std::max(leftBorder, horiztonalBorder.left);
-            rightBorder = std::max(rightBorder, horiztonalBorder.right);
-        }
-        bottomBorder = std::max(bottomBorder, geometry().computedBorder(*tableBox.lastChild()).vertical.bottom);
-
-        auto& rows = grid.rows().list();
-        topBorder = std::max(topBorder, geometry().computedBorder(rows.first().box()).vertical.top);
-        for (auto& row : rows) {
-            auto horiztonalBorder = geometry().computedBorder(row.box()).horizontal;
-            leftBorder = std::max(leftBorder, horiztonalBorder.left);
-            rightBorder = std::max(rightBorder, horiztonalBorder.right);
-        }
-        bottomBorder = std::max(bottomBorder, geometry().computedBorder(rows.last().box()).vertical.bottom);
-
-        auto collapsedBorder = Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
-        grid.setCollapsedBorder(collapsedBorder);
-
-        auto& displayBox = formattingState().displayBox(tableBox);
-        displayBox.setBorder(collapsedBorder / 2);
-        displayBox.setPadding(geometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
+    if (!tableBox.hasChild() || tableBox.style().borderCollapse() == BorderCollapse::Separate) {
+        BlockFormattingContext::computeBorderAndPadding(tableBox, horizontalConstraints);
         return;
     }
-    BlockFormattingContext::computeBorderAndPadding(tableBox, horizontalConstraints);
+    // UAs must compute an initial left and right border width for the table by examining
+    // the first and last cells in the first row of the table.
+    // The left border width of the table is half of the first cell's collapsed left border,
+    // and the right border width of the table is half of the last cell's collapsed right border.
+    // The top border width of the table is computed by examining all cells who collapse their top
+    // borders with the top border of the table. The top border width of the table is equal to half of the
+    // maximum collapsed top border. The bottom border width is computed by examining all cells whose bottom borders collapse
+    // with the bottom of the table. The bottom border width is equal to half of the maximum collapsed bottom border.
+    auto& grid = layoutState().establishedTableFormattingState(tableBox).tableGrid();
+    auto tableBorder = geometry().computedBorder(tableBox);
+
+    auto& firstColumnFirstRowBox = grid.slot({ 0 , 0 })->cell().box();
+    auto leftBorder = std::max(tableBorder.horizontal.left, geometry().computedBorder(firstColumnFirstRowBox).horizontal.left);
+
+    auto& lastColumnFirstRow = grid.slot({ grid.columns().size() - 1, 0 })->cell().box();
+    auto rightBorder = std::max(tableBorder.horizontal.right, geometry().computedBorder(lastColumnFirstRow).horizontal.right);
+
+    auto topBorder = tableBorder.vertical.top;
+    auto bottomBorder = tableBorder.vertical.bottom;
+    auto lastRowIndex = grid.rows().size() - 1;
+    for (size_t columnIndex = 0; columnIndex < grid.columns().size(); ++columnIndex) {
+        auto& boxInFirstRox = grid.slot({ columnIndex, 0 })->cell().box();
+        auto& boxInLastRow = grid.slot({ columnIndex, lastRowIndex })->cell().box();
+
+        topBorder = std::max(topBorder, geometry().computedBorder(boxInFirstRox).vertical.top);
+        bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
+    }
+
+    topBorder = std::max(topBorder, geometry().computedBorder(*tableBox.firstChild()).vertical.top);
+    for (auto& section : childrenOfType<ContainerBox>(tableBox)) {
+        auto horiztonalBorder = geometry().computedBorder(section).horizontal;
+        leftBorder = std::max(leftBorder, horiztonalBorder.left);
+        rightBorder = std::max(rightBorder, horiztonalBorder.right);
+    }
+    bottomBorder = std::max(bottomBorder, geometry().computedBorder(*tableBox.lastChild()).vertical.bottom);
+
+    auto& rows = grid.rows().list();
+    topBorder = std::max(topBorder, geometry().computedBorder(rows.first().box()).vertical.top);
+    for (auto& row : rows) {
+        auto horiztonalBorder = geometry().computedBorder(row.box()).horizontal;
+        leftBorder = std::max(leftBorder, horiztonalBorder.left);
+        rightBorder = std::max(rightBorder, horiztonalBorder.right);
+    }
+    bottomBorder = std::max(bottomBorder, geometry().computedBorder(rows.last().box()).vertical.bottom);
+
+    auto collapsedBorder = Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
+    grid.setCollapsedBorder(collapsedBorder);
+
+    auto& displayBox = formattingState().displayBox(tableBox);
+    displayBox.setBorder(collapsedBorder / 2);
+    displayBox.setPadding(geometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
 }
 
 void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
 {
     ASSERT(tableBox.isTableBox());
+    if (!tableBox.hasChild()) {
+        auto contentWidthAndMargin = geometry().inFlowWidthAndMargin(tableBox, horizontalConstraints, { });
+        auto& displayBox = formattingState().displayBox(tableBox);
+        displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
+        displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
+        displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
+        return;
+    }
+
     // This is a special table "fit-content size" behavior handling. Not in the spec though.
     // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
     auto& formattingStateForTableBox = layoutState().establishedTableFormattingState(tableBox);

@@ -297,6 +297,11 @@ UniqueRef<TableGrid> TableFormattingContext::ensureTableGrid(const ContainerBox&
     tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.verticalBorderSpacing() : 0 });
 
     auto* firstChild = tableBox.firstChild();
+    if (!firstChild) {
+        // The rare case of empty table.
+        return tableGrid;
+    }
+
     const Box* tableCaption = nullptr;
     const Box* colgroup = nullptr;
     // Table caption is an optional element; if used, it is always the first child of a <table>.

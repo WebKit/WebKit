@@ -1,3 +1,13 @@
+2020-06-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for empty table
+        https://bugs.webkit.org/show_bug.cgi?id=212971
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/empty-table-box-expected.html: Added.
+        * fast/layoutformattingcontext/empty-table-box.html: Added.
+
 2020-06-09  Youenn Fablet  <youenn@apple.com>
 
         Fix two MediaStream tests
