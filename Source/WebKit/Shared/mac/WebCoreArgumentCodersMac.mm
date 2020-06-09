@@ -207,7 +207,7 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
         [(NSMutableURLRequest *)requestToSerialize setHTTPBodyStream:nil];
     }
 
-    RetainPtr<CFDictionaryRef> dictionary = createSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef());
+    auto dictionary = createSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullptrTypeRef());
     IPC::encode(encoder, dictionary.get());
 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
@@ -231,7 +231,7 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
     if (!IPC::decode(decoder, dictionary))
         return false;
 
-    RetainPtr<NSURLRequest> nsURLRequest = createNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
+    auto nsURLRequest = createNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullptrTypeRef());
     if (!nsURLRequest)
         return false;
 

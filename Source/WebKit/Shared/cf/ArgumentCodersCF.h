@@ -105,7 +105,7 @@ WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecTrustRef>&);
 void setAllowsDecodingSecKeyRef(bool);
 #endif
 
-CFTypeRef tokenNullTypeRef();
+CFTypeRef tokenNullptrTypeRef();
 
 } // namespace IPC
 

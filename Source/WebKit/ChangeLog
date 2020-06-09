@@ -1,3 +1,41 @@
+2020-06-08  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for IPC::CFType
+        <https://webkit.org/b/212921>
+        <rdar://problem/64134506>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Convert IPC::CFType to enum class.
+        - Rule for new enum names is to remove "Ref" suffix from the
+          actual type name.
+        - Special enum CFType::Null renamed to CFType::Nullptr to
+          differentiate from CFType::CFNull objects.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::tokenNullTypeRef): Delete.
+        (IPC::tokenNullptrTypeRef): Add.
+        - Rename tokenNullTypeRef() to tokenNullptrTypeRef().
+        (IPC::CFType):
+        - Convert to enum class.
+        (IPC::typeFromCFTypeRef):
+        (IPC::encode):
+        - Switch from encodeEnum() to operator<<().
+        (IPC::decode):
+        - Switch from decodeEnum() to decode().
+        (WTF::EnumTraits<IPC::CFType>): Add.
+        * Shared/cf/ArgumentCodersCF.h:
+        (IPC::tokenNullTypeRef): Delete.
+        (IPC::tokenNullptrTypeRef): Add.
+        - Rename tokenNullTypeRef() to tokenNullptrTypeRef().
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData):
+        - Switch to use tokenNullptrTypeRef().
+        * mac/WebKit2.order:
+        - Update symbol name after renaming tokenNullTypeRef().
+
 2020-06-08  Kate Cheney  <katherine_cheney@apple.com>
 
         ResourceLoadStatisticsDatabaseStore::domainIDFromString failed, error message: bad parameter or other API misuse
