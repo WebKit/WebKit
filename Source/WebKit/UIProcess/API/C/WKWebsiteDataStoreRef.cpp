@@ -36,6 +36,7 @@
 #include "WKSecurityOriginRef.h"
 #include "WKString.h"
 #include "WebDeviceOrientationAndMotionAccessController.h"
+#include "WebPageProxy.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
@@ -818,4 +819,19 @@ void WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(WKWebsiteDataStoreR
     WebKit::toImpl(dataStoreRef)->clearBundleIdentifierInNetworkProcess([context, completionHandler] {
         completionHandler(context);
     });
+}
+
+void WKWebsiteDataStoreGetAllStorageAccessEntries(WKWebsiteDataStoreRef dataStoreRef, WKPageRef pageRef, void* context, WKWebsiteDataStoreGetAllStorageAccessEntriesFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->getAllStorageAccessEntries(toImpl(pageRef)->identifier(), [context, callback] (Vector<String>&& domains) {
+        auto domainArrayRef = WKMutableArrayCreate();
+        for (auto domain : domains)
+            WKArrayAppendItem(domainArrayRef, adoptWK(WKStringCreateWithUTF8CString(domain.utf8().data())).get());
+
+        callback(context, domainArrayRef);
+    });
+#else
+    callback(context, WKMutableArrayCreate());
+#endif
 }

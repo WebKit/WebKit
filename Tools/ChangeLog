@@ -1,3 +1,19 @@
+2020-06-09  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement functions to use ResourceLoadStatistics.
+        https://bugs.webkit.org/show_bug.cgi?id=207692
+
+        Implement functions which are required to implement ResourceLoadStatistics for Curl port.
+
+        Tests: http/tests/resourceLoadStatistics/
+
+        Reviewed by Don Olmstead.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::GetAllStorageAccessEntriesCallbackContext::GetAllStorageAccessEntriesCallbackContext):
+        (WTR::getAllStorageAccessEntriesCallback):
+        (WTR::TestController::getAllStorageAccessEntries):
+
 2020-06-09  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [Flatpak][GStreamer] enhance GST_ environment variable passing
