@@ -1,3 +1,14 @@
+2020-06-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, remove flaky timeout failures after r262789
+        https://bugs.webkit.org/show_bug.cgi?id=212979
+
+        Unreviewed gardening.
+
+        Removed flaky timeout failures that have been constantly passing in the last 4000 revisions.
+
+        * platform/gtk/TestExpectations:
+
 2020-06-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         lang=zh needs to defer to system preferences to know whether it should be simplified or traditional
