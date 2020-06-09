@@ -266,18 +266,18 @@ Color blend(const Color& from, const Color& to, double progress)
     if (progress == 1 && !to.isValid())
         return { };
 
-    // Since makePremultipliedSimpleColor() bails on zero alpha, special-case that.
-    auto premultFrom = from.alpha() ? makePremultipliedSimpleColor(from.toSRGBASimpleColorLossy()) : Color::transparent;
-    auto premultTo = to.alpha() ? makePremultipliedSimpleColor(to.toSRGBASimpleColorLossy()) : Color::transparent;
+    // Since premultiplyCeiling() bails on zero alpha, special-case that.
+    auto premultipliedFrom = from.alpha() ? premultiplyCeiling(from.toSRGBASimpleColorLossy()) : Color::transparent;
+    auto premultipliedTo = to.alpha() ? premultiplyCeiling(to.toSRGBASimpleColorLossy()) : Color::transparent;
 
     SimpleColor premultBlended = makeSimpleColor(
-        WebCore::blend(premultFrom.redComponent(), premultTo.redComponent(), progress),
-        WebCore::blend(premultFrom.greenComponent(), premultTo.greenComponent(), progress),
-        WebCore::blend(premultFrom.blueComponent(), premultTo.blueComponent(), progress),
-        WebCore::blend(premultFrom.alphaComponent(), premultTo.alphaComponent(), progress)
+        WebCore::blend(premultipliedFrom.redComponent(), premultipliedTo.redComponent(), progress),
+        WebCore::blend(premultipliedFrom.greenComponent(), premultipliedTo.greenComponent(), progress),
+        WebCore::blend(premultipliedFrom.blueComponent(), premultipliedTo.blueComponent(), progress),
+        WebCore::blend(premultipliedFrom.alphaComponent(), premultipliedTo.alphaComponent(), progress)
     );
 
-    return makeUnpremultipliedSimpleColor(premultBlended);
+    return unpremultiply(premultBlended);
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)

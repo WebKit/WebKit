@@ -33,38 +33,33 @@
 
 namespace WebCore {
 
-static inline unsigned premultipliedChannel(unsigned c, unsigned a, bool ceiling = true)
+SimpleColor premultiplyFlooring(SimpleColor color)
 {
-    return fastDivideBy255(ceiling ? c * a + 254 : c * a);
+    auto [r, g, b, a] = color;
+    if (!a || a == 255)
+        return color;
+    return makeSimpleColor(fastDivideBy255(r * a), fastDivideBy255(g * a), fastDivideBy255(b * a), a);
 }
 
-static inline unsigned unpremultipliedChannel(unsigned c, unsigned a)
+SimpleColor premultiplyCeiling(SimpleColor color)
+{
+    auto [r, g, b, a] = color;
+    if (!a || a == 255)
+        return color;
+    return makeSimpleColor(fastDivideBy255(r * a + 254), fastDivideBy255(g * a + 254), fastDivideBy255(b * a + 254), a);
+}
+
+static inline uint16_t unpremultiplyChannel(uint8_t c, uint8_t a)
 {
     return (fastMultiplyBy255(c) + a - 1) / a;
 }
 
-SimpleColor makePremultipliedSimpleColor(int r, int g, int b, int a, bool ceiling)
+SimpleColor unpremultiply(SimpleColor color)
 {
-    return makeSimpleColor(premultipliedChannel(r, a, ceiling), premultipliedChannel(g, a, ceiling), premultipliedChannel(b, a, ceiling), a);
-}
-
-SimpleColor makePremultipliedSimpleColor(SimpleColor pixelColor)
-{
-    if (pixelColor.isOpaque())
-        return pixelColor;
-    return makePremultipliedSimpleColor(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
-}
-
-SimpleColor makeUnpremultipliedSimpleColor(int r, int g, int b, int a)
-{
-    return makeSimpleColor(unpremultipliedChannel(r, a), unpremultipliedChannel(g, a), unpremultipliedChannel(b, a), a);
-}
-
-SimpleColor makeUnpremultipliedSimpleColor(SimpleColor pixelColor)
-{
-    if (pixelColor.isVisible() && !pixelColor.isOpaque())
-        return makeUnpremultipliedSimpleColor(pixelColor.redComponent(), pixelColor.greenComponent(), pixelColor.blueComponent(), pixelColor.alphaComponent());
-    return pixelColor;
+    auto [r, g, b, a] = color;
+    if (!a || a == 255)
+        return color;
+    return makeSimpleColor(unpremultiplyChannel(r, a), unpremultiplyChannel(g, a), unpremultiplyChannel(b, a), a);
 }
 
 SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a)

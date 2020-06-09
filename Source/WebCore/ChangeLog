@@ -1,3 +1,53 @@
+2020-06-09  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Streamline SimpleColor premulitply/unpremultiply code
+        https://bugs.webkit.org/show_bug.cgi?id=212945
+
+        Reviewed by Darin Adler.
+
+        Simplify / streamline the premulitply/unpremultiply code by:
+        - Removing the overloads that didn't take individual components, keeping 
+          only the ones taking a SimpleColor.
+        - Replacing the "ceiling" bool in makePremultipliedSimpleColor and converting
+          it into two functions.
+        - Simplifying the names from makePremultipliedSimpleColor/makeUnpremultipliedSimpleColor
+          to premultiplyFlooring/premultiplyCeiling/unpremultiply.
+        - Where component order is important, use valueAsARGB() explicitly to
+          show what the resulting value's format will be.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::blend):
+        Update to call premultiplyCeiling/unpremultiply.
+
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::blendPixel):
+        (WebCore::ImageBackingStore::pixelValue const):
+        Update to call premultiplyFlooring/unpremultiply and valueAsARGB().
+
+        * platform/graphics/SimpleColor.h:
+        * platform/graphics/SimpleColor.cpp:
+        (WebCore::premultiplyFlooring):
+        (WebCore::premultiplyCeiling):
+        (WebCore::unpremultiplyChannel):
+        (WebCore::unpremultiply):
+        (WebCore::premultipliedChannel): Deleted.
+        (WebCore::unpremultipliedChannel): Deleted.
+        (WebCore::makePremultipliedSimpleColor): Deleted.
+        (WebCore::makeUnpremultipliedSimpleColor): Deleted.
+        Simplify premulitply/unpremultiply interfaces. Use structured bindings to make
+        the code a bit easier to follow as well.
+        
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace):
+        Update to call premultiplyFlooring/unpremultiply and valueAsARGB().
+
+        * platform/graphics/cairo/NativeImageCairo.cpp:
+        (WebCore::nativeImageSinglePixelSolidColor):
+        Update to call premultiplyFlooring/unpremultiply and valueAsARGB(). Also removes
+        reinterpret cast to SimpleColor, instead following the model in ImageBufferCairoImageSurfaceBackend
+        and casting to unsigned, and building the SimpleColor from that. This will allow 
+        SimpleColor to change its underlying representation in the future without breaking things.
+
 2020-06-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r261841.

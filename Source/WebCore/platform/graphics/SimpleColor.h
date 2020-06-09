@@ -98,10 +98,9 @@ SimpleColor makeSimpleColor(const ColorComponents<float>& sRGBComponents);
 SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a);
 SimpleColor makeSimpleColorFromCMYKA(float c, float m, float y, float k, float a);
 
-SimpleColor makePremultipliedSimpleColor(int r, int g, int b, int a, bool ceiling = true);
-SimpleColor makePremultipliedSimpleColor(SimpleColor);
-SimpleColor makeUnpremultipliedSimpleColor(int r, int g, int b, int a);
-SimpleColor makeUnpremultipliedSimpleColor(SimpleColor);
+SimpleColor premultiplyFlooring(SimpleColor);
+SimpleColor premultiplyCeiling(SimpleColor);
+SimpleColor unpremultiply(SimpleColor);
 
 inline bool operator==(SimpleColor a, SimpleColor b)
 {
