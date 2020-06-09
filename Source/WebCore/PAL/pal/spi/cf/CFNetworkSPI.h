@@ -240,7 +240,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (nullable, readwrite, retain) NSURL *_siteForCookies;
 @property (readwrite) BOOL _isTopLevelNavigation;
 #endif
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if ENABLE(SERVER_PRECONNECT)
 @property (nonatomic, assign) BOOL _preconnect;
 #endif
 @end
