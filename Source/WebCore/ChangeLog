@@ -1,5 +1,17 @@
 2020-06-09  Youenn Fablet  <youenn@apple.com>
 
+        Forward declare MediaKeys/MediaKeySession in Internals.h
+        https://bugs.webkit.org/show_bug.cgi?id=212965
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        No change of behavior.
+
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+
+2020-06-09  Youenn Fablet  <youenn@apple.com>
+
         Fix two MediaStream tests
         https://bugs.webkit.org/show_bug.cgi?id=208926
         <rdar://problem/60329008>

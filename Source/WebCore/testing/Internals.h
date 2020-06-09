@@ -48,11 +48,6 @@
 #include "MediaElementSession.h"
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-#include "MediaKeySession.h"
-#include "MediaKeys.h"
-#endif
-
 namespace WebCore {
 
 class AnimationTimeline;
@@ -115,6 +110,11 @@ class WebAnimation;
 class WebGLRenderingContext;
 class WindowProxy;
 class XMLHttpRequest;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+class MediaKeys;
+class MediaKeySession;
+#endif
 
 #if ENABLE(VIDEO)
 class TextTrackCueGeneric;
