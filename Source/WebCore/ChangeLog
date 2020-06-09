@@ -1,3 +1,26 @@
+2020-06-08  Rob Buis  <rbuis@igalia.com>
+
+        XMLHTTPRequest.send should not send Content-Type headers when Blob has no type
+        https://bugs.webkit.org/show_bug.cgi?id=211999
+
+        Reviewed by Alex Christensen.
+
+        XMLHTTPRequest.send should not send Content-Type headers when Blob has no type [1, 2].
+        This behavior overrides the behavior of the File API spec [3].
+
+        Behavior matches Firefox and Chrome.
+
+        Test: imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type.html
+
+        [1] https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send
+        [2] https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+        [3] http://dev.w3.org/2006/webapi/FileAPI/#dfn-type
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2020-06-08  Simon Fraser  <simon.fraser@apple.com>
 
         Horizontally scrolling elements are broken when revealed by toggling visibility

@@ -1,3 +1,15 @@
+2020-06-08  Rob Buis  <rbuis@igalia.com>
+
+        XMLHTTPRequest.send should not send Content-Type headers when Blob has no type
+        https://bugs.webkit.org/show_bug.cgi?id=211999
+
+        Reviewed by Alex Christensen.
+
+        Remove unneeded expectations.
+
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt: Removed.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt: Removed.
+
 2020-06-08  Simon Fraser  <simon.fraser@apple.com>
 
         Horizontally scrolling elements are broken when revealed by toggling visibility

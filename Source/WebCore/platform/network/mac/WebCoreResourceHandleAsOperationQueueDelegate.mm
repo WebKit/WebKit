@@ -121,8 +121,15 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
     redirectResponse = synthesizeRedirectResponseIfNecessary([connection currentRequest], newRequest, redirectResponse);
 
     // See <rdar://problem/5380697>. This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
-    if (!redirectResponse)
+    if (!redirectResponse) {
+        // CFNetwork will add "application/x-www-form-urlencoded" content-type for POST, even if no Content-Type was specified, remove it in that case.
+        if (equalLettersIgnoringASCIICase(m_handle->firstRequest().httpMethod(), "post") && !m_handle->firstRequest().hasHTTPHeaderField(HTTPHeaderName::ContentType)) {
+            NSMutableURLRequest *modifiedRequest = [newRequest mutableCopy];
+            [modifiedRequest setValue:nil forHTTPHeaderField:@"Content-Type"];
+            return modifiedRequest;
+        }
         return newRequest;
+    }
 
 #if !LOG_DISABLED
     if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]])

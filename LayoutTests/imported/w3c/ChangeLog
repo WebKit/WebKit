@@ -1,3 +1,14 @@
+2020-06-08  Rob Buis  <rbuis@igalia.com>
+
+        XMLHTTPRequest.send should not send Content-Type headers when Blob has no type
+        https://bugs.webkit.org/show_bug.cgi?id=211999
+
+        Reviewed by Alex Christensen.
+
+        Update improved test expectation.
+
+        * web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt:
+
 2020-06-05  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Add missing interfaces from the AR module
