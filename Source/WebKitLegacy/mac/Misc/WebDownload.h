@@ -32,8 +32,8 @@
 #ifndef WebDownload_h
 #define WebDownload_h
 
-#if (defined TARGET_OS_MACCATALYST && TARGET_OS_MACCATALYST) || (defined(TARGET_OS_WATCH) && TARGET_OS_WATCH)
-#import <CFNetwork/CFNSURLConnection.h>
+#if (defined TARGET_OS_MACCATALYST && TARGET_OS_MACCATALYST)
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #elif !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
