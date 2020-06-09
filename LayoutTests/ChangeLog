@@ -1,3 +1,16 @@
+2020-06-09  Antti Koivisto  <antti@apple.com>
+
+        scrollingcoordinator/ios/scroll-position-after-reattach.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=212967
+        <rdar://problem/52961406>
+
+        Reviewed by Antoine Quint.
+
+        * platform/ios-wk2/TestExpectations:
+        * scrollingcoordinator/ios/scroll-position-after-reattach.html:
+
+        Ensure the element is re-added before test finishes.
+
 2020-06-09  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Import some grid tests from WPT

@@ -28,11 +28,15 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-function scroll() {
+async function scroll() {
     let removed = outercontent;
     outercontent.remove();
     document.offsetLeft;
-    setTimeout(() => outer.appendChild(removed));
+
+    await new Promise(requestAnimationFrame);
+
+    outer.appendChild(removed);
+    testRunner.notifyDone();
 }
 
 async function doTest() {
@@ -41,7 +45,6 @@ async function doTest() {
     inner.addEventListener("scroll", scroll);
 
     await UIHelper.immediateScrollElementAtContentPointToOffset(50, 50, 0, 200);
-    testRunner.notifyDone();
 }
 
 window.addEventListener('load', doTest, false);

@@ -1318,8 +1318,6 @@ webkit.org/b/206687 imported/w3c/web-platform-tests/beacon/idlharness.any.html [
 
 webkit.org/b/206946 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Pass Timeout ]
 
-webkit.org/b/205309 scrollingcoordinator/ios/scroll-position-after-reattach.html [ ImageOnlyFailure ]
-
 webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 webkit.org/b/206627 storage/websql [ Skip ]
