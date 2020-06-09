@@ -151,14 +151,14 @@ private:
     };
 
     struct ManipulationUnit {
-        Vector<ManipulationToken> tokens;
         Ref<Node> node;
+        Vector<ManipulationToken> tokens;
         bool areAllTokensExcluded { true };
-        bool containsLineBreak { false };
         bool firstTokenContainsDelimiter { false };
         bool lastTokenContainsDelimiter { false };
     };
-    ManipulationUnit parse(StringView, Node*);
+    ManipulationUnit createUnit(const Vector<String>&, Node&);
+    void parse(ManipulationUnit&, const String&, Node&);
 
     void addItem(ManipulationItemData&&);
     void addItemIfPossible(Vector<ManipulationUnit>&&);

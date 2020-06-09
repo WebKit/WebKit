@@ -1,3 +1,13 @@
+2020-06-08  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulation should only convert text from Node's text content to tokens
+        https://bugs.webkit.org/show_bug.cgi?id=212928
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [webkitpy] Check 'bug-search' returns a non null result before parsing

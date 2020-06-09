@@ -143,6 +143,16 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     flushPendingItemsForCallback();
 }
 
+static bool isInPrivateUseArea(UChar character)
+{
+    return 0xE000 <= character && character <= 0xF8FF;
+}
+
+static bool isTokenDelimiter(UChar character)
+{
+    return isHTMLLineBreak(character) || isInPrivateUseArea(character);
+}
+
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
@@ -166,14 +176,14 @@ public:
 
     struct CurrentContent {
         RefPtr<Node> node;
-        StringView text;
+        Vector<String> text;
         bool isTextContent { false };
         bool isReplacedContent { false };
     };
 
     CurrentContent currentContent()
     {
-        CurrentContent content = { m_node.copyRef(), m_text ? m_text.value() : StringView { }, !!m_text };
+        CurrentContent content = { m_node.copyRef(), m_text ? m_text.value() : Vector<String> { }, !!m_text };
         if (content.node) {
             if (auto* renderer = content.node->renderer()) {
                 if (renderer->isRenderReplaced()) {
@@ -200,24 +210,46 @@ private:
             m_node = m_pastEndNode;
     }
 
+    void appendToText(Vector<String>& text, StringBuilder& stringBuilder)
+    {
+        if (!stringBuilder.isEmpty()) {
+            text.append(stringBuilder.toString());
+            stringBuilder.clear();
+        }
+    }
+
     void advanceIteratorNodeAndUpdateText()
     {
         ASSERT(shouldAdvanceIteratorPastCurrentNode());
 
         StringBuilder stringBuilder;
+        Vector<String> text;
         while (shouldAdvanceIteratorPastCurrentNode()) {
-            stringBuilder.append(m_iterator.text());
+            if (!m_iterator.node()) {
+                auto iteratorText = m_iterator.text();
+                bool containsDelimiter = false;
+                for (unsigned index = 0; index < iteratorText.length() && !containsDelimiter; ++index)
+                    containsDelimiter = isTokenDelimiter(iteratorText[index]);
+
+                if (containsDelimiter) {
+                    appendToText(text, stringBuilder);
+                    text.append({ });
+                }
+            } else
+                stringBuilder.append(m_iterator.text());
+
             m_iterator.advance();
             m_iteratorNode = m_iterator.atEnd() ? nullptr : createLiveRange(m_iterator.range())->firstNode();
         }
-        m_text = { stringBuilder.toString() };
+        appendToText(text, stringBuilder);
+        m_text = text;
     }
 
     TextIterator m_iterator;
     RefPtr<Node> m_iteratorNode;
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastEndNode;
-    Optional<String> m_text;
+    Optional<Vector<String>> m_text;
 };
 
 static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
@@ -294,36 +326,34 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     return false;
 }
 
-static bool isInPrivateUseArea(UChar character)
+TextManipulationController::ManipulationUnit TextManipulationController::createUnit(const Vector<String>& text, Node& textNode)
 {
-    return 0xE000 <= character && character <= 0xF8FF;
+    ManipulationUnit unit = { textNode, { } };
+    for (auto& textEntry : text) {
+        if (!textEntry.isNull())
+            parse(unit, textEntry, textNode);
+        else {
+            if (unit.tokens.isEmpty())
+                unit.firstTokenContainsDelimiter = true;
+            unit.lastTokenContainsDelimiter = true;
+        }
+    }
+    return unit;
 }
 
-static bool isTokenDelimiter(UChar character)
+void TextManipulationController::parse(ManipulationUnit& unit, const String& text, Node& textNode)
 {
-    return isHTMLLineBreak(character) || isInPrivateUseArea(character);
-}
-
-TextManipulationController::ManipulationUnit TextManipulationController::parse(StringView text, Node* textNode)
-{
-    Vector<ManipulationToken> tokens;
     ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
+    bool isNodeExcluded = exclusionRuleMatcher.isExcluded(&textNode);
     size_t positionOfLastNonHTMLSpace = WTF::notFound;
     size_t startPositionOfCurrentToken = 0;
-    bool isNodeExcluded = exclusionRuleMatcher.isExcluded(textNode);
-    bool containsOnlyHTMLSpace = true;
-    bool containsTokenDelimiter = false;
-    bool firstTokenContainsDelimiter = false;
-    bool lastTokenContainsDelimiter = false;
-
     size_t index = 0;
     for (; index < text.length(); ++index) {
         auto character = text[index];
         if (isTokenDelimiter(character)) {
-            containsTokenDelimiter = true;
             if (positionOfLastNonHTMLSpace != WTF::notFound && startPositionOfCurrentToken <= positionOfLastNonHTMLSpace) {
-                auto tokenString = text.substring(startPositionOfCurrentToken, positionOfLastNonHTMLSpace + 1 - startPositionOfCurrentToken).toString();
-                tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), isNodeExcluded });
+                auto stringForToken = text.substring(startPositionOfCurrentToken, positionOfLastNonHTMLSpace + 1 - startPositionOfCurrentToken);
+                unit.tokens.append(ManipulationToken { m_tokenIdentifier.generate(), stringForToken, tokenInfo(&textNode), isNodeExcluded });
                 startPositionOfCurrentToken = positionOfLastNonHTMLSpace + 1;
             }
 
@@ -332,25 +362,24 @@ TextManipulationController::ManipulationUnit TextManipulationController::parse(S
 
             --index;
 
-            auto stringForToken = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken).toString();
-            if (tokens.isEmpty())
-                firstTokenContainsDelimiter = true;
-            tokens.append(ManipulationToken { m_tokenIdentifier.generate(), stringForToken, tokenInfo(textNode), true });
+            auto stringForToken = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken);
+            if (unit.tokens.isEmpty() && !unit.firstTokenContainsDelimiter)
+                unit.firstTokenContainsDelimiter = true;
+            unit.tokens.append(ManipulationToken { m_tokenIdentifier.generate(), stringForToken, tokenInfo(&textNode), true });
             startPositionOfCurrentToken = index + 1;
-            lastTokenContainsDelimiter = true;
+            unit.lastTokenContainsDelimiter = true;
         } else if (isNotHTMLSpace(character)) {
-            containsOnlyHTMLSpace = false;
+            if (!isNodeExcluded)
+                unit.areAllTokensExcluded = false;
             positionOfLastNonHTMLSpace = index;
         }
     }
 
     if (startPositionOfCurrentToken < text.length()) {
-        auto tokenString = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken).toString();
-        tokens.append(ManipulationToken { m_tokenIdentifier.generate(), tokenString, tokenInfo(textNode), isNodeExcluded });
-        lastTokenContainsDelimiter = false;
+        auto stringForToken = text.substring(startPositionOfCurrentToken, index + 1 - startPositionOfCurrentToken);
+        unit.tokens.append(ManipulationToken { m_tokenIdentifier.generate(), stringForToken, tokenInfo(&textNode), isNodeExcluded });
+        unit.lastTokenContainsDelimiter = false;
     }
-
-    return { WTFMove(tokens), *textNode, containsOnlyHTMLSpace || isNodeExcluded, containsTokenDelimiter, firstTokenContainsDelimiter, lastTokenContainsDelimiter };
 }
 
 void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& units)
@@ -432,23 +461,24 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
         if (content.isReplacedContent) {
             if (!unitsInCurrentParagraph.isEmpty())
-                unitsInCurrentParagraph.append(ManipulationUnit { { ManipulationToken { m_tokenIdentifier.generate(), "[]", tokenInfo(content.node.get()), true } }, *contentNode });
+                unitsInCurrentParagraph.append(ManipulationUnit { *contentNode, { ManipulationToken { m_tokenIdentifier.generate(), "[]", tokenInfo(content.node.get()), true } } });
             continue;
         }
 
         if (!content.isTextContent)
             continue;
 
-        auto unitsInCurrentNode = parse(content.text, contentNode);
-        if (unitsInCurrentNode.firstTokenContainsDelimiter)
+        auto currentUnit = createUnit(content.text, *contentNode);
+        if (currentUnit.firstTokenContainsDelimiter)
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
 
-        if (unitsInCurrentParagraph.isEmpty() && unitsInCurrentNode.areAllTokensExcluded)
-                continue;
+        if (unitsInCurrentParagraph.isEmpty() && currentUnit.areAllTokensExcluded)
+            continue;
 
-        unitsInCurrentParagraph.append(WTFMove(unitsInCurrentNode));
+        bool currentUnitEndsWithDelimiter = currentUnit.lastTokenContainsDelimiter;
+        unitsInCurrentParagraph.append(WTFMove(currentUnit));
 
-        if (unitsInCurrentNode.lastTokenContainsDelimiter)
+        if (currentUnitEndsWithDelimiter)
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
     }
 
@@ -680,7 +710,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 
             tokensInCurrentNode.append(item.tokens[currentTokenIndex]);
         } else
-            tokensInCurrentNode = parse(content.text, content.node.get()).tokens;
+            tokensInCurrentNode = createUnit(content.text, *content.node).tokens;
 
         bool isNodeIncluded = WTF::anyOf(tokensInCurrentNode, [] (auto& token) {
             return !token.isExcluded;
