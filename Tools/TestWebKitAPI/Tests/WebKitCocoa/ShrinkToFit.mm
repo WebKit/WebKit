@@ -63,7 +63,8 @@ TEST(WebKit, ShrinkToFit)
 
     [webView _setLayoutMode:_WKLayoutModeViewSize];
     [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
-        EXPECT_EQ(100, [result integerValue]);
+        // This is 85 instead of 100 because after loading a large page, we now have a scrollbar.
+        EXPECT_EQ(85, [result integerValue]);
         shrinkToFitDisabledDone = true;
     }];
 

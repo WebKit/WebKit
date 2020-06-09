@@ -37,12 +37,13 @@ void InjectedBundleController::platformInitialize()
     if (!argumentDomain)
         argumentDomain = [[NSMutableDictionary alloc] init];
 
+    // FIXME: We should set these in the UI process and propagate them to the
+    // Web Content process at process launch time, because most tests do not
+    // have an injected bundle, so these do not make TestWebKitAPI behavior consistent.
     NSDictionary *dict = @{
         @"AppleAntiAliasingThreshold": @(4),
         @"AppleFontSmoothing": @(0),
         @"NSScrollAnimationEnabled": @NO,
-        @"NSOverlayScrollersEnabled": @NO,
-        @"AppleShowScrollBars": @"Always",
     };
 
     [argumentDomain addEntriesFromDictionary:dict];

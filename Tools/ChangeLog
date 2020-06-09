@@ -1,3 +1,39 @@
+2020-06-09  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit.ShrinkToFit is failing on some bots
+        https://bugs.webkit.org/show_bug.cgi?id=212932
+        <rdar://problem/60972407>
+
+        Reviewed by Simon Fraser.
+
+        TestWebKitAPI was failing to stabilize the overlay scrollbar preference,
+        because the only stabilization attempt was in the injected bundle 
+        initialization code, and most tests (including ShrinkToFit) do not have
+        an injected bundle.
+
+        Because this preference is manually propagated to the Web Content process,
+        we can set the default in the volatile domain in the UI process at startup.
+
+        We can't move other preferences yet, because they are not manually propagated,
+        and WebKit's NSUserDefault synchronization mechanism ignores defaults in the
+        volatile domain (and the initial preference load reads from disk, not
+        from the UI process, so it wouldn't find them anyway).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ShrinkToFit.mm:
+        (TEST):
+        Explain why the final value of the test is different than the starting value.
+
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        Leave a FIXME for future generations.
+
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main):
+        Override overlay scrollbar preferences in the UI process, so it affects all tests.
+
+        * TestWebKitAPI/Tests/WebKit/ResizeReversePaginatedWebView.cpp:
+        This test is also affected by using non-overlay scrollbars; we now have less space, so take up more pages.
+
 2020-06-09  Youenn Fablet  <youenn@apple.com>
 
         BaseAudioSharedUnit should unmute its clients in case of suspension even if not having any audio unit

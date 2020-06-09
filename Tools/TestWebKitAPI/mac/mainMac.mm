@@ -38,8 +38,18 @@ int main(int argc, char** argv)
     NSMutableDictionary *argumentDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy];
     if (!argumentDomain)
         argumentDomain = [[NSMutableDictionary alloc] init];
-    
-    NSDictionary *dict = @{ @"WebKitLinkedOnOrAfterEverything": @YES };
+
+    // CAUTION: Defaults set here are not automatically propagated to the
+    // Web Content process. Those listed below are propagated manually.
+    NSDictionary *dict = @{
+        @"WebKitLinkedOnOrAfterEverything": @YES,
+
+        // FIXME: We should switch these defaults to use overlay
+        // scrollbars, since they are the default on the platform,
+        // but a variety of tests will need changes.
+        @"NSOverlayScrollersEnabled": @NO,
+        @"AppleShowScrollBars": @"Always",
+    };
 
     [argumentDomain addEntriesFromDictionary:dict];
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain forName:NSArgumentDomain];

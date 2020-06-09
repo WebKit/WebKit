@@ -42,7 +42,7 @@ static bool testDone;
 
 static const unsigned pageLength = 100;
 static const unsigned pageGap = 100;
-static const unsigned expectedPageCount = 45;
+static const unsigned expectedPageCount = 49;
 
 static void didLayout(WKPageRef page, WKPageRenderingProgressEvents milestones, WKTypeRef, const void* clientInfo)
 {
