@@ -1104,6 +1104,8 @@ private:
     bool listBackgroundIsKnownToBeOpaqueInRect(const LayerList&, const LayoutRect&) const;
 
     void computeScrollDimensions();
+    void computeHasCompositedScrollableOverflow();
+
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
 

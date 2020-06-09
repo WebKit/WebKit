@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    #scroller {
+        overflow: auto;
+        width: 400px;
+        border: 1px solid black;
+        position: relative;
+        visibility: hidden;
+    }
+
+    .contents {
+        width: 300%;
+        height: 100px;
+    }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('scroller').style.visibility = 'visible';
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }, false);
+</script>
+</head>
+<body>
+<div id="scroller">
+    <div class="contents"></div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>
+
