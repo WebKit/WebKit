@@ -48,7 +48,7 @@
 #import <wtf/text/Base64.h>
 
 #if HAVE(NW_ACTIVITY)
-#import <CFNetwork/CFNSURLConnection.h>
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #endif
 
 namespace WebKit {

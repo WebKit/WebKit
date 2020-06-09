@@ -1,3 +1,15 @@
+2020-06-09  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKit: Import NSURLConnectionSPI.h instead of CFNSURLConnection.h
+        https://bugs.webkit.org/show_bug.cgi?id=212980
+        <rdar://problem/64172694>
+
+        Unreviewed build fix.
+
+        No new tests, behavior unchanged.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+
 2020-06-09  Dean Jackson  <dino@apple.com>
 
         REGRESSION: [Safari Mojave for High Sierra] Accessing some of the featured pages on apple.com causes the webpage to crash
