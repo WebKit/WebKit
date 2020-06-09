@@ -398,8 +398,9 @@ void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& un
     if (index == end)
         return;
 
-    auto startPosition = firstPositionInOrBeforeNode(units.first().node.ptr());
-    auto endPosition = positionAfterNode(units.last().node.ptr());
+    ASSERT(end);
+    auto startPosition = firstPositionInOrBeforeNode(units[index].node.ptr());
+    auto endPosition = positionAfterNode(units[end - 1].node.ptr());
     Vector<ManipulationToken> tokens;
     for (; index < end; ++index)
         tokens.appendVector(WTFMove(units[index].tokens));

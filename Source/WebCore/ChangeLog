@@ -1,3 +1,17 @@
+2020-06-09  Sihui Liu  <sihui_liu@apple.com>
+
+        TextManipulationController range of paragraph may be wrong after r262601
+        https://bugs.webkit.org/show_bug.cgi?id=212874
+
+        Reviewed by Wenson Hsieh.
+
+        Start and end position of item are not properly set in r262601.
+
+        Test: TextManipulation.CompleteTextManipulationSuccedsWhenContentOutOfParagraphIsAdded
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::addItemIfPossible):
+
 2020-06-08  Sihui Liu  <sihui_liu@apple.com>
 
         TextManipulation should only convert text from Node's text content to tokens
