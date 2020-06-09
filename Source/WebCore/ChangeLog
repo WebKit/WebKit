@@ -1,5 +1,23 @@
 2020-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] ComplexTextControllerUniscribe: Retry ScriptShape with SCRIPT_UNDEFINED if it failed as USP_E_SCRIPT_NOT_IN_FONT
+        https://bugs.webkit.org/show_bug.cgi?id=212947
+
+        Reviewed by Don Olmstead.
+
+        If the given font doesn't support the givin text, ScriptShape API
+        fails as USP_E_SCRIPT_NOT_IN_FONT. In the case, the complex run
+        was simply ignored and nothing was drawn for the text.
+
+        According to Uniscribe document, We should retry ScriptShape with
+        SCRIPT_UNDEFINED to get missing glyphs.
+        <https://docs.microsoft.com/en-us/windows/win32/intl/displaying-text-with-uniscribe>
+
+        * platform/graphics/win/ComplexTextControllerUniscribe.cpp:
+        (WebCore::shapeByUniscribe):
+
+2020-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         ComplexTextController: Use std::sort to calculate m_runIndices
         https://bugs.webkit.org/show_bug.cgi?id=212944
 

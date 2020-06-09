@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static bool shapeByUniscribe(const UChar* str, int len, SCRIPT_ITEM item, const Font* fontData,
+static bool shapeByUniscribe(const UChar* str, int len, SCRIPT_ITEM& item, const Font* fontData,
     Vector<WORD>& glyphs, Vector<WORD>& clusters,
     Vector<SCRIPT_VISATTR>& visualAttributes)
 {
@@ -60,8 +60,11 @@ static bool shapeByUniscribe(const UChar* str, int len, SCRIPT_ITEM item, const 
             // Need to resize our buffers.
             glyphs.resize(glyphs.size() * 2);
             visualAttributes.resize(glyphs.size());
-        }
-    } while (shapeResult == E_PENDING || shapeResult == E_OUTOFMEMORY);
+        } else if (shapeResult == USP_E_SCRIPT_NOT_IN_FONT)
+            item.a.eScript = SCRIPT_UNDEFINED;
+        else
+            break;
+    } while (true);
 
     if (hdc)
         SelectObject(hdc, oldFont);
