@@ -1,3 +1,16 @@
+2020-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Use bridge cast in String(NSString *) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=212989
+
+        Reviewed by Darin Adler.
+
+        Use bridge cast in String(NSString *) constructor instead of a reinterpret_cast as this
+        is the preferred way of converting a NS Type to a CF one.
+
+        * wtf/text/cocoa/StringCocoa.mm:
+        (WTF::String::String):
+
 2020-06-09  Per Arne Vollan  <pvollan@apple.com>
 
         All platforms should enable CFPrefs read only mode in the WebContent process
