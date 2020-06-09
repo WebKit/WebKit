@@ -32,6 +32,8 @@ public:
     WEBCORE_EXPORT static SwitchingGPUClient& singleton();
     WEBCORE_EXPORT static void setSingleton(SwitchingGPUClient&);
 
+    static bool hasSingleton() { return !!m_singleton; }
+
     virtual ~SwitchingGPUClient() = default;
 
     virtual void requestHighPerformanceGPU() = 0;
