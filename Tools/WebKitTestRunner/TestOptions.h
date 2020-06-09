@@ -101,6 +101,7 @@ struct TestOptions {
     bool allowsLinkPreview { true };
     bool enableCaptureVideoInUIProcess { false };
     bool enableCaptureVideoInGPUProcess { false };
+    bool enableCaptureAudioInUIProcess { false };
     bool enableCaptureAudioInGPUProcess { false };
     bool allowTopNavigationToDataURLs { true };
     bool enableInAppBrowserPrivacy { false };
@@ -170,6 +171,7 @@ struct TestOptions {
             || allowsLinkPreview != options.allowsLinkPreview
             || enableCaptureVideoInUIProcess != options.enableCaptureVideoInUIProcess
             || enableCaptureVideoInGPUProcess != options.enableCaptureVideoInGPUProcess
+            || enableCaptureAudioInUIProcess != options.enableCaptureAudioInUIProcess
             || enableCaptureAudioInGPUProcess != options.enableCaptureAudioInGPUProcess
             || allowTopNavigationToDataURLs != options.allowTopNavigationToDataURLs
             || enableInAppBrowserPrivacy != options.enableInAppBrowserPrivacy

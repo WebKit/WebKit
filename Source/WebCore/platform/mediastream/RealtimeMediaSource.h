@@ -214,7 +214,7 @@ public:
 
     // Testing only
     virtual void delaySamples(Seconds) { };
-    void setInterruptedForTesting(bool);
+    virtual void setInterruptedForTesting(bool);
 
     virtual bool setShouldApplyRotation(bool) { return false; }
 

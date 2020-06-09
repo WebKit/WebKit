@@ -1,3 +1,31 @@
+2020-06-09  Youenn Fablet  <youenn@apple.com>
+
+        BaseAudioSharedUnit should unmute its clients in case of suspension even if not having any audio unit
+        https://bugs.webkit.org/show_bug.cgi?id=212970
+
+        Reviewed by Eric Carlson.
+
+        CoreAudioCaptureSource(s), when muted, are now calling stopProducingData.
+        This will, in turn, make the BaseAudioSharedUnit stop and no longer have any audio unit.
+        In that case, when resume is called on the BaseAudioSharedUnit, it will exit early as the audio unit is null.
+        This will prevent to unmute the CoreAudioCaptureSource(s).
+
+        Fix this by removing the audio unit check in BaseAudioSharedUnit::resume.
+        Add infrastructure testing to be able to write a test.
+
+        Covered by added test.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::resume):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::setInterruptedForTesting):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isMediaStreamSourceInterrupted const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         lang=zh needs to defer to system preferences to know whether it should be simplified or traditional

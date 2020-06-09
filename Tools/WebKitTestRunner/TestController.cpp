@@ -853,6 +853,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 #if PLATFORM(COCOA)
     WKPreferencesSetCaptureVideoInUIProcessEnabled(preferences, options.enableCaptureVideoInUIProcess);
     WKPreferencesSetCaptureVideoInGPUProcessEnabled(preferences, options.enableCaptureVideoInGPUProcess);
+    WKPreferencesSetCaptureAudioInUIProcessEnabled(preferences, options.enableCaptureAudioInUIProcess);
     WKPreferencesSetCaptureAudioInGPUProcessEnabled(preferences, options.enableCaptureAudioInGPUProcess);
 #endif
     WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions.shouldEnableProcessSwapOnNavigation());
@@ -1535,6 +1536,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableCaptureVideoInUIProcess = parseBooleanTestHeaderValue(value);
         else if (key == "enableCaptureVideoInGPUProcess")
             testOptions.enableCaptureVideoInGPUProcess = parseBooleanTestHeaderValue(value);
+        else if (key == "enableCaptureAudioInUIProcess")
+            testOptions.enableCaptureAudioInUIProcess = parseBooleanTestHeaderValue(value);
         else if (key == "enableCaptureAudioInGPUProcess")
             testOptions.enableCaptureAudioInGPUProcess = parseBooleanTestHeaderValue(value);
         else if (key == "allowTopNavigationToDataURLs")

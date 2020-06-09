@@ -176,9 +176,7 @@ OSStatus BaseAudioSharedUnit::resume()
         reconfigure();
     }
 
-    if (!hasAudioUnit())
-        return 0;
-
+    ASSERT(!m_producingCount);
     if (m_producingCount) {
         if (auto error = startUnit())
             return error;

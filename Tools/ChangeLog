@@ -1,3 +1,19 @@
+2020-06-09  Youenn Fablet  <youenn@apple.com>
+
+        BaseAudioSharedUnit should unmute its clients in case of suspension even if not having any audio unit
+        https://bugs.webkit.org/show_bug.cgi?id=212970
+
+        Reviewed by Eric Carlson.
+
+        Add an option to capture in UI process so that the same test can run on both MacOS and iOS.
+        This eases the testing infra to be able to get audio capture unit state in WebProcess as is the case in iOS.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2020-06-09  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement functions to use ResourceLoadStatistics.

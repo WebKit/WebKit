@@ -5173,6 +5173,11 @@ void Internals::setMediaStreamSourceInterrupted(MediaStreamTrack& track, bool in
     track.source().setInterruptedForTesting(interrupted);
 }
 
+bool Internals::isMediaStreamSourceInterrupted(MediaStreamTrack& track) const
+{
+    return track.source().interrupted();
+}
+
 bool Internals::isMockRealtimeMediaSourceCenterEnabled()
 {
     return MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
