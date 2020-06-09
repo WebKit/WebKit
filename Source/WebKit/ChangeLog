@@ -1,3 +1,16 @@
+2020-06-09  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Element Send Keys can hang when an automation window becomes unfocused
+        https://bugs.webkit.org/show_bug.cgi?id=212985
+        <rdar://problem/56354471>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::sendSynthesizedEventsToPage):
+        Make sure to focus the window and set first responder so sending keys doesn't hang.
+
+
 2020-06-09  Jonathan Bedard  <jbedard@apple.com>
 
         WebKit: Import NSURLConnectionSPI.h instead of CFNSURLConnection.h

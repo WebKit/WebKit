@@ -73,13 +73,16 @@ static const void *synthesizedAutomationEventAssociatedObjectKey = &synthesizedA
 void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArray *eventsToSend)
 {
     NSWindow *window = page.platformWindow();
+    [window makeKeyAndOrderFront:nil];
+    page.makeFirstResponder();
 
     for (NSEvent *event in eventsToSend) {
         LOG(Automation, "Sending event[%p] to window[%p]: %@", event, window, event);
 
         // Take focus back in case the Inspector became focused while the prior command or
         // NSEvent was delivered to the window.
-        [window becomeKeyWindow];
+        [window makeKeyAndOrderFront:nil];
+        page.makeFirstResponder();
 
         markEventAsSynthesizedForAutomation(event);
         [window sendEvent:event];
