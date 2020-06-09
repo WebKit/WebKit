@@ -154,7 +154,7 @@ private:
 
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
         void didShowSafeBrowsingWarning() final;
-        void confirmPDFOpening(WebPageProxy&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
+        void confirmPDFOpening(WebPageProxy&, const WTF::URL&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
 #endif
@@ -239,7 +239,7 @@ private:
 #endif
         bool webViewHasVideoInPictureInPictureDidChange : 1;
         bool webViewDidShowSafeBrowsingWarning : 1;
-        bool webViewShouldAllowPDFToOpenFromFrameCompletionHandler : 1;
+        bool webViewShouldAllowPDFAtURLToOpenFromFrameCompletionHandler : 1;
 #if ENABLE(WEB_AUTHN)
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
 #endif

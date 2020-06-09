@@ -171,7 +171,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     
     m_delegateMethods.webViewHasVideoInPictureInPictureDidChange = [delegate respondsToSelector:@selector(_webView:hasVideoInPictureInPictureDidChange:)];
     m_delegateMethods.webViewDidShowSafeBrowsingWarning = [delegate respondsToSelector:@selector(_webViewDidShowSafeBrowsingWarning:)];
-    m_delegateMethods.webViewShouldAllowPDFToOpenFromFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:shouldAllowPDFToOpenFromFrame:completionHandler:)];
+    m_delegateMethods.webViewShouldAllowPDFAtURLToOpenFromFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:shouldAllowPDFAtURL:toOpenFromFrame:completionHandler:)];
 
 #if ENABLE(WEB_AUTHN)
     m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
@@ -1270,17 +1270,17 @@ void UIDelegate::UIClient::didShowSafeBrowsingWarning()
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewDidShowSafeBrowsingWarning:m_uiDelegate.m_webView];
 }
 
-void UIDelegate::UIClient::confirmPDFOpening(WebPageProxy& page, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler)
+void UIDelegate::UIClient::confirmPDFOpening(WebPageProxy& page, const WTF::URL& fileURL, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewShouldAllowPDFToOpenFromFrameCompletionHandler)
+    if (!m_uiDelegate.m_delegateMethods.webViewShouldAllowPDFAtURLToOpenFromFrameCompletionHandler)
         return completionHandler(true);
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return completionHandler(true);
 
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:shouldAllowPDFToOpenFromFrame:completionHandler:));
-    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView shouldAllowPDFToOpenFromFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:shouldAllowPDFAtURL:toOpenFromFrame:completionHandler:));
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView shouldAllowPDFAtURL:fileURL toOpenFromFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

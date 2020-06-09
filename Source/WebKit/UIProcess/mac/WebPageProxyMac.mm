@@ -511,10 +511,11 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 
     m_temporaryPDFFiles.add(pdfUUID, nsPath.get());
 
-    m_uiClient->confirmPDFOpening(*this, WTFMove(frameInfo), [nsPath = WTFMove(nsPath)] (bool allowed) {
+    auto pdfFileURL = URL::fileURLWithFileSystemPath(String(nsPath.get()));
+    m_uiClient->confirmPDFOpening(*this, pdfFileURL, WTFMove(frameInfo), [pdfFileURL] (bool allowed) {
         if (!allowed)
             return;
-        [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:nsPath.get() isDirectory:NO]];
+        [[NSWorkspace sharedWorkspace] openURL:pdfFileURL];
     });
 }
 
@@ -527,10 +528,11 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData
     if (!pdfFilename.endsWithIgnoringASCIICase(".pdf"))
         return;
 
-    m_uiClient->confirmPDFOpening(*this, WTFMove(frameInfo), [pdfFilename = WTFMove(pdfFilename)] (bool allowed) {
+    auto pdfFileURL = URL::fileURLWithFileSystemPath(pdfFilename);
+    m_uiClient->confirmPDFOpening(*this, pdfFileURL, WTFMove(frameInfo), [pdfFileURL] (bool allowed) {
         if (!allowed)
             return;
-        [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:pdfFilename isDirectory:NO]];
+        [[NSWorkspace sharedWorkspace] openURL:pdfFileURL];
     });
 }
 
