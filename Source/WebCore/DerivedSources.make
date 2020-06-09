@@ -147,9 +147,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePaySession.idl \
     $(WebCore)/Modules/applepay/ApplePaySessionError.idl \
     $(WebCore)/Modules/applepay/ApplePaySetup.idl \
-	$(WebCore)/Modules/applepay/ApplePaySetupConfiguration.idl \
+    $(WebCore)/Modules/applepay/ApplePaySetupConfiguration.idl \
     $(WebCore)/Modules/applepay/ApplePaySetupFeature.idl \
-	$(WebCore)/Modules/applepay/ApplePaySetupFeatureState.idl \
+    $(WebCore)/Modules/applepay/ApplePaySetupFeatureState.idl \
     $(WebCore)/Modules/applepay/ApplePaySetupFeatureType.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactSelectedEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayShippingContactUpdate.idl \
