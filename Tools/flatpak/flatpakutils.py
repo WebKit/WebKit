@@ -594,13 +594,17 @@ class WebkitFlatpak:
         command = [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir, "--only-environment"]
         gst_env = run_sanitized(command, gather_output=True)
         whitelist = ("LD_LIBRARY_PATH", "PATH", "PKG_CONFIG_PATH")
+        nopathlist = ("GST_DEBUG", "GST_VERSION", "GST_ENV")
         env = []
         for line in [line for line in gst_env.splitlines() if not line.startswith("export")]:
             tokens = line.split("=")
             var_name, contents = tokens[0], "=".join(tokens[1:])
             if not var_name.startswith("GST_") and var_name not in whitelist:
                 continue
-            new_contents = ':'.join([self.host_path_to_sandbox_path(p) for p in contents.split(":")])
+            if var_name not in nopathlist:
+                new_contents = ':'.join([self.host_path_to_sandbox_path(p) for p in contents.split(":")])
+            else:
+                new_contents = contents.replace("'", "")
             env.append("--env=%s=%s" % (var_name, new_contents))
         return env
 
@@ -700,7 +704,6 @@ class WebkitFlatpak:
             "G",
             "CCACHE",
             "GIGACAGE",
-            "GST",
             "GTK",
             "ICECC",
             "JSC",
@@ -745,7 +748,7 @@ class WebkitFlatpak:
         env_vars.update(extra_env_vars)
         for envvar, value in env_vars.items():
             var_tokens = envvar.split("_")
-            if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or envvar_in_suffixes_to_keep(envvar):
+            if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or envvar_in_suffixes_to_keep(envvar) or (not os.environ.get('GST_BUILD_PATH') and var_tokens[0] == "GST"):
                 sandbox_environment[envvar] = value
 
         share_network_option = "--share=network"

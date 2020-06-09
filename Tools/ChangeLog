@@ -1,3 +1,23 @@
+2020-06-09  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [Flatpak][GStreamer] enhance GST_ environment variable passing
+        https://bugs.webkit.org/show_bug.cgi?id=212905
+
+        Reviewed by Philippe Normand.
+
+        Handle the passing of several GST environment variables,
+        particularly GST_DEBUG, which, when using * symbol, python adds
+        quotes, but they break the parsing in GStreamer.
+
+        Also the variables are handled by gst-env.py when using
+        GST_BUILD_PATH, so they are filtered out when it's exported,
+        avoiding duplication. But it GST_BUILD_PATH is not defined, the
+        variables are passed to flatpak.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.run_in_sandbox):
+
 2020-06-09  Sihui Liu  <sihui_liu@apple.com>
 
         TextManipulationController range of paragraph may be wrong after r262601
