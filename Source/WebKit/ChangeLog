@@ -1,3 +1,32 @@
+2020-06-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r262636. rdar://problem/64127485
+
+    [iOS] Fix message filter sandbox violation
+    https://bugs.webkit.org/show_bug.cgi?id=212837
+    <rdar://problem/63830368>
+    
+    Reviewed by Darin Adler.
+    
+    Add required message to message filter in the iOS WebContent sandbox.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262636 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-05  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Fix message filter sandbox violation
+            https://bugs.webkit.org/show_bug.cgi?id=212837
+            <rdar://problem/63830368>
+
+            Reviewed by Darin Adler.
+
+            Add required message to message filter in the iOS WebContent sandbox.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-06-05  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r262586. rdar://problem/64034619
