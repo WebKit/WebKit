@@ -1394,9 +1394,9 @@ Color RenderTheme::disabledTextColor(const Color& textColor, const Color& backgr
     // This also means that black on black will turn into grey on black when disabled.
     Color disabledColor;
     if (equalIgnoringSemanticColor(textColor, Color::black) || backgroundColor.alphaAsFloat() < minDisabledColorAlphaValue || textColor.luminance() < backgroundColor.luminance())
-        disabledColor = textColor.lighten();
+        disabledColor = textColor.lightened();
     else
-        disabledColor = textColor.darken();
+        disabledColor = textColor.darkened();
     
     // If there's not very much contrast between the disabled color and the background color,
     // just leave the text color alone. We don't want to change a good contrast color scheme so that it has really bad contrast.

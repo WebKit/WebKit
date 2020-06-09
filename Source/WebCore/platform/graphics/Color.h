@@ -135,8 +135,8 @@ public:
     // This will convert non-sRGB colorspace colors into sRGB.
     WEBCORE_EXPORT ColorComponents<float> toSRGBAComponentsLossy() const;
 
-    WEBCORE_EXPORT Color lighten() const;
-    WEBCORE_EXPORT Color darken() const;
+    WEBCORE_EXPORT Color lightened() const;
+    WEBCORE_EXPORT Color darkened() const;
 
     WEBCORE_EXPORT float luminance() const;
 

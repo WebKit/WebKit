@@ -1815,10 +1815,10 @@ void RenderObject::calculateBorderStyleColor(const BorderStyle& style, const Box
     // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
     if (operation == Darken) {
         if (color.luminance() > baseDarkColorLuminance)
-            color = color.darken();
+            color = color.darkened();
     } else {
         if (color.luminance() < baseLightColorLuminance)
-            color = color.lighten();
+            color = color.lightened();
     }
 }
 

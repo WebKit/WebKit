@@ -1,5 +1,17 @@
 2020-06-08  Sam Weinig  <weinig@apple.com>
 
+        Extended Color: Rename Color::lighten() and Color::darken() to Color::lightened() and Color::darkened()
+        https://bugs.webkit.org/show_bug.cgi?id=212917
+
+        Reviewed by Darin Adler.
+
+        Addresses feedback from Darin.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+
+2020-06-08  Sam Weinig  <weinig@apple.com>
+
         Fix test results after r262733.
 
         * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:

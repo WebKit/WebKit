@@ -100,7 +100,7 @@ String Color::nameForRenderTreeAsText() const
     return asSimple().serializationForRenderTreeAsText();
 }
 
-Color Color::lighten() const
+Color Color::lightened() const
 {
     // Hardcode this common case for speed.
     if (!isExtended() && asSimple() == black)
@@ -117,7 +117,7 @@ Color Color::lighten() const
     return makeSimpleColorFromFloats(multiplier * r, multiplier * g, multiplier * b, a);
 }
 
-Color Color::darken() const
+Color Color::darkened() const
 {
     // Hardcode this common case for speed.
     if (!isExtended() && asSimple() == white)

@@ -72,8 +72,8 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
         return textColor;
 
     if (textColor.luminance() > 0.5)
-        return textColor.darken();
-    return textColor.lighten();
+        return textColor.darkened();
+    return textColor.lightened();
 }
 
 TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
