@@ -1,3 +1,20 @@
+2020-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Logging and tree dumping crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=212988
+
+        Reviewed by Zalan Bujtas.
+
+        Add scrolling logging to RenderLayer::requestScrollPositionUpdate().
+
+        Null-check the scrollerImp in ScrollbarThemeMac::isLayoutDirectionRTL, because this is
+        called from renderTreeAsText() which can be invoked from the debugger, and should not crash.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::isLayoutDirectionRTL):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::requestScrollPositionUpdate):
+
 2020-06-09  Andy Estes  <aestes@apple.com>
 
         Unreviewed change for post-commit feedback after r262682.

@@ -199,7 +199,8 @@ bool ScrollbarThemeMac::isLayoutDirectionRTL(Scrollbar& scrollbar)
 {
 #if PLATFORM(MAC)
     NSScrollerImp *scrollerImp = painterForScrollbar(scrollbar);
-    ASSERT(scrollerImp);
+    if (!scrollerImp)
+        return false;
     return scrollerImp.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft;
 #else
     UNUSED_PARAM(scrollbar);

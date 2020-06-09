@@ -2588,6 +2588,8 @@ ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) co
 bool RenderLayer::requestScrollPositionUpdate(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping)
 {
 #if ENABLE(ASYNC_SCROLLING)
+    LOG_WITH_STREAM(Scrolling, stream << *this << " requestScrollPositionUpdate " << position);
+
     if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
         return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
 #endif
