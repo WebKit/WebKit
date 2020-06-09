@@ -127,7 +127,7 @@ OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(
 {
     OptionSet<WebEvent::Modifier> webModifiers;
 
-    if (modifiers & wpe_input_keyboard_modifier_shift)
+    if (modifiers & wpe_input_keyboard_modifier_alt)
         webModifiers.add(WebEvent::Modifier::AltKey);
     if (modifiers & wpe_input_keyboard_modifier_meta)
         webModifiers.add(WebEvent::Modifier::MetaKey);

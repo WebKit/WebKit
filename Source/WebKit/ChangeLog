@@ -1,3 +1,15 @@
+2020-06-09  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Follow up WPE fix after r262703
+        https://bugs.webkit.org/show_bug.cgi?id=212948
+
+        Reviewed by Carlos Garcia Campos.
+
+        Covered by existing tests.
+
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::WebAutomationSession::platformWebModifiersFromRaw):
+
 2020-06-08  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for IPC::CFType
