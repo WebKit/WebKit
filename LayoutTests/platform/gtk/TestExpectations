@@ -1353,8 +1353,6 @@ webkit.org/b/212223 compositing/tiling/perspective-on-scroller-tile-coverage.htm
 
 webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
 
-webkit.org/b/212925 webrtc/multi-audio.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2881,8 +2879,6 @@ webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.
 
 webkit.org/b/211166 webrtc/disable-encryption.html [ Crash Pass ]
 
-webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
-
 webkit.org/b/212821 scrollbars/scrollbar-selectors.html [ Pass Timeout Missing ]
 
 webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]
@@ -3564,8 +3560,6 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]
 
 # HTTP 204 (No Content) should be ignored
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
-
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
 
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 

@@ -18,8 +18,10 @@
 # * CSS
 # * GStreamer
 # * Perf
-# * WebGL
 # * WebAnimations
+# * WebGL
+# * WebRTC
+# * WebSocket
 # * WPT
 # * PASSING tests
 #   * Usually to override tests skipped/failing by Mac ports.
@@ -125,10 +127,22 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# WebRTC-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/212925 webrtc/multi-audio.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of WebRTC-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Failure Timeout Pass ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebSocket-related bugs
@@ -148,6 +162,8 @@ webkit.org/b/212807 imported/w3c/web-platform-tests/fetch/api/basic/header-value
 webkit.org/b/212807 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]
 
 webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navigation/javascript-url-navigation-inherits-csp.html [ Failure ]
+
+webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

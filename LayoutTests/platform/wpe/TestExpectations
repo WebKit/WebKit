@@ -529,8 +529,6 @@ webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/fram
 
 webkit.org/b/198823 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Failure Pass ]
 
-webkit.org/b/206657 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
-
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
 
 webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
@@ -636,6 +634,7 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-003.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-005.xht [ ImageOnlyFailure ]
+webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-ltr-top-bottom-vrl-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vlr-in-htb-020.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-020.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vlr-005.xht [ ImageOnlyFailure ]
@@ -1351,6 +1350,8 @@ webkit.org/b/212352 imported/w3c/web-platform-tests/webxr/xrDevice_requestSessio
 
 webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure Pass ]
 
+webkit.org/b/212959 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1364,6 +1365,8 @@ webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-no
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
+
+webkit.org/b/212960 jquery/manipulation.html [ Slow ]
 
 imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 
@@ -1653,7 +1656,6 @@ webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html [ Failure ]
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Failure ]
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html [ Failure ]
-webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html [ Failure ]
 webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/180648 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 
@@ -1900,7 +1902,6 @@ webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout 
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
-webkit.org/b/180134 webanimations/opacity-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 
