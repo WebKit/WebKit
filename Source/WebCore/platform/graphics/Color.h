@@ -162,7 +162,7 @@ public:
     Color semanticColor() const;
 
     // True if the color originated from a CSS semantic color name.
-    bool isSemantic() const { return !isExtended() && (m_colorData.simpleColorAndFlags & isSemanticSimpleColorBit); }
+    bool isSemantic() const { return isSimple() && (m_colorData.simpleColorAndFlags & isSemanticSimpleColorBit); }
 
 #if PLATFORM(GTK)
     Color(const GdkRGBA&);
@@ -172,7 +172,6 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT Color(CGColorRef);
     WEBCORE_EXPORT Color(CGColorRef, SemanticTag);
-    friend WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
 #endif
 
 #if PLATFORM(WIN)
@@ -190,11 +189,11 @@ public:
     static constexpr SimpleColor cyan { 0xFF00FFFF };
     static constexpr SimpleColor yellow { 0xFFFFFF00 };
 
-    bool isExtended() const
-    {
-        return !(m_colorData.simpleColorAndFlags & invalidSimpleColor);
-    }
+    bool isExtended() const { return !(m_colorData.simpleColorAndFlags & invalidSimpleColor); }
+    bool isSimple() const { return !isExtended(); }
+
     const ExtendedColor& asExtended() const;
+    const SimpleColor asSimple() const;
 
     WEBCORE_EXPORT Color& operator=(const Color&);
     WEBCORE_EXPORT Color& operator=(Color&&);
@@ -211,8 +210,6 @@ public:
     template<class Decoder> static Optional<Color> decode(Decoder&);
 
 private:
-    const SimpleColor asSimple() const;
-
     void setSimpleColor(SimpleColor);
 
     void tagAsSemantic() { m_colorData.simpleColorAndFlags |= isSemanticSimpleColorBit; }
@@ -316,7 +313,7 @@ inline const ExtendedColor& Color::asExtended() const
 
 inline const SimpleColor Color::asSimple() const
 {
-    ASSERT(!isExtended());
+    ASSERT(isSimple());
     return { static_cast<uint32_t>(m_colorData.simpleColorAndFlags >> 32) };
 }
 

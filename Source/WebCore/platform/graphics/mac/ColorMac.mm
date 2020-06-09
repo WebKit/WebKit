@@ -32,7 +32,16 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/StdLibExtras.h>
+#import <wtf/TinyLRUCache.h>
+
+namespace WTF {
+
+template<> RetainPtr<NSColor> TinyLRUCachePolicy<WebCore::Color, RetainPtr<NSColor>>::createValueForKey(const WebCore::Color& color)
+{
+    return [NSColor colorWithCGColor:cachedCGColor(color)];
+}
+
+} // namespace WTF
 
 namespace WebCore {
 
@@ -113,42 +122,26 @@ Color semanticColorFromNSColor(NSColor *color)
 
 NSColor *nsColor(const Color& color)
 {
-    if (!color.isValid()) {
-        // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-        static NeverDestroyed<NSColor *> clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
-        return clearColor;
+    if (color.isSimple()) {
+        switch (color.asSimple().value()) {
+        case Color::transparent.value(): {
+            static NSColor *clearColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0] retain];
+            return clearColor;
+        }
+        case Color::black.value(): {
+            static NSColor *blackColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1] retain];
+            return blackColor;
+        }
+        case Color::white.value(): {
+            static NSColor *whiteColor = [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] retain];
+            return whiteColor;
+        }
+        }
     }
 
-    if (Color::isBlackColor(color)) {
-        static NeverDestroyed<NSColor *> blackColor = [[NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1] retain];
-        return blackColor;
-    }
-
-    if (Color::isWhiteColor(color)) {
-        static NeverDestroyed<NSColor *> whiteColor = [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] retain];
-        return whiteColor;
-    }
-
-    const int cacheSize = 32;
-    static unsigned cachedRGBAValues[cacheSize];
-    static RetainPtr<NSColor>* cachedColors = new RetainPtr<NSColor>[cacheSize];
-
-    unsigned hash = color.hash();
-    for (int i = 0; i < cacheSize; ++i) {
-        if (cachedRGBAValues[i] == hash)
-            return cachedColors[i].get();
-    }
-
-    NSColor *result = [NSColor colorWithCGColor:cachedCGColor(color)];
-
-    static int cursor;
-    cachedRGBAValues[cursor] = hash;
-    cachedColors[cursor] = result;
-    if (++cursor == cacheSize)
-        cursor = 0;
-    return result;
+    static NeverDestroyed<TinyLRUCache<Color, RetainPtr<NSColor>, 32>> cache;
+    return cache.get().get(color).get();
 }
-
 
 } // namespace WebCore
 

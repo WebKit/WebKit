@@ -128,7 +128,7 @@ static CGColorRef leakCGColor(const Color& color)
 
 CGColorRef cachedCGColor(const Color& color)
 {
-    if (!color.isExtended()) {
+    if (color.isSimple()) {
         switch (color.asSimple().value()) {
         case Color::transparent.value(): {
             static CGColorRef transparentCGColor = leakCGColor(color);

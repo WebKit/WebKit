@@ -1,3 +1,20 @@
+2020-06-09  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Switch ColorMac.mm's nsColor() function over to using TinyLRUCache
+        https://bugs.webkit.org/show_bug.cgi?id=212918
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/Color.h:
+        (WebCore::Color::isExtended const):
+        Make asSimple() public, so nsColor() can use it. This also allows us to unfriend cachedCGColor().
+
+        * platform/graphics/mac/ColorMac.mm:
+        (WTF::RetainPtr<NSColor>>::createValueForKey):
+        (WebCore::nsColor):
+        Mimic the structure of cachedCGColor() by switching over simpleColor values for common
+        colors and using a 32 value TinyLRUCache for the rest.
+
 2020-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME] CDMProxyInstance should not keep CDMInstanceSessions hard referenced

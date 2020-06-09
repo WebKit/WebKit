@@ -103,7 +103,7 @@ String Color::nameForRenderTreeAsText() const
 Color Color::lightened() const
 {
     // Hardcode this common case for speed.
-    if (!isExtended() && asSimple() == black)
+    if (isSimple() && asSimple() == black)
         return lightenedBlack;
 
     auto [r, g, b, a] = toSRGBAComponentsLossy();
@@ -120,7 +120,7 @@ Color Color::lightened() const
 Color Color::darkened() const
 {
     // Hardcode this common case for speed.
-    if (!isExtended() && asSimple() == white)
+    if (isSimple() && asSimple() == white)
         return darkenedWhite;
     
     auto [r, g, b, a] = toSRGBAComponentsLossy();
