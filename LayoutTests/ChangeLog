@@ -1,5 +1,21 @@
 2020-06-09  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Gardening, clean up failures filed under bug 186638
+        https://bugs.webkit.org/show_bug.cgi?id=212968
+
+        Unreviewed gardening.
+
+        Most of the the failures were flaky but many tests have been
+        consistently passing, so they were removed from expectations. Adjust
+        other failure entries to their corresponding state inferred from the
+        latest test bot results.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2020-06-09  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Gardening, update test expectations after r262775
         https://bugs.webkit.org/show_bug.cgi?id=212966
 
