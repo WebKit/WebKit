@@ -1,3 +1,17 @@
+2020-06-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update baselines for mediaElementAudioSourceToScriptProcessorTest.html
+        https://bugs.webkit.org/show_bug.cgi?id=184777
+
+        Unreviewed gardening.
+
+        The expected result for GTK and WPE is the same as the general baseline, it only changes an expected value.
+        ios-wk2 also has its own baseline for the same reason.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt:
+
 2020-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME] CDMProxyInstance should not keep CDMInstanceSessions hard referenced
