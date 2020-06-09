@@ -65,7 +65,12 @@ shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf(9)), '[]');
 shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('en')), '["en"]');
 shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' })), '["es","en","de"]');
 shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf(['en', 'pt', 'en', 'es'])), '["en","pt","es"]');
-shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]');
+shouldBe(
+    JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
+    $vm.icuVersion() >= 67
+        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
+        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]'
+);
 shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('no-bok')), '["nb"]');
 shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('x-some-thing')), '[]');
 

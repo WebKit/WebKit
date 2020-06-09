@@ -1,3 +1,23 @@
+2020-06-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Intl] Update tests to support ICU 67
+        https://bugs.webkit.org/show_bug.cgi?id=212943
+
+        Reviewed by Yusuke Suzuki.
+
+        Our tests have been assuming ICU 60-64 results but WinCairo and PlayStation are now on ICU 67,
+        which includes fixes for variant alphabetization and non-explicit "-true" values in locale strings.
+
+        * stress/intl-collator.js:
+        (explicitTrueBeforeICU67):
+        (shouldBe.testCollator.Intl.Collator):
+        * stress/intl-datetimeformat.js:
+        * stress/intl-locale.js:
+        * stress/intl-numberformat.js:
+        * stress/intl-object.js:
+        * stress/intl-pluralrules.js:
+        * stress/intl-relativetimeformat.js:
+
 2020-06-08  Keith Miller  <keith_miller@apple.com>
 
         Fix tests that time out on Series 4 Watch

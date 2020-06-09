@@ -19,6 +19,10 @@ function shouldThrow(func, errorType) {
         throw new Error(`Expected ${errorType.name}!`);
 }
 
+function explicitTrueBeforeICU67() {
+    return $vm.icuVersion() < 67 ? '-true' : '';
+}
+
 // 10.1 The Intl.Collator Constructor
 
 // The Intl.Collator constructor is a standard built-in property of the Intl object.
@@ -81,8 +85,8 @@ shouldBe(testCollator(Intl.Collator('en-u-co-abcd'), [{locale: 'en'}]), true);
 shouldBe(testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}, {locale: 'de'}]), true);
 
 // The 'kn' key is processed correctly.
-shouldBe(testCollator(Intl.Collator('en-u-kn'), [{locale: 'en-u-kn-true', numeric: true}]), true);
-shouldBe(testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kn'), [{locale: 'en-u-kn' + explicitTrueBeforeICU67(), numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn' + explicitTrueBeforeICU67(), numeric: true}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-false'), [{locale: 'en-u-kn-false', numeric: false}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-abcd'), [{locale: 'en'}]), true);
 
@@ -94,12 +98,12 @@ shouldBe(testCollator(Intl.Collator('en-u-kf-false'), [{locale: 'en-u-kf-false',
 shouldBe(testCollator(Intl.Collator('en-u-kf-true'), [{locale: 'en'}]), true);
 
 // Ignores irrelevant extension keys.
-shouldBe(testCollator(Intl.Collator('en-u-aa-aaaa-kn-true-bb-bbbb-co-eor-cc-cccc-y-yyd'), [{locale: 'en-u-co-eor-kn-true', collation: 'eor', numeric: true}, {locale: 'en-u-kn-true', numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-aa-aaaa-kf-upper-bb-bbbb-co-eor-cc-cccc-y-yyd'), [{locale: 'en-u-co-eor-kf-upper', collation: 'eor', caseFirst: 'upper'}, {locale: 'en-u-kf-upper', caseFirst: 'upper'}]), true);
 
 // Ignores other extensions.
-shouldBe(testCollator(Intl.Collator('en-u-kn-true-a-aa'), [{locale: 'en-u-kn-true', numeric: true}]), true);
-shouldBe(testCollator(Intl.Collator('en-a-aa-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]), true);
-shouldBe(testCollator(Intl.Collator('en-a-aa-u-kn-true-b-bb'), [{locale: 'en-u-kn-true', numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kf-upper-a-aa'), [{locale: 'en-u-kf-upper', caseFirst: 'upper'}]), true);
+shouldBe(testCollator(Intl.Collator('en-a-aa-u-kf-upper'), [{locale: 'en-u-kf-upper', caseFirst: 'upper'}]), true);
+shouldBe(testCollator(Intl.Collator('en-a-aa-u-kf-upper-b-bb'), [{locale: 'en-u-kf-upper', caseFirst: 'upper'}]), true);
 
 // The option usage is processed correctly.
 shouldBe(testCollator(Intl.Collator('en', {usage: 'sort'}), [{locale: 'en', usage: 'sort'}]), true);
@@ -146,7 +150,7 @@ shouldThrow(() => Intl.Collator('en', { get ignorePunctuation() { throw new Erro
 // Options override the language tag.
 shouldBe(testCollator(Intl.Collator('en-u-kn-true', {numeric: false}), [{locale: 'en', numeric: false}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-false', {numeric: true}), [{locale: 'en', numeric: true}]), true);
-shouldBe(testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn-true', numeric: true}]), true);
+shouldBe(testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn' + explicitTrueBeforeICU67(), numeric: true}]), true);
 shouldBe(testCollator(Intl.Collator('en-u-kn-false', {numeric: false}), [{locale: 'en-u-kn-false', numeric: false}]), true);
 
 // Options and extension keys are processed correctly.
@@ -184,7 +188,12 @@ shouldBe(JSON.stringify(Intl.Collator.supportedLocalesOf({ length: 4, 1: 'en', 0
 // Deduplicates tags.
 shouldBe(JSON.stringify(Intl.Collator.supportedLocalesOf(['en', 'pt', 'en', 'es'])), '["en","pt","es"]');
 // Canonicalizes tags.
-shouldBe(JSON.stringify(Intl.Collator.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]');
+shouldBe(
+    JSON.stringify(Intl.Collator.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
+    $vm.icuVersion() >= 67
+        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
+        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]'
+);
 // Replaces outdated tags.
 shouldBe(JSON.stringify(Intl.Collator.supportedLocalesOf('no-bok')), '["nb"]');
 // Doesn't throw, but ignores private tags.

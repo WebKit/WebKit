@@ -80,7 +80,12 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf({ length: 4, 1: '
 // Deduplicates tags.
 shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ])), '["en","pt","es"]');
 // Canonicalizes tags.
-shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')), '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]');
+shouldBe(
+    JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
+    $vm.icuVersion() >= 67
+        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
+        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]'
+);
 // Replaces outdated tags.
 shouldBe(JSON.stringify(Intl.DateTimeFormat.supportedLocalesOf('no-bok')), '["nb"]');
 // Doesn't throw, but ignores private tags.
