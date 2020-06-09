@@ -2,17 +2,17 @@
 PASS auto - columns 
 PASS auto - rows 
 PASS min - columns 
-PASS min - rows 
+FAIL min - rows assert_equals: grid-template-rows expected "50px" but got "150px"
 PASS max - columns 
 PASS max - rows 
 PASS size - columns 
 PASS size - rows 
 PASS min max - columns 
-PASS min max - rows 
+FAIL min max - rows assert_equals: grid-template-rows expected "50px" but got "150px"
 PASS min size - columns 
-PASS min size - rows 
+FAIL min size - rows assert_equals: grid-template-rows expected "50px" but got "200px"
 PASS max size - columns 
 PASS max size - rows 
 PASS min max size - columns 
-PASS min max size - rows 
+FAIL min max size - rows assert_equals: grid-template-rows expected "50px" but got "150px"
 

@@ -252,7 +252,7 @@ private:
 class GridTrackSizingAlgorithmStrategy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual LayoutUnit minContentForChild(RenderBox&) const;
+    LayoutUnit minContentForChild(RenderBox&) const;
     LayoutUnit maxContentForChild(RenderBox&) const;
     LayoutUnit minSizeForChild(RenderBox&) const;
 
@@ -267,7 +267,7 @@ protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)
         : m_algorithm(algorithm) { }
 
-    virtual LayoutUnit minLogicalSizeForChild(RenderBox&, const Length& childMinSize, LayoutUnit availableSize) const;
+    virtual LayoutUnit minLogicalWidthForChild(RenderBox&, Length childMinSize, LayoutUnit availableSize) const = 0;
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;
