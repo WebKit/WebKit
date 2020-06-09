@@ -48,6 +48,11 @@
 #include "MediaElementSession.h"
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "MediaKeySession.h"
+#include "MediaKeys.h"
+#endif
+
 namespace WebCore {
 
 class AnimationTimeline;
@@ -1017,6 +1022,11 @@ public:
 
 #if ENABLE(WEBXR)
     ExceptionOr<RefPtr<WebXRTest>> xrTest();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    unsigned mediaKeysInternalInstanceObjectRefCount(const MediaKeys&) const;
+    unsigned mediaKeySessionInternalInstanceSessionObjectRefCount(const MediaKeySession&) const;
 #endif
 
 private:

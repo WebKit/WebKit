@@ -36,6 +36,7 @@
 #include "SharedBuffer.h"
 #include <wtf/Condition.h>
 #include <wtf/VectorHash.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -155,6 +156,9 @@ private:
     KeyStore m_keyStore;
 };
 
+class CDMInstanceSessionProxy : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionProxy, WeakPtrFactoryInitialization::Eager> {
+};
+
 // Base class for common session management code and for communicating messages
 // from "real CDM" state changes to JS.
 class CDMInstanceProxy : public CDMInstance {
@@ -185,7 +189,7 @@ public:
     void stoppedWaitingForKey();
 
 protected:
-    void trackSession(const RefPtr<CDMInstanceSession> session) { m_sessions.append(session); }
+    void trackSession(const CDMInstanceSessionProxy&);
 
 private:
     RefPtr<CDMProxy> m_cdmProxy;
@@ -195,7 +199,7 @@ private:
     MediaPlayer* m_player { nullptr }; // FIXME: MainThread<T>?
 
     std::atomic<int> m_numDecryptorsWaitingForKey { 0 };
-    Vector<RefPtr<CDMInstanceSession>> m_sessions;
+    WeakHashSet<CDMInstanceSessionProxy> m_sessions;
 
     KeyStore m_keyStore;
 };

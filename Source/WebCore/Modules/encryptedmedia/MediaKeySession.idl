@@ -30,6 +30,7 @@
     ActiveDOMObject,
     Conditional=ENCRYPTED_MEDIA,
     EnabledAtRuntime=EncryptedMediaAPI,
+    ExportToWrappedFunction,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
 ] interface MediaKeySession : EventTarget {
     readonly attribute DOMString sessionId;

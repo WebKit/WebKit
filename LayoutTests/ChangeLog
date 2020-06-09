@@ -1,3 +1,13 @@
+2020-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME] CDMProxyInstance should not keep CDMInstanceSessions hard referenced
+        https://bugs.webkit.org/show_bug.cgi?id=212689
+
+        Reviewed by Youenn Fablet.
+
+        * media/encrypted-media/clearKey/clearKey-session-life-cycle-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-session-life-cycle.html: Added.
+
 2020-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Gardening, update test expectations after r262763

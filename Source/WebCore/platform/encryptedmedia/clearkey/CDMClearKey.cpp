@@ -461,8 +461,8 @@ const String& CDMInstanceClearKey::keySystem() const
 
 RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
 {
-    RefPtr<CDMInstanceSession> newSession = adoptRef(new CDMInstanceSessionClearKey(*this));
-    trackSession(newSession);
+    auto newSession = adoptRef(new CDMInstanceSessionClearKey(*this));
+    trackSession(*newSession);
     return newSession;
 }
 

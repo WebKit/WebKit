@@ -104,7 +104,7 @@ public:
     RefPtr<CDMInstanceSession> createSession() final;
 };
 
-class CDMInstanceSessionClearKey final : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionClearKey> {
+class CDMInstanceSessionClearKey final : public CDMInstanceSessionProxy {
 public:
     CDMInstanceSessionClearKey(CDMInstanceClearKey& parent)
         : m_parentInstance(parent) { }

@@ -913,4 +913,7 @@ enum CompositingPolicy {
     boolean destroySleepDisabler(unsigned long identifier);
 
     [Conditional=WEBXR, MayThrowException] readonly attribute WebXRTest xrTest;
+
+    [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeysInternalInstanceObjectRefCount(MediaKeys mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeySessionInternalInstanceSessionObjectRefCount(MediaKeySession session);
 };

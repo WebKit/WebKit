@@ -313,6 +313,12 @@ void CDMInstanceProxy::removeAllKeysFrom(const KeyStore& keyStore)
     m_keyStore.removeAllKeysFrom(keyStore);
 }
 
+void CDMInstanceProxy::trackSession(const CDMInstanceSessionProxy& session)
+{
+    ASSERT(!m_sessions.contains(session));
+    m_sessions.add(session);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

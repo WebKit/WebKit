@@ -80,6 +80,8 @@ public:
     const void* nextChildIdentifier() const;
 #endif
 
+    unsigned internalInstanceObjectRefCount() const { return m_instance->refCount(); }
+
 protected:
     MediaKeys(Document&, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>&, Ref<CDM>&&, Ref<CDMInstance>&&);
 
