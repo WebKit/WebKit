@@ -1,5 +1,19 @@
 2020-06-10  Youenn Fablet  <youenn@apple.com>
 
+        BaseAudioSharedUnit does not need to restart its audio unit at resume time.
+        https://bugs.webkit.org/show_bug.cgi?id=213021
+
+        Reviewed by Eric Carlson.
+
+        Removing a case that should not happen, and was guarded by ASSERT.
+        Keeping ASSERT to make sure we do not break this assumption.
+
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::resume):
+        (WebCore::BaseAudioSharedUnit::suspend):
+
+2020-06-10  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION(r262798): fast/mediastream/media-stream-track-interrupted.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=213011
 

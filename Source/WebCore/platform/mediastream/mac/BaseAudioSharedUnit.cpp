@@ -177,10 +177,6 @@ OSStatus BaseAudioSharedUnit::resume()
     }
 
     ASSERT(!m_producingCount);
-    if (m_producingCount) {
-        if (auto error = startUnit())
-            return error;
-    }
 
     forEachClient([](auto& client) {
         client.setMuted(false);
@@ -201,6 +197,8 @@ OSStatus BaseAudioSharedUnit::suspend()
     forEachClient([](auto& client) {
         client.setMuted(true);
     });
+
+    ASSERT(!m_producingCount);
 
     return 0;
 }
