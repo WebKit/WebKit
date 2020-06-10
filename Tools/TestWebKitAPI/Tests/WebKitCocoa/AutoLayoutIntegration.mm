@@ -148,6 +148,9 @@ TEST(WebKit, AutoLayoutIntegration)
     // One 100x100 rect and ten 10x10 rects, inline; with the constraint (width >= 20) -> 100x150
     [webView load:@"<div class='large'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div>" withWidth:20 expectingContentSize:NSMakeSize(100, 150)];
 
+    // Test content with a subframe
+    [webView load:@"<object type=\"text/html\" data=\"about:blank\">" withWidth:300 expectingContentSize:NSMakeSize(300, 150)];
+
     // With _shouldExpandContentToViewHeightForAutoLayout off (the default), the page should lay out to the intrinsic height
     // of the content.
     [webView load:@"<div class='small'></div>" withWidth:50 expectingContentSize:NSMakeSize(50, 10) resettingWidth:NO];

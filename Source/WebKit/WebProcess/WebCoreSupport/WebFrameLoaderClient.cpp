@@ -1515,7 +1515,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     IntSize sizeToContentAutoSizeMaximumSize = webPage->sizeToContentAutoSizeMaximumSize();
     if (sizeToContentAutoSizeMaximumSize.width() && sizeToContentAutoSizeMaximumSize.height()) {
-        view->enableSizeToContentAutoSizeMode(true, sizeToContentAutoSizeMaximumSize);
+        if (isMainFrame)
+            view->enableSizeToContentAutoSizeMode(true, sizeToContentAutoSizeMaximumSize);
 
         if (webPage->autoSizingShouldExpandToViewHeight())
             view->setAutoSizeFixedMinimumHeight(webPage->size().height());

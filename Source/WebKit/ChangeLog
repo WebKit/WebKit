@@ -1,3 +1,16 @@
+2020-06-10  Antoine Quint  <graouts@webkit.org>
+
+        Subframes should not autosize independently
+        https://bugs.webkit.org/show_bug.cgi?id=212984
+        <rdar://problem/64175493>
+
+        Reviewed by Simon Fraser.
+
+        Ensure we only call FrameView::enableSizeToContentAutoSizeMode() for the main frame.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+
 2020-06-10  Jonathan Bedard  <jbedard@apple.com>
 
         WebKit:Add PepperUICoreSPI.h

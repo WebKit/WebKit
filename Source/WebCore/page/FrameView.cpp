@@ -4593,6 +4593,7 @@ void FrameView::enableSizeToContentAutoSizeMode(bool enable, const IntSize& view
 
 void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize, AutoSizeMode mode)
 {
+    ASSERT(frame().isMainFrame());
     ASSERT(!enable || !viewSize.isEmpty());
     if (m_shouldAutoSize == enable && m_autoSizeConstraint == viewSize)
         return;

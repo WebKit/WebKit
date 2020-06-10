@@ -1,3 +1,14 @@
+2020-06-10  Antoine Quint  <graouts@webkit.org>
+
+        Subframes should not autosize independently
+        https://bugs.webkit.org/show_bug.cgi?id=212984
+        <rdar://problem/64175493>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AutoLayoutIntegration.mm:
+        (TEST): Added test for <object>.
+
 2020-06-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Mojave] Flaky API Test: TestWebKitAPI.WebKitLegacy.CrossPartitionFileSchemeAccess
