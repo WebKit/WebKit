@@ -1,3 +1,12 @@
+2020-06-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Mojave] Flaky API Test: TestWebKitAPI.WebKitLegacy.CrossPartitionFileSchemeAccess
+        https://bugs.webkit.org/show_bug.cgi?id=206956
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm: Disable this test for Mojave.
+
 2020-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Revert r259770

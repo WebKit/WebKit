@@ -85,6 +85,8 @@ void cleanUp()
 
 namespace TestWebKitAPI {
 
+// Re-enable this test for Mojave once webkit.org/b/206956 is resolved
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
 {
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"CrossPartitionFileSchemeAccess" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -107,4 +109,5 @@ TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
     WTFLogAlways("Cleaning up...");
     cleanUp();
 }
+#endif
 }
