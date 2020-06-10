@@ -1,3 +1,28 @@
+2020-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        [Cocoa] Build callOnMainThread on WTF::RunLoop rather than on NSObject methods
+        https://bugs.webkit.org/show_bug.cgi?id=213043
+
+        Reviewed by Simon Fraser.
+
+        Original patch by Sihui Liu.
+
+        From https://bugs.webkit.org/show_bug.cgi?id=202874, this is the subset
+        of Sihui's patch that unifies some of RunLoop and callOnMainThread.
+
+        My goal is to simplify the code, and shrink the diff when testing
+        CFRunLoopSource1 in the future.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::initializeWebRunLoop):
+        (WTF::RunLoop::web):
+        * wtf/RunLoop.h:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::initializeWebThread):
+        (-[JSWTFMainThreadCaller call]): Deleted.
+
 2020-06-10  Jer Noble  <jer.noble@apple.com>
 
         Catalyst WebKit apps continue to play audio after quitting

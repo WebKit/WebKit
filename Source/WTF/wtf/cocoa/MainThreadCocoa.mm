@@ -36,25 +36,13 @@
 #import <wtf/Assertions.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/SchedulePair.h>
 #import <wtf/Threading.h>
 
 #if USE(WEB_THREAD)
 #import <wtf/ios/WebCoreThread.h>
 #endif
-
-@interface JSWTFMainThreadCaller : NSObject
-- (void)call;
-@end
-
-@implementation JSWTFMainThreadCaller
-
-- (void)call
-{
-    WTF::dispatchFunctionsFromMainThread();
-}
-
-@end
 
 #define LOG_CHANNEL_PREFIX Log
 
@@ -66,8 +54,6 @@ WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel:
 WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
 #endif
 
-
-static JSWTFMainThreadCaller* staticMainThreadCaller;
 static bool isTimerPosted; // This is only accessed on the main thread.
 
 #if USE(WEB_THREAD)
@@ -84,9 +70,6 @@ void initializeMainThreadPlatform()
     if (!pthread_main_np())
         RELEASE_LOG_FAULT(Threading, "WebKit Threading Violation - initial use of WebKit from a secondary thread.");
     ASSERT(pthread_main_np());
-
-    ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 }
 
 static void timerFired(CFRunLoopTimerRef timer, void*)
@@ -112,8 +95,6 @@ static void postTimer()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    ASSERT(staticMainThreadCaller);
-    
 #if USE(WEB_THREAD)
     if (isWebThread()) {
         postTimer();
@@ -121,7 +102,7 @@ void scheduleDispatchFunctionsOnMainThread()
     }
 
     if (mainThreadPthread) {
-        [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
+        RunLoop::web().dispatch(dispatchFunctionsFromMainThread);
         return;
     }
 #else
@@ -131,7 +112,7 @@ void scheduleDispatchFunctionsOnMainThread()
     }
 #endif
 
-    [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+    RunLoop::main().dispatch(dispatchFunctionsFromMainThread);
 }
 
 void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)())
@@ -196,6 +177,7 @@ void initializeWebThread()
         mainThreadPthread = pthread_self();
         mainThreadNSThread = [NSThread currentThread];
         sWebThread = &Thread::current();
+        RunLoop::initializeWebRunLoop();
     });
 }
 
