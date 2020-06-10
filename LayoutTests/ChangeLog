@@ -1,3 +1,17 @@
+2020-06-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update expectations after r262834
+        https://bugs.webkit.org/show_bug.cgi?id=213014
+
+        Unreviewed gardening.
+
+        Garden latest failures from bots and adjust the actual result of
+        several flaky failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r262791.

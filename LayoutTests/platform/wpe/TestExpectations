@@ -936,7 +936,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.
 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-013.html [ Pass ]
 
 # WebXR
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Pass ]
+webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html [ Pass ]
@@ -2095,7 +2095,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shapin
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-002.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-004.html [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-001.xht [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-001.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-007.html [ Timeout Pass ]

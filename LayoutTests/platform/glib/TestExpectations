@@ -69,6 +69,8 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
 
 webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout ]
 
+webkit.org/b/213011 fast/mediastream/media-stream-track-interrupted.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +194,8 @@ webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navi
 webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
 webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/213012 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
@@ -321,6 +325,8 @@ fast/scrolling/rtl-scrollbars.html [ Pass ]
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ DumpJSConsoleLogInStdErr ]
+
+imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
