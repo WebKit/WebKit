@@ -1,5 +1,28 @@
 2020-06-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: text inputs should not spellcheck
+        https://bugs.webkit.org/show_bug.cgi?id=213032
+        <rdar://problem/64195429>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI._handleDeviceSettingsTabBarButtonClicked.showUserAgentInput):
+        * UserInterface/Views/BoxShadowEditor.js:
+        (WI.BoxShadowEditor):
+        * UserInterface/Views/CookiePopover.js:
+        (WI.CookiePopover.prototype.show.createInputRow):
+        * UserInterface/Views/EditableDataGridNode.js:
+        (WI.EditableDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/InputPopover.js:
+        (WI.InputPopover.prototype.show):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WI.ProbeSetDetailsSection.prototype._addProbeButtonClicked):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createConsoleSettingsView):
+
+2020-06-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: XHR request with same URL as main resource will hide the main resource request
         https://bugs.webkit.org/show_bug.cgi?id=212850
         <rdar://problem/33072149>

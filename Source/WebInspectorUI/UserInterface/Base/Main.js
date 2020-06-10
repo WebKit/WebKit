@@ -2224,6 +2224,7 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
             return;
 
         userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
+        userAgentValueInput.spellcheck = false;
         userAgentValueInput.value = userAgentValueInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
         userAgentValueInput.addEventListener("click", (clickEvent) => {
             clickEvent.preventDefault();

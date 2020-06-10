@@ -58,7 +58,7 @@ WI.InputPopover = class InputPopover extends WI.Popover
         }
 
         this._inputElement = document.createElement("input");
-        this._inputElement.type = "text";
+        this._inputElement.spellcheck = false;
 
         this._inputElement.addEventListener("keydown", (event) => {
             if (!isEnterKey(event))

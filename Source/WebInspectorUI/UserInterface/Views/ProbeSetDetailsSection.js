@@ -129,7 +129,7 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
         let textBox = content.createChild("input");
         textBox.addEventListener("keypress", createProbeFromEnteredExpression.bind(this, popover));
         textBox.addEventListener("click", function (event) { event.target.select(); });
-        textBox.type = "text";
+        textBox.spellcheck = false;
         textBox.placeholder = WI.UIString("Expression");
         popover.content = content;
         let target = WI.Rect.rectFromClientRect(event.target.element.getBoundingClientRect());

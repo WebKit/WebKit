@@ -66,7 +66,7 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
         let offsetXRow = createInputRow("offset-x", WI.UIString("Offset X", "Offset X @ Box Shadow Editor", "Input label for the x-axis of the offset of a CSS box shadow"));
 
         this._offsetXInput = offsetXRow.inputElement;
-        this._offsetXInput.type = "text"
+        this._offsetXInput.spellcheck = false;
         this._offsetXInput.addEventListener("input", this._handleOffsetXInputInput.bind(this));
         this._offsetXInput.addEventListener("keydown", this._handleOffsetXInputKeyDown.bind(this));
 
@@ -113,7 +113,7 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
         let offsetYRow = createInputRow("offset-y", WI.UIString("Offset Y", "Offset Y @ Box Shadow Editor", "Input label for the y-axis of the offset of a CSS box shadow"));
 
         this._offsetYInput = offsetYRow.inputElement;
-        this._offsetYInput.type = "text"
+        this._offsetYInput.spellcheck = false;
         this._offsetYInput.addEventListener("input", this._handleOffsetYInputInput.bind(this));
         this._offsetYInput.addEventListener("keydown", this._handleOffsetYInputKeyDown.bind(this));
 
@@ -126,7 +126,7 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
         let blurRadiusRow = createInputRow("blur-radius", WI.UIString("Blur", "Blur @ Box Shadow Editor", "Input label for the blur radius of a CSS box shadow"));
 
         this._blurRadiusInput = blurRadiusRow.inputElement;
-        this._blurRadiusInput.type = "text"
+        this._blurRadiusInput.spellcheck = false;
         this._blurRadiusInput.addEventListener("input", this._handleBlurRadiusInputInput.bind(this));
         this._blurRadiusInput.addEventListener("keydown", this._handleBlurRadiusInputKeyDown.bind(this));
         this._blurRadiusInput.min = 0;
@@ -137,7 +137,7 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
         let spreadRadiusRow = createInputRow("spread-radius", WI.UIString("Spread", "Spread @ Box Shadow Editor", "Input label for the spread radius of a CSS box shadow"));
 
         this._spreadRadiusInput = spreadRadiusRow.inputElement;
-        this._spreadRadiusInput.type = "text"
+        this._spreadRadiusInput.spellcheck = false;
         this._spreadRadiusInput.addEventListener("input", this._handleSpreadRadiusInputInput.bind(this));
         this._spreadRadiusInput.addEventListener("keydown", this._handleSpreadRadiusInputKeyDown.bind(this));
 

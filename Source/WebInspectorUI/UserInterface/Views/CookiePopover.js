@@ -174,6 +174,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
                 if (cookie)
                     inputElement.value = value;
                 inputElement.placeholder = value;
+                inputElement.spellcheck = false;
                 inputElement.addEventListener("keydown", boundHandleInputKeyDown);
             }
 

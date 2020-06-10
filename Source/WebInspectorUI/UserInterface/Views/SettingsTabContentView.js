@@ -316,7 +316,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             let consoleSavedResultAliasEditor = consoleSettingsView.addGroupWithCustomEditor(WI.UIString("Saved Result Alias:"));
 
             let consoleSavedResultAliasInput = consoleSavedResultAliasEditor.appendChild(document.createElement("input"));
-            consoleSavedResultAliasInput.type = "text";
+            consoleSavedResultAliasInput.spellcheck = false;
             consoleSavedResultAliasInput.value = WI.settings.consoleSavedResultAlias.value;
             consoleSavedResultAliasInput.placeholder = WI.unlocalizedString("$");
             consoleSavedResultAliasInput.addEventListener("keydown", (event) => {
