@@ -1,3 +1,25 @@
+2020-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor overflow layers cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=213002
+
+        Reviewed by Zalan Bujtas.
+
+        Now that we parent scrollbar and scroll corner layers into the overflowControlsContainer
+        layer, we no need to parent these layers in RenderLayerCompositor::updateBackingAndHierarchy().
+
+        Also rename overflowControlsHostLayerBox to overflowControlsHostLayerRect to avoid
+        ambiguity with RenderBox.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        (WebCore::overflowControlsHostLayerRect):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::overflowControlsHostLayerBox): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+
 2020-06-09  Mark Lam  <mark.lam@apple.com>
 
         Disambiguate the OverridesGetPropertyNames structure flag

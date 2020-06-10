@@ -167,7 +167,7 @@ public:
     // This returns false for other layers, and when the document layer actually needs to paint into its backing store
     // for some reason.
     bool paintsIntoWindow() const;
-    
+
     // Returns true for a composited layer that has no backing store of its own, so
     // paints into some ancestor layer.
     bool paintsIntoCompositedAncestor() const { return !m_requiresOwnBackingStore; }
@@ -265,6 +265,7 @@ public:
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
+    GraphicsLayer* overflowControlsContainer() const { return m_overflowControlsContainer.get(); }
 
     bool canCompositeFilters() const { return m_canCompositeFilters; }
 #if ENABLE(FILTERS_LEVEL_2)

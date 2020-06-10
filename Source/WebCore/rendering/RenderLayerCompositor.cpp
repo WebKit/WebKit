@@ -1360,13 +1360,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
             // Otherwise, the overflow control layers are normal children.
             if (!layerBacking->hasClippingLayer() && !layerBacking->hasScrollingLayer()) {
-                if (auto* overflowControlLayer = layerBacking->layerForHorizontalScrollbar())
-                    layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
-
-                if (auto* overflowControlLayer = layerBacking->layerForVerticalScrollbar())
-                    layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
-
-                if (auto* overflowControlLayer = layerBacking->layerForScrollCorner())
+                if (auto* overflowControlLayer = layerBacking->overflowControlsContainer())
                     layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
             }
         }

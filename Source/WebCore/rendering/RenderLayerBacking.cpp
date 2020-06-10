@@ -472,7 +472,10 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
     
     if (m_contentsContainmentLayer)
         m_contentsContainmentLayer->setShowDebugBorder(showBorder);
-    
+
+    if (m_childContainmentLayer)
+        m_childContainmentLayer->setShowDebugBorder(showBorder);
+
     if (m_backgroundLayer) {
         m_backgroundLayer->setShowDebugBorder(showBorder);
         m_backgroundLayer->setShowRepaintCounter(showRepaintCounter);
@@ -612,7 +615,7 @@ static LayoutRect clippingLayerBox(const RenderBox& renderBox)
     return result;
 }
 
-static LayoutRect overflowControlsHostLayerBox(const RenderBox& renderBox)
+static LayoutRect overflowControlsHostLayerRect(const RenderBox& renderBox)
 {
     return renderBox.paddingBoxRectIncludingScrollbar();
 }
@@ -1413,7 +1416,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     }
 
     if (m_overflowControlsContainer) {
-        LayoutRect overflowControlsBox = overflowControlsHostLayerBox(downcast<RenderBox>(renderer()));
+        LayoutRect overflowControlsBox = overflowControlsHostLayerRect(downcast<RenderBox>(renderer()));
         LayoutSize boxOffsetFromGraphicsLayer = toLayoutSize(overflowControlsBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
         SnappedRectInfo snappedBoxInfo = snappedGraphicsLayer(boxOffsetFromGraphicsLayer, overflowControlsBox.size(), deviceScaleFactor);
 
