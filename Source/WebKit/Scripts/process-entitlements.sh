@@ -140,6 +140,7 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.coremedia.pidinheritance.allow bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
+    plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
