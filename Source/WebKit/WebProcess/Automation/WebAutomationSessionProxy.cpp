@@ -688,7 +688,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         resultElementBounds = enclosingIntRect(mainView->absoluteToDocumentRect(mainView->rootViewToContents(elementBoundsInRootCoordinates)));
         break;
     case CoordinateSystem::LayoutViewport:
-        resultElementBounds = enclosingIntRect(mainView->absoluteToLayoutViewportRect(elementBoundsInRootCoordinates));
+        resultElementBounds = enclosingIntRect(mainView->absoluteToLayoutViewportRect(mainView->rootViewToContents(elementBoundsInRootCoordinates)));
         break;
     }
 
@@ -742,10 +742,10 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView, elementInViewCenterPoint);
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
-        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToDocumentPoint(inViewCenterPointInRootCoordinates));
+        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToDocumentPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
         break;
     case CoordinateSystem::LayoutViewport:
-        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToLayoutViewportPoint(inViewCenterPointInRootCoordinates));
+        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToLayoutViewportPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
         break;
     }
 

@@ -944,6 +944,11 @@ IntRect ScrollView::contentsToContainingViewContents(IntRect rect) const
     return contentsToView(rect);
 }
 
+FloatPoint ScrollView::rootViewToContents(const FloatPoint& rootViewPoint) const
+{
+    return viewToContents(convertFromRootView(rootViewPoint));
+}
+
 IntPoint ScrollView::rootViewToContents(const IntPoint& rootViewPoint) const
 {
     return viewToContents(convertFromRootView(rootViewPoint));

@@ -1,3 +1,22 @@
+2020-06-10  Brian Burg  <bburg@apple.com>
+
+        WebDriver on non-iOS ports cannot perform ActionChain which has scrolling down to the element and click it
+        https://bugs.webkit.org/show_bug.cgi?id=208232
+        <rdar://problem/59859491>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        The provided coordinates are in LayoutViewport coordinate system, which does
+        not take topContentInset into account. Add back in the topContentInset
+        when translating to flipped window coordinates.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        The calculations of element bounds and IVCP have an incorrect handling of
+        root coordinates as contents/absolute coordinates. Add the missing conversion.
+
 2020-06-10  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Update sandbox rules for correct sanitizer paths in current OS releases

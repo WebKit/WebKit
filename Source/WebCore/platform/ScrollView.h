@@ -279,6 +279,7 @@ public:
     WEBCORE_EXPORT void setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppress = false);
     bool scrollbarsSuppressed() const { return m_scrollbarsSuppressed; }
 
+    WEBCORE_EXPORT FloatPoint rootViewToContents(const FloatPoint&) const;
     WEBCORE_EXPORT IntPoint rootViewToContents(const IntPoint&) const;
     WEBCORE_EXPORT IntPoint contentsToRootView(const IntPoint&) const;
     WEBCORE_EXPORT FloatPoint contentsToRootView(const FloatPoint&) const;
