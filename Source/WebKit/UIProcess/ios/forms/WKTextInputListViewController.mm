@@ -29,17 +29,7 @@
 #if PLATFORM(WATCHOS)
 
 #import "WKNumberPadViewController.h"
-#import <PepperUICore/PUICQuickboardArouetViewController.h>
-#import <PepperUICore/PUICQuickboardListViewControllerSubclass.h>
-#import <PepperUICore/PUICQuickboardListViewSpecs.h>
-#import <PepperUICore/PUICResources.h>
-#import <PepperUICore/PUICTableView.h>
-#import <PepperUICore/PUICTableViewCell.h>
 #import <wtf/RetainPtr.h>
-
-#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
-#import <PepperUICore/PUICQuickboardListCollectionViewItemCell.h>
-#endif
 
 static const CGFloat textSuggestionButtonHeight = 44;
 static const CGFloat textSuggestionLabelHorizontalMargin = 9;

@@ -25,14 +25,7 @@
 
 #if PLATFORM(WATCHOS)
 
-#import "UIKitSPI.h"
-#import <PepperUICore/PUICQuickboardListViewController.h>
-#import <PepperUICore/PUICQuickboardListViewControllerSubclass.h>
-#import <PepperUICore/PUICTableViewCell.h>
-
-#if HAVE(QUICKBOARD_COLLECTION_VIEWS)
-#import <PepperUICore/PUICQuickboardListCollectionViewItemCell.h>
-#endif
+#import "PepperUICoreSPI.h"
 
 @interface WKQuickboardListItemCell : PUICQuickboardListItemCell
 @end

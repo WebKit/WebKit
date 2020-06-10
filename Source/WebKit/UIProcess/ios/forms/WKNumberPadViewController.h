@@ -27,7 +27,6 @@
 
 #import "WKNumberPadView.h"
 #import "WKTextInputListViewController.h"
-#import <PepperUICore/PUICQuickboardViewController.h>
 
 @interface WKNumberPadViewController : PUICQuickboardViewController
 

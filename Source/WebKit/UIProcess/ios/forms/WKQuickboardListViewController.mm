@@ -28,12 +28,6 @@
 
 #if PLATFORM(WATCHOS)
 
-#import <PepperUICore/PUICActionController.h>
-#import <PepperUICore/PUICActionGroup.h>
-#import <PepperUICore/PUICApplication_Private.h>
-#import <PepperUICore/PUICQuickboardLanguageController.h>
-#import <PepperUICore/PUICQuickboardViewController_Private.h>
-#import <PepperUICore/PUICStatusBarAppContextView.h>
 #import <wtf/RetainPtr.h>
 
 static const CGFloat itemCellTopToLabelBaseline = 26;
@@ -84,8 +78,13 @@ static const CGFloat itemCellBaselineToBottom = 8;
 
 - (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate
 {
+#if USE(APPLE_INTERNAL)
     if (self = [super initWithDelegate:delegate dictationMode:PUICDictationModeText])
         _contextViewNeedsUpdate = YES;
+#else
+    if (self = [super initWithDelegate:delegate])
+        _contextViewNeedsUpdate = YES;
+#endif
 
     return self;
 }

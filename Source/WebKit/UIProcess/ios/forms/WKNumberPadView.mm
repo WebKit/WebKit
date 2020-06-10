@@ -28,16 +28,11 @@
 
 #if PLATFORM(WATCHOS)
 
+#import "PepperUICoreSPI.h"
 #import "WKNumberPadViewController.h"
-#import <CoreText/CTFontTraitsPriv.h>
-#import <PepperUICore/PUICActionController_Private.h>
-#import <PepperUICore/UIDevice+PUICAdditions.h>
-#import <UIKit/UIFont_Private.h>
-#import <UIKit/UIGeometry_Private.h>
-#import <UIKit/UIImage_Private.h>
-#import <UIKit/UILabel_Private.h>
-#import <UIKit/UIView_Private.h>
+
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>

@@ -35,8 +35,7 @@
 #import <wtf/Language.h>
 
 #if PLATFORM(WATCHOS)
-#import "UIKitSPI.h"
-#import <PepperUICore/UIScrollView+PUICAdditionsPrivate.h>
+#import "PepperUICoreSPI.h"
 #endif
 
 constexpr CGFloat exclamationPointSize = 30;

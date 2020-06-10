@@ -30,8 +30,6 @@
 
 asm(".linker_option \"-framework\", \"PepperUICore\"");
 
-#import <PepperUICore/PUICCrownInputSequencer.h>
-#import <PepperUICore/PUICCrownInputSequencer_Private.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <wtf/NeverDestroyed.h>

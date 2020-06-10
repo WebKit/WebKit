@@ -36,7 +36,7 @@
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(WATCHOS)
-#import <PepperUICore/UIScrollView+PUICAdditionsPrivate.h>
+#import "PepperUICoreSPI.h"
 #endif
 
 @interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>

@@ -28,16 +28,6 @@
 
 #if PLATFORM(WATCHOS)
 
-#import <PepperUICore/PUICApplication_Private.h>
-#import <PepperUICore/PUICPickerView.h>
-#import <PepperUICore/PUICPickerView_Private.h>
-#import <PepperUICore/PUICQuickboardViewController_Private.h>
-#import <PepperUICore/PUICStatusBar_Private.h>
-#import <PepperUICore/UIDevice+PUICAdditions.h>
-#import <UIKit/UIGeometry_Private.h>
-#import <UIKit/UIInterface_Private.h>
-#import <UIKit/UIResponder_Private.h>
-#import <UIKit/UIView_Private.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
