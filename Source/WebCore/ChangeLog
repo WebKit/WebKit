@@ -1,3 +1,27 @@
+2020-06-10  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r262798): fast/mediastream/media-stream-track-interrupted.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=213011
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, a source that is muted and for which its observers get ended will not be ended.
+        This is a potential issue as the source can get unmuted, in which case, the audio shared unit might be asked to restart.
+        This is crashing in debug as we would not have the AudioSession correct category for audio capture.
+
+        Test: fast/mediastream/track-ended-while-muted.html
+        Also covered by fast/mediastream/media-stream-track-interrupted.html no longer flakily crashing in debug.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::requestToEnd):
+        End the source even if muted.
+        * platform/mediastream/RealtimeMediaSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isMediaStreamSourceEnded const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add necessary test infrastructure.
+
 2020-06-05  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Refactor OpenXR platform code

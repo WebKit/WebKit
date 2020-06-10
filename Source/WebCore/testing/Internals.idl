@@ -785,6 +785,7 @@ enum CompositingPolicy {
     [Conditional=MEDIA_STREAM] void setMediaStreamTrackIdentifier(MediaStreamTrack track, DOMString identifier);
     [Conditional=MEDIA_STREAM] void setMediaStreamSourceInterrupted(MediaStreamTrack track, boolean interrupted);
     [Conditional=MEDIA_STREAM] boolean isMediaStreamSourceInterrupted(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] boolean isMediaStreamSourceEnded(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] boolean isMockRealtimeMediaSourceCenterEnabled();
     [Conditional=MEDIA_STREAM] boolean shouldAudioTrackPlay(AudioTrack track);
 

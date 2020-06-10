@@ -248,9 +248,6 @@ void RealtimeMediaSource::stop()
 
 void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
 {
-    if (!m_isProducingData)
-        return;
-
     bool hasObserverPreventingStopping = false;
     forEachObserver([&](auto& observer) {
         if (observer.preventSourceFromStopping())

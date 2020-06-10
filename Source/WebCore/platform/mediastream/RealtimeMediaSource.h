@@ -124,6 +124,7 @@ public:
     void start();
     void stop();
     virtual void requestToEnd(Observer& callingObserver);
+    bool isEnded() const { return m_isEnded; }
 
     bool muted() const { return m_muted; }
     void setMuted(bool);

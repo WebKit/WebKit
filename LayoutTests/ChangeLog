@@ -1,3 +1,13 @@
+2020-06-10  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r262798): fast/mediastream/media-stream-track-interrupted.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=213011
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/track-ended-while-muted-expected.txt: Added.
+        * fast/mediastream/track-ended-while-muted.html: Added.
+
 2020-06-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Layout tests outside of the WPT import should not use resources from it
