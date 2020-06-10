@@ -675,6 +675,7 @@ end
 
 def slow!
     $runCommandOptions[:isSlow] = true
+    skip() if ($mode == "quick")
 end
 
 def crash!

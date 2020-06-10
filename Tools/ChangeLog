@@ -1,3 +1,12 @@
+2020-06-10  Keith Miller  <keith_miller@apple.com>
+
+        run-jsc-stress-tests should skip tests marked as slow in quick mode.
+        https://bugs.webkit.org/show_bug.cgi?id=213042
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-06-10  Antoine Quint  <graouts@webkit.org>
 
         Subframes should not autosize independently
