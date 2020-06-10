@@ -1,3 +1,26 @@
+2020-06-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        ASSERTION FAILED: suspendedState == State::Running in WebKit::WebResourceLoadStatisticsStore::suspend
+        https://bugs.webkit.org/show_bug.cgi?id=213031
+        <rdar://problem/64131092>
+
+        Reviewed by Chris Dumez.
+
+        There is a race condition if two calls are made to
+        WebResourceLoadStatisticsStore::suspend() simultanously.
+        WebResourceLoadStatisticsStore::resume() notifies the background
+        thread to continue and releases a lock, then sometimes the second call
+        to suspend obtains the lock and updates the suspendedState variable
+        before the background thread resumes and checks the result. This patch allows the
+        suspendedState to be either State::Running or State::WillSuspend to
+        account for this.
+
+        No new tests, this should fix http/wpt/service-workers/service-worker-spinning-fetch.https.html.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+
 2020-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Revert r259770

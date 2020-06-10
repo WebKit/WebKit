@@ -353,7 +353,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
         if (!m_statisticsStore)
             return;
 
-        ASSERT(suspendedState == State::Running);
+        ASSERT(suspendedState != State::Suspended);
         m_statisticsStore->mergeStatistics(WTFMove(statistics));
 
         // We can cancel any pending request to process statistics since we're doing it synchronously below.
@@ -1443,7 +1443,7 @@ void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& complet
 
         while (suspendedState == State::Suspended)
             suspendedStateChangeCondition.wait(suspendedStateLock);
-        ASSERT(suspendedState == State::Running);
+        ASSERT(suspendedState != State::Suspended);
     });
 }
 
