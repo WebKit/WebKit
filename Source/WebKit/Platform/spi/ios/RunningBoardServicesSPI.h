@@ -37,6 +37,8 @@ extern const NSTimeInterval RBSProcessTimeLimitationNone;
 
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RBSAttribute : NSObject
 @end
 
@@ -46,6 +48,7 @@ extern const NSTimeInterval RBSProcessTimeLimitationNone;
 
 @interface RBSTarget : NSObject
 + (RBSTarget *)targetWithPid:(pid_t)pid;
++ (RBSTarget *)currentProcess;
 @end
 
 @protocol RBSAssertionObserving;
@@ -91,8 +94,47 @@ extern const NSTimeInterval RBSProcessTimeLimitationNone;
 @interface RBSProcessHandle : NSObject
 + (RBSProcessHandle *)handleForIdentifier:(RBSProcessIdentifier *)identifier error:(NSError **)outError;
 + (RBSProcessHandle *)currentProcess;
+@property (nonatomic, readonly, assign) pid_t pid;
 @property (nonatomic, readonly, strong) RBSProcessState *currentState;
 @property (nonatomic, readonly, strong) RBSProcessLimitations *activeLimitations;
 @end
+
+@interface RBSProcessStateUpdate : NSObject
+@property (nonatomic, readonly, strong) RBSProcessHandle *process;
+@property (nonatomic, readonly, strong, nullable) RBSProcessState *state;
+@end
+
+@class RBSProcessMonitor;
+@class RBSProcessPredicate;
+@class RBSProcessStateDescriptor;
+@protocol RBSProcessMonitorConfiguring;
+
+typedef void (^RBSProcessMonitorConfigurator)(id<RBSProcessMonitorConfiguring> config);
+typedef void (^RBSProcessUpdateHandler)(RBSProcessMonitor *monitor, RBSProcessHandle *process, RBSProcessStateUpdate *update);
+
+@protocol RBSProcessMatching <NSObject>
+- (RBSProcessPredicate *)processPredicate;
+@end
+
+@protocol RBSProcessMonitorConfiguring
+- (void)setPredicates:(nullable NSArray<RBSProcessPredicate *> *)predicates;
+- (void)setStateDescriptor:(nullable RBSProcessStateDescriptor *)descriptor;
+- (void)setUpdateHandler:(nullable RBSProcessUpdateHandler)block;
+@end
+
+@interface RBSProcessMonitor : NSObject <NSCopying>
++ (instancetype)monitorWithConfiguration:(NS_NOESCAPE RBSProcessMonitorConfigurator)block;
+@end
+
+@interface RBSProcessPredicate : NSObject <RBSProcessMatching>
++ (RBSProcessPredicate *)predicateMatchingHandle:(RBSProcessHandle *)process;
+@end
+
+@interface RBSProcessStateDescriptor : NSObject <NSCopying>
++ (instancetype)descriptor;
+@property (nonatomic, readwrite, copy, nullable) NSArray<NSString *> *endowmentNamespaces;
+@end
+
+NS_ASSUME_NONNULL_END
 
 #endif

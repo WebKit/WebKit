@@ -155,6 +155,28 @@ private:
     WeakPtrImplSet m_set;
 };
 
+template<typename MapFunction, typename T>
+struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
+    using SourceItemType = WeakPtr<T>;
+    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
+
+    static Vector<DestinationItemType> map(const WeakHashSet<T>& source, const MapFunction& mapFunction)
+    {
+        Vector<DestinationItemType> result;
+        result.reserveInitialCapacity(source.computeSize());
+        for (auto& item : source)
+            result.uncheckedAppend(mapFunction(item));
+        return result;
+    }
+};
+
+template<typename T>
+inline auto copyToVector(const WeakHashSet<T>& collection) -> Vector<WeakPtr<T>>
+{
+    return WTF::map(collection, [] (auto& v) -> WeakPtr<T> { return makeWeakPtr<T>(v); });
+}
+
+
 } // namespace WTF
 
 using WTF::WeakHashSet;

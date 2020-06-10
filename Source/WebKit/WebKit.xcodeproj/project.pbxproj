@@ -1757,6 +1757,8 @@
 		CDBB49FD240D9A720017C292 /* RemoteAudioSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBB49FC240D9A720017C292 /* RemoteAudioSessionConfiguration.h */; };
 		CDC2831D201BD79D00E6E745 /* WKFullscreenStackView.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC2831B201BD79D00E6E745 /* WKFullscreenStackView.h */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
+		CDCDC99D248FE8DA00A69522 /* EndowmentStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCDC99B248FE8DA00A69522 /* EndowmentStateTracker.h */; };
+		CDCDC99E248FE8DA00A69522 /* EndowmentStateTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */; };
 		CDE555322406EB8C008A3DDB /* RemoteLegacyCDMFactoryProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555292406B896008A3DDB /* RemoteLegacyCDMFactoryProxyMessageReceiver.cpp */; };
 		CDE555332406EB8C008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552A2406B896008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp */; };
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
@@ -5181,6 +5183,8 @@
 		CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullScreenWindowController.mm; sourceTree = "<group>"; };
 		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
 		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		CDCDC99B248FE8DA00A69522 /* EndowmentStateTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EndowmentStateTracker.h; sourceTree = "<group>"; };
+		CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EndowmentStateTracker.mm; sourceTree = "<group>"; };
 		CDD5356F240DD34300F7B8C4 /* RemoteAudioSession.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioSession.messages.in; sourceTree = "<group>"; };
 		CDD53570240DD4EF00F7B8C4 /* RemoteAudioSessionProxyManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioSessionProxyManager.messages.in; sourceTree = "<group>"; };
 		CDD53571240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -6987,6 +6991,8 @@
 				2D5875BD219B53150070B9AA /* EditableImageController.h */,
 				2D5875BB219B28A50070B9AA /* EditableImageController.messages.in */,
 				2D5875BE219B53150070B9AA /* EditableImageController.mm */,
+				CDCDC99B248FE8DA00A69522 /* EndowmentStateTracker.h */,
+				CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */,
 				2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */,
 				2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */,
 				0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */,
@@ -10794,6 +10800,7 @@
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
+				CDCDC99D248FE8DA00A69522 /* EndowmentStateTracker.h in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
 				57B8264823050C5100B72EB0 /* FidoService.h in Headers */,
@@ -12711,6 +12718,7 @@
 				1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */,
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				2D92A780212B6A7100F493FD /* Encoder.cpp in Sources */,
+				CDCDC99E248FE8DA00A69522 /* EndowmentStateTracker.mm in Sources */,
 				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,

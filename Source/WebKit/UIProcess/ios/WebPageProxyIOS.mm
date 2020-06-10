@@ -1600,6 +1600,44 @@ void WebPageProxy::willOpenAppLink()
     });
 }
 
+void WebPageProxy::processWillBecomeSuspended()
+{
+    if (!hasRunningProcess())
+        return;
+
+    m_hasNetworkRequestsOnSuspended = m_pageLoadState.networkRequestsInProgress();
+    if (m_hasNetworkRequestsOnSuspended)
+        setNetworkRequestsInProgress(false);
+}
+
+void WebPageProxy::processWillBecomeForeground()
+{
+    if (!hasRunningProcess())
+        return;
+
+    if (m_hasNetworkRequestsOnSuspended) {
+        setNetworkRequestsInProgress(true);
+        m_hasNetworkRequestsOnSuspended = false;
+    }
+}
+
+void WebPageProxy::isUserFacingChanged(bool isUserFacing)
+{
+#if PLATFORM(MACCATALYST)
+    if (!isUserFacing)
+        suspendAllMediaPlayback();
+    else
+        resumeAllMediaPlayback();
+#else
+    UNUSED_PARAM(isUserFacing);
+#endif
+}
+
+void WebPageProxy::isVisibleChanged(bool isVisible)
+{
+    UNUSED_PARAM(isVisible);
+}
+
 #if PLATFORM(IOS)
 void WebPageProxy::grantAccessToAssetServices()
 {

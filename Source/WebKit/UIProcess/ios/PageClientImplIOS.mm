@@ -34,6 +34,7 @@
 #import "DataReference.h"
 #import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
+#import "EndowmentStateTracker.h"
 #import "FrameInfoData.h"
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
@@ -166,7 +167,7 @@ bool PageClientImpl::isApplicationVisible()
     pid_t applicationPID = serviceViewController._hostProcessIdentifier;
     ASSERT(applicationPID);
 
-    return isApplicationForeground(applicationPID);
+    return EndowmentStateTracker::isApplicationForeground(applicationPID);
 }
 
 bool PageClientImpl::isViewInWindow()

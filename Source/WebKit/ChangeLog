@@ -1,3 +1,54 @@
+2020-06-10  Jer Noble  <jer.noble@apple.com>
+
+        Catalyst WebKit apps continue to play audio after quitting
+        https://bugs.webkit.org/show_bug.cgi?id=212981
+        <rdar://problem/57089471>
+
+        Reviewed by Chris Dumez.
+
+        RunningBoard will track whether a process (and it's associated child processes) are "user-visible" by
+        granting those processes an "endowment", similar to the existing endowment for application visibility.
+        Track changes to these endowments using a RBSProcessMonitor, and for Catalyst apps, react to losing the
+        "user-visible" endowment by suspending all media playback.
+
+        Move all the endowment-related code into a new class, EndowmentStateTracker, which is a singleton object
+        that can have mulitple WebPageProxy clients. Update references to the previously global static
+        isApplicationForeground() function to refer to EndowmentStateTracker instead.
+
+        Drive-by fix: move some iOS-only functions in WebPageProxy.cpp into WebPageProxyIOS.mm.
+
+        * UIProcess/ApplicationStateTracker.h:
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::isApplicationForeground): Deleted.
+        * UIProcess/EndowmentStateTracker.h: Added.
+        (WebKit::EndowmentStateTracker::isVisible const):
+        (WebKit::EndowmentStateTracker::isUserFacing const):
+        * UIProcess/EndowmentStateTracker.mm: Added.
+        (WebKit::handleForPID):
+        (WebKit::EndowmentStateTracker::isApplicationForeground):
+        (WebKit::EndowmentStateTracker::isApplicationUserFacing):
+        (WebKit::EndowmentStateTracker::singleton):
+        (WebKit::EndowmentStateTracker::EndowmentStateTracker):
+        (WebKit::EndowmentStateTracker::addClient):
+        (WebKit::EndowmentStateTracker::removeClient):
+        (WebKit::EndowmentStateTracker::setIsUserFacing):
+        (WebKit::EndowmentStateTracker::setIsVisible):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::processWillBecomeSuspended): Deleted.
+        (WebKit::WebPageProxy::processWillBecomeForeground): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isApplicationVisible):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::processWillBecomeSuspended):
+        (WebKit::WebPageProxy::processWillBecomeForeground):
+        (WebKit::WebPageProxy::isUserFacingChanged):
+        (WebKit::WebPageProxy::isVisibleChanged):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-06-10  Antoine Quint  <graouts@webkit.org>
 
         Subframes should not autosize independently

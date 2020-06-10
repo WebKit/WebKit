@@ -525,6 +525,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     
     if (m_configuration->preferences()->serviceWorkerEntitlementDisabledForTesting())
         disableServiceWorkerEntitlementInNetworkProcess();
+
+    EndowmentStateTracker::singleton().addClient(*this);
 #endif
 
 #if PLATFORM(COCOA)
@@ -565,6 +567,10 @@ WebPageProxy::~WebPageProxy()
 
 #ifndef NDEBUG
     webPageProxyCounter.decrement();
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    EndowmentStateTracker::singleton().removeClient(*this);
 #endif
 }
 
@@ -7463,29 +7469,6 @@ void WebPageProxy::stopAllURLSchemeTasks(WebProcessProxy* process)
     for (auto* handler : handlers)
         handler->stopAllTasksForPage(*this, process);
 }
-
-#if PLATFORM(IOS_FAMILY)
-void WebPageProxy::processWillBecomeSuspended()
-{
-    if (!hasRunningProcess())
-        return;
-
-    m_hasNetworkRequestsOnSuspended = m_pageLoadState.networkRequestsInProgress();
-    if (m_hasNetworkRequestsOnSuspended)
-        setNetworkRequestsInProgress(false);
-}
-
-void WebPageProxy::processWillBecomeForeground()
-{
-    if (!hasRunningProcess())
-        return;
-
-    if (m_hasNetworkRequestsOnSuspended) {
-        setNetworkRequestsInProgress(true);
-        m_hasNetworkRequestsOnSuspended = false;
-    }
-}
-#endif
 
 void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {

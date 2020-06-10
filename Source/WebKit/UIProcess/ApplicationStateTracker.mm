@@ -29,8 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "AssertionServicesSPI.h"
+#import "EndowmentStateTracker.h"
 #import "Logging.h"
-#import "RunningBoardServicesSPI.h"
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
 #import <wtf/ObjCRuntimeExtras.h>
@@ -142,7 +142,7 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         pid_t applicationPID = serviceViewController._hostProcessIdentifier;
         ASSERT(applicationPID);
 
-        m_isInBackground = !isApplicationForeground(applicationPID);
+        m_isInBackground = !EndowmentStateTracker::isApplicationForeground(applicationPID);
 
         // Workaround for <rdar://problem/34028921>. If the host application is StoreKitUIService then it is also a ViewService
         // and is always in the background. We need to treat StoreKitUIService as foreground for the purpose of process suspension
@@ -164,34 +164,6 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         break;
     }
     }
-}
-
-bool isApplicationForeground(pid_t pid)
-{
-    RBSProcessIdentifier *processIdentifier = [RBSProcessIdentifier identifierWithPid:pid];
-    if (!processIdentifier) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "isApplicationForeground: Failed to construct RBSProcessIdentifier from PID %d", pid);
-        // We assume foreground when unable to determine state to maintain pre-existing behavior and to avoid
-        // not rendering anything when we fail.
-        return true;
-    }
-
-    NSError *error = nil;
-    RBSProcessHandle *processHandle = [RBSProcessHandle handleForIdentifier:processIdentifier error:&error];
-    if (!processHandle) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "isApplicationForeground: Failed to get RBSProcessHandle for process with PID %d, error: %{public}@", pid, error);
-        // We assume foreground when unable to determine state to maintain pre-existing behavior and to avoid
-        // not rendering anything when we fail.
-        return true;
-    }
-
-    RBSProcessState *state = processHandle.currentState;
-    if (state.taskState != RBSTaskStateRunningScheduled) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "isApplicationForeground: Process with PID %d is not running", pid);
-        return false;
-    }
-
-    return [[state endowmentNamespaces] containsObject:@"com.apple.frontboard.visibility"];
 }
 
 ApplicationStateTracker::~ApplicationStateTracker()

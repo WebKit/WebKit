@@ -75,7 +75,6 @@ enum class ApplicationType {
 };
 
 ApplicationType applicationType(UIWindow *);
-bool isApplicationForeground(pid_t);
 
 }
 

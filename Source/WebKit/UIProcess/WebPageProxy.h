@@ -121,6 +121,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
+#include "EndowmentStateTracker.h"
 #include "GestureTypes.h"
 #include "WebAutocorrectionContext.h"
 #endif
@@ -433,7 +434,12 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public WebCore::PlatformSpeechSynthesisUtteranceClient
     , public WebCore::PlatformSpeechSynthesizerClient
 #endif
-    , public CanMakeWeakPtr<WebPageProxy> {
+#if PLATFORM(IOS_FAMILY)
+    , public EndowmentStateTracker::Client
+#else
+    , public CanMakeWeakPtr<WebPageProxy>
+#endif
+    {
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
@@ -1183,6 +1189,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void processWillBecomeSuspended();
     void processWillBecomeForeground();
+    void isUserFacingChanged(bool) final;
+    void isVisibleChanged(bool) final;
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

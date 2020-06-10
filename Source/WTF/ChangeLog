@@ -1,3 +1,19 @@
+2020-06-10  Jer Noble  <jer.noble@apple.com>
+
+        Catalyst WebKit apps continue to play audio after quitting
+        https://bugs.webkit.org/show_bug.cgi?id=212981
+        <rdar://problem/57089471>
+
+        Reviewed by Chris Dumez.
+
+        Add the ability to call copyToVector() on a WeakHashSet. This requires two changes:
+        - A template specialization that returns a Vector<WeakPtr<T>> from copyToVector()
+        - A template specialization that calls calculateSize() rather than size() on the object
+          being iterated upon.
+
+        * wtf/WeakHashSet.h:
+        (WTF::copyToVector):
+
 2020-06-09  Tim Horton  <timothy_horton@apple.com>
 
         Use os_log instead of asl_log
