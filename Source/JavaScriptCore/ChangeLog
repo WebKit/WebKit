@@ -1,3 +1,24 @@
+2020-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSCallbackObject::deleteProperty should redirect to Parent::deletePropertyByIndex if propertyName is index
+        https://bugs.webkit.org/show_bug.cgi?id=213041
+        <rdar://problem/64204300>
+
+        Reviewed by Darin Adler.
+
+        We have an infinite recursion here.
+
+        -> JSCallbackObject::deletePropertyByIndex
+            -> JSCell::deleteProperty
+                -> JSCallbackObject::deleteProperty
+                    -> JSObject::deleteProperty
+                        -> JSCallbackObject::deletePropertyByIndex
+
+        When propertyName in JSCallbackObject::deleteProperty is an index, we should go to JSObject::deletePropertyByIndex instead of JSObject::deleteProperty.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::deleteProperty):
+
 2020-06-09  Mark Lam  <mark.lam@apple.com>
 
         Stringifier::appendStringifiedValue() should not assume it is always safe to recurse.

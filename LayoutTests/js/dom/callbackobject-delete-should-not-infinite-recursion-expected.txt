@@ -1,0 +1,3 @@
+
+PASS JSCallbackObject::deleteProperty should not cause infinite recursion 
+

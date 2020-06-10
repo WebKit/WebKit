@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+test(() => {
+    delete testRunner[0];
+}, "JSCallbackObject::deleteProperty should not cause infinite recursion");
+</script>
+</body>
