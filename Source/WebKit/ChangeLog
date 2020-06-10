@@ -1,3 +1,14 @@
+2020-06-09  Tim Horton  <timothy_horton@apple.com>
+
+        Stop using the wrong LaunchServices SPI for getting an app's localized name
+        https://bugs.webkit.org/show_bug.cgi?id=213003
+        <rdar://problem/64169000>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _appendAppLinkOpenActionsForURL:actions:elementInfo:]):
+
 2020-06-09  Mark Lam  <mark.lam@apple.com>
 
         Disambiguate the OverridesGetPropertyNames structure flag

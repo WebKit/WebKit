@@ -46,6 +46,7 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 #if !USE(APPLE_INTERNAL_SDK)
 
 @interface LSResourceProxy : NSObject <NSCopying, NSSecureCoding>
+@property (nonatomic, copy, readonly) NSString *localizedName;
 @end
 
 @interface LSBundleProxy : LSResourceProxy <NSSecureCoding>
@@ -53,7 +54,6 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 
 #if HAVE(APP_LINKS)
 @interface LSApplicationProxy : LSBundleProxy <NSSecureCoding>
-- (NSString *)localizedNameForContext:(NSString *)context;
 @end
 
 @interface LSAppLink : NSObject <NSSecureCoding>

@@ -508,7 +508,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
     [defaultActions addObject:openInDefaultBrowserAction];
 
-    NSString *externalApplicationName = [appLink.targetApplicationProxy localizedNameForContext:nil];
+    NSString *externalApplicationName = appLink.targetApplicationProxy.localizedName;
     if (!externalApplicationName)
         return YES;
 
