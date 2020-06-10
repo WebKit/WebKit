@@ -35,8 +35,8 @@ extension WKPDFConfiguration {
 
 @available(iOS 14.0, macOS 10.16, *)
 extension WKWebView {
-    public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in contentWorld: WKContentWorld, completion: @escaping(Result<Any, Error>) -> Void) {
-        __callAsyncJavaScript(functionBody, arguments: arguments, in: contentWorld, completionHandler: makeResultHandler(completion))
+    public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
+        __callAsyncJavaScript(functionBody, arguments: arguments, in: contentWorld, completionHandler: completionHandler.map(makeResultHandler))
     }
 
     public func createPDF(configuration: WKPDFConfiguration = .init(), completionHandler: @escaping (Result<Data, Error>) -> Void) {
@@ -47,8 +47,8 @@ extension WKWebView {
         __createWebArchiveData(completionHandler: makeResultHandler(completionHandler))
     }
 
-    public func evaluateJavaScript(_ javaScript: String, in contentWorld: WKContentWorld, completion: @escaping (Result<Any, Error>) -> Void) {
-        __evaluateJavaScript(javaScript, in: contentWorld, completionHandler: makeResultHandler(completion))
+    public func evaluateJavaScript(_ javaScript: String, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
+        __evaluateJavaScript(javaScript, in: contentWorld, completionHandler: completionHandler.map(makeResultHandler))
     }
 
     public func find(_ string: String, configuration: WKFindConfiguration = .init(), completionHandler: @escaping (WKFindResult) -> Void) {

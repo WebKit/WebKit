@@ -1,3 +1,40 @@
+2020-06-10  James Savage  <james.savage@apple.com>
+
+        Swift Overlay API refinements
+        https://bugs.webkit.org/show_bug.cgi?id=212939
+        <rdar://problem/64140013>
+
+        Reviewed by Darin Adler.
+
+        This patch cleans up some inconsistencies in the various Swift projections,
+        and modifies JavaScript evaluation callbacks to be optional to account for
+        scripts which may not evaluate to a useful result (such as ones that simply
+        modify the DOM without reporting a status). It also standardizes on using
+        completionHandler as an argument label to match the rest of WebKit API, and
+        the majority of the Swift API refinements.
+        
+        It also fixes a module issue where the WebKit.h umbrella was missing an
+        import of WKScriptReplyWithMessageHandler.h, making the type unusable from
+        Swift source files/
+
+        * Shared/API/Cocoa/WebKit.h: Add missing header.
+        * UIProcess/API/Cocoa/WebKitSwiftOverlay.swift:
+        (callAsyncJavaScript(_:arguments:in:completionHandler:)): Rename completion
+            argument, and make optional. Note: Optional closures are implicitly
+            @escaping, making the annotation redundant and incompatible, so it must
+            be removed. In Swift, Optional.map()'s closure is invoked iff the Optional
+            contains some value, and the result of that transform is returned, else
+            nil is propagated. This allows us to apply the closure transform if the
+            client value is non-nil, without using intermediary variables or if/let.
+        (evaluateJavaScript(_:in:completionHandler:)): Ditto.
+        * SwiftOverlay/Tests/WebKitTests.swift:
+        (WebKitTests.testAPI): Update names to reflect changes.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/xcshareddata/xcschemes/Everything (Catalyst).xcscheme:
+            Ensure that the unit test files get built as part of Build & Run, so that
+            any changes to names get flagged without even running the tests.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/xcshareddata/xcschemes/Everything.xcscheme:
+            Ditto.
+
 2020-06-10  Kate Cheney  <katherine_cheney@apple.com>
 
         ASSERTION FAILED: suspendedState == State::Running in WebKit::WebResourceLoadStatisticsStore::suspend
