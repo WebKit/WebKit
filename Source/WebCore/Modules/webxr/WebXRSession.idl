@@ -43,7 +43,7 @@
     [NewObject] Promise<WebXRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
 
     unsigned long requestAnimationFrame(XRFrameRequestCallback callback);
-    void cancelAnimationFrame(unsigned long handle);
+    void cancelAnimationFrame(long handle);
 
     Promise<void> end();
 
