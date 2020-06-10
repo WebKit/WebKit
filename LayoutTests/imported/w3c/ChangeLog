@@ -1,3 +1,15 @@
+2020-06-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Improve CSP compliance under PSON
+        https://bugs.webkit.org/show_bug.cgi?id=212995
+        <rdar://problem/62996186>
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline an existing test, since CSP is now checked before any navigations performed by a form action.
+
+        * web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub-expected.txt:
+
 2020-06-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION(r262809): [ macOS iOS ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001.html is a constant failure

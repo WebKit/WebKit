@@ -1,3 +1,23 @@
+2020-06-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Improve CSP compliance under PSON
+        https://bugs.webkit.org/show_bug.cgi?id=212995
+        <rdar://problem/62996186>
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/form-action-src-self-blocked.html
+
+        The form submission logic was only considering CSP if the form
+        action was a JavaScript URL. This is incorrect, as CSP might
+        apply to any URL.
+
+        This is also covered by the existing form-action CSP tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): All URLs should be evaluted for
+        compliance with CSP.
+
 2020-06-10  Brian Burg  <bburg@apple.com>
 
         WebDriver on non-iOS ports cannot perform ActionChain which has scrolling down to the element and click it
