@@ -1,3 +1,18 @@
+2020-06-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Update sandbox rules for correct sanitizer paths in current OS releases
+        https://bugs.webkit.org/show_bug.cgi?id=213040
+        <rdar://problem/64187043>
+
+        Reviewed by Per Arne Vollan.
+
+        Update the sandbox rules on iOS platforms to allow access to the
+        new system locations for Asan libraries.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-06-10  Jer Noble  <jer.noble@apple.com>
 
         Catalyst WebKit apps continue to play audio after quitting

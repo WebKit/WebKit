@@ -258,7 +258,8 @@
             ;; <rdar://problem/23857452>
             (allow file-read* file-map-executable
                    (subpath "/AppleInternal")
-                   (subpath "/usr/local/lib")))
+                   (subpath "/usr/local/lib")
+                   (subpath "/usr/appleinternal/lib/sanitizers")))
             (with-elevated-precedence
                 (allow file-read* file-map-executable file-issue-extension
                    (front-user-home-subpath "/XcodeBuiltProducts")))
