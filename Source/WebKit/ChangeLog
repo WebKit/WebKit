@@ -1,3 +1,13 @@
+2020-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKit:Add PepperUICoreSPI.h (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=212996
+        <rdar://problem/64182627>
+
+        Unreviewed build fix.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h: Add PUICPickerView headers.
+
 2020-06-10  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r262858): Fix macOS build when building EndowmentStateTracker.mm

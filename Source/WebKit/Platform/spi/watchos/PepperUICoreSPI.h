@@ -35,6 +35,8 @@
 #import <PepperUICore/PUICApplication_Private.h>
 #import <PepperUICore/PUICCrownInputSequencer.h>
 #import <PepperUICore/PUICCrownInputSequencer_Private.h>
+#import <PepperUICore/PUICPickerView.h>
+#import <PepperUICore/PUICPickerView_Private.h>
 #import <PepperUICore/PUICQuickboardArouetViewController.h>
 #import <PepperUICore/PUICQuickboardLanguageController.h>
 #import <PepperUICore/PUICQuickboardListViewController.h>
