@@ -1,3 +1,18 @@
+2020-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKit: Add ClockKitSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=212994
+        <rdar://problem/64181092>
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests, behavior unchanged.
+
+        * Platform/spi/watchos: Added.
+        * Platform/spi/watchos/ClockKitSPI.h: Added.
+        * UIProcess/ios/forms/WKTimePickerViewController.mm: Import ClockKitSPI.h and UIKitSPI.h.
+        * WebKit.xcodeproj/project.pbxproj: Include ClockKitSPI.
+
 2020-06-10  Brian Burg  <bburg@apple.com>
 
         WebDriver on non-iOS ports cannot perform ActionChain which has scrolling down to the element and click it
