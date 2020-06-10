@@ -4802,6 +4802,8 @@
 		E1BA671A1742BEF400C20251 /* WebCoreTestShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */; };
 		E1BD331A182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BD3318182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
+		E1C1A39D2480080800E0AF66 /* PlatformXROpenXR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C1A39B2480080600E0AF66 /* PlatformXROpenXR.cpp */; };
+		E1C1A39E2480080800E0AF66 /* PlatformXROpenXR.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C1A39C2480080700E0AF66 /* PlatformXROpenXR.h */; };
 		E1C266DF18319F31003F8B33 /* CryptoKeyRSAComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DD18319F31003F8B33 /* CryptoKeyRSAComponents.h */; };
 		E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */; };
 		E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4818,8 +4820,6 @@
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
 		E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E1EE8B702412B2A800E794D6 /* PlatformXR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B6C2412B2A700E794D6 /* PlatformXR.cpp */; };
-		E1EE8B712412B2A800E794D6 /* PlatformXR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE8B6E2412B2A700E794D6 /* PlatformXR.cpp */; };
 		E1EE8B722412B2A800E794D6 /* PlatformXR.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8B6F2412B2A700E794D6 /* PlatformXR.h */; };
 		E1EE8B762413191F00E794D6 /* WebXRViewerPose.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AC72412B16F00E794D6 /* WebXRViewerPose.h */; };
 		E1EE8B772413191F00E794D6 /* XRReferenceSpaceType.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE8AC92412B17000E794D6 /* XRReferenceSpaceType.h */; };
@@ -15305,6 +15305,8 @@
 		E1BD3318182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRSASSA_PKCS1_v1_5.h; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
+		E1C1A39B2480080600E0AF66 /* PlatformXROpenXR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXROpenXR.cpp; sourceTree = "<group>"; };
+		E1C1A39C2480080700E0AF66 /* PlatformXROpenXR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformXROpenXR.h; sourceTree = "<group>"; };
 		E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp; sourceTree = "<group>"; };
 		E1C266DC18319F31003F8B33 /* CryptoKeyRSAComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyRSAComponents.cpp; sourceTree = "<group>"; };
 		E1C266DD18319F31003F8B33 /* CryptoKeyRSAComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyRSAComponents.h; sourceTree = "<group>"; };
@@ -15417,8 +15419,6 @@
 		E1EE8B162412B17000E794D6 /* XRPose.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRPose.idl; sourceTree = "<group>"; };
 		E1EE8B172412B17000E794D6 /* WebXRInputSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebXRInputSource.h; sourceTree = "<group>"; };
 		E1EE8B182412B17000E794D6 /* XRInputSourceArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XRInputSourceArray.idl; sourceTree = "<group>"; };
-		E1EE8B6C2412B2A700E794D6 /* PlatformXR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXR.cpp; sourceTree = "<group>"; };
-		E1EE8B6E2412B2A700E794D6 /* PlatformXR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformXR.cpp; sourceTree = "<group>"; };
 		E1EE8B6F2412B2A700E794D6 /* PlatformXR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformXR.h; sourceTree = "<group>"; };
 		E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTExtensions.cpp; sourceTree = "<group>"; };
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
@@ -27553,7 +27553,6 @@
 			isa = PBXGroup;
 			children = (
 				E1EE8B6D2412B2A700E794D6 /* openxr */,
-				E1EE8B6C2412B2A700E794D6 /* PlatformXR.cpp */,
 				E1EE8B6F2412B2A700E794D6 /* PlatformXR.h */,
 			);
 			path = xr;
@@ -27562,7 +27561,8 @@
 		E1EE8B6D2412B2A700E794D6 /* openxr */ = {
 			isa = PBXGroup;
 			children = (
-				E1EE8B6E2412B2A700E794D6 /* PlatformXR.cpp */,
+				E1C1A39B2480080600E0AF66 /* PlatformXROpenXR.cpp */,
+				E1C1A39C2480080700E0AF66 /* PlatformXROpenXR.h */,
 			);
 			path = openxr;
 			sourceTree = "<group>";
@@ -32502,6 +32502,7 @@
 				52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */,
 				935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */,
 				E1EE8B722412B2A800E794D6 /* PlatformXR.h in Headers */,
+				E1C1A39E2480080800E0AF66 /* PlatformXROpenXR.h in Headers */,
 				712BE4801FE864A7002031CC /* PlaybackDirection.h in Headers */,
 				CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceAVKit.h in Headers */,
 				CDA29A171CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h in Headers */,
@@ -34400,8 +34401,7 @@
 				E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */,
 				CEA284662141E84900E407E8 /* PlatformEventFactoryIOS.mm in Sources */,
 				AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerIOS.mm in Sources */,
-				E1EE8B712412B2A800E794D6 /* PlatformXR.cpp in Sources */,
-				E1EE8B702412B2A800E794D6 /* PlatformXR.cpp in Sources */,
+				E1C1A39D2480080800E0AF66 /* PlatformXROpenXR.cpp in Sources */,
 				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */,
 				CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */,
 				419242492127B93E00634FCF /* RealtimeOutgoingVideoSourceCocoa.mm in Sources */,

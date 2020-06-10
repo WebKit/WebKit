@@ -115,6 +115,7 @@ namespace WebCore {
     M(WebGPU) \
     M(WebRTC) \
     M(WebRTCStats) \
+    M(XR) \
     M(WheelEventTestMonitor) \
 
 #undef DECLARE_LOG_CHANNEL

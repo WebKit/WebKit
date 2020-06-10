@@ -45,33 +45,26 @@ class Device : public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Device);
 public:
-    using DeviceId = uint32_t;
-    Device();
-    DeviceId id() const { return m_id; }
+    virtual ~Device() = default;
 
     using ListOfEnabledFeatures = Vector<ReferenceSpaceType>;
     bool supports(SessionMode mode) const { return m_enabledFeaturesMap.contains(mode); }
     void setEnabledFeatures(SessionMode mode, const ListOfEnabledFeatures& features) { m_enabledFeaturesMap.set(mode, features); }
     ListOfEnabledFeatures enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
-    inline bool operator==(const Device& other) const { return m_id == other.m_id; }
-
 protected:
+    Device() = default;
+
     // https://immersive-web.github.io/webxr/#xr-device-concept
     // Each XR device has a list of enabled features for each XRSessionMode in its list of supported modes,
     // which is a list of feature descriptors which MUST be initially an empty list.
     using EnabledFeaturesPerModeMap = WTF::HashMap<SessionMode, ListOfEnabledFeatures, WTF::IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
     EnabledFeaturesPerModeMap m_enabledFeaturesMap;
-
-private:
-    DeviceId m_id;
 };
 
 class Instance {
 public:
     static Instance& singleton();
-
-    static Device::DeviceId nextDeviceId();
 
     void enumerateImmersiveXRDevices();
     const Vector<std::unique_ptr<Device>>& immersiveXRDevices() const { return m_immersiveXRDevices; }

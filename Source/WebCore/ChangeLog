@@ -1,3 +1,33 @@
+2020-06-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Refactor OpenXR platform code
+        https://bugs.webkit.org/show_bug.cgi?id=212470
+
+        Reviewed by Youenn Fablet.
+
+        Refactored a bit the platform code because we want to extend the PlatformXR::Device for the OpenXR
+        library. Also we're removing all the device id code because there is no need to expose it.
+
+        The idea from now on is to only define interfaces in PlatformXR.h and then add all the OpenXR specifics
+        in the newly renamed PlatformXROpenXR.[ch] files. We're also renaming PlatformXR.cpp to
+        PlatformXROpenXR.cpp to clearly state that it's the OpenXR implementation and to differentiate it from
+        the implementation agnostic PlatformXR.h file.
+
+        No new tests as there is no change in functionality.
+
+        * Sources.txt: Added renamed files. Removed PlatformXR.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/xr/PlatformXR.cpp: Removed.
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::id const): Deleted.
+        (PlatformXR::Device::operator== const): Deleted.
+        * platform/xr/openxr/PlatformXROpenXR.cpp: Renamed from Source/WebCore/platform/xr/openxr/PlatformXR.cpp.
+        (PlatformXR::Instance::Impl::~Impl): Call xrDestroyInstance() on m_instance.
+        (PlatformXR::Instance::Impl::collectSupportedSessionModes): Do not pass XrSystemId as argument
+        as it's stored in the OpenXRDevice object.
+        (PlatformXR::Instance::enumerateImmersiveXRDevices): Create an OpenXRDevice instead of a Device.
+        * platform/xr/openxr/PlatformXROpenXR.h: Added.
+
 2020-06-09  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Release Assert @ WebCore::RenderTreeBuilder::RenderTreeBuilder
