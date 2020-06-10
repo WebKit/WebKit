@@ -95,14 +95,9 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
     return m_cookieDatabase;
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    Optional<Seconds> cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, *pageID);
-#else
-    Optional<Seconds> cappedLifetime = WTF::nullopt;
-#endif
-    cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script, cappedLifetime);
+    cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script);
 }
 
 void NetworkStorageSession::setCookiesFromHTTPResponse(const URL& firstParty, const URL& url, const String& value) const
@@ -138,10 +133,9 @@ std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstPar
     return { cookiesForSession(*this, firstParty, url, false), false };
 }
 
-void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&, const URL& /* mainDocumentURL */)
+void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const URL& /* mainDocumentURL */)
 {
-    for (const auto& cookie : cookies)
-        cookieDatabase().setCookie(cookie);
+    // FIXME: Implement for WebKit to use.
 }
 
 void NetworkStorageSession::setCookie(const Cookie& cookie)
@@ -170,10 +164,9 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime)
     // FIXME: Not yet implemented
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& /* cookieHostNames */, IncludeHttpOnlyCookies)
 {
-    for (auto hostname : cookieHostNames)
-        cookieDatabase().deleteCookiesForHostname(hostname, includeHttpOnlyCookies);
+    // FIXME: Not yet implemented.
 }
 
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames)
@@ -186,9 +179,9 @@ Vector<Cookie> NetworkStorageSession::getAllCookies()
     return cookieDatabase().getAllCookies();
 }
 
-void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
+void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& /* hostnames */)
 {
-    hostnames = cookieDatabase().allDomains();
+    // FIXME: Not yet implemented
 }
 
 Vector<Cookie> NetworkStorageSession::getCookies(const URL&)

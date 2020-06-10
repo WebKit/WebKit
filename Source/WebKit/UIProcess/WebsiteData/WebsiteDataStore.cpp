@@ -2324,9 +2324,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.perOriginStorageQuota = perOriginStorageQuota();
     parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_resourceLoadStatisticsEnabled;
-#endif
     platformSetNetworkParameters(parameters);
 
     return parameters;

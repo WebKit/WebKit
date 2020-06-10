@@ -162,9 +162,6 @@ WK_EXPORT void WKWebsiteDataStoreGetFetchCacheSizeForOrigin(WKWebsiteDataStoreRe
 
 WK_EXPORT void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef dataStoreRef, uint64_t quota) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota);
 
-typedef void(*WKWebsiteDataStoreGetAllStorageAccessEntriesFunction)(void* context, WKArrayRef domains);
-WK_EXPORT void WKWebsiteDataStoreGetAllStorageAccessEntries(WKWebsiteDataStoreRef dataStoreRef, WKPageRef pageRef, void* context, WKWebsiteDataStoreGetAllStorageAccessEntriesFunction callback);
-
 WK_EXPORT void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRef dataStoreRef);
 
 typedef void (*WKWebsiteDataStoreClearAdClickAttributionsThroughWebsiteDataRemovalFunction)(void* functionContext);

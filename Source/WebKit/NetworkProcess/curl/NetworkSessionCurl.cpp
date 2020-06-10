@@ -43,14 +43,6 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, NetworkSe
     if (!parameters.cookiePersistentStorageFile.isEmpty())
         networkStorageSession()->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
     networkStorageSession()->setProxySettings(WTFMove(parameters.proxySettings));
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsParameters.directory;
-    m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
-    m_enableResourceLoadStatisticsDebugMode = parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
-    m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsParameters.manualPrevalentResource;
-    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-#endif
 }
 
 NetworkSessionCurl::~NetworkSessionCurl()
