@@ -1624,10 +1624,8 @@ void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t 
 
 void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
 {
-    if (!m_data) {
-        m_data = adoptCF(CFDataCreateMutable(0, targetLength));
-        return;
-    }
+    if (!m_data)
+        m_data = adoptCF(CFDataCreateMutable(0, 0));
 
     auto currentLength = CFDataGetLength(m_data.get());
     ASSERT(currentLength >= 0);

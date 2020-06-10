@@ -1,3 +1,18 @@
+2020-06-10  Brady Eidson  <beidson@apple.com>
+
+        Crash growing a CFData with incremental PDF loading.
+        <rdar://problem/63670403> and https://bugs.webkit.org/show_bug.cgi?id=213035
+
+        Reviewed by Alex Christensen.
+
+        No test - No reliable way to trigger.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::ensureDataBufferLength): When you call CFDataCreateMutable with a size other than 0,
+          your data object can never grow beyond that size.
+          And, in fact, CFData will crash on purpose when this is attempted.
+          So always create our mutable CFDatas with size 0 even if we immediately plan to grow them.
+
 2020-06-10  Jonathan Bedard  <jbedard@apple.com>
 
         WebKit: Add ClockKitSPI.h
