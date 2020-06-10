@@ -1,5 +1,14 @@
 2020-06-10  Alex Christensen  <achristensen@webkit.org>
 
+        Revert r259770
+        https://bugs.webkit.org/show_bug.cgi?id=210097
+        <rdar://problem/64175992>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
+2020-06-10  Alex Christensen  <achristensen@webkit.org>
+
         Add some null checks in PDFPlugin::updatePageAndDeviceScaleFactors
         https://bugs.webkit.org/show_bug.cgi?id=213009
         <rdar://problem/63756100>

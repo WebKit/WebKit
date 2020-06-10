@@ -263,7 +263,7 @@ TEST(SafeBrowsing, GoBackAfterRestoreFromSessionState)
 #endif
     EXPECT_FALSE(didCloseCalled);
     goBack([webView2 _safeBrowsingWarning]);
-    EXPECT_FALSE(didCloseCalled);
+    EXPECT_TRUE(didCloseCalled);
     WKBackForwardList *list = [webView2 backForwardList];
     EXPECT_FALSE(!!list.backItem);
     EXPECT_FALSE(!!list.forwardItem);

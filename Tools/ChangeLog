@@ -1,3 +1,12 @@
+2020-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r259770
+        https://bugs.webkit.org/show_bug.cgi?id=210097
+        <rdar://problem/64175992>
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+
 2020-06-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r262807.
