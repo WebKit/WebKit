@@ -49,6 +49,9 @@
 {
     [super _notifyObserversOfChangeFromValuesForKeys:oldValues toValuesForKeys:newValues];
 
+    if (!m_observer)
+        return;
+
     for (NSString *key in oldValues) {
         id oldValue = oldValues[key];
         id newValue = newValues[key];
@@ -68,9 +71,6 @@
             encodedString = [data base64EncodedStringWithOptions:0];
         }
 
-        if (!m_observer)
-            return;
-        
         auto globalValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
         auto domainValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, (__bridge CFStringRef)m_suiteName, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
         
