@@ -56,16 +56,18 @@ WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdates
 
 void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
 {
-    auto map = WTFMove(widgetNewParentMap());
-    for (auto& entry : map) {
-        auto& child = *entry.key;
-        auto* currentParent = child.parent();
-        auto* newParent = entry.value;
-        if (newParent != currentParent) {
-            if (currentParent)
-                currentParent->removeChild(child);
-            if (newParent)
-                newParent->addChild(child);
+    while (!widgetNewParentMap().isEmpty()) {
+        auto map = WTFMove(widgetNewParentMap());
+        for (auto& entry : map) {
+            auto& child = *entry.key;
+            auto* currentParent = child.parent();
+            auto* newParent = entry.value;
+            if (newParent != currentParent) {
+                if (currentParent)
+                    currentParent->removeChild(child);
+                if (newParent)
+                    newParent->addChild(child);
+            }
         }
     }
 }
