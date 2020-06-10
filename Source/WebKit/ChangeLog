@@ -1,3 +1,14 @@
+2020-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add some null checks in PDFPlugin::updatePageAndDeviceScaleFactors
+        https://bugs.webkit.org/show_bug.cgi?id=213009
+        <rdar://problem/63756100>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::updatePageAndDeviceScaleFactors):
+
 2020-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, reverting r262791.

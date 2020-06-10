@@ -1742,9 +1742,14 @@ void PDFPlugin::attemptToUnlockPDF(const String& password)
 
 void PDFPlugin::updatePageAndDeviceScaleFactors()
 {
+    if (!controller())
+        return;
+
     double newScaleFactor = controller()->contentsScaleFactor();
-    if (!handlesPageScaleFactor())
-        newScaleFactor *= m_frame.page()->pageScaleFactor();
+    if (!handlesPageScaleFactor()) {
+        if (auto* page = m_frame.page())
+            newScaleFactor *= page->pageScaleFactor();
+    }
 
     if (newScaleFactor != [m_pdfLayerController deviceScaleFactor])
         [m_pdfLayerController setDeviceScaleFactor:newScaleFactor];
