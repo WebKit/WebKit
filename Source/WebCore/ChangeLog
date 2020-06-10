@@ -2,6 +2,14 @@
 
         Unreviewed, WPE Debug build fix attempt after r262838.
 
+        Second attempt. :) Still broken because of r262718 though...
+
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+
+2020-06-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE Debug build fix attempt after r262838.
+
         Still broken because of r262718 though...
         
         * platform/xr/openxr/PlatformXROpenXR.cpp:

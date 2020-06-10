@@ -30,7 +30,7 @@
 #endif // USE_OPENXR
 #include <wtf/NeverDestroyed.h>
 
-use namespace WebCore;
+using namespace WebCore;
 
 namespace PlatformXR {
 
