@@ -2,12 +2,32 @@
 PASS .grid 1 
 PASS .grid 2 
 PASS .grid 3 
-PASS .grid 4 
-PASS .grid 5 
+FAIL .grid 4 assert_equals: 
+<div class="grid">
+  <div class="minHeight60 marginTop5" data-expected-height="60"></div>
+  <div data-expected-height="65"></div>
+</div>
+height expected 65 but got 60
+FAIL .grid 5 assert_equals: 
+<div class="grid">
+  <div class="minHeight60 marginTop5 marginLeftAuto" data-expected-height="60"></div>
+  <div data-expected-height="65"></div>
+</div>
+height expected 65 but got 60
 PASS .grid 6 
-PASS .grid 7 
+FAIL .grid 7 assert_equals: 
+<div class="grid">
+  <div class="minHeight60 marginBottom10" data-expected-height="60"></div>
+  <div data-expected-height="70"></div>
+</div>
+height expected 70 but got 60
 PASS .grid 8 
-PASS .grid 9 
+FAIL .grid 9 assert_equals: 
+<div class="grid">
+  <div class="minHeight60 marginTop5 marginBottom10" data-expected-height="60"></div>
+  <div data-expected-height="75"></div>
+</div>
+height expected 75 but got 60
 PASS .grid 10 
 PASS .grid 11 
 PASS .grid 12 
@@ -21,16 +41,41 @@ PASS .grid 19
 PASS .grid 20 
 PASS .grid 21 
 PASS .grid 22 
-PASS .grid 23 
+FAIL .grid 23 assert_equals: 
+<div class="grid">
+  <div class="minHeight60 marginTop5 marginBottom10 paddingTop6 paddingBottom3 borderTop2 borderBottom4" data-expected-height="75"></div>
+  <div data-expected-height="90"></div>
+</div>
+height expected 90 but got 75
 PASS .grid 24 
 PASS .grid 25 
 PASS .grid 26 
-PASS .grid 27 
-PASS .grid 28 
+FAIL .grid 27 assert_equals: 
+<div class="grid directionRTL">
+  <div class="minHeight60 marginTop5" data-expected-height="60"></div>
+  <div data-expected-height="65"></div>
+</div>
+height expected 65 but got 60
+FAIL .grid 28 assert_equals: 
+<div class="grid directionRTL">
+  <div class="minHeight60 marginTop5 marginLeftAuto" data-expected-height="60"></div>
+  <div data-expected-height="65"></div>
+</div>
+height expected 65 but got 60
 PASS .grid 29 
-PASS .grid 30 
+FAIL .grid 30 assert_equals: 
+<div class="grid directionRTL">
+  <div class="minHeight60 marginBottom10" data-expected-height="60"></div>
+  <div data-expected-height="70"></div>
+</div>
+height expected 70 but got 60
 PASS .grid 31 
-PASS .grid 32 
+FAIL .grid 32 assert_equals: 
+<div class="grid directionRTL">
+  <div class="minHeight60 marginTop5 marginBottom10" data-expected-height="60"></div>
+  <div data-expected-height="75"></div>
+</div>
+height expected 75 but got 60
 PASS .grid 33 
 PASS .grid 34 
 PASS .grid 35 
@@ -44,7 +89,12 @@ PASS .grid 42
 PASS .grid 43 
 PASS .grid 44 
 PASS .grid 45 
-PASS .grid 46 
+FAIL .grid 46 assert_equals: 
+<div class="grid directionRTL">
+  <div class="minHeight60 marginTop5 marginBottom10 paddingTop6 paddingBottom3 borderTop2 borderBottom4" data-expected-height="75"></div>
+  <div data-expected-height="90"></div>
+</div>
+height expected 90 but got 75
 Direction LTR
 
 Item height: 60px;
