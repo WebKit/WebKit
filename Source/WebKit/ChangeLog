@@ -1,3 +1,13 @@
+2020-06-09  Mark Lam  <mark.lam@apple.com>
+
+        Disambiguate the OverridesGetPropertyNames structure flag
+        https://bugs.webkit.org/show_bug.cgi?id=212909
+        <rdar://problem/63823557>
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2020-06-09  Dean Jackson  <dino@apple.com>
 
         Stop using discriminatory names for WebGL and Plugin blocking

@@ -1,3 +1,49 @@
+2020-06-09  Mark Lam  <mark.lam@apple.com>
+
+        Disambiguate the OverridesGetPropertyNames structure flag
+        https://bugs.webkit.org/show_bug.cgi?id=212909
+        <rdar://problem/63823557>
+
+        Reviewed by Saam Barati.
+
+        1. JSDOMWindowProperties was not defining its Base.  As a result, its
+           StructureFlags was inheriting from JSDOMObject's Base instead of from JSDOMObject
+           as one would expect.  This turns out to be harmless because JSDOMObject did not
+           define any StructureFlags.  Regardless, this is not fixed so that if JSDOMObject
+           adds any StructureFlags, it will be inherited properly by JSDOMWindowProperties.
+
+        2. Updated CodeGeneratorJS.pm and rebased the binding test results.
+
+        * bindings/js/JSDOMWindowProperties.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.h:
+
 2020-06-09  Dean Jackson  <dino@apple.com>
 
         Stop using discriminatory names for WebGL and Plugin blocking

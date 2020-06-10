@@ -669,6 +669,20 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, JSGlobalObject* g
     return false;
 }
 
+#if ASSERT_ENABLED
+// These needs to be unique (not inlined) for ASSERT_ENABLED builds to enable
+// Structure::validateFlags() to do checks using function pointer comparisons.
+
+bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
+{
+    return getOwnPropertySlotImpl(object, globalObject, propertyName, slot);
+}
+
+void JSObject::doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&)
+{
+}
+#endif // ASSERT_ENABLED
+
 // https://tc39.github.io/ecma262/#sec-ordinaryset
 bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyName propertyName, JSValue value, JSValue receiver, bool shouldThrow)
 {

@@ -1,3 +1,179 @@
+2020-06-09  Mark Lam  <mark.lam@apple.com>
+
+        Disambiguate the OverridesGetPropertyNames structure flag
+        https://bugs.webkit.org/show_bug.cgi?id=212909
+        <rdar://problem/63823557>
+
+        Reviewed by Saam Barati.
+
+        Previously, the OverridesGetPropertyNames structure flag could mean 2 different
+        things:
+        1. the getPropertyNames() method is overridden, or
+        2. any of the forms of getPropertyName() is overridden:
+           getPropertyName, getOwnPropertyNames, getOwnNonIndexPropertyNames
+
+        Some parts of the code expects one definition while other parts expect the other.
+        This patch disambiguates between the 2 by introducing OverridesAnyFormOfGetPropertyNames
+        for definition (2).  OverridesGetPropertyNames now only means definition (1).
+
+        Note: we could have implemented overridesGetPropertyNames() by doing a comparison
+        of the getPropertyNames pointer in the MethodTable.  This is a little slower than
+        checking a TypeInfo flag, but probably doesn't matter a lot in the code paths
+        where overridesGetPropertyNames() is called.  However, we have bits in TypeInfo
+        left.  So, we'll might as well use it.
+
+        This ambiguity resulted in JSObject::getPropertyNames() recursing infinitely
+        when it didn't think it could recurse.  This is demonstrated in
+        JSTests/stress/unexpected-stack-overflow-below-JSObject-getPropertyNames.js as
+        follows:
+
+        1. The test case invokes JSObject::getPropertyNames on a JSArray.
+
+        2. In the while loop at the bottom of JSObject::getPropertynames(), we check
+           `if (prototype->structure(vm)->typeInfo().overridesGetPropertyNames()) {`.
+
+        3. The test overrides proto as follows:
+           `arg0.__proto__ = arr1` where both arg0 and arr1 are JArrays.
+
+        4. In the old code, JSArray sets OverridesGetPropertyNames but does not override
+           getPropertyNames().  It actually meant to set OverridesAnyFormOfGetPropertyNames
+           (after we disambiguated it) because JSArray overrides getOwnNonIndexPropertyNames().
+
+        5. When we get to the check at (2), we ask if the prototype overridesGetPropertyNames().
+           Since JSArray sets OverridesGetPropertyNames, the answer is yes / true.
+
+           JSObject::getPropertynames() then proceeds to invoke
+           `prototype->methodTable(vm)->getPropertyNames(prototype, globalObject, propertyNames, mode);`
+
+           But because JSArray does not actually overrides getPropertyNames(), we're
+           actually invoking JSObject::getPropertyNames() here.  Viola!  Infinite loop.
+
+        With this patch, JSArray is disambiguated to set OverridesAnyFormOfGetPropertyNames
+        instead of OverridesGetPropertyNames, and this infinite loop no longer exists.
+
+        This patch also made the following changes:
+
+        1. Templatized TypeInfo::isSetOnFlags1() and TypeInfo::isSetOnFlags2() so that
+           we can used static_asserts instead of a debug ASSERT to verify the integrity of
+           the flag we're checking against.
+
+        2. Added a Structure::validateFlags() called from the Structure constructor.
+           validateFlags() will verify the following:
+           a. OverridesGetOwnPropertySlot must be set in the flags if getOwnPropertySlot
+              is overridden in the MethodTable.
+           b. InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero must be set in
+              the flags if getOwnPropertySlotByIndex is overridden in the MethodTable.
+           c. HasPutPropertySecurityCheck must be set in the flags if doPutPropertySecurityCheck
+              is overridden in the MethodTable.
+           d. OverridesGetPropertyNames must be set in the flags if getPropertyNames
+              is overridden in the MethodTable.
+           e. OverridesAnyFormOfGetPropertyNames must be set in the flags if any of
+              getPropertyNames, getOwnPropertyNames, or getOwnNonIndexPropertyNames are
+              overridden in the MethodTable.
+
+           An alternate solution would be to automatically set these flags if we detect
+           their corresponding methods are overridden.  However, this alternate solution
+           requires this laundry list to be checked every time a structure is constructed.
+           The current implementation of having the required flags already pre-determined
+           as a constant is more efficient in terms of performance and code space.
+
+           Also, it only takes one instantiation of the structure to verify that the flags
+           are valid.  Since we only write JSCell / JSObject classes when we need them
+           and we always write tests to exercise new code (especially such classes), we're
+           guaranteed the flags validation will be exercised.
+
+        3. Made JSObject::getOwnPropertySlot() and JSObject::doPutPropertySecurityCheck()
+           not inlined when ASSERT_ENABLED.  This is needed in order for Structure::validateFlags()
+           to do its checks using function pointer comparisons.  Otherwise, the inline
+           functions can result in multiple instantiations of these functions.  For
+           example, WebCore can get its own copy of JSObject::getOwnPropertySlot() and
+           the comparisons will think the function is overridden even when it's not.
+
+        4. Structure::validateFlags() found the following problems which are now fixed:
+
+           GetterSetter was not using its StructureFlags.  As a result, it was missing the
+           OverridesGetOwnPropertySlot flag.
+
+           JSDataView did not define its StructureFlags.  It was missing the
+           OverridesGetOwnPropertySlot and OverridesAnyFormOfGetPropertyNames flags.
+
+        5. Changed a TypeInfo constructor to not have a default argument for the flags value.
+           Also grepped for all uses of this constructor to make sure that it is passed
+           the StructureFlags field.  This exercise found the following issue:
+
+           JSAPIValueWrapper was not using its StructureFlags when creating its structure.
+           Previously, it was just ignoring the StructureIsImmortal flag in StructureFlags.
+
+        6. Hardened the assertions for hasReadOnlyOrGetterSetterPropertiesExcludingProto()
+           and hasGetterSetterProperties() in the Structure constructor.
+
+           Previously, if the flag is set, it verifies that the ClassInfo has the
+           appropriate data expected by the flag.  However, it does not assert the reverse
+           i.e. that if the ClassInfo data exists, then the flag must also be set.
+           The new assertions now checks both.
+
+           Moved the overridesGetCallData() assertion into Structure::validateFlags()
+           because it concerns the OverridesGetCallData flag.  This assertion has also
+           ben hardened.
+
+        * API/JSAPIValueWrapper.h:
+        * API/JSCallbackObject.h:
+        * debugger/DebuggerScope.h:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * runtime/ClonedArguments.h:
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.h:
+        * runtime/JSDataView.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::doPutPropertySecurityCheck):
+        (JSC::JSObject::getOwnPropertySlot):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnPropertySlotImpl):
+        (JSC::JSObject::getOwnPropertySlot):
+        * runtime/JSProxy.h:
+        * runtime/JSString.h:
+        * runtime/JSSymbolTableObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::masqueradesAsUndefined const):
+        (JSC::TypeInfo::implementsHasInstance const):
+        (JSC::TypeInfo::implementsDefaultHasInstance const):
+        (JSC::TypeInfo::overridesGetCallData const):
+        (JSC::TypeInfo::overridesToThis const):
+        (JSC::TypeInfo::structureIsImmortal const):
+        (JSC::TypeInfo::overridesGetPropertyNames const):
+        (JSC::TypeInfo::overridesAnyFormOfGetPropertyNames const):
+        (JSC::TypeInfo::prohibitsPropertyCaching const):
+        (JSC::TypeInfo::getOwnPropertySlotIsImpure const):
+        (JSC::TypeInfo::getOwnPropertySlotIsImpureForPropertyAbsence const):
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const):
+        (JSC::TypeInfo::newImpurePropertyFiresWatchpoints const):
+        (JSC::TypeInfo::isImmutablePrototypeExoticObject const):
+        (JSC::TypeInfo::interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero const):
+        (JSC::TypeInfo::isSetOnFlags1 const):
+        (JSC::TypeInfo::isSetOnFlags2 const):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+        * runtime/ProxyObject.h:
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::canCacheOwnKeys const):
+        * tools/JSDollarVM.cpp:
+
 2020-06-09  Jonathan Bedard  <jbedard@apple.com>
 
         JavaScriptCore: Support tvOS and watchOS builds with the public SDK

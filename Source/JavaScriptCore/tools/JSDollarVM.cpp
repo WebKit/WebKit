@@ -536,7 +536,7 @@ private:
 class RuntimeArray : public JSArray {
 public:
     typedef JSArray Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesAnyFormOfGetPropertyNames;
 
 IGNORE_WARNINGS_BEGIN("unused-const-variable")
     static constexpr bool needsDestruction = false;

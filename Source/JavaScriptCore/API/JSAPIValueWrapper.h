@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -33,7 +33,13 @@ class JSAPIValueWrapper final : public JSCell {
     friend JSValue jsAPIValueWrapper(JSGlobalObject*, JSValue);
 public:
     using Base = JSCell;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    // OverridesAnyFormOfGetPropertyNames (which used to be OverridesGetPropertyNames) was here
+    // since ancient times back when we pessimistically choose to apply this flag. I think we
+    // can remove it, but we should do more testing before we do so.
+    // Ref: http://trac.webkit.org/changeset/49694/webkit#file9
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212954
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesAnyFormOfGetPropertyNames | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -45,7 +51,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesGetPropertyNames), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, StructureFlags), info());
     }
 
     DECLARE_EXPORT_INFO;

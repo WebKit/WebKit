@@ -89,6 +89,10 @@ public:
     friend class SmallStrings;
 
     typedef JSCell Base;
+    // Do we really need OverridesGetOwnPropertySlot?
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212956
+    // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis;
 
     static constexpr bool needsDestruction = true;

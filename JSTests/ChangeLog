@@ -1,3 +1,13 @@
+2020-06-09  Mark Lam  <mark.lam@apple.com>
+
+        Disambiguate the OverridesGetPropertyNames structure flag
+        https://bugs.webkit.org/show_bug.cgi?id=212909
+        <rdar://problem/63823557>
+
+        Reviewed by Saam Barati.
+
+        * stress/unexpected-stack-overflow-below-JSObject-getPropertyNames.js: Added.
+
 2020-06-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Intl] Update tests to support ICU 67

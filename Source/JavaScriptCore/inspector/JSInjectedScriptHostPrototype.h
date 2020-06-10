@@ -32,6 +32,8 @@ namespace Inspector {
 class JSInjectedScriptHostPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
+    // Do we really need OverridesGetOwnPropertySlot?
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212956
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
 
     template<typename CellType, JSC::SubspaceAccess>

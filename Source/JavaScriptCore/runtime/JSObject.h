@@ -92,6 +92,12 @@ COMPILE_ASSERT(PropertyAttribute::Accessor < FirstInternalAttribute, Accessor_is
 
 class JSFinalObject;
 
+#if ASSERT_ENABLED
+#define JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED JS_EXPORT_PRIVATE
+#else
+#define JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED
+#endif
+
 class JSObject : public JSCell {
     friend class BatchedTransitionOptimizer;
     friend class JIT;
@@ -170,10 +176,14 @@ public:
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
-    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+private:
+    static bool getOwnPropertySlotImpl(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+public:
+    JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
     bool getOwnPropertySlotInline(JSGlobalObject*, PropertyName, PropertySlot&);
-    static void doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&);
+    JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED static void doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)
@@ -1435,7 +1445,7 @@ ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(VM& vm, PropertySlot& 
 // It may seem crazy to inline a function this large, especially a virtual function,
 // but it makes a big difference to property lookup that derived classes can inline their
 // base class call to this.
-ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getOwnPropertySlotImpl(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
     Structure* structure = object->structure(vm);
@@ -1446,9 +1456,16 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject
     return false;
 }
 
+#if !ASSERT_ENABLED
+ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
+{
+    return getOwnPropertySlotImpl(object, globalObject, propertyName, slot);
+}
+
 ALWAYS_INLINE void JSObject::doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&)
 {
 }
+#endif
 
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup

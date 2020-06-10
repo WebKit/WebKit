@@ -302,7 +302,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
             auto canPerformFastPropertyEnumerationForObjectAssign = [] (Structure* structure) {
                 if (structure->typeInfo().overridesGetOwnPropertySlot())
                     return false;
-                if (structure->typeInfo().overridesGetPropertyNames())
+                if (structure->typeInfo().overridesAnyFormOfGetPropertyNames())
                     return false;
                 // FIXME: Indexed properties can be handled.
                 // https://bugs.webkit.org/show_bug.cgi?id=185358

@@ -173,6 +173,8 @@ private:
         ASSERT(!vm.structureStructure);
     }
 
+    void validateFlags();
+
 public:
     StructureID id() const { return m_blob.structureID(); }
     int32_t objectInitializationBlob() const { return m_blob.blobExcludingStructureID(); }

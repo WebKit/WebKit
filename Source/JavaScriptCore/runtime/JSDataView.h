@@ -33,6 +33,8 @@ namespace JSC {
 class JSDataView final : public JSArrayBufferView {
 public:
     using Base = JSArrayBufferView;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesAnyFormOfGetPropertyNames;
+
     static constexpr unsigned elementSize = 1;
 
     template<typename CellType, SubspaceAccess mode>

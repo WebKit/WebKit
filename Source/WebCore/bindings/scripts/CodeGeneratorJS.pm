@@ -2685,7 +2685,7 @@ sub GenerateHeader
     
     if (InstanceOverridesGetOwnPropertyNames($interface)) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
-        $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;
+        $structureFlags{"JSC::OverridesAnyFormOfGetPropertyNames"} = 1;
     }
     
     if (InstanceOverridesPut($interface)) {

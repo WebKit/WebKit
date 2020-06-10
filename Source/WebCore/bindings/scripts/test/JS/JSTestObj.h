@@ -86,7 +86,7 @@ public:
     static JSC::JSValue testStaticCustomPromiseFunction(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&);
     JSC::JSValue testCustomReturnsOwnPromiseFunction(JSC::JSGlobalObject&, JSC::CallFrame&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetCallData | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetCallData | JSC::OverridesGetOwnPropertySlot;
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject&, Ref<TestObj>&&);
 

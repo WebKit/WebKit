@@ -107,7 +107,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, StructureFlags), info());
     }
 
     static ptrdiff_t offsetOfGetter()
