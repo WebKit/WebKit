@@ -361,6 +361,7 @@
 		2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopCF.cpp; sourceTree = "<group>"; };
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
+		2DA442FC24904CA000C9C59D /* OSLogSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSLogSPI.h; sourceTree = "<group>"; };
 		304CA4E41375437EBE931D03 /* Markable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Markable.h; sourceTree = "<group>"; };
 		3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexSet.h; sourceTree = "<group>"; };
 		313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTrace.cpp; sourceTree = "<group>"; };
@@ -1457,6 +1458,7 @@
 				E31BDE2822E913CC0029B105 /* MachVMSPI.h */,
 				1C503BE423AADEEA0072E66B /* NSLocaleSPI.h */,
 				93D191CF20CAECE800C51B8E /* objcSPI.h */,
+				2DA442FC24904CA000C9C59D /* OSLogSPI.h */,
 				A5098B011C16A4F900087797 /* SecuritySPI.h */,
 			);
 			path = cocoa;
@@ -1766,7 +1768,6 @@
 				A8A47469151A825B004123FF /* UTF8Conversion.cpp in Sources */,
 				7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */,
 				E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */,
-				FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */,
 				0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */,
 				1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */,
 				0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */,
@@ -1774,6 +1775,7 @@
 				E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */,
 				E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */,
 				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
+				FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */,
 				A8A47445151A825B004123FF /* WTFString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -25,12 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The vprintf_stderr_common function triggers this error in the Mac build.
-// Feel free to remove this pragma if this file builds on Mac.
-// According to http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Diagnostic-Pragmas.html#Diagnostic-Pragmas
-// we need to place this directive before any data or functions are defined.
-#pragma GCC diagnostic ignored "-Wmissing-format-attribute"
-
 #include "config.h"
 #include <wtf/Assertions.h>
 
@@ -49,10 +43,6 @@
 
 #if USE(CF)
 #include <CoreFoundation/CFString.h>
-#if PLATFORM(COCOA)
-#define USE_APPLE_SYSTEM_LOG 1
-#include <asl.h>
-#endif
 #endif // USE(CF)
 
 #if COMPILER(MSVC)
@@ -70,6 +60,10 @@
 
 #if USE(JOURNALD)
 #include <wtf/StringPrintStream.h>
+#endif
+
+#if PLATFORM(COCOA)
+#import <wtf/spi/cocoa/OSLogSPI.h>
 #endif
 
 namespace WTF {
@@ -126,10 +120,8 @@ extern "C" {
 
 static void logToStderr(const char* buffer)
 {
-#if USE(APPLE_SYSTEM_LOG)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+#if PLATFORM(COCOA)
+    os_log(OS_LOG_DEFAULT, "%s", buffer);
 #endif
     fputs(buffer, stderr);
 }
@@ -154,13 +146,11 @@ static void vprintf_stderr_common(const char* format, va_list args)
         return;
     }
 
-#if USE(APPLE_SYSTEM_LOG)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#if PLATFORM(COCOA)
     va_list copyOfArgs;
     va_copy(copyOfArgs, args);
-    asl_vlog(0, 0, ASL_LEVEL_NOTICE, format, copyOfArgs);
+    os_log_with_args(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
     va_end(copyOfArgs);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     // Fall through to write to stderr in the same manner as other platforms.

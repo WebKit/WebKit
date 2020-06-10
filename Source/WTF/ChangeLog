@@ -1,3 +1,13 @@
+2020-06-09  Tim Horton  <timothy_horton@apple.com>
+
+        Use os_log instead of asl_log
+        https://bugs.webkit.org/show_bug.cgi?id=213001
+
+        Reviewed by Saam Barati.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+
 2020-06-09  Chris Dumez  <cdumez@apple.com>
 
         Use bridge cast in String(NSString *) constructor
