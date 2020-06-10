@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -314,7 +314,8 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Recursion is avoided by !holderStackWasEmpty check and do/while loop at the end of this method.
-    ASSERT(vm.isSafeToRecurseSoft());
+    // We're having this recursion check here as a fail safe in case the code
+    // below get modified such that recursion is no longer avoided.
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
         throwStackOverflowError(m_globalObject, scope);
         return StringifyFailed;

@@ -1,5 +1,15 @@
 2020-06-09  Mark Lam  <mark.lam@apple.com>
 
+        Stringifier::appendStringifiedValue() should not assume it is always safe to recurse.
+        https://bugs.webkit.org/show_bug.cgi?id=213006
+        <rdar://problem/64154840>
+
+        Reviewed by Keith Miller.
+
+        * stress/json-stringify-executing-in-reserved-zone.js: Added.
+
+2020-06-09  Mark Lam  <mark.lam@apple.com>
+
         Disambiguate the OverridesGetPropertyNames structure flag
         https://bugs.webkit.org/show_bug.cgi?id=212909
         <rdar://problem/63823557>

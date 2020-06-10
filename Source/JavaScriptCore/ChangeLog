@@ -1,5 +1,27 @@
 2020-06-09  Mark Lam  <mark.lam@apple.com>
 
+        Stringifier::appendStringifiedValue() should not assume it is always safe to recurse.
+        https://bugs.webkit.org/show_bug.cgi?id=213006
+        <rdar://problem/64154840>
+
+        Reviewed by Keith Miller.
+
+        In r262727, I suggested that Alexey Shvayka add an assertion in
+        Stringifier::appendStringifiedValue() to assert that it is safe to recurse because
+        we don't expect it to recurse into itself.  Turns out this is a bad idea because
+        a client may be doing the recursing before calling Stringifier::appendStringifiedValue().
+        As a result, Stringifier::appendStringifiedValue() ends up being executed with
+        the stack pointer already in the reserved zone.  This is legal, and is what the
+        reserved zone is intended for as long as we don't recurse from here.  However,
+        this also means that asserting vm.isSafeToRecurseSoft() here will surely fail
+        because we are already in the reserved zone area.  The fix is simply to remove
+        this faulty assertion.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
+2020-06-09  Mark Lam  <mark.lam@apple.com>
+
         Disambiguate the OverridesGetPropertyNames structure flag
         https://bugs.webkit.org/show_bug.cgi?id=212909
         <rdar://problem/63823557>
