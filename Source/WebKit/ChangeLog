@@ -1,3 +1,10 @@
+2020-06-10  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r262858): Fix macOS build when building EndowmentStateTracker.mm
+
+        * UIProcess/EndowmentStateTracker.mm:
+        - Move #if PLATFORM(IOS_FAMILY) to fix macOS build.
+
 2020-06-10  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Return early from preference change notification handler if there is no observer

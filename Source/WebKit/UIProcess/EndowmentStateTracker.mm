@@ -26,11 +26,11 @@
 #include "config.h"
 #include "EndowmentStateTracker.h"
 
+#if PLATFORM(IOS_FAMILY)
+
 #import "Logging.h"
 #import "RunningBoardServicesSPI.h"
 #include <wtf/NeverDestroyed.h>
-
-#if PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -150,4 +150,4 @@ void EndowmentStateTracker::setIsVisible(bool isVisible)
 
 }
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
