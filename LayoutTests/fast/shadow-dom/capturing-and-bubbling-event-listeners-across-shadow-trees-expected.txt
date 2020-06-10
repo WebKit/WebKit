@@ -1,7 +1,0 @@
-
-PASS Capturing event listeners should be invoked before bubbling event listeners on the target without shadow trees 
-PASS Capturing event listeners should be invoked before bubbling event listeners when an event is dispatched inside a shadow tree 
-PASS Capturing event listeners should be invoked before bubbling event listeners when an event is dispatched inside a doubly nested shadow tree 
-PASS Capturing event listeners should be invoked before bubbling event listeners when an event is dispatched via a slot 
-PASS Capturing event listeners should be invoked before bubbling event listeners when an event is dispatched inside a shadow tree which passes through another shadow tree 
-

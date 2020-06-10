@@ -1,3 +1,110 @@
+2020-06-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Layout tests outside of the WPT import should not use resources from it
+        https://bugs.webkit.org/show_bug.cgi?id=212661
+
+        Reviewed by Youenn Fablet.
+
+        Some layout tests were using resource files from the imported WPT tests.
+        This is an issue because updating the WPT tests may break this tests in the future.
+
+        To fix this the used resource files are copied inside the main folder of each test
+        and the tests modified to use them.
+
+        On top of that, some tests are de-duplicates (in favor of the WPT versions, which are the same).
+        This is the list of tests de-duplicated:
+        canvas/philip/tests/2d.drawImage.incomplete.emptysrc.html -> imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.incomplete.emptysrc.html
+        canvas/philip/tests/2d.drawImage.incomplete.nosrc.html -> imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.incomplete.nosrc.html
+        canvas/philip/tests/2d.drawImage.incomplete.removedsrc.html -> imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.incomplete.removedsrc.html
+        canvas/philip/tests/2d.pattern.image.incomplete.emptysrc.html -> imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.incomplete.emptysrc.html
+        canvas/philip/tests/2d.pattern.image.incomplete.removedsrc.html -> imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.incomplete.removedsrc.html
+        fast/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html -> imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html
+
+        * canvas/philip/tests/2d.drawImage.incomplete.emptysrc-expected.txt: Removed.
+        * canvas/philip/tests/2d.drawImage.incomplete.emptysrc.html: Removed.
+        * canvas/philip/tests/2d.drawImage.incomplete.nosrc-expected.txt: Removed.
+        * canvas/philip/tests/2d.drawImage.incomplete.nosrc.html: Removed.
+        * canvas/philip/tests/2d.drawImage.incomplete.removedsrc-expected.txt: Removed.
+        * canvas/philip/tests/2d.drawImage.incomplete.removedsrc.html: Removed.
+        * canvas/philip/tests/2d.pattern.image.incomplete.emptysrc-expected.txt: Removed.
+        * canvas/philip/tests/2d.pattern.image.incomplete.emptysrc.html: Removed.
+        * canvas/philip/tests/2d.pattern.image.incomplete.removedsrc-expected.txt: Removed.
+        * canvas/philip/tests/2d.pattern.image.incomplete.removedsrc.html: Removed.
+        * fast/css/resources/shadow-helper.js: Added.
+        (getElementByShadowIds):
+        (ceClass.):
+        (installCustomElement):
+        * fast/css/shadow-parts/exportparts-syntax.html:
+        * fast/css/shadow-parts/invalidation-class-before-after.html:
+        * fast/css/shadow-parts/invalidation-class-descendant-combinator-export.html:
+        * fast/css/shadow-parts/invalidation-class-descendant-combinator.html:
+        * fast/css/shadow-parts/invalidation-class-sibling-combinator-export.html:
+        * fast/css/shadow-parts/invalidation-class-sibling-combinator.html:
+        * fast/custom-elements/DOMImplementation-createDocument.html:
+        * fast/custom-elements/adopting-from-frameless-document.html:
+        * fast/custom-elements/disconnected-callback-in-detached-iframe.html:
+        * fast/custom-elements/document-createElementNS.html:
+        * fast/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback.html:
+        * fast/custom-elements/perform-microtask-checkpoint-before-construction.html:
+        * fast/custom-elements/reactions-for-webkit-extensions.html:
+        * fast/custom-elements/resources/custom-elements-helpers.js: Added.
+        (create_window_in_test):
+        (test_with_window):
+        (prototype.attributeChangedCallback):
+        (prototype.connectedCallback):
+        (prototype.disconnectedCallback):
+        (prototype.adoptedCallback):
+        (return.takeLog):
+        (create_constructor_log):
+        (assert_constructor_log_entry):
+        (create_connected_callback_log):
+        (assert_connected_log_entry):
+        (create_disconnected_callback_log):
+        (assert_disconnected_log_entry):
+        (assert_adopted_log_entry):
+        (create_adopted_callback_log):
+        (create_attribute_changed_callback_log):
+        (assert_attribute_log_entry):
+        (define_new_custom_element.CustomElement):
+        (define_new_custom_element.CustomElement.prototype.attributeChangedCallback):
+        (define_new_custom_element.CustomElement.prototype.connectedCallback):
+        (define_new_custom_element.CustomElement.prototype.disconnectedCallback):
+        (define_new_custom_element.CustomElement.prototype.adoptedCallback):
+        (define_new_custom_element.return.takeLog):
+        (CustomElement):
+        (CustomElement.prototype.attributeChangedCallback):
+        (CustomElement.prototype.connectedCallback):
+        (CustomElement.prototype.disconnectedCallback):
+        (CustomElement.prototype.adoptedCallback):
+        * fast/custom-elements/resources/reactions.js: Added.
+        (testNodeConnector):
+        (testNodeDisconnector):
+        (testInsertingMarkup):
+        (testParsingMarkup):
+        (prototype.test):
+        (testReflectBooleanAttribute):
+        (testAttributeAdder):
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-construct.html:
+        * fast/custom-elements/throw-on-dynamic-markup-insertion-counter-reactions.html:
+        * fast/images/resources/green-256x256.png: Added.
+        * fast/images/sizes-dynamic-001-expected.html:
+        * fast/images/sizes-dynamic-001.html:
+        * fast/images/sizes-dynamic-002-expected.html:
+        * fast/images/sizes-dynamic-002.html:
+        * fast/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees-expected.txt: Removed.
+        * fast/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html: Removed.
+        * mathml/non-core/frac-linethickness-001-expected.html:
+        * mathml/non-core/frac-linethickness-001.html:
+        * mathml/non-core/frac-linethickness-002-expected.html:
+        * mathml/non-core/frac-linethickness-002.html:
+        * mathml/non-core/lengths-1.html:
+        * mathml/non-core/lengths-2.html:
+        * mathml/non-core/lengths-3.html:
+        * mathml/presentation/radical-bar-visibility.html:
+        * mathml/resources/fraction-rulethickness10000.woff: Added.
+        * mathml/resources/radical-degreebottomraisepercent25-rulethickness1000.woff: Added.
+        * mathml/resources/xheight500.woff: Added.
+
 2020-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] editing/selection/ios/toggle-callout-bar-after-tap-in-selected-non-editable-text.html times out
