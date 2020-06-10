@@ -1,3 +1,20 @@
+2020-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] editing/selection/ios/toggle-callout-bar-after-tap-in-selected-non-editable-text.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=213010
+        <rdar://problem/64182061>
+
+        Reviewed by Tim Horton.
+
+        This test times out because the second tap (which is intended to toggle callout bar visibility by tapping on the
+        text selection) misses completely, due to the fact that the midpoint of the selected paragraph element is
+        somewhere in the middle of the page.
+
+        Fix this by simply making the selection target `inline-block`, such that the element width doesn't expand to
+        the width of the page.
+
+        * editing/selection/ios/toggle-callout-bar-after-tap-in-selected-non-editable-text.html:
+
 2020-06-10  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Gardening, update expectations after r262834
