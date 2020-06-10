@@ -1877,8 +1877,6 @@ webkit.org/b/208467 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjects
 
 webkit.org/b/208519 [ Catalina ] webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/208574 mathml/scripts-removeChild.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/208722 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value.htm [ Pass Failure ]
 
 webkit.org/b/208832 imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_Blob.htm [ Pass Failure ]

@@ -1,3 +1,15 @@
+2020-06-10  Zalan Bujtas  <zalan@apple.com>
+
+        [ Mac ] mathml/scripts-removeChild.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=208574
+        <rdar://problem/60041327>
+
+        Unreviewed test gardening.
+
+        Can't reproduce flakiness anymore.
+
+        * platform/mac/TestExpectations:
+
 2020-06-10  Brent Fulgham  <bfulgham@apple.com>
 
         Improve CSP compliance under PSON
