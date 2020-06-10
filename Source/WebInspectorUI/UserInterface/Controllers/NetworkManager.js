@@ -972,10 +972,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let frame = this.frameForIdentifier(frameIdentifier);
         if (frame) {
-            // This is a new request for an existing frame, which might be the main resource or a new resource.
-            if (resourceOptions.type === "Document" && frame.mainResource.url === url && frame.loaderIdentifier === resourceOptions.loaderIdentifier)
-                resource = frame.mainResource;
-            else if (resourceOptions.type === "Document" && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === resourceOptions.loaderIdentifier)
+            if (resourceOptions.type === InspectorBackend.Enum.Page.ResourceType.Document && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === resourceOptions.loaderIdentifier)
                 resource = frame.provisionalMainResource;
             else {
                 resource = new WI.Resource(url, resourceOptions);

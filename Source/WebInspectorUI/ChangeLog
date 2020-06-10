@@ -1,3 +1,15 @@
+2020-06-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: XHR request with same URL as main resource will hide the main resource request
+        https://bugs.webkit.org/show_bug.cgi?id=212850
+        <rdar://problem/33072149>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype._addNewResourceToFrameOrTarget):
+        When creating a new resource, don't re-use the frame's main resource if the URL matches.
+
 2020-06-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow multiple resources for a given URL
