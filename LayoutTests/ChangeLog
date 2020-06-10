@@ -1,3 +1,10 @@
+2020-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/text/justify-ideograph-leading-expansion-expected.txt:
+
 2020-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSCallbackObject::deleteProperty should redirect to Parent::deletePropertyByIndex if propertyName is index
