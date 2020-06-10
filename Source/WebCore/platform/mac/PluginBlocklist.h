@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,42 @@
 
 #if PLATFORM(MAC)
 
-#import <dispatch/dispatch.h>
+#include <memory>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS NSArray;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSSet;
+OBJC_CLASS NSString;
 
 namespace WebCore {
 
-class PluginBlacklist;
-class WebGLBlacklist;
-
-class BlacklistUpdater {
+class PluginBlocklist {
 public:
-    static void initializeQueue();
-    static void reloadIfNecessary();
+    enum class LoadPolicy {
+        LoadNormally,
+        BlockedForSecurity,
+        BlockedForCompatibility,
+    };
 
-    static dispatch_queue_t queue() { return s_queue; }
-    static PluginBlacklist* pluginBlacklist() { return s_pluginBlacklist; }
-    static WebGLBlacklist* webGLBlacklist() { return s_webGLBlacklist; };
+    WEBCORE_EXPORT static LoadPolicy loadPolicyForPluginVersion(NSString *bundleIdentifier, NSString *bundleVersionString);
+    WEBCORE_EXPORT static bool isPluginUpdateAvailable(NSString *bundleIdentifier);
+
+    static std::unique_ptr<PluginBlocklist> create(NSDictionary *);
+    ~PluginBlocklist();
+
+    static NSArray *splitOSVersion(NSString *osVersion);
+
+    LoadPolicy loadPolicyForPlugin(NSString *bundleIdentifier, NSString *bundleVersionString) const;
+    bool isUpdateAvailable(NSString *bundleIdentifier) const;
 
 private:
+    PluginBlocklist(NSDictionary *bundleIDToMinimumSecureVersion, NSDictionary *bundleIDToMinimumCompatibleVersion, NSDictionary *bundleIDToBlockedVersions, NSSet *bundleIDsWithAvailableUpdates);
 
-    static NSDictionary *readBlacklistData();
-
-    static dispatch_queue_t s_queue;
-    static PluginBlacklist* s_pluginBlacklist;
-    static WebGLBlacklist* s_webGLBlacklist;
+    RetainPtr<NSDictionary> m_bundleIDToMinimumSecureVersion;
+    RetainPtr<NSDictionary> m_bundleIDToMinimumCompatibleVersion;
+    RetainPtr<NSDictionary> m_bundleIDToBlockedVersions;
+    RetainPtr<NSSet> m_bundleIDsWithAvailableUpdates;
 };
 
 }

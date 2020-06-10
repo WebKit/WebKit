@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
-class WebGLBlacklist {
+class WebGLBlocklist {
 public:
     enum BlockComparison {
         Equals,
@@ -46,8 +46,8 @@ public:
     WEBCORE_EXPORT static bool shouldBlockWebGL();
     WEBCORE_EXPORT static bool shouldSuggestBlockingWebGL();
 
-    static std::unique_ptr<WebGLBlacklist> create(NSDictionary *propertyList);
-    ~WebGLBlacklist();
+    static std::unique_ptr<WebGLBlocklist> create(NSDictionary *propertyList);
+    ~WebGLBlocklist();
 
     bool shouldBlock() const;
     bool shouldSuggestBlocking() const;
@@ -59,7 +59,7 @@ private:
         SuggestBlocking
     };
 
-    WebGLBlacklist(BlockCommand);
+    WebGLBlocklist(BlockCommand);
 
     BlockCommand m_command;
 };

@@ -24,88 +24,88 @@
  */
 
 #import "config.h"
-#import "BlacklistUpdater.h"
+#import "BlocklistUpdater.h"
 
 #if PLATFORM(MAC)
 
-#import "PluginBlacklist.h"
-#import "WebGLBlacklist.h"
+#import "PluginBlocklist.h"
+#import "WebGLBlocklist.h"
 #import <sys/stat.h>
 #import <sys/time.h>
 #import <wtf/RetainPtr.h>
 
-// The time after which we'll check the blacklist data.
-static time_t blacklistNextCheckTime;
+// The time after which we'll check the blocklist data.
+static time_t blocklistNextCheckTime;
 
-// The number of seconds before we'll check if the blacklist data has changed.
-const time_t blacklistCheckTimeInterval = 60 * 10;
+// The number of seconds before we'll check if the blocklist data has changed.
+const time_t blocklistCheckTimeInterval = 60 * 10;
 
-// The time when we last re-parsed the blacklist file.
-static time_t blacklistUpdateTime;
+// The time when we last re-parsed the blocklist file.
+static time_t blocklistUpdateTime;
 
 #if HAVE(READ_ONLY_SYSTEM_VOLUME)
-NSString * const blacklistPath = @"/Library/Apple/System/Library/CoreServices/XProtect.bundle/Contents/Resources/XProtect.meta.plist";
+NSString * const blocklistPath = @"/Library/Apple/System/Library/CoreServices/XProtect.bundle/Contents/Resources/XProtect.meta.plist";
 #else
-NSString * const blacklistPath = @"/System/Library/CoreServices/XProtect.bundle/Contents/Resources/XProtect.meta.plist";
+NSString * const blocklistPath = @"/System/Library/CoreServices/XProtect.bundle/Contents/Resources/XProtect.meta.plist";
 #endif
 
 namespace WebCore {
 
-dispatch_queue_t BlacklistUpdater::s_queue;
+dispatch_queue_t BlocklistUpdater::s_queue;
 
-PluginBlacklist* BlacklistUpdater::s_pluginBlacklist = nullptr;
-WebGLBlacklist* BlacklistUpdater::s_webGLBlacklist = nullptr;
+PluginBlocklist* BlocklistUpdater::s_pluginBlocklist = nullptr;
+WebGLBlocklist* BlocklistUpdater::s_webGLBlocklist = nullptr;
 
-NSDictionary * BlacklistUpdater::readBlacklistData()
+NSDictionary * BlocklistUpdater::readBlocklistData()
 {
-    NSData *data = [NSData dataWithContentsOfFile:blacklistPath];
+    NSData *data = [NSData dataWithContentsOfFile:blocklistPath];
     if (!data)
         return nil;
 
     return dynamic_objc_cast<NSDictionary>([NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:nullptr error:nullptr]);
 }
 
-void BlacklistUpdater::reloadIfNecessary()
+void BlocklistUpdater::reloadIfNecessary()
 {
     struct timeval timeVal;
     if (!gettimeofday(&timeVal, NULL)) {
-        if (timeVal.tv_sec < blacklistNextCheckTime)
+        if (timeVal.tv_sec < blocklistNextCheckTime)
             return;
     }
 
-    blacklistNextCheckTime = timeVal.tv_sec + blacklistCheckTimeInterval;
+    blocklistNextCheckTime = timeVal.tv_sec + blocklistCheckTimeInterval;
 
     struct stat statBuf;
-    if (stat([blacklistPath fileSystemRepresentation], &statBuf) == -1)
+    if (stat([blocklistPath fileSystemRepresentation], &statBuf) == -1)
         return;
 
-    if (statBuf.st_mtimespec.tv_sec == blacklistUpdateTime)
+    if (statBuf.st_mtimespec.tv_sec == blocklistUpdateTime)
         return;
-    NSDictionary *propertyList = readBlacklistData();
+    NSDictionary *propertyList = readBlocklistData();
     if (!propertyList)
         return;
 
-    if (s_pluginBlacklist) {
-        delete s_pluginBlacklist;
-        s_pluginBlacklist = 0;
+    if (s_pluginBlocklist) {
+        delete s_pluginBlocklist;
+        s_pluginBlocklist = 0;
     }
 
-    if (s_webGLBlacklist) {
-        delete s_webGLBlacklist;
-        s_webGLBlacklist = 0;
+    if (s_webGLBlocklist) {
+        delete s_webGLBlocklist;
+        s_webGLBlocklist = 0;
     }
 
-    s_pluginBlacklist = PluginBlacklist::create(propertyList).release();
-    s_webGLBlacklist = WebGLBlacklist::create(propertyList).release();
+    s_pluginBlocklist = PluginBlocklist::create(propertyList).release();
+    s_webGLBlocklist = WebGLBlocklist::create(propertyList).release();
 
-    blacklistUpdateTime = statBuf.st_mtimespec.tv_sec;
+    blocklistUpdateTime = statBuf.st_mtimespec.tv_sec;
 }
 
-void BlacklistUpdater::initializeQueue()
+void BlocklistUpdater::initializeQueue()
 {
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        s_queue = dispatch_queue_create("com.apple.WebKit.Blacklist", 0);
+        s_queue = dispatch_queue_create("com.apple.WebKit.Blocklist", 0);
     });
 }
 

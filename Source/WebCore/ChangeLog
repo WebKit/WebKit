@@ -1,3 +1,41 @@
+2020-06-09  Dean Jackson  <dino@apple.com>
+
+        Stop using discriminatory names for WebGL and Plugin blocking
+        https://bugs.webkit.org/show_bug.cgi?id=213000
+
+        Reviewed by Simon Fraser.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/BlocklistUpdater.h: Renamed from Source/WebCore/platform/mac/BlacklistUpdater.h.
+        (WebCore::BlocklistUpdater::pluginBlocklist):
+        (WebCore::BlocklistUpdater::webGLBlocklist):
+        * platform/mac/BlocklistUpdater.mm: Renamed from Source/WebCore/platform/mac/BlacklistUpdater.mm.
+        (WebCore::BlocklistUpdater::readBlocklistData):
+        (WebCore::BlocklistUpdater::reloadIfNecessary):
+        (WebCore::BlocklistUpdater::initializeQueue):
+        * platform/mac/PluginBlocklist.h: Renamed from Source/WebCore/platform/mac/PluginBlacklist.h.
+        * platform/mac/PluginBlocklist.mm: Renamed from Source/WebCore/platform/mac/PluginBlacklist.mm.
+        (WebCore::PluginBlocklist::loadPolicyForPluginVersion):
+        (WebCore::PluginBlocklist::isPluginUpdateAvailable):
+        (WebCore::PluginBlocklist::create):
+        (WebCore::PluginBlocklist::~PluginBlocklist):
+        (WebCore::PluginBlocklist::splitOSVersion):
+        (WebCore::PluginBlocklist::loadPolicyForPlugin const):
+        (WebCore::PluginBlocklist::isUpdateAvailable const):
+        (WebCore::PluginBlocklist::PluginBlocklist):
+        * platform/mac/WebGLBlocklist.h: Renamed from Source/WebCore/platform/mac/WebGLBlacklist.h.
+        * platform/mac/WebGLBlocklist.mm: Renamed from Source/WebCore/platform/mac/WebGLBlacklist.mm.
+        (WebCore::buildInfoFromOSBuildString):
+        (WebCore::WebGLBlocklist::shouldBlockWebGL):
+        (WebCore::WebGLBlocklist::shouldSuggestBlockingWebGL):
+        (WebCore::matchesBuildInfo):
+        (WebCore::WebGLBlocklist::create):
+        (WebCore::WebGLBlocklist::shouldBlock const):
+        (WebCore::WebGLBlocklist::shouldSuggestBlocking const):
+        (WebCore::WebGLBlocklist::WebGLBlocklist):
+        (WebCore::WebGLBlocklist::~WebGLBlocklist):
+
 2020-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Logging and tree dumping crash fix

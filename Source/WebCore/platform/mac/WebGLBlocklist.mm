@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
-#import "WebGLBlacklist.h"
+#import "WebGLBlocklist.h"
 
 #if PLATFORM(MAC)
 
-#import "BlacklistUpdater.h"
+#import "BlocklistUpdater.h"
 #import <OpenGL/OpenGL.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 
@@ -81,7 +81,7 @@ static OSBuildInfo buildInfoFromOSBuildString(NSString *buildString)
     NSArray *matches = [regex matchesInString:buildString options:0 range:NSMakeRange(0, [buildString length])];
     if (!matches || matches.count != 1) {
 #ifndef NDEBUG
-        NSLog(@"WebGLBlacklist could not parse OSBuild entry: %@", buildString);
+        NSLog(@"WebGLBlocklist could not parse OSBuild entry: %@", buildString);
 #endif
         return OSBuildInfo();
     }
@@ -90,7 +90,7 @@ static OSBuildInfo buildInfoFromOSBuildString(NSString *buildString)
 
     if (matchResult.numberOfRanges != 4) {
 #ifndef NDEBUG
-        NSLog(@"WebGLBlacklist could not parse OSBuild entry: %@", buildString);
+        NSLog(@"WebGLBlocklist could not parse OSBuild entry: %@", buildString);
 #endif
         return OSBuildInfo();
     }
@@ -102,33 +102,33 @@ static OSBuildInfo buildInfoFromOSBuildString(NSString *buildString)
     return OSBuildInfo(majorVersion, minorVersion, buildVersion);
 }
 
-bool WebGLBlacklist::shouldBlockWebGL()
+bool WebGLBlocklist::shouldBlockWebGL()
 {
-    BlacklistUpdater::initializeQueue();
+    BlocklistUpdater::initializeQueue();
 
     __block bool shouldBlock = false;
-    dispatch_sync(BlacklistUpdater::queue(), ^{
-        BlacklistUpdater::reloadIfNecessary();
+    dispatch_sync(BlocklistUpdater::queue(), ^{
+        BlocklistUpdater::reloadIfNecessary();
 
-        WebGLBlacklist* webGLBlacklist = BlacklistUpdater::webGLBlacklist();
-        if (webGLBlacklist)
-            shouldBlock = webGLBlacklist->shouldBlock();
+        WebGLBlocklist* webGLBlocklist = BlocklistUpdater::webGLBlocklist();
+        if (webGLBlocklist)
+            shouldBlock = webGLBlocklist->shouldBlock();
     });
 
     return shouldBlock;
 }
 
-bool WebGLBlacklist::shouldSuggestBlockingWebGL()
+bool WebGLBlocklist::shouldSuggestBlockingWebGL()
 {
-    BlacklistUpdater::initializeQueue();
+    BlocklistUpdater::initializeQueue();
 
     __block bool shouldSuggestBlocking = false;
-    dispatch_sync(BlacklistUpdater::queue(), ^{
-        BlacklistUpdater::reloadIfNecessary();
+    dispatch_sync(BlocklistUpdater::queue(), ^{
+        BlocklistUpdater::reloadIfNecessary();
 
-        WebGLBlacklist* webGLBlacklist = BlacklistUpdater::webGLBlacklist();
-        if (webGLBlacklist)
-            shouldSuggestBlocking = webGLBlacklist->shouldSuggestBlocking();
+        WebGLBlocklist* webGLBlocklist = BlocklistUpdater::webGLBlocklist();
+        if (webGLBlocklist)
+            shouldSuggestBlocking = webGLBlocklist->shouldSuggestBlocking();
     });
 
     return shouldSuggestBlocking;
@@ -154,19 +154,19 @@ static GLint gpuMaskFromString(NSString *input)
     return static_cast<GLint>(maskValue & (kCGLRendererIDMatchingMask | 0xFF));
 }
 
-static bool matchesBuildInfo(OSBuildInfo machineInfo, OSBuildInfo blockInfo, WebGLBlacklist::BlockComparison comparison)
+static bool matchesBuildInfo(OSBuildInfo machineInfo, OSBuildInfo blockInfo, WebGLBlocklist::BlockComparison comparison)
 {
     switch (comparison) {
-    case WebGLBlacklist::BlockComparison::Equals:
+    case WebGLBlocklist::BlockComparison::Equals:
         return machineInfo == blockInfo;
-    case WebGLBlacklist::BlockComparison::LessThan:
+    case WebGLBlocklist::BlockComparison::LessThan:
         return machineInfo < blockInfo;
-    case WebGLBlacklist::BlockComparison::LessThanEquals:
+    case WebGLBlocklist::BlockComparison::LessThanEquals:
         return machineInfo <= blockInfo;
     }
 }
 
-std::unique_ptr<WebGLBlacklist> WebGLBlacklist::create(NSDictionary *propertyList)
+std::unique_ptr<WebGLBlocklist> WebGLBlocklist::create(NSDictionary *propertyList)
 {
     CFDictionaryRef systemVersionDictionary = _CFCopySystemVersionDictionary();
     CFStringRef osBuild = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary, _kCFSystemVersionBuildVersionKey));
@@ -176,7 +176,7 @@ std::unique_ptr<WebGLBlacklist> WebGLBlacklist::create(NSDictionary *propertyLis
     if (!buildInfo.major)
         return nullptr;
 
-    NSArray *blockEntries = [propertyList objectForKey:@"WebGLBlacklist"];
+    NSArray *blockEntries = [propertyList objectForKey:@"WebGLBlocklist"];
 
     if (![blockEntries isKindOfClass:[NSArray class]] || !blockEntries.count)
         return nullptr;
@@ -237,25 +237,25 @@ std::unique_ptr<WebGLBlacklist> WebGLBlacklist::create(NSDictionary *propertyLis
     if (!supportsSeparateAddressSpace && globalCommand == BlockCommand::Allow)
         globalCommand = BlockCommand::SuggestBlocking;
 
-    return std::unique_ptr<WebGLBlacklist>(new WebGLBlacklist(globalCommand));
+    return std::unique_ptr<WebGLBlocklist>(new WebGLBlocklist(globalCommand));
 }
 
-bool WebGLBlacklist::shouldBlock() const
+bool WebGLBlocklist::shouldBlock() const
 {
     return m_command == BlockCommand::Block;
 }
 
-bool WebGLBlacklist::shouldSuggestBlocking() const
+bool WebGLBlocklist::shouldSuggestBlocking() const
 {
     return m_command == BlockCommand::SuggestBlocking;
 }
 
-WebGLBlacklist::WebGLBlacklist(BlockCommand command)
+WebGLBlocklist::WebGLBlocklist(BlockCommand command)
     : m_command(command)
 {
 }
 
-WebGLBlacklist::~WebGLBlacklist()
+WebGLBlocklist::~WebGLBlocklist()
 {
 }
 

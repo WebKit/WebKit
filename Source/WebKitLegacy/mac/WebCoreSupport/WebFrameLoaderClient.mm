@@ -108,7 +108,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
-#import <WebCore/PluginBlacklist.h>
+#import <WebCore/PluginBlocklist.h>
 #import <WebCore/PluginViewBase.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
@@ -119,7 +119,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SubresourceLoader.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebCore/WebGLBlacklist.h>
+#import <WebCore/WebGLBlocklist.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/Widget.h>
 #import <WebKitLegacy/DOMElement.h>
@@ -1881,8 +1881,8 @@ private:
 static bool shouldBlockPlugin(WebBasePluginPackage *pluginPackage)
 {
 #if PLATFORM(MAC)
-    auto loadPolicy = WebCore::PluginBlacklist::loadPolicyForPluginVersion(pluginPackage.bundleIdentifier, pluginPackage.bundleVersion);
-    return loadPolicy == WebCore::PluginBlacklist::LoadPolicy::BlockedForSecurity || loadPolicy == WebCore::PluginBlacklist::LoadPolicy::BlockedForCompatibility;
+    auto loadPolicy = WebCore::PluginBlocklist::loadPolicyForPluginVersion(pluginPackage.bundleIdentifier, pluginPackage.bundleVersion);
+    return loadPolicy == WebCore::PluginBlocklist::LoadPolicy::BlockedForSecurity || loadPolicy == WebCore::PluginBlocklist::LoadPolicy::BlockedForCompatibility;
 #else
     UNUSED_PARAM(pluginPackage);
     return false;
@@ -2104,7 +2104,7 @@ String WebFrameLoaderClient::overrideMediaType() const
 static bool shouldBlockWebGL()
 {
 #if PLATFORM(MAC)
-    return WebCore::WebGLBlacklist::shouldBlockWebGL();
+    return WebCore::WebGLBlocklist::shouldBlockWebGL();
 #else
     return false;
 #endif

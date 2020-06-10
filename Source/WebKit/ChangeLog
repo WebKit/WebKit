@@ -1,3 +1,19 @@
+2020-06-09  Dean Jackson  <dino@apple.com>
+
+        Stop using discriminatory names for WebGL and Plugin blocking
+        https://bugs.webkit.org/show_bug.cgi?id=213000
+
+        Reviewed by Simon Fraser.
+
+        * Shared/Plugins/Netscape/mac/PluginInformationMac.mm:
+        (WebKit::getPlatformPluginModuleInformation):
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextIsPlugInUpdateAvailable):
+        (WKContextShouldBlockWebGL):
+        (WKContextShouldSuggestBlockWebGL):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::defaultLoadPolicyForPlugin):
+
 2020-06-09  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Element Send Keys can hang when an automation window becomes unfocused

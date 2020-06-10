@@ -448,7 +448,7 @@ platform/ios/wak/WebCoreThreadSystemInterface.cpp
 platform/ios/wak/WKGraphics.mm
 platform/ios/wak/WKView.mm
 
-platform/mac/BlacklistUpdater.mm
+platform/mac/BlocklistUpdater.mm
 platform/mac/CursorMac.mm @no-unify
 platform/mac/KeyEventMac.mm @no-unify
 platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
@@ -463,7 +463,7 @@ platform/mac/PlatformEventFactoryMac.mm
 platform/mac/PlatformPasteboardMac.mm
 platform/mac/PlatformScreenMac.mm
 platform/mac/PlatformSpeechSynthesizerMac.mm
-platform/mac/PluginBlacklist.mm
+platform/mac/PluginBlocklist.mm
 platform/mac/PublicSuffixMac.mm
 platform/mac/PowerObserverMac.cpp
 platform/mac/RemoteCommandListenerMac.mm
@@ -486,7 +486,7 @@ platform/mac/WebCoreFullScreenWindow.mm
 platform/mac/WebCoreNSFontManagerExtras.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
-platform/mac/WebGLBlacklist.mm
+platform/mac/WebGLBlocklist.mm
 platform/mac/WebNSAttributedStringExtras.mm
 platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm

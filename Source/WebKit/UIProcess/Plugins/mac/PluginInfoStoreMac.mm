@@ -31,7 +31,7 @@
 #import "Logging.h"
 #import "NetscapePluginModule.h"
 #import "SandboxUtilities.h"
-#import <WebCore/PluginBlacklist.h>
+#import <WebCore/PluginBlocklist.h>
 #import <pwd.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
@@ -113,12 +113,12 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
 
 PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo& plugin)
 {
-    switch (PluginBlacklist::loadPolicyForPluginVersion(plugin.bundleIdentifier, plugin.versionString)) {
-    case PluginBlacklist::LoadPolicy::LoadNormally:
+    switch (PluginBlocklist::loadPolicyForPluginVersion(plugin.bundleIdentifier, plugin.versionString)) {
+    case PluginBlocklist::LoadPolicy::LoadNormally:
         return PluginModuleLoadNormally;
-    case PluginBlacklist::LoadPolicy::BlockedForSecurity:
+    case PluginBlocklist::LoadPolicy::BlockedForSecurity:
         return PluginModuleBlockedForSecurity;
-    case PluginBlacklist::LoadPolicy::BlockedForCompatibility:
+    case PluginBlocklist::LoadPolicy::BlockedForCompatibility:
         return PluginModuleBlockedForCompatibility;
     }
 }

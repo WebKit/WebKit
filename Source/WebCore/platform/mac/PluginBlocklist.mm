@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,55 +24,55 @@
  */
 
 #import "config.h"
-#import "PluginBlacklist.h"
+#import "PluginBlocklist.h"
 
 #if PLATFORM(MAC)
 
-#import "BlacklistUpdater.h"
+#import "BlocklistUpdater.h"
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <sys/stat.h>
 #import <sys/time.h>
 
 namespace WebCore {
 
-PluginBlacklist::LoadPolicy PluginBlacklist::loadPolicyForPluginVersion(NSString *bundleIdentifier, NSString *bundleVersionString)
+PluginBlocklist::LoadPolicy PluginBlocklist::loadPolicyForPluginVersion(NSString *bundleIdentifier, NSString *bundleVersionString)
 {
-    BlacklistUpdater::initializeQueue();
+    BlocklistUpdater::initializeQueue();
 
-    __block PluginBlacklist::LoadPolicy loadPolicy = LoadPolicy::LoadNormally;
-    dispatch_sync(BlacklistUpdater::queue(), ^{
-        BlacklistUpdater::reloadIfNecessary();
+    __block PluginBlocklist::LoadPolicy loadPolicy = LoadPolicy::LoadNormally;
+    dispatch_sync(BlocklistUpdater::queue(), ^{
+        BlocklistUpdater::reloadIfNecessary();
 
-        PluginBlacklist* pluginBlacklist = BlacklistUpdater::pluginBlacklist();
-        if (pluginBlacklist)
-            loadPolicy = pluginBlacklist->loadPolicyForPlugin(bundleIdentifier, bundleVersionString);
+        PluginBlocklist* pluginBlocklist = BlocklistUpdater::pluginBlocklist();
+        if (pluginBlocklist)
+            loadPolicy = pluginBlocklist->loadPolicyForPlugin(bundleIdentifier, bundleVersionString);
     });
 
     return loadPolicy;
 }
 
-bool PluginBlacklist::isPluginUpdateAvailable(NSString *bundleIdentifier)
+bool PluginBlocklist::isPluginUpdateAvailable(NSString *bundleIdentifier)
 {
-    BlacklistUpdater::initializeQueue();
+    BlocklistUpdater::initializeQueue();
 
     __block bool isPluginUpdateAvailable = false;
-    dispatch_sync(BlacklistUpdater::queue(), ^{
-        BlacklistUpdater::reloadIfNecessary();
+    dispatch_sync(BlocklistUpdater::queue(), ^{
+        BlocklistUpdater::reloadIfNecessary();
 
-        PluginBlacklist* pluginBlacklist = BlacklistUpdater::pluginBlacklist();
-        if (pluginBlacklist)
-            isPluginUpdateAvailable = pluginBlacklist->isUpdateAvailable(bundleIdentifier);
+        PluginBlocklist* pluginBlocklist = BlocklistUpdater::pluginBlocklist();
+        if (pluginBlocklist)
+            isPluginUpdateAvailable = pluginBlocklist->isUpdateAvailable(bundleIdentifier);
     });
 
     return isPluginUpdateAvailable;
 }
 
-std::unique_ptr<PluginBlacklist> PluginBlacklist::create(NSDictionary *propertyList)
+std::unique_ptr<PluginBlocklist> PluginBlocklist::create(NSDictionary *propertyList)
 {
     CFDictionaryRef systemVersionDictionary = _CFCopySystemVersionDictionary();
     CFStringRef osVersion = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary, _kCFSystemVersionProductVersionKey));
 
-    NSDictionary *dictionary = [propertyList objectForKey:@"PlugInBlacklist"];
+    NSDictionary *dictionary = [propertyList objectForKey:@"PlugInBlocklist"];
 
     NSMutableDictionary *bundleIDToMinimumSecureVersion = [NSMutableDictionary dictionary];
     NSMutableDictionary *bundleIDToMinimumCompatibleVersion = [NSMutableDictionary dictionary];
@@ -114,14 +114,14 @@ std::unique_ptr<PluginBlacklist> PluginBlacklist::create(NSDictionary *propertyL
 
     CFRelease(systemVersionDictionary);
 
-    return std::unique_ptr<PluginBlacklist>(new PluginBlacklist(bundleIDToMinimumSecureVersion, bundleIDToMinimumCompatibleVersion, bundleIDToBlockedVersions, bundleIDsWithAvailableUpdates));
+    return std::unique_ptr<PluginBlocklist>(new PluginBlocklist(bundleIDToMinimumSecureVersion, bundleIDToMinimumCompatibleVersion, bundleIDToBlockedVersions, bundleIDsWithAvailableUpdates));
 }
 
-PluginBlacklist::~PluginBlacklist()
+PluginBlocklist::~PluginBlocklist()
 {
 }
 
-NSArray *PluginBlacklist::splitOSVersion(NSString *osVersion)
+NSArray *PluginBlocklist::splitOSVersion(NSString *osVersion)
 {
     NSArray *components = [osVersion componentsSeparatedByString:@"."];
 
@@ -137,7 +137,7 @@ NSArray *PluginBlacklist::splitOSVersion(NSString *osVersion)
 }
 
 
-PluginBlacklist::LoadPolicy PluginBlacklist::loadPolicyForPlugin(NSString *bundleIdentifier, NSString *bundleVersionString) const
+PluginBlocklist::LoadPolicy PluginBlocklist::loadPolicyForPlugin(NSString *bundleIdentifier, NSString *bundleVersionString) const
 {
     if (!bundleIdentifier || !bundleVersionString)
         return LoadPolicy::LoadNormally;
@@ -163,12 +163,12 @@ PluginBlacklist::LoadPolicy PluginBlacklist::loadPolicyForPlugin(NSString *bundl
     return LoadPolicy::LoadNormally;
 }
 
-bool PluginBlacklist::isUpdateAvailable(NSString *bundleIdentifier) const
+bool PluginBlocklist::isUpdateAvailable(NSString *bundleIdentifier) const
 {
     return [m_bundleIDsWithAvailableUpdates containsObject:bundleIdentifier];
 }
 
-PluginBlacklist::PluginBlacklist(NSDictionary *bundleIDToMinimumSecureVersion, NSDictionary *bundleIDToMinimumCompatibleVersion, NSDictionary *bundleIDToBlockedVersions, NSSet *bundleIDsWithAvailableUpdates)
+PluginBlocklist::PluginBlocklist(NSDictionary *bundleIDToMinimumSecureVersion, NSDictionary *bundleIDToMinimumCompatibleVersion, NSDictionary *bundleIDToBlockedVersions, NSSet *bundleIDsWithAvailableUpdates)
     : m_bundleIDToMinimumSecureVersion { adoptNS([bundleIDToMinimumSecureVersion copy]) }
     , m_bundleIDToMinimumCompatibleVersion { adoptNS([bundleIDToMinimumCompatibleVersion copy]) }
     , m_bundleIDToBlockedVersions { adoptNS([bundleIDToBlockedVersions copy]) }

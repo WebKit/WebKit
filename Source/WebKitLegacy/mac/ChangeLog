@@ -1,3 +1,14 @@
+2020-06-09  Dean Jackson  <dino@apple.com>
+
+        Stop using discriminatory names for WebGL and Plugin blocking
+        https://bugs.webkit.org/show_bug.cgi?id=213000
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (shouldBlockPlugin):
+        (shouldBlockWebGL):
+
 2020-06-08  Jonathan Bedard  <jbedard@apple.com>
 
         WebKitLegacy: Exclude NSURLConnectionSPI.h from watchOS
