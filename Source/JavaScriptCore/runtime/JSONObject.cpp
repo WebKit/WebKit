@@ -34,6 +34,7 @@
 #include "LiteralParser.h"
 #include "ObjectConstructor.h"
 #include "PropertyNameArray.h"
+#include "VMInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

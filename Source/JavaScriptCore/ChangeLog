@@ -1,3 +1,12 @@
+2020-06-11  Paulo Matos  <pmatos@igalia.com>
+
+        Add missing include to JSONObject.cpp - non-unified build
+        https://bugs.webkit.org/show_bug.cgi?id=213073
+
+        Reviewed by Adrian Perez de Castro.
+
+        * runtime/JSONObject.cpp:
+
 2020-06-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r260697): [Intl] "missing script" locales like zh-TW are no longer mapped
