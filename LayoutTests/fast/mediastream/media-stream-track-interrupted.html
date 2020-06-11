@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enableCaptureAudioInUIProcess=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,14 +8,29 @@
     <script src="../../resources/testharnessreport.js"></script>
  </head>
 <body>
-    <video width=320 height=240></video>
-
     <script>
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+        const track = stream.getAudioTracks()[0];
+        if (!window.internals)
+            return;
 
-    let video;
+        let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
+        internals.setMediaStreamSourceInterrupted(track, true);
+        await promise;
 
-   if (window.testRunner)
-        testRunner.setUserMediaPermission(true);
+        assert_true(track.muted, "track is muted");
+        assert_true(internals.isMediaStreamSourceInterrupted(track), "source is interrupted");
+
+        promise = new Promise((resolve, reject) => { track.onunmute = resolve; setTimeout(() => reject("no unmute"), 5000) });
+        internals.setMediaStreamSourceInterrupted(track, false);
+        await promise;
+
+        assert_false(track.muted, "track is no longer muted");
+        assert_false(internals.isMediaStreamSourceInterrupted(track), "source is not interrupted");
+
+        track.stop();
+    }, "Suspend/resume audio track");
 
     function waitForPageStateChange(numberOfTries, originalState, resolve, reject)
     {
@@ -79,7 +95,6 @@
                 testTrack(stream.getAudioTracks()[0], "Interrupt audio track");
             });
     }, "Create stream");
-
 
     </script>
 
