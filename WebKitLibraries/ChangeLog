@@ -1,3 +1,14 @@
+2020-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        Catalyst WebKit apps continue to play audio after quitting (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=212981
+        <rdar://problem/57089471>
+
+        Unreviewed build fix.
+
+        * WebKitPrivateFrameworkStubs/appletvos/13/RunningBoardServices.framework/RunningBoardServices.tbd:
+        * WebKitPrivateFrameworkStubs/watchos/6/RunningBoardServices.framework/RunningBoardServices.tbd:
+
 2020-06-10  Jer Noble  <jer.noble@apple.com>
 
         Catalyst WebKit apps continue to play audio after quitting
