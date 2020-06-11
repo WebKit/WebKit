@@ -4948,6 +4948,11 @@ bool Internals::isMediaStreamSourceInterrupted(MediaStreamTrack& track) const
     return track.source().interrupted();
 }
 
+bool Internals::isMediaStreamSourceEnded(MediaStreamTrack& track) const
+{
+    return track.source().isEnded();
+}
+
 bool Internals::isMockRealtimeMediaSourceCenterEnabled()
 {
     return MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
