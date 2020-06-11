@@ -63,7 +63,8 @@ addEventListener("load", async function() {
     await UIHelper.activateElementAndWaitForInputSession(button);
     selectionRectsBefore = await waitForSelectionRectsToChange([]);
 
-    await UIHelper.immediateScrollElementAtContentPointToOffset(150, 100, 0, 50);
+    const rect = editor.getBoundingClientRect();
+    await UIHelper.immediateScrollElementAtContentPointToOffset(rect.left + 40, rect.top + 40, 0, 50);
     selectionRectsAfter = await waitForSelectionRectsToChange(selectionRectsBefore);
 
     shouldBe("selectionRectsBefore[0].top", "109");

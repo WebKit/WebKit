@@ -1,3 +1,21 @@
+2020-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/selection/ios/update-selection-after-overflow-scroll.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=213082
+        <rdar://problem/64228007>
+
+        Reviewed by Megan Gardner.
+
+        This test makes a programmatic selection, and then scrolls an overflow area with accelerated scrolling by using
+        `UIHelper.immediateScrollElementAtContentPointToOffset()`. This helper method hit-tests for a subscrollable
+        region, and then uses platform API to change the content offset. However, after timing changes in the system,
+        this hit-testing now fails because it ends up finding the callout menu that shows up after making the text
+        selection, and so scrolling fails.
+
+        Fix this by using (40, 40) instead of (150, 100) when hit-testing the child scroll view when scrolling.
+
+        * editing/selection/ios/update-selection-after-overflow-scroll.html:
+
 2020-06-11  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Release Assert @ WebCore::RenderTreeBuilder::RenderTreeBuilder
