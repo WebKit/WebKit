@@ -1,3 +1,24 @@
+2020-06-11  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Setting the style at the last style change event to null should not create an ElementAnimationRareData object
+        https://bugs.webkit.org/show_bug.cgi?id=213070
+        <rdar://problem/63841893>
+
+        Reviewed by Tim Horton.
+
+        In r262154 we added code that records the pre-animation style for a given element in
+        Style::TreeResolver::createAnimatedElementUpdate(), which is in Web Animations spec
+        parlance the style at the last style change event. This style is set on the backing
+        ElementAnimationRareData object for the given Element. For any element that did not
+        actually have any animations, we would set this style to null, but the function on
+        Element acting as a go-between would always create the backing ElementAnimationRareData
+        even though it would set a null value. We now only creaste the ElementAnimationRareData
+        object if there is a value to be stored, which fixes a performance regression in the
+        Speedometer2 test.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setLastStyleChangeEventStyle):
+
 2020-06-10  Beth Dakin  <bdakin@apple.com>
 
         Replace instances of blacklist in WebCore with blocklist

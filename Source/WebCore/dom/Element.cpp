@@ -3909,7 +3909,10 @@ const RenderStyle* Element::lastStyleChangeEventStyle() const
 
 void Element::setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style)
 {
-    ensureAnimationRareData().setLastStyleChangeEventStyle(WTFMove(style));
+    if (auto* animationData = animationRareData())
+        animationData->setLastStyleChangeEventStyle(WTFMove(style));
+    else if (style)
+        ensureAnimationRareData().setLastStyleChangeEventStyle(WTFMove(style));
 }
 
 #if ENABLE(RESIZE_OBSERVER)
