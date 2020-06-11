@@ -3605,6 +3605,7 @@ fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFail
 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 fast/flexbox/aspect-ratio-intrinsic-adjust.html [ ImageOnlyFailure ]
 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+fast/flexbox/line-clamp-with-anchor-content-only.html [ ImageOnlyFailure ]
 fast/forms/baseline-of-number-inputs.html [ ImageOnlyFailure ]
 fast/images/image-subsampling.html [ ImageOnlyFailure ]
 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]

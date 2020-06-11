@@ -1,3 +1,19 @@
+2020-06-10  Zalan Bujtas  <zalan@apple.com>
+
+        [Line clamp] Do not apply the special anchor handling when the anchor content is visible after clamping
+        https://bugs.webkit.org/show_bug.cgi?id=213052
+        <rdar://problem/59739131>
+
+        Reviewed by Simon Fraser.
+
+        Line clamping tries to preserve the anchor text if it is at the bottom of the paragraph to support cases like "... Read more", where the "read more" is an actual link.
+        This patch makes sure that we only apply the special case handling if the anchor text get clamped.
+
+        Test: fast/flexbox/line-clamp-with-anchor-content-only.html
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+
 2020-06-10  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] CRASH: imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing

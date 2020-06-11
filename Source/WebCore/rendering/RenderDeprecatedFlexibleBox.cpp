@@ -987,7 +987,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         RootInlineBox* lastVisibleLine = blockChild.lineAtIndex(numVisibleLines - 1);
-        if (!lastVisibleLine)
+        if (!lastVisibleLine || !lastVisibleLine->firstChild())
             continue;
 
         const UChar ellipsisAndSpace[2] = { horizontalEllipsis, ' ' };
@@ -999,7 +999,9 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         // Get ellipsis width, and if the last child is an anchor, it will go after the ellipsis, so add in a space and the anchor width too
         LayoutUnit totalWidth;
         InlineBox* anchorBox = lastLine->lastChild();
-        if (anchorBox && anchorBox->renderer().style().isLink())
+        auto& anchorRenderer = anchorBox->renderer();
+        auto& lastVisibleRenderer = lastVisibleLine->firstChild()->renderer();
+        if (anchorBox && anchorBox->renderer().style().isLink() && &lastVisibleRenderer != &anchorRenderer)
             totalWidth = anchorBox->logicalWidth() + font.width(constructTextRun(ellipsisAndSpace, 2, style()));
         else {
             anchorBox = nullptr;
