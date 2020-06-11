@@ -104,22 +104,39 @@ GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHan
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlerCallSiteIndex)
     : MarkingGCAwareJITStubRoutine(code, vm, owner, cells, WTFMove(callLinkInfos))
     , m_codeBlockWithExceptionHandler(codeBlockForExceptionHandlers)
+#if ENABLE(DFG_JIT)
+    , m_codeOriginPool(&m_codeBlockWithExceptionHandler->codeOrigins())
+#endif
     , m_exceptionHandlerCallSiteIndex(exceptionHandlerCallSiteIndex)
 {
     RELEASE_ASSERT(m_codeBlockWithExceptionHandler);
     ASSERT(!!m_codeBlockWithExceptionHandler->handlerForIndex(exceptionHandlerCallSiteIndex.bits()));
 }
 
+GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHandler()
+{
+#if ENABLE(DFG_JIT)
+    // We delay deallocation of m_exceptionHandlerCallSiteIndex until GCAwareJITStubRoutineWithExceptionHandler gets destroyed.
+    // This means that CallSiteIndex can be reserved correctly so long as the code owned by GCAwareJITStubRoutineWithExceptionHandler is on the stack.
+    // This is important since CallSite can be queried so long as this code is on the stack: StackVisitor can retreive CallSiteIndex from the stack.
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    if (m_codeOriginPool)
+        m_codeOriginPool->removeDisposableCallSiteIndex(m_exceptionHandlerCallSiteIndex);
+#endif
+}
+
 void GCAwareJITStubRoutineWithExceptionHandler::aboutToDie()
 {
     m_codeBlockWithExceptionHandler = nullptr;
+#if ENABLE(DFG_JIT)
+    m_codeOriginPool = nullptr;
+#endif
 }
 
 void GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount()
 {
 #if ENABLE(DFG_JIT)
     if (m_codeBlockWithExceptionHandler) {
-        m_codeBlockWithExceptionHandler->jitCode()->dfgCommon()->removeDisposableCallSiteIndex(m_exceptionHandlerCallSiteIndex);
         m_codeBlockWithExceptionHandler->removeExceptionHandlerForCallSite(m_exceptionHandlerCallSiteIndex);
         m_codeBlockWithExceptionHandler = nullptr;
     }

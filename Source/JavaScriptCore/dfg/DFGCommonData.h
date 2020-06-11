@@ -30,6 +30,7 @@
 #include "CodeBlockJettisoningWatchpoint.h"
 #include "DFGAdaptiveInferredPropertyValueWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
+#include "DFGCodeOriginPool.h"
 #include "DFGJumpReplacement.h"
 #include "DFGOSREntry.h"
 #include "InlineCallFrameSet.h"
@@ -73,20 +74,12 @@ class CommonData {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
     CommonData()
-        : isStillValid(true)
-        , frameRegisterCount(std::numeric_limits<unsigned>::max())
-        , requiredRegisterCountForExit(std::numeric_limits<unsigned>::max())
+        : codeOrigins(CodeOriginPool::create())
     { }
     ~CommonData();
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
-    CallSiteIndex addCodeOrigin(CodeOrigin);
-    CallSiteIndex addUniqueCallSiteIndex(CodeOrigin);
-    CallSiteIndex lastCallSite() const;
 
-    DisposableCallSiteIndex addDisposableCallSiteIndex(CodeOrigin);
-    void removeDisposableCallSiteIndex(DisposableCallSiteIndex);
-    
     void shrinkToFit();
     
     bool invalidate(); // Returns true if we did invalidate, or false if the code block was already invalidated.
@@ -120,7 +113,7 @@ public:
     void clearWatchpoints();
 
     RefPtr<InlineCallFrameSet> inlineCallFrames;
-    Vector<CodeOrigin, 0, UnsafeVectorOverflow> codeOrigins;
+    Ref<CodeOriginPool> codeOrigins;
     
     Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
@@ -137,19 +130,15 @@ public:
     RefPtr<Profiler::Compilation> compilation;
     bool livenessHasBeenProved; // Initialized and used on every GC.
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
-    bool isStillValid;
+    bool isStillValid { true };
     bool hasVMTrapsBreakpointsInstalled { false };
     
 #if USE(JSVALUE32_64)
     std::unique_ptr<Bag<double>> doubleConstants;
 #endif
     
-    unsigned frameRegisterCount;
-    unsigned requiredRegisterCountForExit;
-
-private:
-    HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> callSiteIndexFreeList;
-
+    unsigned frameRegisterCount { std::numeric_limits<unsigned>::max() };
+    unsigned requiredRegisterCountForExit { std::numeric_limits<unsigned>::max() };
 };
 
 CodeBlock* codeBlockForVMTrapPC(void* pc);

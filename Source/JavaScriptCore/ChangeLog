@@ -1,3 +1,87 @@
+2020-06-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Return DisposableCallSiteIndex when destroying GCAwareJITStubRoutineWithExceptionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=213069
+        <rdar://problem/64205186>
+
+        Reviewed by Saam Barati.
+
+        Inside GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount, we are returning DisposableCallSiteIndex to freelist.
+        However, GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount can be called even if the code of GCAwareJITStubRoutineWithExceptionHandler is
+        on the stack. Let's consider the following scenario.
+
+            1. Execute GCAwareJITStubRoutineWithExceptionHandler's code. Set CallSiteIndex to the stack.
+            2. Execute more code. (1)'s GCAwareJITStubRoutineWithExceptionHandler's code is on the stack.
+            3. (1)'s GCAwareJITStubRoutineWithExceptionHandler's refcount becomes zero.
+            4. CallSiteIndex of GCAwareJITStubRoutineWithExceptionHandler is returned.
+            5. Execute StackVisitor to construct frames. But we cannot find CodeOrigin corresponding to CallSiteIndex stored in (1) since it is already returned.
+
+        DisposableCallSiteIndex should be returned after ensuring that GCAwareJITStubRoutineWithExceptionHandler's code is not on the stack. Detecting this is the functionality
+        what GCAwareJITStubRoutineWithExceptionHandler can offer. It is destroyed after ensuring that GCAwareJITStubRoutineWithExceptionHandler's code is not on the stack.
+
+        This patch delays DisposableCallSiteIndex returning until we destroy owner GCAwareJITStubRoutineWithExceptionHandler. But it is possible that CodeBlock* corresponding to
+        GCAwareJITStubRoutineWithExceptionHandler is already destroyed. To avoid this condition, we extract CodeOrigins vector as Ref<DFG::CodeOriginPool> and keep it alive from
+        GCAwareJITStubRoutineWithExceptionHandler too. And since CodeOrigin addition / removal happens only from the main thread after finishing the compilation, and
+        GCAwareJITStubRoutineWithExceptionHandler's destructor is called from the Heap's finalizer, which must be executed from the main thread, we can just modify it without a lock.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::newExceptionHandlingCallSiteIndex):
+        (JSC::CodeBlock::codeOrigins):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::codeOrigin):
+        * dfg/DFGCodeOriginPool.cpp: Added.
+        (JSC::DFG::CodeOriginPool::addCodeOrigin):
+        (JSC::DFG::CodeOriginPool::addUniqueCallSiteIndex):
+        (JSC::DFG::CodeOriginPool::lastCallSite const):
+        (JSC::DFG::CodeOriginPool::addDisposableCallSiteIndex):
+        (JSC::DFG::CodeOriginPool::removeDisposableCallSiteIndex):
+        (JSC::DFG::CodeOriginPool::shrinkToFit):
+        * dfg/DFGCodeOriginPool.h: Added.
+        (JSC::DFG::CodeOriginPool::create):
+        (JSC::DFG::CodeOriginPool::get):
+        (JSC::DFG::CodeOriginPool::size const):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::shrinkToFit):
+        (JSC::DFG::CommonData::addCodeOrigin): Deleted.
+        (JSC::DFG::CommonData::addUniqueCallSiteIndex): Deleted.
+        (JSC::DFG::CommonData::lastCallSite const): Deleted.
+        (JSC::DFG::CommonData::addDisposableCallSiteIndex): Deleted.
+        (JSC::DFG::CommonData::removeDisposableCallSiteIndex): Deleted.
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addCallSite):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenTail):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToB3::callPreflight):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::callSiteIndexForCodeOrigin):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::aboutToDie):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount):
+        * jit/GCAwareJITStubRoutine.h:
+
 2020-06-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExp.prototype getters should throw on cross-realm access

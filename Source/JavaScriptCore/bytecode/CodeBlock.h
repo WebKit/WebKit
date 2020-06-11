@@ -37,6 +37,7 @@
 #include "CodeType.h"
 #include "CompilationResult.h"
 #include "ConcurrentJSLock.h"
+#include "DFGCodeOriginPool.h"
 #include "DFGCommon.h"
 #include "DirectEvalCodeCache.h"
 #include "EvalExecutable.h"
@@ -533,7 +534,7 @@ public:
     bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
 
 #if ENABLE(DFG_JIT)
-    Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins();
+    DFG::CodeOriginPool& codeOrigins();
     
     // Having code origins implies that there has been some inlining.
     bool hasCodeOrigins()
@@ -550,7 +551,7 @@ public:
 
     CodeOrigin codeOrigin(CallSiteIndex index)
     {
-        return codeOrigins()[index.bits()];
+        return codeOrigins().get(index.bits());
     }
 
     CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles(const ConcurrentJSLocker&)

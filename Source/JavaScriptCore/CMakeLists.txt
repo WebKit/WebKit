@@ -563,6 +563,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     debugger/DebuggerParseData.h
     debugger/DebuggerPrimitives.h
 
+    dfg/DFGCodeOriginPool.h
     dfg/DFGCommon.h
     dfg/DFGCompilationMode.h
     dfg/DFGDoesGCCheck.h

@@ -1,3 +1,17 @@
+2020-06-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Return DisposableCallSiteIndex when destroying GCAwareJITStubRoutineWithExceptionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=213069
+        <rdar://problem/64205186>
+
+        Reviewed by Saam Barati.
+
+        * stress/dont-dispose-callsiteindex-while-executing.js: Added.
+        (emptyFunction):
+        (foo.bar.set catch):
+        (foo.bar):
+        (foo):
+
 2020-06-11  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         RegExp.prototype getters should throw on cross-realm access

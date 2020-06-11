@@ -332,6 +332,7 @@ dfg/DFGCleanUpPhase.cpp
 dfg/DFGClobberSet.cpp
 dfg/DFGClobberize.cpp
 dfg/DFGClobbersExitState.cpp
+dfg/DFGCodeOriginPool.cpp
 dfg/DFGCombinedLiveness.cpp
 dfg/DFGCommon.cpp
 dfg/DFGCommonData.cpp

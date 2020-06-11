@@ -123,7 +123,7 @@ public:
     
     CallSiteIndex addCallSite(CodeOrigin codeOrigin)
     {
-        return m_jitCode->common.addCodeOrigin(codeOrigin);
+        return m_jitCode->common.codeOrigins->addCodeOrigin(codeOrigin);
     }
 
     CallSiteIndex emitStoreCodeOrigin(CodeOrigin codeOrigin)

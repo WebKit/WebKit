@@ -33,6 +33,9 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
+namespace DFG {
+class CodeOriginPool;
+}
 
 class CallLinkInfo;
 class JITStubRoutineSet;
@@ -102,12 +105,16 @@ public:
     typedef GCAwareJITStubRoutine Base;
 
     GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner, const Vector<JSCell*>&, Bag<CallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
+    ~GCAwareJITStubRoutineWithExceptionHandler() final;
 
     void aboutToDie() final;
     void observeZeroRefCount() final;
 
 private:
     CodeBlock* m_codeBlockWithExceptionHandler;
+#if ENABLE(DFG_JIT)
+    RefPtr<DFG::CodeOriginPool> m_codeOriginPool;
+#endif
     DisposableCallSiteIndex m_exceptionHandlerCallSiteIndex;
 };
 

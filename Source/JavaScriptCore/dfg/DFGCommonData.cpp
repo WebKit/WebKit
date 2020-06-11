@@ -47,55 +47,9 @@ void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeB
         node->transition()->next.get());
 }
 
-CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)
-{
-    if (codeOrigins.isEmpty()
-        || codeOrigins.last() != codeOrigin)
-        codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return CallSiteIndex(index);
-}
-
-CallSiteIndex CommonData::addUniqueCallSiteIndex(CodeOrigin codeOrigin)
-{
-    codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return CallSiteIndex(index);
-}
-
-CallSiteIndex CommonData::lastCallSite() const
-{
-    RELEASE_ASSERT(codeOrigins.size());
-    return CallSiteIndex(codeOrigins.size() - 1);
-}
-
-DisposableCallSiteIndex CommonData::addDisposableCallSiteIndex(CodeOrigin codeOrigin)
-{
-    if (callSiteIndexFreeList.size()) {
-        unsigned index = callSiteIndexFreeList.takeAny();
-        codeOrigins[index] = codeOrigin;
-        return DisposableCallSiteIndex(index);
-    }
-
-    codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return DisposableCallSiteIndex(index);
-}
-
-
-void CommonData::removeDisposableCallSiteIndex(DisposableCallSiteIndex callSite)
-{
-    RELEASE_ASSERT(callSite.bits() < codeOrigins.size());
-    callSiteIndexFreeList.add(callSite.bits());
-    codeOrigins[callSite.bits()] = CodeOrigin();
-}
-
 void CommonData::shrinkToFit()
 {
-    codeOrigins.shrinkToFit();
+    codeOrigins->shrinkToFit();
     dfgIdentifiers.shrinkToFit();
     weakReferences.shrinkToFit();
     weakStructureReferences.shrinkToFit();

@@ -1875,7 +1875,7 @@ DisposableCallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteInd
     RELEASE_ASSERT(canGetCodeOrigin(originalCallSite));
     ASSERT(!!handlerForIndex(originalCallSite.bits()));
     CodeOrigin originalOrigin = codeOrigin(originalCallSite);
-    return m_jitCode->dfgCommon()->addDisposableCallSiteIndex(originalOrigin);
+    return m_jitCode->dfgCommon()->codeOrigins->addDisposableCallSiteIndex(originalOrigin);
 #else
     // We never create new on-the-fly exception handling
     // call sites outside the DFG/FTL inline caches.
@@ -2769,9 +2769,9 @@ ArrayProfile* CodeBlock::getArrayProfile(BytecodeIndex bytecodeIndex)
 }
 
 #if ENABLE(DFG_JIT)
-Vector<CodeOrigin, 0, UnsafeVectorOverflow>& CodeBlock::codeOrigins()
+DFG::CodeOriginPool& CodeBlock::codeOrigins()
 {
-    return m_jitCode->dfgCommon()->codeOrigins;
+    return m_jitCode->dfgCommon()->codeOrigins.get();
 }
 
 size_t CodeBlock::numberOfDFGIdentifiers() const

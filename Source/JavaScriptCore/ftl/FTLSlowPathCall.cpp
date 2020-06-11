@@ -136,7 +136,7 @@ SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr<CFunctionPtrTag> 
 CallSiteIndex callSiteIndexForCodeOrigin(State& state, CodeOrigin codeOrigin)
 {
     if (codeOrigin)
-        return state.jitCode->common.addCodeOrigin(codeOrigin);
+        return state.jitCode->common.codeOrigins->addCodeOrigin(codeOrigin);
     return CallSiteIndex();
 }
 
