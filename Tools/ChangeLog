@@ -1,3 +1,23 @@
+2020-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Health check should access redis and Cassandra
+        https://bugs.webkit.org/show_bug.cgi?id=212899
+        <rdar://problem/64118077>
+
+        Reviewed by Stephanie Lewis.
+
+        * resultsdbpy/resultsdbpy/example/main.py:
+        (health): Check the health status of the model.
+        * resultsdbpy/resultsdbpy/model/model.py:
+        (Model.HealthTable):
+        (Model.__init__): Construct a Cassandra table used to check the health of our Cassandra connection.
+        (Model.healthy): Make both a read and write connection to our two database dependencies so that if
+        our connection to those databases fails, an instance will be forced to restart.
+        * resultsdbpy/resultsdbpy/model/model_unittest.py: Added.
+        (ModelTest):
+        (ModelTest.init_database):
+        (ModelTest.test_health):
+
 2020-06-10  Keith Miller  <keith_miller@apple.com>
 
         run-jsc-stress-tests should skip tests marked as slow in quick mode.

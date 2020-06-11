@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,6 +23,8 @@
 import traceback
 import sys
 
+from cassandra.cqlengine import columns
+from cassandra.cqlengine.models import Model as CassandraModel
 from resultsdbpy.model.archive_context import ArchiveContext
 from resultsdbpy.model.ci_context import CIContext
 from resultsdbpy.model.commit_context import CommitContext
@@ -38,6 +40,11 @@ class Model(object):
     TTL_WEEK = 7 * TTL_DAY
     TTL_YEAR = 365 * TTL_DAY
 
+    class HealthTable(CassandraModel):
+        __table_name__ = 'health'
+        key = columns.Text(partition_key=True, required=True)
+        value = columns.Text(required=True)
+
     def __init__(self, redis, cassandra, repositories=[], default_ttl_seconds=TTL_YEAR * 5, archive_ttl_seconds=TTL_WEEK * 8, async_processing=False):
         if default_ttl_seconds is not None and default_ttl_seconds < 4 * self.TTL_WEEK:
             raise ValueError('TTL must be at least 4 weeks')
@@ -49,6 +56,10 @@ class Model(object):
 
         self.redis = redis
         self.cassandra = cassandra
+
+        with self.cassandra:
+            self.cassandra.create_table(self.HealthTable)
+
         self.commit_context = CommitContext(redis, cassandra)
         for repository in repositories:
             self.commit_context.register_repository(repository)
@@ -89,6 +100,28 @@ class Model(object):
             commit_context=self.commit_context,
             ttl_seconds=self.archive_ttl_seconds,
         )
+
+    def healthy(self, writable=True):
+        if writable:
+            self.redis.set('health-check', b'healthy', ex=5 * 60)
+        value = self.redis.get('health-check')
+        if value is not None and value != b'healthy':
+            return False
+
+        with self.cassandra:
+            if writable:
+                self.cassandra.insert_row(
+                    self.HealthTable.__table_name__,
+                    key='health-check', value='healthy',
+                    ttl=5 * 60,
+                )
+            values = [element.value for element in self.cassandra.select_from_table(
+                self.HealthTable.__table_name__, limit=100, key='health-check',
+            )]
+            if values and values != ['healthy']:
+                return False
+
+        return True
 
     def do_work(self):
         if not self._async_processing:

@@ -20,48 +20,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import hashlib
-import json
-
-from example.environment import Environment, ModelFromEnvironment
-from flask import abort, Flask, request
-from resultsdbpy.controller.api_routes import APIRoutes
-from resultsdbpy.view.view_routes import ViewRoutes
-
-
-environment = Environment()
-print(f'Environment for web-app:\n{environment}')
-
-model = ModelFromEnvironment(environment)
-app = Flask(__name__)
+from fakeredis import FakeStrictRedis
+from redis import StrictRedis
+from resultsdbpy.model.cassandra_context import CassandraContext
+from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
+from resultsdbpy.model.mock_model_factory import MockModelFactory
+from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
 
-api_routes = APIRoutes(model=model, import_name=__name__)
-view_routes = ViewRoutes(
-    title='Example Results Database',
-    model=model, controller=api_routes, import_name=__name__,
-)
+class ModelTest(WaitForDockerTestCase):
+    KEYSPACE = 'model_test_keyspace'
 
+    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
+        cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+        self.model = MockModelFactory.create(
+            redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
+            async_processing=async_processing,
+        )
 
-@app.route('/__health', methods=('GET',))
-def health():
-    if not model.healthy(writable=True):
-        abort(503, description='Health check failed, invalid database connections')
-    return 'ok'
-
-
-@app.errorhandler(401)
-@app.errorhandler(404)
-@app.errorhandler(405)
-def handle_errors(error):
-    if request.path.startswith('/api/'):
-        return api_routes.error_response(error)
-    return view_routes.error(error=error)
-
-
-app.register_blueprint(api_routes)
-app.register_blueprint(view_routes)
-
-
-def main():
-    app.run(host='0.0.0.0', port=environment.port)
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_health(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.assertTrue(self.model.healthy())
+        self.assertTrue(self.model.healthy(writable=False))
