@@ -57,7 +57,7 @@ WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdates
 void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
 {
     while (!widgetNewParentMap().isEmpty()) {
-        auto map = WTFMove(widgetNewParentMap());
+        auto map = std::exchange(widgetNewParentMap(), { });
         for (auto& entry : map) {
             auto& child = *entry.key;
             auto* currentParent = child.parent();

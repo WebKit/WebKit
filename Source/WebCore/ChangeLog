@@ -1,3 +1,18 @@
+2020-06-10  Pinki Gyanchandani  <pgyanchandani@apple.com>
+
+        Release Assert @ WebCore::RenderTreeBuilder::RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=212714
+
+        Reviewed by Geoffrey Garen.
+
+        Replaced call to WTFMove(widgetNewParentMap()) with std::exchange(widgetNewParentMap(), { }) in the 
+        WidgetHierarchyUpdatesSuspensionScope::moveWidgets(), thereby making it explicit to set the source map empty.
+
+        Test would be added later.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::WidgetHierarchyUpdatesSuspensionScope::moveWidgets):
+
 2020-06-10  Brent Fulgham  <bfulgham@apple.com>
 
         Improve CSP compliance under PSON
