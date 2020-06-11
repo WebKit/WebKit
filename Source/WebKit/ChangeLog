@@ -1,3 +1,21 @@
+2020-06-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r262159. rdar://problem/64257403
+
+    Fix the engineering build on internal SDKs
+    
+    * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+    (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Silenced a deprecation warning.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262159 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-05-26  Andy Estes  <aestes@apple.com>
+
+            Fix the engineering build on internal SDKs
+
+            * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+            (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Silenced a deprecation warning.
+
 2020-06-10  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r262864. rdar://problem/64223970

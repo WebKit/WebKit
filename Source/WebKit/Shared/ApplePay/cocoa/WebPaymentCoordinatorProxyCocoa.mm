@@ -238,7 +238,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [result setExpectsMerchantSession:YES];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!paymentRequest.applicationData().isNull()) {
         auto applicationData = adoptNS([[NSData alloc] initWithBase64EncodedString:paymentRequest.applicationData() options:0]);
