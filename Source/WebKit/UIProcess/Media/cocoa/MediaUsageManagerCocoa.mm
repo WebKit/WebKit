@@ -33,7 +33,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface USVideoUsage : NSObject
-- (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier URL:(NSURL *)url mediaURL:(NSURL *)mediaURL NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier URL:(NSURL *)url mediaURL:(NSURL *)mediaURL videoMetadata:(NSDictionary<NSString *, id> *)videoMetadata NS_DESIGNATED_INITIALIZER;
 - (void)stop;
 - (void)restart;
 - (void)updateVideoMetadata:(NSDictionary<NSString *, id> *)videoMetadata;
@@ -100,10 +100,8 @@ MediaUsageManagerCocoa::~MediaUsageManagerCocoa()
 void MediaUsageManagerCocoa::reset()
 {
     for (auto& session : m_mediaSessions.values()) {
-        if (session->usageTracker) {
+        if (session->usageTracker && session->mediaUsageInfo && session->mediaUsageInfo->isPlaying)
             [session->usageTracker stop];
-            session->usageTracker = nullptr;
-        }
     }
     m_mediaSessions.clear();
 }
@@ -144,21 +142,6 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
             }
         }
 
-        if (!session->usageTracker) {
-            if (!mediaUsageInfo.isPlaying)
-                return;
-
-            session->usageTracker = adoptNS([PAL::allocUSVideoUsageInstance() initWithBundleIdentifier:session->bundleIdentifier URL:(NSURL *)session->pageURL mediaURL:(NSURL *)mediaUsageInfo.mediaURL]);
-            ASSERT(session->usageTracker);
-        }
-
-        if (session->mediaUsageInfo && session->mediaUsageInfo->isPlaying != mediaUsageInfo.isPlaying) {
-            if (mediaUsageInfo.isPlaying)
-                [session->usageTracker restart];
-            else
-                [session->usageTracker stop];
-        }
-
         NSDictionary<NSString *, id> *metadata = @{
             USVideoMetadataKeyCanShowControlsManager: @(mediaUsageInfo.canShowControlsManager),
             USVideoMetadataKeyCanShowNowPlayingControls: @(mediaUsageInfo.canShowNowPlayingControls),
@@ -191,7 +174,25 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
             USVideoMetadataKeyIsLargeEnoughForMainContent: @(mediaUsageInfo.isLargeEnoughForMainContent),
         };
 
-        [session->usageTracker updateVideoMetadata:metadata];
+        if (!session->usageTracker) {
+            if (!mediaUsageInfo.isPlaying)
+                return;
+
+            session->usageTracker = adoptNS([PAL::allocUSVideoUsageInstance() initWithBundleIdentifier:session->bundleIdentifier URL:(NSURL *)session->pageURL
+                mediaURL:(NSURL *)mediaUsageInfo.mediaURL videoMetadata:metadata]);
+            ASSERT(session->usageTracker);
+            if (!session->usageTracker)
+                return;
+        } else
+            [session->usageTracker updateVideoMetadata:metadata];
+
+        if (session->mediaUsageInfo && session->mediaUsageInfo->isPlaying != mediaUsageInfo.isPlaying) {
+            if (mediaUsageInfo.isPlaying)
+                [session->usageTracker restart];
+            else
+                [session->usageTracker stop];
+        }
+
         session->mediaUsageInfo = mediaUsageInfo;
 
     } @catch(NSException *exception) {
