@@ -106,7 +106,8 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
             });
 
             // 8.2 Run the algorithm to monitor the list of available remote playback devices.
-            m_mediaElement->remoteHasAvailabilityCallbacksChanged();
+            if (m_mediaElement)
+                m_mediaElement->remoteHasAvailabilityCallbacksChanged();
         });
         promise->resolve<IDLLong>(callbackId);
     });
@@ -257,7 +258,8 @@ void RemotePlayback::shouldPlayToRemoteTargetChanged(bool shouldPlayToRemoteTarg
     else
         disconnect();
 
-    m_mediaElement->remoteHasAvailabilityCallbacksChanged();
+    if (m_mediaElement)
+        m_mediaElement->remoteHasAvailabilityCallbacksChanged();
 }
 
 void RemotePlayback::setState(State state)
@@ -342,7 +344,9 @@ void RemotePlayback::playbackTargetPickerWasDismissed()
 
     for (auto& promise : std::exchange(m_promptPromises, { }))
         promise->reject(NotAllowedError);
-    m_mediaElement->remoteHasAvailabilityCallbacksChanged();
+
+    if (m_mediaElement)
+        m_mediaElement->remoteHasAvailabilityCallbacksChanged();
 }
 
 void RemotePlayback::isPlayingToRemoteTargetChanged(bool isPlayingToTarget)

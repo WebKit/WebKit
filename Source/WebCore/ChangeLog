@@ -1,3 +1,18 @@
+2020-06-10  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] CRASH: imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=213044
+        <rdar://problem/62317723>
+
+        Reviewed by Eric Carlson.
+
+        Add null-checks around previously non-null-checked derefs of WeakPtr<HTMLMediaElement>.
+
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::watchAvailability):
+        (WebCore::RemotePlayback::shouldPlayToRemoteTargetChanged):
+        (WebCore::RemotePlayback::playbackTargetPickerWasDismissed):
+
 2020-06-10  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation does not observe inserted elements that are invisible
