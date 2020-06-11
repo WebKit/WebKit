@@ -963,7 +963,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
 {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(BROKEN_DOWNLOAD_RESUME_UNLINK)
     // This is to work around rdar://problem/63249830
     if ([downloadTask respondsToSelector:@selector(downloadFile)] && [downloadTask.downloadFile respondsToSelector:@selector(setSkipUnlink:)])
         downloadTask.downloadFile.skipUnlink = YES;

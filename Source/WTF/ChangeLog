@@ -1,3 +1,15 @@
+2020-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable download resume tests
+        https://bugs.webkit.org/show_bug.cgi?id=213098
+        <rdar://problem/63512518>
+
+        Reviewed by Geoffrey Garen.
+
+        Workaround is no longer needed because underlying bug has been fixed.
+
+        * wtf/PlatformHave.h:
+
 2020-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         WebKit: Make UIGestureRecognizer build for watchOS and tvOS
