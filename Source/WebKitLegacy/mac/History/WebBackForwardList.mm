@@ -99,7 +99,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 #endif
 }
 

@@ -96,7 +96,7 @@ int WebDriverService::run(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     if (!m_server.listen(host, port))
         return EXIT_FAILURE;

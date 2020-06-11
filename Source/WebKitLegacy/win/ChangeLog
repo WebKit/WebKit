@@ -1,3 +1,15 @@
+2020-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Some style improvements to main thread code
+        https://bugs.webkit.org/show_bug.cgi?id=213051
+
+        Reviewed by Darin Adler.
+
+        Updated for rename.
+
+        * WebView.cpp:
+        (WebView::WebView):
+
 2020-06-08  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for DragOperation

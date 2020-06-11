@@ -124,7 +124,7 @@ static void cleanUpInAppBrowserPrivacyTestSettings()
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
     WebCore::clearApplicationBundleIdentifierTestingOverride();
     IN_APP_BROWSER_PRIVACY_ADDITIONS
 }

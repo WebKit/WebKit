@@ -76,7 +76,7 @@ public:
     virtual void SetUp()
     {
         JSC::initializeThreading();
-        RunLoop::initializeMainRunLoop();
+        RunLoop::initializeMain();
     }
 };
 

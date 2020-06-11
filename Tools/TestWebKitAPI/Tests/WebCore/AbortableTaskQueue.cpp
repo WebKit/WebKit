@@ -39,7 +39,7 @@ TEST(AbortableTaskQueue, AsyncTasks)
     AbortableTaskQueue taskQueue;
     bool testFinished { false };
     int currentStep { 0 };
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());
@@ -101,7 +101,7 @@ TEST(AbortableTaskQueue, SyncTasks)
     bool testFinished { false };
     bool destructedResponseFlag { false };
     int currentStep { 0 };
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());
@@ -183,7 +183,7 @@ TEST(AbortableTaskQueue, Abort)
 
     AbortableTaskQueue taskQueue;
     bool testFinished { false };
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());
@@ -240,7 +240,7 @@ TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
 {
     AbortableTaskQueue taskQueue;
     bool testFinished { false };
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());
@@ -277,7 +277,7 @@ TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
     bool testFinished { false };
     int currentStep { 0 };
     bool destructedResponseFlag { false };
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto backgroundThreadFunction = [&]() {
         EXPECT_FALSE(isMainThread());

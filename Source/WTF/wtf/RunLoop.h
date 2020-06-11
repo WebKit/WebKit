@@ -60,15 +60,16 @@ class RunLoop final : public FunctionDispatcher {
 public:
     // Must be called from the main thread (except for the Mac platform, where it
     // can be called from any thread).
-    WTF_EXPORT_PRIVATE static void initializeMainRunLoop();
+    WTF_EXPORT_PRIVATE static void initializeMain();
 #if USE(WEB_THREAD)
-    WTF_EXPORT_PRIVATE static void initializeWebRunLoop();
+    WTF_EXPORT_PRIVATE static void initializeWeb();
 #endif
 
     WTF_EXPORT_PRIVATE static RunLoop& current();
     WTF_EXPORT_PRIVATE static RunLoop& main();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& web();
+    WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
 #endif
     WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop() final;

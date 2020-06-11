@@ -53,7 +53,7 @@ static void runInitializationCode(void* = nullptr)
 #endif
 
     JSC::initializeThreading();
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
@@ -65,7 +65,7 @@ static void runInitializationCode(void* = nullptr)
 
 void InitializeWebKit2()
 {
-    // Make sure the initialization code is run only once and on the main thread since things like RunLoop::initializeMainRunLoop()
+    // Make sure the initialization code is run only once and on the main thread since things like RunLoop::initializeMain()
     // are only safe to call on the main thread.
     std::call_once(flag, [] {
         if ([NSThread isMainThread] || linkedOnOrAfter(SDKVersion::FirstWithInitializeWebKit2MainThreadAssertion))

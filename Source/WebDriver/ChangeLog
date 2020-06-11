@@ -1,3 +1,15 @@
+2020-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Some style improvements to main thread code
+        https://bugs.webkit.org/show_bug.cgi?id=213051
+
+        Reviewed by Darin Adler.
+
+        Updated for rename.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::run):
+
 2020-03-19  Charlie Turner  <cturner@igalia.com>
 
         Fix many warnings with Clang 7.0 on GTK x86-64 in Debug.

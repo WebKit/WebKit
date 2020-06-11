@@ -71,7 +71,7 @@ using namespace WebCore;
 + (void)initialize
 {
     JSC::initializeThreading();
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
     WebKit::sendUserChangeNotifications();
 }
 

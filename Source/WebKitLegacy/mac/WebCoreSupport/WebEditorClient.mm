@@ -139,7 +139,7 @@ static WebViewInsertAction kit(EditorInsertAction action)
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 #endif
 }
 

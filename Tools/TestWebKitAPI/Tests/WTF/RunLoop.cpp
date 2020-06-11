@@ -36,7 +36,7 @@ static int count = 100;
 
 TEST(WTF_RunLoop, Deadlock)
 {
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     struct DispatchFromDestructorTester {
         ~DispatchFromDestructorTester() {
@@ -76,7 +76,7 @@ private:
 
 TEST(WTF_RunLoop, OneShotTimer)
 {
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     bool testFinished = false;
     DerivedOneShotTimer timer(testFinished);
@@ -108,7 +108,7 @@ private:
 
 TEST(WTF_RunLoop, RepeatingTimer)
 {
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     bool testFinished = false;
     DerivedRepeatingTimer timer(testFinished);

@@ -58,11 +58,10 @@ static bool isTimerPosted; // This is only accessed on the main thread.
 
 #if USE(WEB_THREAD)
 // When the Web thread is enabled, we consider it to be the main thread, not pthread main.
-static pthread_t mainThreadPthread { nullptr };
-static NSThread* mainThreadNSThread { nullptr };
+static pthread_t s_webThreadPthread;
 
-static Thread* sApplicationUIThread;
-static Thread* sWebThread;
+static Thread* s_applicationUIThread;
+static Thread* s_webThread;
 #endif
 
 void initializeMainThreadPlatform()
@@ -101,8 +100,8 @@ void scheduleDispatchFunctionsOnMainThread()
         return;
     }
 
-    if (mainThreadPthread) {
-        RunLoop::web().dispatch(dispatchFunctionsFromMainThread);
+    if (auto* webRunLoop = RunLoop::webIfExists()) {
+        webRunLoop->dispatch(dispatchFunctionsFromMainThread);
         return;
     }
 #else
@@ -160,13 +159,13 @@ bool isUIThread()
 // Keep in mind that isWebThread can be called even when destroying the current thread.
 bool isWebThread()
 {
-    return pthread_equal(pthread_self(), mainThreadPthread);
+    return pthread_equal(pthread_self(), s_webThreadPthread);
 }
 
 void initializeApplicationUIThread()
 {
     ASSERT(pthread_main_np());
-    sApplicationUIThread = &Thread::current();
+    s_applicationUIThread = &Thread::current();
 }
 
 void initializeWebThread()
@@ -174,10 +173,9 @@ void initializeWebThread()
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
         ASSERT(!pthread_main_np());
-        mainThreadPthread = pthread_self();
-        mainThreadNSThread = [NSThread currentThread];
-        sWebThread = &Thread::current();
-        RunLoop::initializeWebRunLoop();
+        s_webThreadPthread = pthread_self();
+        s_webThread = &Thread::current();
+        RunLoop::initializeWeb();
     });
 }
 
@@ -187,8 +185,8 @@ bool canCurrentThreadAccessThreadLocalData(Thread& thread)
     if (&thread == &currentThread)
         return true;
 
-    if (&thread == sWebThread || &thread == sApplicationUIThread)
-        return (&currentThread == sWebThread || &currentThread == sApplicationUIThread) && webThreadIsUninitializedOrLockedOrDisabled();
+    if (&thread == s_webThread || &thread == s_applicationUIThread)
+        return (&currentThread == s_webThread || &currentThread == s_applicationUIThread) && webThreadIsUninitializedOrLockedOrDisabled();
 
     return false;
 }

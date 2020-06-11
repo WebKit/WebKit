@@ -52,7 +52,7 @@ private:
     Ref<RunLoop> m_runLoop;
 };
 
-void RunLoop::initializeMainRunLoop()
+void RunLoop::initializeMain()
 {
     if (s_mainRunLoop)
         return;
@@ -73,7 +73,7 @@ RunLoop& RunLoop::main()
 }
 
 #if USE(WEB_THREAD)
-void RunLoop::initializeWebRunLoop()
+void RunLoop::initializeWeb()
 {
     s_webRunLoop = &RunLoop::current();
 }
@@ -82,6 +82,11 @@ RunLoop& RunLoop::web()
 {
     ASSERT(s_webRunLoop);
     return *s_webRunLoop;
+}
+
+RunLoop* RunLoop::webIfExists()
+{
+    return s_webRunLoop;
 }
 #endif
 

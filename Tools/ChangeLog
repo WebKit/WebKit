@@ -1,3 +1,33 @@
+2020-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Some style improvements to main thread code
+        https://bugs.webkit.org/show_bug.cgi?id=213051
+
+        Reviewed by Darin Adler.
+
+        Updated for rename.
+        
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/AbortableTaskQueue.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (ApplicationManifestParserTest::SetUp):
+        * TestWebKitAPI/Tests/WebCore/ComplexTextController.cpp:
+        (TestWebKitAPI::ComplexTextControllerTest::SetUp):
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::ContentExtensionTest::SetUp):
+        * TestWebKitAPI/Tests/WebCore/DNS.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FileMonitor.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (initializeInAppBrowserPrivacyTestSettings):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2020-06-10  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Health check should access redis and Cassandra

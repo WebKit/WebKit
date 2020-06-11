@@ -1,5 +1,35 @@
 2020-06-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Some style improvements to main thread code
+        https://bugs.webkit.org/show_bug.cgi?id=213051
+
+        Reviewed by Darin Adler.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::initializeMain): Renamed initializeMainRunLoop => initializeMain
+        to match the getter's name.
+        (WTF::RunLoop::initializeWeb): Samesies.
+        (WTF::RunLoop::webIfExists): Added an IfExists accessor for use in
+        scheduleDispatchFunctionsOnMainThread().
+        (WTF::RunLoop::initializeMainRunLoop): Deleted.
+        (WTF::RunLoop::initializeWebRunLoop): Deleted.
+
+        * wtf/RunLoop.h:
+
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::scheduleDispatchFunctionsOnMainThread): Use RunLoop::webIfExists()
+        to check for the web thread run loop, since that's more explicit than
+        checking a pthread variable.
+
+        (WTF::isWebThread): Renamed mainThreadPthread => webThreadPthread because
+        it's the web thread. Changed style on globals to "s_" for consistency.
+        Removed mainThreadNSThread because it was unused.
+        (WTF::initializeApplicationUIThread):
+        (WTF::initializeWebThread):
+        (WTF::canCurrentThreadAccessThreadLocalData):
+
+2020-06-10  Geoffrey Garen  <ggaren@apple.com>
+
         [Cocoa] Build callOnMainThread on WTF::RunLoop rather than on NSObject methods
         https://bugs.webkit.org/show_bug.cgi?id=213043
 

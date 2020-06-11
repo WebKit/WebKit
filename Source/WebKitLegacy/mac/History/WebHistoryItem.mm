@@ -126,7 +126,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 #endif
 }
 

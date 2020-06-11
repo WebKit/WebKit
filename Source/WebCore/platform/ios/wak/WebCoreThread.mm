@@ -643,7 +643,7 @@ static void StartWebThread()
     WebCore::ThreadGlobalData& unused = WebCore::threadGlobalData();
     UNUSED_PARAM(unused);
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     // register class for WebThread deallocation
     WebCoreObjCDeallocOnWebThread([WAKWindow class]);

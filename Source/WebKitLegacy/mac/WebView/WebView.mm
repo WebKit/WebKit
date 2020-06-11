@@ -5520,7 +5520,7 @@ IGNORE_WARNINGS_END
 
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 #endif
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();

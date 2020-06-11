@@ -52,7 +52,7 @@ class FileMonitorTest : public testing::Test {
 public:
     void SetUp() override
     {
-        RunLoop::initializeMainRunLoop();
+        RunLoop::initializeMain();
         
         // create temp file
         FileSystem::PlatformFileHandle handle;
@@ -144,7 +144,7 @@ TEST_F(FileMonitorTest, DetectChange)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
@@ -186,7 +186,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
@@ -246,7 +246,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
@@ -285,7 +285,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
@@ -342,7 +342,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
-    RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMain();
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
