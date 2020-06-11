@@ -1,5 +1,18 @@
 2020-06-10  Jonathan Bedard  <jbedard@apple.com>
 
+        WebKit:Add PepperUICoreSPI.h (Follow-up fix 2)
+        https://bugs.webkit.org/show_bug.cgi?id=212996
+        <rdar://problem/64182627>
+
+        Unreviewed build fix.
+
+        * UIProcess/ios/forms/WKNumberPadViewController.mm:
+        (-[WKNumberPadViewController addContentViewAnimations:]): Correct APPLE_INTERNAL_SDK macro.
+        * UIProcess/ios/forms/WKQuickboardListViewController.mm:
+        (-[WKQuickboardListViewController initWithDelegate:]): Ditto.
+
+2020-06-10  Jonathan Bedard  <jbedard@apple.com>
+
         WebKit:Add PepperUICoreSPI.h (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=212996
         <rdar://problem/64182627>

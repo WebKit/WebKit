@@ -78,7 +78,7 @@ static const CGFloat itemCellBaselineToBottom = 8;
 
 - (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate
 {
-#if USE(APPLE_INTERNAL)
+#if USE(APPLE_INTERNAL_SDK)
     if (self = [super initWithDelegate:delegate dictationMode:PUICDictationModeText])
         _contextViewNeedsUpdate = YES;
 #else
