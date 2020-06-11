@@ -465,7 +465,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     if (!m_frame.document()->contentSecurityPolicy()->allowFormAction(formAction))
         return;
 
-    if (formAction.protocolIsJavaScript()) {
+    if (WTF::protocolIsJavaScript(formAction)) {
         m_isExecutingJavaScriptFormAction = true;
         Ref<Frame> protect(m_frame);
         m_frame.script().executeIfJavaScriptURL(submission->action(), nullptr, DoNotReplaceDocumentIfJavaScriptURL);
