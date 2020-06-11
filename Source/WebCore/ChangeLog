@@ -1,3 +1,27 @@
+2020-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Pass an unsigned long to cancelAnimationCallback() as handle
+        https://bugs.webkit.org/show_bug.cgi?id=212529
+
+        Reviewed by Youenn Fablet.
+
+        The type of the handle returned by XRSession::requestAnimationFrame() was recently changed
+        to unsigned long from long as there was no point in using signed integers for that. However
+        we forgot to update the cancelAnimationFrame() in the specs as well as it receives the handle
+        returned by requestAnimationFrame().
+
+        We landed https://github.com/immersive-web/webxr/pull/1069 in the WebXR specs so we can now
+        safely also replace signed by unsigned integers in our implementation.
+
+        No new tests as there is no change in functionality.
+
+        Reland r262718.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::cancelAnimationFrame): Use unsigned ids.
+        * Modules/webxr/WebXRSession.h: Ditto.
+        * Modules/webxr/WebXRSession.idl: Ditto.
+
 2020-06-11  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Setting the style at the last style change event to null should not create an ElementAnimationRareData object

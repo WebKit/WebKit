@@ -74,7 +74,7 @@ public:
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
 
     XRFrameRequestCallback::Id requestAnimationFrame(Ref<XRFrameRequestCallback>&&);
-    void cancelAnimationFrame(int handle);
+    void cancelAnimationFrame(XRFrameRequestCallback::Id handle);
 
     void end(EndPromise&&);
 
