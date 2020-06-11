@@ -1,3 +1,29 @@
+2020-06-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] nullptr deref in FileInputType::iconLoaded when the input's type attribute is modified by a change event listener
+        https://bugs.webkit.org/show_bug.cgi?id=208244
+        <rdar://problem/41855350>
+
+        Reviewed by Wenson Hsieh.
+
+        When an <input> element's type attribute changes, its existing InputType is detached from
+        the HTMLInputElement by nulling InputType::m_element. When FileInputType::filesChosen is
+        called, it dispatches the input and change events, which can run arbitrary JavaScript that
+        might modify the element's type attribute. If this happens, FileInputType::m_element will be
+        null after returning from FileInputType::setFiles and if there is an icon will be
+        dereferenced by FileInputType::iconLoaded.
+
+        Fixed this by checking for a non-null m_element before calling iconLoaded. While here, also
+        fixed a bug where we sometimes checked the length of m_fileList before FileListCreator had
+        finished setting m_fileList. This bug resulted in missing file icons whenever an
+        <input type=file> had the webkitdirectory attribute.
+
+        Tests: fast/forms/file/file-input-type-detached-on-change.html
+               fast/forms/file/file-input-webkitdirectory-icon.html
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::filesChosen):
+
 2020-06-11  Beth Dakin  <bdakin@apple.com>
 
         Remove references to "slave" in WebCore

@@ -3624,6 +3624,8 @@ editing/selection/character-granularity-select-text-with-click-handler.html [ Sk
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
 fast/dom/FileList-iterator-using-open-panel.html [ Skip ]
 fast/forms/file/file-input-reset-using-open-panel.html [ Skip ]
+fast/forms/file/file-input-type-detached-on-change.html [ Skip ]
+fast/forms/file/file-input-webkitdirectory-icon.html [ Skip ]
 fast/forms/file/file-input-user-selection-events.html [ Skip ]
 fast/forms/file/file-reset-in-change-using-open-panel.html [ Skip ]
 fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html [ Skip ]

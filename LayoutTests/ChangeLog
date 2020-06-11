@@ -1,3 +1,19 @@
+2020-06-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] nullptr deref in FileInputType::iconLoaded when the input's type attribute is modified by a change event listener
+        https://bugs.webkit.org/show_bug.cgi?id=208244
+        <rdar://problem/41855350>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/file/file-input-type-detached-on-change-expected.txt: Added.
+        * fast/forms/file/file-input-type-detached-on-change.html: Added.
+        * fast/forms/file/file-input-webkitdirectory-icon-expected.html: Added.
+        * fast/forms/file/file-input-webkitdirectory-icon.html: Added.
+        * fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html:
+        * fast/forms/file/open-file-panel-crash.html:
+        * fast/forms/file/resources/file-icon-bytes.js: Added.
+
 2020-06-11  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: [ Mac ] inspector/page/setBootstrapScript-sub-frame.html is flaky failing.

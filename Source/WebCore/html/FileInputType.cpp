@@ -416,14 +416,12 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
         m_fileListCreator->cancel();
 
     auto shouldResolveDirectories = allowsDirectories() ? FileListCreator::ShouldResolveDirectories::Yes : FileListCreator::ShouldResolveDirectories::No;
-    auto shouldRequestIcon = icon ? RequestIcon::Yes : RequestIcon::No;
-    m_fileListCreator = FileListCreator::create(paths, shouldResolveDirectories, [this, shouldRequestIcon](Ref<FileList>&& fileList) {
-        setFiles(WTFMove(fileList), shouldRequestIcon);
+    m_fileListCreator = FileListCreator::create(paths, shouldResolveDirectories, [this, icon = makeRefPtr(icon)](Ref<FileList>&& fileList) mutable {
+        setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No);
+        if (icon && !m_fileList->isEmpty() && element())
+            iconLoaded(WTFMove(icon));
         m_fileListCreator = nullptr;
     });
-
-    if (icon && !m_fileList->isEmpty())
-        iconLoaded(icon);
 }
 
 String FileInputType::displayString() const

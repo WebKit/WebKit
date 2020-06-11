@@ -2729,9 +2729,9 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
     WKBundlePagePostMessage(page, messageName.get(), fileURLs.get());
 }
 
-#if PLATFORM(IOS_FAMILY)
 void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef data)
 {
+#if PLATFORM(IOS_FAMILY)
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     JSContextRef context = WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page));
 
@@ -2741,12 +2741,10 @@ void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef data)
 
     static auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetOpenPanelFileURLsMediaIcon"));
     WKBundlePagePostMessage(page, messageName.get(), iconData.get());
-}
 #else
-void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef)
-{
+    UNUSED_PARAM(data);
+#endif
 }
-#endif // PLATFORM(IOS_FAMILY)
 
 void TestRunner::removeAllSessionCredentials(JSValueRef callback)
 {
