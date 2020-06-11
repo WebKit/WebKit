@@ -254,6 +254,8 @@ typedef enum {
 
 @interface UIFont ()
 + (UIFont *)fontWithFamilyName:(NSString *)familyName traits:(UIFontTrait)traits size:(CGFloat)fontSize;
++ (UIFont *)systemFontOfSize:(CGFloat)size weight:(CGFloat)weight design:(NSString *)design;
+
 - (UIFontTrait)traits;
 @end
 
@@ -267,6 +269,7 @@ typedef enum {
 
 @interface UIImage ()
 - (id)initWithCGImage:(CGImageRef)CGImage imageOrientation:(UIImageOrientation)imageOrientation;
+- (UIImage *)_flatImageWithColor:(UIColor *)color;
 @end
 
 @interface UIKeyCommand ()
@@ -507,6 +510,7 @@ typedef enum {
 @interface UITextSuggestion : NSObject
 + (instancetype)textSuggestionWithInputText:(NSString *)inputText;
 @property (nonatomic, copy, readonly) NSString *inputText;
+@property (nonatomic, copy, readonly) NSString *displayText;
 @end
 
 @protocol UITextInputSuggestionDelegate <UITextInputDelegate>
@@ -1209,6 +1213,11 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 + (instancetype)styleWithCursor:(_UICursor *)cursor constrainedAxes:(UIAxis)axes;
 @end
 
+#if PLATFORM(WATCHOS)
+@interface UIStatusBar : UIView
+@end
+#endif
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
@@ -1419,5 +1428,11 @@ extern NSString * const NSTextSizeMultiplierDocumentOption;
 
 extern NSNotificationName const _UISceneWillBeginSystemSnapshotSequence;
 extern NSNotificationName const _UISceneDidCompleteSystemSnapshotSequence;
+
+extern CGRect UIRectInsetEdges(CGRect, UIRectEdge edges, CGFloat v);
+extern CGRect UIRectInset(CGRect, CGFloat top, CGFloat right, CGFloat bottom, CGFloat left);
+
+extern CGRect UIRectInsetEdges(CGRect, UIRectEdge edges, CGFloat v);
+extern CGRect UIRectInset(CGRect, CGFloat top, CGFloat right, CGFloat bottom, CGFloat left);
 
 WTF_EXTERN_C_END
