@@ -1,3 +1,24 @@
+2020-06-11  Beth Dakin  <bdakin@apple.com>
+
+        Remove references to "slave" in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=213085
+
+        Reviewed by Wenson Hsieh.
+
+        This feature is referred to as a mediagroup in html, so let's use that terminology here as 
+        well.
+        * html/MediaController.cpp:
+        (WebCore::MediaController::buffered const):
+        (WebCore::MediaController::seekable const):
+        (WebCore::MediaController::played):
+        (WebCore::MediaController::duration const):
+        (WebCore::MediaController::setCurrentTime):
+        (WebCore::MediaController::play):
+        (WebCore::MediaController::updateReadyState):
+        (WebCore::MediaController::updatePlaybackState):
+        (WebCore::MediaController::isBlocked const):
+        (WebCore::MediaController::hasEnded const):
+
 2020-06-11  David Kilzer  <ddkilzer@apple.com>
 
         [IPC] Adopt enum class for DragSourceAction
