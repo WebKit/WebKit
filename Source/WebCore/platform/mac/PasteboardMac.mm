@@ -567,7 +567,7 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
             return platformType;
     }
 
-    // Blocklist types that might contain subframe information.
+    // Reject types that might contain subframe information.
     if (type == "text/rtf" || type == "public.rtf" || type == "com.apple.traditional-mac-plain-text")
         return String();
 
