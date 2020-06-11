@@ -99,11 +99,11 @@ static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState
         return false;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (source.action & DragSourceActionColor)
+    if (source.action.contains(DragSourceAction::Color))
         return true;
 #endif
 
-    return source.action & (DragSourceActionDHTML | DragSourceActionImage);
+    return source.action.containsAny({ DragSourceAction::DHTML, DragSourceAction::Image });
 }
 
 static bool shouldUseVisiblePathToCreatePreviewForDragSource(const DragSourceState& source)
@@ -112,7 +112,7 @@ static bool shouldUseVisiblePathToCreatePreviewForDragSource(const DragSourceSta
         return false;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (source.action & DragSourceActionColor)
+    if (source.action.contains(DragSourceAction::Color))
         return true;
 #endif
 
@@ -124,11 +124,11 @@ static bool shouldUseTextIndicatorToCreatePreviewForDragSource(const DragSourceS
     if (!source.indicatorData)
         return false;
 
-    if (source.action & (DragSourceActionLink | DragSourceActionSelection))
+    if (source.action.containsAny({ DragSourceAction::Link, DragSourceAction::Selection }))
         return true;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (source.action & DragSourceActionAttachment)
+    if (source.action.contains(DragSourceAction::Attachment))
         return true;
 #endif
 
@@ -141,11 +141,11 @@ static bool canUpdatePreviewForActiveDragSource(const DragSourceState& source)
         return false;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (source.action & DragSourceActionColor)
+    if (source.action.contains(DragSourceAction::Color))
         return true;
 #endif
 
-    if (source.action & DragSourceActionLink && !(source.action & DragSourceActionImage))
+    if (source.action.contains(DragSourceAction::Link) && !source.action.contains(DragSourceAction::Image))
         return true;
 
     return false;
@@ -167,7 +167,7 @@ Optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem(UIDr
 bool DragDropInteractionState::anyActiveDragSourceIs(WebCore::DragSourceAction action) const
 {
     for (auto& source : m_activeDragSources) {
-        if (source.action & action)
+        if (source.action.contains(action))
             return true;
     }
     return false;
@@ -342,7 +342,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
 
     m_adjustedPositionForDragEnd = item.eventPositionInContentCoordinates;
     m_stagedDragSource = {{
-        static_cast<DragSourceAction>(item.sourceAction),
+        item.sourceAction,
         item.eventPositionInContentCoordinates,
         item.dragPreviewFrameInRootViewCoordinates,
         dragImage,
@@ -357,7 +357,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
 
 bool DragDropInteractionState::hasStagedDragSource() const
 {
-    return m_stagedDragSource && stagedDragSource().action != WebCore::DragSourceActionNone;
+    return m_stagedDragSource && !stagedDragSource().action.isEmpty();
 }
 
 void DragDropInteractionState::clearStagedDragSource(DidBecomeActive didBecomeActive)
@@ -393,7 +393,7 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
         if (!dragItem)
             continue;
 
-        if (source.action & DragSourceActionLink) {
+        if (source.action.contains(DragSourceAction::Link)) {
             dragItem.previewProvider = [title = retainPtr((NSString *)source.linkTitle), url = retainPtr((NSURL *)source.linkURL), center = source.adjustedOrigin] () -> UIDragPreview * {
                 UIURLDragPreviewView *previewView = [UIURLDragPreviewView viewWithTitle:title.get() URL:url.get()];
                 previewView.center = center;
@@ -402,7 +402,7 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
             };
         }
 #if ENABLE(INPUT_TYPE_COLOR)
-        else if (source.action & DragSourceActionColor) {
+        else if (source.action.contains(DragSourceAction::Color)) {
             dragItem.previewProvider = [image = source.image] () -> UIDragPreview * {
                 UIImageView *imageView = [[[UIImageView alloc] initWithImage:image.get()] autorelease];
                 UIDragPreviewParameters *parameters = [[[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:[imageView bounds]] ]] autorelease];

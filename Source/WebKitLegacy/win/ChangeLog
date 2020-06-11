@@ -1,3 +1,26 @@
+2020-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for DragSourceAction
+        <https://webkit.org/b/212885>
+        <rdar://problem/64094134>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Add and use conversion functions between
+          OptionSet<WebCore::DragSourceAction> and WebDragSourceAction.
+        - Update method signatures.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (coreDragSourceActionMask): Add.
+        (kit): Add.
+        - Convert from WebCore::DragSourceAction to WebDragSourceAction.
+        (WebDragClient::dragSourceActionMaskForPoint):
+        (WebDragClient::willPerformDragSourceAction):
+        (WebDragClient::startDrag):
+        * WebCoreSupport/WebDragClient.h:
+        (WebDragClient::dragSourceActionMaskForPoint):
+
 2020-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Some style improvements to main thread code

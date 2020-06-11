@@ -68,6 +68,22 @@ WebDragClient::WebDragClient(WebView* webView)
 
 #if PLATFORM(MAC)
 
+static OptionSet<WebCore::DragSourceAction> coreDragSourceActionMask(WebDragSourceAction action)
+{
+    OptionSet<WebCore::DragSourceAction> result;
+
+    if (action & WebDragSourceActionDHTML)
+        result.add(WebCore::DragSourceAction::DHTML);
+    if (action & WebDragSourceActionImage)
+        result.add(WebCore::DragSourceAction::Image);
+    if (action & WebDragSourceActionLink)
+        result.add(WebCore::DragSourceAction::Link);
+    if (action & WebDragSourceActionSelection)
+        result.add(WebCore::DragSourceAction::Selection);
+
+    return result;
+}
+
 static WebDragDestinationAction kit(WebCore::DragDestinationAction action)
 {
     switch (action) {
@@ -104,15 +120,15 @@ void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAct
 }
 
 
-WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& rootViewPoint)
+OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint& rootViewPoint)
 {
     NSPoint viewPoint = [m_webView _convertPointFromRootView:rootViewPoint];
-    return (DragSourceAction)[[m_webView _UIDelegateForwarder] webView:m_webView dragSourceActionMaskForPoint:viewPoint];
+    return coreDragSourceActionMask([[m_webView _UIDelegateForwarder] webView:m_webView dragSourceActionMaskForPoint:viewPoint]);
 }
 
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action, const WebCore::IntPoint& mouseDownPoint, WebCore::DataTransfer& dataTransfer)
 {
-    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name()]];
+    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:kit(action) fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name()]];
 }
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
@@ -124,7 +140,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Fra
     if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
         return;
     
-    NSEvent *event = dragItem.sourceAction == DragSourceActionLink ? frame.eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
+    NSEvent *event = (dragItem.sourceAction && *dragItem.sourceAction == DragSourceAction::Link) ? frame.eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
     WebHTMLView* topHTMLView = getTopHTMLView(&frame);
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     
@@ -197,9 +213,9 @@ void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAct
 {
 }
 
-WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
+OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
-    return DragSourceActionNone;
+    return { };
 }
 
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&)
@@ -232,9 +248,9 @@ void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAct
 {
 }
 
-WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
+OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
-    return DragSourceActionAny;
+    return WebCore::anyDragSourceAction();
 }
 
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const IntPoint&, DataTransfer&)

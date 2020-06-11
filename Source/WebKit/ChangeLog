@@ -1,3 +1,46 @@
+2020-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for DragSourceAction
+        <https://webkit.org/b/212885>
+        <rdar://problem/64094134>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Convert argument parameters from uint64_t to
+          OptionSet<DragSourceAction>.
+        - Convert DragSourceAction to OptionSet<DragSourceAction>.
+
+        * Scripts/webkit/messages.py:
+        - Map DragSourceAction enum to DragActions.h header.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/DragDropInteractionState.h:
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::shouldUseDragImageToCreatePreviewForDragSource):
+        (WebKit::shouldUseVisiblePathToCreatePreviewForDragSource):
+        (WebKit::shouldUseTextIndicatorToCreatePreviewForDragSource):
+        (WebKit::canUpdatePreviewForActiveDragSource):
+        (WebKit::DragDropInteractionState::anyActiveDragSourceIs const):
+        (WebKit::DragDropInteractionState::stageDragItem):
+        (WebKit::DragDropInteractionState::hasStagedDragSource const):
+        (WebKit::DragDropInteractionState::updatePreviewsForActiveDragSources):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startDrag:item:]):
+        (-[WKContentView _allowedDragSourceActions]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestDragStart):
+        (WebKit::WebPageProxy::requestAdditionalItemsForDragSession):
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::dragSourceActionMaskForPoint):
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::allowedDragSourceActions const):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDragStart):
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+
 2020-06-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] MediaUsageManagerCocoa should use a different USVideoUsage initializer

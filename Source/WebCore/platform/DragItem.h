@@ -41,7 +41,7 @@ struct DragItem final {
     // Where the image should be positioned relative to the cursor.
     FloatPoint imageAnchorPoint;
 
-    DragSourceAction sourceAction { DragSourceActionNone };
+    Optional<DragSourceAction> sourceAction;
     IntPoint eventPositionInContentCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
@@ -61,7 +61,7 @@ void DragItem::encode(Encoder& encoder) const
 {
     // FIXME(173815): We should encode and decode PasteboardWriterData and platform drag image data
     // here too, as part of moving off of the legacy dragging codepath.
-    encoder.encodeEnum(sourceAction);
+    encoder << sourceAction;
     encoder << imageAnchorPoint << eventPositionInContentCoordinates << dragLocationInContentCoordinates << dragLocationInWindowCoordinates << title << url << dragPreviewFrameInRootViewCoordinates;
     bool hasIndicatorData = image.hasIndicatorData();
     encoder << hasIndicatorData;
@@ -77,7 +77,7 @@ void DragItem::encode(Encoder& encoder) const
 template<class Decoder>
 bool DragItem::decode(Decoder& decoder, DragItem& result)
 {
-    if (!decoder.decodeEnum(result.sourceAction))
+    if (!decoder.decode(result.sourceAction))
         return false;
     if (!decoder.decode(result.imageAnchorPoint))
         return false;

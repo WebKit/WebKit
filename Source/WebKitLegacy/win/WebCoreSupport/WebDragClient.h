@@ -37,7 +37,7 @@ class WebDragClient : public WebCore::DragClient {
 public:
     WebDragClient(WebView*);
 
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&);
+    virtual OptionSet<WebCore::DragSourceAction> dragSourceActionMaskForPoint(const WebCore::IntPoint&);
     virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&);
     virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&);
     virtual void startDrag(WebCore::DragItem, WebCore::DataTransfer&, WebCore::Frame&);

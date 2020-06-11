@@ -44,21 +44,35 @@ constexpr OptionSet<DragDestinationAction> anyDragDestinationAction()
     return OptionSet<DragDestinationAction> { DragDestinationAction::DHTML, DragDestinationAction::Edit, DragDestinationAction::Load };
 }
 
-// WebCoreDragSourceAction should be kept in sync with WebDragSourceAction.
-typedef enum {
-    DragSourceActionNone         = 0,
-    DragSourceActionDHTML        = 1,
-    DragSourceActionImage        = 2,
-    DragSourceActionLink         = 4,
-    DragSourceActionSelection    = 8,
+// See WebDragSourceAction.
+enum class DragSourceAction : uint8_t {
+    DHTML      = 1,
+    Image      = 2,
+    Link       = 4,
+    Selection  = 8,
 #if ENABLE(ATTACHMENT_ELEMENT)
-    DragSourceActionAttachment   = 16,
+    Attachment = 16,
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-    DragSourceActionColor        = 32,
+    Color      = 32,
 #endif
-    DragSourceActionAny          = UINT_MAX
-} DragSourceAction;
+};
+
+constexpr OptionSet<DragSourceAction> anyDragSourceAction()
+{
+    return OptionSet<DragSourceAction> {
+        DragSourceAction::DHTML,
+        DragSourceAction::Image,
+        DragSourceAction::Link,
+        DragSourceAction::Selection
+#if ENABLE(ATTACHMENT_ELEMENT)
+        , DragSourceAction::Attachment
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+        , DragSourceAction::Color
+#endif
+    };
+}
 
 // See NSDragOperation, _UIDragOperation and UIDropOperation.
 enum class DragOperation : uint8_t {
@@ -108,6 +122,22 @@ template<> struct EnumTraits<WebCore::DragOperation> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::DragSourceAction> {
+    using values = EnumValues<
+        WebCore::DragSourceAction,
+        WebCore::DragSourceAction::DHTML,
+        WebCore::DragSourceAction::Image,
+        WebCore::DragSourceAction::Link,
+        WebCore::DragSourceAction::Selection
+#if ENABLE(ATTACHMENT_ELEMENT)
+        , WebCore::DragSourceAction::Attachment
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+        , WebCore::DragSourceAction::Color
+#endif
+    >;
+};
+
 template<> struct OptionSetTraits<WebCore::DragDestinationAction> {
     using values = OptionSetValues<
         WebCore::DragDestinationAction,
@@ -126,6 +156,22 @@ template<> struct OptionSetTraits<WebCore::DragOperation> {
         WebCore::DragOperation::Private,
         WebCore::DragOperation::Move,
         WebCore::DragOperation::Delete
+    >;
+};
+
+template<> struct OptionSetTraits<WebCore::DragSourceAction> {
+    using values = OptionSetValues<
+        WebCore::DragSourceAction,
+        WebCore::DragSourceAction::DHTML,
+        WebCore::DragSourceAction::Image,
+        WebCore::DragSourceAction::Link,
+        WebCore::DragSourceAction::Selection
+#if ENABLE(ATTACHMENT_ELEMENT)
+        , WebCore::DragSourceAction::Attachment
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+        , WebCore::DragSourceAction::Color
+#endif
     >;
 };
 

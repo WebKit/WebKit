@@ -1190,15 +1190,15 @@ bool EventHandler::panScrollInProgress() const
 }
 
 #if ENABLE(DRAG_SUPPORT)
-DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
+OptionSet<DragSourceAction> EventHandler::updateDragSourceActionsAllowed() const
 {
     Page* page = m_frame.page();
     if (!page)
-        return DragSourceActionNone;
+        return { };
 
     FrameView* view = m_frame.view();
     if (!view)
-        return DragSourceActionNone;
+        return { };
 
     return page->dragController().delegateDragSourceAction(view->contentsToRootView(m_mouseDownContentsPosition));
 }
@@ -3647,35 +3647,36 @@ bool EventHandler::dragHysteresisExceeded(const IntPoint& floatDragViewportLocat
 
 bool EventHandler::dragHysteresisExceeded(const FloatPoint& dragViewportLocation) const
 {
+    auto dragOperation = dragState().type.toSingleValue();
+    ASSERT(dragOperation);
     int threshold = GeneralDragHysteresis;
-    switch (dragState().type) {
-    case DragSourceActionSelection:
-        threshold = TextDragHysteresis;
-        break;
-    case DragSourceActionImage:
+    if (dragOperation) {
+        switch (*dragOperation) {
+        case DragSourceAction::Selection:
+            threshold = TextDragHysteresis;
+            break;
+        case DragSourceAction::Image:
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case DragSourceActionAttachment:
+        case DragSourceAction::Attachment:
 #endif
-        threshold = ImageDragHysteresis;
-        break;
-    case DragSourceActionLink:
-        threshold = LinkDragHysteresis;
-        break;
+            threshold = ImageDragHysteresis;
+            break;
+        case DragSourceAction::Link:
+            threshold = LinkDragHysteresis;
+            break;
 #if ENABLE(INPUT_TYPE_COLOR)
-    case DragSourceActionColor:
-        threshold = ColorDragHystersis;
-        break;
+        case DragSourceAction::Color:
+            threshold = ColorDragHystersis;
+            break;
 #endif
-    case DragSourceActionDHTML:
-        break;
-    case DragSourceActionNone:
-    case DragSourceActionAny:
-        ASSERT_NOT_REACHED();
+        case DragSourceAction::DHTML:
+            break;
+        }
     }
-    
+
     return mouseMovementExceedsThreshold(dragViewportLocation, threshold);
 }
-    
+
 void EventHandler::invalidateDataTransfer()
 {
     if (!dragState().dataTransfer)
@@ -3715,7 +3716,7 @@ void EventHandler::didStartDrag()
         return;
 
     Optional<SimpleRange> draggedContentRange;
-    if (dragState().type & DragSourceActionSelection)
+    if (dragState().type.contains(DragSourceAction::Selection))
         draggedContentRange = m_frame.selection().selection().toNormalizedRange();
     else
         draggedContentRange = makeRangeSelectingNode(*dragSource);
@@ -3775,11 +3776,6 @@ bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTrans
     return !dispatchDragEvent(eventNames().dragstartEvent, *dragState().source, m_mouseDownEvent, dataTransfer) && !m_frame.selection().selection().isInPasswordField();
 }
 
-static bool ExactlyOneBitSet(DragSourceAction n)
-{
-    return n && !(n & (n - 1));
-}
-
 RefPtr<Element> EventHandler::draggedElement() const
 {
     return dragState().source;
@@ -3803,7 +3799,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     
     // Careful that the drag starting logic stays in sync with eventMayStartDrag().
     if (m_mouseDownMayStartDrag && !dragState().source) {
-        dragState().shouldDispatchEvents = (updateDragSourceActionsAllowed() & DragSourceActionDHTML);
+        dragState().shouldDispatchEvents = updateDragSourceActionsAllowed().contains(DragSourceAction::DHTML);
 
         // Try to find an element that wants to be dragged.
         HitTestResult result(m_mouseDownContentsPosition);
@@ -3814,17 +3810,17 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         if (!dragState().source)
             m_mouseDownMayStartDrag = false; // no element is draggable
         else
-            m_dragMayStartSelectionInstead = (dragState().type & DragSourceActionSelection);
+            m_dragMayStartSelectionInstead = dragState().type.contains(DragSourceAction::Selection);
     }
     
     // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
     // or else we bail on the dragging stuff and allow selection to occur
-    if (m_mouseDownMayStartDrag && m_dragMayStartSelectionInstead && (dragState().type & DragSourceActionSelection) && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
+    if (m_mouseDownMayStartDrag && m_dragMayStartSelectionInstead && dragState().type.contains(DragSourceAction::Selection) && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
         ASSERT(event.event().type() == PlatformEvent::MouseMoved);
-        if ((dragState().type & DragSourceActionImage)) {
+        if (dragState().type.contains(DragSourceAction::Image)) {
             // ... unless the mouse is over an image, then we start dragging just the image
-            dragState().type = DragSourceActionImage;
-        } else if (!(dragState().type & (DragSourceActionDHTML | DragSourceActionLink))) {
+            dragState().type = DragSourceAction::Image;
+        } else if (!dragState().type.containsAny({ DragSourceAction::DHTML, DragSourceAction::Link })) {
             // ... but only bail if we're not over an unselectable element.
             m_mouseDownMayStartDrag = false;
             dragState().source = nullptr;
@@ -3845,11 +3841,15 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         return !mouseDownMayStartSelect() && !m_mouseDownMayStartAutoscroll;
     ASSERT(dragState().source);
 
-    if (!ExactlyOneBitSet(dragState().type)) {
-        ASSERT(dragState().type & DragSourceActionSelection);
-        ASSERT(ExactlyOneBitSet(static_cast<DragSourceAction>(dragState().type & ~DragSourceActionSelection)));
+    if (!dragState().type.hasExactlyOneBitSet()) {
+        ASSERT(dragState().type.contains(DragSourceAction::Selection));
+#ifndef NDEBUG
+        auto actionMaskCopy = dragState().type;
+        actionMaskCopy.remove(DragSourceAction::Selection);
+        ASSERT(actionMaskCopy.hasExactlyOneBitSet());
+#endif
 
-        dragState().type = DragSourceActionSelection;
+        dragState().type = DragSourceAction::Selection;
     }
 
     // We are starting a text/image/url drag, so the cursor should be an arrow
@@ -3881,7 +3881,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::Yes;
         dragState().dataTransfer->moveDragState(WTFMove(dragStartDataTransfer));
 
-        if (dragState().source && dragState().type == DragSourceActionDHTML && !dragState().dataTransfer->hasDragImage()) {
+        if (dragState().source && dragState().type == DragSourceAction::DHTML && !dragState().dataTransfer->hasDragImage()) {
             dragState().source->document().updateStyleIfNeeded();
             if (auto* renderer = dragState().source->renderer()) {
                 auto absolutePosition = renderer->localToAbsolute();

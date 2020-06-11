@@ -1,3 +1,19 @@
+2020-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for DragSourceAction
+        <https://webkit.org/b/212885>
+        <rdar://problem/64094134>
+
+        Reviewed by Darin Adler.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::hasExactlyOneBitSet const): Add.
+        - Move here from WebCore::ExactlyOneBitSet() in
+          Source/WebCore/page/EventHandler.cpp.
+        (WTF::OptionSet::toSingleValue const): Add.
+        - Use hasExactlyOneBitSet() to determine whether exactly one
+          enum bitmask value can be returned.
+
 2020-06-11  Geoffrey Garen  <ggaren@apple.com>
 
         [Cocoa] Build callOnMainThread on WTF::RunLoop rather than on a timer

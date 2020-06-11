@@ -46,7 +46,7 @@ struct TextIndicatorData;
 namespace WebKit {
 
 struct DragSourceState {
-    WebCore::DragSourceAction action { WebCore::DragSourceActionNone };
+    OptionSet<WebCore::DragSourceAction> action;
     CGPoint adjustedOrigin { CGPointZero };
     CGRect dragPreviewFrameInRootViewCoordinates { CGRectZero };
     RetainPtr<UIImage> image;

@@ -76,12 +76,12 @@ public:
     const URL& draggingImageURL() const { return m_draggingImageURL; }
     void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
     const IntPoint& dragOffset() const { return m_dragOffset; }
-    DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
+    OptionSet<DragSourceAction> dragSourceAction() const { return m_dragSourceAction; }
     DragHandlingMethod dragHandlingMethod() const { return m_dragHandlingMethod; }
 
     Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
-    DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
+    OptionSet<DragSourceAction> delegateDragSourceAction(const IntPoint& rootViewPoint);
 
     Element* draggableElement(const Frame*, Element* start, const IntPoint&, DragState&) const;
     WEBCORE_EXPORT void dragEnded();
@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
     WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
 
-    void prepareForDragStart(Frame& sourceFrame, DragSourceAction, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;
+    void prepareForDragStart(Frame& sourceFrame, OptionSet<DragSourceAction>, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;
     bool startDrag(Frame& src, const DragState&, OptionSet<DragOperation>, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData);
     static const IntSize& maxDragImageSize();
 
@@ -154,7 +154,7 @@ private:
     DragHandlingMethod m_dragHandlingMethod { DragHandlingMethod::None };
 
     OptionSet<DragDestinationAction> m_dragDestinationActionMask;
-    DragSourceAction m_dragSourceAction { DragSourceActionNone };
+    OptionSet<DragSourceAction> m_dragSourceAction;
     bool m_didInitiateDrag { false };
     OptionSet<DragOperation> m_sourceDragOperationMask; // Set in startDrag when a drag starts from a mouse down within WebKit.
     IntPoint m_dragOffset;

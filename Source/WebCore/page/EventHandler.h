@@ -465,7 +465,7 @@ private:
     void defaultArrowEventHandler(FocusDirection, KeyboardEvent&);
 
 #if ENABLE(DRAG_SUPPORT)
-    DragSourceAction updateDragSourceActionsAllowed() const;
+    OptionSet<DragSourceAction> updateDragSourceActionsAllowed() const;
     bool supportsSelectionUpdatesOnMouseDrag() const;
 #endif
 

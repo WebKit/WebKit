@@ -675,6 +675,34 @@ static _UIDragOperation kit(Optional<WebCore::DragOperation> dragOperation)
     return _UIDragOperationNone;
 }
 #endif // USE(APPKIT)
+
+WebDragSourceAction kit(Optional<WebCore::DragSourceAction> action)
+{
+    if (!action)
+        return WebDragSourceActionNone;
+
+    switch (*action) {
+    case WebCore::DragSourceAction::DHTML:
+        return WebDragSourceActionDHTML;
+    case WebCore::DragSourceAction::Image:
+        return WebDragSourceActionImage;
+    case WebCore::DragSourceAction::Link:
+        return WebDragSourceActionLink;
+    case WebCore::DragSourceAction::Selection:
+        return WebDragSourceActionSelection;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    case WebCore::DragSourceAction::Attachment:
+        break;
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebCore::DragSourceAction::Color:
+        break;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebDragSourceActionNone;
+}
 #endif // ENABLE(DRAG_SUPPORT)
 
 WebCore::FindOptions coreOptions(WebFindOptions options)
@@ -1960,7 +1988,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->draggedLinkURL = dragItem.url.isEmpty() ? nil : (NSURL *)dragItem.url;
     _private->draggedLinkTitle = dragItem.title.isEmpty() ? nil : (NSString *)dragItem.title;
     _private->dragPreviewFrameInRootViewCoordinates = dragItem.dragPreviewFrameInRootViewCoordinates;
-    _private->dragSourceAction = static_cast<WebDragSourceAction>(dragItem.sourceAction);
+    _private->dragSourceAction = kit(dragItem.sourceAction);
 }
 
 - (CGRect)_dataInteractionCaretRect

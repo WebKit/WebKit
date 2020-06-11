@@ -205,6 +205,16 @@ public:
         m_storage &= ~optionSet.m_storage;
     }
 
+    constexpr bool hasExactlyOneBitSet() const
+    {
+        return m_storage && !(m_storage & (m_storage - 1));
+    }
+
+    constexpr Optional<E> toSingleValue() const
+    {
+        return hasExactlyOneBitSet() ? Optional<E>(static_cast<E>(m_storage)) : WTF::nullopt;
+    }
+
     constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)
     {
         return lhs.m_storage == rhs.m_storage;

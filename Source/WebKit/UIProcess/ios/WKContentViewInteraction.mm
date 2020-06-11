@@ -7253,7 +7253,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 
 - (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item
 {
-    ASSERT(item.sourceAction != WebCore::DragSourceActionNone);
+    ASSERT(item.sourceAction);
 
     if (item.promisedAttachmentInfo)
         [self _prepareToDragPromisedAttachment:item.promisedAttachmentInfo];
@@ -7554,12 +7554,12 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
 }
 
-- (WebCore::DragSourceAction)_allowedDragSourceActions
+- (OptionSet<WebCore::DragSourceAction>)_allowedDragSourceActions
 {
-    auto allowedActions = WebCore::DragSourceActionAny;
+    auto allowedActions = WebCore::anyDragSourceAction();
     if (!self.isFirstResponder || !_suppressSelectionAssistantReasons.isEmpty()) {
         // Don't allow starting a drag on a selection when selection views are not visible.
-        allowedActions = static_cast<WebCore::DragSourceAction>(allowedActions & ~WebCore::DragSourceActionSelection);
+        allowedActions.remove(WebCore::DragSourceAction::Selection);
     }
     return allowedActions;
 }
@@ -8030,7 +8030,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 - (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
 {
     RELEASE_LOG(DragAndDrop, "Drag session willAnimateLiftWithAnimator: %p", session);
-    if (_dragDropInteractionState.anyActiveDragSourceIs(WebCore::DragSourceActionSelection)) {
+    if (_dragDropInteractionState.anyActiveDragSourceIs(WebCore::DragSourceAction::Selection)) {
         [self cancelActiveTextInteractionGestures];
         if (!_shouldRestoreCalloutBarAfterDrop) {
             // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.

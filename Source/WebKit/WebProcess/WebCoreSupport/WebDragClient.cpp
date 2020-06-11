@@ -45,7 +45,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint
 {
 }
 
-DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
+OptionSet<DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
     return m_page->allowedDragSourceActions();
 }

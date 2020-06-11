@@ -1,3 +1,65 @@
+2020-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Adopt enum class for DragSourceAction
+        <https://webkit.org/b/212885>
+        <rdar://problem/64094134>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Convert DragSourceAction to enum class.
+        - Remove DragSourceActionNone by using Optional<> and
+          OptionSet<> (as dictated by how the code used the value).
+        - Remove DragSourceActionAny and replace (as needed) with
+          anyDragSourceAction(). (Some--but not all--uses were removed.)
+        - Add both WTF::EnumTraits<> and WTF::OptionSetTraits<> for
+          DragSourceAction since both Optional<> and OptionSet<> are
+          used with IPC.
+
+        * loader/EmptyClients.cpp:
+        * page/DragActions.h:
+        (WebCore::DragSourceAction):
+        - Convert to enum class.
+        (WebCore::anyDragSourceAction): Add.
+        - Replaces WebCore::DragSourceActionAny.
+        (WTF::EnumTraits<WebCore::DragSourceAction>): Add.
+        (WTF::OptionSetTraits<WebCore::DragSourceAction>): Add.
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::delegateDragSourceAction):
+        (WebCore::DragController::draggableElement const):
+        (WebCore::DragController::prepareForDragStart const):
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doSystemDrag):
+        - Use OptionSet<>::toSingleValue() and add ASSERT() that it does
+          not return WTF::nullopt.
+        * page/DragController.h:
+        (WebCore::DragController::dragSourceAction const):
+        * page/DragState.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragSourceActionsAllowed const):
+        (WebCore::EventHandler::dragHysteresisExceeded const):
+        - Use OptionSet<>::toSingleValue() and add ASSERT() that it does
+          not return WTF::nullopt.
+        - Remove case statements for DragSourceActionNone and
+          DragSourceActionAny, along with ASSERT_NOT_REACHED(). The
+          ASSERT() for toSingleValue() replaces the DragSourceActionNone
+          case.
+        (WebCore::EventHandler::didStartDrag):
+        (WebCore::ExactlyOneBitSet): Delete.
+        - Move to WTF::OptionSet<>::hasExactlyOneBitSet().
+        (WebCore::EventHandler::handleDrag):
+        - Add code to #ifndef NDEBUG/#endif instead of modifying
+          dragState().type in-place since it seemed weird to modify it
+          just to check an ASSERT(), even though it was overwritten
+          immediately after that.
+        * page/EventHandler.h:
+        * platform/DragItem.h:
+        (WebCore::DragItem::encode const):
+        (WebCore::DragItem::decode):
+        - Stop using decodeEnum()/encodeEnum() with
+          Optional<DragSourceAction>.
+
 2020-06-11  Youenn Fablet  <youenn@apple.com>
 
         End a remote MediaStreamTrack if its source is ended

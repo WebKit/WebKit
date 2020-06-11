@@ -909,16 +909,16 @@ void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
 }
 
 #if ENABLE(DATA_INTERACTION)
-void WebPage::requestDragStart(const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t allowedActions)
+void WebPage::requestDragStart(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
 {
-    SetForScope<WebCore::DragSourceAction> allowedActionsForScope(m_allowedDragSourceActions, static_cast<WebCore::DragSourceAction>(allowedActions));
+    SetForScope<OptionSet<WebCore::DragSourceAction>> allowedActionsForScope(m_allowedDragSourceActions, allowedActionsMask);
     bool didStart = m_page->mainFrame().eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition);
     send(Messages::WebPageProxy::DidHandleDragStartRequest(didStart));
 }
 
-void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t allowedActions)
+void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
 {
-    SetForScope<WebCore::DragSourceAction> allowedActionsForScope(m_allowedDragSourceActions, static_cast<WebCore::DragSourceAction>(allowedActions));
+    SetForScope<OptionSet<WebCore::DragSourceAction>> allowedActionsForScope(m_allowedDragSourceActions, allowedActionsMask);
     // To augment the platform drag session with additional items, end the current drag session and begin a new drag session with the new drag item.
     // This process is opaque to the UI process, which still maintains the old drag item in its drag session. Similarly, this persistent drag session
     // is opaque to the web process, which only sees that the current drag has ended, and that a new one is beginning.

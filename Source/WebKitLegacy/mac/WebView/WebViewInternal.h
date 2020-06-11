@@ -32,6 +32,7 @@
 #import "WebPreferences.h"
 #import "WebViewPrivate.h"
 #import "WebTypesInternal.h"
+#import "WebUIDelegate.h"
 
 #ifdef __cplusplus
 
@@ -98,6 +99,8 @@ using CocoaDragOperation = uint64_t;
 #endif
 
 OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation);
+
+WebDragSourceAction kit(Optional<WebCore::DragSourceAction>);
 #endif // ENABLE(DRAG_SUPPORT)
 
 WebCore::FindOptions coreOptions(WebFindOptions);

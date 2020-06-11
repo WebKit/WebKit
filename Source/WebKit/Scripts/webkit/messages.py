@@ -591,6 +591,7 @@ def headers_for_type(type):
         'WebKit::DocumentEditingContextRequest': ['"DocumentEditingContext.h"'],
         'WebCore::DragHandlingMethod': ['<WebCore/DragActions.h>'],
         'WebCore::DragOperation': ['<WebCore/DragActions.h>'],
+        'WebCore::DragSourceAction': ['<WebCore/DragActions.h>'],
         'WebCore::ExceptionDetails': ['<WebCore/JSDOMExceptionHandling.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],
         'WebCore::ShareDataWithParsedURL': ['<WebCore/ShareData.h>'],
