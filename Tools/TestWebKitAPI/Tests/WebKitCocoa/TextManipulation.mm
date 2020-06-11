@@ -602,6 +602,60 @@ TEST(TextManipulation, StartTextManipulationIncludesFullyClippedText)
     EXPECT_WK_STREQ("More text", items[1].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationFindsInsertedClippedText)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head>"
+        "    <style>"
+        "        span { overflow: hidden; width: 200px; height: 0; }"
+        "        p { visibility: hidden; }"
+        "    </style>"
+        "</head>"
+        "<body>"
+        "    <div>hello, world</div>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+
+    done = false;
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        if (items.count == 2)
+            done = true;
+    };
+    [webView stringByEvaluatingJavaScript:@"var beforeElement = document.createElement('span');"
+        "beforeElement.innerHTML='before';"
+        "document.querySelector('div').before(beforeElement);"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        if (items.count == 3)
+            done = true;
+    };
+    [webView stringByEvaluatingJavaScript:@"var afterElement = document.createElement('p');"
+        "afterElement.innerHTML='after';"
+        "document.querySelector('div').after(afterElement)"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("hello, world", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("before", items[1].tokens[0].content);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("after", items[2].tokens[0].content);
+}
+
 TEST(TextManipulation, StartTextManipulationTreatsInlineBlockLinksAndButtonsAsParagraphs)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

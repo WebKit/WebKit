@@ -1,3 +1,14 @@
+2020-06-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation does not observe inserted elements that are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=213057
+        <rdar://problem/63768253>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Some style improvements to main thread code

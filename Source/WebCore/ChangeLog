@@ -1,3 +1,23 @@
+2020-06-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation does not observe inserted elements that are invisible
+        https://bugs.webkit.org/show_bug.cgi?id=213057
+        <rdar://problem/63768253>
+
+        Reviewed by Wenson Hsieh.
+
+        TextManipulationController gets notification when renderer of an element is created and starts observing the 
+        element. It currently sets the observing range to be the visible start position and visible end position of the 
+        element. When the invisible content becomes visible later, TextManipulationController does not get notification 
+        and will miss the content. Therefore, TextManipulationController should use the actual start and end positions 
+        of the element for range.
+
+        Test: TextManipulation.StartTextManipulationFindsInsertedClippedText
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::makeHashablePositionRange):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+
 2020-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Some style improvements to main thread code

@@ -507,9 +507,9 @@ static const PositionTuple makePositionTuple(const Position& position)
     return { position.anchorNode(), static_cast<unsigned>(position.anchorType()), position.anchorType() == Position::PositionIsOffsetInAnchor ? position.offsetInContainerNode() : 0 };
 }
 
-static const std::pair<PositionTuple, PositionTuple> makeHashablePositionRange(const VisiblePosition& start, const VisiblePosition& end)
+static const std::pair<PositionTuple, PositionTuple> makeHashablePositionRange(const Position& start, const Position& end)
 {
-    return { makePositionTuple(start.deepEquivalent()), makePositionTuple(end.deepEquivalent()) };
+    return { makePositionTuple(start), makePositionTuple(end) };
 }
 
 void TextManipulationController::scheduleObservationUpdate()
@@ -537,8 +537,8 @@ void TextManipulationController::scheduleObservationUpdate()
 
         HashSet<std::pair<PositionTuple, PositionTuple>> paragraphSets;
         for (auto& element : filteredElements) {
-            auto start = startOfParagraph(firstPositionInOrBeforeNode(element.ptr()));
-            auto end = endOfParagraph(lastPositionInOrAfterNode(element.ptr()));
+            auto start = firstPositionInOrBeforeNode(element.ptr());
+            auto end = lastPositionInOrAfterNode(element.ptr());
 
             if (start.isNull() || end.isNull())
                 continue;
@@ -549,9 +549,9 @@ void TextManipulationController::scheduleObservationUpdate()
 
             auto* controller = weakThis.get();
             if (!controller)
-                return; // Finding the start/end of paragraph may have updated layout & executed arbitrary scripts.
+                return;
 
-            controller->observeParagraphs(start.deepEquivalent(), end.deepEquivalent());
+            controller->observeParagraphs(start, end);
         }
         controller->flushPendingItemsForCallback();
     });
