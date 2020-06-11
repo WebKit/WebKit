@@ -94,6 +94,7 @@
     "web-platform-tests/css/css-grid/abspos": "import", 
     "web-platform-tests/css/css-grid/alignment/": "import", 
     "web-platform-tests/css/css-grid/grid-definition/": "import", 
+    "web-platform-tests/css/css-grid/grid-items/": "import", 
     "web-platform-tests/css/css-grid/layout-algorithm": "import", 
     "web-platform-tests/css/css-grid/layout-algorithm/": "import", 
     "web-platform-tests/css/css-grid/parsing/": "import", 

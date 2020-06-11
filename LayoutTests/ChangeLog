@@ -1,3 +1,14 @@
+2020-06-11  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Reimport WPT tests removed in r262809
+        https://bugs.webkit.org/show_bug.cgi?id=213028
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Add failure expectations of the new tests.
+
+        * TestExpectations:
+
 2020-06-10  Frank Yang  <guowei_yang@apple.com>
 
         Multiple SVG Filters Unexpectedly lightens image using linearRGB

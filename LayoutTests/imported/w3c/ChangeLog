@@ -1,3 +1,80 @@
+2020-06-11  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Reimport WPT tests removed in r262809
+        https://bugs.webkit.org/show_bug.cgi?id=213028
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        r261841 imported some WPT grid tests, but it was reverted in r262809.
+        This patch reimports these tests again.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-003-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-004-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-005-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-005.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-006-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-006.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-007-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-007.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-008-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-008.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-009-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-009.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-010-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-010.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-011-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-011.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-012-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-012.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-013-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-013.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-014-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-014.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-003-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-004-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-005-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-005.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-006-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-006.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-007-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-007.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-008-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-008.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-009-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-009.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-010-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-010.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-011-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-011.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-012-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-012.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-013-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-013.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-014-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-014.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002.html:
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+
 2020-06-11  Rob Buis  <rbuis@igalia.com>
 
         Improve url-setters.html WPT test
