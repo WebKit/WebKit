@@ -1,3 +1,9 @@
+2020-06-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, updated libsoup dependency in jhbuild.
+
+        * wpe/jhbuild.modules:
+
 2020-06-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS]: The File Picker of the <input> file element should show the selection filter
