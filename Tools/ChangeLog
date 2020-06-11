@@ -1,3 +1,27 @@
+2020-06-11  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r262879): 3 TestWebKitAPI.TextManipulation tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=213079
+        <rdar://problem/64256870>
+
+        Reviewed by Wenson Hsieh.
+
+        Update a few tests after behavior change in r262879. From r262879, we no longer use visible positions of element
+        to calculate range to observe. Instead, we use the first and end position in the element to decide the range. In
+        previous implementation, the range can be extended to outside of the element, like some visible positon before 
+        or after the element.
+
+        TextManipulation.StartTextManipulationFindNewlyDisplayedParagraph: Different elements would make separate ranges 
+        because we create range with the boundaries of element. We can consider merging adjacent ranges later.
+        TextManipulation.StartTextManipulationFindSameParagraphWithNewContent: The newly observing range only includes
+        the newly inserted element now.
+        TextManipulation.InsertingContentIntoAlreadyManipulatedContentDoesNotCreateTextManipulationItem: The p element
+        is not manipulated as it is the common ancestor of manipulated elements. And we want to make sure the newly
+        inserted element is child of a manipulated element.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-11  Andy Estes  <aestes@apple.com>
 
         [iOS] nullptr deref in FileInputType::iconLoaded when the input's type attribute is modified by a change event listener

@@ -314,7 +314,13 @@ TEST(TextManipulation, StartTextManipulationFindNewlyDisplayedParagraph)
 
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body>"
         "<style> .hidden { display: none; } </style>"
-        "<p>hello</p><div><span class='hidden'>Web</span><span class='hidden'>Kit</span></div><div class='hidden'>hey</div></body></html>"];
+        "<p>hello</p>"
+        "<div>"
+            "<span class='hidden'>Web</span>"
+            "<span class='hidden'>Kit</span>"
+        "</div>"
+        "<div class='hidden'>hey</div>"
+        "</body></html>"];
 
     done = false;
     [webView _startTextManipulationsWithConfiguration:nil completion:^{
@@ -329,29 +335,31 @@ TEST(TextManipulation, StartTextManipulationFindNewlyDisplayedParagraph)
 
     done = false;
     delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
-        if (items.count == 2)
+        if (items.count == 3)
             done = true;
     };
     [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('span.hidden').forEach((span) => span.classList.remove('hidden'));"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_EQ(items.count, 2UL);
-    EXPECT_EQ(items[1].tokens.count, 2UL);
-    EXPECT_STREQ("Web", items[1].tokens[0].content.UTF8String);
-    EXPECT_STREQ("Kit", items[1].tokens[1].content.UTF8String);
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    RetainPtr<NSSet> tokens = adoptNS([[NSSet alloc] initWithObjects:items[1].tokens[0].content, items[2].tokens[0].content, nil]);
+    EXPECT_TRUE([tokens.get() containsObject:@"Web"]);
+    EXPECT_TRUE([tokens.get() containsObject:@"Kit"]);
 
     // This has to happen separately in order to have a deterministic ordering.
     done = false;
     delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
-        if (items.count == 3)
+        if (items.count == 4)
             done = true;
     };
     [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('div.hidden').forEach((div) => div.classList.remove('hidden'));"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_EQ(items.count, 3UL);
-    EXPECT_EQ(items[2].tokens.count, 1UL);
-    EXPECT_STREQ("hey", items[2].tokens[0].content.UTF8String);
+    EXPECT_EQ(items.count, 4UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_STREQ("hey", items[3].tokens[0].content.UTF8String);
 }
 
 TEST(TextManipulation, StartTextManipulationFindSameParagraphWithNewContent)
@@ -385,9 +393,8 @@ TEST(TextManipulation, StartTextManipulationFindSameParagraphWithNewContent)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_EQ(items.count, 2UL);
-    EXPECT_EQ(items[1].tokens.count, 2UL);
-    EXPECT_STREQ("hello", items[1].tokens[0].content.UTF8String);
-    EXPECT_STREQ(" world", items[1].tokens[1].content.UTF8String);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_STREQ(" world", items[1].tokens[0].content.UTF8String);
 }
 
 TEST(TextManipulation, StartTextManipulationApplySingleExcluionRuleForElement)
@@ -2399,7 +2406,7 @@ TEST(TextManipulation, InsertingContentIntoAlreadyManipulatedContentDoesNotCreat
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView _setTextManipulationDelegate:delegate.get()];
 
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p><b>hey</b> dude</p></body></html>"];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><p><i><b>hey</b></i> dude</p></body></html>"];
 
     auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
 
@@ -2436,7 +2443,7 @@ TEST(TextManipulation, InsertingContentIntoAlreadyManipulatedContentDoesNotCreat
     [webView waitForNextPresentationUpdate];
 
     EXPECT_FALSE(foundNewItemAfterCompletingTextManipulation);
-    EXPECT_WK_STREQ("<p><b>hello,</b><span> WebKit!</span> world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+    EXPECT_WK_STREQ("<p><i><b>hello,</b><span> WebKit!</span></i> world</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
 TEST(TextManipulation, CompleteTextManipulationInButtonsAndTextFields)
