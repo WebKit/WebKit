@@ -641,7 +641,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     for (auto& fallbackURL : manifest.fallbackURLs)
         addEntry(fallbackURL.second.string(), ApplicationCacheResource::Fallback);
     
-    m_cacheBeingUpdated->setOnlineWhitelist(manifest.onlineWhitelistedURLs);
+    m_cacheBeingUpdated->setOnlineAllowlist(manifest.onlineAllowedURLs);
     m_cacheBeingUpdated->setFallbackURLs(manifest.fallbackURLs);
     m_cacheBeingUpdated->setAllowsAllNetworkRequests(manifest.allowAllNetworkRequests);
 

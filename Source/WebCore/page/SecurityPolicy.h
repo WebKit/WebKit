@@ -68,12 +68,12 @@ public:
     static bool allowSubstituteDataAccessToLocal();
 
     WEBCORE_EXPORT static void allowAccessTo(const UserContentURLPattern&);
-    WEBCORE_EXPORT static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    WEBCORE_EXPORT static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    WEBCORE_EXPORT static void resetOriginAccessWhitelists();
+    WEBCORE_EXPORT static void addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
+    WEBCORE_EXPORT static void removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
+    WEBCORE_EXPORT static void resetOriginAccessAllowlists();
 
-    static bool isAccessWhiteListed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL);
-    static bool isAccessWhiteListed(const SecurityOrigin& activeOrigin, const URL& targetURL);
+    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL);
+    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& targetURL);
 };
 
 } // namespace WebCore

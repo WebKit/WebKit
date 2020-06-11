@@ -43,8 +43,8 @@ namespace WebCore {
 
 static SecurityPolicy::LocalLoadPolicy localLoadPolicy = SecurityPolicy::AllowLocalLoadsForLocalOnly;
 
-typedef Vector<OriginAccessEntry> OriginAccessWhiteList;
-typedef HashMap<String, std::unique_ptr<OriginAccessWhiteList>> OriginAccessMap;
+typedef Vector<OriginAccessEntry> OriginAccessAllowlist;
+typedef HashMap<String, std::unique_ptr<OriginAccessAllowlist>> OriginAccessMap;
 
 static Lock originAccessMapLock;
 static OriginAccessMap& originAccessMap()
@@ -201,12 +201,12 @@ bool SecurityPolicy::allowSubstituteDataAccessToLocal()
     return localLoadPolicy != SecurityPolicy::AllowLocalLoadsForLocalOnly;
 }
 
-bool SecurityPolicy::isAccessWhiteListed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL)
+bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL)
 {
     ASSERT(targetOrigin.equal(SecurityOrigin::create(targetURL).ptr()));
     {
         Locker<Lock> locker(originAccessMapLock);
-        if (OriginAccessWhiteList* list = originAccessMap().get(activeOrigin.toString())) {
+        if (OriginAccessAllowlist* list = originAccessMap().get(activeOrigin.toString())) {
             for (auto& entry : *list) {
                 if (entry.matchesOrigin(targetOrigin))
                     return true;
@@ -221,12 +221,12 @@ bool SecurityPolicy::isAccessWhiteListed(const SecurityOrigin& activeOrigin, con
     return false;
 }
 
-bool SecurityPolicy::isAccessWhiteListed(const SecurityOrigin& activeOrigin, const URL& url)
+bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& url)
 {
-    return isAccessWhiteListed(activeOrigin, SecurityOrigin::create(url).get(), url);
+    return isAccessAllowed(activeOrigin, SecurityOrigin::create(url).get(), url);
 }
 
-void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
+void SecurityPolicy::addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
 {
     ASSERT(!sourceOrigin.isUnique());
     if (sourceOrigin.isUnique())
@@ -237,13 +237,13 @@ void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceO
     Locker<Lock> locker(originAccessMapLock);
     OriginAccessMap::AddResult result = originAccessMap().add(sourceString, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = makeUnique<OriginAccessWhiteList>();
+        result.iterator->value = makeUnique<OriginAccessAllowlist>();
 
-    OriginAccessWhiteList* list = result.iterator->value.get();
+    OriginAccessAllowlist* list = result.iterator->value.get();
     list->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains, OriginAccessEntry::TreatIPAddressAsIPAddress));
 }
 
-void SecurityPolicy::removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
+void SecurityPolicy::removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
 {
     ASSERT(!sourceOrigin.isUnique());
     if (sourceOrigin.isUnique())
@@ -257,7 +257,7 @@ void SecurityPolicy::removeOriginAccessWhitelistEntry(const SecurityOrigin& sour
     if (it == map.end())
         return;
 
-    OriginAccessWhiteList& list = *it->value;
+    OriginAccessAllowlist& list = *it->value;
     OriginAccessEntry originAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains, OriginAccessEntry::TreatIPAddressAsIPAddress);
     if (!list.removeFirst(originAccessEntry))
         return;
@@ -266,7 +266,7 @@ void SecurityPolicy::removeOriginAccessWhitelistEntry(const SecurityOrigin& sour
         map.remove(it);
 }
 
-void SecurityPolicy::resetOriginAccessWhitelists()
+void SecurityPolicy::resetOriginAccessAllowlists()
 {
     Locker<Lock> locker(originAccessMapLock);
     originAccessMap().clear();

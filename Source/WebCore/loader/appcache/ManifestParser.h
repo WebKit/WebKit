@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct Manifest {
-    Vector<URL> onlineWhitelistedURLs;
+    Vector<URL> onlineAllowedURLs;
     HashSet<String> explicitURLs;
     FallbackURLVector fallbackURLs;
     bool allowAllNetworkRequests; // Wildcard found in NETWORK section.

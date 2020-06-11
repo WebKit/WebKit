@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-enum Mode { Explicit, Fallback, OnlineWhitelist, Unknown };
+enum Mode { Explicit, Fallback, OnlineAllowlist, Unknown };
 
 static StringView manifestPath(const URL& manifestURL)
 {
@@ -47,7 +47,7 @@ static StringView manifestPath(const URL& manifestURL)
 bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length, Manifest& manifest)
 {
     ASSERT(manifest.explicitURLs.isEmpty());
-    ASSERT(manifest.onlineWhitelistedURLs.isEmpty());
+    ASSERT(manifest.onlineAllowedURLs.isEmpty());
     ASSERT(manifest.fallbackURLs.isEmpty());
     manifest.allowAllNetworkRequests = false;
 
@@ -109,12 +109,12 @@ bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const
         else if (line == "FALLBACK:")
             mode = Fallback;
         else if (line == "NETWORK:")
-            mode = OnlineWhitelist;
+            mode = OnlineAllowlist;
         else if (line.endsWith(':'))
             mode = Unknown;
         else if (mode == Unknown)
             continue;
-        else if (mode == Explicit || mode == OnlineWhitelist) {
+        else if (mode == Explicit || mode == OnlineAllowlist) {
             auto upconvertedLineCharacters = StringView(line).upconvertedCharacters();
             const UChar* p = upconvertedLineCharacters;
             const UChar* lineEnd = p + line.length();
@@ -123,7 +123,7 @@ bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const
             while (p < lineEnd && *p != '\t' && *p != ' ') 
                 p++;
 
-            if (mode == OnlineWhitelist && p - upconvertedLineCharacters == 1 && line[0] == '*') {
+            if (mode == OnlineAllowlist && p - upconvertedLineCharacters == 1 && line[0] == '*') {
                 // Wildcard was found.
                 manifest.allowAllNetworkRequests = true;
                 continue;
@@ -145,7 +145,7 @@ bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const
             if (mode == Explicit)
                 manifest.explicitURLs.add(url.string());
             else
-                manifest.onlineWhitelistedURLs.append(url);
+                manifest.onlineAllowedURLs.append(url);
             
         } else if (mode == Fallback) {
             auto upconvertedLineCharacters = StringView(line).upconvertedCharacters();

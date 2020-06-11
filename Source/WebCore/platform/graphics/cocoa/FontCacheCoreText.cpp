@@ -833,19 +833,19 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     return SynthesisPair(needsSyntheticBold, needsSyntheticOblique);
 }
 
-typedef HashSet<String, ASCIICaseInsensitiveHash> Whitelist;
-static Whitelist& fontWhitelist()
+typedef HashSet<String, ASCIICaseInsensitiveHash> Allowlist;
+static Allowlist& fontAllowlist()
 {
-    static NeverDestroyed<Whitelist> whitelist;
-    return whitelist;
+    static NeverDestroyed<Allowlist> allowlist;
+    return allowlist;
 }
 
-void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
+void FontCache::setFontAllowlist(const Vector<String>& inputAllowlist)
 {
-    Whitelist& whitelist = fontWhitelist();
-    whitelist.clear();
-    for (auto& item : inputWhitelist)
-        whitelist.add(item);
+    Allowlist& allowlist = fontAllowlist();
+    allowlist.clear();
+    for (auto& item : inputAllowlist)
+        allowlist.add(item);
 }
 
 class FontDatabase {
@@ -1179,8 +1179,8 @@ struct FontLookup {
 
 static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-    const auto& whitelist = fontWhitelist();
-    if (!isSystemFont(family.string()) && whitelist.size() && !whitelist.contains(family))
+    const auto& allowlist = fontAllowlist();
+    if (!isSystemFont(family.string()) && allowlist.size() && !allowlist.contains(family))
         return { nullptr };
 
     if (equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")

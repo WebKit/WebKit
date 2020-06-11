@@ -4725,17 +4725,17 @@ IGNORE_WARNINGS_END
 
 + (void)_addOriginAccessWhitelistEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
 {
-    WebCore::SecurityPolicy::addOriginAccessWhitelistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    WebCore::SecurityPolicy::addOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 + (void)_removeOriginAccessWhitelistEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
 {
-    WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
+    WebCore::SecurityPolicy::removeOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
 + (void)_resetOriginAccessWhitelists
 {
-    WebCore::SecurityPolicy::resetOriginAccessWhitelists();
+    WebCore::SecurityPolicy::resetOriginAccessAllowlists();
 }
 
 - (BOOL)_isViewVisible
@@ -10252,7 +10252,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 #if !PLATFORM(MAC)
     UNUSED_PARAM(whitelist);
 #else
-    WebCore::FontCache::setFontWhitelist(makeVector<String>(whitelist));
+    WebCore::FontCache::setFontAllowlist(makeVector<String>(whitelist));
 #endif
 }
 

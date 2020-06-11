@@ -58,9 +58,9 @@ public:
 
     void setAllowsAllNetworkRequests(bool value) { m_allowAllNetworkRequests = value; }
     bool allowsAllNetworkRequests() const { return m_allowAllNetworkRequests; }
-    void setOnlineWhitelist(const Vector<URL>& onlineWhitelist);
-    const Vector<URL>& onlineWhitelist() const { return m_onlineWhitelist; }
-    bool isURLInOnlineWhitelist(const URL&); // There is an entry in online whitelist that has the same origin as the resource's URL and that is a prefix match for the resource's URL.
+    void setOnlineAllowlist(const Vector<URL>&);
+    const Vector<URL>& onlineAllowlist() const { return m_onlineAllowlist; }
+    bool isURLInOnlineAllowlist(const URL&); // There is an entry in online allowlist that has the same origin as the resource's URL and that is a prefix match for the resource's URL.
 
     void setFallbackURLs(const FallbackURLVector&);
     const FallbackURLVector& fallbackURLs() const { return m_fallbackURLs; }
@@ -89,7 +89,7 @@ private:
     WeakPtr<ApplicationCacheResource> m_manifest;
 
     bool m_allowAllNetworkRequests { false };
-    Vector<URL> m_onlineWhitelist;
+    Vector<URL> m_onlineAllowlist;
     FallbackURLVector m_fallbackURLs;
 
     // The total size of the resources belonging to this Application Cache instance.

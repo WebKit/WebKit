@@ -137,25 +137,25 @@ static bool computeContainsUncommonAttributeSelector(const CSSSelector& rootSele
     return false;
 }
 
-static inline PropertyWhitelistType determinePropertyWhitelistType(const CSSSelector* selector)
+static inline PropertyAllowlistType determinePropertyAllowlistType(const CSSSelector* selector)
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
 #if ENABLE(VIDEO)
         if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
-            return PropertyWhitelistCue;
+            return PropertyAllowlistCue;
 #endif
         if (component->match() == CSSSelector::PseudoElement && component->pseudoElementType() == CSSSelector::PseudoElementMarker)
-            return PropertyWhitelistMarker;
+            return PropertyAllowlistMarker;
 
         if (const auto* selectorList = selector->selectorList()) {
             for (const auto* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                auto whitelistType = determinePropertyWhitelistType(subSelector);
-                if (whitelistType != PropertyWhitelistNone)
-                    return whitelistType;
+                auto allowlistType = determinePropertyAllowlistType(subSelector);
+                if (allowlistType != PropertyAllowlistNone)
+                    return allowlistType;
             }
         }
     }
-    return PropertyWhitelistNone;
+    return PropertyAllowlistNone;
 }
 
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position)
@@ -167,7 +167,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
     , m_containsUncommonAttributeSelector(computeContainsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
-    , m_propertyWhitelistType(determinePropertyWhitelistType(selector()))
+    , m_propertyAllowlistType(determinePropertyAllowlistType(selector()))
     , m_isEnabled(true)
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
 {

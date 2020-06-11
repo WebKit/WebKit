@@ -41,10 +41,10 @@ public:
     UserScript& operator=(const UserScript&) = default;
     UserScript& operator=(UserScript&&) = default;
 
-    UserScript(String&& source, URL&& url, Vector<String>&& whitelist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
+    UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
         : m_source(WTFMove(source))
         , m_url(WTFMove(url))
-        , m_whitelist(WTFMove(whitelist))
+        , m_allowlist(WTFMove(allowlist))
         , m_blocklist(WTFMove(blocklist))
         , m_injectionTime(injectionTime)
         , m_injectedFrames(injectedFrames)
@@ -54,7 +54,7 @@ public:
 
     const String& source() const { return m_source; }
     const URL& url() const { return m_url; }
-    const Vector<String>& whitelist() const { return m_whitelist; }
+    const Vector<String>& allowlist() const { return m_allowlist; }
     const Vector<String>& blocklist() const { return m_blocklist; }
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
@@ -66,7 +66,7 @@ public:
 private:
     String m_source;
     URL m_url;
-    Vector<String> m_whitelist;
+    Vector<String> m_allowlist;
     Vector<String> m_blocklist;
     UserScriptInjectionTime m_injectionTime { UserScriptInjectionTime::DocumentStart };
     UserContentInjectedFrames m_injectedFrames { UserContentInjectedFrames::InjectInAllFrames };
@@ -78,7 +78,7 @@ void UserScript::encode(Encoder& encoder) const
 {
     encoder << m_source;
     encoder << m_url;
-    encoder << m_whitelist;
+    encoder << m_allowlist;
     encoder << m_blocklist;
     encoder << m_injectionTime;
     encoder << m_injectedFrames;
@@ -98,9 +98,9 @@ Optional<UserScript> UserScript::decode(Decoder& decoder)
     if (!url)
         return WTF::nullopt;
     
-    Optional<Vector<String>> whitelist;
-    decoder >> whitelist;
-    if (!whitelist)
+    Optional<Vector<String>> allowlist;
+    decoder >> allowlist;
+    if (!allowlist)
         return WTF::nullopt;
     
     Optional<Vector<String>> blocklist;
@@ -126,7 +126,7 @@ Optional<UserScript> UserScript::decode(Decoder& decoder)
     return {{
         WTFMove(*source),
         WTFMove(*url),
-        WTFMove(*whitelist),
+        WTFMove(*allowlist),
         WTFMove(*blocklist),
         WTFMove(*injectionTime),
         WTFMove(*injectedFrames),

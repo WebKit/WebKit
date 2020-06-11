@@ -27,11 +27,11 @@
 namespace WebCore {
 namespace Style {
 
-enum PropertyWhitelistType {
-    PropertyWhitelistNone   = 0,
-    PropertyWhitelistMarker,
+enum PropertyAllowlistType {
+    PropertyAllowlistNone   = 0,
+    PropertyAllowlistMarker,
 #if ENABLE(VIDEO)
-    PropertyWhitelistCue
+    PropertyAllowlistCue
 #endif
 };
 
@@ -65,7 +65,7 @@ public:
     MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned linkMatchType() const { return m_linkMatchType; }
-    PropertyWhitelistType propertyWhitelistType() const { return static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
+    PropertyAllowlistType propertyAllowlistType() const { return static_cast<PropertyAllowlistType>(m_propertyAllowlistType); }
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool value) { m_isEnabled = value; }
 
@@ -84,7 +84,7 @@ private:
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    unsigned m_propertyWhitelistType : 2;
+    unsigned m_propertyAllowlistType : 2;
     unsigned m_isEnabled : 1;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 };

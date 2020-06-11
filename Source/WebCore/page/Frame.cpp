@@ -671,7 +671,7 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
         return;
     if (script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && !isMainFrame())
         return;
-    if (!UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blocklist()))
+    if (!UserContentURLPattern::matchesPatterns(document->url(), script.allowlist(), script.blocklist()))
         return;
     if (!m_script->shouldAllowUserAgentScripts(*document))
         return;

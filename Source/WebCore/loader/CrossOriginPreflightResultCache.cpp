@@ -84,7 +84,7 @@ Optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHeaders(c
 
 bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
-    return m_methods.contains(method) || (m_methods.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodWhitelist(method);
+    return m_methods.contains(method) || (m_methods.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodAllowlist(method);
 }
 
 Optional<String> CrossOriginPreflightResultCacheItem::validateCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy) const

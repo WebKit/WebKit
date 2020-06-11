@@ -242,7 +242,7 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {
     auto& styleProperties = *matchedProperties.properties;
-    auto propertyWhitelistType = static_cast<PropertyWhitelistType>(matchedProperties.whitelistType);
+    auto propertyAllowlistType = static_cast<PropertyAllowlistType>(matchedProperties.allowlistType);
     bool hasImportantProperties = false;
 
     for (unsigned i = 0, count = styleProperties.propertyCount(); i < count; ++i) {
@@ -262,10 +262,10 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         CSSPropertyID propertyID = current.id();
 
 #if ENABLE(VIDEO)
-        if (propertyWhitelistType == PropertyWhitelistCue && !isValidCueStyleProperty(propertyID))
+        if (propertyAllowlistType == PropertyAllowlistCue && !isValidCueStyleProperty(propertyID))
             continue;
 #endif
-        if (propertyWhitelistType == PropertyWhitelistMarker && !isValidMarkerStyleProperty(propertyID))
+        if (propertyAllowlistType == PropertyAllowlistMarker && !isValidMarkerStyleProperty(propertyID))
             continue;
 
         if (shouldApplyPropertyInParseOrder(propertyID))

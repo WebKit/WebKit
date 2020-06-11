@@ -265,7 +265,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
 
         if (ApplicationCache* cache = group->newestCache()) {
             URL fallbackURL;
-            if (cache->isURLInOnlineWhitelist(url))
+            if (cache->isURLInOnlineAllowlist(url))
                 continue;
             if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
                 continue;
@@ -300,7 +300,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
         auto cache = loadCache(newestCacheID);
 
         URL fallbackURL;
-        if (cache->isURLInOnlineWhitelist(url))
+        if (cache->isURLInOnlineAllowlist(url))
             continue;
         if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
             continue;
@@ -616,7 +616,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     executeSQLCommand("CREATE TABLE IF NOT EXISTS DeletedCacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS Origins (origin TEXT UNIQUE ON CONFLICT IGNORE, quota INTEGER NOT NULL ON CONFLICT FAIL)");
 
-    // When a cache is deleted, all its entries and its whitelist should be deleted.
+    // When a cache is deleted, all its entries and its allowlist should be deleted.
     executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheDeleted AFTER DELETE ON Caches"
                       " FOR EACH ROW BEGIN"
                       "  DELETE FROM CacheEntries WHERE cache = OLD.id;"
@@ -721,14 +721,14 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
         storageIDJournal->add(resource.get(), oldStorageID);
     }
     
-    // Store the online whitelist
-    const Vector<URL>& onlineWhitelist = cache->onlineWhitelist();
+    // Store the online allowlist
+    const Vector<URL>& onlineAllowlist = cache->onlineAllowlist();
     {
-        for (auto& whitelistURL : onlineWhitelist) {
+        for (auto& allowlistURL : onlineAllowlist) {
             SQLiteStatement statement(m_database, "INSERT INTO CacheWhitelistURLs (url, cache) VALUES (?, ?)");
             statement.prepare();
 
-            statement.bindText(1, whitelistURL.string());
+            statement.bindText(1, allowlistURL.string());
             statement.bindInt64(2, cacheStorageID);
 
             if (!executeStatement(statement))
@@ -736,7 +736,7 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
         }
     }
 
-    // Store online whitelist wildcard flag.
+    // Store online allowlist wildcard flag.
     {
         SQLiteStatement statement(m_database, "INSERT INTO CacheAllowsAllNetworkRequests (wildcard, cache) VALUES (?, ?)");
         statement.prepare();
@@ -1154,35 +1154,35 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
         return nullptr;
     }
 
-    // Load the online whitelist
-    SQLiteStatement whitelistStatement(m_database, "SELECT url FROM CacheWhitelistURLs WHERE cache=?");
-    if (whitelistStatement.prepare() != SQLITE_OK)
+    // Load the online allowlist
+    SQLiteStatement allowlistStatement(m_database, "SELECT url FROM CacheWhitelistURLs WHERE cache=?");
+    if (allowlistStatement.prepare() != SQLITE_OK)
         return nullptr;
-    whitelistStatement.bindInt64(1, storageID);
+    allowlistStatement.bindInt64(1, storageID);
     
-    Vector<URL> whitelist;
-    while ((result = whitelistStatement.step()) == SQLITE_ROW) 
-        whitelist.append(URL({ }, whitelistStatement.getColumnText(0)));
+    Vector<URL> allowlist;
+    while ((result = allowlistStatement.step()) == SQLITE_ROW)
+        allowlist.append(URL({ }, allowlistStatement.getColumnText(0)));
 
     if (result != SQLITE_DONE)
-        LOG_ERROR("Could not load cache online whitelist, error \"%s\"", m_database.lastErrorMsg());
+        LOG_ERROR("Could not load cache online allowlist, error \"%s\"", m_database.lastErrorMsg());
 
-    cache->setOnlineWhitelist(whitelist);
+    cache->setOnlineAllowlist(allowlist);
 
-    // Load online whitelist wildcard flag.
-    SQLiteStatement whitelistWildcardStatement(m_database, "SELECT wildcard FROM CacheAllowsAllNetworkRequests WHERE cache=?");
-    if (whitelistWildcardStatement.prepare() != SQLITE_OK)
+    // Load online allowlist wildcard flag.
+    SQLiteStatement allowlistWildcardStatement(m_database, "SELECT wildcard FROM CacheAllowsAllNetworkRequests WHERE cache=?");
+    if (allowlistWildcardStatement.prepare() != SQLITE_OK)
         return nullptr;
-    whitelistWildcardStatement.bindInt64(1, storageID);
+    allowlistWildcardStatement.bindInt64(1, storageID);
     
-    result = whitelistWildcardStatement.step();
+    result = allowlistWildcardStatement.step();
     if (result != SQLITE_ROW)
-        LOG_ERROR("Could not load cache online whitelist wildcard flag, error \"%s\"", m_database.lastErrorMsg());
+        LOG_ERROR("Could not load cache online allowlist wildcard flag, error \"%s\"", m_database.lastErrorMsg());
 
-    cache->setAllowsAllNetworkRequests(whitelistWildcardStatement.getColumnInt64(0));
+    cache->setAllowsAllNetworkRequests(allowlistWildcardStatement.getColumnInt64(0));
 
-    if (whitelistWildcardStatement.step() != SQLITE_DONE)
-        LOG_ERROR("Too many rows for online whitelist wildcard flag");
+    if (allowlistWildcardStatement.step() != SQLITE_DONE)
+        LOG_ERROR("Too many rows for online allowlist wildcard flag");
 
     // Load fallback URLs.
     SQLiteStatement fallbackStatement(m_database, "SELECT namespace, fallbackURL FROM FallbackURLs WHERE cache=?");

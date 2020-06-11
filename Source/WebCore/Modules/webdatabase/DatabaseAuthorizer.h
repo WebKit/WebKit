@@ -104,7 +104,7 @@ public:
 
 private:
     explicit DatabaseAuthorizer(const String& databaseInfoTableName);
-    void addWhitelistedFunctions();
+    void addAllowedFunctions();
     int denyBasedOnTableName(const String&) const;
     int updateDeletesBasedOnTableName(const String&);
     bool allowWrite();
@@ -117,7 +117,7 @@ private:
 
     const String m_databaseInfoTableName;
 
-    HashSet<String, ASCIICaseInsensitiveHash> m_whitelistedFunctions;
+    HashSet<String, ASCIICaseInsensitiveHash> m_allowedFunctions;
 };
 
 } // namespace WebCore

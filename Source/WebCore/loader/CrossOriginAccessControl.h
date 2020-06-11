@@ -46,7 +46,7 @@ class SecurityOrigin;
 struct ResourceLoaderOptions;
 
 WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
-bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
+bool isOnAccessControlSimpleRequestMethodAllowlist(const String&);
 
 void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const String&);
     

@@ -84,7 +84,7 @@ public:
     bool isDescendant() const { return m_isDescendant; }
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
-    // FIXME: Callers of these methods are dangerous and should be whitelisted explicitly or removed.
+    // FIXME: Callers of these methods are dangerous and should be allowed explicitly or removed.
     RootInlineBox* originatingLine() const { return m_originatingLine.get(); }
     void clearOriginatingLine() { m_originatingLine = nullptr; }
     void setOriginatingLine(RootInlineBox& line) { m_originatingLine = makeWeakPtr(line); }

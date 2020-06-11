@@ -2080,7 +2080,7 @@ void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleShee
 {
     encoder << userStyleSheet.source();
     encoder << userStyleSheet.url();
-    encoder << userStyleSheet.whitelist();
+    encoder << userStyleSheet.allowlist();
     encoder << userStyleSheet.blocklist();
     encoder.encodeEnum(userStyleSheet.injectedFrames());
     encoder.encodeEnum(userStyleSheet.level());
@@ -2097,8 +2097,8 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
     if (!decoder.decode(url))
         return false;
 
-    Vector<String> whitelist;
-    if (!decoder.decode(whitelist))
+    Vector<String> allowlist;
+    if (!decoder.decode(allowlist))
         return false;
 
     Vector<String> blocklist;
@@ -2118,7 +2118,7 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
     if (!pageID)
         return false;
 
-    userStyleSheet = UserStyleSheet(source, url, WTFMove(whitelist), WTFMove(blocklist), injectedFrames, level, WTFMove(*pageID));
+    userStyleSheet = UserStyleSheet(source, url, WTFMove(allowlist), WTFMove(blocklist), injectedFrames, level, WTFMove(*pageID));
     return true;
 }
 

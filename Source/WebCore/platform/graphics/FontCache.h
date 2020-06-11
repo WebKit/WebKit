@@ -198,7 +198,7 @@ public:
     static bool isSystemFontForbiddenForEditing(const String&);
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static void setFontWhitelist(const Vector<String>&);
+    WEBCORE_EXPORT static void setFontAllowlist(const Vector<String>&);
 #endif
 #if PLATFORM(WIN)
     IMLangFontLinkType* getFontLinkInterface();

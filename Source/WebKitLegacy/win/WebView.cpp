@@ -7156,19 +7156,19 @@ HRESULT WebView::invalidateBackingStore(_In_ const RECT* rect)
 
 HRESULT WebView::addOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
-    SecurityPolicy::addOriginAccessWhitelistEntry(SecurityOrigin::createFromString(toString(sourceOrigin)).get(), toString(destinationProtocol), toString(destinationHost), allowDestinationSubdomains);
+    SecurityPolicy::addOriginAccessAllowlistEntry(SecurityOrigin::createFromString(toString(sourceOrigin)).get(), toString(destinationProtocol), toString(destinationHost), allowDestinationSubdomains);
     return S_OK;
 }
 
 HRESULT WebView::removeOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
-    SecurityPolicy::removeOriginAccessWhitelistEntry(SecurityOrigin::createFromString(toString(sourceOrigin)).get(), toString(destinationProtocol), toString(destinationHost), allowDestinationSubdomains);
+    SecurityPolicy::removeOriginAccessAllowlistEntry(SecurityOrigin::createFromString(toString(sourceOrigin)).get(), toString(destinationProtocol), toString(destinationHost), allowDestinationSubdomains);
     return S_OK;
 }
 
 HRESULT WebView::resetOriginAccessWhitelists()
 {
-    SecurityPolicy::resetOriginAccessWhitelists();
+    SecurityPolicy::resetOriginAccessAllowlists();
     return S_OK;
 }
  

@@ -45,14 +45,14 @@
 
 namespace WebCore {
 
-bool isOnAccessControlSimpleRequestMethodWhitelist(const String& method)
+bool isOnAccessControlSimpleRequestMethodAllowlist(const String& method)
 {
     return method == "GET" || method == "HEAD" || method == "POST";
 }
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap& headerMap)
 {
-    if (!isOnAccessControlSimpleRequestMethodWhitelist(method))
+    if (!isOnAccessControlSimpleRequestMethodAllowlist(method))
         return false;
 
     for (const auto& header : headerMap) {

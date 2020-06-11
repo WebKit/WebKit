@@ -1,3 +1,97 @@
+2020-06-11  Beth Dakin  <bdakin@apple.com>
+
+        Replace instances of whitelist in WebCore with allowlist
+        https://bugs.webkit.org/show_bug.cgi?id=213068
+
+        Reviewed by Tim Horton.
+
+        * Modules/webdatabase/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::DatabaseAuthorizer):
+        (WebCore::DatabaseAuthorizer::addAllowedFunctions):
+        (WebCore::DatabaseAuthorizer::allowFunction):
+        (WebCore::DatabaseAuthorizer::addWhitelistedFunctions): Deleted.
+        * Modules/webdatabase/DatabaseAuthorizer.h:
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache const):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlSimpleRequestMethodAllowlist):
+        (WebCore::isSimpleCrossOriginAccessRequest):
+        (WebCore::isOnAccessControlSimpleRequestMethodWhitelist): Deleted.
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod const):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::setOnlineAllowlist):
+        (WebCore::ApplicationCache::isURLInOnlineAllowlist):
+        (WebCore::ApplicationCache::setOnlineWhitelist): Deleted.
+        (WebCore::ApplicationCache::isURLInOnlineWhitelist): Deleted.
+        * loader/appcache/ApplicationCache.h:
+        (WebCore::ApplicationCache::onlineAllowlist const):
+        (WebCore::ApplicationCache::onlineWhitelist const): Deleted.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::shouldLoadResourceFromApplicationCache):
+        (WebCore::ApplicationCacheHost::getApplicationCacheFallbackResource):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        * loader/appcache/ManifestParser.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canRequest const):
+        (WebCore::SecurityOrigin::canDisplay const):
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::isAccessAllowed):
+        (WebCore::SecurityPolicy::addOriginAccessAllowlistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessAllowlistEntry):
+        (WebCore::SecurityPolicy::resetOriginAccessAllowlists):
+        (WebCore::SecurityPolicy::isAccessWhiteListed): Deleted.
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry): Deleted.
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry): Deleted.
+        (WebCore::SecurityPolicy::resetOriginAccessWhitelists): Deleted.
+        * page/SecurityPolicy.h:
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::matchesPatterns):
+        * page/UserContentURLPattern.h:
+        * page/UserScript.h:
+        (WebCore::UserScript::UserScript):
+        (WebCore::UserScript::allowlist const):
+        (WebCore::UserScript::encode const):
+        (WebCore::UserScript::decode):
+        (WebCore::UserScript::whitelist const): Deleted.
+        * page/UserStyleSheet.h:
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::allowlist const):
+        (WebCore::UserStyleSheet::whitelist const): Deleted.
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontAllowlist):
+        (WebCore::FontCache::setFontAllowlist):
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWhitelist): Deleted.
+        (WebCore::FontCache::setFontWhitelist): Deleted.
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidAcceptHeaderValue):
+        * rendering/FloatingObjects.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::transferMatchedRules):
+        * style/ElementRuleCollector.h:
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::addMatch):
+        * style/RuleData.cpp:
+        (WebCore::Style::determinePropertyAllowlistType):
+        (WebCore::Style::RuleData::RuleData):
+        (WebCore::Style::determinePropertyWhitelistType): Deleted.
+        * style/RuleData.h:
+        (WebCore::Style::RuleData::propertyAllowlistType const):
+        (WebCore::Style::RuleData::propertyWhitelistType const): Deleted.
+
 2020-06-11  Andy Estes  <aestes@apple.com>
 
         [iOS] nullptr deref in FileInputType::iconLoaded when the input's type attribute is modified by a change event listener

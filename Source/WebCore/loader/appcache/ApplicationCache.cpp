@@ -124,16 +124,16 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
     return resourceForURL(url.string());
 }
 
-void ApplicationCache::setOnlineWhitelist(const Vector<URL>& onlineWhitelist)
+void ApplicationCache::setOnlineAllowlist(const Vector<URL>& onlineAllowlist)
 {
-    ASSERT(m_onlineWhitelist.isEmpty());
-    m_onlineWhitelist = onlineWhitelist; 
+    ASSERT(m_onlineAllowlist.isEmpty());
+    m_onlineAllowlist = onlineAllowlist;
 }
 
-bool ApplicationCache::isURLInOnlineWhitelist(const URL& url)
+bool ApplicationCache::isURLInOnlineAllowlist(const URL& url)
 {
-    for (auto& whitelistURL : m_onlineWhitelist) {
-        if (protocolHostAndPortAreEqual(url, whitelistURL) && url.string().startsWith(whitelistURL.string()))
+    for (auto& allowlistURL : m_onlineAllowlist) {
+        if (protocolHostAndPortAreEqual(url, allowlistURL) && url.string().startsWith(allowlistURL.string()))
             return true;
     }
     return false;

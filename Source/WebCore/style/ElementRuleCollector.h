@@ -67,7 +67,7 @@ struct MatchedRule {
 struct MatchedProperties {
     RefPtr<const StyleProperties> properties;
     uint16_t linkMatchType { SelectorChecker::MatchAll };
-    uint16_t whitelistType { PropertyWhitelistNone };
+    uint16_t allowlistType { PropertyAllowlistNone };
     ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
 };
 

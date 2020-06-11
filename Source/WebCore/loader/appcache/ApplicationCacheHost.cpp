@@ -430,9 +430,9 @@ bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const Resource
     // in the application cache, then get the resource from the cache (instead of fetching it).
     resource = cache->resourceForURL(request.url().string());
 
-    // Resources that match fallback namespaces or online whitelist entries are fetched from the network,
+    // Resources that match fallback namespaces or online allowlist entries are fetched from the network,
     // unless they are also cached.
-    if (!resource && (cache->allowsAllNetworkRequests() || cache->urlMatchesFallbackNamespace(request.url()) || cache->isURLInOnlineWhitelist(request.url())))
+    if (!resource && (cache->allowsAllNetworkRequests() || cache->urlMatchesFallbackNamespace(request.url()) || cache->isURLInOnlineAllowlist(request.url())))
         return false;
 
     // Resources that are not present in the manifest will always fail to load (at least, after the
@@ -455,7 +455,7 @@ bool ApplicationCacheHost::getApplicationCacheFallbackResource(const ResourceReq
         return false;
 
     URL fallbackURL;
-    if (cache->isURLInOnlineWhitelist(request.url()))
+    if (cache->isURLInOnlineAllowlist(request.url()))
         return false;
     if (!cache->urlMatchesFallbackNamespace(request.url(), &fallbackURL))
         return false;

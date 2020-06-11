@@ -200,7 +200,7 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
         addMatchedProperties({
             &matchedRule.ruleData->styleRule().properties(),
             static_cast<uint16_t>(matchedRule.ruleData->linkMatchType()),
-            static_cast<uint16_t>(matchedRule.ruleData->propertyWhitelistType()),
+            static_cast<uint16_t>(matchedRule.ruleData->propertyAllowlistType()),
             matchedRule.styleScopeOrdinal
         }, declarationOrigin);
     }
