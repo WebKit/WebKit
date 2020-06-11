@@ -1,3 +1,57 @@
+2020-06-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r262870. rdar://problem/64232759
+
+    Improve CSP compliance under PSON
+    https://bugs.webkit.org/show_bug.cgi?id=212995
+    <rdar://problem/62996186>
+    
+    Reviewed by Chris Dumez.
+    
+    LayoutTests/imported/w3c:
+    
+    Rebaseline an existing test, since CSP is now checked before any navigations performed by a form action.
+    
+    * web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub-expected.txt:
+    
+    Source/WebCore:
+    
+    Tests: http/tests/security/contentSecurityPolicy/1.1/form-action-src-self-blocked.html
+    
+    The form submission logic was only considering CSP if the form
+    action was a JavaScript URL. This is incorrect, as CSP might
+    apply to any URL.
+    
+    This is also covered by the existing form-action CSP tests.
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::submitForm): All URLs should be evaluted for
+    compliance with CSP.
+    
+    LayoutTests:
+    
+    Add a new test to confirm that CSP rules are honored for form-action operations during process swap.
+    This also rebaselines an existing test, since CSP is now checked before any navigations performed by
+    a form action.
+    
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt: Rebaselined.
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-self-blocked-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt.
+    * http/tests/security/contentSecurityPolicy/1.1/form-action-src-self-blocked.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262870 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-10  Brent Fulgham  <bfulgham@apple.com>
+
+            Improve CSP compliance under PSON
+            https://bugs.webkit.org/show_bug.cgi?id=212995
+            <rdar://problem/62996186>
+
+            Reviewed by Chris Dumez.
+
+            Rebaseline an existing test, since CSP is now checked before any navigations performed by a form action.
+
+            * web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub-expected.txt:
+
 2020-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r258411. rdar://problem/61410180
