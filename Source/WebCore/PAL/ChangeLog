@@ -1,3 +1,14 @@
+2020-06-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS]: The File Picker of the <input> file element should show the selection filter
+        https://bugs.webkit.org/show_bug.cgi?id=212485
+
+        Reviewed by Darin Adler.
+
+        Expose an SPI from CoreServcies to get all the UTIs known by the system.
+
+        * pal/spi/cocoa/CoreServicesSPI.h:
+
 2020-06-09  Tim Horton  <timothy_horton@apple.com>
 
         Stop using the wrong LaunchServices SPI for getting an app's localized name

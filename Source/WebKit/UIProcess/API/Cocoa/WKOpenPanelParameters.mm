@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,59 @@
 
 #import "config.h"
 #import "WKOpenPanelParametersInternal.h"
+#import <pal/spi/cocoa/CoreServicesSPI.h>
 
 #if PLATFORM(MAC)
 
 #import "WKNSArray.h"
+
+static NSDictionary<NSString *, NSSet<NSString *> *> *extensionsForMIMETypeMap()
+{
+    static auto extensionsForMIMETypeMap = makeNeverDestroyed([] {
+        auto extensionsForMIMETypeMap = adoptNS([[NSMutableDictionary alloc] init]);
+        auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
+
+        auto addExtensionForMIMEType = ^(NSString *mimeType, NSString *extension) {
+            if (!extensionsForMIMETypeMap.get()[mimeType])
+                extensionsForMIMETypeMap.get()[mimeType] = [NSMutableSet set];
+            [extensionsForMIMETypeMap.get()[mimeType] addObject:extension];
+        };
+
+        auto addExtensionsForMIMEType = ^(NSString *mimeType, NSArray<NSString *> *extensions) {
+            auto wildcardMIMEType = [[mimeType componentsSeparatedByString:@"/"][0] stringByAppendingString:@"/*"];
+
+            for (NSString *extension in extensions) {
+                if (!extension)
+                    continue;
+                // Add extension to wildcardMIMEType, for example add "png" to "image/*"
+                addExtensionForMIMEType(wildcardMIMEType, extension);
+                // Add extension to itsmimeType, for example add "png" to "image/png"
+                addExtensionForMIMEType(mimeType, extension);
+            }
+        };
+
+        for (CFIndex i = 0, count = CFArrayGetCount(allUTIs.get()); i < count; ++i) {
+            auto uti = static_cast<CFStringRef>(CFArrayGetValueAtIndex(allUTIs.get(), i));
+            auto mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
+            if (!mimeType)
+                continue;
+            auto extensions = adoptCF(UTTypeCopyAllTagsWithClass(uti, kUTTagClassFilenameExtension));
+            addExtensionsForMIMEType((__bridge NSString *)mimeType.get(), (__bridge NSArray<NSString *> *)extensions.get());
+        }
+
+        // Add additional mime types which _UTCopyDeclaredTypeIdentifiers() may not return.
+        addExtensionForMIMEType(@"image/webp", @"webp");
+
+        return extensionsForMIMETypeMap;
+    }());
+
+    return extensionsForMIMETypeMap.get().get();
+}
+
+static NSSet<NSString *> *extensionsForMIMEType(NSString *mimetype)
+{
+    return [extensionsForMIMETypeMap() objectForKey:mimetype];
+}
 
 @implementation WKOpenPanelParameters
 
@@ -61,6 +110,62 @@
 - (NSArray<NSString *> *)_acceptedFileExtensions
 {
     return wrapper(_openPanelParameters->acceptFileExtensions());
+}
+
+- (NSArray<NSString *> *)_allowedFileExtensions
+{
+    // Aggregate extensions based on specified MIME types.
+    auto acceptedMIMETypes = [self _acceptedMIMETypes];
+    auto acceptedFileExtensions = [self _acceptedFileExtensions];
+
+    auto allowedFileExtensions = adoptNS([[NSMutableSet alloc] init]);
+
+    [acceptedMIMETypes enumerateObjectsUsingBlock:^(NSString *mimeType, NSUInteger index, BOOL* stop) {
+        ASSERT([mimeType containsString:@"/"]);
+        [allowedFileExtensions unionSet:extensionsForMIMEType(mimeType)];
+    }];
+
+    auto additionalAllowedFileExtensions = adoptNS([[NSMutableArray alloc] init]);
+
+    [acceptedFileExtensions enumerateObjectsUsingBlock:^(NSString *extension, NSUInteger index, BOOL *stop) {
+        ASSERT([extension characterAtIndex:0] == '.');
+        [additionalAllowedFileExtensions addObject:[extension substringFromIndex:1]];
+    }];
+    
+    [allowedFileExtensions addObjectsFromArray:additionalAllowedFileExtensions.get()];
+    return [allowedFileExtensions allObjects];
+}
+
+- (NSArray<NSString *> *)_allowedFileExtensionsTitles
+{
+    auto acceptedMIMETypes = [self _acceptedMIMETypes];
+    auto acceptedFileExtensions = [self _acceptedFileExtensions];
+
+    constexpr auto AllFilesTitle = @"All Files";
+    constexpr auto CustomFilesTitle = @"Custom Files";
+    
+    if (![acceptedMIMETypes count] && ![acceptedFileExtensions count])
+        return @[AllFilesTitle];
+
+    if (!([acceptedMIMETypes count] == 1 && ![acceptedFileExtensions count]))
+        return @[CustomFilesTitle, AllFilesTitle];
+
+    auto mimeType = [acceptedMIMETypes firstObject];
+    auto range = [mimeType rangeOfString:@"/"];
+    
+    if (!range.length)
+        return @[CustomFilesTitle, AllFilesTitle];
+    
+    auto mimeTypePrefix = [mimeType substringToIndex:range.location];
+    auto mimeTypeSuffix = [mimeType substringFromIndex:range.location + 1];
+    
+    if ([mimeTypeSuffix isEqualToString:@"*"])
+        return @[[NSString stringWithFormat:@"%@%@ Files", [[mimeTypePrefix substringToIndex:1] uppercaseString], [mimeTypePrefix substringFromIndex:1]], AllFilesTitle];
+
+    if ([mimeTypeSuffix length] <= 4)
+        return @[[NSString stringWithFormat:@"%@ %@", [mimeTypeSuffix uppercaseString], mimeTypePrefix], AllFilesTitle];
+
+    return @[[NSString stringWithFormat:@"%@ %@", mimeTypeSuffix, mimeTypePrefix], AllFilesTitle];
 }
 
 @end

@@ -26,3 +26,5 @@
 #pragma once
 
 extern "C" void _CSCheckFixDisable();
+extern "C" CFArrayRef _UTCopyDeclaredTypeIdentifiers(void);
+

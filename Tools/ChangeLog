@@ -1,3 +1,22 @@
+2020-06-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS]: The File Picker of the <input> file element should show the selection filter
+        https://bugs.webkit.org/show_bug.cgi?id=212485
+
+        Reviewed by Darin Adler.
+
+        Create a view with an NSPopupButton for the file extensions filter. Set
+        this view as the AccessoryView of the OpenPanel. Create a customized target
+        for the NSPopupButton to respond to changing its selection.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[FileExtensionsPopupTarget initWithOpenPanel:allowedFileExtensions:]):
+        (-[FileExtensionsPopupTarget popupAction:]):
+        (-[FileExtensionsPopupTarget dealloc]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController createFilterView:popupTarget:]):
+        (-[WK2BrowserWindowController webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+
 2020-06-10  Jonathan Bedard  <jbedard@apple.com>
 
         Generalize configure-xcode-for-ios-development (Part 2)
