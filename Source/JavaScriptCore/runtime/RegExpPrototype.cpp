@@ -239,7 +239,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(JSGlobalObject* globalObjec
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.global getter can only be called on a RegExp object"_s);
     }
@@ -255,7 +255,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(JSGlobalObject* globalO
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.ignoreCase getter can only be called on a RegExp object"_s);
     }
@@ -271,7 +271,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(JSGlobalObject* globalOb
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.multiline getter can only be called on a RegExp object"_s);
     }
@@ -287,7 +287,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterDotAll(JSGlobalObject* globalObjec
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.dotAll getter can only be called on a RegExp object"_s);
     }
@@ -303,7 +303,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSticky(JSGlobalObject* globalObjec
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.sticky getter can only be called on a RegExp object"_s);
     }
@@ -319,7 +319,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterUnicode(JSGlobalObject* globalObje
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.unicode getter can only be called on a RegExp object"_s);
     }
@@ -457,7 +457,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(JSGlobalObject* globalObjec
     JSValue thisValue = callFrame->thisValue();
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, thisValue);
     if (UNLIKELY(!regexp)) {
-        if (thisValue.inherits<RegExpPrototype>(vm))
+        if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsNontrivialString(vm, "(?:)"_s));
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.source getter can only be called on a RegExp object"_s);
     }

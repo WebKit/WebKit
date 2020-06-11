@@ -1,3 +1,27 @@
+2020-06-11  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        RegExp.prototype getters should throw on cross-realm access
+        https://bugs.webkit.org/show_bug.cgi?id=213075
+
+        Reviewed by Saam Barati.
+
+        This patch makes RegExp.prototype getters throw TypeError when called on
+        RegExp.prototype object from another realm, aligning JSC with V8 and SpiderMonkey.
+
+        The spec [1] allows same-realm access to avoid breaking the web, while makes
+        RegExp.prototype an ordinary object (rather than RegExp instance) where possible.
+
+        [1]: https://tc39.es/ecma262/#sec-get-regexp.prototype.global (step 3.a)
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoGetterGlobal):
+        (JSC::regExpProtoGetterIgnoreCase):
+        (JSC::regExpProtoGetterMultiline):
+        (JSC::regExpProtoGetterDotAll):
+        (JSC::regExpProtoGetterSticky):
+        (JSC::regExpProtoGetterUnicode):
+        (JSC::regExpProtoGetterSource):
+
 2020-06-11  Paulo Matos  <pmatos@igalia.com>
 
         Add missing include to JSONObject.cpp - non-unified build

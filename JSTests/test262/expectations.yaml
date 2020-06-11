@@ -1435,30 +1435,9 @@ test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
 test/built-ins/RegExp/prototype/Symbol.split/u-lastindex-adv-thru-failure.js:
   default: 'Test262Error: Expected SameValue(«2», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«2», «1») to be true'
-test/built-ins/RegExp/prototype/dotAll/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
-test/built-ins/RegExp/prototype/global/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/ignoreCase/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/multiline/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/source/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/sticky/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/RegExp/prototype/unicode/cross-realm.js:
-  default: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: cross-realm RegExp.prototype Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
