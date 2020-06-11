@@ -33,6 +33,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
+#include "ImageBuffer.h"
 #include "IntSize.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>

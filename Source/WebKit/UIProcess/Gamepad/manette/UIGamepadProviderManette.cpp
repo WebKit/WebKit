@@ -26,7 +26,7 @@
 #include "config.h"
 #include "UIGamepadProvider.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && OS(LINUX)
 
 #include "WebPageProxy.h"
 #include <WebCore/ManetteGamepadProvider.h>
@@ -61,4 +61,4 @@ void UIGamepadProvider::platformStartMonitoringInput()
 
 }
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && OS(LINUX)

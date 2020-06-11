@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && OS(LINUX)
 
 #include "GamepadProvider.h"
 #include <libmanette.h>
@@ -44,12 +44,17 @@ class ManetteGamepadProvider final : public GamepadProvider {
 public:
     static ManetteGamepadProvider& singleton();
 
+    virtual ~ManetteGamepadProvider();
+
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
     const Vector<PlatformGamepad*>& platformGamepads() final { return m_gamepadVector; }
 
     void deviceConnected(ManetteDevice*);
     void deviceDisconnected(ManetteDevice*);
+
+    enum class ShouldMakeGamepadsVisible : bool { No, Yes };
+    void gamepadHadInput(ManetteGamepad&, ShouldMakeGamepadsVisible);
 
 private:
     ManetteGamepadProvider();
@@ -58,6 +63,7 @@ private:
 
     unsigned indexForNewlyConnectedDevice();
     void connectionDelayTimerFired();
+    void inputNotificationTimerFired();
 
     Vector<PlatformGamepad*> m_gamepadVector;
     HashMap<ManetteDevice*, std::unique_ptr<ManetteGamepad>> m_gamepadMap;
@@ -65,8 +71,9 @@ private:
 
     GUniquePtr<ManetteMonitor> m_monitor;
     RunLoop::Timer<ManetteGamepadProvider> m_connectionDelayTimer;
+    RunLoop::Timer<ManetteGamepadProvider> m_inputNotificationTimer;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && OS(LINUX)

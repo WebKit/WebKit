@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ManetteGamepadProvider.h"
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && OS(LINUX)
 
 #include "GUniquePtrManette.h"
 #include "GamepadProviderClient.h"
@@ -38,6 +38,7 @@
 namespace WebCore {
 
 static const Seconds connectionDelayInterval { 500_ms };
+static const Seconds inputNotificationDelay { 50_ms };
 
 ManetteGamepadProvider& ManetteGamepadProvider::singleton()
 {
@@ -58,9 +59,20 @@ static void onDeviceDisconnected(ManetteMonitor*, ManetteDevice* device, Manette
 ManetteGamepadProvider::ManetteGamepadProvider()
     : m_monitor(manette_monitor_new())
     , m_connectionDelayTimer(RunLoop::current(), this, &ManetteGamepadProvider::connectionDelayTimerFired)
+    , m_inputNotificationTimer(RunLoop::current(), this, &ManetteGamepadProvider::inputNotificationTimerFired)
 {
     g_signal_connect(m_monitor.get(), "device-connected", G_CALLBACK(onDeviceConnected), this);
     g_signal_connect(m_monitor.get(), "device-disconnected", G_CALLBACK(onDeviceDisconnected), this);
+
+    ManetteDevice* device;
+    GUniquePtr<ManetteMonitorIter> iter(manette_monitor_iterate(m_monitor.get()));
+    while (manette_monitor_iter_next(iter.get(), &device))
+        deviceConnected(device);
+}
+
+ManetteGamepadProvider::~ManetteGamepadProvider()
+{
+    g_signal_handlers_disconnect_by_data(m_monitor.get(), this);
 }
 
 void ManetteGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
@@ -90,6 +102,15 @@ void ManetteGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& clien
         m_gamepadMap.clear();
         m_connectionDelayTimer.stop();
     }
+}
+
+void ManetteGamepadProvider::gamepadHadInput(ManetteGamepad&, ShouldMakeGamepadsVisible shouldMakeGamepadsVisible)
+{
+    if (!m_inputNotificationTimer.isActive())
+        m_inputNotificationTimer.startOneShot(inputNotificationDelay);
+
+    if (shouldMakeGamepadsVisible == ShouldMakeGamepadsVisible::Yes)
+        setShouldMakeGamepadsVisibile();
 }
 
 void ManetteGamepadProvider::deviceConnected(ManetteDevice* device)
@@ -156,6 +177,14 @@ void ManetteGamepadProvider::connectionDelayTimerFired()
         client->setInitialConnectedGamepads(m_gamepadVector);
 }
 
+void ManetteGamepadProvider::inputNotificationTimerFired()
+{
+    if (!m_shouldDispatchCallbacks)
+        return;
+
+    dispatchPlatformGamepadInputActivity();
+}
+
 std::unique_ptr<ManetteGamepad> ManetteGamepadProvider::removeGamepadForDevice(ManetteDevice* device)
 {
     std::unique_ptr<ManetteGamepad> result = m_gamepadMap.take(device);
@@ -170,4 +199,4 @@ std::unique_ptr<ManetteGamepad> ManetteGamepadProvider::removeGamepadForDevice(M
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && OS(LINUX)

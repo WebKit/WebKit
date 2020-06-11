@@ -1,3 +1,15 @@
+2020-06-11  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Implement button-press-event, button-release-event, and absolute-axis-event of GAMEPAD API.
+        https://bugs.webkit.org/show_bug.cgi?id=133850
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp: Add the OS(LINUX) guard.
+        * UIProcess/Gamepad/gtk/UIGamepadProviderGtk.cpp:
+        (WebKit::getWebPageProxy): Build fix. WebKitWebViewBase is used, not WebKitWebViewPrivate.
+        * UIProcess/Gamepad/manette/UIGamepadProviderManette.cpp: Add the OS(LINUX) guard.
+
 2020-06-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS]: The File Picker of the <input> file element should show the selection filter

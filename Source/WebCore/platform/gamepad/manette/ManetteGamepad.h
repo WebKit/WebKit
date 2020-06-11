@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && OS(LINUX)
 
 #include "PlatformGamepad.h"
 
@@ -37,10 +37,44 @@ namespace WebCore {
 
 class ManetteGamepad final : public PlatformGamepad {
 public:
+    // Refer https://www.w3.org/TR/gamepad/#gamepadbutton-interface
+    enum class StandardGamepadAxis : int8_t {
+        Unknown = -1,
+        LeftStickX,
+        LeftStickY,
+        RightStickX,
+        RightStickY,
+        Count,
+    };
+    enum class StandardGamepadButton : int8_t {
+        Unknown = -1,
+        A,
+        B,
+        X,
+        Y,
+        LeftShoulder,
+        RightShoulder,
+        LeftTrigger,
+        RightTrigger,
+        Select,
+        Start,
+        LeftStick,
+        RightStick,
+        DPadUp,
+        DPadDown,
+        DPadLeft,
+        DPadRight,
+        Count,
+    };
+
     ManetteGamepad(ManetteDevice*, unsigned index);
+    virtual ~ManetteGamepad();
 
     const Vector<double>& axisValues() const final { return m_axisValues; }
     const Vector<double>& buttonValues() const final { return m_buttonValues; }
+
+    void absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis, double value);
+    void buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton, bool pressed);
 
 private:
     GRefPtr<ManetteDevice> m_device;
@@ -51,4 +85,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && OS(LINUX)

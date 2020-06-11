@@ -43,7 +43,7 @@ static WebPageProxy* getWebPageProxy(GtkWidget* widget)
     if (!widget || !GTK_IS_CONTAINER(widget))
         return nullptr;
 
-    if (WEBKIT_IS_WEB_VIEW(widget))
+    if (WEBKIT_IS_WEB_VIEW_BASE(widget))
         return gtk_widget_is_visible(widget) ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(widget)) : nullptr;
 
     GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(widget)));
