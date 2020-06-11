@@ -49,7 +49,7 @@ fi
 
 # If building for iOS, make sure we run this script to make it possible to build frameworks.
 if [ "$QUEUE_NAME" == "ios-ews" ]; then
-    (cd $WEBKIT_HOME; sudo ./Tools/Scripts/configure-xcode-for-ios-development)
+    (cd $WEBKIT_HOME; sudo ./Tools/Scripts/configure-xcode-for-embedded-development)
 fi
 
 # Delete log files older than 30 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.

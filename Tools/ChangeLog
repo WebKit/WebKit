@@ -1,3 +1,14 @@
+2020-06-10  Jonathan Bedard  <jbedard@apple.com>
+
+        Generalize configure-xcode-for-ios-development (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=207043
+        <rdar://problem/63946933>
+
+        Reviewed by Darin Adler.
+
+        * EWSTools/start-queue-mac.sh: Use configure-xcode-for-embedded-development over configure-xcode-for-ios-development.
+        * Scripts/configure-xcode-for-ios-development: Removed.
+
 2020-06-10  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation does not observe inserted elements that are invisible
