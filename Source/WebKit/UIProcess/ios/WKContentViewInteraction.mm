@@ -3293,7 +3293,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         || action == @selector(_moveToStartOfParagraph:withHistory:) || action == @selector(_moveToStartOfWord:withHistory:) || action == @selector(_moveUp:withHistory:))
         return !editorState.selectionIsNone;
 
-    if (action == @selector(_deleteByWord) || action == @selector(_deleteForwardAndNotify:) || action == @selector(_deleteToEndOfParagraph) || action == @selector(_deleteToStartOfLine)
+    if (action == @selector(_deleteByWord) || action == @selector(_deleteForwardByWord) || action == @selector(_deleteForwardAndNotify:) || action == @selector(_deleteToEndOfParagraph) || action == @selector(_deleteToStartOfLine)
         || action == @selector(_transpose))
         return editorState.isContentEditable;
 
@@ -5490,6 +5490,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_deleteByWord
 {
     [self executeEditCommandWithCallback:@"deleteWordBackward"];
+}
+
+- (void)_deleteForwardByWord
+{
+    [self executeEditCommandWithCallback:@"deleteWordForward"];
 }
 
 - (void)_deleteToStartOfLine

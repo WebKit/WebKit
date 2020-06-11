@@ -1,0 +1,12 @@
+Tests that pressing Option + Forward Delete in a content-editable field deletes to next word.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+To run this test by hand, place the text insertion point at the begin of the text below and press Option + Forward Delete.
+
+PASS document.getElementById("test").textContent is "world"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

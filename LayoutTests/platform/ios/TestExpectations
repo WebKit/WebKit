@@ -258,6 +258,9 @@ webkit.org/b/152491 fast/text/woff2.html [ Skip ]
 
 webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 
+# FIXME: Unskip the following test once we have the fix for <rdar://problem/63253983>.
+fast/events/ios/key-command-delete-next-word.html [ Skip ]
+
 # Needs testRunner.enableAutoResizeMode()
 fast/autoresize
 

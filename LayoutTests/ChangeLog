@@ -1,3 +1,18 @@
+2020-06-10  Hiro (mzp) Mizuno  <mzp@apple.com>
+
+        [iOS] Option + Forward Delete should delete next word
+        https://bugs.webkit.org/show_bug.cgi?id=213062
+        rdar://64225458
+
+        Reviewed by Daniel Bates.
+
+        Add tests to ensure that Option + Forward Delete delete to the next word.
+        Skip the tests for now until we have the UIKit fix <rdar://problem/63253983>.
+
+        * fast/events/ios/key-command-delete-next-word-expected.txt: Added.
+        * fast/events/ios/key-command-delete-next-word.html: Added.
+        * platform/ios/TestExpectations: Skip tests for now
+
 2020-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

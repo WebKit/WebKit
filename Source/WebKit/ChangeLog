@@ -1,3 +1,18 @@
+2020-06-10  Hiro (mzp) Mizuno  <mzp@apple.com>
+
+        [iOS] Option + Forward Delete should delete next word
+        https://bugs.webkit.org/show_bug.cgi?id=213062
+        rdar://64225458
+
+        Reviewed by Daniel Bates.
+
+        Implement support for pressing Option + Forward Delete to delete the next word. This makes text editing
+        in WebKit more closely match the platform conventions.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformAction:withSender:]): Handle _deleteForwardByWord.
+        (-[WKContentView _deleteForwardByWord]): Added.
+
 2020-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Some style improvements to main thread code
