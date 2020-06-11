@@ -249,6 +249,8 @@ protected:
 
     void forEachObserver(const Function<void(Observer&)>&);
 
+    void end(Observer* = nullptr);
+
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }

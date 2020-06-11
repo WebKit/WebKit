@@ -1,3 +1,13 @@
+2020-06-11  Youenn Fablet  <youenn@apple.com>
+
+        End a remote MediaStreamTrack if its source is ended
+        https://bugs.webkit.org/show_bug.cgi?id=213074
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive-expected.txt: Added.
+        * webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html: Added.
+
 2020-06-11  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Reimport WPT tests removed in r262809

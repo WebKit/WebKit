@@ -46,18 +46,35 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
     constraints.setSupportsHeight(true);
     m_currentSettings = RealtimeMediaSourceSettings { };
     m_currentSettings->setSupportedConstraints(WTFMove(constraints));
+
+    m_videoTrack->RegisterObserver(this);
+}
+
+RealtimeIncomingVideoSource::~RealtimeIncomingVideoSource()
+{
+    stop();
+    m_videoTrack->UnregisterObserver(this);
 }
 
 void RealtimeIncomingVideoSource::startProducingData()
 {
-    if (m_videoTrack)
-        m_videoTrack->AddOrUpdateSink(this, rtc::VideoSinkWants());
+    m_videoTrack->AddOrUpdateSink(this, rtc::VideoSinkWants());
 }
 
 void RealtimeIncomingVideoSource::stopProducingData()
 {
-    if (m_videoTrack)
-        m_videoTrack->RemoveSink(this);
+    m_videoTrack->RemoveSink(this);
+}
+
+void RealtimeIncomingVideoSource::OnChanged()
+{
+    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+
+        if (m_videoTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
+            end();
+    });
 }
 
 const RealtimeMediaSourceCapabilities& RealtimeIncomingVideoSource::capabilities()

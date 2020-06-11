@@ -256,6 +256,18 @@ void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
     if (hasObserverPreventingStopping)
         return;
 
+    end(&callingObserver);
+}
+
+void RealtimeMediaSource::end(Observer* callingObserver)
+{
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+
+    if (m_isEnded)
+        return;
+
     auto protectedThis = makeRef(*this);
 
     stop();
@@ -263,7 +275,7 @@ void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
     hasEnded();
 
     forEachObserver([&callingObserver](auto& observer) {
-        if (&observer != &callingObserver)
+        if (&observer != callingObserver)
             observer.sourceStopped();
     });
 }

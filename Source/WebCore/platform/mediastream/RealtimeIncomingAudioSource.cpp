@@ -43,23 +43,34 @@ RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webr
     , m_audioTrack(WTFMove(audioTrack))
 {
     ASSERT(m_audioTrack);
+    m_audioTrack->RegisterObserver(this);
 }
 
 RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource()
 {
     stop();
+    m_audioTrack->UnregisterObserver(this);
 }
 
 void RealtimeIncomingAudioSource::startProducingData()
 {
-    if (m_audioTrack)
-        m_audioTrack->AddSink(this);
+    m_audioTrack->AddSink(this);
 }
 
 void RealtimeIncomingAudioSource::stopProducingData()
 {
-    if (m_audioTrack)
-        m_audioTrack->RemoveSink(this);
+    m_audioTrack->RemoveSink(this);
+}
+
+void RealtimeIncomingAudioSource::OnChanged()
+{
+    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
+
+        if (m_audioTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
+            end();
+    });
 }
 
 const RealtimeMediaSourceCapabilities& RealtimeIncomingAudioSource::capabilities()

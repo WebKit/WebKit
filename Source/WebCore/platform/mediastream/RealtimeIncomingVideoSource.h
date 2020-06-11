@@ -50,13 +50,11 @@ class CaptureDevice;
 class RealtimeIncomingVideoSource
     : public RealtimeMediaSource
     , private rtc::VideoSinkInterface<webrtc::VideoFrame>
+    , private webrtc::ObserverInterface
 {
 public:
     static Ref<RealtimeIncomingVideoSource> create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
-    ~RealtimeIncomingVideoSource()
-    {
-        stop();
-    }
+    ~RealtimeIncomingVideoSource();
 
 protected:
     RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
@@ -75,6 +73,9 @@ private:
     const RealtimeMediaSourceSettings& settings() final;
 
     bool isIncomingVideoSource() const final { return true; }
+
+    // webrtc::ObserverInterface API
+    void OnChanged() final;
 
     Optional<RealtimeMediaSourceSettings> m_currentSettings;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
