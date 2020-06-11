@@ -124,7 +124,8 @@ void URLDecomposition::setHost(StringView value)
                 fullURL.setHostAndPort(value.substring(0, separator + 1 + portLength));
         }
     }
-    setFullURL(fullURL);
+    if (fullURL.isValid())
+        setFullURL(fullURL);
 }
 
 String URLDecomposition::hostname() const
@@ -152,7 +153,8 @@ void URLDecomposition::setHostname(StringView value)
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
         return;
     fullURL.setHost(host);
-    setFullURL(fullURL);
+    if (fullURL.isValid())
+        setFullURL(fullURL);
 }
 
 String URLDecomposition::port() const
