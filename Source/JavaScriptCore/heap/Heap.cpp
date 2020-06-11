@@ -1303,7 +1303,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
 
             {
                 ParallelModeEnabler parallelModeEnabler(*slotVisitor);
-                slotVisitor->drainFromShared(SlotVisitor::SlaveDrain);
+                slotVisitor->drainFromShared(SlotVisitor::HelperDrain);
             }
 
             {

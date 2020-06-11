@@ -31,7 +31,7 @@
 #include "DFGPlan.h"
 #include "DFGThunks.h"
 #include "DFGWorklist.h"
-#include "FunctionWhitelist.h"
+#include "FunctionAllowlist.h"
 #include "JITCode.h"
 #include "Options.h"
 #include "ThunkGenerators.h"
@@ -48,15 +48,15 @@ unsigned getNumCompilations()
 }
 
 #if ENABLE(DFG_JIT)
-static FunctionWhitelist& ensureGlobalDFGWhitelist()
+static FunctionAllowlist& ensureGlobalDFGAllowlist()
 {
-    static LazyNeverDestroyed<FunctionWhitelist> dfgWhitelist;
-    static std::once_flag initializeWhitelistFlag;
-    std::call_once(initializeWhitelistFlag, [] {
-        const char* functionWhitelistFile = Options::dfgWhitelist();
-        dfgWhitelist.construct(functionWhitelistFile);
+    static LazyNeverDestroyed<FunctionAllowlist> dfgAllowlist;
+    static std::once_flag initializeAllowlistFlag;
+    std::call_once(initializeAllowlistFlag, [] {
+        const char* functionAllowlistFile = Options::dfgAllowlist();
+        dfgAllowlist.construct(functionAllowlistFile);
     });
-    return dfgWhitelist;
+    return dfgAllowlist;
 }
 
 static CompilationResult compileImpl(
@@ -65,7 +65,7 @@ static CompilationResult compileImpl(
     Ref<DeferredCompilationCallback>&& callback)
 {
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionsSize())
-        || !ensureGlobalDFGWhitelist().contains(codeBlock))
+        || !ensureGlobalDFGAllowlist().contains(codeBlock))
         return CompilationFailed;
     
     numCompilations++;

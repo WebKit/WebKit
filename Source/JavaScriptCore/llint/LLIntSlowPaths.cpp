@@ -37,8 +37,8 @@
 #include "Exception.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
+#include "FunctionAllowlist.h"
 #include "FunctionCodeBlock.h"
-#include "FunctionWhitelist.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "JITExceptions.h"
@@ -340,21 +340,21 @@ LLINT_SLOW_PATH_DECL(trace)
 enum EntryKind { Prologue, ArityCheck };
 
 #if ENABLE(JIT)
-static FunctionWhitelist& ensureGlobalJITWhitelist()
+static FunctionAllowlist& ensureGlobalJITAllowlist()
 {
-    static LazyNeverDestroyed<FunctionWhitelist> baselineWhitelist;
-    static std::once_flag initializeWhitelistFlag;
-    std::call_once(initializeWhitelistFlag, [] {
-        const char* functionWhitelistFile = Options::jitWhitelist();
-        baselineWhitelist.construct(functionWhitelistFile);
+    static LazyNeverDestroyed<FunctionAllowlist> baselineAllowlist;
+    static std::once_flag initializeAllowlistFlag;
+    std::call_once(initializeAllowlistFlag, [] {
+        const char* functionAllowlistFile = Options::jitAllowlist();
+        baselineAllowlist.construct(functionAllowlistFile);
     });
-    return baselineWhitelist;
+    return baselineAllowlist;
 }
 
 inline bool shouldJIT(CodeBlock* codeBlock)
 {
     if (!Options::bytecodeRangeToJITCompile().isInRange(codeBlock->instructionsSize())
-        || !ensureGlobalJITWhitelist().contains(codeBlock))
+        || !ensureGlobalJITAllowlist().contains(codeBlock))
         return false;
 
     return VM::canUseJIT() && Options::useBaselineJIT();

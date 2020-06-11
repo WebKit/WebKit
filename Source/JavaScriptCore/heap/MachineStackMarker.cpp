@@ -100,7 +100,7 @@ static void copyMemory(void* dst, const void* src, size_t size)
 // acquire a lock. Since 'thread' is suspended, trying to acquire a lock
 // will deadlock if 'thread' holds that lock.
 // This function, specifically the memory copying, was causing problems with Address Sanitizer in
-// apps. Since we cannot blacklist the system memcpy we must use our own naive implementation,
+// apps. Since we cannot disallow the system memcpy we must use our own naive implementation,
 // copyMemory, for ASan to work on either instrumented or non-instrumented builds. This is not a
 // significant performance loss as tryCopyOtherThreadStack is only called as part of an O(heapsize)
 // operation. As the heap is generally much larger than the stack the performance hit is minimal.

@@ -33,21 +33,21 @@
 #include "DFGNaturalLoops.h"
 #include "DFGPhase.h"
 #include "FTLCapabilities.h"
-#include "FunctionWhitelist.h"
+#include "FunctionAllowlist.h"
 #include "JSCJSValueInlines.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace DFG {
 
-static FunctionWhitelist& ensureGlobalFTLWhitelist()
+static FunctionAllowlist& ensureGlobalFTLAllowlist()
 {
-    static LazyNeverDestroyed<FunctionWhitelist> ftlWhitelist;
-    static std::once_flag initializeWhitelistFlag;
-    std::call_once(initializeWhitelistFlag, [] {
-        const char* functionWhitelistFile = Options::ftlWhitelist();
-        ftlWhitelist.construct(functionWhitelistFile);
+    static LazyNeverDestroyed<FunctionAllowlist> ftlAllowlist;
+    static std::once_flag initializeAllowlistFlag;
+    std::call_once(initializeAllowlistFlag, [] {
+        const char* functionAllowlistFile = Options::ftlAllowlist();
+        ftlAllowlist.construct(functionAllowlistFile);
     });
-    return ftlWhitelist;
+    return ftlAllowlist;
 }
 
 using NaturalLoop = CPSNaturalLoop;
@@ -72,7 +72,7 @@ public:
         if (!Options::bytecodeRangeToFTLCompile().isInRange(m_graph.m_profiledBlock->instructionsSize()))
             return false;
 
-        if (!ensureGlobalFTLWhitelist().contains(m_graph.m_profiledBlock))
+        if (!ensureGlobalFTLAllowlist().contains(m_graph.m_profiledBlock))
             return false;
         
 #if ENABLE(FTL_JIT)

@@ -134,7 +134,7 @@ public:
     void drain(MonotonicTime timeout = MonotonicTime::infinity());
     void donateAndDrain(MonotonicTime timeout = MonotonicTime::infinity());
     
-    enum SharedDrainMode { SlaveDrain, MasterDrain };
+    enum SharedDrainMode { HelperDrain, MainDrain };
     enum class SharedDrainResult { Done, TimedOut };
     SharedDrainResult drainFromShared(SharedDrainMode, MonotonicTime timeout = MonotonicTime::infinity());
 

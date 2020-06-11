@@ -135,9 +135,9 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(OptionRange, bytecodeRangeToJITCompile, 0, Normal, "bytecode size range to allow compilation on, e.g. 1:100") \
     v(OptionRange, bytecodeRangeToDFGCompile, 0, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
     v(OptionRange, bytecodeRangeToFTLCompile, 0, Normal, "bytecode size range to allow FTL compilation on, e.g. 1:100") \
-    v(OptionString, jitWhitelist, nullptr, Normal, "file with list of function signatures to allow compilation on") \
-    v(OptionString, dfgWhitelist, nullptr, Normal, "file with list of function signatures to allow DFG compilation on") \
-    v(OptionString, ftlWhitelist, nullptr, Normal, "file with list of function signatures to allow FTL compilation on") \
+    v(OptionString, jitAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow compilation on") \
+    v(OptionString, dfgAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow DFG compilation on") \
+    v(OptionString, ftlAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow FTL compilation on") \
     v(Bool, dumpSourceAtDFGTime, false, Normal, "dumps source code of JS function being DFG compiled") \
     v(Bool, dumpBytecodeAtDFGTime, false, Normal, "dumps bytecode of JS function being DFG compiled") \
     v(Bool, dumpGraphAfterParsing, false, Normal, nullptr) \
@@ -367,7 +367,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, collectSamplingProfilerDataForJSCShell, false, Normal, "This corresponds to the JSC shell's --sample option.") \
     v(Unsigned, samplingProfilerTopFunctionsCount, 12, Normal, "Number of top functions to report when using the command line interface.") \
     v(Unsigned, samplingProfilerTopBytecodesCount, 40, Normal, "Number of top bytecodes to report when using the command line interface.") \
-    v(OptionString, samplingProfilerPath, nullptr, Normal, "The path to the directory to write sampiling profiler output to. This probably will not work with WK2 unless the path is in the whitelist.") \
+    v(OptionString, samplingProfilerPath, nullptr, Normal, "The path to the directory to write sampiling profiler output to. This probably will not work with WK2 unless the path is in the sandbox.") \
     v(Bool, sampleCCode, false, Normal, "Causes the sampling profiler to record profiling data for C frames.") \
     \
     v(Bool, alwaysGeneratePCToCodeOriginMap, false, Normal, "This will make sure we always generate a PCToCodeOriginMap for JITed code.") \

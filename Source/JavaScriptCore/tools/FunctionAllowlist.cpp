@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FunctionWhitelist.h"
+#include "FunctionAllowlist.h"
 
 #if ENABLE(JIT)
 
@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-FunctionWhitelist::FunctionWhitelist(const char* filename)
+FunctionAllowlist::FunctionAllowlist(const char* filename)
 {
     if (!filename)
         return;
@@ -45,7 +45,7 @@ FunctionWhitelist::FunctionWhitelist(const char* filename)
         return;
     }
 
-    m_hasActiveWhitelist = true;
+    m_hasActiveAllowlist = true;
 
     char* line;
     char buffer[BUFSIZ];
@@ -72,9 +72,9 @@ FunctionWhitelist::FunctionWhitelist(const char* filename)
         dataLogF("Failed to close file %s: %s\n", filename, strerror(errno));
 }
 
-bool FunctionWhitelist::contains(CodeBlock* codeBlock) const
+bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
 {
-    if (!m_hasActiveWhitelist)
+    if (!m_hasActiveAllowlist)
         return true;
 
     if (m_entries.isEmpty())

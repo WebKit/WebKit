@@ -1010,8 +1010,8 @@ JSCBuiltins.cpp
 
 tools/CellList.cpp
 tools/CompilerTimingScope.cpp
+tools/FunctionAllowlist.cpp
 tools/FunctionOverrides.cpp
-tools/FunctionWhitelist.cpp
 tools/HeapVerifier.cpp
 tools/Integrity.cpp
 tools/JSDollarVM.cpp

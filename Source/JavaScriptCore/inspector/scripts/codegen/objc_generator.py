@@ -131,9 +131,9 @@ class ObjCGenerator(Generator):
         if self.model().framework is Frameworks.Test:
             return True
 
-        whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-        whitelist.update(set(['Console', 'Debugger', 'Runtime']))
-        return domain.domain_name in whitelist
+        allowlist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
+        allowlist.update(set(['Console', 'Debugger', 'Runtime']))
+        return domain.domain_name in allowlist
 
     def should_generate_commands_for_domain(self, domain):
         if not len(self.commands_for_domain(domain)):
@@ -142,8 +142,8 @@ class ObjCGenerator(Generator):
         if self.model().framework is Frameworks.Test:
             return True
 
-        whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-        return domain.domain_name in whitelist
+        allowlist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
+        return domain.domain_name in allowlist
 
     def should_generate_events_for_domain(self, domain):
         if not len(self.events_for_domain(domain)):
@@ -152,9 +152,9 @@ class ObjCGenerator(Generator):
         if self.model().framework is Frameworks.Test:
             return True
 
-        whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-        whitelist.add('Console')
-        return domain.domain_name in whitelist
+        allowlist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
+        allowlist.add('Console')
+        return domain.domain_name in allowlist
 
     # ObjC enum and type names.
 

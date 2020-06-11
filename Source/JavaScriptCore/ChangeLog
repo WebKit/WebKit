@@ -1,3 +1,46 @@
+2020-06-11  Saam Barati  <sbarati@apple.com>
+
+        Replace uses of black/white list with block/allow list
+        https://bugs.webkit.org/show_bug.cgi?id=213084
+
+        Reviewed by Keith Miller.
+
+        We should be using racially neutral names in our code. From Chromium style guide:
+        
+        "Terms such as 'blacklist' and 'whitelist' reinforce the notion that
+        black==bad and white==good."
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::ensureGlobalDFGAllowlist):
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::ensureGlobalDFGWhitelist): Deleted.
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::ensureGlobalFTLAllowlist):
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::ensureGlobalFTLWhitelist): Deleted.
+        * heap/MachineStackMarker.cpp:
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.should_generate_types_for_domain):
+        (ObjCGenerator.should_generate_commands_for_domain):
+        (ObjCGenerator.should_generate_events_for_domain):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::ensureGlobalJITAllowlist):
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::ensureGlobalJITWhitelist): Deleted.
+        * runtime/OptionsList.h:
+        * tools/FunctionAllowlist.cpp: Copied from Source/JavaScriptCore/tools/FunctionWhitelist.cpp.
+        (JSC::FunctionAllowlist::FunctionAllowlist):
+        (JSC::FunctionAllowlist::contains const):
+        (JSC::FunctionWhitelist::FunctionWhitelist): Deleted.
+        (JSC::FunctionWhitelist::contains const): Deleted.
+        * tools/FunctionAllowlist.h: Copied from Source/JavaScriptCore/tools/FunctionWhitelist.h.
+        * tools/FunctionWhitelist.cpp: Removed.
+        * tools/FunctionWhitelist.h: Removed.
+
 2020-06-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Return DisposableCallSiteIndex when destroying GCAwareJITStubRoutineWithExceptionHandler

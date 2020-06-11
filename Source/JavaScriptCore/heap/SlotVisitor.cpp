@@ -616,7 +616,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                 m_heap.m_numberOfActiveParallelMarkers--;
             m_heap.m_numberOfWaitingParallelMarkers++;
             
-            if (sharedDrainMode == MasterDrain) {
+            if (sharedDrainMode == MainDrain) {
                 while (true) {
                     if (hasElapsed(timeout))
                         return SharedDrainResult::TimedOut;
@@ -632,7 +632,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                     m_heap.m_markingConditionVariable.waitUntil(m_heap.m_markingMutex, timeout);
                 }
             } else {
-                ASSERT(sharedDrainMode == SlaveDrain);
+                ASSERT(sharedDrainMode == HelperDrain);
 
                 if (hasElapsed(timeout))
                     return SharedDrainResult::TimedOut;
@@ -708,7 +708,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
 SlotVisitor::SharedDrainResult SlotVisitor::drainInParallel(MonotonicTime timeout)
 {
     donateAndDrain(timeout);
-    return drainFromShared(MasterDrain, timeout);
+    return drainFromShared(MainDrain, timeout);
 }
 
 SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTime timeout)
