@@ -1,3 +1,37 @@
+2020-06-10  Beth Dakin  <bdakin@apple.com>
+
+        Replace instances of blacklist in WebCore with blocklist
+        https://bugs.webkit.org/show_bug.cgi?id=213064
+
+        Reviewed by Tim Horton.
+
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache const):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::matchesPatterns):
+        * page/UserContentURLPattern.h:
+        * page/UserScript.h:
+        (WebCore::UserScript::UserScript):
+        (WebCore::UserScript::blocklist const):
+        (WebCore::UserScript::encode const):
+        (WebCore::UserScript::decode):
+        (WebCore::UserScript::blacklist const): Deleted.
+        * page/UserStyleSheet.h:
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::blocklist const):
+        (WebCore::UserStyleSheet::blacklist const): Deleted.
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::pruneBlocklistedCodecs):
+        (WebCore::extendTextCodecMaps):
+        (WebCore::pruneBlacklistedCodecs): Deleted.
+
 2020-06-10  Frank Yang  <guowei_yang@apple.com>
 
         Multiple SVG Filters Unexpectedly lightens image using linearRGB

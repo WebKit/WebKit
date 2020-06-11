@@ -2081,7 +2081,7 @@ void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleShee
     encoder << userStyleSheet.source();
     encoder << userStyleSheet.url();
     encoder << userStyleSheet.whitelist();
-    encoder << userStyleSheet.blacklist();
+    encoder << userStyleSheet.blocklist();
     encoder.encodeEnum(userStyleSheet.injectedFrames());
     encoder.encodeEnum(userStyleSheet.level());
     encoder << userStyleSheet.pageID();
@@ -2101,8 +2101,8 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
     if (!decoder.decode(whitelist))
         return false;
 
-    Vector<String> blacklist;
-    if (!decoder.decode(blacklist))
+    Vector<String> blocklist;
+    if (!decoder.decode(blocklist))
         return false;
 
     UserContentInjectedFrames injectedFrames;
@@ -2118,7 +2118,7 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
     if (!pageID)
         return false;
 
-    userStyleSheet = UserStyleSheet(source, url, WTFMove(whitelist), WTFMove(blacklist), injectedFrames, level, WTFMove(*pageID));
+    userStyleSheet = UserStyleSheet(source, url, WTFMove(whitelist), WTFMove(blocklist), injectedFrames, level, WTFMove(*pageID));
     return true;
 }
 

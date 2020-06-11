@@ -268,8 +268,8 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     CGLContextObj sharedCGLContext = sharedContext ? static_cast<CGLContextObj>(sharedContext->m_contextObj) : nullptr;
 
     CGLError err = CGLCreateContext(pixelFormatObj, sharedCGLContext, &cglContext);
-    GLint abortOnBlacklist = 0;
-    CGLSetParameter(cglContext, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
+    GLint abortOnBlocklist = 0;
+    CGLSetParameter(cglContext, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlocklist);
 
 #if PLATFORM(MAC) // FIXME: This probably should be USE(OPENGL) - see <rdar://53062794>.
 
@@ -676,7 +676,7 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
     CGLContextObj cglContext = static_cast<CGLContextObj>(platformGraphicsContextGL());
     CGLGetParameter(cglContext, kCGLCPGPURestartStatus, &restartStatus);
     if (restartStatus == kCGLCPGPURestartStatusBlacklisted) {
-        LOG(WebGL, "The GPU has blacklisted us (%p). Terminating.", this);
+        LOG(WebGL, "The GPU has blocklisted us (%p). Terminating.", this);
         exit(EX_OSERR);
     }
     if (restartStatus == kCGLCPGPURestartStatusCaused) {
@@ -688,7 +688,7 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
     EAGLContext* currentContext = static_cast<EAGLContext*>(PlatformGraphicsContextGL());
     [currentContext getParameter:kEAGLCPGPURestartStatus to:&restartStatus];
     if (restartStatus == kEAGLCPGPURestartStatusCaused || restartStatus == kEAGLCPGPURestartStatusBlacklisted) {
-        LOG(WebGL, "The GPU has either reset or blacklisted us (%p). Lose the context.", this);
+        LOG(WebGL, "The GPU has either reset or blocklisted us (%p). Lose the context.", this);
         forceContextLost();
         [EAGLContext setCurrentContext:0];
     }

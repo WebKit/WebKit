@@ -50,7 +50,7 @@ public:
 
     bool matchSubdomains() const { return m_matchSubdomains; }
     
-    static bool matchesPatterns(const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist);
+    static bool matchesPatterns(const URL&, const Vector<String>& whitelist, const Vector<String>& blocklist);
 
 private:
     WEBCORE_EXPORT bool parse(const String& pattern);

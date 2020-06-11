@@ -41,11 +41,11 @@ public:
     UserScript& operator=(const UserScript&) = default;
     UserScript& operator=(UserScript&&) = default;
 
-    UserScript(String&& source, URL&& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
+    UserScript(String&& source, URL&& url, Vector<String>&& whitelist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, WaitForNotificationBeforeInjecting waitForNotification)
         : m_source(WTFMove(source))
         , m_url(WTFMove(url))
         , m_whitelist(WTFMove(whitelist))
-        , m_blacklist(WTFMove(blacklist))
+        , m_blocklist(WTFMove(blocklist))
         , m_injectionTime(injectionTime)
         , m_injectedFrames(injectedFrames)
         , m_waitForNotificationBeforeInjecting(waitForNotification)
@@ -55,7 +55,7 @@ public:
     const String& source() const { return m_source; }
     const URL& url() const { return m_url; }
     const Vector<String>& whitelist() const { return m_whitelist; }
-    const Vector<String>& blacklist() const { return m_blacklist; }
+    const Vector<String>& blocklist() const { return m_blocklist; }
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
     WaitForNotificationBeforeInjecting waitForNotificationBeforeInjecting() const { return m_waitForNotificationBeforeInjecting; }
@@ -67,7 +67,7 @@ private:
     String m_source;
     URL m_url;
     Vector<String> m_whitelist;
-    Vector<String> m_blacklist;
+    Vector<String> m_blocklist;
     UserScriptInjectionTime m_injectionTime { UserScriptInjectionTime::DocumentStart };
     UserContentInjectedFrames m_injectedFrames { UserContentInjectedFrames::InjectInAllFrames };
     WaitForNotificationBeforeInjecting m_waitForNotificationBeforeInjecting { WaitForNotificationBeforeInjecting::No };
@@ -79,7 +79,7 @@ void UserScript::encode(Encoder& encoder) const
     encoder << m_source;
     encoder << m_url;
     encoder << m_whitelist;
-    encoder << m_blacklist;
+    encoder << m_blocklist;
     encoder << m_injectionTime;
     encoder << m_injectedFrames;
     encoder << m_waitForNotificationBeforeInjecting;
@@ -103,9 +103,9 @@ Optional<UserScript> UserScript::decode(Decoder& decoder)
     if (!whitelist)
         return WTF::nullopt;
     
-    Optional<Vector<String>> blacklist;
-    decoder >> blacklist;
-    if (!blacklist)
+    Optional<Vector<String>> blocklist;
+    decoder >> blocklist;
+    if (!blocklist)
         return WTF::nullopt;
     
     Optional<UserScriptInjectionTime> injectionTime;
@@ -127,7 +127,7 @@ Optional<UserScript> UserScript::decode(Decoder& decoder)
         WTFMove(*source),
         WTFMove(*url),
         WTFMove(*whitelist),
-        WTFMove(*blacklist),
+        WTFMove(*blocklist),
         WTFMove(*injectionTime),
         WTFMove(*injectedFrames),
         WTFMove(*waitForNotification)

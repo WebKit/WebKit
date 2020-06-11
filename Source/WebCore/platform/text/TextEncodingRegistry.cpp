@@ -97,7 +97,7 @@ static bool didExtendTextCodecMaps;
 static HashSet<const char*>* japaneseEncodings;
 static HashSet<const char*>* nonBackslashEncodings;
 
-static const char* const textEncodingNameBlacklist[] = { "UTF-7", "BOCU-1", "SCSU" };
+static const char* const textEncodingNameBlocklist[] = { "UTF-7", "BOCU-1", "SCSU" };
 
 static bool isUndesiredAlias(const char* alias)
 {
@@ -135,10 +135,10 @@ static void addToTextCodecMap(const char* name, NewTextCodecFunction&& function)
     textCodecMap->add(atomName, WTFMove(function));
 }
 
-static void pruneBlacklistedCodecs()
+static void pruneBlocklistedCodecs()
 {
-    for (auto& nameFromBlacklist : textEncodingNameBlacklist) {
-        auto* atomName = textEncodingNameMap->get(nameFromBlacklist);
+    for (auto& nameFromBlocklist : textEncodingNameBlocklist) {
+        auto* atomName = textEncodingNameMap->get(nameFromBlocklist);
         if (!atomName)
             continue;
 
@@ -237,7 +237,7 @@ static void extendTextCodecMaps()
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
 
-    pruneBlacklistedCodecs();
+    pruneBlocklistedCodecs();
     buildQuirksSets();
 }
 
