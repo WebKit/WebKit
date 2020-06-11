@@ -1,3 +1,29 @@
+2020-06-11  Geoffrey Garen  <ggaren@apple.com>
+
+        [Cocoa] Build callOnMainThread on WTF::RunLoop rather than on a timer
+        https://bugs.webkit.org/show_bug.cgi?id=213063
+
+        Reviewed by Anders Carlsson.
+
+        Always use the RunLoop API for main thread tasks.
+
+        Previously, callOnMainThread sometimes scheduled a timer and sometimes
+        used the RunLoop. (Ironically, the timer behavior was added in r55816
+        with the intention to establish a single point of execution. Now, it has
+        the opposite effect.)
+
+        I picked the RunLoop API rather than the timer API because it moves us
+        closer to universally applying the RunLoop speedup in
+        https://bugs.webkit.org/show_bug.cgi?id=202874. Also, it avoids
+        allocating a timer, which can be expensive.
+
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::scheduleDispatchFunctionsOnMainThread): The webIfExists() check
+        is a superset of the isWebThread() check, so we can just remove the
+        isWebThread() check when scheduling tasks to the web thread.
+        (WTF::timerFired): Deleted.
+        (WTF::postTimer): Deleted.
+
 2020-06-10  Geoffrey Garen  <ggaren@apple.com>
 
         Some style improvements to main thread code
