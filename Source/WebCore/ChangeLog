@@ -1,3 +1,16 @@
+2020-06-11  Rob Buis  <rbuis@igalia.com>
+
+        REGRESSION (r262776): Flaky crash under -[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]
+        https://bugs.webkit.org/show_bug.cgi?id=213059
+
+        Reviewed by Alex Christensen.
+
+        My r262776 patch did not null check m_handle and it can cause crashes
+        in some cases, so add the check.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+
 2020-06-11  Beth Dakin  <bdakin@apple.com>
 
         Replace instances of whitelist in WebCore with allowlist

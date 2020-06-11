@@ -123,7 +123,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
     // See <rdar://problem/5380697>. This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
     if (!redirectResponse) {
         // CFNetwork will add "application/x-www-form-urlencoded" content-type for POST, even if no Content-Type was specified, remove it in that case.
-        if (equalLettersIgnoringASCIICase(m_handle->firstRequest().httpMethod(), "post") && !m_handle->firstRequest().hasHTTPHeaderField(HTTPHeaderName::ContentType)) {
+        if (m_handle && equalLettersIgnoringASCIICase(m_handle->firstRequest().httpMethod(), "post") && !m_handle->firstRequest().hasHTTPHeaderField(HTTPHeaderName::ContentType)) {
             NSMutableURLRequest *modifiedRequest = [newRequest mutableCopy];
             [modifiedRequest setValue:nil forHTTPHeaderField:@"Content-Type"];
             return modifiedRequest;
