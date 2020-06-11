@@ -633,6 +633,15 @@ const BaseAudioSharedUnit& CoreAudioCaptureSource::unit() const
     return m_overrideUnit ? *m_overrideUnit : CoreAudioSharedUnit::singleton();
 }
 
+void CoreAudioCaptureSource::setInterruptedForTesting(bool isInterrupted)
+{
+    if (isInterrupted) {
+        unit().suspend();
+        return;
+    }
+    unit().resume();
+}
+
 void CoreAudioCaptureSourceFactory::beginInterruption()
 {
     if (!isMainThread()) {

@@ -750,6 +750,7 @@ public:
     void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack&);
     void setMediaStreamTrackIdentifier(MediaStreamTrack&, String&& id);
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
+    bool isMediaStreamSourceInterrupted(MediaStreamTrack&) const;
     bool isMockRealtimeMediaSourceCenterEnabled();
 #endif
 
