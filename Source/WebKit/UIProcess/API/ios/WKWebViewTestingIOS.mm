@@ -80,12 +80,20 @@
 
 - (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
 {
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
     [_contentView requestDocumentContext:request completionHandler:completionHandler];
+#else
+    completionHandler(nil);
+#endif
 }
 
 - (void)_adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
 {
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
     [_contentView adjustSelectionWithDelta:deltaRange completionHandler:completionHandler];
+#else
+    completionHandler();
+#endif
 }
 
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect
