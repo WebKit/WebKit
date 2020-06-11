@@ -1,3 +1,39 @@
+2020-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/pasteboard/dom-paste tests consistently time out
+        https://bugs.webkit.org/show_bug.cgi?id=213061
+        <rdar://problem/64211161>
+
+        Reviewed by Darin Adler.
+
+        On recent versions of iOS, system changes have moved the timing of the call to
+        `-requestAutocorrectionContextWithCompletionHandler:` when focusing an editable element. This results in a
+        consistently reproducible deadlock between the UI process and web process if a page tries to request
+        programmatic clipboard access during the click event (importantly, in the same runloop as element focus).
+
+        What ends up happening is that the autocorrection context is requested by the UI process shortly after the
+        (unbounded) sync IPC message for the DOM paste arrives, so we end up waiting forever for the sync-IPC-blocked
+        web process to respond. Normally this just results in a 1 second hang, and the DOM paste proceeds as normal.
+        However these layout tests purposefully opt out of sync IPC timeouts (precisely so that we can catch bugs like
+        this). See below for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Keep track of the most recent autocorrection context that arrived in the UI process.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+
+        Clear out the autocorrection context, in case the web process crashes.
+
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
+        If the autocorrection context is requested while handling a DOM paste, we know that the latest autocorrection
+        context must be up to date, since the autocorrection context is computed and sent immediately before a DOM paste
+        request. Use this to immediately invoke the completion handler, without any sync IPC back to the web process.
+
+        (-[WKContentView _handleAutocorrectionContext:]):
+
 2020-06-10  Hiro (mzp) Mizuno  <mzp@apple.com>
 
         [iOS] Option + Forward Delete should delete next word

@@ -927,6 +927,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _additionalContextForStrongPasswordAssistance = nil;
     _waitingForEditDragSnapshot = NO;
 
+    _lastAutocorrectionContext = { };
+
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     _candidateViewNeedsUpdate = NO;
     _seenHardwareKeyDownInNonEditableElement = NO;
@@ -4246,6 +4248,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
+    if (_domPasteRequestHandler) {
+        completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]);
+        return;
+    }
+
     // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
 
@@ -4265,6 +4272,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
 {
+    _lastAutocorrectionContext = context;
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
 }
 

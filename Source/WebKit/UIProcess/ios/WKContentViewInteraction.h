@@ -50,6 +50,7 @@
 #import "WKShareSheet.h"
 #import "WKSyntheticTapGestureRecognizer.h"
 #import "WKTouchActionGestureRecognizer.h"
+#import "WebAutocorrectionContext.h"
 #import "_WKElementAction.h"
 #import "_WKFormInputSession.h"
 #import <UIKit/UIView.h>
@@ -95,7 +96,6 @@ class NativeWebTouchEvent;
 class SmartMagnificationController;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
-struct WebAutocorrectionContext;
 }
 
 @class WebEvent;
@@ -309,6 +309,7 @@ struct WKAutoCorrectionData {
     };
     TapHighlightInformation _tapHighlightInformation;
 
+    WebKit::WebAutocorrectionContext _lastAutocorrectionContext;
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
     WebKit::FocusedElementInformation _focusedElementInformation;
