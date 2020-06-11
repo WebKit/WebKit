@@ -1,3 +1,88 @@
+2020-06-10  Frank Yang  <guowei_yang@apple.com>
+
+        Multiple SVG Filters Unexpectedly lightens image using linearRGB
+        https://bugs.webkit.org/show_bug.cgi?id=212649
+
+        Reviewed by Myles C. Maxfield, Simon Fraser, Darin Adler
+
+        Added color space conversion of input FilterEffect ImageBuffer and ImageData
+        for filters that directly manipulates pixel values. The conversion
+        is missing only on CG platforms because on CG platforms,
+        FilterEffect::transformResultColorSpace doesn't perform any operations
+        Its author assumed all filters are using CG ImageBuffers, and that
+        CG will handle the conversion which is not the case. The following filters
+        operates on the raw pixels inside an ImageBuffer, and this requires an explicit
+        color space conversion of the pixel values when the ImageData are retrieved
+        by calling FilterEffect::copy{Pre/Un}multipliedData(). 
+
+        The filters affected are feComponentTransfer, feComposite, feConvolveMatrix
+        feGaussianBlur, FELighting, feMorphology. The conversion is done 
+        by CG, by drawing the input ImageBuffer to a new ImageBuffer that 
+        has the correct color space tag. The ImageData is then pulled from 
+        this new ImageBuffer and used in platformApplySoftware() 
+
+        Tests: svg/filters/feComponentTransfer-clipped-expected.svg
+               svg/filters/feComponentTransfer-clipped.svg
+               svg/filters/feComposite-clipped-expected.svg
+               svg/filters/feComposite-clipped.svg
+               svg/filters/feConvolveMatrix-clipped-expected.svg
+               svg/filters/feConvolveMatrix-clipped.svg
+               svg/filters/feGaussianBlur-clipped-expected.svg
+               svg/filters/feGaussianBlur-clipped.svg
+               svg/filters/feLighting-clipped-expected.svg
+               svg/filters/feLighting-clipped.svg
+               svg/filters/feMorphology-clipped-expected.svg
+               svg/filters/feMorphology-clipped.svg
+
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::platformApplySoftware): Modified function call to
+             FilterEffect::premultipliedResult, color space conversion is required on CG 
+             platforms, so operatingColorSpace is passed in and input will be converted to 
+             that color space
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware): Similarly, color space conversion 
+             Required on CG color space conversion is required on CG 
+             platforms, so operatingColorSpace is passed in and input will be converted to 
+             that color space
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::platformApplySoftware): converting to operating space
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware): converting to operating space
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplySoftware): converting to operating space
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplyDegenerate): converting to operating space
+        (WebCore::FEMorphology::platformApplySoftware): converting to operating space
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::unmultipliedResult): modified function signature so that 
+             The Optional ColorSpace enum could be passed in to copyUnmultipliedResult()
+        (WebCore::FilterEffect::premultipliedResult): modified function signature so that 
+             The Optional ColorSpace enum could be passed in to copyUnmultipliedResult()
+        (WebCore::FilterEffect::convertImageDataToColorSpace): helper function that takes an ImageData ptr 
+             as input, put it into an ImageBuffer, and calls convertImageBufferToColorSpace to
+             perform color conversion, and returns the converted ImageData
+        (WebCore::FilterEffect::convertImageBufferToColorSpace): helper function that takes an ImageBuffer ptr 
+             as input, create a new ImageBuffer with target color space, write input ImageBuffer to this new buffer
+             (CG backend handles the conversion) and returns the ImageData in the buffer.
+        (WebCore::FilterEffect::copyConvertedImageBufferToDestination): helper function that copies data from ImageBuffer
+             whose data is converted to the correct color space, to the destination array
+        (WebCore::FilterEffect::copyConvertedImageDataToDestination): helper function that copies data from ImageData
+             whose data is converted to the correct color space, to the destination array
+        (WebCore::FilterEffect::copyUnmultipliedResult): added an optional argument, colorSpace, which will be passed 
+             into requiresAdditionalColorSpaceConversion, in order to determine if color space conversion is required
+             when obtaining the unmultiplied result. Then, added code to convert color space before writing to the 
+             destination array
+        (WebCore::FilterEffect::copyPremultipliedResult): added an optional argument, colorSpace, which will be passed
+             into requiresAdditionalColorSpaceConversion, in order to determine if color space conversion is required
+             when obtaining the premultiplied result. Then, added code to convert color space before writing to the
+             destination array.
+        (WebCore::FilterEffect::requiresImageDataColorSpaceConversion): unction that only returns true 
+              when 1) destination color space is non-null and is different than current color space AND 
+                   2) the code is running on CG platforms
+              This function will only be called inside copy{Un, Pre}multipliedResult, to address the issue
+              where color space is needed for filters that modifies raw pixels.
+        * platform/graphics/filters/FilterEffect.h: Added function declarations
+
 2020-06-10  Zalan Bujtas  <zalan@apple.com>
 
         [Line clamp] Do not apply the special anchor handling when the anchor content is visible after clamping

@@ -1,0 +1,11 @@
+<svg width="480px" height="600px" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <filter id="filter" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
+    	<feFlood x="0" y="0" width="300" height="300" flood-color="rgb(93, 10, 53)" result="flood1" color-interpolation-filters="sRGB"/>
+        <feConvolveMatrix order="3,3" divisor="1" kernelMatrix="0 0 0 
+                                                                0 1 0 
+                                                                0 0 0 " preserveAlpha="true"></feConvolveMatrix>
+    </filter> 
+</defs>
+<rect x="0" y="0" width="400" height="400" filter="url(#filter)"/>
+</svg>

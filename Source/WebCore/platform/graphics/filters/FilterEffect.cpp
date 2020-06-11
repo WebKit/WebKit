@@ -27,6 +27,7 @@
 #include "Color.h"
 #include "Filter.h"
 #include "GeometryUtilities.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "Logging.h"
@@ -286,7 +287,7 @@ ImageBuffer* FilterEffect::imageBufferResult()
     return m_imageBufferResult.get();
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect)
+RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, Optional<ColorSpace> colorSpace)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
@@ -294,12 +295,11 @@ RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect)
     auto imageData = Uint8ClampedArray::tryCreateUninitialized((scaledSize.area() * 4).unsafeGet());
     if (!imageData)
         return nullptr;
-
-    copyUnmultipliedResult(*imageData, rect);
+    copyUnmultipliedResult(*imageData, rect, colorSpace);
     return imageData;
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect)
+RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect, Optional<ColorSpace> colorSpace)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
@@ -307,7 +307,7 @@ RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect)
     auto imageData = Uint8ClampedArray::tryCreateUninitialized((scaledSize.area() * 4).unsafeGet());
     if (!imageData)
         return nullptr;
-    copyPremultipliedResult(*imageData, rect);
+    copyPremultipliedResult(*imageData, rect, colorSpace);
     return imageData;
 }
 
@@ -435,7 +435,50 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clam
 #endif
 }
 
-void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect)
+RefPtr<ImageData> FilterEffect::convertImageDataToColorSpace(ColorSpace targetColorSpace, ImageData& inputData, AlphaPremultiplication outputFormat)
+{
+    IntRect destinationRect(IntPoint(), inputData.size());
+    FloatSize clampedSize = ImageBuffer::clampedSize(inputData.size());
+    // Create an ImageBuffer to store incoming ImageData
+    auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), operatingColorSpace());
+    if (!buffer)
+        return nullptr;
+    buffer->putImageData(outputFormat, inputData, destinationRect);
+    return convertImageBufferToColorSpace(targetColorSpace, *buffer, destinationRect, outputFormat);
+}
+
+RefPtr<ImageData> FilterEffect::convertImageBufferToColorSpace(ColorSpace targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputFormat)
+{
+    FloatSize clampedSize = ImageBuffer::clampedSize(rect.size());
+    // Create an ImageBuffer with the correct color space and utilize CG to handle color space conversion
+    auto convertedBuffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), targetColorSpace);
+    if (!convertedBuffer)
+        return nullptr;
+    // Color space conversion happens internally when drawing from one image buffer to another
+    convertedBuffer->context().drawImageBuffer(inputBuffer, rect);
+    return convertedBuffer->getImageData(outputFormat, rect);
+}
+
+void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& destination, ColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
+{
+    // Converts the data stored in m_imageBufferResult, and save to destination
+    auto convertedImageData = convertImageBufferToColorSpace(colorSpace, *m_imageBufferResult, { IntPoint(), m_absolutePaintRect.size() }, outputFormat);
+    if (!convertedImageData)
+        return;
+    copyImageBytes(*convertedImageData->data(), destination, destRect);
+}
+
+void FilterEffect::copyConvertedImageDataToDestination(Uint8ClampedArray& destination, ImageData& imageData, ColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
+{
+    // Converts the data stored in m_unmultipliedImageResult/m_premultipliedImageResult,
+    // whichever isn't null, and save to destination
+    auto convertedImageData = convertImageDataToColorSpace(colorSpace, imageData, outputFormat);
+    if (!convertedImageData)
+        return;
+    copyImageBytes(*convertedImageData->data(), destination, destRect);
+}
+
+void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<ColorSpace> colorSpace)
 {
     ASSERT(hasResult());
     
@@ -444,6 +487,10 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
     if (!m_unmultipliedImageResult) {
         // We prefer a conversion from the image buffer.
         if (m_imageBufferResult) {
+            if (requiresImageDataColorSpaceConversion(colorSpace)) {
+                copyConvertedImageBufferToDestination(destination, *colorSpace, AlphaPremultiplication::Unpremultiplied, rect);
+                return;
+            }
             m_unmultipliedImageResult = m_imageBufferResult->getImageData(AlphaPremultiplication::Unpremultiplied, { IntPoint(), m_absolutePaintRect.size() });
             if (!m_unmultipliedImageResult)
                 return;
@@ -454,14 +501,17 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
             m_unmultipliedImageResult = ImageData::create(inputSize);
             if (!m_unmultipliedImageResult)
                 return;
-            
             copyUnpremultiplyingAlpha(*m_premultipliedImageResult->data(), *m_unmultipliedImageResult->data(), inputSize);
         }
+    }
+    if (requiresImageDataColorSpaceConversion(colorSpace)) {
+        copyConvertedImageDataToDestination(destination, *m_unmultipliedImageResult, *colorSpace, AlphaPremultiplication::Unpremultiplied, rect);
+        return;
     }
     copyImageBytes(*m_unmultipliedImageResult->data(), destination, rect);
 }
 
-void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect)
+void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<ColorSpace> colorSpace)
 {
     ASSERT(hasResult());
 
@@ -470,6 +520,10 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
     if (!m_premultipliedImageResult) {
         // We prefer a conversion from the image buffer.
         if (m_imageBufferResult) {
+            if (requiresImageDataColorSpaceConversion(colorSpace)) {
+                copyConvertedImageBufferToDestination(destination, *colorSpace, AlphaPremultiplication::Premultiplied, rect);
+                return;
+            }
             m_premultipliedImageResult = m_imageBufferResult->getImageData(AlphaPremultiplication::Premultiplied, { IntPoint(), m_absolutePaintRect.size() });
             if (!m_premultipliedImageResult)
                 return;
@@ -480,9 +534,14 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
             m_premultipliedImageResult = ImageData::create(inputSize);
             if (!m_premultipliedImageResult)
                 return;
-            
             copyPremultiplyingAlpha(*m_unmultipliedImageResult->data(), *m_premultipliedImageResult->data(), inputSize);
         }
+    }
+    
+    RefPtr<ImageData> convertedImageData;
+    if (requiresImageDataColorSpaceConversion(colorSpace)) {
+        copyConvertedImageDataToDestination(destination, *m_premultipliedImageResult, *colorSpace, AlphaPremultiplication::Premultiplied, rect);
+        return;
     }
     copyImageBytes(*m_premultipliedImageResult->data(), destination, rect);
 }
@@ -531,6 +590,20 @@ ImageData* FilterEffect::createPremultipliedImageResult()
     resultSize.scale(m_filter.filterScale());
     m_premultipliedImageResult = ImageData::create(resultSize);
     return m_premultipliedImageResult.get();
+}
+
+bool FilterEffect::requiresImageDataColorSpaceConversion(Optional<ColorSpace> dstColorSpace)
+{
+#if USE(CG)
+    // This function determines whether we need the step of an extra color space conversion
+    // We only need extra color conversion when 1) color space is different in the input
+    // AND 2) the filter is manipulating raw pixels
+    return dstColorSpace && resultColorSpace() != *dstColorSpace;
+#else
+    // Additional color space conversion is not needed on non-CG
+    UNUSED_PARAM(dstColorSpace);
+    return false;
+#endif
 }
 
 void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)

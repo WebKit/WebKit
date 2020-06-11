@@ -384,10 +384,9 @@ void FEConvolveMatrix::platformApplySoftware()
 
     RefPtr<Uint8ClampedArray> srcPixelArray;
     if (m_preserveAlpha)
-        srcPixelArray = in->unmultipliedResult(effectDrawingRect);
+        srcPixelArray = in->unmultipliedResult(effectDrawingRect, operatingColorSpace());
     else
-        srcPixelArray = in->premultipliedResult(effectDrawingRect);
-
+        srcPixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
     if (!srcPixelArray)
         return;
 

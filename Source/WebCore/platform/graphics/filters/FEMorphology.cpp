@@ -235,10 +235,9 @@ bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, con
 {
     if (radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY)) {
         FilterEffect* in = inputEffect(0);
-        in->copyPremultipliedResult(dstPixelArray, imageRect);
+        in->copyPremultipliedResult(dstPixelArray, imageRect, operatingColorSpace());
         return true;
     }
-
     return false;
 }
 
@@ -260,7 +259,7 @@ void FEMorphology::platformApplySoftware()
         return;
 
     Filter& filter = this->filter();
-    auto srcPixelArray = in->premultipliedResult(effectDrawingRect);
+    auto srcPixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
     if (!srcPixelArray)
         return;
 

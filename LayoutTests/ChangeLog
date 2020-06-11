@@ -1,3 +1,27 @@
+2020-06-10  Frank Yang  <guowei_yang@apple.com>
+
+        Multiple SVG Filters Unexpectedly lightens image using linearRGB
+        https://bugs.webkit.org/show_bug.cgi?id=212649
+
+        Reviewed by Myles C. Maxfield, Simon Fraser, Darin Adler
+
+        Added new tests that checks SVG render results for 
+        feComponentTransfer, feComposite, feConvolveMatrix
+        feGaussianBlur, feMorphology and lighting
+
+        * svg/filters/feComponentTransfer-clipped-expected.svg: Added.
+        * svg/filters/feComponentTransfer-clipped.svg: Added.
+        * svg/filters/feComposite-clipped-expected.svg: Added.
+        * svg/filters/feComposite-clipped.svg: Added.
+        * svg/filters/feConvolveMatrix-clipped-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-clipped.svg: Added.
+        * svg/filters/feGaussianBlur-clipped-expected.svg: Added.
+        * svg/filters/feGaussianBlur-clipped.svg: Added.
+        * svg/filters/feLighting-clipped-expected.svg: Added.
+        * svg/filters/feLighting-clipped.svg: Added.
+        * svg/filters/feMorphology-clipped-expected.svg: Added.
+        * svg/filters/feMorphology-clipped.svg: Added.
+
 2020-06-10  Zalan Bujtas  <zalan@apple.com>
 
         [Line clamp] Do not apply the special anchor handling when the anchor content is visible after clamping

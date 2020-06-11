@@ -531,8 +531,7 @@ void FEGaussianBlur::platformApplySoftware()
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyPremultipliedResult(*dstPixelArray, effectDrawingRect);
-
+    in->copyPremultipliedResult(*dstPixelArray, effectDrawingRect, operatingColorSpace());
     if (!m_stdX && !m_stdY)
         return;
 

@@ -1,0 +1,13 @@
+ <svg width="400px" height="400px" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="filter" filterUnits="objectBoundingBox" x="0" y="0" width="100%" height="100%">
+    	<feFlood x="0" y="0" width="500" height="500" flood-color="rgb(93, 7, 54)" result="flood1" color-interpolation-filters="sRGB"/>
+        <feGaussianBlur id="blur" stdDeviation="4" x="0" y="0" in="flood1" result="turbRes2" color-interpolation-filters="linearRGB" edgeMode="wrap"/>
+    </filter> 
+
+    <clipPath id="clippath">
+      <polygon points="20,20 20,400 400,400 400,20 "  />
+    </clipPath>
+  </defs> 
+  <rect x="0" y="0" width="500" height="500" filter="url(#filter)" clip-path="url(#clippath)"/>
+</svg>

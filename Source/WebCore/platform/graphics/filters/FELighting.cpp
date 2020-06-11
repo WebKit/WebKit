@@ -482,8 +482,7 @@ void FELighting::platformApplySoftware()
     setIsAlphaImage(false);
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyPremultipliedResult(*resutPixelArray, effectDrawingRect);
-
+    in->copyPremultipliedResult(*resutPixelArray, effectDrawingRect, operatingColorSpace());
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
     // output for various kernelUnitLengths, and I am not sure they are reliable.

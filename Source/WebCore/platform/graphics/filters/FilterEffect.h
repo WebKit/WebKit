@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "AlphaPremultiplication.h"
 #include "ColorSpace.h"
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -59,12 +60,10 @@ public:
     void clearResultsRecursive();
 
     ImageBuffer* imageBufferResult();
-    RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&);
-    RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&);
-
-    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&);
-    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&);
-
+    RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&, Optional<ColorSpace> = WTF::nullopt);
+    RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&, Optional<ColorSpace> = WTF::nullopt);
+    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<ColorSpace> = WTF::nullopt);
+    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<ColorSpace> = WTF::nullopt);
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
@@ -178,6 +177,12 @@ private:
     virtual void platformApplySoftware() = 0;
 
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
+    void copyConvertedImageBufferToDestination(Uint8ClampedArray&, ColorSpace, AlphaPremultiplication, const IntRect&);
+    void copyConvertedImageDataToDestination(Uint8ClampedArray&, ImageData&, ColorSpace, AlphaPremultiplication, const IntRect&);
+    bool requiresImageDataColorSpaceConversion(Optional<ColorSpace>);
+    RefPtr<ImageData> convertImageDataToColorSpace(ColorSpace, ImageData&, AlphaPremultiplication);
+    RefPtr<ImageData> convertImageBufferToColorSpace(ColorSpace, ImageBuffer&, const IntRect&, AlphaPremultiplication);
+    
 
     Filter& m_filter;
     FilterEffectVector m_inputEffects;

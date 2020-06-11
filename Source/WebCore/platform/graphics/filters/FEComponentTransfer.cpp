@@ -120,8 +120,7 @@ void FEComponentTransfer::platformApplySoftware()
     computeLookupTables(redTable, greenTable, blueTable, alphaTable);
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyUnmultipliedResult(*pixelArray, drawingRect);
-
+    in->copyUnmultipliedResult(*pixelArray, drawingRect, operatingColorSpace());
     unsigned pixelArrayLength = pixelArray->length();
     uint8_t* data = pixelArray->data();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
