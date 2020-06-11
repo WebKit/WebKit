@@ -751,6 +751,7 @@ public:
     void setMediaStreamTrackIdentifier(MediaStreamTrack&, String&& id);
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
     bool isMediaStreamSourceInterrupted(MediaStreamTrack&) const;
+    bool isMediaStreamSourceEnded(MediaStreamTrack&) const;
     bool isMockRealtimeMediaSourceCenterEnabled();
 #endif
 
