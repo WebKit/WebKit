@@ -123,49 +123,6 @@ $buildType = "release"
 $forceCollectContinuously = false
 $reportExecutionTime = false
 
-def sshRead(cmd, remoteIndex=0)
-    raise unless $remote
-
-    remoteHost = $remoteHosts[remoteIndex]
-
-    result = ""
-    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port} #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
-      | inp |
-      inp.each_line {
-        | line |
-        result += line
-      }
-    }
-    raise "#{$?}" unless $?.success?
-    result
-end
-
-def checkAndPrepareRemoteHost(remoteIndex=0)
-    available = false
-    remoteHost = $remoteHosts[remoteIndex]
-
-    begin
-        remoteHost.remoteDirectory = JSON::parse(sshRead("cat ~/.bencher", remoteIndex))["tempPath"] unless remoteHost.remoteDirectory
-        mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
-        available = true
-    rescue
-        $stderr.puts "Host #{remoteHost.host}:#{remoteHost.port} is not available"
-    end
-    available
-end
-
-def checkAndPrepareRemoteHosts
-    availableHosts = []
-    $remoteHosts.each_with_index {
-        | host, remoteIndex |
-        if checkAndPrepareRemoteHost(remoteIndex)
-            availableHosts << host
-        end
-    }
-    raise "There is no remote host available" if availableHosts.empty?
-    $remoteHosts = availableHosts
-end
-
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
     puts
@@ -339,8 +296,6 @@ if $remoteConfigFile
             host
         }
     end
-
-    checkAndPrepareRemoteHosts if $remote
 end
 
 unless jscArg
@@ -2001,6 +1956,23 @@ def cleanRunnerDirectory
     }
 end
 
+def sshRead(cmd, remoteIndex=0)
+    raise unless $remote
+
+    remoteHost = $remoteHosts[remoteIndex]
+
+    result = ""
+    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port} #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
+      | inp |
+      inp.each_line {
+        | line |
+        result += line
+      }
+    }
+    raise "#{$?}" unless $?.success?
+    result
+end
+
 def runCommandOnTester(cmd)
     if $remote
         result = sshRead(cmd)
@@ -2105,8 +2077,12 @@ def runAndMonitorTestRunnerCommand(*cmd)
 end
 
 def runTestRunner(remoteIndex=0)
-    remoteHost = $remoteHosts[remoteIndex]
     if $remote
+        remoteHost = $remoteHosts[remoteIndex]
+        if !remoteHost.remoteDirectory
+            remoteHost.remoteDirectory = JSON::parse(sshRead("cat ~/.bencher", remoteIndex))["tempPath"]
+        end
+        mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
         mysys("scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
         remoteScript = "\""
         remoteScript += "cd #{remoteHost.remoteDirectory} && "
