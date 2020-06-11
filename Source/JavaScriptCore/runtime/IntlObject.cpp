@@ -188,6 +188,32 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
     return String(buffer.data(), buffer.size());
 }
 
+// Ensure we have xx-ZZ whenever we have xx-Yyyy-ZZ.
+static void addScriptlessLocaleIfNeeded(HashSet<String>& availableLocales, StringView locale)
+{
+    if (locale.length() < 10)
+        return;
+
+    Vector<StringView, 3> subtags;
+    for (auto subtag : locale.split('-')) {
+        if (subtags.size() == 3)
+            return;
+        subtags.append(subtag);
+    }
+
+    if (subtags.size() < 3 || subtags[1].length() != 4 || subtags[2].length() > 3)
+        return;
+
+    Vector<char, 12> buffer;
+    ASSERT(subtags[0].is8Bit() && subtags[0].isAllASCII());
+    buffer.append(reinterpret_cast<const char*>(subtags[0].characters8()), subtags[0].length());
+    buffer.append('-');
+    ASSERT(subtags[2].is8Bit() && subtags[2].isAllASCII());
+    buffer.append(reinterpret_cast<const char*>(subtags[2].characters8()), subtags[2].length());
+
+    availableLocales.add(StringImpl::createStaticStringImpl(buffer.data(), buffer.size()));
+}
+
 const HashSet<String>& intlAvailableLocales()
 {
     static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
@@ -200,8 +226,10 @@ const HashSet<String>& intlAvailableLocales()
         int32_t count = uloc_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
             String locale = languageTagForLocaleID(uloc_getAvailable(i), isImmortal);
-            if (!locale.isEmpty())
-                availableLocales.add(locale);
+            if (locale.isEmpty())
+                continue;
+            availableLocales.add(locale);
+            addScriptlessLocaleIfNeeded(availableLocales, locale);
         }
     });
     return availableLocales;
@@ -219,8 +247,10 @@ const HashSet<String>& intlCollatorAvailableLocales()
         int32_t count = ucol_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
             String locale = languageTagForLocaleID(ucol_getAvailable(i), isImmortal);
-            if (!locale.isEmpty())
-                availableLocales.add(locale);
+            if (locale.isEmpty())
+                continue;
+            availableLocales.add(locale);
+            addScriptlessLocaleIfNeeded(availableLocales, locale);
         }
     });
     return availableLocales;

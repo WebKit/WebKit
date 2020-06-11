@@ -1,3 +1,25 @@
+2020-06-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r260697): [Intl] "missing script" locales like zh-TW are no longer mapped
+        https://bugs.webkit.org/show_bug.cgi?id=213007
+
+        Reviewed by Darin Adler.
+
+        addMissingScriptLocales was removed from IntlObject when changing our locale resolution to depend more directly
+        on ICU, but apparently even latest ICU won't perform this legacy "region implies script" mapping for us.
+
+        ICU 65+ does have uloc_openAvailableByType which will do the trick, so perhaps we should use this in the future,
+        but it still doesn't seem to help us with Collator, which has its own separate set of "available locales".
+
+        The exact set of locales which should be mapped is currently under discussion here:
+        https://github.com/tc39/ecma402/issues/159
+        But the crux seems to be that we should ensure we have an xx-ZZ alias for all available xx-Yyyy-ZZ locales.
+
+        * runtime/IntlObject.cpp:
+        (JSC::addScriptlessLocaleIfNeeded):
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+
 2020-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSCallbackObject::deleteProperty should redirect to Parent::deletePropertyByIndex if propertyName is index
