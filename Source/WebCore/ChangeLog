@@ -1,3 +1,29 @@
+2020-06-12  Andres Gonzalez  <andresg_22@apple.com>
+
+        In isolated tree mode 2, AXIsolatedObject::setChildrenIDs should be called only on secondary thread.
+        https://bugs.webkit.org/show_bug.cgi?id=213124
+
+        Reviewed by Chris Fleizach.
+
+        Covered by existing tests.
+
+        - AXIsolatedTree::createSubtree was calling AXIsolatedObject::setChildrenIDs
+        which should be called only on the secondary thread. Now it is queueing
+        the children update under lock.
+        - The unsigned int range for object IDs was being overrun for large
+        number of objects like in the case of the sample page in <rdar://problem/59331146>.
+        Increased the size of AXID to size_t.
+        - Better handle the case of invalid object IDs, although this needs
+        more work, since we should never encounter this case.
+
+        * accessibility/AccessibilityObjectInterface.h: AXID are now size_t instead of unsigned ints.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::AXIsolatedObject):
+        (WebCore::AXIsolatedObject::setChildrenIDs): Inlined in header.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::createSubtree):
+
 2020-06-12  Andy Estes  <aestes@apple.com>
 
         FileInputType should use WeakPtr for FileListCreator lambdas

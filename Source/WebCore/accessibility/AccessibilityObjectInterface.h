@@ -72,7 +72,7 @@ class AccessibilityScrollView;
 struct AccessibilityText;
 struct ScrollRectToVisibleOptions;
 
-typedef unsigned AXID;
+typedef size_t AXID;
 extern const AXID InvalidAXID;
 
 enum class AccessibilityRole {

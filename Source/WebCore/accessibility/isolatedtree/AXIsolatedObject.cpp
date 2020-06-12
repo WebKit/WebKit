@@ -44,7 +44,12 @@ AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTreeID treeID
     ASSERT(isMainThread());
     if (auto tree = AXIsolatedTree::treeForID(m_treeID))
         m_cachedTree = tree;
-    initializeAttributeData(object, parentID == InvalidAXID);
+    if (m_id != InvalidAXID)
+        initializeAttributeData(object, parentID == InvalidAXID);
+    else {
+        // Should never happen under normal circumstances.
+        ASSERT_NOT_REACHED();
+    }
 }
 
 Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTreeID treeID, AXID parentID)
@@ -454,12 +459,6 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVa
         m_attributeMap.remove(propertyName);
     else
         m_attributeMap.set(propertyName, value);
-}
-
-void AXIsolatedObject::setChildrenIDs(Vector<AXID>&& childrenIDs)
-{
-    ASSERT(isMainThread());
-    m_childrenIDs = childrenIDs;
 }
 
 void AXIsolatedObject::setParent(AXID parent)

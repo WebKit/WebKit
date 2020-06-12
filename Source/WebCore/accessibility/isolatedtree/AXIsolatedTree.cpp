@@ -181,6 +181,12 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
     ASSERT(isMainThread());
 
     auto object = AXIsolatedObject::create(axObject, m_treeID, parentID);
+    if (object->objectID() == InvalidAXID) {
+        // Either the axObject has an invalid ID or something else went terribly wrong. Don't bother doing anything else.
+        ASSERT_NOT_REACHED();
+        return object;
+    }
+
     if (attachWrapper) {
         object->attachPlatformWrapper(axObject.wrapper());
         // Since this object has already an attached wrapper, set the wrapper
@@ -197,7 +203,10 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
         childrenIDs.append(child->objectID());
     }
     m_nodeMap.set(object->objectID(), childrenIDs);
-    object->setChildrenIDs(WTFMove(childrenIDs));
+    {
+        LockHolder locker { m_changeLogLock };
+        m_pendingChildrenUpdates.append(std::make_pair(object->objectID(), childrenIDs));
+    }
 
     return object;
 }
