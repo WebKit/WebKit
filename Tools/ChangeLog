@@ -1,5 +1,13 @@
 2020-06-12  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Update GTK4 to 3.98.5
+
+        Rubber-stamped by Carlos Alberto Lopez Perez.
+
+        * buildstream/elements/sdk/gtk.bst:
+
+2020-06-12  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Add libavif
         https://bugs.webkit.org/show_bug.cgi?id=212964
 
