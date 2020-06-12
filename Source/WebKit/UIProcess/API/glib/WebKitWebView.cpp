@@ -60,6 +60,7 @@
 #include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebResourcePrivate.h"
+#include "WebKitWebViewInternal.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebViewSessionStatePrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
@@ -3733,6 +3734,27 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
         reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }
 
+static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, const gchar* script, RunJavaScriptParameters&& params, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+
+    getPage(webView).runJavaScriptInMainFrame(WTFMove(params), [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
+        ExceptionDetails exceptionDetails;
+        if (details)
+            exceptionDetails = *details;
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
+    });
+}
+
+void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView, const gchar* script, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(script);
+
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, WTF::nullopt, false };
+    webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
+}
+
 /**
  * webkit_web_view_run_javascript:
  * @web_view: a #WebKitWebView
@@ -3752,13 +3774,8 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, [task = WTFMove(task)](API::SerializedScriptValue* serializedScriptValue, Optional<ExceptionDetails> details, WebKit::CallbackBase::Error) {
-        ExceptionDetails exceptionDetails;
-        if (details)
-            exceptionDetails = *details;
-        webkitWebViewRunJavaScriptCallback(serializedScriptValue, exceptionDetails, task.get());
-    });
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, WTF::nullopt, true };
+    webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
 /**

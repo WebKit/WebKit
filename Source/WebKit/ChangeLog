@@ -1,3 +1,22 @@
+2020-06-12  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Add an internal API to run javascript without forced user gestures
+        https://bugs.webkit.org/show_bug.cgi?id=212969
+
+        Reviewed by Carlos Garcia Campos.
+
+        To be used by tests in a follow-up commit.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptWithParams): Factor out the glue to run
+        JavaScript in the page.
+        (webkitWebViewRunJavascriptWithoutForcedUserGestures): Add a new
+        internal API for use by tests.
+        (webkit_web_view_run_javascript): Modified to use factored out
+        glue.
+        * UIProcess/API/glib/WebKitWebViewInternal.h: Added. Place to keep
+        API test-specific internal APIs.
+
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make WebDriver work
