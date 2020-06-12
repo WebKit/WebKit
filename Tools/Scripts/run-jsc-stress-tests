@@ -1137,13 +1137,15 @@ end
 def runWebAssemblyJetStream2
     return if !$jitTests
     return if !$isFTLPlatform
+    return if $memoryLimited
 
     prepareExtraAbsoluteFiles(JETSTREAM2_PATH, ["JetStreamDriver.js"])
     prepareExtraRelativeFilesWithBaseDirectory(Dir[JETSTREAM2_PATH + "wasm" + "*.js"].map { |f| "wasm/" + File.basename(f) }, $collection.dirname, $extraFilesBaseDir.dirname)
     prepareExtraRelativeFilesWithBaseDirectory(Dir[JETSTREAM2_PATH + "wasm" + "*.wasm"].map { |f| "wasm/" + File.basename(f) }, $collection.dirname, $extraFilesBaseDir.dirname)
 
     run("default-wasm", *FTL_OPTIONS)
-    if $mode != "quick" and !$memoryLimited
+
+    if $mode != "quick"
         run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + EAGER_OPTIONS))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)

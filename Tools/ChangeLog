@@ -1,3 +1,12 @@
+2020-06-11  Saam Barati  <sbarati@apple.com>
+
+        Skip wasm-js2 test on memory limited devices
+        https://bugs.webkit.org/show_bug.cgi?id=213099
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable download resume tests
