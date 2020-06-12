@@ -59,12 +59,12 @@ PASS CSS Transitions with transition: all: property <background-color> from [inh
 PASS CSS Transitions with transition: all: property <background-color> from [inherit] to [green] at (0.6) should be [rgb(95, 172, 95)] 
 PASS CSS Transitions with transition: all: property <background-color> from [inherit] to [green] at (1) should be [rgb(0, 128, 0)] 
 PASS CSS Transitions with transition: all: property <background-color> from [inherit] to [green] at (1.5) should be [rgb(0, 73, 0)] 
-FAIL CSS Animations: property <background-color> from [inherit] to [green] at (-0.3) should be [rgb(255, 255, 255)] assert_equals: expected "rgb ( 255 , 255 , 255 ) " but got "rgb ( 0 , 0 , 0 ) "
-FAIL CSS Animations: property <background-color> from [inherit] to [green] at (0) should be [rgb(238, 238, 238)] assert_equals: expected "rgb ( 238 , 238 , 238 ) " but got "rgb ( 0 , 0 , 0 ) "
-FAIL CSS Animations: property <background-color> from [inherit] to [green] at (0.3) should be [rgb(167, 205, 167)] assert_equals: expected "rgb ( 167 , 205 , 167 ) " but got "rgb ( 0 , 38 , 0 ) "
-FAIL CSS Animations: property <background-color> from [inherit] to [green] at (0.6) should be [rgb(95, 172, 95)] assert_equals: expected "rgb ( 95 , 172 , 95 ) " but got "rgb ( 0 , 77 , 0 ) "
+PASS CSS Animations: property <background-color> from [inherit] to [green] at (-0.3) should be [rgb(255, 255, 255)] 
+PASS CSS Animations: property <background-color> from [inherit] to [green] at (0) should be [rgb(238, 238, 238)] 
+PASS CSS Animations: property <background-color> from [inherit] to [green] at (0.3) should be [rgb(167, 205, 167)] 
+PASS CSS Animations: property <background-color> from [inherit] to [green] at (0.6) should be [rgb(95, 172, 95)] 
 PASS CSS Animations: property <background-color> from [inherit] to [green] at (1) should be [rgb(0, 128, 0)] 
-FAIL CSS Animations: property <background-color> from [inherit] to [green] at (1.5) should be [rgb(0, 73, 0)] assert_equals: expected "rgb ( 0 , 73 , 0 ) " but got "rgb ( 0 , 192 , 0 ) "
+PASS CSS Animations: property <background-color> from [inherit] to [green] at (1.5) should be [rgb(0, 73, 0)] 
 FAIL Web Animations: property <background-color> from [inherit] to [green] at (-0.3) should be [rgb(255, 255, 255)] assert_equals: expected "rgb ( 255 , 255 , 255 ) " but got "rgb ( 0 , 0 , 0 ) "
 FAIL Web Animations: property <background-color> from [inherit] to [green] at (0) should be [rgb(238, 238, 238)] assert_equals: expected "rgb ( 238 , 238 , 238 ) " but got "rgb ( 0 , 0 , 0 ) "
 FAIL Web Animations: property <background-color> from [inherit] to [green] at (0.3) should be [rgb(167, 205, 167)] assert_equals: expected "rgb ( 167 , 205 , 167 ) " but got "rgb ( 0 , 38 , 0 ) "

@@ -63,12 +63,12 @@ PASS CSS Transitions with transition: all: property <column-count> from [inherit
 PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (0.7) should be [23] 
 PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (1) should be [20] 
 PASS CSS Transitions with transition: all: property <column-count> from [inherit] to [20] at (1.5) should be [15] 
-FAIL CSS Animations: property <column-count> from [inherit] to [20] at (-0.5) should be [35] assert_equals: expected "35 " but got "5 "
-FAIL CSS Animations: property <column-count> from [inherit] to [20] at (0) should be [30] assert_equals: expected "30 " but got "10 "
-FAIL CSS Animations: property <column-count> from [inherit] to [20] at (0.3) should be [27] assert_equals: expected "27 " but got "13 "
-FAIL CSS Animations: property <column-count> from [inherit] to [20] at (0.7) should be [23] assert_equals: expected "23 " but got "17 "
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (-0.5) should be [35] 
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (0) should be [30] 
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (0.3) should be [27] 
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (0.7) should be [23] 
 PASS CSS Animations: property <column-count> from [inherit] to [20] at (1) should be [20] 
-FAIL CSS Animations: property <column-count> from [inherit] to [20] at (1.5) should be [15] assert_equals: expected "15 " but got "25 "
+PASS CSS Animations: property <column-count> from [inherit] to [20] at (1.5) should be [15] 
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (-0.5) should be [35] assert_equals: expected "35 " but got "5 "
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (0) should be [30] assert_equals: expected "30 " but got "5 "
 FAIL Web Animations: property <column-count> from [inherit] to [20] at (0.3) should be [27] assert_equals: expected "27 " but got "10 "

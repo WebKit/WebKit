@@ -59,12 +59,12 @@ PASS CSS Transitions with transition: all: property <box-shadow> from [inherit] 
 PASS CSS Transitions with transition: all: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0.6) should be [rgb(0, 0, 0) 24px 16px 24px 16px] 
 PASS CSS Transitions with transition: all: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (1) should be [rgb(0, 0, 0) 20px 20px 20px 20px] 
 PASS CSS Transitions with transition: all: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (1.5) should be [rgb(0, 0, 0) 15px 25px 15px 25px] 
-FAIL CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (-0.3) should be [rgb(0, 0, 0) 33px 7px 33px 7px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 33px 7px 33px 7px " but got "rgb ( 0 , 0 , 0 ) 7px 33px 7px 33px "
-FAIL CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0) should be [rgb(0, 0, 0) 30px 10px 30px 10px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 30px 10px 30px 10px " but got "rgb ( 0 , 0 , 0 ) 10px 30px 10px 30px "
-FAIL CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0.3) should be [rgb(0, 0, 0) 27px 13px 27px 13px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 27px 13px 27px 13px " but got "rgb ( 0 , 0 , 0 ) 13px 27px 13px 27px "
-FAIL CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0.6) should be [rgb(0, 0, 0) 24px 16px 24px 16px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 24px 16px 24px 16px " but got "rgb ( 0 , 0 , 0 ) 16px 24px 16px 24px "
+PASS CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (-0.3) should be [rgb(0, 0, 0) 33px 7px 33px 7px] 
+PASS CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0) should be [rgb(0, 0, 0) 30px 10px 30px 10px] 
+PASS CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0.3) should be [rgb(0, 0, 0) 27px 13px 27px 13px] 
+PASS CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0.6) should be [rgb(0, 0, 0) 24px 16px 24px 16px] 
 PASS CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (1) should be [rgb(0, 0, 0) 20px 20px 20px 20px] 
-FAIL CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (1.5) should be [rgb(0, 0, 0) 15px 25px 15px 25px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 15px 25px 15px 25px " but got "rgb ( 0 , 0 , 0 ) 25px 15px 25px 15px "
+PASS CSS Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (1.5) should be [rgb(0, 0, 0) 15px 25px 15px 25px] 
 FAIL Web Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (-0.3) should be [rgb(0, 0, 0) 33px 7px 33px 7px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 33px 7px 33px 7px " but got "rgb ( 0 , 0 , 0 ) 7px 33px 7px 33px "
 FAIL Web Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0) should be [rgb(0, 0, 0) 30px 10px 30px 10px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 30px 10px 30px 10px " but got "rgb ( 0 , 0 , 0 ) 7px 33px 7px 33px "
 FAIL Web Animations: property <box-shadow> from [inherit] to [20px 20px 20px 20px black] at (0.3) should be [rgb(0, 0, 0) 27px 13px 27px 13px] assert_equals: expected "rgb ( 0 , 0 , 0 ) 27px 13px 27px 13px " but got "rgb ( 0 , 0 , 0 ) 10.89px 29.09px 11px 29.09px "

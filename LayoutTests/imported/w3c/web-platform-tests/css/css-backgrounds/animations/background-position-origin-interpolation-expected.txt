@@ -49,10 +49,10 @@ FAIL CSS Transitions with transition: all: property <background-position> from [
 FAIL CSS Transitions with transition: all: property <background-position> from [inherit] to [left 20px top 20px] at (0.5) should be [50px 50px] assert_equals: expected "50px 50px " but got "left 50px top 50px "
 FAIL CSS Transitions with transition: all: property <background-position> from [inherit] to [left 20px top 20px] at (0.75) should be [35px 35px] assert_equals: expected "35px 35px " but got "left 35px top 35px "
 FAIL CSS Transitions with transition: all: property <background-position> from [inherit] to [left 20px top 20px] at (1) should be [20px 20px] assert_equals: expected "20px 20px " but got "left 20px top 20px "
-FAIL CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0) should be [80px 80px] assert_equals: expected "80px 80px " but got "10px 10px "
-FAIL CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.25) should be [65px 65px] assert_equals: expected "65px 65px " but got "12.5px 12.5px "
-FAIL CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.5) should be [50px 50px] assert_equals: expected "50px 50px " but got "15px 15px "
-FAIL CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.75) should be [35px 35px] assert_equals: expected "35px 35px " but got "17.5px 17.5px "
+PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0) should be [80px 80px] 
+PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.25) should be [65px 65px] 
+PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.5) should be [50px 50px] 
+PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.75) should be [35px 35px] 
 PASS CSS Animations: property <background-position> from [inherit] to [left 20px top 20px] at (1) should be [20px 20px] 
 FAIL Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0) should be [80px 80px] assert_equals: expected "80px 80px " but got "10px 10px "
 FAIL Web Animations: property <background-position> from [inherit] to [left 20px top 20px] at (0.25) should be [65px 65px] assert_equals: expected "65px 65px " but got "12.5px 12.5px "

@@ -105,8 +105,11 @@ public:
 
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
 
-    RenderStyle* overrideDocumentElementStyle() const { return m_overrideDocumentElementStyle; }
-    void setOverrideDocumentElementStyle(RenderStyle* style) { m_overrideDocumentElementStyle = style; }
+    const RenderStyle* overrideDocumentElementStyle() const { return m_overrideDocumentElementStyle; }
+    void setOverrideDocumentElementStyle(const RenderStyle* style) { m_overrideDocumentElementStyle = style; }
+
+    // FIXME: Remove and pass this through the animation system normally.
+    void setParentElementStyleForKeyframes(const RenderStyle* style) { m_parentElementStyleForKeyframes = style; }
 
     void addCurrentSVGFontFaceRules();
 
@@ -187,7 +190,8 @@ private:
 
     Document& m_document;
 
-    RenderStyle* m_overrideDocumentElementStyle { nullptr };
+    const RenderStyle* m_overrideDocumentElementStyle { nullptr };
+    const RenderStyle* m_parentElementStyleForKeyframes { nullptr };
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 

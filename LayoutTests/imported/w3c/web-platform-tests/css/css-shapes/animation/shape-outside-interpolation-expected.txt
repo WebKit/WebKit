@@ -63,12 +63,12 @@ PASS CSS Transitions with transition: all: property <shape-outside> from [inheri
 PASS CSS Transitions with transition: all: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0.6) should be [circle(56% at 24% 16%)] 
 PASS CSS Transitions with transition: all: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)] 
 PASS CSS Transitions with transition: all: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (1.5) should be [circle(20% at 15% 25%)] 
-FAIL CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (-0.3) should be [circle(92% at 33% 7%)] assert_equals: expected "circle ( 92 % at 33 % 7 % ) " but got "circle ( 66 % at 7 % 33 % ) "
-FAIL CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0) should be [circle(80% at 30% 10%)] assert_equals: expected "circle ( 80 % at 30 % 10 % ) " but got "circle ( 60 % at 10 % 30 % ) "
-FAIL CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0.3) should be [circle(68% at 27% 13%)] assert_equals: expected "circle ( 68 % at 27 % 13 % ) " but got "circle ( 54 % at 13 % 27 % ) "
-FAIL CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0.6) should be [circle(56% at 24% 16%)] assert_equals: expected "circle ( 56 % at 24 % 16 % ) " but got "circle ( 48 % at 16 % 24 % ) "
+PASS CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (-0.3) should be [circle(92% at 33% 7%)] 
+PASS CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0) should be [circle(80% at 30% 10%)] 
+PASS CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0.3) should be [circle(68% at 27% 13%)] 
+PASS CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0.6) should be [circle(56% at 24% 16%)] 
 PASS CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (1) should be [circle(40% at 20% 20%)] 
-FAIL CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (1.5) should be [circle(20% at 15% 25%)] assert_equals: expected "circle ( 20 % at 15 % 25 % ) " but got "circle ( 30 % at 25 % 15 % ) "
+PASS CSS Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (1.5) should be [circle(20% at 15% 25%)] 
 FAIL Web Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (-0.3) should be [circle(92% at 33% 7%)] assert_equals: expected "circle ( 92 % at 33 % 7 % ) " but got "circle ( 66 % at 7 % 33 % ) "
 FAIL Web Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0) should be [circle(80% at 30% 10%)] assert_equals: expected "circle ( 80 % at 30 % 10 % ) " but got "circle ( 66 % at 7 % 33 % ) "
 FAIL Web Animations: property <shape-outside> from [inherit] to [circle(40% at 20% 20%)] at (0.3) should be [circle(68% at 27% 13%)] assert_equals: expected "circle ( 68 % at 27 % 13 % ) " but got "circle ( 58.2 % at 10.9 % 29.1 % ) "

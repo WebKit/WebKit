@@ -75,14 +75,14 @@ PASS CSS Transitions with transition: all: property <border-image-width> from [i
 FAIL CSS Transitions with transition: all: property <border-image-width> from [inherit] to [20px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 20px "
 FAIL CSS Transitions with transition: all: property <border-image-width> from [inherit] to [20px] at (5) should be [0px] assert_equals: expected "0px " but got "- 300px "
 FAIL CSS Transitions with transition: all: property <border-image-width> from [inherit] to [20px] at (10) should be [0px] assert_equals: expected "0px " but got "- 700px "
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (-0.3) should be [124px] assert_equals: expected "124px " but got "7px "
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (0) should be [100px] assert_equals: expected "100px " but got "10px "
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (0.3) should be [76px] assert_equals: expected "76px " but got "13px "
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (0.6) should be [52px] assert_equals: expected "52px " but got "16px "
+PASS CSS Animations: property <border-image-width> from [inherit] to [20px] at (-0.3) should be [124px] 
+PASS CSS Animations: property <border-image-width> from [inherit] to [20px] at (0) should be [100px] 
+PASS CSS Animations: property <border-image-width> from [inherit] to [20px] at (0.3) should be [76px] 
+PASS CSS Animations: property <border-image-width> from [inherit] to [20px] at (0.6) should be [52px] 
 PASS CSS Animations: property <border-image-width> from [inherit] to [20px] at (1) should be [20px] 
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (1.5) should be [0px] assert_equals: expected "0px " but got "25px "
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (5) should be [0px] assert_equals: expected "0px " but got "60px "
-FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (10) should be [0px] assert_equals: expected "0px " but got "110px "
+FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (1.5) should be [0px] assert_equals: expected "0px " but got "- 20px "
+FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (5) should be [0px] assert_equals: expected "0px " but got "- 300px "
+FAIL CSS Animations: property <border-image-width> from [inherit] to [20px] at (10) should be [0px] assert_equals: expected "0px " but got "- 700px "
 FAIL Web Animations: property <border-image-width> from [inherit] to [20px] at (-0.3) should be [124px] assert_equals: expected "124px " but got "7px "
 FAIL Web Animations: property <border-image-width> from [inherit] to [20px] at (0) should be [100px] assert_equals: expected "100px " but got "7px "
 FAIL Web Animations: property <border-image-width> from [inherit] to [20px] at (0.3) should be [76px] assert_equals: expected "76px " but got "10.9px "

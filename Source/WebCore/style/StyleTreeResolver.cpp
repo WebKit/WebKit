@@ -320,8 +320,14 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
             // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
             // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
             // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
-            if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
+            if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations()) {
+                // FIXME: Remove this hack and pass the parent style via updateCSSAnimationsForElement.
+                scope().resolver.setParentElementStyleForKeyframes(&parent().style);
+
                 m_document.timeline().updateCSSAnimationsForElement(element, oldStyle, *newStyle);
+
+                scope().resolver.setParentElementStyleForKeyframes(nullptr);
+            }
         }
     }
 

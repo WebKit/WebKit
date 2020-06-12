@@ -59,12 +59,12 @@ PASS CSS Transitions with transition: all: property <column-rule-color> from [in
 PASS CSS Transitions with transition: all: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0.6) should be [rgb(70, 130, 110)] 
 PASS CSS Transitions with transition: all: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (1) should be [rgb(70, 170, 70)] 
 PASS CSS Transitions with transition: all: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (1.5) should be [rgb(70, 220, 20)] 
-FAIL CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (-0.5) should be [rgb(70, 20, 220)] assert_equals: expected "rgb ( 70 , 20 , 220 ) " but got "rgb ( 220 , 20 , 70 ) "
-FAIL CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0) should be [rgb(70, 70, 170)] assert_equals: expected "rgb ( 70 , 70 , 170 ) " but got "rgb ( 170 , 70 , 70 ) "
-FAIL CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0.3) should be [rgb(70, 100, 140)] assert_equals: expected "rgb ( 70 , 100 , 140 ) " but got "rgb ( 140 , 100 , 70 ) "
-FAIL CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0.6) should be [rgb(70, 130, 110)] assert_equals: expected "rgb ( 70 , 130 , 110 ) " but got "rgb ( 110 , 130 , 70 ) "
+PASS CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (-0.5) should be [rgb(70, 20, 220)] 
+PASS CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0) should be [rgb(70, 70, 170)] 
+PASS CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0.3) should be [rgb(70, 100, 140)] 
+PASS CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0.6) should be [rgb(70, 130, 110)] 
 PASS CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (1) should be [rgb(70, 170, 70)] 
-FAIL CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (1.5) should be [rgb(70, 220, 20)] assert_equals: expected "rgb ( 70 , 220 , 20 ) " but got "rgb ( 20 , 220 , 70 ) "
+PASS CSS Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (1.5) should be [rgb(70, 220, 20)] 
 FAIL Web Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (-0.5) should be [rgb(70, 20, 220)] assert_equals: expected "rgb ( 70 , 20 , 220 ) " but got "rgb ( 220 , 20 , 70 ) "
 FAIL Web Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0) should be [rgb(70, 70, 170)] assert_equals: expected "rgb ( 70 , 70 , 170 ) " but got "rgb ( 220 , 20 , 70 ) "
 FAIL Web Animations: property <column-rule-color> from [inherit] to [rgb(70, 170, 70)] at (0.3) should be [rgb(70, 100, 140)] assert_equals: expected "rgb ( 70 , 100 , 140 ) " but got "rgb ( 175 , 65 , 70 ) "

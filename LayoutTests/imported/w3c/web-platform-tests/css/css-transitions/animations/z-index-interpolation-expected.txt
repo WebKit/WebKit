@@ -63,12 +63,12 @@ PASS CSS Transitions with transition: all: property <z-index> from [inherit] to 
 PASS CSS Transitions with transition: all: property <z-index> from [inherit] to [5] at (0.6) should be [9] 
 PASS CSS Transitions with transition: all: property <z-index> from [inherit] to [5] at (1) should be [5] 
 PASS CSS Transitions with transition: all: property <z-index> from [inherit] to [5] at (1.5) should be [0] 
-FAIL CSS Animations: property <z-index> from [inherit] to [5] at (-0.3) should be [18] assert_equals: expected "18 " but got "- 4 "
-FAIL CSS Animations: property <z-index> from [inherit] to [5] at (0) should be [15] assert_equals: expected "15 " but got "- 2 "
-FAIL CSS Animations: property <z-index> from [inherit] to [5] at (0.3) should be [12] assert_equals: expected "12 " but got "0 "
-FAIL CSS Animations: property <z-index> from [inherit] to [5] at (0.6) should be [9] assert_equals: expected "9 " but got "2 "
+PASS CSS Animations: property <z-index> from [inherit] to [5] at (-0.3) should be [18] 
+PASS CSS Animations: property <z-index> from [inherit] to [5] at (0) should be [15] 
+PASS CSS Animations: property <z-index> from [inherit] to [5] at (0.3) should be [12] 
+PASS CSS Animations: property <z-index> from [inherit] to [5] at (0.6) should be [9] 
 PASS CSS Animations: property <z-index> from [inherit] to [5] at (1) should be [5] 
-FAIL CSS Animations: property <z-index> from [inherit] to [5] at (1.5) should be [0] assert_equals: expected "0 " but got "9 "
+PASS CSS Animations: property <z-index> from [inherit] to [5] at (1.5) should be [0] 
 FAIL Web Animations: property <z-index> from [inherit] to [5] at (-0.3) should be [18] assert_equals: expected "18 " but got "- 4 "
 FAIL Web Animations: property <z-index> from [inherit] to [5] at (0) should be [15] assert_equals: expected "15 " but got "- 4 "
 FAIL Web Animations: property <z-index> from [inherit] to [5] at (0.3) should be [12] assert_equals: expected "12 " but got "- 1 "

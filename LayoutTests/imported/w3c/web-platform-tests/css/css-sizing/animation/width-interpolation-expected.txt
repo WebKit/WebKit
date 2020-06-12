@@ -63,12 +63,12 @@ PASS CSS Transitions with transition: all: property <width> from [inherit] to [4
 PASS CSS Transitions with transition: all: property <width> from [inherit] to [40px] at (0.6) should be [64px] 
 PASS CSS Transitions with transition: all: property <width> from [inherit] to [40px] at (1) should be [40px] 
 PASS CSS Transitions with transition: all: property <width> from [inherit] to [40px] at (1.5) should be [10px] 
-FAIL CSS Animations: property <width> from [inherit] to [40px] at (-0.3) should be [118px] assert_equals: expected "118px " but got "1px "
-FAIL CSS Animations: property <width> from [inherit] to [40px] at (0) should be [100px] assert_equals: expected "100px " but got "10px "
-FAIL CSS Animations: property <width> from [inherit] to [40px] at (0.3) should be [82px] assert_equals: expected "82px " but got "19px "
-FAIL CSS Animations: property <width> from [inherit] to [40px] at (0.6) should be [64px] assert_equals: expected "64px " but got "28px "
+PASS CSS Animations: property <width> from [inherit] to [40px] at (-0.3) should be [118px] 
+PASS CSS Animations: property <width> from [inherit] to [40px] at (0) should be [100px] 
+PASS CSS Animations: property <width> from [inherit] to [40px] at (0.3) should be [82px] 
+PASS CSS Animations: property <width> from [inherit] to [40px] at (0.6) should be [64px] 
 PASS CSS Animations: property <width> from [inherit] to [40px] at (1) should be [40px] 
-FAIL CSS Animations: property <width> from [inherit] to [40px] at (1.5) should be [10px] assert_equals: expected "10px " but got "55px "
+PASS CSS Animations: property <width> from [inherit] to [40px] at (1.5) should be [10px] 
 FAIL Web Animations: property <width> from [inherit] to [40px] at (-0.3) should be [118px] assert_equals: expected "118px " but got "1px "
 FAIL Web Animations: property <width> from [inherit] to [40px] at (0) should be [100px] assert_equals: expected "100px " but got "1px "
 FAIL Web Animations: property <width> from [inherit] to [40px] at (0.3) should be [82px] assert_equals: expected "82px " but got "12.69px "

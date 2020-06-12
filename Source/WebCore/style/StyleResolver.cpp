@@ -263,7 +263,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
     auto state = State(element, nullptr, m_overrideDocumentElementStyle);
 
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
-    state.setParentStyle(RenderStyle::clonePtr(*elementStyle));
+    state.setParentStyle(RenderStyle::clonePtr(m_parentElementStyleForKeyframes ? *m_parentElementStyleForKeyframes : *elementStyle));
 
     Builder builder(*state.style(), builderContext(state), result, { CascadeLevel::Author });
     builder.applyAllProperties();

@@ -69,13 +69,13 @@ PASS CSS Transitions with transition: all: property <border-image-slice> from [i
 PASS CSS Transitions with transition: all: property <border-image-slice> from [inherit] to [10%] at (0.6) should be [26%] 
 PASS CSS Transitions with transition: all: property <border-image-slice> from [inherit] to [10%] at (1) should be [10%] 
 FAIL CSS Transitions with transition: all: property <border-image-slice> from [inherit] to [10%] at (1.5) should be [0%] assert_equals: expected "0 % " but got "- 10 % "
-FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (-0.3) should be [62%] assert_equals: expected "62 % " but got "23 % "
-FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0) should be [50%] assert_equals: expected "50 % " but got "20 % "
-FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0.3) should be [38%] assert_equals: expected "38 % " but got "17 % "
-FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0.5) should be [30%] assert_equals: expected "30 % " but got "15 % "
-FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0.6) should be [26%] assert_equals: expected "26 % " but got "14 % "
+PASS CSS Animations: property <border-image-slice> from [inherit] to [10%] at (-0.3) should be [62%] 
+PASS CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0) should be [50%] 
+PASS CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0.3) should be [38%] 
+PASS CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0.5) should be [30%] 
+PASS CSS Animations: property <border-image-slice> from [inherit] to [10%] at (0.6) should be [26%] 
 PASS CSS Animations: property <border-image-slice> from [inherit] to [10%] at (1) should be [10%] 
-FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (1.5) should be [0%] assert_equals: expected "0 % " but got "5 % "
+FAIL CSS Animations: property <border-image-slice> from [inherit] to [10%] at (1.5) should be [0%] assert_equals: expected "0 % " but got "- 10 % "
 FAIL Web Animations: property <border-image-slice> from [inherit] to [10%] at (-0.3) should be [62%] assert_equals: expected "62 % " but got "23 % "
 FAIL Web Animations: property <border-image-slice> from [inherit] to [10%] at (0) should be [50%] assert_equals: expected "50 % " but got "23 % "
 FAIL Web Animations: property <border-image-slice> from [inherit] to [10%] at (0.3) should be [38%] assert_equals: expected "38 % " but got "19.1 % "

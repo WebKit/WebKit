@@ -59,12 +59,12 @@ PASS CSS Transitions with transition: all: property <shape-image-threshold> from
 PASS CSS Transitions with transition: all: property <shape-image-threshold> from [inherit] to [0.8] at (0.5) should be [0.6] 
 PASS CSS Transitions with transition: all: property <shape-image-threshold> from [inherit] to [0.8] at (1) should be [0.8] 
 PASS CSS Transitions with transition: all: property <shape-image-threshold> from [inherit] to [0.8] at (1.5) should be [1] 
-FAIL CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (-1.5) should be [0] assert_equals: expected "0 " but got "0.3 "
-FAIL CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (-0.5) should be [0.2] assert_equals: expected "0.2 " but got "0.5 "
-FAIL CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (0) should be [0.4] assert_equals: expected "0.4 " but got "0.6 "
-FAIL CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (0.5) should be [0.6] assert_equals: expected "0.6 " but got "0.7 "
+PASS CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (-1.5) should be [0] 
+PASS CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (-0.5) should be [0.2] 
+PASS CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (0) should be [0.4] 
+PASS CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (0.5) should be [0.6] 
 PASS CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (1) should be [0.8] 
-FAIL CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (1.5) should be [1] assert_equals: expected "1 " but got "0.9 "
+PASS CSS Animations: property <shape-image-threshold> from [inherit] to [0.8] at (1.5) should be [1] 
 FAIL Web Animations: property <shape-image-threshold> from [inherit] to [0.8] at (-1.5) should be [0] assert_equals: expected "0 " but got "0.3 "
 FAIL Web Animations: property <shape-image-threshold> from [inherit] to [0.8] at (-0.5) should be [0.2] assert_equals: expected "0.2 " but got "0.05 "
 FAIL Web Animations: property <shape-image-threshold> from [inherit] to [0.8] at (0) should be [0.4] assert_equals: expected "0.4 " but got "0.05 "

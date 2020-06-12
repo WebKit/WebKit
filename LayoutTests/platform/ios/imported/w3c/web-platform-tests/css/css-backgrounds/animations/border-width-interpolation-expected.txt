@@ -83,12 +83,12 @@ PASS CSS Transitions with transition: all: property <border-left-width> from [in
 PASS CSS Transitions with transition: all: property <border-left-width> from [inherit] to [20px] at (0.6) should be [12px] 
 PASS CSS Transitions with transition: all: property <border-left-width> from [inherit] to [20px] at (1) should be [20px] 
 PASS CSS Transitions with transition: all: property <border-left-width> from [inherit] to [20px] at (1.5) should be [30px] 
-FAIL CSS Animations: property <border-left-width> from [inherit] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "7px "
-FAIL CSS Animations: property <border-left-width> from [inherit] to [20px] at (0) should be [0px] assert_equals: expected "0px " but got "10px "
-FAIL CSS Animations: property <border-left-width> from [inherit] to [20px] at (0.3) should be [6px] assert_equals: expected "6px " but got "13px "
-FAIL CSS Animations: property <border-left-width> from [inherit] to [20px] at (0.6) should be [12px] assert_equals: expected "12px " but got "16px "
+FAIL CSS Animations: property <border-left-width> from [inherit] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "- 6px "
+PASS CSS Animations: property <border-left-width> from [inherit] to [20px] at (0) should be [0px] 
+PASS CSS Animations: property <border-left-width> from [inherit] to [20px] at (0.3) should be [6px] 
+PASS CSS Animations: property <border-left-width> from [inherit] to [20px] at (0.6) should be [12px] 
 PASS CSS Animations: property <border-left-width> from [inherit] to [20px] at (1) should be [20px] 
-FAIL CSS Animations: property <border-left-width> from [inherit] to [20px] at (1.5) should be [30px] assert_equals: expected "30px " but got "25px "
+PASS CSS Animations: property <border-left-width> from [inherit] to [20px] at (1.5) should be [30px] 
 FAIL Web Animations: property <border-left-width> from [inherit] to [20px] at (-0.3) should be [0px] assert_equals: expected "0px " but got "7px "
 FAIL Web Animations: property <border-left-width> from [inherit] to [20px] at (0) should be [0px] assert_equals: expected "0px " but got "7px "
 FAIL Web Animations: property <border-left-width> from [inherit] to [20px] at (0.3) should be [6px] assert_equals: expected "6px " but got "10.9px "

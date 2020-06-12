@@ -57,11 +57,11 @@ PASS CSS Transitions with transition: all: property <right> from [inherit] to [2
 PASS CSS Transitions with transition: all: property <right> from [inherit] to [20px] at (0.5) should be [25px] 
 PASS CSS Transitions with transition: all: property <right> from [inherit] to [20px] at (1) should be [20px] 
 PASS CSS Transitions with transition: all: property <right> from [inherit] to [20px] at (1.5) should be [15px] 
-FAIL CSS Animations: property <right> from [inherit] to [20px] at (-0.3) should be [33px] assert_equals: expected "33px " but got "7px "
-FAIL CSS Animations: property <right> from [inherit] to [20px] at (0) should be [30px] assert_equals: expected "30px " but got "10px "
-FAIL CSS Animations: property <right> from [inherit] to [20px] at (0.5) should be [25px] assert_equals: expected "25px " but got "15px "
+PASS CSS Animations: property <right> from [inherit] to [20px] at (-0.3) should be [33px] 
+PASS CSS Animations: property <right> from [inherit] to [20px] at (0) should be [30px] 
+PASS CSS Animations: property <right> from [inherit] to [20px] at (0.5) should be [25px] 
 PASS CSS Animations: property <right> from [inherit] to [20px] at (1) should be [20px] 
-FAIL CSS Animations: property <right> from [inherit] to [20px] at (1.5) should be [15px] assert_equals: expected "15px " but got "25px "
+PASS CSS Animations: property <right> from [inherit] to [20px] at (1.5) should be [15px] 
 FAIL Web Animations: property <right> from [inherit] to [20px] at (-0.3) should be [33px] assert_equals: expected "33px " but got "7px "
 FAIL Web Animations: property <right> from [inherit] to [20px] at (0) should be [30px] assert_equals: expected "30px " but got "7px "
 FAIL Web Animations: property <right> from [inherit] to [20px] at (0.5) should be [25px] assert_equals: expected "25px " but got "13.5px "

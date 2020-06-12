@@ -59,12 +59,12 @@ PASS CSS Transitions with transition: all: property <opacity> from [inherit] to 
 PASS CSS Transitions with transition: all: property <opacity> from [inherit] to [0.2] at (0.6) should be [0.44] 
 PASS CSS Transitions with transition: all: property <opacity> from [inherit] to [0.2] at (1) should be [0.2] 
 PASS CSS Transitions with transition: all: property <opacity> from [inherit] to [0.2] at (1.5) should be [0] 
-FAIL CSS Animations: property <opacity> from [inherit] to [0.2] at (-0.3) should be [0.98] assert_equals: expected "0.98 " but got "0.07 "
-FAIL CSS Animations: property <opacity> from [inherit] to [0.2] at (0) should be [0.8] assert_equals: expected "0.8 " but got "0.1 "
-FAIL CSS Animations: property <opacity> from [inherit] to [0.2] at (0.3) should be [0.62] assert_equals: expected "0.62 " but got "0.13 "
-FAIL CSS Animations: property <opacity> from [inherit] to [0.2] at (0.6) should be [0.44] assert_equals: expected "0.44 " but got "0.16 "
+PASS CSS Animations: property <opacity> from [inherit] to [0.2] at (-0.3) should be [0.98] 
+PASS CSS Animations: property <opacity> from [inherit] to [0.2] at (0) should be [0.8] 
+PASS CSS Animations: property <opacity> from [inherit] to [0.2] at (0.3) should be [0.62] 
+PASS CSS Animations: property <opacity> from [inherit] to [0.2] at (0.6) should be [0.44] 
 PASS CSS Animations: property <opacity> from [inherit] to [0.2] at (1) should be [0.2] 
-FAIL CSS Animations: property <opacity> from [inherit] to [0.2] at (1.5) should be [0] assert_equals: expected "0 " but got "0.25 "
+PASS CSS Animations: property <opacity> from [inherit] to [0.2] at (1.5) should be [0] 
 FAIL Web Animations: property <opacity> from [inherit] to [0.2] at (-0.3) should be [0.98] assert_equals: expected "0.98 " but got "0.07 "
 FAIL Web Animations: property <opacity> from [inherit] to [0.2] at (0) should be [0.8] assert_equals: expected "0.8 " but got "0.07 "
 FAIL Web Animations: property <opacity> from [inherit] to [0.2] at (0.3) should be [0.62] assert_equals: expected "0.62 " but got "0.11 "

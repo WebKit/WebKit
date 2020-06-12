@@ -83,12 +83,12 @@ PASS CSS Transitions with transition: all: property <border-top-color> from [inh
 PASS CSS Transitions with transition: all: property <border-top-color> from [inherit] to [orange] at (0.6) should be [rgb(255, 201, 102)] 
 PASS CSS Transitions with transition: all: property <border-top-color> from [inherit] to [orange] at (1) should be [rgb(255, 165, 0)] 
 PASS CSS Transitions with transition: all: property <border-top-color> from [inherit] to [orange] at (1.5) should be [rgb(255, 120, 0)] 
-FAIL CSS Animations: property <border-top-color> from [inherit] to [orange] at (-0.3) should be [rgb(255, 255, 255)] assert_equals: expected "rgb ( 255 , 255 , 255 ) " but got "rgb ( 0 , 0 , 181 ) "
-FAIL CSS Animations: property <border-top-color> from [inherit] to [orange] at (0) should be [rgb(255, 255, 255)] assert_equals: expected "rgb ( 255 , 255 , 255 ) " but got "rgb ( 0 , 0 , 139 ) "
-FAIL CSS Animations: property <border-top-color> from [inherit] to [orange] at (0.3) should be [rgb(255, 228, 179)] assert_equals: expected "rgb ( 255 , 228 , 179 ) " but got "rgb ( 77 , 50 , 97 ) "
-FAIL CSS Animations: property <border-top-color> from [inherit] to [orange] at (0.6) should be [rgb(255, 201, 102)] assert_equals: expected "rgb ( 255 , 201 , 102 ) " but got "rgb ( 153 , 99 , 56 ) "
+PASS CSS Animations: property <border-top-color> from [inherit] to [orange] at (-0.3) should be [rgb(255, 255, 255)] 
+PASS CSS Animations: property <border-top-color> from [inherit] to [orange] at (0) should be [rgb(255, 255, 255)] 
+PASS CSS Animations: property <border-top-color> from [inherit] to [orange] at (0.3) should be [rgb(255, 228, 179)] 
+PASS CSS Animations: property <border-top-color> from [inherit] to [orange] at (0.6) should be [rgb(255, 201, 102)] 
 PASS CSS Animations: property <border-top-color> from [inherit] to [orange] at (1) should be [rgb(255, 165, 0)] 
-FAIL CSS Animations: property <border-top-color> from [inherit] to [orange] at (1.5) should be [rgb(255, 120, 0)] assert_equals: expected "rgb ( 255 , 120 , 0 ) " but got "rgb ( 255 , 248 , 0 ) "
+PASS CSS Animations: property <border-top-color> from [inherit] to [orange] at (1.5) should be [rgb(255, 120, 0)] 
 FAIL Web Animations: property <border-top-color> from [inherit] to [orange] at (-0.3) should be [rgb(255, 255, 255)] assert_equals: expected "rgb ( 255 , 255 , 255 ) " but got "rgb ( 0 , 0 , 181 ) "
 FAIL Web Animations: property <border-top-color> from [inherit] to [orange] at (0) should be [rgb(255, 255, 255)] assert_equals: expected "rgb ( 255 , 255 , 255 ) " but got "rgb ( 0 , 0 , 181 ) "
 FAIL Web Animations: property <border-top-color> from [inherit] to [orange] at (0.3) should be [rgb(255, 228, 179)] assert_equals: expected "rgb ( 255 , 228 , 179 ) " but got "rgb ( 77 , 50 , 127 ) "
