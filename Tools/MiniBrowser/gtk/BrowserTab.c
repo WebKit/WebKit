@@ -28,7 +28,7 @@
 #endif
 #include "BrowserTab.h"
 
-#include "BrowserSearchBar.h"
+#include "BrowserSearchBox.h"
 #include "BrowserWindow.h"
 #include <string.h>
 
@@ -42,9 +42,7 @@ struct _BrowserTab {
     GtkBox parent;
 
     WebKitWebView *webView;
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    BrowserSearchBar *searchBar;
-#endif
+    GtkWidget *searchBar;
     GtkWidget *statusLabel;
     gboolean wasSearchingWhenEnteredFullscreen;
     gboolean inspectorIsVisible;
@@ -98,7 +96,7 @@ static gchar *getWebViewOrigin(WebKitWebView *webView)
 
     return originStr;
 }
-#if !GTK_CHECK_VERSION(3, 98, 0)
+
 static void titleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserTab *tab)
 {
     const char *title = webkit_web_view_get_title(webView);
@@ -136,7 +134,7 @@ static gboolean decidePolicy(WebKitWebView *webView, WebKitPolicyDecision *decis
     return TRUE;
 }
 
-#if !GTK_CHECK_VERSION(3, 98, 4)
+#if !GTK_CHECK_VERSION(3, 98, 5)
 static void removeChildIfInfoBar(GtkWidget *child, GtkContainer *tab)
 {
     if (GTK_IS_INFO_BAR(child))
@@ -149,7 +147,15 @@ static void loadChanged(WebKitWebView *webView, WebKitLoadEvent loadEvent, Brows
     if (loadEvent != WEBKIT_LOAD_STARTED)
         return;
 
-#if !GTK_CHECK_VERSION(3, 98, 4)
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkWidget *child = gtk_widget_get_first_child(GTK_WIDGET(tab));
+    while (child) {
+        GtkWidget *next = gtk_widget_get_next_sibling(child);
+        if (GTK_IS_INFO_BAR(child))
+            gtk_widget_unparent(child);
+        child = next;
+    }
+#else
     gtk_container_foreach(GTK_CONTAINER(tab), (GtkCallback)removeChildIfInfoBar, tab);
 #endif
 }
@@ -159,28 +165,50 @@ static GtkWidget *createInfoBarQuestionMessage(const char *title, const char *te
     GtkWidget *dialog = gtk_info_bar_new_with_buttons("No", GTK_RESPONSE_NO, "Yes", GTK_RESPONSE_YES, NULL);
     gtk_info_bar_set_message_type(GTK_INFO_BAR(dialog), GTK_MESSAGE_QUESTION);
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkWidget *contentBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_set_spacing(GTK_BOX(contentBox), 0);
+#else
     GtkWidget *contentBox = gtk_info_bar_get_content_area(GTK_INFO_BAR(dialog));
     gtk_orientable_set_orientation(GTK_ORIENTABLE(contentBox), GTK_ORIENTATION_VERTICAL);
     gtk_box_set_spacing(GTK_BOX(contentBox), 0);
+#endif
 
     GtkLabel *label = GTK_LABEL(gtk_label_new(NULL));
     gchar *markup = g_strdup_printf("<span size='xx-large' weight='bold'>%s</span>", title);
     gtk_label_set_markup(label, markup);
     g_free(markup);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_label_set_wrap(label, TRUE);
+#else
     gtk_label_set_line_wrap(label, TRUE);
+#endif
     gtk_label_set_selectable(label, TRUE);
     gtk_label_set_xalign(label, 0.);
     gtk_label_set_yalign(label, 0.5);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(contentBox), GTK_WIDGET(label));
+#else
     gtk_box_pack_start(GTK_BOX(contentBox), GTK_WIDGET(label), FALSE, FALSE, 2);
     gtk_widget_show(GTK_WIDGET(label));
+#endif
 
     label = GTK_LABEL(gtk_label_new(text));
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_label_set_wrap(label, TRUE);
+#else
     gtk_label_set_line_wrap(label, TRUE);
+#endif
     gtk_label_set_selectable(label, TRUE);
     gtk_label_set_xalign(label, 0.);
     gtk_label_set_yalign(label, 0.5);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(contentBox), GTK_WIDGET(label));
+    gtk_info_bar_add_child(GTK_INFO_BAR(dialog), contentBox);
+#else
     gtk_box_pack_start(GTK_BOX(contentBox), GTK_WIDGET(label), FALSE, FALSE, 0);
     gtk_widget_show(GTK_WIDGET(label));
+#endif
 
     return dialog;
 }
@@ -195,7 +223,11 @@ static void tlsErrorsDialogResponse(GtkWidget *dialog, gint response, BrowserTab
         soup_uri_free(uri);
         webkit_web_view_load_uri(tab->webView, failingURI);
     }
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_widget_unparent(dialog);
+#else
     gtk_widget_destroy(dialog);
+#endif
 }
 
 static gboolean loadFailedWithTLSerrors(WebKitWebView *webView, const char *failingURI, GTlsCertificate *certificate, GTlsCertificateFlags errors, BrowserTab *tab)
@@ -208,9 +240,13 @@ static gboolean loadFailedWithTLSerrors(WebKitWebView *webView, const char *fail
 
     g_signal_connect(dialog, "response", G_CALLBACK(tlsErrorsDialogResponse), tab);
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_prepend(GTK_BOX(tab), dialog);
+#else
     gtk_box_pack_start(GTK_BOX(tab), dialog, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(tab), dialog, 0);
     gtk_widget_show(dialog);
+#endif
 
     return TRUE;
 }
@@ -239,7 +275,11 @@ static void permissionRequestDialogResponse(GtkWidget *dialog, gint response, Pe
         break;
     }
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_widget_unparent(dialog);
+#else
     gtk_widget_destroy(dialog);
+#endif
     g_clear_pointer(&requestData, permissionRequestDataFree);
 }
 
@@ -303,9 +343,13 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
     g_signal_connect(dialog, "response", G_CALLBACK(permissionRequestDialogResponse), permissionRequestDataNew(request,
         getWebViewOrigin(webView)));
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_prepend(GTK_BOX(tab), dialog);
+#else
     gtk_box_pack_start(GTK_BOX(tab), dialog, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(tab), dialog, 0);
     gtk_widget_show(dialog);
+#endif
 
     return TRUE;
 }
@@ -325,12 +369,21 @@ static void popoverColorClosed(GtkWidget *popover, WebKitColorChooserRequest *re
 static void colorChooserRequestFinished(WebKitColorChooserRequest *request, GtkWidget *popover)
 {
     g_object_unref(request);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_widget_unparent(popover);
+#else
     gtk_widget_destroy(popover);
+#endif
 }
 
 static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChooserRequest *request, BrowserTab *tab)
 {
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkWidget *popover = gtk_popover_new();
+    gtk_widget_set_parent(popover, GTK_WIDGET(webView));
+#else
     GtkWidget *popover = gtk_popover_new(GTK_WIDGET(webView));
+#endif
 
     GdkRectangle rectangle;
     webkit_color_chooser_request_get_element_rectangle(request, &rectangle);
@@ -341,8 +394,12 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
     webkit_color_chooser_request_get_rgba(request, &rgba);
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorChooser), &rgba);
     g_signal_connect(colorChooser, "notify::rgba", G_CALLBACK(colorChooserRGBAChanged), request);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_popover_set_child(GTK_POPOVER(popover), colorChooser);
+#else
     gtk_container_add(GTK_CONTAINER(popover), colorChooser);
     gtk_widget_show(colorChooser);
+#endif
 
     g_object_ref(request);
     g_signal_connect_object(popover, "hide", G_CALLBACK(popoverColorClosed), request, 0);
@@ -352,7 +409,6 @@ static gboolean runColorChooserCallback(WebKitWebView *webView, WebKitColorChoos
 
     return TRUE;
 }
-#endif
 
 static gboolean inspectorOpenedInWindow(WebKitWebInspector *inspector, BrowserTab *tab)
 {
@@ -385,6 +441,18 @@ static void audioMutedChanged(WebKitWebView *webView, GParamSpec *pspec, gpointe
     gtk_button_set_image(GTK_BUTTON(tab->titleAudioButton), gtk_image_new_from_icon_name(muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic", GTK_ICON_SIZE_MENU));
 #endif
 }
+
+#if GTK_CHECK_VERSION(3, 98, 5)
+static void tabCloseClicked(BrowserTab *tab)
+{
+    GtkWidget *parent = gtk_widget_get_parent(GTK_WIDGET(tab));
+    while (parent && !GTK_IS_NOTEBOOK(parent))
+        parent = gtk_widget_get_parent(parent);
+
+    GtkNotebook *notebook = GTK_NOTEBOOK(parent);
+    gtk_notebook_remove_page(notebook, gtk_notebook_page_num(notebook, GTK_WIDGET(tab)));
+}
+#endif
 
 static void browserTabSetProperty(GObject *object, guint propId, const GValue *value, GParamSpec *pspec)
 {
@@ -422,9 +490,21 @@ static void browserTabConstructed(GObject *gObject)
 
     G_OBJECT_CLASS(browser_tab_parent_class)->constructed(gObject);
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    tab->searchBar = BROWSER_SEARCH_BAR(browser_search_bar_new(tab->webView));
-    gtk_box_pack_start(GTK_BOX(tab), GTK_WIDGET(tab->searchBar), FALSE, FALSE, 0);
+    tab->searchBar = gtk_search_bar_new();
+    GtkWidget *searchBox = browser_search_box_new(tab->webView);
+    gtk_search_bar_set_show_close_button(GTK_SEARCH_BAR(tab->searchBar), TRUE);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_search_bar_set_child(GTK_SEARCH_BAR(tab->searchBar), searchBox);
+    gtk_search_bar_connect_entry(GTK_SEARCH_BAR(tab->searchBar),
+        GTK_EDITABLE(browser_search_box_get_entry(BROWSER_SEARCH_BOX(searchBox))));
+    gtk_box_append(GTK_BOX(tab), tab->searchBar);
+#else
+    gtk_container_add(GTK_CONTAINER(tab->searchBar), searchBox);
+    gtk_widget_show(searchBox);
+    gtk_search_bar_connect_entry(GTK_SEARCH_BAR(tab->searchBar),
+        browser_search_box_get_entry(BROWSER_SEARCH_BOX(searchBox)));
+    gtk_container_add(GTK_CONTAINER(tab), tab->searchBar);
+    gtk_widget_show(tab->searchBar);
 #endif
 
     GtkWidget *overlay = gtk_overlay_new();
@@ -438,12 +518,10 @@ static void browserTabConstructed(GObject *gObject)
     tab->statusLabel = gtk_label_new(NULL);
     gtk_widget_set_halign(tab->statusLabel, GTK_ALIGN_START);
     gtk_widget_set_valign(tab->statusLabel, GTK_ALIGN_END);
-#if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_widget_set_margin_start(tab->statusLabel, 1);
     gtk_widget_set_margin_end(tab->statusLabel, 1);
     gtk_widget_set_margin_top(tab->statusLabel, 1);
     gtk_widget_set_margin_bottom(tab->statusLabel, 1);
-#endif
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->statusLabel);
 
     tab->fullScreenMessageLabel = gtk_label_new(NULL);
@@ -463,53 +541,76 @@ static void browserTabConstructed(GObject *gObject)
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), tab->pointerLockMessageLabel);
 
     gtk_widget_set_vexpand(GTK_WIDGET(tab->webView), TRUE);
-#if !GTK_CHECK_VERSION(3, 98, 0)
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_overlay_set_child(GTK_OVERLAY(overlay), GTK_WIDGET(tab->webView));
+#else
     gtk_container_add(GTK_CONTAINER(overlay), GTK_WIDGET(tab->webView));
     gtk_widget_show(GTK_WIDGET(tab->webView));
-#else
-    gtk_overlay_set_child(GTK_OVERLAY(overlay), GTK_WIDGET(tab->webView));
 #endif
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
     tab->titleBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
     gtk_widget_set_halign(hbox, GTK_ALIGN_CENTER);
+    gtk_widget_set_hexpand(hbox, TRUE);
 
     tab->titleSpinner = gtk_spinner_new();
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(hbox), tab->titleSpinner);
+#else
     gtk_box_pack_start(GTK_BOX(hbox), tab->titleSpinner, FALSE, FALSE, 0);
+#endif
 
     tab->titleLabel = gtk_label_new(NULL);
     gtk_label_set_ellipsize(GTK_LABEL(tab->titleLabel), PANGO_ELLIPSIZE_END);
     gtk_label_set_single_line_mode(GTK_LABEL(tab->titleLabel), TRUE);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(hbox), tab->titleLabel);
+#else
     gtk_box_pack_start(GTK_BOX(hbox), tab->titleLabel, FALSE, FALSE, 0);
     gtk_widget_show(tab->titleLabel);
+#endif
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(tab->titleBox), hbox);
+#else
     gtk_box_pack_start(GTK_BOX(tab->titleBox), hbox, TRUE, TRUE, 0);
     gtk_widget_show(hbox);
+#endif
 
-    tab->titleAudioButton = gtk_button_new();
-    g_signal_connect(tab->titleAudioButton, "clicked", G_CALLBACK(audioClicked), tab);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    tab->titleAudioButton = gtk_button_new_from_icon_name("audio-volume-high-symbolic");
+    gtk_button_set_has_frame(GTK_BUTTON(tab->titleAudioButton), FALSE);
+#else
+    tab->titleAudioButton = gtk_button_new_from_icon_name("audio-volume-high-symbolic", GTK_ICON_SIZE_MENU);
     gtk_button_set_relief(GTK_BUTTON(tab->titleAudioButton), GTK_RELIEF_NONE);
+#endif
+    g_signal_connect(tab->titleAudioButton, "clicked", G_CALLBACK(audioClicked), tab);
     gtk_widget_set_focus_on_click(tab->titleAudioButton, FALSE);
 
-    GtkWidget *image = gtk_image_new_from_icon_name("audio-volume-high-symbolic", GTK_ICON_SIZE_MENU);
-    gtk_button_set_image(GTK_BUTTON(tab->titleAudioButton), image);
-    gtk_widget_show(image);
-
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(tab->titleBox), tab->titleAudioButton);
+#else
     gtk_box_pack_start(GTK_BOX(tab->titleBox), tab->titleAudioButton, FALSE, FALSE, 0);
+#endif
 
-    tab->titleCloseButton = gtk_button_new();
-    g_signal_connect_swapped(tab->titleCloseButton, "clicked", G_CALLBACK(gtk_widget_destroy), tab);
+#if GTK_CHECK_VERSION(3, 98, 5)
+    tab->titleCloseButton = gtk_button_new_from_icon_name("window-close-symbolic");
+    gtk_button_set_has_frame(GTK_BUTTON(tab->titleCloseButton), FALSE);
+    g_signal_connect_swapped(tab->titleCloseButton, "clicked", G_CALLBACK(tabCloseClicked), tab);
+#else
+    tab->titleCloseButton = gtk_button_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_MENU);
     gtk_button_set_relief(GTK_BUTTON(tab->titleCloseButton), GTK_RELIEF_NONE);
+    g_signal_connect_swapped(tab->titleCloseButton, "clicked", G_CALLBACK(gtk_widget_destroy), tab);
+#endif
     gtk_widget_set_focus_on_click(tab->titleCloseButton, FALSE);
 
-    image = gtk_image_new_from_icon_name("window-close-symbolic", GTK_ICON_SIZE_MENU);
-    gtk_container_add(GTK_CONTAINER(tab->titleCloseButton), image);
-    gtk_widget_show(image);
-
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(GTK_BOX(tab->titleBox), tab->titleCloseButton);
+#else
     gtk_box_pack_start(GTK_BOX(tab->titleBox), tab->titleCloseButton, FALSE, FALSE, 0);
     gtk_widget_show(tab->titleCloseButton);
+#endif
 
     g_signal_connect(tab->webView, "notify::title", G_CALLBACK(titleChanged), tab);
     g_signal_connect(tab->webView, "notify::is-loading", G_CALLBACK(isLoadingChanged), tab);
@@ -521,7 +622,6 @@ static void browserTabConstructed(GObject *gObject)
 
     g_object_bind_property(tab->webView, "is-playing-audio", tab->titleAudioButton, "visible", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
     g_signal_connect(tab->webView, "notify::is-muted", G_CALLBACK(audioMutedChanged), tab);
-#endif
 
     WebKitWebInspector *inspector = webkit_web_view_get_inspector(tab->webView);
     g_signal_connect(inspector, "open-window", G_CALLBACK(inspectorOpenedInWindow), tab);
@@ -621,22 +721,28 @@ void browser_tab_toggle_inspector(BrowserTab *tab)
         webkit_web_inspector_close(inspector);
 }
 
+static gboolean browserTabIsSearchBarOpen(BrowserTab *tab)
+{
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkWidget *revealer = gtk_widget_get_first_child(tab->searchBar);
+#else
+    GtkWidget *revealer = gtk_bin_get_child(GTK_BIN(tab->searchBar));
+#endif
+    return gtk_revealer_get_reveal_child(GTK_REVEALER(revealer));
+}
+
 void browser_tab_start_search(BrowserTab *tab)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    if (!browser_search_bar_is_open(tab->searchBar))
-        browser_search_bar_open(tab->searchBar);
-#endif
+    if (!browserTabIsSearchBarOpen(tab))
+        gtk_search_bar_set_search_mode(GTK_SEARCH_BAR(tab->searchBar), TRUE);
 }
 
 void browser_tab_stop_search(BrowserTab *tab)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    if (browser_search_bar_is_open(tab->searchBar))
-        browser_search_bar_close(tab->searchBar);
-#endif
+    if (browserTabIsSearchBarOpen(tab))
+        gtk_search_bar_set_search_mode(GTK_SEARCH_BAR(tab->searchBar), FALSE);
 }
 
 static gboolean fullScreenMessageTimeoutCallback(BrowserTab *tab)
@@ -663,10 +769,8 @@ void browser_tab_enter_fullscreen(BrowserTab *tab)
     tab->fullScreenMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)fullScreenMessageTimeoutCallback, tab);
     g_source_set_name_by_id(tab->fullScreenMessageLabelId, "[WebKit] fullScreenMessageTimeoutCallback");
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    tab->wasSearchingWhenEnteredFullscreen = gtk_widget_get_visible(GTK_WIDGET(tab->searchBar));
+    tab->wasSearchingWhenEnteredFullscreen = browserTabIsSearchBarOpen(tab);
     browser_tab_stop_search(tab);
-#endif
 }
 
 void browser_tab_leave_fullscreen(BrowserTab *tab)
@@ -680,17 +784,19 @@ void browser_tab_leave_fullscreen(BrowserTab *tab)
 
     gtk_widget_hide(tab->fullScreenMessageLabel);
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
     if (tab->wasSearchingWhenEnteredFullscreen) {
         /* Opening the search bar steals the focus. Usually, we want
          * this but not when coming back from fullscreen.
          */
+#if GTK_CHECK_VERSION(3, 98, 5)
+        GtkWindow *window = GTK_WINDOW(gtk_widget_get_root(GTK_WIDGET(tab)));
+#else
         GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(tab)));
+#endif
         GtkWidget *focusWidget = gtk_window_get_focus(window);
         browser_tab_start_search(tab);
         gtk_window_set_focus(window, focusWidget);
     }
-#endif
 }
 
 void browser_tab_set_background_color(BrowserTab *tab, GdkRGBA *rgba)

@@ -26,8 +26,6 @@
 #include "BrowserSettingsDialog.h"
 #include "BrowserCellRendererVariant.h"
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
-
 enum {
     PROP_0,
 
@@ -129,14 +127,23 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
     gtk_box_set_spacing(contentArea, 2);
 
     gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 400);
+#if !GTK_CHECK_VERSION(3, 98, 5)
     gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+#endif
     gtk_window_set_title(GTK_WINDOW(dialog), "WebKit View Settings");
     gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
-    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
     gtk_dialog_add_button(GTK_DIALOG(dialog), "_Close", GTK_RESPONSE_CLOSE);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
 
     GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_margin_start(scrolledWindow, 5);
+    gtk_widget_set_margin_end(scrolledWindow, 5);
+    gtk_widget_set_margin_top(scrolledWindow, 5);
+    gtk_widget_set_margin_bottom(scrolledWindow, 5);
+    gtk_widget_set_halign(scrolledWindow, GTK_ALIGN_FILL);
+    gtk_widget_set_valign(scrolledWindow, GTK_ALIGN_FILL);
+    gtk_widget_set_hexpand(scrolledWindow, TRUE);
+    gtk_widget_set_vexpand(scrolledWindow, TRUE);
     dialog->settingsList = gtk_tree_view_new();
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(dialog->settingsList),
@@ -152,13 +159,23 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
                                                 NULL);
     gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(dialog->settingsList), SETTINGS_LIST_COLUMN_BLURB);
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolledWindow), dialog->settingsList);
+#else
     gtk_container_add(GTK_CONTAINER(scrolledWindow), dialog->settingsList);
     gtk_widget_show(dialog->settingsList);
+#endif
 
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(contentArea, scrolledWindow);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(gtk_window_destroy), NULL);
+#else
     gtk_box_pack_start(contentArea, scrolledWindow, TRUE, TRUE, 0);
     gtk_widget_show(scrolledWindow);
 
     g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+#endif
 }
 
 static void browserSettingsDialogConstructed(GObject *object)
@@ -237,5 +254,3 @@ GtkWidget *browser_settings_dialog_new(WebKitSettings *settings)
 
     return GTK_WIDGET(g_object_new(BROWSER_TYPE_SETTINGS_DIALOG, "settings", settings, NULL));
 }
-
-#endif

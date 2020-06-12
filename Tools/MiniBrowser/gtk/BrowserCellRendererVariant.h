@@ -28,8 +28,6 @@
 
 #include <gtk/gtk.h>
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
-
 G_BEGIN_DECLS
 
 #define BROWSER_TYPE_CELL_RENDERER_VARIANT            (browser_cell_renderer_variant_get_type())
@@ -47,7 +45,5 @@ GType browser_cell_renderer_variant_get_type(void);
 GtkCellRenderer* browser_cell_renderer_variant_new(void);
 
 G_END_DECLS
-
-#endif
 
 #endif

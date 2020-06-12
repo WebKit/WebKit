@@ -1,5 +1,91 @@
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Get MiniBrowser ready for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=210276
+
+        Reviewed by Adrian Perez de Castro.
+
+        Port MiniBrowser to GTK4. BrowserSearchBar has been renamed as BrowserSearchBox, because in GTK GtkSearchBar is
+        final class, so we derive from GtkBox and to be used as contents of a GtkSearchBar.
+
+        * MiniBrowser/gtk/BrowserCellRendererVariant.c:
+        (browserCellRendererVariantCellRendererSnapshot):
+        (browser_cell_renderer_variant_class_init):
+        * MiniBrowser/gtk/BrowserCellRendererVariant.h:
+        * MiniBrowser/gtk/BrowserSearchBar.c: Removed.
+        * MiniBrowser/gtk/BrowserSearchBox.c: Added.
+        (setFailedStyleForEntry):
+        (doSearch):
+        (searchNext):
+        (searchPrevious):
+        (searchEntryMenuIconPressedCallback):
+        (searchEntryClearIconReleasedCallback):
+        (searchEntryChangedCallback):
+        (searchEntryActivatedCallback):
+        (searchPreviousButtonCallback):
+        (searchNextButtonCallback):
+        (searchMenuCheckButtonToggledCallback):
+        (findControllerFailedToFindTextCallback):
+        (findControllerFoundTextCallback):
+        (browserSearchBoxFinalize):
+        (browserSearchBoxDispose):
+        (browserSearchBoxSizeAllocate):
+        (browser_search_box_class_init):
+        (browser_search_box_new):
+        (browser_search_box_get_entry):
+        * MiniBrowser/gtk/BrowserSearchBox.h: Renamed from Tools/MiniBrowser/gtk/BrowserSearchBar.h.
+        * MiniBrowser/gtk/BrowserSettingsDialog.c:
+        (browser_settings_dialog_init):
+        (browser_settings_dialog_new):
+        * MiniBrowser/gtk/BrowserSettingsDialog.h:
+        * MiniBrowser/gtk/BrowserTab.c:
+        (loadChanged):
+        (createInfoBarQuestionMessage):
+        (tlsErrorsDialogResponse):
+        (loadFailedWithTLSerrors):
+        (permissionRequestDialogResponse):
+        (decidePermissionRequest):
+        (colorChooserRequestFinished):
+        (runColorChooserCallback):
+        (tabCloseClicked):
+        (browserTabConstructed):
+        (browserTabIsSearchBarOpen):
+        (browser_tab_start_search):
+        (browser_tab_stop_search):
+        (browser_tab_enter_fullscreen):
+        (browser_tab_leave_fullscreen):
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (settingsCallback):
+        (resetEntryProgress):
+        (webViewLoadProgressChanged):
+        (browserWindowCreateBackForwardMenu):
+        (browserWindowUpdateNavigationMenu):
+        (navigationButtonPressed):
+        (navigationButtonPressCallback):
+        (scrollEventCallback):
+        (webViewIsLoadingChanged):
+        (searchCallback):
+        (insertImageDialogResponse):
+        (insertImageCommandCallback):
+        (insertLinkDialogResponse):
+        (insertLinkCommandCallback):
+        (typingAttributesChanged):
+        (browserWindowSaveSession):
+        (browserWindowFinalize):
+        (browserWindowDispose):
+        (addToolbarButton):
+        (browserWindowSwitchTab):
+        (browserWindowTabAddedOrRemoved):
+        (browserWindowBuildPopoverMenu):
+        (browserWindowCloseRequest):
+        (browserWindowDeleteEvent):
+        (browser_window_class_init):
+        (browser_window_append_view):
+        (browser_window_set_background_color):
+        * MiniBrowser/gtk/CMakeLists.txt:
+
+2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] MiniBrowser: stop using GtkToolbar
         https://bugs.webkit.org/show_bug.cgi?id=212898
 

@@ -8,8 +8,8 @@ set(MiniBrowser_SOURCES
     BrowserCellRendererVariant.h
     BrowserDownloadsBar.c
     BrowserDownloadsBar.h
-    BrowserSearchBar.c
-    BrowserSearchBar.h
+    BrowserSearchBox.c
+    BrowserSearchBox.h
     BrowserSettingsDialog.c
     BrowserSettingsDialog.h
     BrowserTab.c

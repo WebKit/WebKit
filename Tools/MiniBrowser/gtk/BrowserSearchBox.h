@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2013, 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BrowserSearchBar_h
-#define BrowserSearchBar_h
+#ifndef BrowserSearchBox_h
+#define BrowserSearchBox_h
 
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
-#if !GTK_CHECK_VERSION(3, 98, 0)
-
 G_BEGIN_DECLS
 
-#define BROWSER_TYPE_SEARCH_BAR            (browser_search_bar_get_type())
-#define BROWSER_SEARCH_BAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), BROWSER_TYPE_SEARCH_BAR, BrowserSearchBar))
-#define BROWSER_IS_SEARCH_BAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), BROWSER_TYPE_SEARCH_BAR))
-#define BROWSER_SEARCH_BAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  BROWSER_TYPE_SEARCH_BAR, BrowserSearchBarClass))
-#define BROWSER_IS_SEARCH_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  BROWSER_TYPE_SEARCH_BAR))
-#define BROWSER_SEARCH_BAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  BROWSER_TYPE_SEARCH_BAR, BrowserSearchBarClass))
+#define BROWSER_TYPE_SEARCH_BOX            (browser_search_box_get_type())
+#define BROWSER_SEARCH_BOX(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), BROWSER_TYPE_SEARCH_BOX, BrowserSearchBox))
+#define BROWSER_IS_SEARCH_BOX(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), BROWSER_TYPE_SEARCH_BOX))
+#define BROWSER_SEARCH_BOX_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  BROWSER_TYPE_SEARCH_BOX, BrowserSearchBoxClass))
+#define BROWSER_IS_SEARCH_BOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  BROWSER_TYPE_SEARCH_BOX))
+#define BROWSER_SEARCH_BOX_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  BROWSER_TYPE_SEARCH_BOX, BrowserSearchBoxClass))
 
-typedef struct _BrowserSearchBar       BrowserSearchBar;
-typedef struct _BrowserSearchBarClass  BrowserSearchBarClass;
+typedef struct _BrowserSearchBox       BrowserSearchBox;
+typedef struct _BrowserSearchBoxClass  BrowserSearchBoxClass;
 
-struct _BrowserSearchBarClass {
-    GtkSearchBarClass parent_class;
+struct _BrowserSearchBoxClass {
+    GtkBoxClass parent_class;
 };
 
-GType browser_search_bar_get_type(void);
+GType browser_search_box_get_type(void);
 
-GtkWidget *browser_search_bar_new(WebKitWebView *);
-void browser_search_bar_open(BrowserSearchBar *);
-void browser_search_bar_close(BrowserSearchBar *);
-gboolean browser_search_bar_is_open(BrowserSearchBar *);
-
+GtkWidget *browser_search_box_new(WebKitWebView *);
+GtkEntry *browser_search_box_get_entry(BrowserSearchBox *);
 
 G_END_DECLS
-
-#endif
 
 #endif
