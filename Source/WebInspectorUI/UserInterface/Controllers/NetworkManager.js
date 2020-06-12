@@ -310,7 +310,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
  * ${WI.UIString("The contents and enabled state will be preserved across Web Inspector sessions.")}
  * 
  * ${WI.UIString("Some examples of ways to use this script include (but are not limited to):")}
- *  - ${WI.UIString("overriding built-in functions to log call traces or add `debugger` statements")}
+ *  - ${WI.UIString("overriding built-in functions to log call traces or add %s statements").format(WI.unlocalizedString("`debugger`"))}
  *  - ${WI.UIString("ensuring that common debugging functions are available on every page via the Console")}
  * 
  * ${WI.UIString("More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>.")}
