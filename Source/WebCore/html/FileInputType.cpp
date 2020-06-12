@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -103,9 +103,6 @@ FileInputType::FileInputType(HTMLInputElement& element)
 
 FileInputType::~FileInputType()
 {
-    if (m_fileListCreator)
-        m_fileListCreator->cancel();
-
     if (m_fileChooser)
         m_fileChooser->invalidate();
 
@@ -416,7 +413,10 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
         m_fileListCreator->cancel();
 
     auto shouldResolveDirectories = allowsDirectories() ? FileListCreator::ShouldResolveDirectories::Yes : FileListCreator::ShouldResolveDirectories::No;
-    m_fileListCreator = FileListCreator::create(paths, shouldResolveDirectories, [this, icon = makeRefPtr(icon)](Ref<FileList>&& fileList) mutable {
+    m_fileListCreator = FileListCreator::create(paths, shouldResolveDirectories, [this, weakThis = makeWeakPtr(*this), icon = makeRefPtr(icon)](Ref<FileList>&& fileList) mutable {
+        auto protectedThis = makeRefPtr(weakThis.get());
+        if (!protectedThis)
+            return;
         setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No);
         if (icon && !m_fileList->isEmpty() && element())
             iconLoaded(WTFMove(icon));

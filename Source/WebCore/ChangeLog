@@ -1,3 +1,39 @@
+2020-06-12  Andy Estes  <aestes@apple.com>
+
+        FileInputType should use WeakPtr for FileListCreator lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=213130
+        <rdar://problem/64276591>
+
+        Reviewed by David Kilzer.
+
+        FileInputType::filesChosen was passing a completion handler to FileListCreator::create that
+        captured |this|. If the FileListCreator instance still existed when |this| was destroyed,
+        FileInputType::~FileInputType would clear the captured |this| by calling
+        FileListCreator::clear. This can be simplified by having the FileListCreator completion
+        handler capture a WeakPtr to |this|.
+
+        Also, when FileInputType::allowsDirectories is false, m_fileListCreator would not be
+        properly cleared after creating the file list. The FileListCreator completion handler would
+        set m_fileListCreator to nullptr, but would be executed *before* FileListCreator::create
+        returned and set m_fileListCreator to the newly-created FileListCreator object. Fixed this
+        by having FileListCreator::create execute the completion handler immediately and return
+        nullptr in cases where a FileListCreator does not need to be created for directory
+        resolution.
+
+        Covered by existing tests.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::~FileInputType):
+        (WebCore::FileInputType::filesChosen):
+        * html/FileInputType.h:
+        * html/FileListCreator.cpp:
+        (WebCore::createFileList):
+        (WebCore::FileListCreator::create):
+        (WebCore::FileListCreator::FileListCreator):
+        (WebCore::FileListCreator::createFileList):
+        * html/FileListCreator.h:
+        (WebCore::FileListCreator::create): Deleted.
+
 2020-06-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r262618): Very slow typing in a github issue
