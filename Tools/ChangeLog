@@ -1,3 +1,17 @@
+2020-06-12  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add libkate
+        https://bugs.webkit.org/show_bug.cgi?id=212865
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The GStreamer kate decoder is required for some media/track tests being re-enabled in bug
+        120665.
+
+        * buildstream/elements/sdk-platform.bst:
+        * buildstream/elements/sdk/gst-plugins-bad.bst:
+        * buildstream/elements/sdk/libkate.bst: Added.
+
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Get MiniBrowser ready for GTK4

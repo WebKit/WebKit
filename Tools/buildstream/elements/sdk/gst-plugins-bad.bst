@@ -12,6 +12,7 @@ depends:
 - sdk/gstreamer.bst
 - sdk/gst-plugins-base.bst
 - sdk/openjpeg.bst
+- sdk/libkate.bst
 - sdk/libusrsctp.bst
 - sdk/libsrtp2.bst
 - sdk-build-depends/libusb.bst
@@ -68,7 +69,6 @@ variables:
     -Dgme=disabled
     -Dgsm=disabled
     -Diqa=disabled
-    -Dkate=disabled
     -Dladspa=disabled
     -Dlibde265=disabled
     -Dlibmms=disabled

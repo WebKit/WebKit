@@ -33,6 +33,7 @@ depends:
 - sdk/libcap-ng.bst
 - sdk/libevent.bst
 - sdk/libgcrypt.bst
+- sdk/libkate.bst
 - sdk/libmanette.bst
 - sdk/libnotify.bst
 - sdk/libsecret.bst
