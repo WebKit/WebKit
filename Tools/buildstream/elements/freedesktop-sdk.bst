@@ -23,8 +23,6 @@ sources:
   path: patches/fdo/0005-ffmpeg-Add-msmpeg4v3-support.patch
 - kind: patch
   path: patches/fdo/0001-Pango-Bump-to-1.45-master.patch
-- kind: patch
-  path: patches/fdo/0001-dav1d-Bump-to-0.7.0.patch
 config:
   options:
     target_arch: '%{arch}'

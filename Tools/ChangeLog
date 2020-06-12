@@ -1,3 +1,16 @@
+2020-06-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r262942.
+        https://bugs.webkit.org/show_bug.cgi?id=213132
+
+        Broke gst-libav due to dav1d ABI bump
+
+        Reverted changeset:
+
+        "[Flatpak SDK] Add libavif"
+        https://bugs.webkit.org/show_bug.cgi?id=212964
+        https://trac.webkit.org/changeset/262942
+
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK WebDriver tests after r262938
