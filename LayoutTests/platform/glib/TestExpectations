@@ -18,6 +18,7 @@
 # * CSS
 # * GStreamer
 # * Perf
+# * SVG
 # * WebAnimations
 # * WebGL
 # * WebRTC
@@ -55,6 +56,8 @@ webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 webkit.org/b/206589 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 
 webkit.org/b/212300 fast/text/font-collection-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
@@ -99,6 +102,18 @@ webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Perf-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# SVG-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/213113 svg/filters/feConvolveMatrix-clipped.svg [ ImageOnlyFailure ]
+webkit.org/b/213113 svg/filters/feGaussianBlur-clipped.svg [ ImageOnlyFailure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -194,8 +209,6 @@ webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navi
 webkit.org/b/212812 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.animated.gif.html [ Failure Pass ]
 
 webkit.org/b/212963 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/213012 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
