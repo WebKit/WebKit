@@ -41,15 +41,16 @@ FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
 void FetchBodySource::setActive()
 {
     ASSERT(m_bodyOwner);
+    ASSERT(!m_pendingActivity);
     if (m_bodyOwner)
-        m_bodyOwner->setPendingActivity(*m_bodyOwner);
+        m_pendingActivity = m_bodyOwner->makePendingActivity(*m_bodyOwner);
 }
 
 void FetchBodySource::setInactive()
 {
     ASSERT(m_bodyOwner);
-    if (m_bodyOwner)
-        m_bodyOwner->unsetPendingActivity(*m_bodyOwner);
+    ASSERT(m_pendingActivity);
+    m_pendingActivity = nullptr;
 }
 
 void FetchBodySource::doStart()

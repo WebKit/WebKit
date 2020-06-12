@@ -102,6 +102,9 @@ private:
     void blobLoadingFailed();
     void finishBlobLoading();
 
+    // ActiveDOMObject API
+    bool virtualHasPendingActivity() const final;
+
     struct BlobLoader final : FetchLoaderClient {
         BlobLoader(FetchBodyOwner&);
 
