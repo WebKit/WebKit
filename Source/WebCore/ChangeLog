@@ -1,3 +1,23 @@
+2020-06-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r262618): Very slow typing in a github issue
+        https://bugs.webkit.org/show_bug.cgi?id=213137
+        <rdar://problem/64214117>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/media/media-query-keyframes-resolution-count.html
+
+        If a stylesheet had multiple media queries and one of them forced static resolution
+        (by containing @keyframes rule for example) we would end up reseting the style multiple
+        times and forcing unneeded style resolutions.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::evaluteDynamicMediaQueryRules):
+
+        We can't bail out from the loop. Even though the result is known we still need to loop to
+        save the evaluation result for all media queries.
+
 2020-06-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         FileReader.error should be DOMException now

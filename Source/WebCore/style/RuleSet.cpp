@@ -437,7 +437,7 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluteDynamicMediaQueryRules(const
 
             if (dynamicRules.requiresFullReset) {
                 collectedChanges.requiredFullReset = true;
-                return collectedChanges;
+                continue;
             }
 
             traverseRuleDatas([&](RuleData& ruleData) {
