@@ -1038,3 +1038,5 @@ webkit.org/b/212824 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio
 
 webkit.org/b/212042 [ Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html [ Pass Timeout ]
 webkit.org/b/212042 [ Debug ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-reveal.html [ Pass Timeout ]
+
+webkit.org/b/213123 inspector/canvas/create-context-webgpu.html [ Pass Failure ]
