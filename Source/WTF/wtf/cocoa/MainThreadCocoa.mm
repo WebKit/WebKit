@@ -54,6 +54,8 @@ WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel:
 WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
 #endif
 
+static bool isTimerPosted; // This is only accessed on the main thread.
+
 #if USE(WEB_THREAD)
 // When the Web thread is enabled, we consider it to be the main thread, not pthread main.
 static pthread_t s_webThreadPthread;
@@ -69,11 +71,42 @@ void initializeMainThreadPlatform()
     ASSERT(pthread_main_np());
 }
 
+static void timerFired(CFRunLoopTimerRef timer, void*)
+{
+    CFRelease(timer);
+    isTimerPosted = false;
+
+    @autoreleasepool {
+        WTF::dispatchFunctionsFromMainThread();
+    }
+}
+
+static void postTimer()
+{
+    ASSERT(isMainThread());
+
+    if (isTimerPosted)
+        return;
+
+    isTimerPosted = true;
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
+}
+
 void scheduleDispatchFunctionsOnMainThread()
 {
 #if USE(WEB_THREAD)
+    if (isWebThread()) {
+        postTimer();
+        return;
+    }
+
     if (auto* webRunLoop = RunLoop::webIfExists()) {
         webRunLoop->dispatch(dispatchFunctionsFromMainThread);
+        return;
+    }
+#else
+    if (isMainThread()) {
+        postTimer();
         return;
     }
 #endif
