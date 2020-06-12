@@ -1,5 +1,17 @@
 2020-06-12  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Add libavif
+        https://bugs.webkit.org/show_bug.cgi?id=212964
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * buildstream/elements/freedesktop-sdk.bst:
+        * buildstream/elements/sdk-platform.bst:
+        * buildstream/elements/sdk/libavif.bst: Added.
+        * buildstream/patches/fdo/0001-dav1d-Bump-to-0.7.0.patch: Added.
+
+2020-06-12  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Add libkate
         https://bugs.webkit.org/show_bug.cgi?id=212865
 

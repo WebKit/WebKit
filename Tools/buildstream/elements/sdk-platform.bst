@@ -30,6 +30,7 @@ depends:
 - sdk/icecc.bst
 - sdk/intltool.bst
 - sdk/krb5.bst
+- sdk/libavif.bst
 - sdk/libcap-ng.bst
 - sdk/libevent.bst
 - sdk/libgcrypt.bst
@@ -76,6 +77,7 @@ depends:
 - freedesktop-sdk.bst:components/cups.bst
 - freedesktop-sdk.bst:components/curl.bst
 - freedesktop-sdk.bst:components/cyrus-sasl.bst
+- freedesktop-sdk.bst:components/dav1d.bst
 - freedesktop-sdk.bst:components/dbus.bst
 - freedesktop-sdk.bst:components/dejavu-fonts.bst
 - freedesktop-sdk.bst:components/dictionaries.bst
