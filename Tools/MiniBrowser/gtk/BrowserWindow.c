@@ -222,6 +222,8 @@ static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *lis
     for (listItem = list; listItem; listItem = g_list_next(listItem)) {
         WebKitBackForwardListItem *item = (WebKitBackForwardListItem *)listItem->data;
         const char *title = webkit_back_forward_list_item_get_title(item);
+        if (!title || !*title)
+            title = webkit_back_forward_list_item_get_uri(item);
 
         char *actionName = g_strdup_printf("action-%lu", ++actionId);
         GSimpleAction *action = g_simple_action_new(actionName, NULL);
