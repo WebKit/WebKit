@@ -30,6 +30,7 @@
 
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/LibWebRTCEnumTraits.h>
 #include <wtf/Optional.h>
 
 namespace WebKit {

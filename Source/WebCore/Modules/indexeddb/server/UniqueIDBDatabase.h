@@ -51,10 +51,10 @@ class IDBRequestData;
 class IDBTransactionInfo;
 class StorageQuotaManager;
 
-enum class IDBGetRecordDataType;
+enum class IDBGetRecordDataType : bool;
 
 namespace IndexedDB {
-enum class IndexRecordType;
+enum class IndexRecordType : bool;
 }
 
 namespace IDBServer {

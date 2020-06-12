@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProtectionSpaceBase_h
-#define ProtectionSpaceBase_h
+#pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -98,4 +98,36 @@ inline bool operator!=(const ProtectionSpace& a, const ProtectionSpace& b) { ret
     
 } // namespace WebCore
 
-#endif // ProtectionSpaceBase_h
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ProtectionSpaceAuthenticationScheme> {
+    using values = EnumValues<
+        WebCore::ProtectionSpaceAuthenticationScheme,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeDefault,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeHTTPBasic,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeHTTPDigest,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeHTMLForm,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeNTLM,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeNegotiate,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeClientCertificateRequested,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeOAuth,
+        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeUnknown
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ProtectionSpaceServerType> {
+    using values = EnumValues<
+        WebCore::ProtectionSpaceServerType,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerHTTP,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerHTTPS,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerFTP,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerFTPS,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxyHTTP,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxyHTTPS,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxyFTP,
+        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxySOCKS
+    >;
+};
+
+} // namespace WTF

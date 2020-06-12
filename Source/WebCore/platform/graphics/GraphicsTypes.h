@@ -190,6 +190,17 @@ template<> struct EnumTraits<WebCore::GradientSpreadMethod> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::InterpolationQuality> {
+    using values = EnumValues<
+    WebCore::InterpolationQuality,
+    WebCore::InterpolationQuality::Default,
+    WebCore::InterpolationQuality::DoNotInterpolate,
+    WebCore::InterpolationQuality::Low,
+    WebCore::InterpolationQuality::Medium,
+    WebCore::InterpolationQuality::High
+    >;
+};
+
 template<> struct EnumTraits<WebCore::LineCap> {
     using values = EnumValues<
     WebCore::LineCap,
@@ -205,17 +216,6 @@ template<> struct EnumTraits<WebCore::LineJoin> {
     WebCore::LineJoin::MiterJoin,
     WebCore::LineJoin::RoundJoin,
     WebCore::LineJoin::BevelJoin
-    >;
-};
-
-template<> struct EnumTraits<WebCore::InterpolationQuality> {
-    using values = EnumValues<
-    WebCore::InterpolationQuality,
-    WebCore::InterpolationQuality::Default,
-    WebCore::InterpolationQuality::DoNotInterpolate,
-    WebCore::InterpolationQuality::Low,
-    WebCore::InterpolationQuality::Medium,
-    WebCore::InterpolationQuality::High
     >;
 };
 

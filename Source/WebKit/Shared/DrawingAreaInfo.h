@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
@@ -49,3 +50,21 @@ enum DrawingAreaIdentifierType { };
 using DrawingAreaIdentifier = ObjectIdentifier<DrawingAreaIdentifierType>;
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::DrawingAreaType> {
+    using values = EnumValues<
+        WebKit::DrawingAreaType
+#if PLATFORM(COCOA)
+#if !PLATFORM(IOS_FAMILY)
+        , WebKit::DrawingAreaType::DrawingAreaTypeTiledCoreAnimation
+#endif
+        , WebKit::DrawingAreaType::DrawingAreaTypeRemoteLayerTree
+#elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+        , WebKit::DrawingAreaType::DrawingAreaTypeCoordinatedGraphics
+#endif
+    >;
+};
+
+} // namespace WTF

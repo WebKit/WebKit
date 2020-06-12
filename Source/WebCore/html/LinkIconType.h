@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,31 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 // These values are arranged so that they can be used with WTF::OptionSet.
 // And using it with Markable via EnumMarkableTraits.
+// See WKLinkIconType.
 
 enum class LinkIconType : uint8_t {
     Favicon = 1 << 0,
     TouchIcon = 1 << 1,
-    TouchPrecomposedIcon = 1 <<2
+    TouchPrecomposedIcon = 1 << 2
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::LinkIconType> {
+    using values = EnumValues<
+        WebCore::LinkIconType,
+        WebCore::LinkIconType::Favicon,
+        WebCore::LinkIconType::TouchIcon,
+        WebCore::LinkIconType::TouchPrecomposedIcon
+    >;
+};
+
+} // namespace WTF

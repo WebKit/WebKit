@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteDataType_h
-#define WebsiteDataType_h
+#pragma once
+
+#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 
@@ -56,6 +57,39 @@ enum class WebsiteDataType {
 #endif
 };
 
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebsiteDataType> {
+    using values = EnumValues<
+        WebKit::WebsiteDataType,
+        WebKit::WebsiteDataType::Cookies,
+        WebKit::WebsiteDataType::DiskCache,
+        WebKit::WebsiteDataType::MemoryCache,
+        WebKit::WebsiteDataType::OfflineWebApplicationCache,
+        WebKit::WebsiteDataType::SessionStorage,
+        WebKit::WebsiteDataType::LocalStorage,
+        WebKit::WebsiteDataType::WebSQLDatabases,
+        WebKit::WebsiteDataType::IndexedDBDatabases,
+        WebKit::WebsiteDataType::MediaKeys,
+        WebKit::WebsiteDataType::HSTSCache,
+        WebKit::WebsiteDataType::SearchFieldRecentSearches,
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        WebKit::WebsiteDataType::PlugInData,
+#endif
+        WebKit::WebsiteDataType::ResourceLoadStatistics,
+        WebKit::WebsiteDataType::Credentials,
+#if ENABLE(SERVICE_WORKER)
+        WebKit::WebsiteDataType::ServiceWorkerRegistrations,
+#endif
+        WebKit::WebsiteDataType::DOMCache,
+        WebKit::WebsiteDataType::DeviceIdHashSalt,
+        WebKit::WebsiteDataType::AdClickAttributions
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+        , WebKit::WebsiteDataType::AlternativeServices
+#endif
+    >;
 };
 
-#endif // WebsiteDataType_h
+} // namespace WTF

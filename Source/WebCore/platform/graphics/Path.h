@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include "InlinePathData.h"
 #include "WindRule.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
@@ -420,3 +421,18 @@ inline bool Path::hasAnyInlineData() const
 #endif
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PathElement::Type> {
+    using values = EnumValues<
+        WebCore::PathElement::Type,
+        WebCore::PathElement::Type::MoveToPoint,
+        WebCore::PathElement::Type::AddLineToPoint,
+        WebCore::PathElement::Type::AddQuadCurveToPoint,
+        WebCore::PathElement::Type::AddCurveToPoint,
+        WebCore::PathElement::Type::CloseSubpath
+    >;
+};
+
+} // namespace WTF

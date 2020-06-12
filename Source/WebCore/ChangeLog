@@ -1,3 +1,90 @@
+2020-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Add WTF::EnumTraits<> for every enum type used in IPC
+        <https://webkit.org/b/213093>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Change underlying type of enum class to `bool` when there are
+          only two values.  In some cases, reorder the two values so the
+          mapping to 0 and 1 makes more sense.  Converting every enum to
+          an enum class is not a goal of this patch, so some two-value
+          enums stil have WTF::EnumTraits<> defined as noted below.
+        - Add WTF::EnumTraits<> for the remaining enum types that are
+          used by IPC::Encoder::encodeEnum() and
+          IPC::Decoder::decodeEnum() so that WTF::isValidEnum<>() checks
+          may be added next.
+        - Add #include <WebCore/LibWebRTCEnumTraits.h> as needed.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add LibWebRTCEnumTraits.h to project. Keep these definitions
+          separate from the libwebrtc project cut down on changes to
+          re-merge after updating.
+
+        * platform/mediastream/libwebrtc/LibWebRTCEnumTraits.h: Add.
+
+        * Modules/applepay/ApplePaySessionPaymentRequest.h:
+        * Modules/indexeddb/IDBTransactionMode.h:
+        * Modules/indexeddb/IndexedDB.h:
+        (WTF::EnumTraits<WebCore::IndexedDB::IndexRecordType>):
+        - Remove after changing enum class to bool.
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        * Modules/indexeddb/shared/IDBResultData.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ExceptionCode.h:
+        * editing/CompositionUnderline.h:
+        * html/Autofill.h:
+        * html/DataListSuggestionInformation.h:
+        * html/EnterKeyHint.h:
+        * html/LinkIconType.h:
+        * loader/FrameLoaderTypes.h:
+        - Alphabetize WTF::EnumTraits<> definitions.
+        * loader/ResourceLoaderOptions.h:
+        * page/SecurityOrigin.h:
+        * page/UserStyleSheetTypes.h:
+        (WTF::EnumTraits<WebCore::UserStyleLevel>):
+        - Define this since UserStyleLevel is not an enum class.
+        * page/scrolling/ScrollingCoordinatorTypes.h:
+        * platform/ContextMenuItem.h:
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/FileChooser.h:
+        * platform/PopupMenuStyle.h:
+        * platform/ScreenProperties.h:
+        * platform/ScrollTypes.h:
+        * platform/SerializedPlatformDataCueValue.h:
+        (WebCore::SerializedPlatformDataCueValue::PlatformType):
+        - Convert from enum to enum class.
+        * platform/UserInterfaceLayoutDirection.h:
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsTypes.h:
+        - Alphabetize WTF::EnumTraits<> definitions.
+        * platform/graphics/Image.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/mediastream/MediaConstraints.h:
+        * platform/mediastream/MediaStreamRequest.h:
+        (WTF::EnumTraits<WebCore::MediaStreamRequest::Type>):
+        - Fix EnumTraits definition (missing "::Type").
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.h:
+        * platform/network/CredentialBase.h:
+        * platform/network/ProtectionSpaceBase.h:
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/soup/SoupNetworkProxySettings.h:
+        * platform/text/TextChecking.h:
+        (WTF::EnumTraits<WebCore::TextCheckingProcessType):
+        - Define this since TextCheckingProcessType is not an enum class.
+        * platform/text/WritingMode.h:
+        * rendering/Pagination.h:
+        * workers/service/ServiceWorkerJobType.h:
+
 2020-06-11  Beth Dakin  <bdakin@apple.com>
 
         Fix comment after blocklist transition

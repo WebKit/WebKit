@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/PlatformCAAnimation.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -306,3 +307,18 @@ WTF::TextStream& operator<<(WTF::TextStream&, const PlatformCAAnimationRemote::P
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_CAANIMATION(WebKit::PlatformCAAnimationRemote, isPlatformCAAnimationRemote())
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType> {
+    using values = EnumValues<
+        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType,
+        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::NumberKeyType,
+        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::ColorKeyType,
+        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::PointKeyType,
+        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::TransformKeyType,
+        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::FilterKeyType
+    >;
+};
+
+} // namespace WTF

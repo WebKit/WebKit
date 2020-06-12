@@ -45,14 +45,14 @@ class IDBTransactionInfo;
 class IDBValue;
 class ThreadSafeDataBuffer;
 
-enum class IDBGetRecordDataType;
+enum class IDBGetRecordDataType : bool;
 
 struct IDBGetAllRecordsData;
 struct IDBIterateCursorData;
 struct IDBKeyRangeData;
 
 namespace IndexedDB {
-enum class IndexRecordType;
+enum class IndexRecordType : bool;
 }
 
 namespace IDBServer {

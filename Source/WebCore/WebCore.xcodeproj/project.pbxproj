@@ -1206,6 +1206,7 @@
 		44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */; };
 		44C9919F0F3D210E00586670 /* ThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C9919D0F3D210E00586670 /* ThemeIOS.h */; };
 		44DAB5B215A623580097C1E4 /* ExtensionsGLOpenGLCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DAB5B015A623580097C1E4 /* ExtensionsGLOpenGLCommon.h */; };
+		44E349F9246F4E190068479C /* LibWebRTCEnumTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E349F7246F4DC70068479C /* LibWebRTCEnumTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4512502115DCE37D002F84E2 /* SpinButtonElement.h */; };
 		453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 453EB635159C570400001BB7 /* DateTimeFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7768,6 +7769,7 @@
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
 		44DAB5AF15A623580097C1E4 /* ExtensionsGLOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionsGLOpenGLCommon.cpp; sourceTree = "<group>"; };
 		44DAB5B015A623580097C1E4 /* ExtensionsGLOpenGLCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionsGLOpenGLCommon.h; sourceTree = "<group>"; };
+		44E349F7246F4DC70068479C /* LibWebRTCEnumTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCEnumTraits.h; path = libwebrtc/LibWebRTCEnumTraits.h; sourceTree = "<group>"; };
 		44E88E4C2369128A009B4847 /* HighlightMap.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightMap.idl; sourceTree = "<group>"; };
 		44E88E4D2369128B009B4847 /* HighlightRangeGroup.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HighlightRangeGroup.idl; sourceTree = "<group>"; };
 		44E88E50236A56AC009B4847 /* HighlightMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightMap.h; sourceTree = "<group>"; };
@@ -18443,6 +18445,7 @@
 				415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */,
 				41F2354522F550BE00B4FCDB /* LibWebRTCDTMFSenderBackend.cpp */,
 				41F2354622F550BF00B4FCDB /* LibWebRTCDTMFSenderBackend.h */,
+				44E349F7246F4DC70068479C /* LibWebRTCEnumTraits.h */,
 				415747431E38699E00E914D8 /* LibWebRTCMacros.h */,
 				41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */,
 				415747441E38699E00E914D8 /* LibWebRTCProvider.h */,
@@ -32039,6 +32042,7 @@
 				0F8716701C869D83004FF0DE /* LengthPoint.h in Headers */,
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
 				415080371E3F00B00051D75D /* LibWebRTCAudioModule.h in Headers */,
+				44E349F9246F4E190068479C /* LibWebRTCEnumTraits.h in Headers */,
 				415747471E3869A400E914D8 /* LibWebRTCMacros.h in Headers */,
 				417612B01E3A994000C3D81D /* LibWebRTCMediaEndpoint.h in Headers */,
 				417612B21E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.h in Headers */,

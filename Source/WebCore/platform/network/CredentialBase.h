@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CredentialBase_h
-#define CredentialBase_h
+#pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -68,6 +68,17 @@ private:
 inline bool operator==(const Credential& a, const Credential& b) { return CredentialBase::compare(a, b); }
 inline bool operator!=(const Credential& a, const Credential& b) { return !(a == b); }
     
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CredentialPersistence> {
+    using values = EnumValues<
+        WebCore::CredentialPersistence,
+        WebCore::CredentialPersistence::CredentialPersistenceNone,
+        WebCore::CredentialPersistence::CredentialPersistenceForSession,
+        WebCore::CredentialPersistence::CredentialPersistencePermanent
+    >;
 };
 
-#endif
+} // namespace WTF

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 WebPopupItem::WebPopupItem()
-    : m_type(Item)
+    : m_type(Type::Item)
     , m_textDirection(WebCore::TextDirection::LTR)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)

@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 
 #include "CSSValue.h"
 #include "ExceptionOr.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -313,6 +314,17 @@ SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(WebCore::SpringTimingFunction, isSpringTim
 
 namespace WTF {
 
+template<> struct EnumTraits<WebCore::CubicBezierTimingFunction::TimingFunctionPreset> {
+    using values = EnumValues<
+        WebCore::CubicBezierTimingFunction::TimingFunctionPreset,
+        WebCore::CubicBezierTimingFunction::TimingFunctionPreset::Ease,
+        WebCore::CubicBezierTimingFunction::TimingFunctionPreset::EaseIn,
+        WebCore::CubicBezierTimingFunction::TimingFunctionPreset::EaseOut,
+        WebCore::CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut,
+        WebCore::CubicBezierTimingFunction::TimingFunctionPreset::Custom
+    >;
+};
+
 template<> struct EnumTraits<WebCore::StepsTimingFunction::StepPosition> {
     using values = EnumValues<
         WebCore::StepsTimingFunction::StepPosition,
@@ -322,6 +334,16 @@ template<> struct EnumTraits<WebCore::StepsTimingFunction::StepPosition> {
         WebCore::StepsTimingFunction::StepPosition::JumpBoth,
         WebCore::StepsTimingFunction::StepPosition::Start,
         WebCore::StepsTimingFunction::StepPosition::End
+    >;
+};
+
+template<> struct EnumTraits<WebCore::TimingFunction::TimingFunctionType> {
+    using values = EnumValues<
+        WebCore::TimingFunction::TimingFunctionType,
+        WebCore::TimingFunction::TimingFunctionType::LinearFunction,
+        WebCore::TimingFunction::TimingFunctionType::CubicBezierFunction,
+        WebCore::TimingFunction::TimingFunctionType::StepsFunction,
+        WebCore::TimingFunction::TimingFunctionType::SpringFunction
     >;
 };
 

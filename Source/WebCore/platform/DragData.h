@@ -28,6 +28,7 @@
 #include "Color.h"
 #include "DragActions.h"
 #include "IntPoint.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
@@ -141,4 +142,19 @@ private:
 #endif
 };
     
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DragApplicationFlags> {
+    using values = EnumValues<
+        WebCore::DragApplicationFlags,
+        WebCore::DragApplicationFlags::DragApplicationNone,
+        WebCore::DragApplicationFlags::DragApplicationIsModal,
+        WebCore::DragApplicationFlags::DragApplicationIsSource,
+        WebCore::DragApplicationFlags::DragApplicationHasAttachedSheet,
+        WebCore::DragApplicationFlags::DragApplicationIsCopyKeyDown
+    >;
+};
+
+} // namespace WTF

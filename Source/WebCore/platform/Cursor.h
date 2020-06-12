@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "Image.h"
 #include "IntPoint.h"
 #include <wtf/Assertions.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(WIN)
@@ -228,3 +229,57 @@ inline Cursor::Type Cursor::type() const
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::Cursor::Type> {
+    using values = EnumValues<
+        WebCore::Cursor::Type,
+        WebCore::Cursor::Type::Pointer,
+        WebCore::Cursor::Type::Cross,
+        WebCore::Cursor::Type::Hand,
+        WebCore::Cursor::Type::IBeam,
+        WebCore::Cursor::Type::Wait,
+        WebCore::Cursor::Type::Help,
+        WebCore::Cursor::Type::EastResize,
+        WebCore::Cursor::Type::NorthResize,
+        WebCore::Cursor::Type::NorthEastResize,
+        WebCore::Cursor::Type::NorthWestResize,
+        WebCore::Cursor::Type::SouthResize,
+        WebCore::Cursor::Type::SouthEastResize,
+        WebCore::Cursor::Type::SouthWestResize,
+        WebCore::Cursor::Type::WestResize,
+        WebCore::Cursor::Type::NorthSouthResize,
+        WebCore::Cursor::Type::EastWestResize,
+        WebCore::Cursor::Type::NorthEastSouthWestResize,
+        WebCore::Cursor::Type::NorthWestSouthEastResize,
+        WebCore::Cursor::Type::ColumnResize,
+        WebCore::Cursor::Type::RowResize,
+        WebCore::Cursor::Type::MiddlePanning,
+        WebCore::Cursor::Type::EastPanning,
+        WebCore::Cursor::Type::NorthPanning,
+        WebCore::Cursor::Type::NorthEastPanning,
+        WebCore::Cursor::Type::NorthWestPanning,
+        WebCore::Cursor::Type::SouthPanning,
+        WebCore::Cursor::Type::SouthEastPanning,
+        WebCore::Cursor::Type::SouthWestPanning,
+        WebCore::Cursor::Type::WestPanning,
+        WebCore::Cursor::Type::Move,
+        WebCore::Cursor::Type::VerticalText,
+        WebCore::Cursor::Type::Cell,
+        WebCore::Cursor::Type::ContextMenu,
+        WebCore::Cursor::Type::Alias,
+        WebCore::Cursor::Type::Progress,
+        WebCore::Cursor::Type::NoDrop,
+        WebCore::Cursor::Type::Copy,
+        WebCore::Cursor::Type::None,
+        WebCore::Cursor::Type::NotAllowed,
+        WebCore::Cursor::Type::ZoomIn,
+        WebCore::Cursor::Type::ZoomOut,
+        WebCore::Cursor::Type::Grab,
+        WebCore::Cursor::Type::Grabbing,
+        WebCore::Cursor::Type::Custom
+    >;
+};
+
+} // namespace WTF

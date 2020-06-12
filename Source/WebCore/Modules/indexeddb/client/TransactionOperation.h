@@ -41,7 +41,7 @@ namespace WebCore {
 class IDBResultData;
 
 namespace IndexedDB {
-enum class IndexRecordType;
+enum class IndexRecordType : bool;
 }
 
 namespace IDBClient {

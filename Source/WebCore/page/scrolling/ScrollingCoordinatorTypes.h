@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ScrollTypes.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -101,4 +102,22 @@ enum class ViewportRectStability {
     ChangingObscuredInsetsInteractively // This implies Unstable.
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ScrollingNodeType> {
+    using values = EnumValues<
+        WebCore::ScrollingNodeType,
+        WebCore::ScrollingNodeType::MainFrame,
+        WebCore::ScrollingNodeType::Subframe,
+        WebCore::ScrollingNodeType::FrameHosting,
+        WebCore::ScrollingNodeType::Overflow,
+        WebCore::ScrollingNodeType::OverflowProxy,
+        WebCore::ScrollingNodeType::Fixed,
+        WebCore::ScrollingNodeType::Sticky,
+        WebCore::ScrollingNodeType::Positioned
+    >;
+};
+
+} // namespace WTF

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,8 @@
  */
 
 #pragma once
+
+#include <wtf/EnumTraits.h>
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -74,7 +76,7 @@ struct MediaStreamRequest {
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::MediaStreamRequest> {
+template<> struct EnumTraits<WebCore::MediaStreamRequest::Type> {
     using values = EnumValues<
         WebCore::MediaStreamRequest::Type,
         WebCore::MediaStreamRequest::Type::UserMedia,
@@ -83,5 +85,3 @@ template<> struct EnumTraits<WebCore::MediaStreamRequest> {
 };
 
 } // namespace WTF
-
-

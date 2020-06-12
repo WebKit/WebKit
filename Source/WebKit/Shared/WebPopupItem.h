@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/WritingMode.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -36,7 +37,7 @@ class Encoder;
 namespace WebKit {
 
 struct WebPopupItem {
-    enum Type {
+    enum class Type : bool {
         Separator,
         Item
     };

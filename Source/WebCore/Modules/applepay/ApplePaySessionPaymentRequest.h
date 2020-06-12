@@ -29,6 +29,7 @@
 
 #include "PaymentContact.h"
 #include "PaymentInstallmentConfigurationWebCore.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -85,7 +86,7 @@ public:
     void setMerchantCapabilities(const MerchantCapabilities& merchantCapabilities) { m_merchantCapabilities = merchantCapabilities; }
 
     struct LineItem {
-        enum class Type {
+        enum class Type : bool {
             Pending,
             Final,
         } type { Type::Final };
@@ -130,7 +131,7 @@ public:
     const Vector<String>& supportedCountries() const { return m_supportedCountries; }
     void setSupportedCountries(Vector<String>&& supportedCountries) { m_supportedCountries = WTFMove(supportedCountries); }
 
-    enum class Requester {
+    enum class Requester : bool {
         ApplePayJS,
         PaymentRequest,
     };
@@ -221,9 +222,19 @@ struct ShippingMethodUpdate {
 
 WEBCORE_EXPORT bool isFinalStateResult(const Optional<PaymentAuthorizationResult>&);
 
-}
+} // namespace WebCore
 
 namespace WTF {
+
+template<> struct EnumTraits<WebCore::ApplePaySessionPaymentRequest::ShippingType> {
+    using values = EnumValues<
+        WebCore::ApplePaySessionPaymentRequest::ShippingType,
+        WebCore::ApplePaySessionPaymentRequest::ShippingType::Shipping,
+        WebCore::ApplePaySessionPaymentRequest::ShippingType::Delivery,
+        WebCore::ApplePaySessionPaymentRequest::ShippingType::StorePickup,
+        WebCore::ApplePaySessionPaymentRequest::ShippingType::ServicePickup
+    >;
+};
 
 template<> struct EnumTraits<WebCore::PaymentError::Code> {
     using values = EnumValues<
@@ -254,6 +265,6 @@ template<> struct EnumTraits<WebCore::PaymentError::ContactField> {
     >;
 };
 
-}
+} // namespace WTF
 
 #endif

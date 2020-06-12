@@ -771,4 +771,16 @@ template<> struct EnumTraits<WebCore::DocumentMarkerLineStyle::Mode> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::StrokeStyle> {
+    using values = EnumValues<
+    WebCore::StrokeStyle,
+    WebCore::StrokeStyle::NoStroke,
+    WebCore::StrokeStyle::SolidStroke,
+    WebCore::StrokeStyle::DottedStroke,
+    WebCore::StrokeStyle::DashedStroke,
+    WebCore::StrokeStyle::DoubleStroke,
+    WebCore::StrokeStyle::WavyStroke
+    >;
+};
+
 } // namespace WTF

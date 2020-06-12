@@ -1,3 +1,56 @@
+2020-06-11  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC] Add WTF::EnumTraits<> for every enum type used in IPC
+        <https://webkit.org/b/213093>
+
+        Reviewed by Darin Adler.
+
+        Summary:
+        - Change underlying type of enum class to `bool` when there are
+          only two values.  In some cases, reorder the two values so the
+          mapping to 0 and 1 makes more sense.  Converting every enum to
+          an enum class is not a goal of this patch, so some two-value
+          enums stil have WTF::EnumTraits<> defined as noted below.
+        - Add WTF::EnumTraits<> for the remaining enum types that are
+          used by IPC::Encoder::encodeEnum() and
+          IPC::Decoder::decodeEnum() so that WTF::isValidEnum<>() checks
+          may be added next.
+        - Add #include <WebCore/LibWebRTCEnumTraits.h> as needed.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.h:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * Shared/API/APIObject.h:
+        * Shared/ContextMenuContextData.h:
+        * Shared/DrawingAreaInfo.h:
+        * Shared/FocusedElementInformation.h:
+        * Shared/PrintInfo.h:
+        (WTF::EnumTraits<WebKit::PrintInfo::PrintMode>):
+        - Define this since PrintMode is not an enum class.
+        * Shared/RTCPacketOptions.cpp:
+        * Shared/SessionState.h:
+        * Shared/TouchBarMenuItemData.h:
+        * Shared/WebEvent.h:
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::WebPopupItem):
+        - Fix reference to WebPopupItem::Type enum.
+        * Shared/WebPopupItem.h:
+        (WebKit::WebPopupItem::Type):
+        - Convert from enum to enum class.
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * Shared/glib/InputMethodState.h:
+        * Shared/glib/UserMessage.h:
+        * Shared/mac/ColorSpaceData.mm:
+        * Shared/mac/SecItemRequestData.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+        - Fix reference to WebPopupItem::Type enum.
+        * WebProcess/Plugins/Plugin.cpp:
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::populateItems):
+        - Fix reference to WebPopupItem::Type enum.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+
 2020-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable download resume tests

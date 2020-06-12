@@ -32,7 +32,7 @@ namespace WebCore {
 
 class FloatPoint;
 class ScrollableArea;
-enum class ScrollClamping : uint8_t;
+enum class ScrollClamping : bool;
 
 class ScrollAnimation {
     WTF_MAKE_FAST_ALLOCATED;

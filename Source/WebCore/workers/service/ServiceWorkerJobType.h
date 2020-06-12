@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class ServiceWorkerJobType {
@@ -36,5 +38,18 @@ enum class ServiceWorkerJobType {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ServiceWorkerJobType> {
+    using values = EnumValues<
+        WebCore::ServiceWorkerJobType,
+        WebCore::ServiceWorkerJobType::Register,
+        WebCore::ServiceWorkerJobType::Unregister,
+        WebCore::ServiceWorkerJobType::Update
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -27,6 +27,7 @@
 
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/InputMode.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 
@@ -79,3 +80,33 @@ inline bool operator==(const InputMethodState& a, const InputMethodState& b)
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::InputMethodState::Hint> {
+    using values = EnumValues<
+        WebKit::InputMethodState::Hint,
+        WebKit::InputMethodState::Hint::None,
+        WebKit::InputMethodState::Hint::Spellcheck,
+        WebKit::InputMethodState::Hint::Lowercase,
+        WebKit::InputMethodState::Hint::UppercaseChars,
+        WebKit::InputMethodState::Hint::UppercaseWords,
+        WebKit::InputMethodState::Hint::UppercaseSentences,
+        WebKit::InputMethodState::Hint::InhibitOnScreenKeyboard
+    >;
+};
+
+template<> struct EnumTraits<WebKit::InputMethodState::Purpose> {
+    using values = EnumValues<
+        WebKit::InputMethodState::Purpose,
+        WebKit::InputMethodState::Purpose::FreeForm,
+        WebKit::InputMethodState::Purpose::Digits,
+        WebKit::InputMethodState::Purpose::Number,
+        WebKit::InputMethodState::Purpose::Phone,
+        WebKit::InputMethodState::Purpose::Url,
+        WebKit::InputMethodState::Purpose::Email,
+        WebKit::InputMethodState::Purpose::Password
+    >;
+};
+
+} // namespace WTF

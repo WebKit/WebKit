@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,9 @@
  *
  */
 
-#ifndef FileChooser_h
-#define FileChooser_h
+#pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -108,4 +108,15 @@ private:
 
 } // namespace WebCore
 
-#endif // FileChooser_h
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::MediaCaptureType> {
+    using values = EnumValues<
+        WebCore::MediaCaptureType,
+        WebCore::MediaCaptureType::MediaCaptureTypeNone,
+        WebCore::MediaCaptureType::MediaCaptureTypeUser,
+        WebCore::MediaCaptureType::MediaCaptureTypeEnvironment
+    >;
+};
+
+} // namespace WTF

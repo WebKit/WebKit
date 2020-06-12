@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -64,4 +65,17 @@ struct UserMessage {
     uint32_t errorCode { 0 };
 };
 
-}
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::UserMessage::Type> {
+    using values = EnumValues<
+        WebKit::UserMessage::Type,
+        WebKit::UserMessage::Type::Null,
+        WebKit::UserMessage::Type::Message,
+        WebKit::UserMessage::Type::Error
+    >;
+};
+
+} // namespace WTF

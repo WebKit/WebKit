@@ -41,6 +41,7 @@
 #include "TimingFunction.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Function.h>
 #include <wtf/TypeCasts.h>
 
@@ -767,3 +768,18 @@ SPECIALIZE_TYPE_TRAITS_END()
 // Outside the WebCore namespace for ease of invocation from the debugger.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::GraphicsLayer::CustomAppearance> {
+    using values = EnumValues<
+        WebCore::GraphicsLayer::CustomAppearance,
+        WebCore::GraphicsLayer::CustomAppearance::None,
+        WebCore::GraphicsLayer::CustomAppearance::ScrollingOverhang,
+        WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow,
+        WebCore::GraphicsLayer::CustomAppearance::LightBackdrop,
+        WebCore::GraphicsLayer::CustomAppearance::DarkBackdrop
+    >;
+};
+
+} // namespace WTF

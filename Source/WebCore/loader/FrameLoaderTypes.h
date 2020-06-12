@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "ElementContext.h"
 #include "IntRect.h"
 #include "ProcessIdentifier.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -228,23 +229,13 @@ enum class LoadCompletionType : bool {
 };
 
 enum class AllowsContentJavaScript : bool {
-    Yes,
     No,
+    Yes,
 };
 
 } // namespace WebCore
 
 namespace WTF {
-
-template<> struct EnumTraits<WebCore::PolicyAction> {
-    using values = EnumValues<
-        WebCore::PolicyAction,
-        WebCore::PolicyAction::Use,
-        WebCore::PolicyAction::Download,
-        WebCore::PolicyAction::Ignore,
-        WebCore::PolicyAction::StopAllLoads
-    >;
-};
 
 template<> struct EnumTraits<WebCore::FrameLoadType> {
     using values = EnumValues<
@@ -259,6 +250,28 @@ template<> struct EnumTraits<WebCore::FrameLoadType> {
         WebCore::FrameLoadType::Replace,
         WebCore::FrameLoadType::ReloadFromOrigin,
         WebCore::FrameLoadType::ReloadExpiredOnly
+    >;
+};
+
+template<> struct EnumTraits<WebCore::NavigationType> {
+    using values = EnumValues<
+        WebCore::NavigationType,
+        WebCore::NavigationType::LinkClicked,
+        WebCore::NavigationType::FormSubmitted,
+        WebCore::NavigationType::BackForward,
+        WebCore::NavigationType::Reload,
+        WebCore::NavigationType::FormResubmitted,
+        WebCore::NavigationType::Other
+    >;
+};
+
+template<> struct EnumTraits<WebCore::PolicyAction> {
+    using values = EnumValues<
+        WebCore::PolicyAction,
+        WebCore::PolicyAction::Use,
+        WebCore::PolicyAction::Download,
+        WebCore::PolicyAction::Ignore,
+        WebCore::PolicyAction::StopAllLoads
     >;
 };
 

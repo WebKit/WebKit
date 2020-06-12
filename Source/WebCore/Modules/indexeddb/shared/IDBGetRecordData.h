@@ -28,10 +28,11 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyRangeData.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
-enum class IDBGetRecordDataType {
+enum class IDBGetRecordDataType : bool {
     KeyOnly,
     KeyAndValue,
 };

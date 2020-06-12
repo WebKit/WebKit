@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO)
 
+#include <wtf/EnumTraits.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RetainPtr.h>
 
@@ -41,7 +42,7 @@ namespace WebCore {
 class SerializedPlatformDataCueValue {
     WTF_MAKE_ISO_ALLOCATED(SerializedPlatformDataCueValue);
 public:
-    enum class PlatformType {
+    enum class PlatformType : bool {
         None,
         ObjC,
     };
@@ -67,4 +68,4 @@ protected:
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO)

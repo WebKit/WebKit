@@ -29,6 +29,7 @@
 
 #include "AuxiliaryProcess.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/LibWebRTCEnumTraits.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>

@@ -27,6 +27,7 @@
 
 #include "FloatRoundedRect.h"
 #include "GraphicsLayer.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
@@ -314,3 +315,39 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCALayer::Fi
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::PlatformCALayer& layer) { return layer.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlatformCALayer::FilterType> {
+    using values = EnumValues<
+        WebCore::PlatformCALayer::FilterType,
+        WebCore::PlatformCALayer::FilterType::Linear,
+        WebCore::PlatformCALayer::FilterType::Nearest,
+        WebCore::PlatformCALayer::FilterType::Trilinear
+    >;
+};
+
+template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
+    using values = EnumValues<
+        WebCore::PlatformCALayer::LayerType,
+        WebCore::PlatformCALayer::LayerType::LayerTypeLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeWebLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeSimpleLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeTransformLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeRootLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeAVPlayerLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeBackdropLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeShapeLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeLightSystemBackdropLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeDarkSystemBackdropLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeScrollContainerLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeEditableImageLayer,
+        WebCore::PlatformCALayer::LayerType::LayerTypeCustom
+    >;
+};
+
+} // namespace WTF

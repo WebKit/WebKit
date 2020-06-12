@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecItemRequestData_h
-#define SecItemRequestData_h
+#pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/RetainPtr.h>
 
 namespace IPC {
@@ -65,4 +65,17 @@ private:
     
 } // namespace WebKit
 
-#endif // SecItemRequestData_h
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::SecItemRequestData::Type> {
+    using values = EnumValues<
+        WebKit::SecItemRequestData::Type,
+        WebKit::SecItemRequestData::Type::Invalid,
+        WebKit::SecItemRequestData::Type::CopyMatching,
+        WebKit::SecItemRequestData::Type::Add,
+        WebKit::SecItemRequestData::Type::Update,
+        WebKit::SecItemRequestData::Type::Delete
+    >;
+};
+
+} // namespace WTF

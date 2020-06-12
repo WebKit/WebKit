@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
  * Copyright (C) 2016 Canon Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -99,3 +100,18 @@ inline bool operator==(const ResourceError& a, const ResourceError& b) { return 
 inline bool operator!=(const ResourceError& a, const ResourceError& b) { return !(a == b); }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ResourceErrorBase::Type> {
+    using values = EnumValues<
+        WebCore::ResourceErrorBase::Type,
+        WebCore::ResourceErrorBase::Type::Null,
+        WebCore::ResourceErrorBase::Type::General,
+        WebCore::ResourceErrorBase::Type::AccessControl,
+        WebCore::ResourceErrorBase::Type::Cancellation,
+        WebCore::ResourceErrorBase::Type::Timeout
+    >;
+};
+
+} // namespace WTF

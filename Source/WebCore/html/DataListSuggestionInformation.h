@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntRect.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -108,4 +109,17 @@ Optional<DataListSuggestionInformation> DataListSuggestionInformation::decode(De
 
 } // namespace WebCore
 
-#endif
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DataListSuggestionActivationType> {
+    using values = EnumValues<
+        WebCore::DataListSuggestionActivationType,
+        WebCore::DataListSuggestionActivationType::ControlClicked,
+        WebCore::DataListSuggestionActivationType::IndicatorClicked,
+        WebCore::DataListSuggestionActivationType::TextChanged
+    >;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(DATALIST_ELEMENT)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeMediaSourceCapabilities_h
-#define RealtimeMediaSourceCapabilities_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSourceSettings.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -175,7 +175,7 @@ public:
     const CapabilityValueOrRange& sampleSize() const { return m_sampleSize; }
     void setSampleSize(const CapabilityValueOrRange& sampleSize) { m_sampleSize = sampleSize; }
 
-    enum class EchoCancellation {
+    enum class EchoCancellation : bool {
         ReadOnly = 0,
         ReadWrite = 1,
     };
@@ -249,6 +249,19 @@ bool RealtimeMediaSourceCapabilities::decode(Decoder& decoder, RealtimeMediaSour
 
 } // namespace WebCore
 
-#endif // RealtimeMediaSourceCapabilities_h
+namespace WTF {
 
-#endif
+template<> struct EnumTraits<WebCore::CapabilityValueOrRange::Type> {
+    using values = EnumValues<
+        WebCore::CapabilityValueOrRange::Type,
+        WebCore::CapabilityValueOrRange::Type::Undefined,
+        WebCore::CapabilityValueOrRange::Type::Double,
+        WebCore::CapabilityValueOrRange::Type::ULong,
+        WebCore::CapabilityValueOrRange::Type::DoubleRange,
+        WebCore::CapabilityValueOrRange::Type::ULongRange
+    >;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(MEDIA_STREAM)

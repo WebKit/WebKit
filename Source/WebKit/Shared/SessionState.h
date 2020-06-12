@@ -31,6 +31,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -155,3 +156,16 @@ struct SessionState {
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::HTTPBody::Element::Type> {
+    using values = EnumValues<
+        WebKit::HTTPBody::Element::Type,
+        WebKit::HTTPBody::Element::Type::Data,
+        WebKit::HTTPBody::Element::Type::File,
+        WebKit::HTTPBody::Element::Type::Blob
+    >;
+};
+
+} // namespace WTF

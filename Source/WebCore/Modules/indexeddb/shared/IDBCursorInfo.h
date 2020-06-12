@@ -36,8 +36,8 @@ class IDBTransaction;
 
 namespace IndexedDB {
 enum class CursorDirection;
-enum class CursorSource;
-enum class CursorType;
+enum class CursorSource : bool;
+enum class CursorType : bool;
 }
 
 struct IDBKeyRangeData;

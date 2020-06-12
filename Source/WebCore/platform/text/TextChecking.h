@@ -32,6 +32,7 @@
 #pragma once
 
 #include "CharacterRange.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -110,4 +111,31 @@ public:
     virtual void didCancel() = 0;
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::TextCheckingProcessType> {
+    using values = EnumValues<
+        WebCore::TextCheckingProcessType,
+        WebCore::TextCheckingProcessType::TextCheckingProcessBatch,
+        WebCore::TextCheckingProcessType::TextCheckingProcessIncremental
+    >;
+};
+
+template<> struct EnumTraits<WebCore::TextCheckingType> {
+    using values = EnumValues<
+        WebCore::TextCheckingType,
+        WebCore::TextCheckingType::None,
+        WebCore::TextCheckingType::Spelling,
+        WebCore::TextCheckingType::Grammar,
+        WebCore::TextCheckingType::Link,
+        WebCore::TextCheckingType::Quote,
+        WebCore::TextCheckingType::Dash,
+        WebCore::TextCheckingType::Replacement,
+        WebCore::TextCheckingType::Correction,
+        WebCore::TextCheckingType::ShowCorrectionPanel
+    >;
+};
+
+} // namespace WTF

@@ -27,6 +27,7 @@
 
 #include "FloatRect.h"
 #include "PlatformScreen.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -224,3 +225,16 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ScreenData::ColorSpaceType> {
+    using values = EnumValues<
+        WebCore::ScreenData::ColorSpaceType,
+        WebCore::ScreenData::ColorSpaceType::None,
+        WebCore::ScreenData::ColorSpaceType::Name,
+        WebCore::ScreenData::ColorSpaceType::Data
+    >;
+};
+
+} // namespace WTF

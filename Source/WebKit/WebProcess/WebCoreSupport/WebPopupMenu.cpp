@@ -81,13 +81,13 @@ Vector<WebPopupItem> WebPopupMenu::populateItems()
     
     for (size_t i = 0; i < size; ++i) {
         if (m_popupClient->itemIsSeparator(i))
-            items.append(WebPopupItem(WebPopupItem::Separator));
+            items.append(WebPopupItem(WebPopupItem::Type::Separator));
         else {
             // FIXME: Add support for styling the font.
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.
             PopupMenuStyle itemStyle = m_popupClient->itemStyle(i);
-            items.append(WebPopupItem(WebPopupItem::Item, m_popupClient->itemText(i), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride(), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i), m_popupClient->itemIsLabel(i), m_popupClient->itemIsSelected(i)));
+            items.append(WebPopupItem(WebPopupItem::Type::Item, m_popupClient->itemText(i), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride(), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i), m_popupClient->itemIsLabel(i), m_popupClient->itemIsSelected(i)));
         }
     }
 

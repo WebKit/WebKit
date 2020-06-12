@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <wtf/Assertions.h>
+#include <wtf/EnumTraits.h>
 
 namespace WTF {
 class TextStream;
@@ -34,7 +35,7 @@ class TextStream;
 
 namespace WebCore {
 
-enum class ScrollType : uint8_t {
+enum class ScrollType : bool {
     User,
     Programmatic
 };
@@ -207,12 +208,12 @@ enum ScrollPinningBehavior : uint8_t {
     PinToBottom
 };
 
-enum class ScrollClamping : uint8_t {
+enum class ScrollClamping : bool {
     Unclamped,
     Clamped
 };
 
-enum ScrollBehaviorForFixedElements : uint8_t {
+enum ScrollBehaviorForFixedElements : bool {
     StickToDocumentBounds,
     StickToViewportBounds
 };
@@ -242,5 +243,38 @@ using ScrollingNodeID = uint64_t;
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ScrollbarMode> {
+    using values = EnumValues<
+        WebCore::ScrollbarMode,
+        WebCore::ScrollbarMode::ScrollbarAuto,
+        WebCore::ScrollbarMode::ScrollbarAlwaysOff,
+        WebCore::ScrollbarMode::ScrollbarAlwaysOn
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ScrollElasticity> {
+    using values = EnumValues<
+        WebCore::ScrollElasticity,
+        WebCore::ScrollElasticity::ScrollElasticityAutomatic,
+        WebCore::ScrollElasticity::ScrollElasticityNone,
+        WebCore::ScrollElasticity::ScrollElasticityAllowed
+    >;
+};
+
+
+template<> struct EnumTraits<WebCore::ScrollPinningBehavior> {
+    using values = EnumValues<
+        WebCore::ScrollPinningBehavior,
+        WebCore::ScrollPinningBehavior::DoNotPin,
+        WebCore::ScrollPinningBehavior::PinToTop,
+        WebCore::ScrollPinningBehavior::PinToBottom
+    >;
+};
+
+} // namespace WTF

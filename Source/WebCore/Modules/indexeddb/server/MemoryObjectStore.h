@@ -52,7 +52,7 @@ struct IDBKeyRangeData;
 
 namespace IndexedDB {
 enum class GetAllType;
-enum class IndexRecordType;
+enum class IndexRecordType : bool;
 }
 
 namespace IDBServer {

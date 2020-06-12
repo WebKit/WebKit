@@ -33,7 +33,7 @@ namespace WebCore {
 
 class FloatPoint;
 class ScrollableArea;
-enum class ScrollClamping : uint8_t;
+enum class ScrollClamping : bool;
 
 class ScrollAnimationSmooth final: public ScrollAnimation {
 public:

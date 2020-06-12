@@ -36,6 +36,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/KeypressCommand.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
@@ -493,3 +494,26 @@ private:
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebMouseEvent::Button> {
+    using values = EnumValues<
+        WebKit::WebMouseEvent::Button,
+        WebKit::WebMouseEvent::Button::LeftButton,
+        WebKit::WebMouseEvent::Button::MiddleButton,
+        WebKit::WebMouseEvent::Button::RightButton,
+        WebKit::WebMouseEvent::Button::NoButton
+    >;
+};
+
+template<> struct EnumTraits<WebKit::WebMouseEvent::SyntheticClickType> {
+    using values = EnumValues<
+        WebKit::WebMouseEvent::SyntheticClickType,
+        WebKit::WebMouseEvent::SyntheticClickType::NoTap,
+        WebKit::WebMouseEvent::SyntheticClickType::OneFingerTap,
+        WebKit::WebMouseEvent::SyntheticClickType::TwoFingerTap
+    >;
+};
+
+} // namespace WTF

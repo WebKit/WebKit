@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PopupMenuStyle_h
-#define PopupMenuStyle_h
+#pragma once
 
 #include "Color.h"
 #include "FontCascade.h"
 #include "Length.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -91,4 +91,18 @@ private:
 
 } // namespace WebCore
 
-#endif // PopupMenuStyle_h
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PopupMenuStyle::PopupMenuSize> {
+    using values = EnumValues<
+        WebCore::PopupMenuStyle::PopupMenuSize,
+        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeNormal,
+        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeSmall,
+        WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeMini
+#if HAVE(LARGE_CONTROL_SIZE)
+        , WebCore::PopupMenuStyle::PopupMenuSize::PopupMenuSizeLarge
+#endif
+    >;
+};
+
+} // namespace WTF

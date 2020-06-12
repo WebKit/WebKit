@@ -33,6 +33,7 @@
 #include "RemoteAudioSessionIdentifier.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RenderingBackendIdentifier.h"
+#include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>

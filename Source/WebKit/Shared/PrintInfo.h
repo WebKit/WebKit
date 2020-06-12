@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <WebCore/LengthBox.h>
+#include <wtf/EnumTraits.h>
+
 #if USE(APPKIT)
 OBJC_CLASS NSPrintInfo;
 #elif PLATFORM(GTK)
@@ -35,7 +38,6 @@ typedef struct _GtkPageSetup GtkPageSetup;
 // FIXME: This should use the windows equivalent.
 class NSPrintInfo;
 #endif
-#include <WebCore/LengthBox.h>
 
 namespace IPC {
 class Decoder;
@@ -76,4 +78,18 @@ struct PrintInfo {
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, PrintInfo&);
 };
 
-}
+} // namespace WebKit
+
+#if PLATFORM(GTK)
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::PrintInfo::PrintMode> {
+    using values = EnumValues<
+        WebKit::PrintInfo::PrintMode,
+        WebKit::PrintInfo::PrintMode::PrintModeAsync,
+        WebKit::PrintInfo::PrintMode::PrintModeSync
+    >;
+};
+
+} // namespace WTF
+#endif // PLATFORM(GTK)

@@ -29,6 +29,7 @@
 #import "ArgumentCodersCF.h"
 #import "Decoder.h"
 #import "Encoder.h"
+#import <wtf/EnumTraits.h>
 
 namespace WebKit {
 
@@ -93,3 +94,16 @@ bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceDat
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::EncodedDataType> {
+    using values = EnumValues<
+        WebKit::EncodedDataType,
+        WebKit::EncodedDataType::Null,
+        WebKit::EncodedDataType::Name,
+        WebKit::EncodedDataType::Data
+    >;
+};
+
+} // namespace WTF

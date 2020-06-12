@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +24,14 @@
  *
  */
 
-#ifndef ContextMenuContextData_h
-#define ContextMenuContextData_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
 #include "ShareableBitmap.h"
 #include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
+#include <wtf/EnumTraits.h>
 
 namespace IPC {
 class Decoder;
@@ -46,7 +46,7 @@ namespace WebKit {
 
 class ContextMenuContextData {
 public:
-    enum class Type {
+    enum class Type : bool {
         ContextMenu,
         ServicesMenu,
     };
@@ -102,4 +102,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // ContextMenuContextData_h

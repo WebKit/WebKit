@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Plugin.h"
 
+#include "LayerTreeContext.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IntPoint.h>
 #include <wtf/SetForScope.h>

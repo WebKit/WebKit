@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ContextMenuItem_h
-#define ContextMenuItem_h
+#pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -197,6 +197,136 @@ private:
     Vector<ContextMenuItem> m_subMenuItems;
 };
 
-}
+} // namespace WebCore
 
-#endif // ContextMenuItem_h
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ContextMenuAction> {
+    using values = EnumValues<
+        WebCore::ContextMenuAction,
+        WebCore::ContextMenuAction::ContextMenuItemTagNoAction,
+        WebCore::ContextMenuAction::ContextMenuItemTagOpenLinkInNewWindow,
+        WebCore::ContextMenuAction::ContextMenuItemTagDownloadLinkToDisk,
+        WebCore::ContextMenuAction::ContextMenuItemTagCopyLinkToClipboard,
+        WebCore::ContextMenuAction::ContextMenuItemTagOpenImageInNewWindow,
+        WebCore::ContextMenuAction::ContextMenuItemTagDownloadImageToDisk,
+        WebCore::ContextMenuAction::ContextMenuItemTagCopyImageToClipboard,
+#if PLATFORM(GTK)
+        WebCore::ContextMenuAction::ContextMenuItemTagCopyImageUrlToClipboard,
+#endif
+        WebCore::ContextMenuAction::ContextMenuItemTagOpenFrameInNewWindow,
+        WebCore::ContextMenuAction::ContextMenuItemTagCopy,
+        WebCore::ContextMenuAction::ContextMenuItemTagGoBack,
+        WebCore::ContextMenuAction::ContextMenuItemTagGoForward,
+        WebCore::ContextMenuAction::ContextMenuItemTagStop,
+        WebCore::ContextMenuAction::ContextMenuItemTagReload,
+        WebCore::ContextMenuAction::ContextMenuItemTagCut,
+        WebCore::ContextMenuAction::ContextMenuItemTagPaste,
+#if PLATFORM(GTK)
+        WebCore::ContextMenuAction::ContextMenuItemTagDelete,
+        WebCore::ContextMenuAction::ContextMenuItemTagSelectAll,
+        WebCore::ContextMenuAction::ContextMenuItemTagInputMethods,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicode,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertLRMMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertRLMMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertLREMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertRLEMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertLROMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertRLOMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertPDFMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertZWSMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertZWJMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnicodeInsertZWNJMark,
+        WebCore::ContextMenuAction::ContextMenuItemTagInsertEmoji,
+#endif
+        WebCore::ContextMenuAction::ContextMenuItemTagSpellingGuess,
+        WebCore::ContextMenuAction::ContextMenuItemTagNoGuessesFound,
+        WebCore::ContextMenuAction::ContextMenuItemTagIgnoreSpelling,
+        WebCore::ContextMenuAction::ContextMenuItemTagLearnSpelling,
+        WebCore::ContextMenuAction::ContextMenuItemTagOther,
+        WebCore::ContextMenuAction::ContextMenuItemTagSearchInSpotlight,
+        WebCore::ContextMenuAction::ContextMenuItemTagSearchWeb,
+        WebCore::ContextMenuAction::ContextMenuItemTagLookUpInDictionary,
+        WebCore::ContextMenuAction::ContextMenuItemTagOpenWithDefaultApplication,
+        WebCore::ContextMenuAction::ContextMenuItemPDFActualSize,
+        WebCore::ContextMenuAction::ContextMenuItemPDFZoomIn,
+        WebCore::ContextMenuAction::ContextMenuItemPDFZoomOut,
+        WebCore::ContextMenuAction::ContextMenuItemPDFAutoSize,
+        WebCore::ContextMenuAction::ContextMenuItemPDFSinglePage,
+        WebCore::ContextMenuAction::ContextMenuItemPDFFacingPages,
+        WebCore::ContextMenuAction::ContextMenuItemPDFContinuous,
+        WebCore::ContextMenuAction::ContextMenuItemPDFNextPage,
+        WebCore::ContextMenuAction::ContextMenuItemPDFPreviousPage,
+        WebCore::ContextMenuAction::ContextMenuItemTagOpenLink,
+        WebCore::ContextMenuAction::ContextMenuItemTagIgnoreGrammar,
+        WebCore::ContextMenuAction::ContextMenuItemTagSpellingMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagShowSpellingPanel,
+        WebCore::ContextMenuAction::ContextMenuItemTagCheckSpelling,
+        WebCore::ContextMenuAction::ContextMenuItemTagCheckSpellingWhileTyping,
+        WebCore::ContextMenuAction::ContextMenuItemTagCheckGrammarWithSpelling,
+        WebCore::ContextMenuAction::ContextMenuItemTagFontMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagShowFonts,
+        WebCore::ContextMenuAction::ContextMenuItemTagBold,
+        WebCore::ContextMenuAction::ContextMenuItemTagItalic,
+        WebCore::ContextMenuAction::ContextMenuItemTagUnderline,
+        WebCore::ContextMenuAction::ContextMenuItemTagOutline,
+        WebCore::ContextMenuAction::ContextMenuItemTagStyles,
+        WebCore::ContextMenuAction::ContextMenuItemTagShowColors,
+        WebCore::ContextMenuAction::ContextMenuItemTagSpeechMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagStartSpeaking,
+        WebCore::ContextMenuAction::ContextMenuItemTagStopSpeaking,
+        WebCore::ContextMenuAction::ContextMenuItemTagWritingDirectionMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagDefaultDirection,
+        WebCore::ContextMenuAction::ContextMenuItemTagLeftToRight,
+        WebCore::ContextMenuAction::ContextMenuItemTagRightToLeft,
+        WebCore::ContextMenuAction::ContextMenuItemTagPDFSinglePageScrolling,
+        WebCore::ContextMenuAction::ContextMenuItemTagPDFFacingPagesScrolling,
+        WebCore::ContextMenuAction::ContextMenuItemTagInspectElement,
+        WebCore::ContextMenuAction::ContextMenuItemTagTextDirectionMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagTextDirectionDefault,
+        WebCore::ContextMenuAction::ContextMenuItemTagTextDirectionLeftToRight,
+        WebCore::ContextMenuAction::ContextMenuItemTagTextDirectionRightToLeft,
+#if PLATFORM(COCOA)
+        WebCore::ContextMenuAction::ContextMenuItemTagCorrectSpellingAutomatically,
+        WebCore::ContextMenuAction::ContextMenuItemTagSubstitutionsMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagShowSubstitutions,
+        WebCore::ContextMenuAction::ContextMenuItemTagSmartCopyPaste,
+        WebCore::ContextMenuAction::ContextMenuItemTagSmartQuotes,
+        WebCore::ContextMenuAction::ContextMenuItemTagSmartDashes,
+        WebCore::ContextMenuAction::ContextMenuItemTagSmartLinks,
+        WebCore::ContextMenuAction::ContextMenuItemTagTextReplacement,
+        WebCore::ContextMenuAction::ContextMenuItemTagTransformationsMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagMakeUpperCase,
+        WebCore::ContextMenuAction::ContextMenuItemTagMakeLowerCase,
+        WebCore::ContextMenuAction::ContextMenuItemTagCapitalize,
+        WebCore::ContextMenuAction::ContextMenuItemTagChangeBack,
+#endif
+        WebCore::ContextMenuAction::ContextMenuItemTagOpenMediaInNewWindow,
+        WebCore::ContextMenuAction::ContextMenuItemTagDownloadMediaToDisk,
+        WebCore::ContextMenuAction::ContextMenuItemTagCopyMediaLinkToClipboard,
+        WebCore::ContextMenuAction::ContextMenuItemTagToggleMediaControls,
+        WebCore::ContextMenuAction::ContextMenuItemTagToggleMediaLoop,
+        WebCore::ContextMenuAction::ContextMenuItemTagEnterVideoFullscreen,
+        WebCore::ContextMenuAction::ContextMenuItemTagMediaPlayPause,
+        WebCore::ContextMenuAction::ContextMenuItemTagMediaMute,
+        WebCore::ContextMenuAction::ContextMenuItemTagDictationAlternative,
+        WebCore::ContextMenuAction::ContextMenuItemTagToggleVideoFullscreen,
+        WebCore::ContextMenuAction::ContextMenuItemTagShareMenu,
+        WebCore::ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen,
+        WebCore::ContextMenuAction::ContextMenuItemBaseCustomTag,
+        WebCore::ContextMenuAction::ContextMenuItemLastCustomTag,
+        WebCore::ContextMenuAction::ContextMenuItemBaseApplicationTag
+    >;
+};
+
+template<> struct EnumTraits<WebCore::ContextMenuItemType> {
+    using values = EnumValues<
+        WebCore::ContextMenuItemType,
+        WebCore::ContextMenuItemType::ActionType,
+        WebCore::ContextMenuItemType::CheckableActionType,
+        WebCore::ContextMenuItemType::SeparatorType,
+        WebCore::ContextMenuItemType::SubmenuType
+    >;
+};
+
+} // namespace WTF
