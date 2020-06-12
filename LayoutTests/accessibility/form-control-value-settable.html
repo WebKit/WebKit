@@ -32,44 +32,38 @@
 description("This tests whether AXValue is writable for various form controls.");
 
 if (window.testRunner && window.accessibilityController) {
+    jsTestIsAsync = true;
     window.testRunner.dumpAsText();
 
-    function check(id1, id2, expected1) {
-        debug(id1);
-        window.element1 = document.getElementById(id1);
-        element1.focus();
-        shouldBe("document.activeElement == element1", "true");
-        window.axElement1 = accessibilityController.focusedElement;
+    function check(ids, expect, index) {
+        if (index >= ids.length)
+            finishJSTest();
 
-        debug(id2);
-        window.element2 = document.getElementById(id2);
-        element2.focus();
-        shouldBe("document.activeElement == element2", "true");
-        window.axElement2 = accessibilityController.focusedElement;
+        id = ids[index];
+        window.element = document.getElementById(id);
+        element.focus();
+        setTimeout(function() {
+            debug(id);
+            shouldBe("document.activeElement == element", "true");
+            window.axElement = accessibilityController.focusedElement;
+            shouldBe("axElement.isAttributeSettable('AXValue')", String(expect[index]));
 
-        shouldBe("axElement1.isAttributeSettable('AXValue')", String(expected1));
-        // If contentEditable, AXValue is always writable.
-        shouldBe("axElement2.isAttributeSettable('AXValue')", "true");
-        debug("");
+            check(ids, expect, ++index);
+        }, 0);
     }
 
-    // All text-like form controls should have a writable AXValue.
-    check("text1", "text2", true);
-    check("number1", "number2", true);
-    check("textarea1", "textarea2", true);
-
-    // A slider can set AXValue.
-    check("slider1", "slider2", true);
-
+    var ids = ["text1", "text2", "number1", "number2", "textarea1", "textarea2", "slider1", "slider2", "checkbox1", "checkbox2", "radio1", "radio2", "submit1", "submit2", "combobox1", "combobox2", "listbox1", "listbox2"];
+    // All text-like form controls and slider should have a writable AXValue.
     // Other controls whose contents or state can be user modified should have a read-only
     // AXValue for non-ATK-based platforms, unless those controls are inside contentEditable,
     // then everything should have a writable AXValue.
-    isATK = accessibilityController.platformName == "atk";
-    check("checkbox1", "checkbox2", isATK ? true : false);
-    check("radio1", "radio2", isATK ? true : false);
-    check("submit1", "submit2", false);
-    check("combobox1", "combobox2", isATK ? true : false);
-    check("listbox1", "listbox2", isATK ? true : false);
+    var expect;
+    if (accessibilityController.platformName != "atk")
+        expect = [true, true, true, true, true, true, true, true, false, true, false, true, false, true, false, true, false, true];
+    else
+        expect = [true, true, true, true, true, true, true, true, true, true, true, true, false, true, true, true, true, true];
+
+    check(ids, expect, 0);
 }
 
 </script>

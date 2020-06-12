@@ -1,3 +1,17 @@
+2020-06-12  Andres Gonzalez  <andresg_22@apple.com>
+
+        Re-write accessibility/form-control-value-settable.html so that it can pass in both isolated tree mode on and off.
+        https://bugs.webkit.org/show_bug.cgi?id=213150
+
+        Reviewed by Chris Fleizach.
+
+        In isolated tree mode, it is necessary to setTimeout after setting the
+        focus so that the isolated tree can be updated.
+
+        * accessibility/form-control-value-settable.html:
+        * platform/gtk/accessibility/form-control-value-settable-expected.txt:
+        * platform/mac/accessibility/form-control-value-settable-expected.txt:
+
 2020-06-12  Chris Dumez  <cdumez@apple.com>
 
         Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache
