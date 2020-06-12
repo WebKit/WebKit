@@ -1,3 +1,19 @@
+2020-06-12  Chris Dumez  <cdumez@apple.com>
+
+        Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=213147
+        <rdar://problem/64249683>
+
+        Reviewed by Geoffrey Garen.
+
+        Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache.
+        This is a revert of r250437 due to push back from Web developers.
+
+        No new tests, updated existing tests.
+
+        * history/BackForwardCache.cpp:
+        (WebCore::canCacheFrame):
+
 2020-06-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Stop to use ActiveDOMObject::setPendingActivity() for Modules/fetch
