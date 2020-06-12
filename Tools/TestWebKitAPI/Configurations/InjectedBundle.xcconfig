@@ -25,7 +25,7 @@ INFOPLIST_FILE = InjectedBundle-Info.plist;
 PRODUCT_NAME = InjectedBundleTestWebKitAPI;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 
-FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=iphone*] = -lobjc -framework UIKit;
+FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=embedded*] = -lobjc -framework UIKit;
 FRAMEWORK_AND_LIBRARY_LDFLAGS[sdk=macosx*] = -framework JavaScriptCore -framework WebKit -framework CoreGraphics -framework Cocoa;
 
 OTHER_LDFLAGS = $(inherited) $(FRAMEWORK_AND_LIBRARY_LDFLAGS);

@@ -89,11 +89,11 @@ TARGET_MAC_OS_X_VERSION_MAJOR_15 = 101500;
 TARGET_MAC_OS_X_VERSION_MAJOR_16 = 101600;
 TARGET_MAC_OS_X_VERSION_MAJOR_17 = 101700;
 
-SDKROOT = macosx.internal;
+WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.3 => 9
+WK_TARGET_TVOS_VERSION_MAJOR = $(TVOS_DEPLOYMENT_TARGET:base);
+WK_TARGET_WATCHOS_VERSION_MAJOR = $(WATCHOS_DEPLOYMENT_TARGET:base);
 
-// FIXME: Remove these settings once <rdar://problem/27459890> is fixed.
-CODE_SIGNING_ALLOWED[sdk=iphonesimulator*] = YES;
-AD_HOC_CODE_SIGNING_ALLOWED[sdk=iphonesimulator*] = YES;
+SDKROOT = macosx.internal;
 
 WEBKIT_UMBRELLA_FRAMEWORKS_DIR = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 WEBCORE_PRIVATE_HEADERS_DIR = $(WEBKIT_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
@@ -114,4 +114,10 @@ WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
 
-SYSTEM_FRAMEWORK_SEARCH_PATHS = $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(inherited);
+WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=appletv*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=watch*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
+
+SYSTEM_FRAMEWORK_SEARCH_PATHS = $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(WK_PRIVATE_FRAMEWORKS_DIR) $(inherited);

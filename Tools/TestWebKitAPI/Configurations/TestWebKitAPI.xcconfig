@@ -28,7 +28,10 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.TestWebKitAPI;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
-WK_PRIVATE_FRAMEWORKS_DIR_[sdk=mac*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(MAC_OS_X_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=appletv*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=watch*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
 
 WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.3 => 9
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(WK_PRIVATE_FRAMEWORKS_DIR_iphone_$(USE_INTERNAL_SDK));
@@ -66,7 +69,7 @@ OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework WebCore -framework CoreGraphics -
 
 LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 
-CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/TestWebKitAPI-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=embedded*] = Configurations/TestWebKitAPI-iOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = Configurations/TestWebKitAPI-macOS.entitlements;
 
 STRIP_STYLE = debugging;

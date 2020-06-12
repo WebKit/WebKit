@@ -35,7 +35,7 @@ OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWTF application.
-OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework CoreGraphics;
+OTHER_LDFLAGS_PLATFORM[sdk=embedded*] = -framework CoreGraphics;
 
 STRIP_STYLE = debugging;
 

@@ -108,7 +108,7 @@
 #endif
 
 // FIXME: Move this to PlatformHave.h.
-#if !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST)
+#if !PLATFORM(APPLETV) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 #define HAVE_SSL 1
 #endif
 

@@ -32,4 +32,4 @@ EXECUTABLE_SUFFIX = .bundle;
 WRAPPER_EXTENSION = wkbundle;
 OTHER_LDFLAGS = $(inherited) -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport;
 LD_RUNPATH_SEARCH_PATHS[sdk=macosx*] = "@loader_path/../../..";
-LD_RUNPATH_SEARCH_PATHS[sdk=iphone*] = "@loader_path/..";
+LD_RUNPATH_SEARCH_PATHS[sdk=embedded*] = "@loader_path/..";
