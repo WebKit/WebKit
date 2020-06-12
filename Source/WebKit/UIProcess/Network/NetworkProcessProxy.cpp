@@ -1472,7 +1472,7 @@ void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, Compl
 
 void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
-    if (!url.isValid() || !url.protocolIsInHTTPFamily() || SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host()))
+    if (!url.isValid() || !url.protocolIsInHTTPFamily())
         return;
     send(Messages::NetworkProcess::PreconnectTo(sessionID, webPageProxyID, webPageID, url, userAgent, storedCredentialsPolicy, isNavigatingToAppBoundDomain), 0);
 }

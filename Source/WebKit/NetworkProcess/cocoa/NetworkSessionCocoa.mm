@@ -532,7 +532,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         auto completionHandlerCopy = Block_copy(completionHandler);
 
         if (auto* sessionCocoa = [self sessionFromTask:task])
-            sessionCocoa->taskReceivedBytes(taskIdentifier);
+            sessionCocoa->taskServerConnectionSucceeded(taskIdentifier);
 
         bool shouldIgnoreHSTS = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -730,8 +730,12 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     }
 
     if (auto* networkDataTask = [self existingTask:task]) {
-        if (auto* sessionCocoa = [self sessionFromTask:task])
-            sessionCocoa->taskFailed(task.taskIdentifier);
+        if (auto* sessionCocoa = [self sessionFromTask:task]) {
+            if (error)
+                sessionCocoa->taskFailed(task.taskIdentifier);
+            else
+                sessionCocoa->taskServerConnectionSucceeded(task.taskIdentifier);
+        }
         networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
     } else if (error) {
         if (!_sessionWrapper)
@@ -872,7 +876,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         ASSERT(RunLoop::isMain());
 
         if (auto* sessionCocoa = [self sessionFromTask:dataTask])
-            sessionCocoa->taskReceivedBytes(taskIdentifier);
+            sessionCocoa->taskServerConnectionSucceeded(taskIdentifier);
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
 #if HAVE(TLS_PROTOCOL_VERSION_T)
@@ -1061,7 +1065,7 @@ void NetworkSessionCocoa::clientCertificateSuggestedForHost(NetworkDataTaskCocoa
     m_suggestedClientCertificates.set(taskID, SuggestedClientCertificate { host, port, credential });
 }
 
-void NetworkSessionCocoa::taskReceivedBytes(NetworkDataTaskCocoa::TaskIdentifier identifier)
+void NetworkSessionCocoa::taskServerConnectionSucceeded(NetworkDataTaskCocoa::TaskIdentifier identifier)
 {
     if (LIKELY(m_suggestedClientCertificates.isEmpty()))
         return;

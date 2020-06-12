@@ -102,7 +102,7 @@ public:
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     
     void clientCertificateSuggestedForHost(NetworkDataTaskCocoa::TaskIdentifier, NSURLCredential *, const String& host, uint16_t port);
-    void taskReceivedBytes(NetworkDataTaskCocoa::TaskIdentifier);
+    void taskServerConnectionSucceeded(NetworkDataTaskCocoa::TaskIdentifier);
     void taskFailed(NetworkDataTaskCocoa::TaskIdentifier);
     NSURLCredential *successfulClientCertificateForHost(const String& host, uint16_t port) const;
 

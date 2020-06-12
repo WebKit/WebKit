@@ -1,3 +1,33 @@
+2020-06-12  Alex Christensen  <achristensen@webkit.org>
+
+        Make API tests tolerant of our relatively new use of WebPageProxy::preconnectTo
+        https://bugs.webkit.org/show_bug.cgi?id=213144
+
+        Reviewed by Geofferey Garen.
+
+        Most changes are straightforward moving to HTTPServer, which is more tolerant of different numbers of connections except these two:
+
+        The ResourceLoadDelegate.Challenge API test was checking the output of _WKResourceLoadDelegate.didReceiveChallenge
+        by using a server trust challenge.  Now that preconnecting happens, the server trust evaluation would happen with a
+        PreconnectTask, not the main resource load.  The WKNavigationDelegate still gets the challenge and there is no problem
+        here, but in order to continue to test _WKResourceLoadDelegate.didReceiveChallenge I use a basic authentication challenge
+        instead of a server trust evaluation.
+
+        The WebKit.FastServerTrust API test now has two failed attempts (one from the preconnect attempt, one from the main resource load attempt),
+        but only when _strictTrustEvaluate is not available.
+
+        * TestWebKitAPI/TCPServer.cpp:
+        (TestWebKitAPI::TCPServer::TCPServer):
+        * TestWebKitAPI/TCPServer.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondWithChallengeThenOK):
+
 2020-06-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [buildbot] [GTK][WPE] Move WebDriver test to own bot

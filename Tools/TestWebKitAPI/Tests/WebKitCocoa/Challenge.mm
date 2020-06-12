@@ -203,10 +203,12 @@ static RetainPtr<NSURLCredential> persistentCredential;
 
 @end
 
+#if HAVE(NETWORK_FRAMEWORK)
+
 TEST(Challenge, BasicProposedCredential)
 {
     using namespace TestWebKitAPI;
-    TCPServer server(TCPServer::respondWithChallengeThenOK, 2);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BasicProposedCredentialPlugIn"]);
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     auto delegate = adoptNS([ProposedCredentialDelegate new]);
@@ -216,7 +218,7 @@ TEST(Challenge, BasicProposedCredential)
     NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
     [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
 
-    RetainPtr<NSURLRequest> request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]];
+    RetainPtr<NSURLRequest> request = server.request();
     [webView loadRequest:request.get()];
     Util::run(&navigationFinished);
     navigationFinished = false;
@@ -227,6 +229,8 @@ TEST(Challenge, BasicProposedCredential)
     // Clear persistent credentials created by this test.
     [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
 }
+
+#endif // HAVE(NETWORK_FRAMEWORK)
 
 #if HAVE(SSL)
 static void verifyCertificateAndPublicKey(SecTrustRef trust)
@@ -379,7 +383,7 @@ TEST(WebKit, FastServerTrust)
 #else
     TCPServer server(TCPServer::Protocol::HTTPS, [](SSL* ssl) {
         EXPECT_FALSE(ssl);
-    });
+    }, WTF::nullopt, 2);
 #endif
     WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
     _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
@@ -492,7 +496,7 @@ TEST(MultipleClientCertificateConnections, Failure)
     size_t certChallengesAfterInitialFailure = countClientCertChallenges(methods);
     [webView loadRequest:server.request()];
     [delegate waitForDidFinishNavigation];
-    EXPECT_EQ(countClientCertChallenges(methods), certChallengesAfterInitialFailure + 1);
+    EXPECT_EQ(countClientCertChallenges(methods), certChallengesAfterInitialFailure);
 }
 
 TEST(MultipleClientCertificateConnections, NonPersistentDataStore)

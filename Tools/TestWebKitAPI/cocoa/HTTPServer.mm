@@ -115,6 +115,26 @@ HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol 
 
 HTTPServer::~HTTPServer() = default;
 
+void HTTPServer::respondWithChallengeThenOK(Connection connection)
+{
+    connection.receiveHTTPRequest([connection] (Vector<char>&&) {
+        const char* challengeHeader =
+        "HTTP/1.1 401 Unauthorized\r\n"
+        "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
+        "Content-Length: 0\r\n"
+        "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
+        connection.send(challengeHeader, [connection] {
+            connection.receiveHTTPRequest([connection] (Vector<char>&&) {
+                connection.send(
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 13\r\n\r\n"
+                    "Hello, World!"
+                );
+            });
+        });
+    });
+}
+
 size_t HTTPServer::totalRequests() const
 {
     if (!m_requestData)

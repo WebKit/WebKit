@@ -390,43 +390,35 @@ TEST(ResourceLoadDelegate, LoadInfo)
 
 // FIXME: Add a test for loadedFromCache.
 
-#endif // HAVE(NETWORK_FRAMEWORK)
-
-#if HAVE(SSL)
-
 TEST(ResourceLoadDelegate, Challenge)
 {
     using namespace TestWebKitAPI;
-    TCPServer server(TCPServer::Protocol::HTTPS, [] (SSL* ssl) {
-        EXPECT_TRUE(!!ssl); // Connection should succeed after a server trust challenge.
-        // Send nothing to make the resource load fail.
-    });
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
-        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
-        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodHTTPBasic);
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistenceNone]);
     }];
 
     __block bool receivedErrorNotification = false;
     __block bool receivedChallengeNotificiation = false;
     auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
     [resourceLoadDelegate setDidReceiveChallenge:^(WKWebView *, _WKResourceLoadInfo *, NSURLAuthenticationChallenge *challenge) {
-        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodHTTPBasic);
         receivedChallengeNotificiation = true;
     }];
     [resourceLoadDelegate setDidCompleteWithError:^(WKWebView *, _WKResourceLoadInfo *, NSError *error, NSURLResponse *) {
-        EXPECT_EQ(error.code, kCFURLErrorCannotConnectToHost);
-        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        EXPECT_FALSE(error);
         receivedErrorNotification = true;
     }];
 
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView _setResourceLoadDelegate:resourceLoadDelegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
+    [webView loadRequest:server.request()];
     TestWebKitAPI::Util::run(&receivedErrorNotification);
     EXPECT_TRUE(receivedChallengeNotificiation);
 }
 
-#endif // HAVE(SSL)
+#endif // HAVE(NETWORK_FRAMEWORK)

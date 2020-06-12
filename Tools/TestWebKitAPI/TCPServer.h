@@ -47,7 +47,7 @@ public:
     enum class Protocol : uint8_t {
         HTTPS, HTTPSProxy, HTTPSWithClientCertificateRequest
     };
-    TCPServer(Protocol, Function<void(SSL*)>&&, Optional<uint16_t> maxTLSVersion = WTF::nullopt);
+    TCPServer(Protocol, Function<void(SSL*)>&&, Optional<uint16_t> maxTLSVersion = WTF::nullopt, size_t connections = 1);
 #endif // HAVE(SSL)
     ~TCPServer();
     

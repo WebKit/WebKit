@@ -53,6 +53,8 @@ public:
     NSURLRequest *request(const String& path = "/"_str) const;
     size_t totalRequests() const;
 
+    static void respondWithChallengeThenOK(Connection);
+    
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&);
     static void respondToRequests(Connection, RefPtr<RequestData>);

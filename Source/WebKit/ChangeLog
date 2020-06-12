@@ -1,3 +1,26 @@
+2020-06-12  Alex Christensen  <achristensen@webkit.org>
+
+        Make API tests tolerant of our relatively new use of WebPageProxy::preconnectTo
+        https://bugs.webkit.org/show_bug.cgi?id=213144
+
+        Reviewed by Geofferey Garen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::taskServerConnectionSucceeded):
+        (WebKit::NetworkSessionCocoa::taskReceivedBytes): Deleted.
+        Fix our logic that remembers successful client certificate connections.
+        If a task completes with no error (like a preconnect task does), consider that a successful connection.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preconnectTo):
+        Remove the check to not preconnect to loopback addresses.
+        This was making our tests different than the real internet and prevented me from landing a perfectly good test
+        in https://bugs.webkit.org/show_bug.cgi?id=213109
+
 2020-06-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Preferences are not being observed if the process pool is being created after activation

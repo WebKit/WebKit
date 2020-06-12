@@ -207,7 +207,7 @@ void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secu
     secureConnectionHandler(acceptResult > 0 ? ssl.get() : nullptr);
 };
 
-TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, Optional<uint16_t> maxTLSVersion)
+TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, Optional<uint16_t> maxTLSVersion, size_t connections)
 {
     switch (protocol) {
     case Protocol::HTTPS:
@@ -232,7 +232,7 @@ TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionH
         };
         break;
     }
-    listenForConnections(1);
+    listenForConnections(connections);
 }
 #endif // HAVE(SSL)
 
