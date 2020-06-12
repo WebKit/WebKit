@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<p style="width: 50px">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+
+'use strict';
+
+document.addEventListener("click", event => {});
+
+promise_test(async () => {
+    const initialPageScaleFactor = window.internals.pageScaleFactor();
+
+    // Double tap to zoom in on the text.
+    await UIHelper.humanSpeedDoubleTapAt(30, 100);
+    assert_not_equals(window.internals.pageScaleFactor(), initialPageScaleFactor, "The page zoomed in after double-tapping.");
+
+    // Double tap a second time to zoom out.
+    await UIHelper.humanSpeedDoubleTapAt(30, 100);
+    assert_equals(window.internals.pageScaleFactor(), initialPageScaleFactor, "The page was zoomed back out after double-tapping.");
+
+    document.querySelector("p").remove();
+}, "Testing that double-tapping once on text zooms in and then double-tapping again zooms back out.");
+
+</script>
+</body>
+</html>

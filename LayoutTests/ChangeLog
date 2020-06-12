@@ -1,3 +1,19 @@
+2020-06-12  Antoine Quint  <graouts@webkit.org>
+
+        Double tap to zoom out doesn't work after upgrading to iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=205158
+        <rdar://problem/205158>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test that double taps to zoom in and then double taps to zoom out. This test would fail to zoom
+        out prior to this source change. This test is skipped on iPad since desktop-class browsing mode has
+        heuristics that would prevent the second double-tap to zoom out.
+
+        * fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out-expected.txt: Added.
+        * fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html: Added.
+        * platform/ipad/TestExpectations:
+
 2020-06-12  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r262397): [ Mac wk2 ] inspector/canvas/create-context-webgpu.html is flaky failing.

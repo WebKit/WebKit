@@ -66,3 +66,7 @@ webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-002.html [ Pass ]
 webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-004.html [ Pass ]
 
 media/picture-in-picture [ Pass ]
+
+# This test cannot work on iPad because in desktop mode the double-tap-to-zoom-out would be prevented
+# due to heuristics specific to the desktop-class browsing mode. 
+fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html [ Skip ]

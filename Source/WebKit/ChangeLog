@@ -1,3 +1,19 @@
+2020-06-12  Antoine Quint  <graouts@webkit.org>
+
+        Double tap to zoom out doesn't work after upgrading to iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=205158
+        <rdar://problem/205158>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html
+
+        In order to determine whether a significant zoom to happen, we should use the current page scale
+        factor and not the initial page scale factor.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleSmartMagnificationInformationForPotentialTap:renderRect:fitEntireRect:viewportMinimumScale:viewportMaximumScale:nodeIsRootLevel:]):
+
 2020-06-12  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUserScript initializer SPI with alternative names
