@@ -350,6 +350,28 @@ imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pas
 # UNSUPPORTED tests. Things we must skip.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# WebArchive
+webarchive [ WontFix ]
+http/tests/webarchive [ WontFix ]
+svg/webarchive [ WontFix ]
+svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
+inspector/page/archive.html [ WontFix ]
+
+# WebAuthN
+http/wpt/credential-management/ [ Skip ]
+http/wpt/webauthn/ [ Skip ]
+imported/w3c/web-platform-tests/credential-management/ [ Skip ]
+
+# WebGPU
+webgpu [ Skip ]
+inspector/canvas/create-context-webgpu.html [ Skip ]
+inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
+inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
+inspector/canvas/resolveContext-webgpu.html [ Skip ]
+inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
+inspector/canvas/updateShader-webgpu.html [ Skip ]
+inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////

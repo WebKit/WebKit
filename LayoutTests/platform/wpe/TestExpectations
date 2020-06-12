@@ -130,17 +130,6 @@ webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
-webarchive/ [ WontFix ]
-http/tests/webarchive [ WontFix ]
-svg/webarchive [ WontFix ]
-svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
-
-# Skip anything related to WebAuthN
-# ---------------------------------
-http/wpt/credential-management/ [ Skip ]
-http/wpt/webauthn/ [ Skip ]
-imported/w3c/web-platform-tests/credential-management/ [ Skip ]
-
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
 
@@ -307,16 +296,6 @@ http/tests/cookies/third-party-cookie-relaxing.html [ WontFix Failure ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-2.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
-
-# No WebGPU support yet
-webgpu [ Skip ]
-inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
-inspector/canvas/resolveContext-webgpu.html [ Skip ]
-inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
 # This port doesn't support detecting slow unload handlers.
 Bug(GTK) fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
@@ -696,11 +675,11 @@ webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(WPE) compositing/ [ Skip ]
-Bug(WPE) editing/ [ Skip ]
-Bug(WPE) gamepad/ [ Skip ]
-Bug(WPE) inspector/ [ Skip ]
-Bug(WPE) media/ [ Skip ]
+webkit.org/b/213131 compositing/ [ Skip ]
+webkit.org/b/213131 editing/ [ Skip ]
+webkit.org/b/213131 gamepad/ [ Skip ]
+webkit.org/b/213131 inspector/ [ Skip ]
+webkit.org/b/213131 media/ [ Skip ]
 
 plugins/ [ Skip ]
 http/tests/plugins [ Skip ]
@@ -708,11 +687,11 @@ imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
 imported/blink/plugins/empty-per-context-data.html [ Skip ]
 
 Bug(WPE) fast/autoresize [ Skip ]
-Bug(WPE) fast/files [ Skip ]
-Bug(WPE) fast/forms [ Skip ]
-Bug(WPE) fast/media [ Skip ]
-Bug(WPE) fast/repaint [ Skip ]
-Bug(WPE) fast/speechsynthesis [ Skip ]
+webkit.org/b/213131 fast/files [ Skip ]
+webkit.org/b/213131 fast/forms [ Skip ]
+webkit.org/b/213131 fast/media [ Skip ]
+webkit.org/b/213131 fast/repaint [ Skip ]
+webkit.org/b/213131 fast/speechsynthesis [ Skip ]
 Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
 

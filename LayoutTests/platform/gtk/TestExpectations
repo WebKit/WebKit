@@ -163,13 +163,6 @@ fast/images/pdf-as-tiled-background.html [ WontFix Pass ]
 # Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
 http/tests/cookies/third-party-cookie-relaxing.html [ WontFix Failure ]
 
-# WebKitGTK+ does not support webarchives (via Chromium).
-webarchive [ WontFix ]
-http/tests/webarchive [ WontFix ]
-svg/webarchive [ WontFix ]
-svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
-inspector/page/archive.html [ WontFix ]
-
 # This test is specific to QuickTime media engine.
 media/video-does-not-loop.html [ WontFix Timeout Crash ]
 
@@ -1050,11 +1043,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/credentials.https.html [ Skip ]
 webkit.org/b/175419 [ Release ] http/tests/workers/service/postmessage-after-terminate.https.html [ Pass Failure Timeout ]
 
-# Skip anything related to WebAuthN
-http/wpt/credential-management/ [ Skip ]
-http/wpt/webauthn/ [ Skip ]
-imported/w3c/web-platform-tests/credential-management/ [ Skip ]
-
 # FIXME: This can't be the right bug number.
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
@@ -1122,16 +1110,6 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 # Currently enabled on Mac only
 media/media-usage-state.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
-
-# No support for WebGPU yet
-webkit.org/b/191005 webgpu/ [ Skip ]
-webkit.org/b/191005 inspector/canvas/create-context-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/resolveContext-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/updateShader-webgpu.html [ Skip ]
-webkit.org/b/191005 inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
 
 # No support for screen capture
 fast/mediastream/screencapture-user-gesture.html [ Skip ]
