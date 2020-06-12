@@ -145,11 +145,12 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
 {
     ASSERT(tableBox.isTableBox());
     if (!tableBox.hasChild()) {
-        auto contentWidthAndMargin = geometry().inFlowWidthAndMargin(tableBox, horizontalConstraints, { });
+        auto constraintsPair = ConstraintsPair { { horizontalConstraints, { } }, { horizontalConstraints, { } } };
+        auto computedWidthAndMargin = geometry().computedWidthAndMargin(tableBox, constraintsPair);
         auto& displayBox = formattingState().displayBox(tableBox);
-        displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
-        displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
-        displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
+        displayBox.setContentBoxWidth(computedWidthAndMargin.contentWidth);
+        displayBox.setHorizontalMargin(computedWidthAndMargin.usedMargin);
+        displayBox.setHorizontalComputedMargin(computedWidthAndMargin.computedMargin);
         return;
     }
 
@@ -159,18 +160,34 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
     auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
     if (auto precomputedIntrinsicWidthConstraints = formattingStateForTableBox.intrinsicWidthConstraints())
         intrinsicWidthConstraints = *precomputedIntrinsicWidthConstraints;
-    else
+    else {
         intrinsicWidthConstraints = LayoutContext::createFormattingContext(tableBox, layoutState())->computedIntrinsicWidthConstraints();
-    auto computedTableWidth = geometry().computedWidth(tableBox, horizontalConstraints.logicalWidth);
-    auto usedWidth = computedTableWidth;
-    if (computedTableWidth && intrinsicWidthConstraints.minimum > computedTableWidth) {
-        // Table content needs more space than the table has.
-        usedWidth = intrinsicWidthConstraints.minimum;
-    } else if (!computedTableWidth) {
-        // Use the generic shrink-to-fit-width logic.
-        usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, horizontalConstraints.logicalWidth), intrinsicWidthConstraints.maximum);
+        formattingStateForTableBox.setIntrinsicWidthConstraints(intrinsicWidthConstraints);
     }
-    auto contentWidthAndMargin = geometry().inFlowWidthAndMargin(tableBox, horizontalConstraints, OverrideHorizontalValues { usedWidth, { } });
+
+    auto geometry = this->geometry();
+    auto computedWidth = geometry.computedWidth(tableBox, horizontalConstraints.logicalWidth);
+    auto computedMaxWidth = geometry.computedMaxWidth(tableBox, horizontalConstraints.logicalWidth);
+    auto computedMinWidth = geometry.computedMinWidth(tableBox, horizontalConstraints.logicalWidth);
+    // Use the generic shrink-to-fit-width logic as the initial width for the table.
+    auto usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, horizontalConstraints.logicalWidth), intrinsicWidthConstraints.maximum);
+    if (computedWidth || computedMinWidth || computedMaxWidth) {
+        if (computedWidth) {
+            // Normalize the computed width value first.
+            if (computedMaxWidth && *computedWidth > *computedMaxWidth)
+                computedWidth = computedMaxWidth;
+            if (computedMinWidth && *computedWidth < *computedMinWidth)
+                computedWidth = computedMinWidth;
+            usedWidth = *computedWidth < intrinsicWidthConstraints.minimum ? intrinsicWidthConstraints.minimum : *computedWidth;
+        }
+
+        if (computedMaxWidth && *computedMaxWidth < usedWidth)
+            usedWidth = intrinsicWidthConstraints.minimum;
+        if (computedMinWidth && *computedMinWidth > usedWidth)
+            usedWidth = *computedMinWidth;
+    }
+
+    auto contentWidthAndMargin = geometry.inFlowWidthAndMargin(tableBox, horizontalConstraints, OverrideHorizontalValues { usedWidth, { } });
 
     auto& displayBox = formattingState().displayBox(tableBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);

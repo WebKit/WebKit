@@ -1,3 +1,21 @@
+2020-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for min/max-width
+        https://bugs.webkit.org/show_bug.cgi?id=213111
+
+        Reviewed by Antti Koivisto.
+
+        Apply min/max-width to constrain the available width for the table content. 
+
+        Test: fast/layoutformattingcontext/table-min-max-width-simple.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computedWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+
 2020-06-12  Antti Koivisto  <antti@apple.com>
 
         Relative font size values (em) within CSS animations compound

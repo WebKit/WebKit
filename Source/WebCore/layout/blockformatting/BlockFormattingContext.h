@@ -52,8 +52,8 @@ public:
 
 protected:
     struct ConstraintsPair {
-        const ConstraintsForInFlowContent formattingContextRoot;
-        const ConstraintsForInFlowContent containingBlock;
+        ConstraintsForInFlowContent formattingContextRoot;
+        ConstraintsForInFlowContent containingBlock;
     };
     void placeInFlowPositionedChildren(const ContainerBox&, const HorizontalConstraints&);
 
@@ -69,6 +69,7 @@ protected:
     void precomputeVerticalPositionForBoxAndAncestors(const Box&, const ConstraintsPair&);
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
+
     LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&, const VerticalConstraints&) const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
@@ -84,6 +85,8 @@ protected:
         LayoutUnit staticHorizontalPosition(const Box&, const HorizontalConstraints&) const;
 
         IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
+
+        ContentWidthAndMargin computedWidthAndMargin(const Box&, const ConstraintsPair&);
 
     private:
         ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, const HorizontalConstraints&, const OverrideVerticalValues&);

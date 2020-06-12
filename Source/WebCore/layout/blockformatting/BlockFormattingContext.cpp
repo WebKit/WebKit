@@ -320,39 +320,14 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
 
 void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair& constraintsPair)
 {
-    auto& horizontalConstraints = constraintsPair.containingBlock.horizontal; 
-    auto compute = [&](Optional<LayoutUnit> usedWidth) -> ContentWidthAndMargin {
-        if (layoutBox.isFloatingPositioned())
-            return geometry().floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
-
-        if (layoutBox.isFloatAvoider()) {
-            auto availableWidth = horizontalConstraints.logicalWidth;
-            if (layoutBox.style().logicalWidth().isAuto())
-                availableWidth = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, constraintsPair).valueOr(availableWidth);
-            return geometry().inFlowWidthAndMargin(layoutBox, { horizontalConstraints.logicalLeft, availableWidth }, { usedWidth, { } });
-        }
-
-        if (layoutBox.isInFlow())
-            return geometry().inFlowWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
-
-        ASSERT_NOT_REACHED();
-        return { };
-    };
-
-    auto contentWidthAndMargin = compute({ });
-
-    auto availableWidth = horizontalConstraints.logicalWidth;
-    if (auto maxWidth = geometry().computedMaxWidth(layoutBox, availableWidth)) {
-        auto maxWidthAndMargin = compute(maxWidth);
-        if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
-            contentWidthAndMargin = maxWidthAndMargin;
+    auto adjustedConstraints = constraintsPair;
+    if (layoutBox.isFloatAvoider() && layoutBox.style().logicalWidth().isAuto()) {
+        // Float avoiders' available width might be shrunk by existing floats in the context.
+        if (auto availableWidthForFloatAvoider = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, constraintsPair))
+            adjustedConstraints.containingBlock.horizontal.logicalWidth = *availableWidthForFloatAvoider;
     }
 
-    auto minWidth = geometry().computedMinWidth(layoutBox, availableWidth).valueOr(0);
-    auto minWidthAndMargin = compute(minWidth);
-    if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
-        contentWidthAndMargin = minWidthAndMargin;
-
+    auto contentWidthAndMargin = geometry().computedWidthAndMargin(layoutBox, adjustedConstraints);
     auto& displayBox = formattingState().displayBox(layoutBox);
     displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
     displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);

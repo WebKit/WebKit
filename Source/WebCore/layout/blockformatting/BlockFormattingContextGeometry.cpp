@@ -283,6 +283,36 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(con
     return inFlowReplacedWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overrideHorizontalValues);
 }
 
+ContentWidthAndMargin BlockFormattingContext::Geometry::computedWidthAndMargin(const Box& layoutBox, const ConstraintsPair& constraintsPair)
+{
+    auto& horizontalConstraints = constraintsPair.containingBlock.horizontal;
+    auto compute = [&](Optional<LayoutUnit> usedWidth) {
+        if (layoutBox.isFloatingPositioned())
+            return floatingWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+
+        if (layoutBox.isInFlow())
+            return inFlowWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+
+        ASSERT_NOT_REACHED();
+        return ContentWidthAndMargin { };
+    };
+
+    auto contentWidthAndMargin = compute({ });
+
+    auto availableWidth = horizontalConstraints.logicalWidth;
+    if (auto maxWidth = computedMaxWidth(layoutBox, availableWidth)) {
+        auto maxWidthAndMargin = compute(maxWidth);
+        if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
+            contentWidthAndMargin = maxWidthAndMargin;
+    }
+
+    auto minWidth = computedMinWidth(layoutBox, availableWidth).valueOr(0);
+    auto minWidthAndMargin = compute(minWidth);
+    if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
+        contentWidthAndMargin = minWidthAndMargin;
+    return contentWidthAndMargin;
+}
+
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const Box& layoutBox)
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {

@@ -1,3 +1,13 @@
+2020-06-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add support for min/max-width
+        https://bugs.webkit.org/show_bug.cgi?id=213111
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-min-max-width-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-min-max-width-simple.html: Added.
+
 2020-06-12  Antti Koivisto  <antti@apple.com>
 
         Relative font size values (em) within CSS animations compound

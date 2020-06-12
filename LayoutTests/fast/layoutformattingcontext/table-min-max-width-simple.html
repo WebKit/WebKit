@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ internal:LayoutFormattingContextEnabled=true internal:LayoutFormattingContextIntegrationEnabled=false ] -->
+<style>
+td {
+   padding: 0px; }
+</style>
+<table style="width: 10px;"><tr><td>text content</td></tr></table>
+<table style="width: 500px;"><tr><td>text content</td></tr></table>
+<table style="max-width: 10px;"><tr><td>text content</td></tr></table>
+<table style="max-width: 500px;"><tr><td>text content</td></tr></table>
+<table style="min-width: 10px;"><tr><td>text content</td></tr></table>
+<table style="min-width: 500px;"><tr><td>text content</td></tr></table>
+<table style="min-width: 500px; max-width: 10px;"><tr><td>text content</td></tr></table>
+<table style="min-width: 10px; max-width: 500px;"><tr><td>text content</td></tr></table>
+<table style="width: 200px; min-width: 10px; max-width: 500px;"><tr><td>text content</td></tr></table>
+<table style="width: 5px; min-width: 10px; max-width: 500px;"><tr><td>text content</td></tr></table>
