@@ -1,3 +1,17 @@
+2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [ Mojave wk2 Release ] js/dom/unhandled-promise-rejection-console-no-report.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=212851
+
+        Reviewed by Darin Adler.
+
+        This test is wrong since both onunhandledrejection and setTimeout are driven by macro-tasks.
+        There is no ordering between them so they have race condition, and this race condition makes this
+        the test flaky. We should fix the test. This patch removes the dependency to setTimeout.
+
+        * js/dom/unhandled-promise-rejection-console-no-report-expected.txt:
+        * js/dom/unhandled-promise-rejection-console-no-report.html:
+
 2020-06-12  Antoine Quint  <graouts@webkit.org>
 
         Double tap to zoom out doesn't work after upgrading to iOS 13
