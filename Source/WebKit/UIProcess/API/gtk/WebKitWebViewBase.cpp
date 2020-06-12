@@ -2596,10 +2596,12 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
         }
 #endif
 
+#if !USE(GTK4)
         if (keyval == GDK_KEY_Menu) {
             webkitWebViewBasePopupMenu(GTK_WIDGET(webViewBase));
             return;
         }
+#endif
     }
 
     auto keycode = widgetKeyvalToKeycode(GTK_WIDGET(webViewBase), keyval);
