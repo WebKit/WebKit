@@ -371,7 +371,6 @@ static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *
     gtk_widget_grab_focus(GTK_WIDGET(newWebView));
     g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(webViewReadyToShow), newWindow);
     g_signal_connect(newWebView, "run-as-modal", G_CALLBACK(webViewRunAsModal), newWindow);
-    g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), newWindow);
     return GTK_WIDGET(newWebView);
 }
 

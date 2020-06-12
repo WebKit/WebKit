@@ -1,3 +1,15 @@
+2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Make WebDriver work
+        https://bugs.webkit.org/show_bug.cgi?id=212316
+
+        Reviewed by Adrian Perez de Castro.
+
+        Stop connecting to WebKitWebView::close signal twice for newaly created windows.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewCreate):
+
 2020-06-11  Saam Barati  <sbarati@apple.com>
 
         Skip wasm-js2 test on memory limited devices

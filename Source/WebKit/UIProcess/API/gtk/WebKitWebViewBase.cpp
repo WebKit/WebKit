@@ -2605,7 +2605,9 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
     auto keycode = widgetKeyvalToKeycode(GTK_WIDGET(webViewBase), keyval);
     if (modifiers && shouldTranslate == ShouldTranslateKeyboardState::Yes) {
         auto* display = gtk_widget_get_display(GTK_WIDGET(webViewBase));
-#if !USE(GTK4)
+#if USE(GTK4)
+        gdk_display_translate_key(display, keycode, static_cast<GdkModifierType>(modifiers), 0, &keyval, nullptr, nullptr, nullptr);
+#else
         gdk_keymap_translate_keyboard_state(gdk_keymap_get_for_display(display), keycode, static_cast<GdkModifierType>(modifiers), 0, &keyval, nullptr, nullptr, nullptr);
 #endif
     }

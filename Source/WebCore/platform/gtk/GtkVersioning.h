@@ -58,6 +58,11 @@ gtk_window_get_position(GtkWindow*, int* x, int* y)
 }
 
 static inline void
+gtk_window_move(GtkWindow*, int, int)
+{
+}
+
+static inline void
 gtk_init(int*, char***)
 {
     gtk_init();
@@ -233,6 +238,18 @@ static inline void
 gtk_widget_add_css_class(GtkWidget* widget, const char* name)
 {
     gtk_style_context_add_class(gtk_widget_get_style_context(widget), name);
+}
+
+static inline void
+gtk_window_minimize(GtkWindow* window)
+{
+    gtk_window_iconify(window);
+}
+
+static inline void
+gtk_window_unminimize(GtkWindow* window)
+{
+    gtk_window_deiconify(window);
 }
 
 #endif // USE(GTK4)

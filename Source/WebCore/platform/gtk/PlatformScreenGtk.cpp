@@ -168,15 +168,15 @@ void setScreenDPIObserverHandler(Function<void()>&& handler, void* context)
     }
 }
 
-GdkMonitor* getCurrentScreenMonitor()
+static GRefPtr<GdkMonitor> currentScreenMonitor()
 {
-#if USE(GTK4)
-    return nullptr;
-#else
     GdkDisplay* display = gdk_display_get_default();
     if (!display)
         return nullptr;
 
+#if USE(GTK4)
+    return adoptGRef(static_cast<GdkMonitor*>(g_list_model_get_item(gdk_display_get_monitors(display), 0)));
+#else
     auto* rootWindow = gdk_get_default_root_window();
     if (!rootWindow)
         return nullptr;
@@ -190,24 +190,23 @@ FloatRect screenRect(Widget*)
 {
     GdkRectangle geometry;
 
-    auto* monitor = getCurrentScreenMonitor();
+    auto monitor = currentScreenMonitor();
     if (!monitor)
         return { };
 
-    gdk_monitor_get_geometry(monitor, &geometry);
+    gdk_monitor_get_geometry(monitor.get(), &geometry);
 
     return FloatRect(geometry.x, geometry.y, geometry.width, geometry.height);
 }
 
 FloatRect screenAvailableRect(Widget*)
 {
-    GdkRectangle workArea;
-
-    auto* monitor = getCurrentScreenMonitor();
+    auto monitor = currentScreenMonitor();
     if (!monitor)
         return { };
 
-    gdk_monitor_get_workarea(monitor, &workArea);
+    GdkRectangle workArea;
+    gdk_monitor_get_workarea(monitor.get(), &workArea);
 
     return FloatRect(workArea.x, workArea.y, workArea.width, workArea.height);
 }
