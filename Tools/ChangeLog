@@ -1,5 +1,19 @@
 2020-06-12  Jonathan Bedard  <jbedard@apple.com>
 
+        Support building test runners for watchOS and tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=213128
+        <rdar://problem/64298006>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Link against framework stubs.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: Apply iOS rules to all embedded sdks.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Link against framework stubs.
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig: Apply iOS rules to all embedded sdks.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig: Use watchOS entitlements for tvOS.
+
+2020-06-12  Jonathan Bedard  <jbedard@apple.com>
+
         TestWebKitAPI: Build for watchOS and tvOS
         https://bugs.webkit.org/show_bug.cgi?id=213127
         <rdar://problem/64297979>

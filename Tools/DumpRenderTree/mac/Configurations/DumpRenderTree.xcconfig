@@ -31,8 +31,8 @@ LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 STRIP_STYLE = debugging;
 PRODUCT_NAME = DumpRenderTree;
 SKIP_INSTALL[sdk=macosx*] = NO;
-SKIP_INSTALL[sdk=iphone*] = YES;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.ttf *.TTF *.otf;
+SKIP_INSTALL[sdk=embedded*] = YES;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = *.ttf *.TTF *.otf;
 
 INSTALL_PATH = $(INSTALL_PATH_$(CONFIGURATION))
 INSTALL_PATH_Release = $(INSTALL_PATH);

@@ -32,7 +32,7 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebKitTestRunner;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -lWebKitTestRunner -framework Carbon -framework Cocoa -framework JavaScriptCore -framework WebKit;
 STRIP_STYLE = debugging;
-SKIP_INSTALL[sdk=iphone*] = YES;
+SKIP_INSTALL[sdk=embedded*] = YES;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH));
 EXCLUDED_SOURCE_FILE_NAMES_ = ;
