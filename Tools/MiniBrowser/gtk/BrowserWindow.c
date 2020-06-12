@@ -92,11 +92,6 @@ static void browserWindowSetStatusText(BrowserWindow *window, const char *text)
     browser_tab_set_status_text(window->activeTab, text);
 }
 
-static void resetStatusText(GtkWidget *widget, BrowserWindow *window)
-{
-    browserWindowSetStatusText(window, NULL);
-}
-
 static void activateUriEntryCallback(BrowserWindow *window)
 {
     browser_window_load_uri(window,
@@ -211,15 +206,9 @@ static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *downlo
 }
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
-static void browserWindowHistoryItemSelected(BrowserWindow *window, GtkMenuItem *menuItem)
+static void browserWindowHistoryItemActivated(BrowserWindow *window, GVariant *parameter, GAction *action)
 {
-    WebKitBackForwardListItem *item = g_object_get_data(G_OBJECT(menuItem), "back-forward-list-item");
-    browserWindowSetStatusText(window, item ? webkit_back_forward_list_item_get_uri(item) : NULL);
-}
-
-static void browserWindowHistoryItemActivated(BrowserWindow *window, GtkMenuItem *menuItem)
-{
-    WebKitBackForwardListItem *item = g_object_get_data(G_OBJECT(menuItem), "back-forward-list-item");
+    WebKitBackForwardListItem *item = g_object_get_data(G_OBJECT(action), "back-forward-list-item");
     if (!item)
         return;
 
@@ -227,29 +216,46 @@ static void browserWindowHistoryItemActivated(BrowserWindow *window, GtkMenuItem
     webkit_web_view_go_to_back_forward_list_item(webView, item);
 }
 
-static GtkWidget *browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *list)
+static void browserWindowCreateBackForwardMenu(BrowserWindow *window, GList *list, gboolean isBack)
 {
     if (!list)
-        return NULL;
+        return;
 
-    GtkWidget *menu = gtk_menu_new();
+    static guint64 actionId = 0;
+
+    GSimpleActionGroup *actionGroup = g_simple_action_group_new();
+    GMenu *menu = g_menu_new();
     GList *listItem;
     for (listItem = list; listItem; listItem = g_list_next(listItem)) {
         WebKitBackForwardListItem *item = (WebKitBackForwardListItem *)listItem->data;
         const char *title = webkit_back_forward_list_item_get_title(item);
 
-        GtkWidget *menuItem = gtk_menu_item_new_with_label(title);
-        g_object_set_data_full(G_OBJECT(menuItem), "back-forward-list-item", g_object_ref(item), g_object_unref);
-        g_signal_connect_swapped(menuItem, "select", G_CALLBACK(browserWindowHistoryItemSelected), window);
-        g_signal_connect_swapped(menuItem, "activate", G_CALLBACK(browserWindowHistoryItemActivated), window);
+        char *actionName = g_strdup_printf("action-%lu", ++actionId);
+        GSimpleAction *action = g_simple_action_new(actionName, NULL);
+        g_object_set_data_full(G_OBJECT(action), "back-forward-list-item", g_object_ref(item), g_object_unref);
+        g_signal_connect_swapped(action, "activate", G_CALLBACK(browserWindowHistoryItemActivated), window);
+        g_action_map_add_action(G_ACTION_MAP(actionGroup), G_ACTION(action));
+        g_object_unref(action);
 
-        gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menuItem);
-        gtk_widget_show(menuItem);
+        char *detailedActionName = g_strdup_printf("%s.%s", isBack ? "bf-back" : "bf-forward", actionName);
+        GMenuItem *menuItem = g_menu_item_new(title, detailedActionName);
+        g_menu_append_item(menu, menuItem);
+        g_object_unref(menuItem);
+
+        g_free(detailedActionName);
+        g_free(actionName);
     }
 
-    g_signal_connect(menu, "hide", G_CALLBACK(resetStatusText), window);
+    GtkWidget *popover = gtk_popover_menu_new();
+    gtk_widget_insert_action_group(popover, isBack ? "bf-back" : "bf-forward", G_ACTION_GROUP(actionGroup));
+    g_object_unref(actionGroup);
+    gtk_popover_bind_model(GTK_POPOVER(popover), G_MENU_MODEL(menu), NULL);
+    g_object_unref(menu);
 
-    return menu;
+    GtkWidget *button = isBack ? window->backItem : window->forwardItem;
+    gtk_popover_set_relative_to(GTK_POPOVER(popover), button);
+    gtk_popover_set_position(GTK_POPOVER(popover), GTK_POS_BOTTOM);
+    g_object_set_data(G_OBJECT(button), "history-popover", popover);
 }
 #endif
 
@@ -263,16 +269,31 @@ static void browserWindowUpdateNavigationMenu(BrowserWindow *window, WebKitBackF
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
     GList *list = g_list_reverse(webkit_back_forward_list_get_back_list_with_limit(backForwardlist, 10));
-    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->backItem),
-        browserWindowCreateBackForwardMenu(window, list));
+    browserWindowCreateBackForwardMenu(window, list, TRUE);
     g_list_free(list);
 
     list = webkit_back_forward_list_get_forward_list_with_limit(backForwardlist, 10);
-    gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->forwardItem),
-        browserWindowCreateBackForwardMenu(window, list));
+    browserWindowCreateBackForwardMenu(window, list, FALSE);
     g_list_free(list);
 #endif
 }
+
+#if !GTK_CHECK_VERSION(3, 98, 0)
+static gboolean navigationButtonPressCallback(GtkButton *button, GdkEvent *event, BrowserWindow *window)
+{
+    guint eventButton;
+    gdk_event_get_button(event, &eventButton);
+    if (eventButton != GDK_BUTTON_SECONDARY)
+        return GDK_EVENT_PROPAGATE;
+
+    GtkWidget *popover = g_object_get_data(G_OBJECT(button), "history-popover");
+    if (!popover)
+        return GDK_EVENT_PROPAGATE;
+
+    gtk_popover_popup(GTK_POPOVER(popover));
+    return GDK_EVENT_STOP;
+}
+#endif
 
 static void browserWindowTryCloseCurrentWebView(GSimpleAction *action, GVariant *parameter, gpointer userData)
 {
@@ -445,6 +466,12 @@ static gboolean browserWindowCanZoomOut(BrowserWindow *window)
     return zoomLevel > minimumZoomLevel;
 }
 
+static gboolean browserWindowCanZoomDefault(BrowserWindow *window)
+{
+    WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
+    return webkit_web_view_get_zoom_level(webView) != 1.0;
+}
+
 static gboolean browserWindowZoomIn(BrowserWindow *window)
 {
     if (browserWindowCanZoomIn(window)) {
@@ -488,6 +515,8 @@ static void browserWindowUpdateZoomActions(BrowserWindow *window)
     g_simple_action_set_enabled(G_SIMPLE_ACTION(action), browserWindowCanZoomIn(window));
     action = g_action_map_lookup_action(G_ACTION_MAP(window), "zoom-out");
     g_simple_action_set_enabled(G_SIMPLE_ACTION(action), browserWindowCanZoomOut(window));
+    action = g_action_map_lookup_action(G_ACTION_MAP(window), "zoom-default");
+    g_simple_action_set_enabled(G_SIMPLE_ACTION(action), browserWindowCanZoomDefault(window));
 }
 
 static void webViewZoomLevelChanged(GObject *object, GParamSpec *paramSpec, BrowserWindow *window)
@@ -540,7 +569,8 @@ static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, Browse
 static void webViewIsLoadingChanged(WebKitWebView *webView, GParamSpec *paramSpec, BrowserWindow *window)
 {
     gboolean isLoading = webkit_web_view_is_loading(webView);
-    g_object_set(G_OBJECT(window->reloadOrStopButton), "label", isLoading ? "Stop" : "Reload", "icon-name", isLoading ? "process-stop" : "view-refresh", NULL);
+    GtkWidget *image = gtk_button_get_image(GTK_BUTTON(window->reloadOrStopButton));
+    g_object_set(image, "icon-name", isLoading ? "process-stop-symbolic" : "view-refresh-symbolic", NULL);
 }
 
 static void zoomInCallback(GSimpleAction *action, GVariant *parameter, gpointer userData)
@@ -772,17 +802,36 @@ static void browserWindowDispose(GObject *gObject)
 }
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
-static GtkWidget *
-browserWindowSetupEditorToolbarItem(BrowserWindow* window, GtkWidget* toolbar, GType type, const char* label, const char* namedIcon, const char* actionName)
-{
-    GtkWidget *item = g_object_new(type, "icon-name", namedIcon, NULL);
-    gtk_widget_set_name(item, label);
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), label);
-    gtk_actionable_set_action_name(GTK_ACTIONABLE(item), actionName);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(item), -1);
-    gtk_widget_show(item);
+typedef enum {
+    TOOLBAR_BUTTON_NORMAL,
+    TOOLBAR_BUTTON_TOGGLE,
+    TOOLBAR_BUTTON_MENU
+} ToolbarButtonType;
 
-    return item;
+static GtkWidget *addToolbarButton(GtkWidget* toolbar, ToolbarButtonType type, const char* iconName, const char *actionName)
+{
+    GtkWidget *button;
+    switch (type) {
+    case TOOLBAR_BUTTON_NORMAL:
+        button = gtk_button_new_from_icon_name(iconName, GTK_ICON_SIZE_MENU);
+        break;
+    case TOOLBAR_BUTTON_TOGGLE:
+        button = gtk_toggle_button_new();
+        break;
+    case TOOLBAR_BUTTON_MENU:
+        button = gtk_menu_button_new();
+        break;
+    }
+    if (type != TOOLBAR_BUTTON_NORMAL)
+        gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_icon_name(iconName, GTK_ICON_SIZE_MENU));
+
+    gtk_widget_set_focus_on_click(button, FALSE);
+    if (actionName)
+        gtk_actionable_set_action_name(GTK_ACTIONABLE(button), actionName);
+    gtk_container_add(GTK_CONTAINER(toolbar), button);
+    gtk_widget_show(button);
+
+    return button;
 }
 #endif
 
@@ -806,87 +855,65 @@ static const GActionEntry editActions[] = {
 static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 {
 #if !GTK_CHECK_VERSION(3, 98, 0)
-    GtkWidget *toolbar = gtk_toolbar_new();
+    GtkWidget *toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     window->editToolbar = toolbar;
-    gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
-    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+    gtk_widget_set_margin_top(toolbar, 2);
+    gtk_widget_set_margin_bottom(toolbar, 2);
+    gtk_widget_set_margin_start(toolbar, 2);
+    gtk_widget_set_margin_end(toolbar, 2);
 
     GSimpleActionGroup *actionGroup = g_simple_action_group_new();
     g_action_map_add_action_entries(G_ACTION_MAP(actionGroup), editActions, G_N_ELEMENTS(editActions), window);
     gtk_widget_insert_action_group(toolbar, "edit", G_ACTION_GROUP(actionGroup));
     g_object_unref(actionGroup);
 
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOGGLE_TOOL_BUTTON, "Bold", "format-text-bold", "edit.Bold");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOGGLE_TOOL_BUTTON, "Italic", "format-text-italic", "edit.Italic");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOGGLE_TOOL_BUTTON, "Underline", "format-text-underline", "edit.Underline");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOGGLE_TOOL_BUTTON, "Strikethrough", "format-text-strikethrough", "edit.Strikethrough");
+    GtkWidget *groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_TOGGLE, "format-text-bold-symbolic", "edit.Bold");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_TOGGLE, "format-text-italic-symbolic", "edit.Italic");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_TOGGLE, "format-text-underline-symbolic", "edit.Underline");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_TOGGLE, "format-text-strikethrough-symbolic", "edit.Strikethrough");
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
 
-    GtkToolItem *item = gtk_separator_tool_item_new();
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
+    groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "edit-cut-symbolic", "edit.Cut");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "edit-copy-symbolic", "edit.Copy");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "edit-paste-symbolic", "edit.Paste");
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
 
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, WEBKIT_EDITING_COMMAND_CUT, "edit-cut", "edit.Cut");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, WEBKIT_EDITING_COMMAND_COPY, "edit-copy", "edit.Copy");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, WEBKIT_EDITING_COMMAND_PASTE, "edit-paste", "edit.Paste");
+    groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "edit-undo-symbolic", "edit.Undo");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "edit-redo-symbolic", "edit.Redo");
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
 
-    item = gtk_separator_tool_item_new();
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
+    groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-justify-left-symbolic", "edit.JustifyLeft");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-justify-center-symbolic", "edit.JustifyCenter");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-justify-right-symbolic", "edit.JustifyRight");
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
 
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, WEBKIT_EDITING_COMMAND_UNDO, "edit-undo", "edit.Undo");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, WEBKIT_EDITING_COMMAND_REDO, "edit-redo", "edit.Redo");
+    groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-indent-more-symbolic", "edit.Indent");
+    addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "format-indent-less-symbolic", "edit.Outdent");
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
 
-    item = gtk_separator_tool_item_new();
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    item = gtk_radio_tool_button_new(NULL);
-    GSList *justifyRadioGroup = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(item));
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "format-justify-left");
-    gtk_actionable_set_action_name(GTK_ACTIONABLE(item), "edit.JustifyLeft");
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Justify Left");
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    item = gtk_radio_tool_button_new(justifyRadioGroup);
-    justifyRadioGroup = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(item));
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "format-justify-center");
-    gtk_actionable_set_action_name(GTK_ACTIONABLE(item), "edit.JustifyCenter");
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Justify Center");
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    item = gtk_radio_tool_button_new(justifyRadioGroup);
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "format-justify-right");
-    gtk_actionable_set_action_name(GTK_ACTIONABLE(item), "edit.JustifyRight");
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Justify Right");
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    item = gtk_separator_tool_item_new();
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Indent", "format-indent-more", "edit.Indent");
-    browserWindowSetupEditorToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Outdent", "format-indent-less", "edit.Outdent");
-
-    item = gtk_separator_tool_item_new();
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    item = gtk_tool_button_new(NULL, NULL);
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "insert-image");
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Insert Image");
-    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(insertImageCommandCallback), window);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
-
-    item = gtk_tool_button_new(NULL, NULL);
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "insert-link");
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Insert Link");
-    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(insertLinkCommandCallback), window);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
+    groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
+    GtkWidget *button = addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "insert-image-symbolic", NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(insertImageCommandCallback), window);
+    button = addToolbarButton(groupBox, TOOLBAR_BUTTON_NORMAL, "insert-link-symbolic", NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(insertLinkCommandCallback), window);
+    gtk_box_pack_start(GTK_BOX(toolbar), groupBox, FALSE, FALSE, 0);
+    gtk_widget_show(groupBox);
 
     gtk_box_pack_start(GTK_BOX(window->mainBox), toolbar, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(window->mainBox), toolbar, 1);
@@ -967,20 +994,82 @@ static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow* window, GtkBox* b
 
     return button;
 }
-#else
-static GtkWidget* browserWindowSetupToolbarItem(BrowserWindow *window, GtkWidget *toolbar, GType type, const char *label, const char *namedIcon, const char *actionName)
-{
-    GtkWidget *item = g_object_new(type, "icon-name", namedIcon, NULL);
-    if (type == GTK_TYPE_MENU_TOOL_BUTTON)
-        gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(item), 0);
-    gtk_actionable_set_action_name(GTK_ACTIONABLE(item), actionName);
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), label);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(item), -1);
-    gtk_widget_show(item);
-
-    return item;
-}
 #endif
+
+static void browserWindowBuildPopoverMenu(BrowserWindow *window, GtkWidget *parent)
+{
+    GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    gtk_widget_set_margin_top(vbox, 12);
+    gtk_widget_set_margin_bottom(vbox, 12);
+
+    GtkWidget *zoomBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_margin_start(zoomBox, 12);
+    gtk_widget_set_margin_end(zoomBox, 12);
+    gtk_box_set_homogeneous(GTK_BOX(zoomBox), TRUE);
+    gtk_style_context_add_class(gtk_widget_get_style_context(zoomBox), GTK_STYLE_CLASS_LINKED);
+    GtkWidget *button = gtk_button_new_from_icon_name("zoom-out-symbolic", GTK_ICON_SIZE_MENU);
+    gtk_widget_set_halign(button, GTK_ALIGN_FILL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.zoom-out");
+    gtk_container_add(GTK_CONTAINER(zoomBox), button);
+    gtk_widget_show(button);
+
+    button = gtk_button_new_from_icon_name("zoom-original-symbolic", GTK_ICON_SIZE_MENU);
+    gtk_widget_set_halign(button, GTK_ALIGN_FILL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.zoom-default");
+    gtk_container_add(GTK_CONTAINER(zoomBox), button);
+    gtk_widget_show(button);
+
+    button = gtk_button_new_from_icon_name("zoom-in-symbolic", GTK_ICON_SIZE_MENU);
+    gtk_widget_set_halign(button, GTK_ALIGN_FILL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.zoom-in");
+    gtk_container_add(GTK_CONTAINER(zoomBox), button);
+    gtk_widget_show(button);
+
+    gtk_box_pack_start(GTK_BOX(vbox), zoomBox, FALSE, FALSE, 0);
+    gtk_widget_show(zoomBox);
+
+    GtkWidget *menuBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_margin_start(menuBox, 12);
+    gtk_widget_set_margin_end(menuBox, 12);
+
+    GtkWidget *separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_set_margin_top(separator, 6);
+    gtk_widget_set_margin_bottom(separator, 6);
+    gtk_box_pack_start(GTK_BOX(menuBox), separator, FALSE, FALSE, 0);
+    gtk_widget_show(separator);
+
+    button = gtk_model_button_new();
+    g_object_set(button, "text", "_New Private Window", NULL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.open-private-window");
+    gtk_box_pack_start(GTK_BOX(menuBox), button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    button = gtk_model_button_new();
+    g_object_set(button, "text", "_Print…", NULL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.print");
+    gtk_box_pack_start(GTK_BOX(menuBox), button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    button = gtk_model_button_new();
+    g_object_set(button, "text", "Prefere_nces…", NULL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.preferences");
+    gtk_box_pack_start(GTK_BOX(menuBox), button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    button = gtk_model_button_new();
+    g_object_set(button, "text", "_Quit", NULL);
+    gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win.quit");
+    gtk_box_pack_start(GTK_BOX(menuBox), button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    gtk_box_pack_start(GTK_BOX(vbox), menuBox, FALSE, FALSE, 0);
+    gtk_widget_show(menuBox);
+
+    GtkWidget *popover = gtk_popover_new(parent);
+    gtk_menu_button_set_popover(GTK_MENU_BUTTON(parent), popover);
+    gtk_container_add(GTK_CONTAINER(popover), vbox);
+    gtk_widget_show(vbox);
+}
 
 static const GActionEntry actions[] = {
     { "reload", reloadPage, NULL, NULL, NULL, { 0 } },
@@ -1034,36 +1123,33 @@ static void browser_window_init(BrowserWindow *window)
     window->reloadOrStopButton = browserWindowSetupToolbarItem(window, GTK_BOX(box), "view-refresh", G_CALLBACK(reloadOrStopCallback));
     gtk_center_box_set_start_widget(GTK_CENTER_BOX(toolbar), box);
 #else
-    GtkWidget *toolbar = gtk_toolbar_new();
+    GtkWidget *toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     window->toolbar = toolbar;
-    gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
-    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+    gtk_widget_set_margin_top(toolbar, 2);
+    gtk_widget_set_margin_bottom(toolbar, 2);
+    gtk_widget_set_margin_start(toolbar, 2);
+    gtk_widget_set_margin_end(toolbar, 2);
 
-    window->backItem = browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_MENU_TOOL_BUTTON, "Back", "go-previous", "win.go-back");
-    window->forwardItem = browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_MENU_TOOL_BUTTON, "Forward", "go-next", "win.go-forward");
-    browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Preferences", "preferences-system", "win.preferences");
+    GtkWidget *navigationBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(navigationBox), GTK_STYLE_CLASS_LINKED);
 
-    browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Zoom Out", "zoom-out", "win.zoom-out");
-    browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Zoom In", "zoom-in", "win.zoom-in");
+    window->backItem = addToolbarButton(navigationBox, TOOLBAR_BUTTON_NORMAL, "go-previous-symbolic", "win.go-back");
+    g_signal_connect(window->backItem, "button-press-event", G_CALLBACK(navigationButtonPressCallback), window);
+    window->forwardItem = addToolbarButton(navigationBox, TOOLBAR_BUTTON_NORMAL, "go-next-symbolic", "win.go-forward");
+    g_signal_connect(window->forwardItem, "button-press-event", G_CALLBACK(navigationButtonPressCallback), window);
+    gtk_box_pack_start(GTK_BOX(toolbar), navigationBox, FALSE, FALSE, 0);
+    gtk_widget_show(navigationBox);
 
-    browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Find", "edit-find", "win.find");
+    addToolbarButton(toolbar, TOOLBAR_BUTTON_NORMAL, "go-home-symbolic", "win.load-homepage");
+    addToolbarButton(toolbar, TOOLBAR_BUTTON_NORMAL, "tab-new-symbolic", "win.new-tab");
 
-    browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Home", "go-home", "win.load-homepage");
-
-    GtkToolItem *item = gtk_tool_button_new(gtk_image_new_from_icon_name("tab-new", GTK_ICON_SIZE_SMALL_TOOLBAR), NULL);
-    gtk_actionable_set_action_name(GTK_ACTIONABLE(item), "win.new-tab");
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "New Tab");
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show_all(GTK_WIDGET(item));
-
-    item = gtk_tool_item_new();
-    gtk_tool_item_set_expand(item, TRUE);
-    gtk_container_add(GTK_CONTAINER(item), window->uriEntry);
+    gtk_box_pack_start(GTK_BOX(toolbar), window->uriEntry, TRUE, TRUE, 0);
     gtk_widget_show(window->uriEntry);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_show(GTK_WIDGET(item));
 
-    window->reloadOrStopButton = browserWindowSetupToolbarItem(window, toolbar, GTK_TYPE_TOOL_BUTTON, "Reload", "view-refresh", "win-reload-stop");
+    window->reloadOrStopButton = addToolbarButton(toolbar, TOOLBAR_BUTTON_NORMAL, "view-refresh-symbolic", "win.reload-stop");
+    addToolbarButton(toolbar, TOOLBAR_BUTTON_NORMAL, "edit-find-symbolic", "win.find");
+    GtkWidget *button = addToolbarButton(toolbar, TOOLBAR_BUTTON_MENU, "open-menu-symbolic", NULL);
+    browserWindowBuildPopoverMenu(window, button);
 #endif
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     window->mainBox = vbox;

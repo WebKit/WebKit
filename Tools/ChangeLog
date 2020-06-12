@@ -1,5 +1,29 @@
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] MiniBrowser: stop using GtkToolbar
+        https://bugs.webkit.org/show_bug.cgi?id=212898
+
+        Reviewed by Adrian Perez de Castro.
+
+        GtkToolbar iss no longer available in GTK4, use a GtkBox with buttons instead. Also use symbolic icons and move
+        some of the actions to a gear menu.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowHistoryItemActivated):
+        (browserWindowCreateBackForwardMenu):
+        (browserWindowUpdateNavigationMenu):
+        (navigationButtonPressCallback):
+        (browserWindowCanZoomDefault):
+        (browserWindowUpdateZoomActions):
+        (webViewIsLoadingChanged):
+        (addToolbarButton):
+        (browserWindowBuildPopoverMenu):
+        (resetStatusText): Deleted.
+        (browserWindowHistoryItemSelected): Deleted.
+        (browserWindowSetupEditorToolbarItem): Deleted.
+
+2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] MiniBrowser: stop using GtkToolbar for the search bar
         https://bugs.webkit.org/show_bug.cgi?id=212817
 
