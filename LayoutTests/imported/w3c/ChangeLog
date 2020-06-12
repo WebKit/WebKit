@@ -1,3 +1,17 @@
+2020-06-11  Sam Weinig  <weinig@apple.com>
+
+        Document.currentScript does not work for SVGScriptElements
+        https://bugs.webkit.org/show_bug.cgi?id=213104
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript-expected.txt:
+        Update test results after making currentScript work with SVGScriptElements.
+
+        * web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden-meta.tentative.sub-expected.txt:
+        * web-platform-tests/content-security-policy/nonce-hiding/svgscript-nonces-hidden.tentative-expected.txt:
+        Update results. Not passing, but getting further. 
+
 2020-06-11  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Reimport WPT tests removed in r262809

@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLScriptElement.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "InlineClassicScript.h"
 #include "LoadableClassicScript.h"
@@ -393,7 +394,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
         return;
 
     IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
-    CurrentScriptIncrementer currentScriptIncrementer(document, m_element);
+    CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %{public}s async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
     frame->script().evaluateIgnoringException(sourceCode);
@@ -412,7 +413,7 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
         return;
 
     IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(&document);
-    CurrentScriptIncrementer currentScriptIncrementer(document, m_element);
+    CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, "Execute Script Element", "executing module script");
     frame->script().linkAndEvaluateModuleScript(loadableModuleScript);

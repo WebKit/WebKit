@@ -1,3 +1,16 @@
+2020-06-11  Sam Weinig  <weinig@apple.com>
+
+        Document.currentScript does not work for SVGScriptElements
+        https://bugs.webkit.org/show_bug.cgi?id=213104
+
+        Reviewed by Yusuke Suzuki.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument currentScript]):
+        Update to account for change in Document::currentScript() now returning an
+        Element* that can be either an HTMLScriptElement or an SVGScriptElement. To
+        keep API compatibility, only return non-null for HTMLScriptElements.
+
 2020-06-12  Keith Rollin  <krollin@apple.com>
 
         Add dependencies for Migrate Headers and Generate Export Files build phases

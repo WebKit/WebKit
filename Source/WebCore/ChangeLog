@@ -1,3 +1,43 @@
+2020-06-11  Sam Weinig  <weinig@apple.com>
+
+        Document.currentScript does not work for SVGScriptElements
+        https://bugs.webkit.org/show_bug.cgi?id=213104
+
+        Reviewed by Yusuke Suzuki.
+
+        Updates results for existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add CurrentScriptIncrementer.h to the Xcode project as it was missing.
+
+        * dom/CurrentScriptIncrementer.h:
+        (WebCore::CurrentScriptIncrementer::CurrentScriptIncrementer):
+        (WebCore::CurrentScriptIncrementer::~CurrentScriptIncrementer):
+        Re-work using ScriptElement, removing the HTMLScriptElement checks. Also changes
+        scriptType check to explicitly check that against classic scripts, as they are
+        the only supported type, and if any types other than modules are added in the 
+        future, we would not want this to change behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::pushCurrentScript):
+        * dom/Document.h:
+        (WebCore::Document::currentScript const):
+        Use an Element, rather than an HTMLScriptElement for currentScript/currentScriptStack
+        so that either an HTMLScriptElement or an SVGScriptElement can be stored. Using a 
+        ScriptElement would be possible, but would complicate the implementation unnecessarily
+        by requiring currentScript to have an additional checks before extracting the Element.
+        Variant<RefPtr<HTMLScriptElement>, RefPtr<SVGScriptElement>> could also have been used
+        but also would unnecessarily complicated the interface and caused more memory to be used. 
+
+        * dom/Document.idl:
+        Update interface to use Element rather HTMLScriptElement with a comment explaining why we
+        are not using HTMLOrSVGScriptElement but retaining the same observable behavior.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeClassicScript):
+        (WebCore::ScriptElement::executeModuleScript):
+        Pass *this directly to CurrentScriptIncrementer to simplify implementation.
+
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Make WebDriver work

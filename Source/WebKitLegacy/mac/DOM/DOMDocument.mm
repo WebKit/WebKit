@@ -404,7 +404,10 @@
 - (DOMHTMLScriptElement *)currentScript
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->currentScript()));
+    WebCore::Element* element = IMPL->currentScript();
+    if (!is<WebCore::HTMLScriptElement>(element))
+        return nil;
+    return kit(WTF::getPtr(downcast<WebCore::HTMLScriptElement>(element)));
 }
 
 - (NSString *)origin

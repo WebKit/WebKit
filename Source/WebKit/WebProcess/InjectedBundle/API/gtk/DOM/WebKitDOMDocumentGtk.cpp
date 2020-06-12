@@ -1908,8 +1908,10 @@ WebKitDOMHTMLScriptElement* webkit_dom_document_get_current_script(WebKitDOMDocu
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::HTMLScriptElement> gobjectResult = WTF::getPtr(item->currentScript());
-    return WebKit::kit(gobjectResult.get());
+    WebCore::Element* element = item->currentScript();
+    if (!is<WebCore::HTMLScriptElement>(element))
+        return nullptr;
+    return WebKit::kit(downcast<WebCore::HTMLScriptElement>(element));
 }
 
 gchar* webkit_dom_document_get_origin(WebKitDOMDocument* self)

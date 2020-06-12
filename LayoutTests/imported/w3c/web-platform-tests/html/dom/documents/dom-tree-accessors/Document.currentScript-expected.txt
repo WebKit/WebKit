@@ -13,11 +13,7 @@ PASS Script script-window-error
 PASS Script timeout 
 PASS Script eval 
 PASS Script xhr-test 
-FAIL Script script-svg assert_array_equals: expected property 0 to be Element node <script id="script-svg">
-    verify('script-svg');
-    fi... but got null (expected array [Element node <script id="script-svg">
-    verify('script-svg');
-    fi...] got [null])
+PASS Script script-svg 
 PASS Script script-async 
 PASS Script script-defer 
 PASS Script script-async-false 

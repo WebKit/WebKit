@@ -31,6 +31,8 @@ typedef (
     ImageBitmapRenderingContext or 
     CanvasRenderingContext2D) RenderingContext;
 
+typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
+
 [
     Constructor,
     ConstructorCallWith=Document,
@@ -100,7 +102,10 @@ typedef (
     readonly attribute HTMLCollection forms; // Should be [SameObject].
     readonly attribute HTMLCollection scripts; // Should be [SameObject].
     NodeList getElementsByName([AtomString] DOMString elementName);
-    readonly attribute HTMLScriptElement? currentScript; // FIXME: Should return a HTMLOrSVGScriptElement.
+    
+    // currentScript is specified to use type HTMLOrSVGScriptElement?, but implemented using
+    // shared base type Element? to optimize implementation without an observable difference.
+    readonly attribute Element? currentScript;
 
     // dynamic markup insertion
     // FIXME: The HTML spec says this should consult the "responsible document". We should ensure
