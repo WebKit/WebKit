@@ -768,7 +768,6 @@ set(WebCore_NON_SVG_IDL_FILES
     fileapi/BlobPropertyBag.idl
     fileapi/EndingType.idl
     fileapi/File.idl
-    fileapi/FileError.idl
     fileapi/FileList.idl
     fileapi/FileReader.idl
     fileapi/FileReaderSync.idl

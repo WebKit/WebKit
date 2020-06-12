@@ -4,14 +4,14 @@ Test reading a blob containing non-existent file
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 Test reading a blob containing existent and non-existent file
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 Test reading a blob containing empty file

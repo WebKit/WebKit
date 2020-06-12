@@ -2952,7 +2952,6 @@ JSFetchRequestRedirect.cpp
 JSFetchResponse.cpp
 JSFile.cpp
 JSFileCallback.cpp
-JSFileError.cpp
 JSFileList.cpp
 JSFileReader.cpp
 JSFileReaderSync.cpp

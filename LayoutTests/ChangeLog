@@ -1,3 +1,24 @@
+2020-06-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Change FileReader.error to DOMException from obsoleted FileError
+        https://bugs.webkit.org/show_bug.cgi?id=213117
+
+        Reviewed by Chris Dumez.
+
+        By the [lastest spec](https://w3c.github.io/FileAPI/),
+        `FileReader.error` should return `DOMException`
+        and this change remove `FileError` from exposed interfaces.
+
+        * fast/files/file-reader-abort-expected.txt:
+        * fast/files/file-reader-abort-using-open-panel-expected.txt:
+        * fast/files/read-blob-async-expected.txt:
+        * fast/files/read-file-async-expected.txt:
+        * fast/files/workers/worker-read-blob-async-expected.txt:
+        * fast/files/workers/worker-read-file-async-expected.txt:
+          Update to `DOMException` error code from `FileError` error code.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/FileAPI/historical.https-expected.txt:
+          FileError should not be exposed.
+
 2020-06-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add support for min/max-width

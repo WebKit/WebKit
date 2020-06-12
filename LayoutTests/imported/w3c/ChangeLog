@@ -1,3 +1,13 @@
+2020-06-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Change FileReader.error to DOMException from obsoleted FileError
+        https://bugs.webkit.org/show_bug.cgi?id=213117
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/FileAPI/historical.https-expected.txt:
+          FileError should not be exposed.
+
 2020-06-11  Sam Weinig  <weinig@apple.com>
 
         Document.currentScript does not work for SVGScriptElements

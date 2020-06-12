@@ -1,6 +1,6 @@
 
 PASS "toNativeLineEndings" should not be supported 
-FAIL "FileError" should not be supported assert_false: expected false got true
+PASS "FileError" should not be supported 
 PASS "FileException" should not be supported 
 PASS "FileHandle" should not be supported 
 PASS "FileRequest" should not be supported 

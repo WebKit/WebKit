@@ -704,7 +704,6 @@ $(PROJECT_DIR)/fileapi/BlobCallback.idl
 $(PROJECT_DIR)/fileapi/BlobPropertyBag.idl
 $(PROJECT_DIR)/fileapi/EndingType.idl
 $(PROJECT_DIR)/fileapi/File.idl
-$(PROJECT_DIR)/fileapi/FileError.idl
 $(PROJECT_DIR)/fileapi/FileList.idl
 $(PROJECT_DIR)/fileapi/FileReader.idl
 $(PROJECT_DIR)/fileapi/FileReaderSync.idl

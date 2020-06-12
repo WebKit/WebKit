@@ -34,6 +34,7 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
+#include "FileError.h"
 #include "FileReaderLoader.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 
@@ -72,7 +73,7 @@ ExceptionOr<String> FileReaderSync::readAsDataURL(ScriptExecutionContext& script
     return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
-static ExceptionOr<void> errorCodeToException(FileError::ErrorCode errorCode)
+ExceptionOr<void> FileReaderSync::errorCodeToException(FileError::ErrorCode errorCode)
 {
     switch (errorCode) {
     case FileError::OK:

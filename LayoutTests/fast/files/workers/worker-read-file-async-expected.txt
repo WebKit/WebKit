@@ -4,28 +4,28 @@ Test reading a non-existent file as array buffer
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 Test reading a non-existent file as binary string
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 Test reading a non-existent file as text
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 Test reading a non-existent file as data URL
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 Test reading an empty file as array buffer
@@ -208,7 +208,7 @@ Test reading again after failed read
 readyState: 0
 Received error event
 readyState: 2
-error code: 1
+error code: 8
 result: null
 Received loadend event
 readyState after recalling read method: 1

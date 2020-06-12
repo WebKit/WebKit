@@ -600,8 +600,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFile.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFile.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileCallback.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileError.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileReader.cpp

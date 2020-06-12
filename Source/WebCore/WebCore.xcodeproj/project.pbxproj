@@ -832,7 +832,6 @@
 		2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99CC10E2BBDA00496337 /* JSBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E37DFD812DBAFB800A6B233 /* DOMURL.h */; };
 		2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E37E00412DBC5A400A6B233 /* JSDOMURL.h */; };
-		2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BC0C9117D3E0800B9409A /* JSFileError.h */; };
 		2E4346460F546A8200B0F1BA /* Worker.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346340F546A8200B0F1BA /* Worker.h */; };
 		2E4346490F546A8200B0F1BA /* WorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346370F546A8200B0F1BA /* WorkerGlobalScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E43464B0F546A8200B0F1BA /* WorkerGlobalScopeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346390F546A8200B0F1BA /* WorkerGlobalScopeProxy.h */; };
@@ -6943,8 +6942,6 @@
 		2E37DFD912DBAFB800A6B233 /* DOMURL.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMURL.idl; sourceTree = "<group>"; };
 		2E37E00312DBC5A400A6B233 /* JSDOMURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMURL.cpp; sourceTree = "<group>"; };
 		2E37E00412DBC5A400A6B233 /* JSDOMURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMURL.h; sourceTree = "<group>"; };
-		2E3BC0C8117D3E0800B9409A /* JSFileError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileError.cpp; sourceTree = "<group>"; };
-		2E3BC0C9117D3E0800B9409A /* JSFileError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileError.h; sourceTree = "<group>"; };
 		2E4346330F546A8200B0F1BA /* Worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Worker.cpp; sourceTree = "<group>"; };
 		2E4346340F546A8200B0F1BA /* Worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Worker.h; sourceTree = "<group>"; };
 		2E4346350F546A8200B0F1BA /* Worker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Worker.idl; sourceTree = "<group>"; };
@@ -15282,7 +15279,6 @@
 		E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptController.cpp; sourceTree = "<group>"; };
 		E1AB1EA814E9E27D00449E13 /* FileList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileList.idl; sourceTree = "<group>"; };
 		E1AB1EB714E9E35800449E13 /* File.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = File.idl; sourceTree = "<group>"; };
-		E1AB1EBB14E9E37A00449E13 /* FileError.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FileError.idl; sourceTree = "<group>"; };
 		E1AB1EBD14E9E3A800449E13 /* FileReaderSync.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FileReaderSync.idl; sourceTree = "<group>"; };
 		E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = MessagePort.h; sourceTree = "<group>"; };
 		E1ADECBE0E76ACF1004A1A5E /* MessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessagePort.cpp; sourceTree = "<group>"; };
@@ -21938,8 +21934,6 @@
 				7C77C3DA1DEF86D700A50BFA /* JSEndingType.h */,
 				BC00F0100E0A189500FD04E3 /* JSFile.cpp */,
 				BC00F0110E0A189500FD04E3 /* JSFile.h */,
-				2E3BC0C8117D3E0800B9409A /* JSFileError.cpp */,
-				2E3BC0C9117D3E0800B9409A /* JSFileError.h */,
 				BC00F0120E0A189500FD04E3 /* JSFileList.cpp */,
 				BC00F0130E0A189500FD04E3 /* JSFileList.h */,
 				2E94F439119207DA00B7F75D /* JSFileReader.cpp */,
@@ -22927,7 +22921,6 @@
 				E1AB1EB714E9E35800449E13 /* File.idl */,
 				E164A2E7191AC5BB0010737D /* FileCocoa.mm */,
 				976D6C64122B8A3D001FD1F7 /* FileError.h */,
-				E1AB1EBB14E9E37A00449E13 /* FileError.idl */,
 				976D6C66122B8A3D001FD1F7 /* FileList.cpp */,
 				976D6C67122B8A3D001FD1F7 /* FileList.h */,
 				E1AB1EA814E9E27D00449E13 /* FileList.idl */,
@@ -31394,7 +31387,6 @@
 				8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */,
 				BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */,
 				8370568E1F50915700D93425 /* JSFileCallback.h in Headers */,
-				2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */,
 				BC00F0170E0A189500FD04E3 /* JSFileList.h in Headers */,
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
 				898785F5122E1EAC003AABDA /* JSFileReaderSync.h in Headers */,

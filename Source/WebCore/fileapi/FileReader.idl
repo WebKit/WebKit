@@ -52,7 +52,7 @@
 
     readonly attribute (DOMString or ArrayBuffer)? result;
 
-    readonly attribute FileError error;
+    readonly attribute DOMException? error;
 
     attribute EventHandler onloadstart;
     attribute EventHandler onprogress;

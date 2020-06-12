@@ -733,7 +733,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/fileapi/BlobPropertyBag.idl \
     $(WebCore)/fileapi/EndingType.idl \
     $(WebCore)/fileapi/File.idl \
-    $(WebCore)/fileapi/FileError.idl \
     $(WebCore)/fileapi/FileList.idl \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
