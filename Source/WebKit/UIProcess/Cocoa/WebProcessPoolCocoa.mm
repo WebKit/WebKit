@@ -466,6 +466,14 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (!_MGCacheValid())
         [adoptNS([[objc_getClass("MobileGestaltHelperProxy") alloc] init]) proxyRebuildCache];
 #endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)
+    if ([UIApplication sharedApplication]) {
+        auto state = [[UIApplication sharedApplication] applicationState];
+        if (state == UIApplicationStateActive)
+            startObservingPreferenceChanges();
+    }
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

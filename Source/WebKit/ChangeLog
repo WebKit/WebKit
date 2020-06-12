@@ -1,3 +1,18 @@
+2020-06-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Preferences are not being observed if the process pool is being created after activation
+        https://bugs.webkit.org/show_bug.cgi?id=213145
+
+        Reviewed by Brent Fulgham.
+
+        If the app is creating the Web process pool after being activated, preferences will not be observed until the app is being backgrounded
+        and then foregrounded again, since the preference observer is initialized when handling the app activation notification.
+
+        No new tests, since an API test would make sense in this case, but API tests aren't run on iOS.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-06-12  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement functions to use ResourceLoadStatistics.
