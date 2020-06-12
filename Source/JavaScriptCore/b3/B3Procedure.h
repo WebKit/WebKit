@@ -133,7 +133,7 @@ public:
     Value* addIntConstant(Value*, int64_t value);
 
     // bits is a bitwise_cast of the constant you want.
-    Value* addConstant(Origin, Type, uint64_t bits);
+    JS_EXPORT_PRIVATE Value* addConstant(Origin, Type, uint64_t bits);
 
     // You're guaranteed that bottom is zero.
     Value* addBottom(Origin, Type);

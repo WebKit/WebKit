@@ -1,5 +1,51 @@
 2020-06-11  Saam Barati  <sbarati@apple.com>
 
+        Linear Scan uses the wrong Interval for spills for tmps with roles of early def or late use
+        https://bugs.webkit.org/show_bug.cgi?id=213055
+        <rdar://problem/59874018>
+
+        Reviewed by Yusuke Suzuki.
+
+        There was a bug in linear scan when computing the live range interval for
+        spill tmps that had early defs or late uses.  When linear scan spills a
+        tmp, it creates a new tmp that it loads to and stores from, and replaces the old tmp
+        with the new tmp, and emits stores/loads around pertinent instructions. The live
+        interval for such tmps is small by nature, it's contained in the interval for the
+        instruction itself. However, we'd build this interval purely based off the
+        original tmp's arg timing. So, for example, let's consider a program like this:
+        
+        RandoInsn: LateUse:Tmp1, Use:Tmp2, [early = N, late = N+1]
+        Let's say that Tmp1's last use is RandoInsn, and it had a def before
+        RandoInsn, therefore, its live range will be something like:
+        [J where J < N, N+1]
+        
+        and now imagine we spilled Tmp1 for some reason, and rewrote the
+        program to be:
+        Move Addr(spill for Tmp1), TmpSpill
+        RandoInsn: LateUse:TmpSpill, Use:Tmp2, [early = N, late = N+1]
+        
+        We used to incorrectly mark the live range for TmpSpill to just be [N+1, N+2).
+        However, the bug here is that we neglected that TmpSpill actually had an earlier
+        def at [N, N+1). So, the live range for TmpSpill was wrong. This could incorrectly
+        lead us to allocate Tmp2 and TmpSpill to the same register, since their live
+        ranges may not intersect if Tmp2 dies at RandoInsn.
+        
+        We also had the symmetric bug for EarlyDefs: we wouldn't account for the
+        store-spill that'd happen after something like RandoInsn.
+        
+        The fix is to account for the loads/stores of spill tmps when assigning
+        them a live range.
+        
+        This patch contains a standalone test in testair. It also fixes crashes we had when
+        running B3O1 tests using typed arrays on arm64e since we had patchpoints that utilized
+        LateUse for signing and auth.
+
+        * b3/B3Procedure.h:
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/testair.cpp:
+
+2020-06-11  Saam Barati  <sbarati@apple.com>
+
         Replace uses of black/white list with block/allow list
         https://bugs.webkit.org/show_bug.cgi?id=213084
 
