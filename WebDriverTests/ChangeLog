@@ -1,3 +1,11 @@
+2020-06-12  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Add remaining WPE failures to expectations.
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2020-06-08  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][WPE] Gardening most of the remaining WPE failures.

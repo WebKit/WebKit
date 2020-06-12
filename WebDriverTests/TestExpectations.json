@@ -210,7 +210,7 @@
     "imported/w3c/webdriver/tests/perform_actions/pointer_contextmenu.py": {
         "subtests": {
             "test_release_control_click": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213060"}}
             }
         }
     },
@@ -345,6 +345,14 @@
         }
     },
 
+    "imported/w3c/webdriver/tests/perform_actions/key_shortcuts.py": {
+        "subtests": {
+            "test_mod_a_mod_c_right_mod_v_pastes_text": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/213122"}}
+            }
+        }
+    },
+
     "imported/w3c/webdriver/tests/release_actions/sequence.py": {
         "subtests": {
             "test_release_char_sequence_sends_keyup_events_in_reverse": {
@@ -383,6 +391,14 @@
         "subtests": {
             "test_input[color-#ff0000-#000000]": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/180645"}}
+            }
+        }
+    },
+
+    "imported/w3c/webdriver/tests/element_click/bubbling.py": {
+        "subtests": {
+            "test_spin_event_loop": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/213129"}}
             }
         }
     },
