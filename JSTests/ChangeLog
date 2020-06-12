@@ -1,3 +1,23 @@
+2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add sampling-profiler code-origin lookup test
+        https://bugs.webkit.org/show_bug.cgi?id=213108
+        <rdar://problem/52044072>
+
+        Reviewed by Saam Barati.
+
+        This is fixed by r262920. This patch just adds a test additionally.
+        We are keeping CallSiteIndex valid until corresponding JIT stub is destroyed.
+        This fixes SamplingProfiler too since SamplingProfiler also collects CallSiteIndex and gets corresponding CodeOrigin.
+        Since SamplingProfiler does this CallSiteIndex => CodeOrigin before running GC finalizer, validity of CallSiteIndex
+        should be kept correctly.
+
+        * stress/sampling-profiler-code-origin.js: Added.
+        (let.oThrow.get f):
+        (foo):
+        (return.get f):
+        (f):
+
 2020-06-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Return DisposableCallSiteIndex when destroying GCAwareJITStubRoutineWithExceptionHandler
