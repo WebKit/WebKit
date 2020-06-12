@@ -1,3 +1,15 @@
+2020-06-12  Antoine Quint  <graouts@webkit.org>
+
+        Double tap to zoom out doesn't work after upgrading to iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=205158
+        <rdar://problem/205158>
+
+        Unreviewed. Make the test that was previously added into a test that can be run on iPad instead
+        of having to be skipped.
+
+        * fast/events/ios/fast-click-double-tap-to-zoom-in-on-text-and-then-again-to-zoom-out.html:
+        * platform/ipad/TestExpectations:
+
 2020-06-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r262618): Very slow typing in a github issue

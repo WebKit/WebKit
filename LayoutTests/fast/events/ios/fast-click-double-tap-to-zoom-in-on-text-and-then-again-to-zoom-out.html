@@ -1,4 +1,8 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true contentMode=mobile ] -->
+<!--
+    This test cannot work on iPad because in desktop mode the double-tap-to-zoom-out would be prevented
+    due to heuristics specific to the desktop-class browsing mode.
+-->
 <html>
 <head>
 <meta charset=utf-8>
