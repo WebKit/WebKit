@@ -28,50 +28,57 @@
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
 
-static const char *searchEntryFailedStyle = "GtkEntry#searchEntry {background-color: #ff6666;}";
-
 struct _BrowserSearchBar {
-    GtkToolbar parent;
+    GtkSearchBar parent;
 
     WebKitWebView *webView;
     GtkWidget *entry;
-    GtkCssProvider *cssProvider;
     GtkWidget *prevButton;
     GtkWidget *nextButton;
-    GtkWidget *optionsMenu;
+    GMenu *optionsMenu;
     GtkWidget *caseCheckButton;
     GtkWidget *begginigWordCheckButton;
     GtkWidget *capitalAsBegginigWordCheckButton;
 };
 
-G_DEFINE_TYPE(BrowserSearchBar, browser_search_bar, GTK_TYPE_TOOLBAR)
+G_DEFINE_TYPE(BrowserSearchBar, browser_search_bar, GTK_TYPE_SEARCH_BAR)
 
 static void setFailedStyleForEntry(BrowserSearchBar *searchBar, gboolean failedSearch)
 {
-    gtk_css_provider_load_from_data(searchBar->cssProvider, failedSearch ? searchEntryFailedStyle : "", -1, NULL);
+    if (failedSearch)
+        gtk_style_context_add_class(gtk_widget_get_style_context(searchBar->entry), "search-failed");
+    else
+        gtk_style_context_remove_class(gtk_widget_get_style_context(searchBar->entry), "search-failed");
 }
 
 static void doSearch(BrowserSearchBar *searchBar)
 {
     GtkEntry *entry = GTK_ENTRY(searchBar->entry);
-
     if (!gtk_entry_get_text_length(entry)) {
-        webkit_find_controller_search_finish(webkit_web_view_get_find_controller(searchBar->webView));
-        gtk_entry_set_icon_from_icon_name(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
         setFailedStyleForEntry(searchBar, FALSE);
+        webkit_find_controller_search_finish(webkit_web_view_get_find_controller(searchBar->webView));
         return;
     }
 
-    if (!gtk_entry_get_icon_name(entry, GTK_ENTRY_ICON_SECONDARY))
-        gtk_entry_set_icon_from_icon_name(entry, GTK_ENTRY_ICON_SECONDARY, "edit-clear");
-
     WebKitFindOptions options = WEBKIT_FIND_OPTIONS_WRAP_AROUND;
-    if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(searchBar->caseCheckButton)))
+    GActionGroup *actionGroup = gtk_widget_get_action_group(GTK_WIDGET(searchBar), "find");
+    GAction *action = g_action_map_lookup_action(G_ACTION_MAP(actionGroup), "case-sensitive");
+    GVariant *state = g_action_get_state(action);
+    if (!g_variant_get_boolean(state))
         options |= WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE;
-    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(searchBar->begginigWordCheckButton)))
+    g_variant_unref(state);
+
+    action = g_action_map_lookup_action(G_ACTION_MAP(actionGroup), "beginning-word");
+    state = g_action_get_state(action);
+    if (g_variant_get_boolean(state))
         options |= WEBKIT_FIND_OPTIONS_AT_WORD_STARTS;
-    if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(searchBar->capitalAsBegginigWordCheckButton)))
+    g_variant_unref(state);
+
+    action = g_action_map_lookup_action(G_ACTION_MAP(actionGroup), "capital-as-beginning-word");
+    state = g_action_get_state(action);
+    if (g_variant_get_boolean(state))
         options |= WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START;
+    g_variant_unref(state);
 
     const gchar *text = gtk_entry_get_text(entry);
     webkit_find_controller_search(webkit_web_view_get_find_controller(searchBar->webView), text, options, G_MAXUINT);
@@ -87,24 +94,20 @@ static void searchPrevious(BrowserSearchBar *searchBar)
     webkit_find_controller_search_previous(webkit_web_view_get_find_controller(searchBar->webView));
 }
 
-static void searchCloseButtonClickedCallback(BrowserSearchBar *searchBar)
-{
-    browser_search_bar_close(searchBar);
-}
-
 static void searchEntryMenuIconPressedCallback(BrowserSearchBar *searchBar, GtkEntryIconPosition iconPosition, GdkEvent *event)
 {
-    if (iconPosition == GTK_ENTRY_ICON_PRIMARY)
-        gtk_menu_popup_at_pointer(GTK_MENU(searchBar->optionsMenu), event);
+    if (iconPosition != GTK_ENTRY_ICON_PRIMARY)
+        return;
+
+    GtkWidget *popover = gtk_popover_new_from_model(searchBar->entry, G_MENU_MODEL(searchBar->optionsMenu));
+    GdkRectangle rect;
+    gtk_entry_get_icon_area(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, &rect);
+    gtk_popover_set_pointing_to(GTK_POPOVER(popover), &rect);
+    gtk_popover_set_position(GTK_POPOVER(popover), GTK_POS_BOTTOM);
+    gtk_popover_popup(GTK_POPOVER(popover));
 }
 
-static void searchEntryClearIconReleasedCallback(BrowserSearchBar *searchBar, GtkEntryIconPosition iconPosition)
-{
-    if (iconPosition == GTK_ENTRY_ICON_SECONDARY)
-        gtk_entry_set_text(GTK_ENTRY(searchBar->entry), "");
-}
-
-static void searchEntryChangedCallback(GtkEntry *entry, BrowserSearchBar *searchBar)
+static void searchEntryChangedCallback(GtkSearchEntry *entry, BrowserSearchBar *searchBar)
 {
     doSearch(searchBar);
 }
@@ -124,9 +127,10 @@ static void searchNextButtonCallback(GSimpleAction *action, GVariant *parameter,
     searchNext(BROWSER_SEARCH_BAR(userData));
 }
 
-static void searchMenuCheckButtonToggledCallback(BrowserSearchBar *searchBar)
+static void searchMenuCheckButtonToggledCallback(GSimpleAction *action, GVariant *state, gpointer userData)
 {
-    doSearch(searchBar);
+    g_simple_action_set_state(action, state);
+    doSearch(BROWSER_SEARCH_BAR(userData));
 }
 
 static void findControllerFailedToFindTextCallback(BrowserSearchBar *searchBar)
@@ -142,6 +146,9 @@ static void findControllerFoundTextCallback(BrowserSearchBar *searchBar)
 static const GActionEntry actions[] = {
     { "next", searchNextButtonCallback, NULL, NULL, NULL, { 0 } },
     { "previous", searchPreviousButtonCallback, NULL, NULL, NULL, { 0 } },
+    { "case-sensitive", NULL, NULL, "false", searchMenuCheckButtonToggledCallback, { 0 } },
+    { "beginning-word", NULL, NULL, "false", searchMenuCheckButtonToggledCallback, { 0 } },
+    { "capital-as-beginning-word", NULL, NULL, "false", searchMenuCheckButtonToggledCallback, { 0 } }
 };
 
 static void browser_search_bar_init(BrowserSearchBar *searchBar)
@@ -151,71 +158,50 @@ static void browser_search_bar_init(BrowserSearchBar *searchBar)
     gtk_widget_insert_action_group(GTK_WIDGET(searchBar), "find", G_ACTION_GROUP(actionGroup));
     g_object_unref(actionGroup);
 
-    gtk_widget_set_hexpand(GTK_WIDGET(searchBar), TRUE);
+    GtkWidget *hBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    GtkStyleContext *styleContext = gtk_widget_get_style_context(hBox);
+    gtk_style_context_add_class(styleContext, GTK_STYLE_CLASS_LINKED);
+    gtk_style_context_add_class(styleContext, GTK_STYLE_CLASS_RAISED);
 
-    GtkToolItem *toolItem = gtk_tool_item_new();
-    gtk_tool_item_set_expand(toolItem, TRUE);
-    gtk_toolbar_insert(GTK_TOOLBAR(searchBar), toolItem, 0);
+    searchBar->entry = gtk_search_entry_new();
+    gtk_entry_set_icon_activatable(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, TRUE);
+    gtk_entry_set_icon_sensitive(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, TRUE);
+    gtk_entry_set_icon_tooltip_text(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, "Search options");
+    gtk_box_pack_start(GTK_BOX(hBox), searchBar->entry, TRUE, TRUE, 0);
+    gtk_widget_show(searchBar->entry);
 
-    GtkBox *hBox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5));
-    gtk_box_set_homogeneous(hBox, TRUE);
-    gtk_container_add(GTK_CONTAINER(toolItem), GTK_WIDGET(hBox));
+    GtkCssProvider *cssProvider = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(cssProvider, ".search-failed { background-color: #ff6666; }", -1, NULL);
+    gtk_style_context_add_provider(gtk_widget_get_style_context(searchBar->entry), GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    g_object_unref(cssProvider);
 
-    gtk_box_pack_start(hBox, gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0), TRUE, TRUE, 0);
-
-    searchBar->entry = gtk_entry_new();
-    gtk_widget_set_name(searchBar->entry, "searchEntry");
-    gtk_entry_set_placeholder_text(GTK_ENTRY(searchBar->entry), "Search");
-    gtk_entry_set_icon_from_icon_name(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, "edit-find");
-    gtk_box_pack_start(hBox, searchBar->entry, TRUE, TRUE, 0);
-
-    searchBar->cssProvider = gtk_css_provider_new();
-    gtk_style_context_add_provider(gtk_widget_get_style_context(searchBar->entry), GTK_STYLE_PROVIDER(searchBar->cssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-    GtkBox *hBoxButtons = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
-    gtk_box_pack_start(hBox, GTK_WIDGET(hBoxButtons), TRUE, TRUE, 0);
-
-    searchBar->prevButton = gtk_button_new_from_icon_name("go-up", GTK_ICON_SIZE_SMALL_TOOLBAR);
+    searchBar->prevButton = gtk_button_new_from_icon_name("go-up-symbolic", GTK_ICON_SIZE_MENU);
     GtkButton *button = GTK_BUTTON(searchBar->prevButton);
     gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "find.previous");
-    gtk_button_set_relief(button, GTK_RELIEF_NONE);
     gtk_widget_set_focus_on_click(searchBar->prevButton, FALSE);
-    gtk_box_pack_start(hBoxButtons, searchBar->prevButton, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hBox), searchBar->prevButton, FALSE, FALSE, 0);
+    gtk_widget_show(searchBar->prevButton);
 
-    searchBar->nextButton = gtk_button_new_from_icon_name("go-down", GTK_ICON_SIZE_SMALL_TOOLBAR);
+    searchBar->nextButton = gtk_button_new_from_icon_name("go-down-symbolic", GTK_ICON_SIZE_MENU);
     button = GTK_BUTTON(searchBar->nextButton);
     gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "find.next");
-    gtk_button_set_relief(button, GTK_RELIEF_NONE);
     gtk_widget_set_focus_on_click(searchBar->nextButton, FALSE);
-    gtk_box_pack_start(hBoxButtons, searchBar->nextButton, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hBox), searchBar->nextButton, FALSE, FALSE, 0);
+    gtk_widget_show(searchBar->nextButton);
 
-    GtkWidget *closeButton = gtk_button_new_from_icon_name("window-close", GTK_ICON_SIZE_SMALL_TOOLBAR);
-    gtk_button_set_relief(GTK_BUTTON(closeButton), GTK_RELIEF_NONE);
-    gtk_widget_set_focus_on_click(closeButton, FALSE);
-    gtk_box_pack_end(hBoxButtons, closeButton, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(searchBar), hBox);
+    gtk_widget_show(hBox);
+    gtk_search_bar_connect_entry(GTK_SEARCH_BAR(searchBar), GTK_ENTRY(searchBar->entry));
+    gtk_widget_show(GTK_WIDGET(searchBar));
 
-    searchBar->optionsMenu = g_object_ref_sink(gtk_menu_new());
+    searchBar->optionsMenu = g_menu_new();
+    g_menu_append(searchBar->optionsMenu, "Ca_se sensitive", "find.case-sensitive");
+    g_menu_append(searchBar->optionsMenu, "Only at the _beginning of words", "find.beginning-word");
+    g_menu_append(searchBar->optionsMenu, "Capital _always as beginning of word", "find.capital-as-beginning-word");
 
-    searchBar->caseCheckButton = gtk_check_menu_item_new_with_mnemonic("Ca_se sensitive");
-    gtk_container_add(GTK_CONTAINER(searchBar->optionsMenu), searchBar->caseCheckButton);
-
-    searchBar->begginigWordCheckButton = gtk_check_menu_item_new_with_mnemonic("Only at the _beginning of words");
-    gtk_container_add(GTK_CONTAINER(searchBar->optionsMenu), searchBar->begginigWordCheckButton);
-
-    searchBar->capitalAsBegginigWordCheckButton = gtk_check_menu_item_new_with_mnemonic("Capital _always as beginning of word");
-    gtk_container_add(GTK_CONTAINER(searchBar->optionsMenu), searchBar->capitalAsBegginigWordCheckButton);
-
-    g_signal_connect_swapped(closeButton, "clicked", G_CALLBACK(searchCloseButtonClickedCallback), searchBar);
     g_signal_connect_swapped(searchBar->entry, "icon-press", G_CALLBACK(searchEntryMenuIconPressedCallback), searchBar);
-    g_signal_connect_swapped(searchBar->entry, "icon-release", G_CALLBACK(searchEntryClearIconReleasedCallback), searchBar);
-    g_signal_connect_after(searchBar->entry, "changed", G_CALLBACK(searchEntryChangedCallback), searchBar);
+    g_signal_connect_after(searchBar->entry, "search-changed", G_CALLBACK(searchEntryChangedCallback), searchBar);
     g_signal_connect_swapped(searchBar->entry, "activate", G_CALLBACK(searchEntryActivatedCallback), searchBar);
-    g_signal_connect_swapped(searchBar->caseCheckButton, "toggled", G_CALLBACK(searchMenuCheckButtonToggledCallback), searchBar);
-    g_signal_connect_swapped(searchBar->begginigWordCheckButton, "toggled", G_CALLBACK(searchMenuCheckButtonToggledCallback), searchBar);
-    g_signal_connect_swapped(searchBar->capitalAsBegginigWordCheckButton, "toggled", G_CALLBACK(searchMenuCheckButtonToggledCallback), searchBar);
-
-    gtk_widget_show_all(GTK_WIDGET(toolItem));
-    gtk_widget_show_all(searchBar->optionsMenu);
 }
 
 static void browserSearchBarFinalize(GObject *gObject)
@@ -225,11 +211,6 @@ static void browserSearchBarFinalize(GObject *gObject)
     if (searchBar->webView) {
         g_object_unref(searchBar->webView);
         searchBar->webView = NULL;
-    }
-
-    if (searchBar->cssProvider) {
-        g_object_unref(searchBar->cssProvider);
-        searchBar->cssProvider = NULL;
     }
 
     if (searchBar->optionsMenu) {
@@ -253,6 +234,7 @@ GtkWidget *browser_search_bar_new(WebKitWebView *webView)
 
     GtkWidget *searchBar = GTK_WIDGET(g_object_new(BROWSER_TYPE_SEARCH_BAR, NULL));
     BROWSER_SEARCH_BAR(searchBar)->webView = g_object_ref(webView);
+    gtk_search_bar_set_show_close_button(GTK_SEARCH_BAR(searchBar), TRUE);
 
     WebKitFindController *controller = webkit_web_view_get_find_controller(webView);
     g_signal_connect_swapped(controller, "failed-to-find-text", G_CALLBACK(findControllerFailedToFindTextCallback), searchBar);
@@ -265,22 +247,22 @@ void browser_search_bar_open(BrowserSearchBar *searchBar)
 {
     g_return_if_fail(BROWSER_IS_SEARCH_BAR(searchBar));
 
-    GtkEntry *entry = GTK_ENTRY(searchBar->entry);
-
-    gtk_widget_show(GTK_WIDGET(searchBar));
-    gtk_widget_grab_focus(GTK_WIDGET(entry));
-    gtk_editable_select_region(GTK_EDITABLE(entry), 0, -1);
-    if (gtk_entry_get_text_length(entry))
-        doSearch(searchBar);
+    gtk_search_bar_set_search_mode(GTK_SEARCH_BAR(searchBar), TRUE);
 }
 
 void browser_search_bar_close(BrowserSearchBar *searchBar)
 {
     g_return_if_fail(BROWSER_IS_SEARCH_BAR(searchBar));
 
-    gtk_widget_hide(GTK_WIDGET(searchBar));
-    WebKitFindController *controller = webkit_web_view_get_find_controller(searchBar->webView);
-    webkit_find_controller_search_finish(controller);
+    gtk_search_bar_set_search_mode(GTK_SEARCH_BAR(searchBar), FALSE);
+}
+
+gboolean browser_search_bar_is_open(BrowserSearchBar *searchBar)
+{
+    g_return_val_if_fail(BROWSER_IS_SEARCH_BAR(searchBar), FALSE);
+
+    GtkWidget *revealer = gtk_bin_get_child(GTK_BIN(searchBar));
+    return gtk_revealer_get_reveal_child(GTK_REVEALER(revealer));
 }
 
 #endif

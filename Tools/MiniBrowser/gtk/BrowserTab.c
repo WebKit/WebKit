@@ -625,7 +625,7 @@ void browser_tab_start_search(BrowserTab *tab)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
 #if !GTK_CHECK_VERSION(3, 98, 0)
-    if (!gtk_widget_get_visible(GTK_WIDGET(tab->searchBar)))
+    if (!browser_search_bar_is_open(tab->searchBar))
         browser_search_bar_open(tab->searchBar);
 #endif
 }
@@ -634,7 +634,7 @@ void browser_tab_stop_search(BrowserTab *tab)
 {
     g_return_if_fail(BROWSER_IS_TAB(tab));
 #if !GTK_CHECK_VERSION(3, 98, 0)
-    if (gtk_widget_get_visible(GTK_WIDGET(tab->searchBar)))
+    if (browser_search_bar_is_open(tab->searchBar))
         browser_search_bar_close(tab->searchBar);
 #endif
 }

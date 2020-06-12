@@ -44,7 +44,7 @@ typedef struct _BrowserSearchBar       BrowserSearchBar;
 typedef struct _BrowserSearchBarClass  BrowserSearchBarClass;
 
 struct _BrowserSearchBarClass {
-    GtkToolbarClass parent_class;
+    GtkSearchBarClass parent_class;
 };
 
 GType browser_search_bar_get_type(void);
@@ -52,6 +52,8 @@ GType browser_search_bar_get_type(void);
 GtkWidget *browser_search_bar_new(WebKitWebView *);
 void browser_search_bar_open(BrowserSearchBar *);
 void browser_search_bar_close(BrowserSearchBar *);
+gboolean browser_search_bar_is_open(BrowserSearchBar *);
+
 
 G_END_DECLS
 

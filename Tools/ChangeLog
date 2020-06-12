@@ -1,5 +1,33 @@
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] MiniBrowser: stop using GtkToolbar for the search bar
+        https://bugs.webkit.org/show_bug.cgi?id=212817
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use a GtkSearchBar instead, because GtkToolbar is no longer available in GTK4. Also use a GtkPopover for the
+        options menu instead of the GtkMenu.
+
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        (setFailedStyleForEntry):
+        (doSearch):
+        (searchEntryMenuIconPressedCallback):
+        (searchEntryChangedCallback):
+        (searchMenuCheckButtonToggledCallback):
+        (browserSearchBarFinalize):
+        (browser_search_bar_new):
+        (browser_search_bar_open):
+        (browser_search_bar_close):
+        (browser_search_bar_is_open):
+        (searchCloseButtonClickedCallback): Deleted.
+        (searchEntryClearIconReleasedCallback): Deleted.
+        * MiniBrowser/gtk/BrowserSearchBar.h:
+        * MiniBrowser/gtk/BrowserTab.c:
+        (browser_tab_start_search):
+        (browser_tab_stop_search):
+
+2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK4] Make WebDriver work
         https://bugs.webkit.org/show_bug.cgi?id=212316
 
