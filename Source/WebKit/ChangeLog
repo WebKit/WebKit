@@ -1,3 +1,35 @@
+2020-06-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement functions to use ResourceLoadStatistics.
+        https://bugs.webkit.org/show_bug.cgi?id=207692
+
+        Reviewed by Don Olmstead.
+
+        Implement functions which are required to implement ResourceLoadStatistics for Curl port.
+
+        In NetworkDataTaskCurl.cpp we check if we should block cookies and block if needed.
+
+        Tests: http/tests/resourceLoadStatistics/
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::NetworkDataTaskCurl):
+        (WebKit::NetworkDataTaskCurl::createCurlRequest):
+        (WebKit::NetworkDataTaskCurl::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCurl::blockCookies):
+        (WebKit::NetworkDataTaskCurl::unblockCookies):
+        (WebKit::NetworkDataTaskCurl::shouldBlockCookies):
+        (WebKit::NetworkDataTaskCurl::isThirdPartyRequest):
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+        * NetworkProcess/curl/NetworkSessionCurl.cpp:
+        (WebKit::NetworkSessionCurl::NetworkSessionCurl):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreGetAllStorageAccessEntries):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+
 2020-06-12  Antoine Quint  <graouts@webkit.org>
 
         Double tap to zoom out doesn't work after upgrading to iOS 13

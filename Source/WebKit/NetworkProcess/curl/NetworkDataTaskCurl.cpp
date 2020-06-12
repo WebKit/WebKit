@@ -44,8 +44,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation)
+NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, FrameIdentifier frameID, PageIdentifier& pageID, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation, WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
+    , m_frameID(frameID)
+    , m_pageID(pageID)
+    , m_shouldRelaxThirdPartyCookieBlocking(shouldRelaxThirdPartyCookieBlocking)
 {
     if (m_scheduledFailureType != NoFailure)
         return;
@@ -66,6 +69,12 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
                 m_session->networkStorageSession()->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistenceNone), request.url());
         }
     }
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (shouldBlockCookies(request))
+        blockCookies();
+#endif
+    restrictRequestReferrerToOriginIfNeeded(request);
 
     m_curlRequest = createCurlRequest(WTFMove(request));
     if (!m_initialCredential.isEmpty()) {
@@ -124,7 +133,7 @@ NetworkDataTask::State NetworkDataTaskCurl::state() const
 
 Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(ResourceRequest&& request, RequestStatus status)
 {
-    if (status == RequestStatus::NewRequest)
+    if (status == RequestStatus::NewRequest && !m_blockingCookies)
         appendCookieHeader(request);
 
     // Creates a CurlRequest in suspended state.
@@ -296,6 +305,10 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         }
     }
 
+#if ENABLE(RESOURCE_LOAD_STATISTCS)
+    if (!m_blockingCookies && shouldBlockCookies(request))
+        blockCookies();
+#endif
     auto response = ResourceResponse(m_response);
     m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = makeRef(*this), didChangeCredential, isCrossOrigin](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
@@ -308,6 +321,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
             m_startTime = MonotonicTime::now();
 
         auto requestCopy = newRequest;
+        restrictRequestReferrerToOriginIfNeeded(requestCopy);
         m_curlRequest = createCurlRequest(WTFMove(requestCopy));
         if (didChangeCredential && !m_initialCredential.isEmpty()) {
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
@@ -461,6 +475,39 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
             m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
         }
     }
+}
+
+void NetworkDataTaskCurl::blockCookies()
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    m_blockingCookies = true;
+#endif
+}
+
+void NetworkDataTaskCurl::unblockCookies()
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    m_blockingCookies = false;
+#endif
+}
+
+bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& request)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
+
+    if (!shouldBlockCookies && m_session->networkStorageSession())
+        shouldBlockCookies = m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID, m_shouldRelaxThirdPartyCookieBlocking);
+
+    if (shouldBlockCookies)
+        return true;
+#endif
+    return false;
+}
+
+bool NetworkDataTaskCurl::isThirdPartyRequest(const WebCore::ResourceRequest& request)
+{
+    return !WebCore::areRegistrableDomainsEqual(request.url(), request.firstPartyForCookies());
 }
 
 } // namespace WebKit

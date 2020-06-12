@@ -1,3 +1,19 @@
+2020-06-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement functions to use ResourceLoadStatistics.
+        https://bugs.webkit.org/show_bug.cgi?id=207692
+
+        Reviewed by Don Olmstead.
+
+        Implement functions which are required to implement ResourceLoadStatistics for Curl port.
+
+        Tests: http/tests/resourceLoadStatistics/
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::GetAllStorageAccessEntriesCallbackContext::GetAllStorageAccessEntriesCallbackContext):
+        (WTR::getAllStorageAccessEntriesCallback):
+        (WTR::TestController::getAllStorageAccessEntries):
+
 2020-06-12  Jonathan Bedard  <jbedard@apple.com>
 
         Support building test runners for watchOS and tvOS

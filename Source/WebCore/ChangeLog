@@ -1,3 +1,27 @@
+2020-06-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement functions to use ResourceLoadStatistics.
+        https://bugs.webkit.org/show_bug.cgi?id=207692
+
+        Reviewed by Don Olmstead.
+
+        Implement functions which are required to implement ResourceLoadStatistics for Curl port.
+
+        Tests: http/tests/resourceLoadStatistics/
+
+        * CMakeLists.txt:
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::openDatabase):
+        (WebCore::CookieJarDB::setCookie):
+        (WebCore::CookieJarDB::allDomains):
+        (WebCore::CookieJarDB::deleteCookiesForHostname):
+        * platform/network/curl/CookieJarDB.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::setCookies):
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+        (WebCore::NetworkStorageSession::getHostnamesWithCookies):
+
 2020-06-12  Andres Gonzalez  <andresg_22@apple.com>
 
         In isolated tree mode 2, AXIsolatedObject::setChildrenIDs should be called only on secondary thread.

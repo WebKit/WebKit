@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "CookieJarDB.h"
+#include "cookieJar.h"
 
 #include "CookieUtil.h"
 #include "Logging.h"
@@ -63,6 +64,8 @@ namespace WebCore {
     "CREATE INDEX IF NOT EXISTS domain_index ON Cookie(domain);"
 #define CREATE_PATH_INDEX_SQL \
     "CREATE INDEX IF NOT EXISTS path_index ON Cookie(path);"
+#define SELECT_ALL_DOMAINS_SQL \
+    "SELECT DISTINCT domain FROM Cookie;"
 #define CHECK_EXISTS_COOKIE_SQL \
     "SELECT domain FROM Cookie WHERE ((domain = ?) OR (domain GLOB ?));"
 #define CHECK_EXISTS_HTTPONLY_COOKIE_SQL \
@@ -76,6 +79,10 @@ namespace WebCore {
     "DELETE FROM Cookie WHERE name = ? AND domain = ?;"
 #define DELETE_ALL_SESSION_COOKIE_SQL \
     "DELETE FROM Cookie WHERE session = 1;"
+#define DELETE_COOKIES_BY_DOMAIN_SQL \
+    "DELETE FROM Cookie WHERE domain = ? ;"
+#define DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL \
+    "DELETE FROM Cookie WHERE (domain = ?) AND (httponly = 0);"
 #define DELETE_ALL_COOKIE_SQL \
     "DELETE FROM Cookie;"
 
@@ -165,6 +172,8 @@ bool CookieJarDB::openDatabase()
     createPrepareStatement(CHECK_EXISTS_HTTPONLY_COOKIE_SQL);
     createPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL);
     createPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_SQL);
+    createPrepareStatement(DELETE_COOKIES_BY_DOMAIN_SQL);
+    createPrepareStatement(DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL);
 
     return true;
 }
@@ -529,7 +538,7 @@ bool CookieJarDB::setCookie(const Cookie& cookie)
     return checkSQLiteReturnCode(statement.step());
 }
 
-bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String& body, CookieJarDB::Source source)
+bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String& body, CookieJarDB::Source source, Optional<Seconds> cappedLifetime)
 {
     if (!isEnabled() || !m_database.isOpen())
         return false;
@@ -550,7 +559,29 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
     if (!canAcceptCookie(*cookie, firstParty, url, source))
         return false;
 
+    if (cappedLifetime && cookie->expires) {
+        ASSERT(*cappedLifetime >= 0_s);
+        auto cappedExpires = WallTime::now() + *cappedLifetime;
+        if (cappedExpires < WallTime::fromRawSeconds(*cookie->expires / WTF::msPerSecond))
+            cookie->expires = cappedExpires.secondsSinceEpoch().milliseconds();
+    }
+
     return setCookie(*cookie);
+}
+
+HashSet<String> CookieJarDB::allDomains()
+{
+    SQLiteStatement statement(m_database, SELECT_ALL_DOMAINS_SQL);
+    statement.prepare();
+
+    HashSet<String> domains;
+    while (statement.step() == SQLITE_ROW) {
+        auto domain = statement.getColumnText(0);
+        domains.add(domain);
+    }
+
+    statement.finalize();
+    return domains;
 }
 
 bool CookieJarDB::deleteCookie(const String& url, const String& name)
@@ -587,6 +618,13 @@ bool CookieJarDB::deleteCookies(const String&)
     // NOT IMPLEMENTED
     // TODO: this function will be called if application calls WKCookieManagerDeleteCookiesForHostname() in WKCookieManager.h.
     return false;
+}
+
+bool CookieJarDB::deleteCookiesForHostname(const String& hostname, IncludeHttpOnlyCookies includeHttpOnlyCookies)
+{
+    auto& statement = preparedStatement(includeHttpOnlyCookies == IncludeHttpOnlyCookies::Yes ? DELETE_COOKIES_BY_DOMAIN_SQL : DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL);
+    statement.bindText(1, hostname);
+    return checkSQLiteReturnCode(statement.step());
 }
 
 bool CookieJarDB::deleteAllCookies()

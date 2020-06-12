@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Cookie.h"
+#include "CookieJar.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include <wtf/HashMap.h>
@@ -56,13 +57,15 @@ public:
     void setAcceptPolicy(CookieAcceptPolicy policy) { m_acceptPolicy = policy; }
     CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
 
+    HashSet<String> allDomains();
     Optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
     Vector<Cookie> getAllCookies();
-    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source);
+    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, Optional<Seconds> cappedLifetime = WTF::nullopt);
     bool setCookie(const Cookie&);
 
     bool deleteCookie(const String& url, const String& name);
     bool deleteCookies(const String& url);
+    bool deleteCookiesForHostname(const String& hostname, IncludeHttpOnlyCookies);
     bool deleteAllCookies();
 
     WEBCORE_EXPORT CookieJarDB(const String& databasePath);

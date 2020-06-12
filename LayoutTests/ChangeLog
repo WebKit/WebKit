@@ -1,3 +1,17 @@
+2020-06-12  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement functions to use ResourceLoadStatistics.
+        https://bugs.webkit.org/show_bug.cgi?id=207692
+
+        Reviewed by Don Olmstead.
+
+        Implement functions which are required to implement ResourceLoadStatistics for Curl port.
+
+        Tests: http/tests/resourceLoadStatistics/
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [ Mojave wk2 Release ] js/dom/unhandled-promise-rejection-console-no-report.html is flaky failing.

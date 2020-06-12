@@ -309,3 +309,6 @@ webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [
 
 # Skip IsLoggedIn
 http/tests/is-logged-in/ [ Skip ]
+
+# Skip ResourceLoadStatistics
+http/tests/resourceLoadStatistics [ Skip ]
