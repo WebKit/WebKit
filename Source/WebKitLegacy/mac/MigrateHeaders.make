@@ -100,6 +100,7 @@ $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 ifneq ($(WK_PLATFORM_NAME), macosx)
 
 REEXPORT_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_$(WK_CURRENT_ARCH).exp
+REEXPORT_FILE_TIMESTAMP = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols.timestamp
 
 .PHONY : reexport_headers
 reexport_headers : $(REEXPORT_FILE)
@@ -108,6 +109,7 @@ TAPI_PATH := $(strip $(shell xcrun --find tapi 2>/dev/null))
 
 $(REEXPORT_FILE) : $(HEADERS)
 	$(TAPI_PATH) reexport -target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX) -isysroot $(SDK_DIR) $(HEADER_FLAGS) $(FRAMEWORK_FLAGS) $^ -o $@
+	touch $(REEXPORT_FILE_TIMESTAMP)
 
 else
 

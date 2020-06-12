@@ -3239,6 +3239,10 @@
 			files = (
 			);
 			inputPaths = (
+				"$(PROJECT_DIR)/mac/WebKit.exp",
+				"$(PROJECT_DIR)/mac/WebKit.mac.exp",
+				"$(PROJECT_DIR)/ios/WebKit.iOS.exp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols.timestamp",
 			);
 			name = "Generate Export Files";
 			outputPaths = (
@@ -3255,9 +3259,11 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/mac/MigrateHeaders.make",
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)",
 			);
 			name = "Migrate Headers";
 			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

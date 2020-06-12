@@ -1,3 +1,31 @@
+2020-06-12  Keith Rollin  <krollin@apple.com>
+
+        Add dependencies for Migrate Headers and Generate Export Files build phases
+        https://bugs.webkit.org/show_bug.cgi?id=213072
+        <rdar://problem/64249345>
+
+        Reviewed by Tim Horton.
+
+        These build phases have incomplete specifications for the files they
+        consume and produce, which can lead to incorrect builds. Address this
+        by:
+
+        - Adding the WebCore/PrivateHeaders directory (which contains the
+          headers being migrated) as input to the Migrate Headers build phase
+        - Touching a timestamp file when re-exporting any headers in the
+          Migrate Headers build phase
+        - Adding the timestamp file as an output of the Migrate Headers build
+          phase
+        - Adding the timestamp file as an input of the Generate Export Files
+          build phase
+        - Adding other files that Generate Export Files consumes to the list
+          of input files
+
+        In this way, if any exported headers are changed, both Migrate Headers
+        and Generate Export Files will be run.
+
+        * MigrateHeaders.make:
+
 2020-06-11  Beth Dakin  <bdakin@apple.com>
 
         Replace instances of whitelist in WebCore with allowlist
