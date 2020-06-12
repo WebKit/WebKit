@@ -1,3 +1,17 @@
+2020-06-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Build is broken with EVENT_LOOP_TYPE=GLib
+        https://bugs.webkit.org/show_bug.cgi?id=212987
+
+        Reviewed by Konstantin Tokarev.
+
+        * wtf/CurrentTime.cpp: Make sure that <time.h> is included to get clock_gettime() and
+        friends defined when USE_GLIB is disabled.
+        * wtf/PlatformJSCOnly.cmake: Use FileSystemGLib instead of FileSystemPOSIX when
+        EVENT_LOOP_TYPE=GLib is set, add missing sources needed when ENABLE_REMOTE_INSPECTOR
+        is set.
+        * wtf/glib/RunLoopSourcePriority.h: Use the same list of priorities for WPE and JSCOnly.
+
 2020-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable download resume tests

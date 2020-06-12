@@ -1,3 +1,13 @@
+2020-06-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Build is broken with EVENT_LOOP_TYPE=GLib
+        https://bugs.webkit.org/show_bug.cgi?id=212987
+
+        Reviewed by Konstantin Tokarev.
+
+        * Source/cmake/OptionsJSCOnly.cmake: Add gio-unix as a required component of the GLib
+        package, as it is needed for the remote inspector support with EVENT_LOOP_TYPE=GLib.
+
 2020-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Get MiniBrowser ready for GTK4

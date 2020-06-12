@@ -82,7 +82,7 @@ enum RunLoopSourcePriority {
     DiskCacheWrite = 200,
 };
 
-#elif PLATFORM(WPE)
+#else
 
 enum RunLoopSourcePriority {
     RunLoopDispatcher = 0,

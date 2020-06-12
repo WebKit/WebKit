@@ -31,14 +31,12 @@ else ()
     list(APPEND WTF_SOURCES
         generic/MainThreadGeneric.cpp
 
-        posix/FileSystemPOSIX.cpp
         posix/OSAllocatorPOSIX.cpp
         posix/ThreadingPOSIX.cpp
 
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 
         unix/LanguageUnix.cpp
-        unix/UniStdExtrasUnix.cpp
     )
     if (WTF_OS_FUCHSIA)
         list(APPEND WTF_SOURCES
@@ -49,6 +47,19 @@ else ()
             unix/CPUTimeUnix.cpp
         )
     endif ()
+
+    if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
+        list(APPEND WTF_SOURCES
+            glib/FileSystemGlib.cpp
+        )
+    else ()
+        list(APPEND WTF_SOURCES
+            posix/FileSystemPOSIX.cpp
+
+            unix/UniStdExtrasUnix.cpp
+        )
+    endif ()
+
 endif ()
 
 if (WIN32)
@@ -107,10 +118,30 @@ if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
         glib/GRefPtr.cpp
         glib/RunLoopGLib.cpp
     )
+    list(APPEND WTF_PUBLIC_HEADERS
+        glib/GRefPtr.h
+        glib/GTypedefs.h
+        glib/RunLoopSourcePriority.h
+    )
+
+    if (ENABLE_REMOTE_INSPECTOR)
+        list(APPEND WTF_SOURCES
+            glib/GSocketMonitor.cpp
+            glib/SocketConnection.cpp
+        )
+        list(APPEND WTF_PUBLIC_HEADERS
+            glib/GSocketMonitor.h
+            glib/GUniquePtr.h
+            glib/SocketConnection.h
+        )
+    endif ()
+
     list(APPEND WTF_SYSTEM_INCLUDE_DIRECTORIES
+        ${GIO_UNIX_INCLUDE_DIRS}
         ${GLIB_INCLUDE_DIRS}
     )
     list(APPEND WTF_LIBRARIES
+        ${GIO_UNIX_LIBRARIES}
         ${GLIB_GIO_LIBRARIES}
         ${GLIB_GOBJECT_LIBRARIES}
         ${GLIB_LIBRARIES}
