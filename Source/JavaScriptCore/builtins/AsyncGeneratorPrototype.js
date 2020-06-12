@@ -149,6 +149,14 @@ function doAsyncGeneratorBodyCall(generator, resumeValue, resumeMode)
 {
     "use strict";
 
+    if (resumeMode === @GeneratorResumeModeReturn && @isSuspendYieldState(generator)) {
+        var onFulfilled = function(result) { @doAsyncGeneratorBodyCall(generator, result, @GeneratorResumeModeReturn); };
+
+        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
+        @awaitValue(generator, resumeValue, onFulfilled);
+        return;
+    }
+
     var value = @undefined;
     var state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
 

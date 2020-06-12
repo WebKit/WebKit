@@ -1,3 +1,16 @@
+2020-06-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        AsyncGenerator should await "return" completions
+        https://bugs.webkit.org/show_bug.cgi?id=212774
+
+        Reviewed by Ross Kirsling.
+
+        With this change, async generator stress tests now pass in Chrome and Firefox (tested manually).
+
+        * stress/async-iteration-yield-star-interface.js:
+        * stress/async-iteration-yield-star.js:
+        * test262/expectations.yaml: Mark 8 test cases as passing.
+
 2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add sampling-profiler code-origin lookup test

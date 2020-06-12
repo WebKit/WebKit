@@ -4863,6 +4863,9 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
 
                     move(value.get(), generatorValueRegister());
 
+                    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+                        emitAwait(value.get());
+
                     Ref<Label> returnSequence = newLabel();
                     emitJump(returnSequence.get());
 

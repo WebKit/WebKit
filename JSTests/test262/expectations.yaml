@@ -651,9 +651,6 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-promise.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: AsyncGeneratorResolve(generator, resultValue, true) Expected SameValue(«[object Promise]», «unwrapped-value») to be true'
 test/built-ins/DataView/custom-proto-access-detaches-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -3025,15 +3022,6 @@ test/language/statements/async-generator/generator-created-after-decl-inst.js:
 test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
-test/language/statements/async-generator/yield-return-then-getter-ticks.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, get then, tick 2] to have the same contents. Ticks for return with thenable getter'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2] and [start, tick 1, get then, tick 2] to have the same contents. Ticks for return with thenable getter'
-test/language/statements/async-generator/yield-star-return-missing-value-is-awaited.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«[object Promise]», «3») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«[object Promise]», «3») to be true'
-test/language/statements/async-generator/yield-star-return-then-getter-ticks.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get return, tick 3, tick 4] and [start, tick 1, tick 2, get then, tick 3, get return, get then, tick 4] to have the same contents. Ticks for return with thenable getter'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get return, tick 3, tick 4] and [start, tick 1, tick 2, get then, tick 3, get return, get then, tick 4] to have the same contents. Ticks for return with thenable getter'
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"

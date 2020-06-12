@@ -1,3 +1,33 @@
+2020-06-12  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        AsyncGenerator should await "return" completions
+        https://bugs.webkit.org/show_bug.cgi?id=212774
+
+        Reviewed by Ross Kirsling.
+
+        This patch fixes 2 spec discrepancies, observable with async generators if the
+        value of "return" completion is a Promise, aligning JSC with V8 and SpiderMonkey.
+
+        * builtins/AsyncGeneratorPrototype.js:
+        (onFulfilled):
+        This change implements step 8 of AsyncGeneratorYield [1], that is executed after
+        step 15 of AsyncGeneratorResumeNext [2] (implemented as @doAsyncGeneratorBodyCall).
+        We are safe to rely on [[AsyncGeneratorState]] being "suspendedYield" (set in
+        step 6 of AsyncGeneratorYield [1]) instead of adding extra field to AsyncGenerator:
+        AsyncGeneratorResumeNext [2] does not overwrite "suspendedYield" state.
+        This change fixes most of test262 cases.
+
+        [1]: https://tc39.es/ecma262/#sec-asyncgeneratoryield
+        [2]: https://tc39.es/ecma262/#sec-asyncgeneratorresumenext
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        This change implements step 7.c.iii.1 of yield* runtime semantics [3], that is
+        observable only if [[Value]] has userland "then" getter. Awaited result is discarded.
+        This change fixes async-generator/yield-star-return-then-getter-ticks.js test262 case.
+
+        [3]: https://tc39.es/ecma262/#sec-generator-function-definitions-runtime-semantics-evaluation
+
 2020-06-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, address Darin's feedback on r262890.
