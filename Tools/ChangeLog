@@ -1,3 +1,25 @@
+2020-06-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [buildbot] [GTK][WPE] Move WebDriver test to own bot
+        https://bugs.webkit.org/show_bug.cgi?id=212527
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Move 'webdriver-test' step from GTK Release and GTK Debug test bots
+        to separated bots.
+
+        For bots that require a Wayland display (WPE and GTK Wayland),
+        'webdriver-test' step is run on the corresponding general test bot,
+        since it's not possible at the moment to run tests that require a 
+        Wayland display in a bot set as a container.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (TestFactory.__init__):
+        (TestWebDriverFactory):
+        (TestWebDriverFactory.__init__):
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-06-12  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement functions to use ResourceLoadStatistics.

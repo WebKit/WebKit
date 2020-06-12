@@ -80,6 +80,7 @@
                     { "name": "gtk-linux-bot-12", "platform": "gtk" },
                     { "name": "gtk-linux-bot-13", "platform": "gtk" },
                     { "name": "gtk-linux-bot-14", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-15", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -257,7 +258,7 @@
                     {
                       "name": "GTK Linux 64-bit Release (Build)", "type": "BuildAndGenerateJSCBundle", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js",
+                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
                                    "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
@@ -272,9 +273,14 @@
                       "slavenames": ["gtk-linux-bot-12"]
                     },
                     {
+                      "name": "GTK Linux 64-bit Release (Tests WebDriver)", "type": "TestWebDriver", "builddir": "gtk-linux-64-release-tests-webdriver",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-bot-14"]
+                    },
+                    {
                       "name": "GTK Linux 64-bit Debug (Build)", "type": "Build", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["gtk-linux-64-debug-tests", "gtk-linux-64-debug-tests-js"],
+                      "triggers": ["gtk-linux-64-debug-tests", "gtk-linux-64-debug-tests-js", "gtk-linux-64-debug-tests-webdriver"],
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
@@ -286,6 +292,11 @@
                       "name": "GTK Linux 64-bit Debug (Tests JS)", "type": "TestJS", "builddir": "gtk-linux-64-debug-tests-js",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-bot-13"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Debug (Tests WebDriver)", "type": "TestWebDriver", "builddir": "gtk-linux-64-debug-tests-webdriver",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-bot-15"]
                     },
                     {
                       "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "gtk-linux-64-release-perf-tests",
@@ -500,11 +511,17 @@
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-js",
                       "builderNames": ["GTK Linux 64-bit Release (Tests JS)"]
                     },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests-webdriver",
+                      "builderNames": ["GTK Linux 64-bit Release (Tests WebDriver)"]
+                    },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
                       "builderNames": ["GTK Linux 64-bit Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-js",
                       "builderNames": ["GTK Linux 64-bit Debug (Tests JS)"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-webdriver",
+                      "builderNames": ["GTK Linux 64-bit Debug (Tests WebDriver)"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-perf-tests",
                       "builderNames": ["GTK Linux 64-bit Release (Perf)"]
