@@ -201,7 +201,7 @@ static void addScriptlessLocaleIfNeeded(HashSet<String>& availableLocales, Strin
         subtags.append(subtag);
     }
 
-    if (subtags.size() < 3 || subtags[1].length() != 4 || subtags[2].length() > 3)
+    if (subtags.size() != 3 || subtags[1].length() != 4 || subtags[2].length() > 3)
         return;
 
     Vector<char, 12> buffer;

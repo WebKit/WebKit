@@ -1,3 +1,11 @@
+2020-06-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, address Darin's feedback on r262890.
+
+        * runtime/IntlObject.cpp:
+        (JSC::addScriptlessLocaleIfNeeded):
+        Use != instead of < for clarity.
+
 2020-06-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         Build is broken with EVENT_LOOP_TYPE=GLib
