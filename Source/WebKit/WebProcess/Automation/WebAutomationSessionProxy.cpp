@@ -682,14 +682,15 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     Optional<WebCore::IntPoint> resultInViewCenterPoint;
     bool isObscured = false;
 
-    auto elementBoundsInRootCoordinates = convertRectFromFrameClientToRootView(frameView, coreElement->boundingClientRect());
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
-        resultElementBounds = enclosingIntRect(mainView->absoluteToDocumentRect(mainView->rootViewToContents(elementBoundsInRootCoordinates)));
+        resultElementBounds = enclosingIntRect(coreElement->boundingClientRect());
         break;
-    case CoordinateSystem::LayoutViewport:
+    case CoordinateSystem::LayoutViewport: {
+        auto elementBoundsInRootCoordinates = convertRectFromFrameClientToRootView(frameView, coreElement->boundingClientRect());
         resultElementBounds = enclosingIntRect(mainView->absoluteToLayoutViewportRect(mainView->rootViewToContents(elementBoundsInRootCoordinates)));
         break;
+    }
     }
 
     // If an <option> or <optgroup> does not have an associated <select> or <datalist> element, then give up.
@@ -739,14 +740,15 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     // Node::isDescendantOf() is not self-inclusive, so that is explicitly checked here.
     isObscured = elementList[0] != containerElement && !elementList[0]->isDescendantOf(containerElement);
 
-    auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView, elementInViewCenterPoint);
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
-        resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToDocumentPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
+        resultInViewCenterPoint = roundedIntPoint(elementInViewCenterPoint);
         break;
-    case CoordinateSystem::LayoutViewport:
+    case CoordinateSystem::LayoutViewport: {
+        auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView, elementInViewCenterPoint);
         resultInViewCenterPoint = roundedIntPoint(mainView->absoluteToLayoutViewportPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
         break;
+    }
     }
 
     completionHandler(WTF::nullopt, resultElementBounds, resultInViewCenterPoint, isObscured);

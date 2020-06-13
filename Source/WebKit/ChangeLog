@@ -1,3 +1,22 @@
+2020-06-12  Brian Burg  <bburg@apple.com>
+
+        Automation.computeElementLayout should return iframe-relative element rects (when coordinate system is 'Page')
+        https://bugs.webkit.org/show_bug.cgi?id=213139
+        <rdar://problem/55042445>
+
+        Reviewed by Devin Rousso.
+
+        Automation.computeElementLayout has two coordinate systems it can use, LayoutViewport (used for hit testing)
+        and Page (used for Get Element Rect). Since Get Element Rect expects coordinates relative to the current
+        browsing context, make the mode simpler by reporting the bounds from Element::boundingClientRect() which
+        are frame-relative.
+
+        Covered by existing WPT suite. The semantics of this command are under review, as
+        the remote end steps seem to describe a different result than what the non-normative text does.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+
 2020-06-12  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Check enum values in IPC::Decoder::decodeEnum() an IPC::Encoder::encodeEnum()
