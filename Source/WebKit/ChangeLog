@@ -1,3 +1,24 @@
+2020-06-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac Catalyst] Color inputs and selects fail to display popovers when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=213157
+        <rdar://problem/64004135>
+
+        Reviewed by Tim Horton.
+
+        In Mac Catalyst, presenting popovers using `UIPopoverController` causes the first responder to change. This
+        means that the WKContentView will resign first responder, which in turn causes the currently presented popover
+        to be dismissed. This means that popovers for color inputs and select elements will be dismissed immediately
+        after presentation.
+
+        To mitigate this, adapt the approach taken in r259840 to `WKColorPopover` and `WKSelectPopover` by teaching the
+        base class (`WKRotatingPopover`) to temporarily preserve the focused element in light of first responder changes
+        while presenting a popover on Mac Catalyst.
+
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        (-[WKRotatingPopover presentPopoverAnimated:]):
+        (-[WKRotatingPopover dismissPopoverAnimated:]):
+
 2020-06-13  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Experiment with strongly typed ColorComponents

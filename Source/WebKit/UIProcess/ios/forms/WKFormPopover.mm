@@ -75,6 +75,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKContentView *_view;
 
     BOOL _isRotating;
+    BOOL _isPreservingFocus;
     CGPoint _presentationPoint;
     RetainPtr<UIPopoverController> _popoverController;
     id <WKRotatingPopoverDelegate> _dismissionDelegate;
@@ -132,6 +133,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)presentPopoverAnimated:(BOOL)animated
 {
+#if PLATFORM(MACCATALYST)
+    if (!_isPreservingFocus) {
+        _isPreservingFocus = YES;
+        [_view preserveFocus];
+    }
+#endif
+
     UIPopoverArrowDirection directions = [self popoverArrowDirections];
 
     BOOL presentWithPoint = !CGPointEqualToPoint(self.presentationPoint, CGPointZero);
@@ -152,6 +160,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)dismissPopoverAnimated:(BOOL)animated
 {
+#if PLATFORM(MACCATALYST)
+    if (_isPreservingFocus) {
+        _isPreservingFocus = NO;
+        [_view releaseFocus];
+    }
+#endif
+
     [_popoverController dismissPopoverAnimated:animated];
 }
 
