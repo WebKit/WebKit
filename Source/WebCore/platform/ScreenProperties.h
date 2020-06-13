@@ -101,7 +101,7 @@ void ScreenData::encode(Encoder& encoder) const
     if (colorSpace) {
         // Try to encode the name.
         if (auto name = adoptCF(CGColorSpaceCopyName(colorSpace.get()))) {
-            encoder.encodeEnum(ColorSpaceType::Name);
+            encoder << ColorSpaceType::Name;
             encoder << String(name.get());
             return;
         }
@@ -111,14 +111,14 @@ void ScreenData::encode(Encoder& encoder) const
             Vector<uint8_t> iccData;
             iccData.append(CFDataGetBytePtr(profileData.get()), CFDataGetLength(profileData.get()));
 
-            encoder.encodeEnum(ColorSpaceType::Data);
+            encoder << ColorSpaceType::Data;
             encoder << iccData;
             return;
         }
     }
 
     // The color space was null or failed to be encoded.
-    encoder.encodeEnum(ColorSpaceType::None);
+    encoder << ColorSpaceType::None;
 }
 
 template<class Decoder>
@@ -177,7 +177,7 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
 #endif
 
     ColorSpaceType dataType;
-    if (!decoder.decodeEnum(dataType))
+    if (!decoder.decode(dataType))
         return WTF::nullopt;
 
     RetainPtr<CGColorSpaceRef> cgColorSpace;

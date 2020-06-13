@@ -138,11 +138,11 @@ bool WebKitEncodedFrameInfo::decode(Decoder& decoder, WebKitEncodedFrameInfo& in
         return false;
     if (!decoder.decode(info.captureTimeMS))
         return false;
-    if (!decoder.decodeEnum(info.frameType))
+    if (!decoder.decode(info.frameType))
         return false;
-    if (!decoder.decodeEnum(info.rotation))
+    if (!decoder.decode(info.rotation))
         return false;
-    if (!decoder.decodeEnum(info.contentType))
+    if (!decoder.decode(info.contentType))
         return false;
     if (!decoder.decode(info.completeFrame))
         return false;
@@ -184,9 +184,9 @@ void WebKitEncodedFrameInfo::encode(Encoder& encoder) const
     encoder << timeStamp;
     encoder << ntpTimeMS;
     encoder << captureTimeMS;
-    encoder.encodeEnum(frameType);
-    encoder.encodeEnum(rotation);
-    encoder.encodeEnum(contentType);
+    encoder << frameType;
+    encoder << rotation;
+    encoder << contentType;
     encoder << completeFrame;
     encoder << qp;
 

@@ -48,7 +48,7 @@ template<class Encoder>
 void LinkIcon::encode(Encoder& encoder) const
 {
     encoder << url << mimeType << size << attributes;
-    encoder.encodeEnum(type);
+    encoder << type;
 }
 
 template<class Decoder>
@@ -66,7 +66,7 @@ bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
     if (!decoder.decode(result.attributes))
         return false;
 
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return false;
 
     return true;

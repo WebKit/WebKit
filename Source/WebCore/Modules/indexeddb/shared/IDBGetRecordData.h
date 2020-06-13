@@ -55,7 +55,7 @@ template<class Encoder>
 void IDBGetRecordData::encode(Encoder& encoder) const
 {
     encoder << keyRangeData;
-    encoder.encodeEnum(type);
+    encoder << type;
 }
 
 template<class Decoder>
@@ -64,7 +64,7 @@ bool IDBGetRecordData::decode(Decoder& decoder, IDBGetRecordData& getRecordData)
     if (!decoder.decode(getRecordData.keyRangeData))
         return false;
 
-    if (!decoder.decodeEnum(getRecordData.type))
+    if (!decoder.decode(getRecordData.type))
         return false;
 
     return true;

@@ -74,7 +74,7 @@ struct NetworkProcessConnectionInfo {
     {
         if (!decoder.decode(info.connection))
             return false;
-        if (!decoder.decodeEnum(info.cookieAcceptPolicy))
+        if (!decoder.decode(info.cookieAcceptPolicy))
             return false;
 #if HAVE(AUDIT_TOKEN)
         if (!decoder.decode(info.auditToken))

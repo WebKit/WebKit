@@ -37,7 +37,7 @@ namespace WebKit {
 
 void RTCPacketOptions::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(options.dscp);
+    encoder << options.dscp;
     encoder << safeCast<int32_t>(options.packet_id);
     encoder << options.packet_time_params.rtp_sendtime_extension_id;
 
@@ -54,7 +54,7 @@ Optional<RTCPacketOptions> RTCPacketOptions::decode(IPC::Decoder& decoder)
     rtc::PacketOptions options;
 
     rtc::DiffServCodePoint dscp;
-    if (!decoder.decodeEnum(dscp))
+    if (!decoder.decode(dscp))
         return WTF::nullopt;
     options.dscp = dscp;
 

@@ -54,7 +54,7 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
 void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& encoder) const
 {
     encoder << layerID;
-    encoder.encodeEnum(type);
+    encoder << type;
     encoder << embeddedViewID;
     encoder << hostingContextID;
     encoder << hostingDeviceScaleFactor;
@@ -66,7 +66,7 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
     if (!decoder.decode(result.layerID))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return WTF::nullopt;
 
     if (!decoder.decode(result.embeddedViewID))
@@ -243,16 +243,16 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
         encoder << shapePath;
 
     if (changedProperties & MinificationFilterChanged)
-        encoder.encodeEnum(minificationFilter);
+        encoder << minificationFilter;
 
     if (changedProperties & MagnificationFilterChanged)
-        encoder.encodeEnum(magnificationFilter);
+        encoder << magnificationFilter;
 
     if (changedProperties & BlendModeChanged)
-        encoder.encodeEnum(blendMode);
+        encoder << blendMode;
 
     if (changedProperties & WindRuleChanged)
-        encoder.encodeEnum(windRule);
+        encoder << windRule;
 
     if (changedProperties & SpeedChanged)
         encoder << speed;
@@ -277,7 +277,7 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
         encoder << edgeAntialiasingMask;
 
     if (changedProperties & CustomAppearanceChanged)
-        encoder.encodeEnum(customAppearance);
+        encoder << customAppearance;
 
     if (changedProperties & UserInteractionEnabledChanged)
         encoder << userInteractionEnabled;
@@ -437,22 +437,22 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & MinificationFilterChanged) {
-        if (!decoder.decodeEnum(result.minificationFilter))
+        if (!decoder.decode(result.minificationFilter))
             return false;
     }
 
     if (result.changedProperties & MagnificationFilterChanged) {
-        if (!decoder.decodeEnum(result.magnificationFilter))
+        if (!decoder.decode(result.magnificationFilter))
             return false;
     }
 
     if (result.changedProperties & BlendModeChanged) {
-        if (!decoder.decodeEnum(result.blendMode))
+        if (!decoder.decode(result.blendMode))
             return false;
     }
 
     if (result.changedProperties & WindRuleChanged) {
-        if (!decoder.decodeEnum(result.windRule))
+        if (!decoder.decode(result.windRule))
             return false;
     }
 
@@ -498,7 +498,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & CustomAppearanceChanged) {
-        if (!decoder.decodeEnum(result.customAppearance))
+        if (!decoder.decode(result.customAppearance))
             return false;
     }
 

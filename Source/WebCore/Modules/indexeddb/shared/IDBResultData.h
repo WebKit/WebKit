@@ -140,7 +140,7 @@ void IDBResultData::encode(Encoder& encoder) const
 {
     encoder << m_requestIdentifier << m_error << m_databaseConnectionIdentifier << m_resultInteger;
 
-    encoder.encodeEnum(m_type);
+    encoder << m_type;
 
     encoder << !!m_databaseInfo;
     if (m_databaseInfo)
@@ -178,7 +178,7 @@ template<class Decoder> Optional<IDBResultData> IDBResultData::decode(Decoder& d
     if (!decoder.decode(result.m_resultInteger))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(result.m_type))
+    if (!decoder.decode(result.m_type))
         return WTF::nullopt;
 
     bool hasObject;

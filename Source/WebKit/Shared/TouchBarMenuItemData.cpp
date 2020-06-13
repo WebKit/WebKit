@@ -51,7 +51,7 @@ TouchBarMenuItemData::TouchBarMenuItemData(const WebCore::HTMLMenuItemElement& e
 
 void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(type);
+    encoder << type;
     
     encoder << identifier;
     encoder << priority;
@@ -60,7 +60,7 @@ void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
 Optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
 {
     TouchBarMenuItemData result;
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return WTF::nullopt;
     
     if (!decoder.decode(result.identifier))

@@ -109,7 +109,7 @@ void IDBRequestData::encode(Encoder& encoder) const
     encoder << m_serverConnectionIdentifier << m_objectStoreIdentifier << m_indexIdentifier << m_databaseIdentifier << m_requestedVersion;
 
     encoder << m_indexRecordType;
-    encoder.encodeEnum(m_requestType);
+    encoder << m_requestType;
 
     encoder << !!m_requestIdentifier;
     if (m_requestIdentifier)
@@ -148,7 +148,7 @@ bool IDBRequestData::decode(Decoder& decoder, IDBRequestData& request)
     if (!decoder.decode(request.m_indexRecordType))
         return false;
 
-    if (!decoder.decodeEnum(request.m_requestType))
+    if (!decoder.decode(request.m_requestType))
         return false;
 
     bool hasObject;

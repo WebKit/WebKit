@@ -53,8 +53,8 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldOpenExternalURLsPolicy;
     encoder << shouldTreatAsContinuingLoad;
     encoder << userData;
-    encoder.encodeEnum(lockHistory);
-    encoder.encodeEnum(lockBackForwardList);
+    encoder << lockHistory;
+    encoder << lockBackForwardList;
     encoder << clientRedirectSourceForHistory;
     encoder << isNavigatingToAppBoundDomain;
 
@@ -122,10 +122,10 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     if (!decoder.decode(data.userData))
         return false;
 
-    if (!decoder.decodeEnum(data.lockHistory))
+    if (!decoder.decode(data.lockHistory))
         return false;
 
-    if (!decoder.decodeEnum(data.lockBackForwardList))
+    if (!decoder.decode(data.lockBackForwardList))
         return false;
 
     Optional<String> clientRedirectSourceForHistory;

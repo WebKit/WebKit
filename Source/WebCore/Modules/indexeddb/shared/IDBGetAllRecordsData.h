@@ -58,7 +58,7 @@ template<class Encoder>
 void IDBGetAllRecordsData::encode(Encoder& encoder) const
 {
     encoder << keyRangeData;
-    encoder.encodeEnum(getAllType);
+    encoder << getAllType;
     encoder << count << objectStoreIdentifier << indexIdentifier;
 }
 
@@ -68,7 +68,7 @@ bool IDBGetAllRecordsData::decode(Decoder& decoder, IDBGetAllRecordsData& getAll
     if (!decoder.decode(getAllRecordsData.keyRangeData))
         return false;
 
-    if (!decoder.decodeEnum(getAllRecordsData.getAllType))
+    if (!decoder.decode(getAllRecordsData.getAllType))
         return false;
 
     if (!decoder.decode(getAllRecordsData.count))

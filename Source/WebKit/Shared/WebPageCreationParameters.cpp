@@ -36,7 +36,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << activityState;
 
     encoder << store;
-    encoder.encodeEnum(drawingAreaType);
+    encoder << drawingAreaType;
     encoder << drawingAreaIdentifier;
     encoder << webPageProxyIdentifier;
     encoder << pageGroupData;
@@ -47,7 +47,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << viewExposedRect;
     encoder << alwaysShowsHorizontalScroller;
     encoder << alwaysShowsVerticalScroller;
-    encoder.encodeEnum(paginationMode);
+    encoder << paginationMode;
     encoder << paginationBehavesLikeColumns;
     encoder << pageLength;
     encoder << gapBetweenPages;
@@ -71,10 +71,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << sizeToContentAutoSizeMaximumSize;
     encoder << autoSizingShouldExpandToViewHeight;
     encoder << viewportSizeForCSSViewportUnits;
-    encoder.encodeEnum(scrollPinningBehavior);
+    encoder << scrollPinningBehavior;
     encoder << scrollbarOverlayStyle;
     encoder << backgroundExtendsBeyondPage;
-    encoder.encodeEnum(layerHostingMode);
+    encoder << layerHostingMode;
     encoder << mimeTypesWithCustomContentProviders;
     encoder << controlledByAutomation;
     encoder << isProcessSwap;
@@ -125,7 +125,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << appleMailPaginationQuirkEnabled;
     encoder << appleMailLinesClampEnabled;
     encoder << shouldScaleViewToFitDocument;
-    encoder.encodeEnum(userInterfaceLayoutDirection);
+    encoder << userInterfaceLayoutDirection;
     encoder << observedLayoutMilestones;
     encoder << overrideContentSecurityPolicy;
     encoder << cpuLimit;
@@ -172,7 +172,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.store))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(parameters.drawingAreaType))
+    if (!decoder.decode(parameters.drawingAreaType))
         return WTF::nullopt;
     Optional<DrawingAreaIdentifier> drawingAreaIdentifier;
     decoder >> drawingAreaIdentifier;
@@ -203,7 +203,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.alwaysShowsVerticalScroller))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(parameters.paginationMode))
+    if (!decoder.decode(parameters.paginationMode))
         return WTF::nullopt;
     if (!decoder.decode(parameters.paginationBehavesLikeColumns))
         return WTF::nullopt;
@@ -264,7 +264,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.viewportSizeForCSSViewportUnits))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
+    if (!decoder.decode(parameters.scrollPinningBehavior))
         return WTF::nullopt;
 
     Optional<Optional<uint32_t>> scrollbarOverlayStyle;
@@ -275,7 +275,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 
     if (!decoder.decode(parameters.backgroundExtendsBeyondPage))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(parameters.layerHostingMode))
+    if (!decoder.decode(parameters.layerHostingMode))
         return WTF::nullopt;
     if (!decoder.decode(parameters.mimeTypesWithCustomContentProviders))
         return WTF::nullopt;
@@ -383,7 +383,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.shouldScaleViewToFitDocument))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(parameters.userInterfaceLayoutDirection))
+    if (!decoder.decode(parameters.userInterfaceLayoutDirection))
         return WTF::nullopt;
     if (!decoder.decode(parameters.observedLayoutMilestones))
         return WTF::nullopt;

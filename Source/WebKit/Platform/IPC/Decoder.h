@@ -100,7 +100,7 @@ public:
     template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
     WARN_UNUSED_RETURN bool decode(E& enumValue)
     {
-        typename std::underlying_type<E>::type value;
+        std::underlying_type_t<E> value;
         if (!decode(value))
             return false;
         if (!WTF::isValidEnum<E>(value))
@@ -113,22 +113,11 @@ public:
     template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
     Decoder& operator>>(Optional<E>& optional)
     {
-        Optional<typename std::underlying_type<E>::type> value;
+        Optional<std::underlying_type_t<E>> value;
         *this >> value;
         if (value && WTF::isValidEnum<E>(*value))
             optional = static_cast<E>(*value);
         return *this;
-    }
-
-    template<typename E>
-    WARN_UNUSED_RETURN bool decodeEnum(E& result)
-    {
-        // FIXME: Remove this after migrating all uses of this function to decode() or operator>>() with WTF::isValidEnum check.
-        typename std::underlying_type<E>::type value;
-        if (!decode(value))
-            return false;
-        result = static_cast<E>(value);
-        return true;
     }
 
     template<typename T>

@@ -79,10 +79,10 @@ struct RemoteMediaPlayerState {
         encoder << languageOfPrimaryAudioTrack;
         encoder << wirelessPlaybackTargetName;
         encoder << bufferedRanges;
-        encoder.encodeEnum(networkState);
-        encoder.encodeEnum(readyState);
-        encoder.encodeEnum(movieLoadType);
-        encoder.encodeEnum(wirelessPlaybackTargetType);
+        encoder << networkState;
+        encoder << readyState;
+        encoder << movieLoadType;
+        encoder << wirelessPlaybackTargetType;
         encoder << naturalSize;
         encoder << maxFastForwardRate;
         encoder << minFastReverseRate;
@@ -152,19 +152,19 @@ struct RemoteMediaPlayerState {
             return WTF::nullopt;
 
         WebCore::MediaPlayerEnums::NetworkState networkState;
-        if (!decoder.decodeEnum(networkState))
+        if (!decoder.decode(networkState))
             return WTF::nullopt;
 
         WebCore::MediaPlayerEnums::ReadyState readyState;
-        if (!decoder.decodeEnum(readyState))
+        if (!decoder.decode(readyState))
             return WTF::nullopt;
 
         WebCore::MediaPlayerEnums::MovieLoadType movieLoadType;
-        if (!decoder.decodeEnum(movieLoadType))
+        if (!decoder.decode(movieLoadType))
             return WTF::nullopt;
 
         WebCore::MediaPlayerEnums::WirelessPlaybackTargetType wirelessPlaybackTargetType;
-        if (!decoder.decodeEnum(wirelessPlaybackTargetType))
+        if (!decoder.decode(wirelessPlaybackTargetType))
             return WTF::nullopt;
 
         Optional<WebCore::FloatSize> naturalSize;

@@ -222,7 +222,7 @@ private:
 template <class Encoder>
 void HTTPHeaderMap::CommonHeader::encode(Encoder& encoder) const
 {
-    encoder.encodeEnum(key);
+    encoder << key;
     encoder << value;
 }
 
@@ -230,7 +230,7 @@ template <class Decoder>
 auto HTTPHeaderMap::CommonHeader::decode(Decoder& decoder) -> Optional<CommonHeader>
 {
     HTTPHeaderName name;
-    if (!decoder.decodeEnum(name))
+    if (!decoder.decode(name))
         return WTF::nullopt;
     String value;
     if (!decoder.decode(value))

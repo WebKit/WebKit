@@ -36,7 +36,7 @@ namespace WebKit {
 void WebsiteData::Entry::encode(IPC::Encoder& encoder) const
 {
     encoder << origin;
-    encoder.encodeEnum(type);
+    encoder << type;
     encoder << size;
 }
 
@@ -50,7 +50,7 @@ auto WebsiteData::Entry::decode(IPC::Decoder& decoder) -> Optional<Entry>
         return WTF::nullopt;
     result.origin = WTFMove(*securityOriginData);
 
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return WTF::nullopt;
 
     if (!decoder.decode(result.size))

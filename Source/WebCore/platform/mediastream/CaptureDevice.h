@@ -72,7 +72,7 @@ public:
         encoder << m_label;
         encoder << m_groupId;
         encoder << m_enabled;
-        encoder.encodeEnum(m_type);
+        encoder << m_type;
     }
 
     template <class Decoder>

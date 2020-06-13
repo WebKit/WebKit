@@ -100,7 +100,7 @@ using namespace WebCore;
 
 void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(keyType);
+    encoder << keyType;
 
     switch (keyType) {
     case NumberKeyType:
@@ -124,7 +124,7 @@ void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) con
 Optional<PlatformCAAnimationRemote::KeyframeValue> PlatformCAAnimationRemote::KeyframeValue::decode(IPC::Decoder& decoder)
 {
     PlatformCAAnimationRemote::KeyframeValue value;
-    if (!decoder.decodeEnum(value.keyType))
+    if (!decoder.decode(value.keyType))
         return WTF::nullopt;
 
     switch (value.keyType) {
@@ -156,7 +156,7 @@ Optional<PlatformCAAnimationRemote::KeyframeValue> PlatformCAAnimationRemote::Ke
 void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
 {
     encoder << keyPath;
-    encoder.encodeEnum(animationType);
+    encoder << animationType;
 
     encoder << beginTime;
     encoder << duration;
@@ -164,8 +164,8 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     encoder << repeatCount;
     encoder << speed;
 
-    encoder.encodeEnum(fillMode);
-    encoder.encodeEnum(valueFunction);
+    encoder << fillMode;
+    encoder << valueFunction;
 
     encoder << autoReverses;
     encoder << removedOnCompletion;
@@ -204,7 +204,7 @@ Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Prope
     if (!decoder.decode(properties.keyPath))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(properties.animationType))
+    if (!decoder.decode(properties.animationType))
         return WTF::nullopt;
 
     if (!decoder.decode(properties.beginTime))
@@ -222,10 +222,10 @@ Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Prope
     if (!decoder.decode(properties.speed))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(properties.fillMode))
+    if (!decoder.decode(properties.fillMode))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(properties.valueFunction))
+    if (!decoder.decode(properties.valueFunction))
         return WTF::nullopt;
 
     if (!decoder.decode(properties.autoReverses))
@@ -259,7 +259,7 @@ Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Prope
         for (size_t i = 0; i < numTimingFunctions; ++i) {
         
             TimingFunction::TimingFunctionType type;
-            if (!decoder.decodeEnum(type))
+            if (!decoder.decode(type))
                 return WTF::nullopt;
 
             RefPtr<TimingFunction> timingFunction;

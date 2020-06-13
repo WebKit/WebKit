@@ -65,9 +65,9 @@ WebPopupItem::WebPopupItem(Type type, const String& text, WebCore::TextDirection
 
 void WebPopupItem::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(m_type);
+    encoder << m_type;
     encoder << m_text;
-    encoder.encodeEnum(m_textDirection);
+    encoder << m_textDirection;
     encoder << m_hasTextDirectionOverride;
     encoder << m_toolTip;
     encoder << m_accessibilityText;
@@ -79,7 +79,7 @@ void WebPopupItem::encode(IPC::Encoder& encoder) const
 Optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
 {
     Type type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return WTF::nullopt;
 
     String text;
@@ -87,7 +87,7 @@ Optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
         return WTF::nullopt;
     
     WebCore::TextDirection textDirection;
-    if (!decoder.decodeEnum(textDirection))
+    if (!decoder.decode(textDirection))
         return WTF::nullopt;
 
     bool hasTextDirectionOverride;

@@ -177,11 +177,11 @@ Optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthentica
     MockWebAuthenticationConfiguration::HidConfiguration result;
     if (!decoder.decode(result.payloadBase64))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(result.stage))
+    if (!decoder.decode(result.stage))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(result.subStage))
+    if (!decoder.decode(result.subStage))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(result.error))
+    if (!decoder.decode(result.error))
         return WTF::nullopt;
     if (!decoder.decode(result.isU2f))
         return WTF::nullopt;
@@ -210,7 +210,7 @@ template<class Decoder>
 Optional<MockWebAuthenticationConfiguration::NfcConfiguration> MockWebAuthenticationConfiguration::NfcConfiguration::decode(Decoder& decoder)
 {
     MockWebAuthenticationConfiguration::NfcConfiguration result;
-    if (!decoder.decodeEnum(result.error))
+    if (!decoder.decode(result.error))
         return WTF::nullopt;
     if (!decoder.decode(result.payloadBase64))
         return WTF::nullopt;

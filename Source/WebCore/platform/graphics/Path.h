@@ -302,7 +302,7 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
     encoder << static_cast<uint64_t>(elementCount());
 
     apply([&](auto& element) {
-        encoder.encodeEnum(element.type);
+        encoder << element.type;
 
         switch (element.type) {
         case PathElement::Type::MoveToPoint:
@@ -351,7 +351,7 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
 
     for (uint64_t i = 0; i < numPoints; ++i) {
         PathElement::Type elementType;
-        if (!decoder.decodeEnum(elementType))
+        if (!decoder.decode(elementType))
             return WTF::nullopt;
 
         switch (elementType) {

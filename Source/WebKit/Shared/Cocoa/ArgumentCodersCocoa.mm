@@ -473,7 +473,7 @@ Optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allowedCl
         return { nullptr };
 
     NSType type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return WTF::nullopt;
 
     switch (type) {

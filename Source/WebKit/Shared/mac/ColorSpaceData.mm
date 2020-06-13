@@ -44,27 +44,27 @@ void ColorSpaceData::encode(IPC::Encoder& encoder) const
     if (cgColorSpace) {
         // Try to encode the name.
         if (RetainPtr<CFStringRef> name = adoptCF(CGColorSpaceCopyName(cgColorSpace.get()))) {
-            encoder.encodeEnum(Name);
+            encoder << Name;
             IPC::encode(encoder, name.get());
             return;
         }
 
         // Failing that, just encode the ICC data.
         if (RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCData(cgColorSpace.get()))) {
-            encoder.encodeEnum(Data);
+            encoder << Data;
             IPC::encode(encoder, profileData.get());
             return;
         }
     }
 
     // The color space was null or failed to be encoded.
-    encoder.encodeEnum(Null);
+    encoder << Null;
 }
 
 bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceData)
 {
     EncodedDataType dataType;
-    if (!decoder.decodeEnum(dataType))
+    if (!decoder.decode(dataType))
         return false;
 
     switch (dataType) {

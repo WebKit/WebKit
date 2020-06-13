@@ -82,7 +82,7 @@ struct DataListSuggestionInformation {
 template<class Encoder>
 void DataListSuggestionInformation::encode(Encoder& encoder) const
 {
-    encoder.encodeEnum(activationType);
+    encoder << activationType;
     encoder << suggestions;
     encoder << elementRect;
 }
@@ -91,7 +91,7 @@ template<class Decoder>
 Optional<DataListSuggestionInformation> DataListSuggestionInformation::decode(Decoder& decoder)
 {
     DataListSuggestionActivationType activationType;
-    if (!decoder.decodeEnum(activationType))
+    if (!decoder.decode(activationType))
         return WTF::nullopt;
 
     Optional<Vector<DataListSuggestion>> suggestions;

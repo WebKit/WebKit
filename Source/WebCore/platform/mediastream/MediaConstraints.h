@@ -56,20 +56,20 @@ public:
 
     template <class Encoder> void encode(Encoder& encoder) const
     {
-        encoder.encodeEnum(m_constraintType);
+        encoder << m_constraintType;
         encoder << m_name;
-        encoder.encodeEnum(m_dataType);
+        encoder << m_dataType;
     }
 
     template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, MediaConstraint& constraint)
     {
-        if (!decoder.decodeEnum(constraint.m_constraintType))
+        if (!decoder.decode(constraint.m_constraintType))
             return false;
 
         if (!decoder.decode(constraint.m_name))
             return false;
 
-        if (!decoder.decodeEnum(constraint.m_dataType))
+        if (!decoder.decode(constraint.m_dataType))
             return false;
 
         return true;

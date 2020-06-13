@@ -223,6 +223,7 @@ template<> struct EnumTraits<WebCore::ContextMenuAction> {
         WebCore::ContextMenuAction::ContextMenuItemTagCut,
         WebCore::ContextMenuAction::ContextMenuItemTagPaste,
 #if PLATFORM(GTK)
+        WebCore::ContextMenuAction::ContextMenuItemTagPasteAsPlainText,
         WebCore::ContextMenuAction::ContextMenuItemTagDelete,
         WebCore::ContextMenuAction::ContextMenuItemTagSelectAll,
         WebCore::ContextMenuAction::ContextMenuItemTagInputMethods,

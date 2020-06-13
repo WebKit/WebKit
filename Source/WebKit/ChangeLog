@@ -1,3 +1,178 @@
+2020-06-12  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Check enum values in IPC::Decoder::decodeEnum() an IPC::Encoder::encodeEnum()
+        <https://webkit.org/b/211988>
+        <rdar://problem/63137695>
+
+        Reviewed by Darin Adler.
+
+        Replace decodeEnum() with decode() and encodeEnum() with
+        operator<<().
+
+        * GPUProcess/media/TextTrackPrivateRemoteConfiguration.h:
+        (WebKit::TextTrackPrivateRemoteConfiguration::encode const):
+        * GPUProcess/media/TrackPrivateRemoteConfiguration.h:
+        (WebKit::TrackPrivateRemoteConfiguration::encode const):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decode):
+        (IPC::Decoder::operator>>):
+        - Make use of std::underlying_type_t<>.
+        (IPC::Decoder::decodeEnum): Delete.
+        - Replace with calls to decode().
+        * Platform/IPC/Encoder.h:
+        (IPC::Encoder::operator<<):
+        (IPC::Encoder::encode):
+        - Make use of WTF::enumToUnderlyingType<>.
+        (IPC::Encoder::encodeEnum): Delete.
+        - Replace with calls to operator<<().
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeObject):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode):
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::encode const):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode const):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode const):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode const):
+        (WebKit::PrintInfo::decode):
+        * Shared/RTCPacketOptions.cpp:
+        (WebKit::RTCPacketOptions::encode const):
+        (WebKit::RTCPacketOptions::decode):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateNode>::encode):
+        (ArgumentCoder<RequestedScrollData>::encode):
+        (ArgumentCoder<RequestedScrollData>::decode):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        * Shared/SessionState.cpp:
+        (WebKit::HTTPBody::Element::encode const):
+        (WebKit::HTTPBody::Element::decode):
+        (WebKit::PageState::encode const):
+        (WebKit::PageState::decode):
+        * Shared/TouchBarMenuItemData.cpp:
+        (WebKit::TouchBarMenuItemData::encode const):
+        (WebKit::TouchBarMenuItemData::decode):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::encode const):
+        (WebKit::WebContextMenuItemData::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<LinearTimingFunction>::encode):
+        (IPC::ArgumentCoder<CubicBezierTimingFunction>::encode):
+        (IPC::ArgumentCoder<CubicBezierTimingFunction>::decode):
+        (IPC::ArgumentCoder<StepsTimingFunction>::encode):
+        (IPC::ArgumentCoder<SpringTimingFunction>::encode):
+        (IPC::ArgumentCoder<PluginInfo>::encode):
+        (IPC::ArgumentCoder<PluginInfo>::decode):
+        (IPC::ArgumentCoder<ProtectionSpace>::encode):
+        (IPC::ArgumentCoder<ProtectionSpace>::decode):
+        (IPC::ArgumentCoder<Credential>::encode):
+        (IPC::ArgumentCoder<Credential>::decode):
+        (IPC::ArgumentCoder<Cursor>::encode):
+        (IPC::ArgumentCoder<Cursor>::decode):
+        (IPC::ArgumentCoder<ResourceError>::encode):
+        (IPC::ArgumentCoder<ResourceError>::decode):
+        (IPC::ArgumentCoder<DragData>::encode):
+        (IPC::ArgumentCoder<DragData>::decode):
+        (IPC::ArgumentCoder<CompositionUnderline>::encode):
+        (IPC::ArgumentCoder<CompositionUnderline>::decode):
+        (IPC::ArgumentCoder<FileChooserSettings>::encode):
+        (IPC::ArgumentCoder<FileChooserSettings>::decode):
+        (IPC::ArgumentCoder<TextCheckingRequestData>::encode):
+        (IPC::ArgumentCoder<TextCheckingRequestData>::decode):
+        (IPC::ArgumentCoder<TextCheckingResult>::encode):
+        (IPC::ArgumentCoder<TextCheckingResult>::decode):
+        (IPC::ArgumentCoder<UserStyleSheet>::encode):
+        (IPC::ArgumentCoder<UserStyleSheet>::decode):
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::encode):
+        (IPC::ArgumentCoder<ScrollableAreaParameters>::decode):
+        (IPC::ArgumentCoder<FilterOperation>::encode):
+        (IPC::decodeFilterOperation):
+        (IPC::ArgumentCoder<FontAttributes>::encode):
+        (IPC::ArgumentCoder<FontAttributes>::decode):
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode):
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::encode const):
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::Entry::encode const):
+        (WebKit::WebsiteData::Entry::decode):
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData):
+        * Shared/glib/InputMethodState.cpp:
+        (WebKit::InputMethodState::encode const):
+        (WebKit::InputMethodState::decode):
+        * Shared/glib/UserMessage.cpp:
+        (WebKit::UserMessage::encode const):
+        (WebKit::UserMessage::decode):
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode const):
+        (WebKit::ColorSpaceData::decode):
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::encode const):
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData):
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::encode):
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<SoupNetworkProxySettings>::encode):
+        (IPC::ArgumentCoder<SoupNetworkProxySettings>::decode):
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const):
+        (WebKit::RemoteMediaPlayerState::decode):
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+        (WebKit::NetworkProcessConnectionInfo::decode):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode const):
+        (WebKit::Plugin::Parameters::decode):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::KeyframeValue::encode const):
+        (WebKit::PlatformCAAnimationRemote::KeyframeValue::decode):
+        (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+
 2020-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Focusing selects and color inputs should not bring up the software keyboard

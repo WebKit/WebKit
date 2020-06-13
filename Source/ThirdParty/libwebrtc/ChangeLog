@@ -1,3 +1,18 @@
+2020-06-12  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Check enum values in IPC::Decoder::decodeEnum() an IPC::Encoder::encodeEnum()
+        <https://webkit.org/b/211988>
+        <rdar://problem/63137695>
+
+        Reviewed by Darin Adler.
+
+        Replace decodeEnum() with decode() and encodeEnum() with
+        operator<<().
+
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.h:
+        (webrtc::WebKitEncodedFrameInfo::decode):
+        (webrtc::WebKitEncodedFrameInfo::encode const):
+
 2020-06-08  Youenn Fablet  <youenn@apple.com>
 
         Add missed WebRTC media-source and remote-inbound-rtp stats

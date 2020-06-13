@@ -61,9 +61,9 @@ struct TextTrackPrivateRemoteConfiguration {
         encoder << inBandMetadataTrackDispatchType;
         encoder << startTimeVariance;
         encoder << trackIndex;
-        encoder.encodeEnum(cueFormat);
-        encoder.encodeEnum(mode);
-        encoder.encodeEnum(kind);
+        encoder << cueFormat;
+        encoder << mode;
+        encoder << kind;
         encoder << isClosedCaptions;
         encoder << isSDH;
         encoder << containsOnlyForcedSubtitles;

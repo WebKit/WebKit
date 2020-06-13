@@ -71,7 +71,7 @@ Optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
         return WTF::nullopt;
     if (!decoder.decode(result.scope))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(result.display))
+    if (!decoder.decode(result.display))
         return WTF::nullopt;
     if (!decoder.decode(result.startURL))
         return WTF::nullopt;

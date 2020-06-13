@@ -156,7 +156,7 @@ bool UserData::decode(IPC::Decoder& decoder, UserData& userData)
 void UserData::encode(IPC::Encoder& encoder, const API::Object* object)
 {
     if (!object) {
-        encoder.encodeEnum(API::Object::Type::Null);
+        encoder << API::Object::Type::Null;
         return;
     }
 
@@ -166,7 +166,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object* object)
 void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
 {
     API::Object::Type type = object.type();
-    encoder.encodeEnum(type);
+    encoder << type;
 
     switch (object.type()) {
     case API::Object::Type::Array: {
@@ -336,7 +336,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
 bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 {
     API::Object::Type type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return false;
 
     switch (type) {

@@ -127,7 +127,7 @@ template<class Encoder>
 void PasteboardItemInfo::encode(Encoder& encoder) const
 {
     encoder << pathsForFileUpload << platformTypesForFileUpload << platformTypesByFidelity << suggestedFileName << preferredPresentationSize << isNonTextType << containsFileURLAndFileUploadContent << webSafeTypesByFidelity;
-    encoder.encodeEnum(preferredPresentationStyle);
+    encoder << preferredPresentationStyle;
 }
 
 template<class Decoder>
@@ -158,7 +158,7 @@ Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
     if (!decoder.decode(result.webSafeTypesByFidelity))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(result.preferredPresentationStyle))
+    if (!decoder.decode(result.preferredPresentationStyle))
         return WTF::nullopt;
 
     return result;

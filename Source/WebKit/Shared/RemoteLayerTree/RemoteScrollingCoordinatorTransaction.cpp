@@ -104,7 +104,7 @@ using namespace IPC;
 
 void ArgumentCoder<ScrollingStateNode>::encode(Encoder& encoder, const ScrollingStateNode& node)
 {
-    encoder.encodeEnum(node.nodeType());
+    encoder << node.nodeType();
     encoder << node.scrollingNodeID();
     encoder << node.parentNodeID();
     encoder << node.changedProperties();
@@ -137,7 +137,7 @@ bool ArgumentCoder<ScrollingStateNode>::decode(Decoder& decoder, ScrollingStateN
 
 #define SCROLLING_NODE_ENCODE_ENUM(property, getter) \
     if (node.hasChangedProperty(property)) \
-        encoder.encodeEnum(node.getter());
+        encoder << node.getter();
 
 void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const ScrollingStateScrollingNode& node)
 {
@@ -231,7 +231,7 @@ void ArgumentCoder<ScrollingStateOverflowScrollProxyNode>::encode(Encoder& encod
 #define SCROLLING_NODE_DECODE_ENUM(property, type, setter) \
     if (node.hasChangedProperty(property)) { \
         type decodedValue; \
-        if (!decoder.decodeEnum(decodedValue)) \
+        if (!decoder.decode(decodedValue)) \
             return false; \
         node.setter(decodedValue); \
     }
@@ -446,8 +446,8 @@ bool ArgumentCoder<ScrollingStatePositionedNode>::decode(Decoder& decoder, Scrol
 void ArgumentCoder<RequestedScrollData>::encode(Encoder& encoder, const RequestedScrollData& scrollData)
 {
     encoder << scrollData.scrollPosition;
-    encoder.encodeEnum(scrollData.scrollType);
-    encoder.encodeEnum(scrollData.clamping);
+    encoder << scrollData.scrollType;
+    encoder << scrollData.clamping;
 }
 
 bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrollData& scrollData)
@@ -455,10 +455,10 @@ bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrol
     if (!decoder.decode(scrollData.scrollPosition))
         return false;
 
-    if (!decoder.decodeEnum(scrollData.scrollType))
+    if (!decoder.decode(scrollData.scrollType))
         return false;
 
-    if (!decoder.decodeEnum(scrollData.clamping))
+    if (!decoder.decode(scrollData.clamping))
         return false;
 
     return true;
@@ -547,7 +547,7 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
 
     for (int i = 0; i < numNodes; ++i) {
         ScrollingNodeType nodeType;
-        if (!decoder.decodeEnum(nodeType))
+        if (!decoder.decode(nodeType))
             return false;
 
         ScrollingNodeID nodeID;

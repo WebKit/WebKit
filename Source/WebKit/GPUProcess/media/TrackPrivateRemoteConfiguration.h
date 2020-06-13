@@ -55,9 +55,9 @@ struct TrackPrivateRemoteConfiguration {
         encoder << startTimeVariance;
         encoder << trackIndex;
         encoder << enabled;
-        encoder.encodeEnum(audioKind);
+        encoder << audioKind;
         encoder << selected;
-        encoder.encodeEnum(videoKind);
+        encoder << videoKind;
     }
 
     template <class Decoder>

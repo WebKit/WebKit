@@ -212,8 +212,8 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
-    encoder.encodeEnum(resourceRequest.requester());
-    encoder.encodeEnum(resourceRequest.cachePolicy());
+    encoder << resourceRequest.requester();
+    encoder << resourceRequest.cachePolicy();
 }
 
 bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decoder, WebCore::ResourceRequest& resourceRequest)
@@ -248,12 +248,12 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
     );
 
     WebCore::ResourceRequest::Requester requester;
-    if (!decoder.decodeEnum(requester))
+    if (!decoder.decode(requester))
         return false;
     resourceRequest.setRequester(requester);
 
     WebCore::ResourceRequestCachePolicy cachePolicy;
-    if (!decoder.decodeEnum(cachePolicy))
+    if (!decoder.decode(cachePolicy))
         return false;
     resourceRequest.setCachePolicy(cachePolicy);
 
@@ -262,7 +262,7 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
 
 void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
-    encoder.encodeEnum(certificateInfo.type());
+    encoder << certificateInfo.type();
 
     switch (certificateInfo.type()) {
 #if HAVE(SEC_TRUST_SERIALIZATION)
@@ -282,7 +282,7 @@ void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const Web
 bool ArgumentCoder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
 {
     WebCore::CertificateInfo::Type certificateInfoType;
-    if (!decoder.decodeEnum(certificateInfoType))
+    if (!decoder.decode(certificateInfoType))
         return false;
 
     switch (certificateInfoType) {

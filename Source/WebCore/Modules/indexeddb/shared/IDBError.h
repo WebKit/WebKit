@@ -70,7 +70,7 @@ void IDBError::encode(Encoder& encoder) const
 {
     if (m_code) {
         encoder << true;
-        encoder.encodeEnum(m_code.value());
+        encoder << m_code.value();
     } else
         encoder << false;
     encoder << m_message;
@@ -85,7 +85,7 @@ bool IDBError::decode(Decoder& decoder, IDBError& error)
 
     if (hasCode) {
         ExceptionCode ec;
-        if (!decoder.decodeEnum(ec))
+        if (!decoder.decode(ec))
             return false;
         error.m_code = ec;
     } else

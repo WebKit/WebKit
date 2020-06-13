@@ -216,8 +216,8 @@ void GenericCueData::encode(Encoder& encoder) const
     encoder << m_foregroundColor;
     encoder << m_backgroundColor;
     encoder << m_highlightColor;
-    encoder.encodeEnum(m_align);
-    encoder.encodeEnum(m_status);
+    encoder << m_align;
+    encoder << m_status;
 }
 
 class InbandGenericCue : public RefCounted<InbandGenericCue> {

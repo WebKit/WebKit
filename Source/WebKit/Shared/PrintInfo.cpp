@@ -44,7 +44,7 @@ void PrintInfo::encode(IPC::Encoder& encoder) const
 #if PLATFORM(GTK)
     IPC::encode(encoder, printSettings.get());
     IPC::encode(encoder, pageSetup.get());
-    encoder.encodeEnum(printMode);
+    encoder << printMode;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -68,7 +68,7 @@ bool PrintInfo::decode(IPC::Decoder& decoder, PrintInfo& info)
         return false;
     if (!IPC::decode(decoder, info.pageSetup))
         return false;
-    if (!decoder.decodeEnum(info.printMode))
+    if (!decoder.decode(info.printMode))
         return false;
 #endif
 

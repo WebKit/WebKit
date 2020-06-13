@@ -105,14 +105,14 @@ void InputMethodState::addHintsForAutocapitalizeType(WebCore::AutocapitalizeType
 
 void InputMethodState::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(purpose);
+    encoder << purpose;
     encoder << hints;
 }
 
 Optional<InputMethodState> InputMethodState::decode(IPC::Decoder& decoder)
 {
     InputMethodState state;
-    if (!decoder.decodeEnum(state.purpose))
+    if (!decoder.decode(state.purpose))
         return WTF::nullopt;
     if (!decoder.decode(state.hints))
         return WTF::nullopt;

@@ -492,7 +492,7 @@ bool ArgumentCoder<TransformationMatrix>::decode(Decoder& decoder, Transformatio
 
 void ArgumentCoder<LinearTimingFunction>::encode(Encoder& encoder, const LinearTimingFunction& timingFunction)
 {
-    encoder.encodeEnum(timingFunction.type());
+    encoder << timingFunction.type();
 }
 
 bool ArgumentCoder<LinearTimingFunction>::decode(Decoder&, LinearTimingFunction&)
@@ -503,14 +503,14 @@ bool ArgumentCoder<LinearTimingFunction>::decode(Decoder&, LinearTimingFunction&
 
 void ArgumentCoder<CubicBezierTimingFunction>::encode(Encoder& encoder, const CubicBezierTimingFunction& timingFunction)
 {
-    encoder.encodeEnum(timingFunction.type());
+    encoder << timingFunction.type();
     
     encoder << timingFunction.x1();
     encoder << timingFunction.y1();
     encoder << timingFunction.x2();
     encoder << timingFunction.y2();
     
-    encoder.encodeEnum(timingFunction.timingFunctionPreset());
+    encoder << timingFunction.timingFunctionPreset();
 }
 
 bool ArgumentCoder<CubicBezierTimingFunction>::decode(Decoder& decoder, CubicBezierTimingFunction& timingFunction)
@@ -533,7 +533,7 @@ bool ArgumentCoder<CubicBezierTimingFunction>::decode(Decoder& decoder, CubicBez
         return false;
 
     CubicBezierTimingFunction::TimingFunctionPreset preset;
-    if (!decoder.decodeEnum(preset))
+    if (!decoder.decode(preset))
         return false;
 
     timingFunction.setValues(x1, y1, x2, y2);
@@ -544,7 +544,7 @@ bool ArgumentCoder<CubicBezierTimingFunction>::decode(Decoder& decoder, CubicBez
 
 void ArgumentCoder<StepsTimingFunction>::encode(Encoder& encoder, const StepsTimingFunction& timingFunction)
 {
-    encoder.encodeEnum(timingFunction.type());
+    encoder << timingFunction.type();
     
     encoder << timingFunction.numberOfSteps();
     encoder << timingFunction.stepPosition();
@@ -569,7 +569,7 @@ bool ArgumentCoder<StepsTimingFunction>::decode(Decoder& decoder, StepsTimingFun
 
 void ArgumentCoder<SpringTimingFunction>::encode(Encoder& encoder, const SpringTimingFunction& timingFunction)
 {
-    encoder.encodeEnum(timingFunction.type());
+    encoder << timingFunction.type();
     
     encoder << timingFunction.mass();
     encoder << timingFunction.stiffness();
@@ -889,7 +889,7 @@ void ArgumentCoder<PluginInfo>::encode(Encoder& encoder, const PluginInfo& plugi
     encoder << pluginInfo.desc;
     encoder << pluginInfo.mimes;
     encoder << pluginInfo.isApplicationPlugin;
-    encoder.encodeEnum(pluginInfo.clientLoadPolicy);
+    encoder << pluginInfo.clientLoadPolicy;
     encoder << pluginInfo.bundleIdentifier;
 #if PLATFORM(MAC)
     encoder << pluginInfo.versionString;
@@ -909,7 +909,7 @@ Optional<WebCore::PluginInfo> ArgumentCoder<PluginInfo>::decode(Decoder& decoder
         return WTF::nullopt;
     if (!decoder.decode(pluginInfo.isApplicationPlugin))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(pluginInfo.clientLoadPolicy))
+    if (!decoder.decode(pluginInfo.clientLoadPolicy))
         return WTF::nullopt;
     if (!decoder.decode(pluginInfo.bundleIdentifier))
         return WTF::nullopt;
@@ -963,8 +963,8 @@ void ArgumentCoder<ProtectionSpace>::encode(Encoder& encoder, const ProtectionSp
 
     encoder << false;
     encoder << space.host() << space.port() << space.realm();
-    encoder.encodeEnum(space.authenticationScheme());
-    encoder.encodeEnum(space.serverType());
+    encoder << space.authenticationScheme();
+    encoder << space.serverType();
 }
 
 bool ArgumentCoder<ProtectionSpace>::decode(Decoder& decoder, ProtectionSpace& space)
@@ -989,11 +989,11 @@ bool ArgumentCoder<ProtectionSpace>::decode(Decoder& decoder, ProtectionSpace& s
         return false;
     
     ProtectionSpaceAuthenticationScheme authenticationScheme;
-    if (!decoder.decodeEnum(authenticationScheme))
+    if (!decoder.decode(authenticationScheme))
         return false;
 
     ProtectionSpaceServerType serverType;
-    if (!decoder.decodeEnum(serverType))
+    if (!decoder.decode(serverType))
         return false;
 
     space = ProtectionSpace(host, port, serverType, realm, authenticationScheme);
@@ -1010,7 +1010,7 @@ void ArgumentCoder<Credential>::encode(Encoder& encoder, const Credential& crede
 
     encoder << false;
     encoder << credential.user() << credential.password();
-    encoder.encodeEnum(credential.persistence());
+    encoder << credential.persistence();
 }
 
 bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
@@ -1031,7 +1031,7 @@ bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
         return false;
 
     CredentialPersistence persistence;
-    if (!decoder.decodeEnum(persistence))
+    if (!decoder.decode(persistence))
         return false;
     
     credential = Credential(user, password, persistence);
@@ -1252,7 +1252,7 @@ bool ArgumentCoder<FontHandle>::decode(Decoder& decoder, FontHandle& handle)
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 {
-    encoder.encodeEnum(cursor.type());
+    encoder << cursor.type();
         
     if (cursor.type() != Cursor::Custom)
         return;
@@ -1273,7 +1273,7 @@ void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
 bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
 {
     Cursor::Type type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return false;
 
     if (type > Cursor::Custom)
@@ -1379,7 +1379,7 @@ bool ArgumentCoder<ResourceRequest>::decode(Decoder& decoder, ResourceRequest& r
 
 void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)
 {
-    encoder.encodeEnum(resourceError.type());
+    encoder << resourceError.type();
     if (resourceError.type() == ResourceError::Type::Null)
         return;
     encodePlatformData(encoder, resourceError);
@@ -1388,7 +1388,7 @@ void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError&
 bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resourceError)
 {
     ResourceError::Type type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return false;
 
     if (type == ResourceError::Type::Null) {
@@ -1532,7 +1532,7 @@ void ArgumentCoder<DragData>::encode(Encoder& encoder, const DragData& dragData)
     encoder << dragData.clientPosition();
     encoder << dragData.globalPosition();
     encoder << dragData.draggingSourceOperationMask();
-    encoder.encodeEnum(dragData.flags());
+    encoder << dragData.flags();
 #if PLATFORM(COCOA)
     encoder << dragData.pasteboardName();
     encoder << dragData.fileNames();
@@ -1555,7 +1555,7 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
         return false;
 
     DragApplicationFlags applicationFlags;
-    if (!decoder.decodeEnum(applicationFlags))
+    if (!decoder.decode(applicationFlags))
         return false;
 
     String pasteboardName;
@@ -1584,7 +1584,7 @@ void ArgumentCoder<CompositionUnderline>::encode(Encoder& encoder, const Composi
     encoder << underline.startOffset;
     encoder << underline.endOffset;
     encoder << underline.thick;
-    encoder.encodeEnum(underline.compositionUnderlineColor);
+    encoder << underline.compositionUnderlineColor;
     encoder << underline.color;
 }
 
@@ -1598,7 +1598,7 @@ Optional<CompositionUnderline> ArgumentCoder<CompositionUnderline>::decode(Decod
         return WTF::nullopt;
     if (!decoder.decode(underline.thick))
         return WTF::nullopt;
-    if (!decoder.decodeEnum(underline.compositionUnderlineColor))
+    if (!decoder.decode(underline.compositionUnderlineColor))
         return WTF::nullopt;
     if (!decoder.decode(underline.color))
         return WTF::nullopt;
@@ -1912,7 +1912,7 @@ void ArgumentCoder<FileChooserSettings>::encode(Encoder& encoder, const FileChoo
     encoder << settings.acceptFileExtensions;
     encoder << settings.selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
-    encoder.encodeEnum(settings.mediaCaptureType);
+    encoder << settings.mediaCaptureType;
 #endif
 }
 
@@ -1929,7 +1929,7 @@ bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSet
     if (!decoder.decode(settings.selectedFiles))
         return false;
 #if ENABLE(MEDIA_CAPTURE)
-    if (!decoder.decodeEnum(settings.mediaCaptureType))
+    if (!decoder.decode(settings.mediaCaptureType))
         return false;
 #endif
 
@@ -2019,7 +2019,7 @@ void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const Text
     encoder << request.identifier();
     encoder << request.text();
     encoder << request.checkingTypes();
-    encoder.encodeEnum(request.processType());
+    encoder << request.processType();
 }
 
 bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextCheckingRequestData& request)
@@ -2037,7 +2037,7 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextChecki
         return false;
 
     TextCheckingProcessType processType;
-    if (!decoder.decodeEnum(processType))
+    if (!decoder.decode(processType))
         return false;
 
     request = TextCheckingRequestData { identifier, text, checkingTypes, processType };
@@ -2046,7 +2046,7 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextChecki
 
 void ArgumentCoder<TextCheckingResult>::encode(Encoder& encoder, const TextCheckingResult& result)
 {
-    encoder.encodeEnum(result.type);
+    encoder << result.type;
     encoder << result.range;
     encoder << result.details;
     encoder << result.replacement;
@@ -2055,7 +2055,7 @@ void ArgumentCoder<TextCheckingResult>::encode(Encoder& encoder, const TextCheck
 Optional<TextCheckingResult> ArgumentCoder<TextCheckingResult>::decode(Decoder& decoder)
 {
     TextCheckingType type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return WTF::nullopt;
     
     Optional<CharacterRange> range;
@@ -2082,8 +2082,8 @@ void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleShee
     encoder << userStyleSheet.url();
     encoder << userStyleSheet.allowlist();
     encoder << userStyleSheet.blocklist();
-    encoder.encodeEnum(userStyleSheet.injectedFrames());
-    encoder.encodeEnum(userStyleSheet.level());
+    encoder << userStyleSheet.injectedFrames();
+    encoder << userStyleSheet.level();
     encoder << userStyleSheet.pageID();
 }
 
@@ -2106,11 +2106,11 @@ bool ArgumentCoder<UserStyleSheet>::decode(Decoder& decoder, UserStyleSheet& use
         return false;
 
     UserContentInjectedFrames injectedFrames;
-    if (!decoder.decodeEnum(injectedFrames))
+    if (!decoder.decode(injectedFrames))
         return false;
 
     UserStyleLevel level;
-    if (!decoder.decodeEnum(level))
+    if (!decoder.decode(level))
         return false;
 
     Optional<Optional<PageIdentifier>> pageID;
@@ -2150,11 +2150,11 @@ bool ArgumentCoder<MediaSessionMetadata>::decode(Decoder& decoder, MediaSessionM
 
 void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const ScrollableAreaParameters& parameters)
 {
-    encoder.encodeEnum(parameters.horizontalScrollElasticity);
-    encoder.encodeEnum(parameters.verticalScrollElasticity);
+    encoder << parameters.horizontalScrollElasticity;
+    encoder << parameters.verticalScrollElasticity;
 
-    encoder.encodeEnum(parameters.horizontalScrollbarMode);
-    encoder.encodeEnum(parameters.verticalScrollbarMode);
+    encoder << parameters.horizontalScrollbarMode;
+    encoder << parameters.verticalScrollbarMode;
 
     encoder << parameters.hasEnabledHorizontalScrollbar;
     encoder << parameters.hasEnabledVerticalScrollbar;
@@ -2167,14 +2167,14 @@ void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const Scr
 
 bool ArgumentCoder<ScrollableAreaParameters>::decode(Decoder& decoder, ScrollableAreaParameters& params)
 {
-    if (!decoder.decodeEnum(params.horizontalScrollElasticity))
+    if (!decoder.decode(params.horizontalScrollElasticity))
         return false;
-    if (!decoder.decodeEnum(params.verticalScrollElasticity))
+    if (!decoder.decode(params.verticalScrollElasticity))
         return false;
 
-    if (!decoder.decodeEnum(params.horizontalScrollbarMode))
+    if (!decoder.decode(params.horizontalScrollbarMode))
         return false;
-    if (!decoder.decodeEnum(params.verticalScrollbarMode))
+    if (!decoder.decode(params.verticalScrollbarMode))
         return false;
 
     if (!decoder.decode(params.hasEnabledHorizontalScrollbar))
@@ -2338,7 +2338,7 @@ bool ArgumentCoder<StickyPositionViewportConstraints>::decode(Decoder& decoder, 
 #if !USE(COORDINATED_GRAPHICS)
 void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperation& filter)
 {
-    encoder.encodeEnum(filter.type());
+    encoder << filter.type();
 
     switch (filter.type()) {
     case FilterOperation::NONE:
@@ -2371,7 +2371,7 @@ void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperat
         break;
     }
     case FilterOperation::DEFAULT:
-        encoder.encodeEnum(downcast<DefaultFilterOperation>(filter).representedType());
+        encoder << downcast<DefaultFilterOperation>(filter).representedType();
         break;
     case FilterOperation::PASSTHROUGH:
         break;
@@ -2381,7 +2381,7 @@ void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperat
 bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
 {
     FilterOperation::OperationType type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return false;
 
     switch (type) {
@@ -2435,7 +2435,7 @@ bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
     }
     case FilterOperation::DEFAULT: {
         FilterOperation::OperationType representedType;
-        if (!decoder.decodeEnum(representedType))
+        if (!decoder.decode(representedType))
             return false;
         filter = DefaultFilterOperation::create(representedType);
         break;
@@ -3060,8 +3060,8 @@ bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vec
 void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
 {
     encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough << attributes.textLists;
-    encoder.encodeEnum(attributes.horizontalAlignment);
-    encoder.encodeEnum(attributes.subscriptOrSuperscript);
+    encoder << attributes.horizontalAlignment;
+    encoder << attributes.subscriptOrSuperscript;
 
     if (attributes.encodingRequiresPlatformData()) {
         encoder << true;
@@ -3092,10 +3092,10 @@ Optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
     if (!decoder.decode(attributes.textLists))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(attributes.horizontalAlignment))
+    if (!decoder.decode(attributes.horizontalAlignment))
         return WTF::nullopt;
 
-    if (!decoder.decodeEnum(attributes.subscriptOrSuperscript))
+    if (!decoder.decode(attributes.subscriptOrSuperscript))
         return WTF::nullopt;
 
     bool hasPlatformData;
@@ -3139,7 +3139,7 @@ void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode(Encoder& enc
     bool hasPlatformData = value.encodingRequiresPlatformData();
     encoder << hasPlatformData;
 
-    encoder.encodeEnum(value.platformType());
+    encoder << value.platformType();
     if (hasPlatformData)
         encodePlatformData(encoder, value);
 }
@@ -3151,7 +3151,7 @@ Optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedPlatfo
         return WTF::nullopt;
 
     WebCore::SerializedPlatformDataCueValue::PlatformType type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return WTF::nullopt;
 
     if (hasPlatformData)

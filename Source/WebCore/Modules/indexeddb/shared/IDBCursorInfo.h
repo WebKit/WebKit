@@ -97,9 +97,9 @@ void IDBCursorInfo::encode(Encoder& encoder) const
 {
     encoder << m_cursorIdentifier << m_transactionIdentifier << m_objectStoreIdentifier << m_sourceIdentifier << m_range;
 
-    encoder.encodeEnum(m_source);
-    encoder.encodeEnum(m_direction);
-    encoder.encodeEnum(m_type);
+    encoder << m_source;
+    encoder << m_direction;
+    encoder << m_type;
 }
 
 template<class Decoder>
@@ -120,13 +120,13 @@ bool IDBCursorInfo::decode(Decoder& decoder, IDBCursorInfo& info)
     if (!decoder.decode(info.m_range))
         return false;
 
-    if (!decoder.decodeEnum(info.m_source))
+    if (!decoder.decode(info.m_source))
         return false;
 
-    if (!decoder.decodeEnum(info.m_direction))
+    if (!decoder.decode(info.m_direction))
         return false;
 
-    if (!decoder.decodeEnum(info.m_type))
+    if (!decoder.decode(info.m_type))
         return false;
 
     return true;

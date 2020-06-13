@@ -116,7 +116,7 @@ void CapabilityValueOrRange::encode(Encoder& encoder) const
 {
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&m_minOrValue), sizeof(ValueUnion), alignof(ValueUnion));
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&m_max), sizeof(ValueUnion), alignof(ValueUnion));
-    encoder.encodeEnum(m_type);
+    encoder << m_type;
 }
 
 template<class Decoder>
@@ -124,7 +124,7 @@ bool CapabilityValueOrRange::decode(Decoder& decoder, CapabilityValueOrRange& va
 {
     return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&valueOrRange.m_minOrValue), sizeof(ValueUnion), alignof(ValueUnion))
         && decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&valueOrRange.m_max), sizeof(ValueUnion), alignof(ValueUnion))
-        && decoder.decodeEnum(valueOrRange.m_type);
+        && decoder.decode(valueOrRange.m_type);
 }
 
 class RealtimeMediaSourceCapabilities {
@@ -227,7 +227,7 @@ void RealtimeMediaSourceCapabilities::encode(Encoder& encoder) const
         << m_deviceId
         << m_groupId
         << m_supportedConstraints;
-    encoder.encodeEnum(m_echoCancellation);
+    encoder << m_echoCancellation;
 }
 
 template<class Decoder>
@@ -244,7 +244,7 @@ bool RealtimeMediaSourceCapabilities::decode(Decoder& decoder, RealtimeMediaSour
         && decoder.decode(capabilities.m_deviceId)
         && decoder.decode(capabilities.m_groupId)
         && decoder.decode(capabilities.m_supportedConstraints)
-        && decoder.decodeEnum(capabilities.m_echoCancellation);
+        && decoder.decode(capabilities.m_echoCancellation);
 }
 
 } // namespace WebCore

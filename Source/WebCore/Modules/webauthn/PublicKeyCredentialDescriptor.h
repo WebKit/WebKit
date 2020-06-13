@@ -56,7 +56,7 @@ template<class Decoder>
 Optional<PublicKeyCredentialDescriptor> PublicKeyCredentialDescriptor::decode(Decoder& decoder)
 {
     PublicKeyCredentialDescriptor result;
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return WTF::nullopt;
     if (!decoder.decode(result.idVector))
         return WTF::nullopt;

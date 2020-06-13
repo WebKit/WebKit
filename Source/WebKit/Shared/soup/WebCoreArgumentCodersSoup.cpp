@@ -162,7 +162,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
 void ArgumentCoder<SoupNetworkProxySettings>::encode(Encoder& encoder, const SoupNetworkProxySettings& settings)
 {
     ASSERT(!settings.isEmpty());
-    encoder.encodeEnum(settings.mode);
+    encoder << settings.mode;
     if (settings.mode != SoupNetworkProxySettings::Mode::Custom)
         return;
 
@@ -178,7 +178,7 @@ void ArgumentCoder<SoupNetworkProxySettings>::encode(Encoder& encoder, const Sou
 
 bool ArgumentCoder<SoupNetworkProxySettings>::decode(Decoder& decoder, SoupNetworkProxySettings& settings)
 {
-    if (!decoder.decodeEnum(settings.mode))
+    if (!decoder.decode(settings.mode))
         return false;
 
     if (settings.mode != SoupNetworkProxySettings::Mode::Custom)

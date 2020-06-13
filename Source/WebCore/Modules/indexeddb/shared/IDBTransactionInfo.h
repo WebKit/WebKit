@@ -92,7 +92,7 @@ template<class Encoder>
 void IDBTransactionInfo::encode(Encoder& encoder) const
 {
     encoder << m_identifier << m_newVersion << m_objectStores;
-    encoder.encodeEnum(m_mode);
+    encoder << m_mode;
 
     encoder << !!m_originalDatabaseInfo;
     if (m_originalDatabaseInfo)
@@ -111,7 +111,7 @@ bool IDBTransactionInfo::decode(Decoder& decoder, IDBTransactionInfo& info)
     if (!decoder.decode(info.m_objectStores))
         return false;
 
-    if (!decoder.decodeEnum(info.m_mode))
+    if (!decoder.decode(info.m_mode))
         return false;
 
     bool hasObject;

@@ -100,8 +100,8 @@ void WebContextMenuItemData::setUserData(API::Object* userData)
     
 void WebContextMenuItemData::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(m_type);
-    encoder.encodeEnum(m_action);
+    encoder << m_type;
+    encoder << m_action;
     encoder << m_title;
     encoder << m_checked;
     encoder << m_enabled;
@@ -111,11 +111,11 @@ void WebContextMenuItemData::encode(IPC::Encoder& encoder) const
 Optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& decoder)
 {
     WebCore::ContextMenuItemType type;
-    if (!decoder.decodeEnum(type))
+    if (!decoder.decode(type))
         return WTF::nullopt;
 
     WebCore::ContextMenuAction action;
-    if (!decoder.decodeEnum(action))
+    if (!decoder.decode(action))
         return WTF::nullopt;
 
     String title;

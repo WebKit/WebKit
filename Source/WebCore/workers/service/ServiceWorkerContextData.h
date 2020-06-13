@@ -134,7 +134,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
         return WTF::nullopt;
     
     WorkerType workerType;
-    if (!decoder.decodeEnum(workerType))
+    if (!decoder.decode(workerType))
         return WTF::nullopt;
 
     bool loadedFromDisk;

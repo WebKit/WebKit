@@ -74,7 +74,7 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 
 void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(m_type);
+    encoder << m_type;
     encoder << m_menuLocation;
     encoder << m_menuItems;
     encoder << m_webHitTestResultData;
@@ -93,7 +93,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 
 bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextData& result)
 {
-    if (!decoder.decodeEnum(result.m_type))
+    if (!decoder.decode(result.m_type))
         return false;
 
     if (!decoder.decode(result.m_menuLocation))

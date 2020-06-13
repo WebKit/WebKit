@@ -238,7 +238,7 @@ void IDBKeyData::encode(Encoder& encoder) const
     if (m_isNull)
         return;
 
-    encoder.encodeEnum(m_type);
+    encoder << m_type;
 
     switch (m_type) {
     case IndexedDB::KeyType::Invalid:
@@ -271,7 +271,7 @@ Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
     if (keyData.m_isNull)
         return keyData;
 
-    if (!decoder.decodeEnum(keyData.m_type))
+    if (!decoder.decode(keyData.m_type))
         return WTF::nullopt;
 
     switch (keyData.m_type) {

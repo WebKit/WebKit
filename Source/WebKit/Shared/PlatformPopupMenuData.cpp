@@ -36,7 +36,7 @@ void PlatformPopupMenuData::encode(IPC::Encoder& encoder) const
     encoder << fontInfo;
     encoder << shouldPopOver;
     encoder << hideArrows;
-    encoder.encodeEnum(menuSize);
+    encoder << menuSize;
 #elif PLATFORM(WIN)
     encoder << m_clientPaddingLeft;
     encoder << m_clientPaddingRight;
@@ -66,7 +66,7 @@ bool PlatformPopupMenuData::decode(IPC::Decoder& decoder, PlatformPopupMenuData&
         return false;
     if (!decoder.decode(data.hideArrows))
         return false;
-    if (!decoder.decodeEnum(data.menuSize))
+    if (!decoder.decode(data.menuSize))
         return false;
 #elif PLATFORM(WIN)
     if (!decoder.decode(data.m_clientPaddingLeft))

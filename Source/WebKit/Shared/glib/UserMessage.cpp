@@ -35,7 +35,7 @@ namespace WebKit {
 
 void UserMessage::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(type);
+    encoder << type;
     if (type == Type::Null)
         return;
 
@@ -59,7 +59,7 @@ void UserMessage::encode(IPC::Encoder& encoder) const
 Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
 {
     UserMessage result;
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return WTF::nullopt;
 
     if (result.type == Type::Null)

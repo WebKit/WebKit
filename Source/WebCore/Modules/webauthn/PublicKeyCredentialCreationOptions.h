@@ -101,7 +101,7 @@ template<class Decoder>
 Optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentialCreationOptions::Parameters::decode(Decoder& decoder)
 {
     PublicKeyCredentialCreationOptions::Parameters result;
-    if (!decoder.decodeEnum(result.type))
+    if (!decoder.decode(result.type))
         return WTF::nullopt;
     if (!decoder.decode(result.alg))
         return WTF::nullopt;
@@ -131,7 +131,7 @@ Optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> Pub
         return WTF::nullopt;
     result.requireResidentKey = *requireResidentKey;
 
-    if (!decoder.decodeEnum(result.userVerification))
+    if (!decoder.decode(result.userVerification))
         return WTF::nullopt;
     return result;
 }

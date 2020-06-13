@@ -425,7 +425,7 @@ void SetState::encode(Encoder& encoder) const
         encoder << state.fillColor;
 
     if (changeFlags.contains(GraphicsContextState::StrokeStyleChange))
-        encoder.encodeEnum(state.strokeStyle);
+        encoder << state.strokeStyle;
 
     if (changeFlags.contains(GraphicsContextState::FillRuleChange))
         encoder << state.fillRule;
@@ -596,7 +596,7 @@ Optional<Ref<SetState>> SetState::decode(Decoder& decoder)
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeStyleChange)) {
         StrokeStyle strokeStyle;
-        if (!decoder.decodeEnum(strokeStyle))
+        if (!decoder.decode(strokeStyle))
             return WTF::nullopt;
 
         stateChange.m_state.strokeStyle = strokeStyle;
@@ -1334,8 +1334,8 @@ void DrawTiledScaledImage::encode(Encoder& encoder) const
     encoder << m_destination;
     encoder << m_source;
     encoder << m_tileScaleFactor;
-    encoder.encodeEnum(m_hRule);
-    encoder.encodeEnum(m_vRule);
+    encoder << m_hRule;
+    encoder << m_vRule;
     encoder << m_imagePaintingOptions;
 }
 
@@ -1363,11 +1363,11 @@ Optional<Ref<DrawTiledScaledImage>> DrawTiledScaledImage::decode(Decoder& decode
         return WTF::nullopt;
 
     Image::TileRule hRule;
-    if (!decoder.decodeEnum(hRule))
+    if (!decoder.decode(hRule))
         return WTF::nullopt;
 
     Image::TileRule vRule;
-    if (!decoder.decodeEnum(vRule))
+    if (!decoder.decode(vRule))
         return WTF::nullopt;
 
     Optional<ImagePaintingOptions> imagePaintingOptions;

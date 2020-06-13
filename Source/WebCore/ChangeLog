@@ -1,3 +1,110 @@
+2020-06-12  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Check enum values in IPC::Decoder::decodeEnum() an IPC::Encoder::encodeEnum()
+        <https://webkit.org/b/211988>
+        <rdar://problem/63137695>
+
+        Reviewed by Darin Adler.
+
+        Replace decodeEnum() with decode() and encodeEnum() with
+        operator<<().
+
+        * Modules/applicationmanifest/ApplicationManifest.h:
+        (WebCore::ApplicationManifest::decode):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::encode const):
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        (WebCore::IDBCursorInfo::encode const):
+        (WebCore::IDBCursorInfo::decode):
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::encode const):
+        (WebCore::IDBError::decode):
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h:
+        (WebCore::IDBGetAllRecordsData::encode const):
+        (WebCore::IDBGetAllRecordsData::decode):
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        (WebCore::IDBGetRecordData::encode const):
+        (WebCore::IDBGetRecordData::decode):
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        (WebCore::IDBIterateCursorData::encode const):
+        (WebCore::IDBIterateCursorData::decode):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::encode const):
+        (WebCore::IDBRequestData::decode):
+        * Modules/indexeddb/shared/IDBResultData.h:
+        (WebCore::IDBResultData::encode const):
+        (WebCore::IDBResultData::decode):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::encode const):
+        (WebCore::IDBTransactionInfo::decode):
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (WebCore::PublicKeyCredentialCreationOptions::Parameters::decode):
+        (WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::decode):
+        * Modules/webauthn/PublicKeyCredentialDescriptor.h:
+        (WebCore::PublicKeyCredentialDescriptor::decode):
+        * dom/ExceptionData.h:
+        (WebCore::ExceptionData::encode const):
+        (WebCore::ExceptionData::decode):
+        * html/DataListSuggestionInformation.h:
+        (WebCore::DataListSuggestionInformation::encode const):
+        (WebCore::DataListSuggestionInformation::decode):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::encode const):
+        (WebCore::SecurityOrigin::decode):
+        * platform/ContextMenuItem.h:
+        (WTF::EnumTraits<WebCore::ContextMenuAction>):
+        - Add missing ContextMenuItemTagPasteAsPlainText that was added
+          in r261800.
+        * platform/LinkIcon.h:
+        (WebCore::LinkIcon::encode const):
+        (WebCore::LinkIcon::decode):
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/graphics/InbandGenericCue.h:
+        (WebCore::GenericCueData::encode const):
+        * platform/graphics/Path.h:
+        (WebCore::Path::encode const):
+        (WebCore::Path::decode):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetState::encode const):
+        (WebCore::DisplayList::SetState::decode):
+        (WebCore::DisplayList::DrawTiledScaledImage::encode const):
+        (WebCore::DisplayList::DrawTiledScaledImage::decode):
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::CaptureDevice::encode const):
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::MediaConstraint::encode const):
+        (WebCore::MediaConstraint::decode):
+        * platform/mediastream/MediaStreamRequest.h:
+        (WebCore::MediaStreamRequest::encode const):
+        (WebCore::MediaStreamRequest::decode):
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        (WebCore::CapabilityValueOrRange::encode const):
+        (WebCore::CapabilityValueOrRange::decode):
+        (WebCore::RealtimeMediaSourceCapabilities::encode const):
+        (WebCore::RealtimeMediaSourceCapabilities::decode):
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WebCore::RealtimeMediaSourceSettings::encode const):
+        (WebCore::RealtimeMediaSourceSettings::decode):
+        * platform/mock/MockMediaDevice.h:
+        (WebCore::MockDisplayProperties::encode const):
+        * platform/network/HTTPHeaderMap.h:
+        (WebCore::HTTPHeaderMap::CommonHeader::encode const):
+        (WebCore::HTTPHeaderMap::CommonHeader::decode):
+        * testing/MockWebAuthenticationConfiguration.h:
+        (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::decode):
+        (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::decode):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+
 2020-06-12  Chris Dumez  <cdumez@apple.com>
 
         Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache

@@ -210,13 +210,13 @@ void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, cons
     encoder << request.shippingContact();
     encoder << request.merchantCapabilities();
     encoder << request.supportedNetworks();
-    encoder.encodeEnum(request.shippingType());
+    encoder << request.shippingType();
     encoder << request.shippingMethods();
     encoder << request.lineItems();
     encoder << request.total();
     encoder << request.applicationData();
     encoder << request.supportedCountries();
-    encoder.encodeEnum(request.requester());
+    encoder << request.requester();
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     encoder << request.installmentConfiguration();
 #endif
@@ -267,7 +267,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
     request.setSupportedNetworks(supportedNetworks);
 
     ApplePaySessionPaymentRequest::ShippingType shippingType;
-    if (!decoder.decodeEnum(shippingType))
+    if (!decoder.decode(shippingType))
         return false;
     request.setShippingType(shippingType);
 
@@ -298,7 +298,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
     request.setSupportedCountries(WTFMove(supportedCountries));
 
     ApplePaySessionPaymentRequest::Requester requester;
-    if (!decoder.decodeEnum(requester))
+    if (!decoder.decode(requester))
         return false;
     request.setRequester(requester);
     
@@ -341,7 +341,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder
 
 void ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
-    encoder.encodeEnum(lineItem.type);
+    encoder << lineItem.type;
     encoder << lineItem.label;
     encoder << lineItem.amount;
 }
@@ -349,7 +349,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode(Encoder& enc
 Optional<ApplePaySessionPaymentRequest::LineItem> ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder)
 {
     WebCore::ApplePaySessionPaymentRequest::LineItem lineItem;
-    if (!decoder.decodeEnum(lineItem.type))
+    if (!decoder.decode(lineItem.type))
         return WTF::nullopt;
     if (!decoder.decode(lineItem.label))
         return WTF::nullopt;

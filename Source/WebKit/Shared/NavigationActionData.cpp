@@ -35,13 +35,13 @@ namespace WebKit {
 
 void NavigationActionData::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(navigationType);
+    encoder << navigationType;
     encoder << modifiers;
-    encoder.encodeEnum(mouseButton);
-    encoder.encodeEnum(syntheticClickType);
+    encoder << mouseButton;
+    encoder << syntheticClickType;
     encoder << userGestureTokenIdentifier;
     encoder << canHandleRequest;
-    encoder.encodeEnum(shouldOpenExternalURLsPolicy);
+    encoder << shouldOpenExternalURLsPolicy;
     encoder << downloadAttribute;
     encoder << clickLocationInRootViewCoordinates;
     encoder << isRedirect;
@@ -51,8 +51,8 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << requesterOrigin;
     encoder << targetBackForwardItemIdentifier;
     encoder << sourceBackForwardItemIdentifier;
-    encoder.encodeEnum(lockHistory);
-    encoder.encodeEnum(lockBackForwardList);
+    encoder << lockHistory;
+    encoder << lockBackForwardList;
     encoder << clientRedirectSourceForHistory;
     encoder << adClickAttribution;
 }
@@ -60,7 +60,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
 Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
 {
     WebCore::NavigationType navigationType;
-    if (!decoder.decodeEnum(navigationType))
+    if (!decoder.decode(navigationType))
         return WTF::nullopt;
     
     OptionSet<WebEvent::Modifier> modifiers;
@@ -68,11 +68,11 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
         return WTF::nullopt;
 
     WebMouseEvent::Button mouseButton;
-    if (!decoder.decodeEnum(mouseButton))
+    if (!decoder.decode(mouseButton))
         return WTF::nullopt;
     
     WebMouseEvent::SyntheticClickType syntheticClickType;
-    if (!decoder.decodeEnum(syntheticClickType))
+    if (!decoder.decode(syntheticClickType))
         return WTF::nullopt;
     
     Optional<uint64_t> userGestureTokenIdentifier;
@@ -86,7 +86,7 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
         return WTF::nullopt;
     
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
-    if (!decoder.decodeEnum(shouldOpenExternalURLsPolicy))
+    if (!decoder.decode(shouldOpenExternalURLsPolicy))
         return WTF::nullopt;
     
     Optional<String> downloadAttribute;
@@ -134,11 +134,11 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
         return WTF::nullopt;
 
     WebCore::LockHistory lockHistory;
-    if (!decoder.decodeEnum(lockHistory))
+    if (!decoder.decode(lockHistory))
         return WTF::nullopt;
 
     WebCore::LockBackForwardList lockBackForwardList;
-    if (!decoder.decodeEnum(lockBackForwardList))
+    if (!decoder.decode(lockBackForwardList))
         return WTF::nullopt;
 
     Optional<String> clientRedirectSourceForHistory;
