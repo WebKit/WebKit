@@ -1,3 +1,42 @@
+2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] el(Greek) characters' upper-case conversion is locale-sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=213155
+        <rdar://problem/55018467>
+
+        Reviewed by Darin Adler.
+
+        CLDR defines 4 locales which has language-sensitive case conversions. "az", "el", "lt", and "tr", where,
+
+            az = Azerbaijani
+            el = Greek
+            lt = Lithuanian
+            tr = Turkish
+
+        We can ensure it easily like this.
+
+            1. Download CLDR data
+            2. `ls common/transforms/*Upper.xml`
+
+                common/transforms/az-Upper.xml
+                common/transforms/el-Upper.xml
+                common/transforms/lt-Upper.xml
+                common/transforms/tr-Upper.xml
+
+        And ECMA-402 String.prototype.{toLocaleLowerCase,toLocaleUpperCase} requires these locales are listed as `availableLocales`.
+
+            > 7. Let availableLocales be a List with language tags that includes the languages for which the Unicode Character
+            >    Database contains language sensitive case mappings. Implementations may add additional language tags if they
+            >    support case mapping for additional locales.
+
+            https://tc39.es/ecma402/#sup-string.prototype.tolocalelowercase
+
+        This patch adds "el" to our maintained availableLocales list. Previously we only had "az", "lt", and "tr".
+
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase):
+        (JSC::stringProtoFuncToLocaleUpperCase):
+
 2020-06-12  Keith Miller  <keith_miller@apple.com>
 
         Tests expecting a crash should use a signal handler in the JSC CLI process

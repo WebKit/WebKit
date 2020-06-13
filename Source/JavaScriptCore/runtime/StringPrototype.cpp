@@ -1582,8 +1582,10 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     String noExtensionsLocale = removeUnicodeLocaleExtension(requestedLocale);
 
     // 10. Let availableLocales be a List with the language tags of the languages for which the Unicode character database contains language sensitive case mappings.
-    // Note 1: As of Unicode 5.1, the availableLocales list contains the elements "az", "lt", and "tr".
-    const HashSet<String> availableLocales({ "az"_s, "lt"_s, "tr"_s });
+    // Note 1: As of Unicode 5.1, the availableLocales list contains the elements "az", "el", "lt", and "tr".
+    // FIXME: Creating HashSet for these 4 locales every time is inefficient.
+    // https://bugs.webkit.org/show_bug.cgi?id=213158
+    const HashSet<String> availableLocales({ "az"_s, "el"_s, "lt"_s, "tr"_s });
 
     // 11. Let locale be BestAvailableLocale(availableLocales, noExtensionsLocale).
     String locale = bestAvailableLocale(availableLocales, noExtensionsLocale);
@@ -1623,7 +1625,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(JSGlobalObject* gl
     // 13.1.3 String.prototype.toLocaleUpperCase ([locales])
     // http://ecma-international.org/publications/standards/Ecma-402.htm
     // This function interprets a string value as a sequence of code points, as described in ES2015, 6.1.4. This function behaves in exactly the same way as String.prototype.toLocaleLowerCase, except that characters are mapped to their uppercase equivalents as specified in the Unicode character database.
-    return toLocaleCase<CaseConversionMode::Upper>(globalObject,callFrame);
+    return toLocaleCase<CaseConversionMode::Upper>(globalObject, callFrame);
 }
 
 enum {

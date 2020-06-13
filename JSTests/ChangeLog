@@ -1,3 +1,14 @@
+2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] el(Greek) characters' upper-case conversion is locale-sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=213155
+        <rdar://problem/55018467>
+
+        Reviewed by Darin Adler.
+
+        * stress/intl-el-case.js: Added.
+        (shouldBe):
+
 2020-06-12  Keith Miller  <keith_miller@apple.com>
 
         Tests expecting a crash should use a signal handler in the JSC CLI process
