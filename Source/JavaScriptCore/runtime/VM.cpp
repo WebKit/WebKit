@@ -285,7 +285,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , immutableButterflyHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
     , cellHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
     , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
-    , aggregateErrorHeapCellType(IsoHeapCellType::create<AggregateError>())
     , apiGlobalObjectHeapCellType(IsoHeapCellType::create<JSAPIGlobalObject>())
     , callbackConstructorHeapCellType(IsoHeapCellType::create<JSCallbackConstructor>())
     , callbackGlobalObjectHeapCellType(IsoHeapCellType::create<JSCallbackObject<JSGlobalObject>>())
@@ -1420,7 +1419,6 @@ void VM::ensureShadowChicken()
     }
 
 
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(aggregateErrorSpace, aggregateErrorHeapCellType.get(), AggregateError)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiGlobalObjectSpace, apiGlobalObjectHeapCellType.get(), JSAPIGlobalObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiValueWrapperSpace, cellHeapCellType.get(), JSAPIValueWrapper)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(arrayBufferSpace, cellHeapCellType.get(), JSArrayBuffer)

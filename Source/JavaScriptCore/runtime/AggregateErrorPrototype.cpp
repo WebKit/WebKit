@@ -33,41 +33,15 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL aggregateErrorPrototypeAccessorErrors(JSGlobalObject*, CallFrame*);
-
 AggregateErrorPrototype::AggregateErrorPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
 }
 
-void AggregateErrorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void AggregateErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm, errorTypeName(ErrorType::AggregateError));
     ASSERT(inherits(vm, info()));
-
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("errors", aggregateErrorPrototypeAccessorErrors, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-}
-
-EncodedJSValue JSC_HOST_CALL aggregateErrorPrototypeAccessorErrors(JSGlobalObject* globalObject, CallFrame* callFrame)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = callFrame->thisValue();
-    auto* aggregateError = jsDynamicCast<AggregateError*>(vm, thisValue);
-    if (!aggregateError)
-        return throwVMTypeError(globalObject, scope, "The AggregateError.prototype.errors getter can only be called on a AggregateError object"_s);
-
-    auto* result = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    unsigned index = 0;
-    for (const auto& error : aggregateError->errors()) {
-        result->putDirectIndex(globalObject, index++, error.get());
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-
-    return JSValue::encode(result);
 }
 
 } // namespace JSC

@@ -30,12 +30,8 @@
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSGlobalObject.h"
-#include "SlotVisitor.h"
 #include "Structure.h"
-#include "SubspaceAccess.h"
 #include "VM.h"
-#include "WriteBarrier.h"
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -46,17 +42,6 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags;
     static constexpr bool needsDestruction = Base::needsDestruction;
 
-    static void destroy(JSCell* cell)
-    {
-        static_cast<AggregateError*>(cell)->AggregateError::~AggregateError();
-    }
-
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.aggregateErrorSpace<mode>();
-    }
-
     DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -64,27 +49,21 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
     }
 
-    static void visitChildren(JSCell*, SlotVisitor&);
-
     static AggregateError* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const MarkedArgumentBuffer& errors, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
     {
-        auto* instance = new (NotNull, allocateCell<AggregateError>(vm.heap)) AggregateError(vm, structure, errors);
-        instance->finishCreation(vm, globalObject, message, appender, type, useCurrentFrame);
+        auto* instance = new (NotNull, allocateCell<AggregateError>(vm.heap)) AggregateError(vm, structure);
+        instance->finishCreation(vm, globalObject, errors, message, appender, type, useCurrentFrame);
         return instance;
     }
 
     static AggregateError* create(JSGlobalObject*, VM&, Structure*, JSValue errors, JSValue message, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
-    const Vector<WriteBarrier<Unknown>>& errors() const
-    {
-        // This should never be modified after construction.
-        return m_errors;
-    }
+    void finishCreation(VM&, JSGlobalObject*, const MarkedArgumentBuffer& errors, const String& message, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
 private:
-    explicit AggregateError(VM&, Structure*, const MarkedArgumentBuffer& errors);
-
-    Vector<WriteBarrier<Unknown>> m_errors;
+    explicit AggregateError(VM&, Structure*);
 };
+
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(AggregateError, AggregateError::Base);
 
 } // namespace JSC

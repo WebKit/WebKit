@@ -539,7 +539,7 @@ void JSGlobalObject::initializeErrorConstructor(LazyClassStructure::Initializer&
 
 void JSGlobalObject::initializeAggregateErrorConstructor(LazyClassStructure::Initializer& init)
 {
-    init.setPrototype(AggregateErrorPrototype::create(init.vm, this, AggregateErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this))));
+    init.setPrototype(AggregateErrorPrototype::create(init.vm, AggregateErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this))));
     init.setStructure(AggregateError::createStructure(init.vm, this, init.prototype));
     init.setConstructor(AggregateErrorConstructor::create(init.vm, AggregateErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsCast<AggregateErrorPrototype*>(init.prototype)));
 }

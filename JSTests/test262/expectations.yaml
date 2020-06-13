@@ -921,6 +921,33 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
   default: 'Test262Error: Expected SameValue(«22», «2») to be true'
   strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
+test/built-ins/NativeErrors/AggregateError/prototype/errors/invoked-as-accessor.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/NativeErrors/AggregateError/prototype/errors/invoked-as-func.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
+test/built-ins/NativeErrors/AggregateError/prototype/errors/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'desc.get')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'desc.get')"
+test/built-ins/NativeErrors/AggregateError/prototype/errors/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'desc.get')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'desc.get')"
+test/built-ins/NativeErrors/AggregateError/prototype/errors/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'desc.set')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'desc.set')"
+test/built-ins/NativeErrors/AggregateError/prototype/errors/return-from-iterable-errors.js:
+  default: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«3,6», «3,6») to be false'
+  strict mode: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«3,6», «3,6») to be false'
+test/built-ins/NativeErrors/AggregateError/prototype/errors/return-new-array-from-list.js:
+  default: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«», «») to be false'
+  strict mode: 'Test262Error: creates a new array everytime it gets the values Expected SameValue(«», «») to be false'
+test/built-ins/NativeErrors/AggregateError/prototype/errors/this-has-no-typedarrayname-internal.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
+test/built-ins/NativeErrors/AggregateError/prototype/errors/this-is-not-object.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor("
 test/built-ins/Object/assign/strings-and-symbol-order-proxy.js:
   default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '

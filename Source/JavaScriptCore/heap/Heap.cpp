@@ -611,8 +611,6 @@ void Heap::finalizeUnconditionalFinalizers()
         finalizeMarkedUnconditionalFinalizers<JSWeakObjectRef>(*vm().m_weakObjectRefSpace);
     if (vm().m_errorInstanceSpace)
         finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*vm().m_errorInstanceSpace);
-    if (vm().m_aggregateErrorSpace)
-        finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*vm().m_aggregateErrorSpace);
 
 #if ENABLE(WEBASSEMBLY)
     if (vm().m_webAssemblyCodeBlockSpace)

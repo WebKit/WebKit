@@ -372,7 +372,6 @@ public:
     std::unique_ptr<HeapCellType> immutableButterflyHeapCellType;
     std::unique_ptr<HeapCellType> cellHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
-    std::unique_ptr<IsoHeapCellType> aggregateErrorHeapCellType;
     std::unique_ptr<IsoHeapCellType> apiGlobalObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> callbackConstructorHeapCellType;
     std::unique_ptr<IsoHeapCellType> callbackGlobalObjectHeapCellType;
@@ -498,7 +497,6 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jscCallbackFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackAPIWrapperGlobalObjectSpace)
 #endif
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(aggregateErrorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiGlobalObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiValueWrapperSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(arrayBufferSpace)

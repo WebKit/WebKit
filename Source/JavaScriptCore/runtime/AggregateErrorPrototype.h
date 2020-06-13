@@ -52,16 +52,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static AggregateErrorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static AggregateErrorPrototype* create(VM& vm, Structure* structure)
     {
         AggregateErrorPrototype* prototype = new (NotNull, allocateCell<AggregateErrorPrototype>(vm.heap)) AggregateErrorPrototype(vm, structure);
-        prototype->finishCreation(vm, globalObject);
+        prototype->finishCreation(vm);
         return prototype;
     }
 
 private:
     AggregateErrorPrototype(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

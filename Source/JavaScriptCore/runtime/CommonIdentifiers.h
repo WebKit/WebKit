@@ -101,6 +101,7 @@
     macro(dotAll) \
     macro(enumerable) \
     macro(era) \
+    macro(errors) \
     macro(eval) \
     macro(events) \
     macro(exec) \

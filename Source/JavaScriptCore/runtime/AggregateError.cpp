@@ -35,21 +35,19 @@ namespace JSC {
 
 const ClassInfo AggregateError::s_info = { "AggregateError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AggregateError) };
 
-AggregateError::AggregateError(VM& vm, Structure* structure, const MarkedArgumentBuffer& errors)
+AggregateError::AggregateError(VM& vm, Structure* structure)
     : Base(vm, structure)
-    , m_errors(errors.size())
 {
-    for (size_t i = 0; i < errors.size(); ++i)
-        m_errors[i].setWithoutWriteBarrier(errors.at(i));
 }
 
-void AggregateError::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void AggregateError::finishCreation(VM& vm, JSGlobalObject* globalObject, const MarkedArgumentBuffer& errors, const String& message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
-    auto* thisObject = jsCast<AggregateError*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
+    Base::finishCreation(vm, globalObject, message, appender, type, useCurrentFrame);
+    ASSERT(inherits(vm, info()));
 
-    visitor.appendValues(thisObject->m_errors.data(), thisObject->m_errors.size());
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    putDirect(vm, vm.propertyNames->errors, constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), errors), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    RETURN_IF_EXCEPTION(scope, void());
 }
 
 AggregateError* AggregateError::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, JSValue errors, JSValue message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)

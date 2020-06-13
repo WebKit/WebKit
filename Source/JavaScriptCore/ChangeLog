@@ -1,3 +1,37 @@
+2020-06-13  Devin Rousso  <drousso@apple.com>
+
+        Make `errors` an own property of `AggregateError` instead of a prototype accessor
+        https://bugs.webkit.org/show_bug.cgi?id=212677
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/AggregateError.h:
+        (JSC::AggregateError::destroy): Deleted.
+        (JSC::AggregateError::subspaceFor): Deleted.
+        (JSC::AggregateError::errors): Deleted.
+        * runtime/AggregateError.cpp:
+        (JSC::AggregateError::AggregateError):
+        (JSC::AggregateError::finishCreation): Added.
+        (JSC::AggregateError::visitChildren): Deleted.
+
+        * runtime/AggregateErrorPrototype.h:
+        * runtime/AggregateErrorPrototype.cpp:
+        (JSC::AggregateErrorPrototype::finishCreation):
+        (JSC::aggregateErrorPrototypeAccessorErrors): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::initializeAggregateErrorConstructor):
+
+        * runtime/VM.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        Remove `aggregateErrorSpace` since `AggregateError` doesn't add any new member variables.
+        Ensure that it can share an `IsoSubspace` with `ErrorInstance`.
+
+        * runtime/CommonIdentifiers.h:
+        Add `errors`.
+
 2020-06-12  Robin Morisset  <rmorisset@apple.com>
 
         The ||= operator (and similar ones) should produce valid bytecode even if the right side is a static error
