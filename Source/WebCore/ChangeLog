@@ -1,3 +1,13 @@
+2020-06-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Obsolete comment in FontCustomPlatformDataFreeType.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=213169
+
+        Unreviewed, remove the stale comment.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::defaultFontconfigOptions):
+
 2020-06-13  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Experiment with strongly typed ColorComponents

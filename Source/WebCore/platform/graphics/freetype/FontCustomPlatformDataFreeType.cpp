@@ -60,8 +60,6 @@ static RefPtr<FcPattern> defaultFontconfigOptions()
 {
     // Get some generic default settings from fontconfig for web fonts. Strategy
     // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
-    // For web fonts, the hint style is overridden in FontCustomPlatformData::FontCustomPlatformData
-    // so Fontconfig will not affect the hint style, but it may disable hinting completely.
     static FcPattern* pattern = nullptr;
     static std::once_flag flag;
     std::call_once(flag, [](FcPattern*) {
