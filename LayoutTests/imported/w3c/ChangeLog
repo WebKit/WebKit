@@ -1,3 +1,13 @@
+2020-06-13  Sam Weinig  <weinig@apple.com>
+
+        [WPT] dom/nodes/Document-createCDATASection-xhtml.xhtml fails due to missing exception in Document.createCDATASection()
+        https://bugs.webkit.org/show_bug.cgi?id=213167
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/dom/nodes/Document-createCDATASection-xhtml-expected.txt:
+        Update results to show we are now passing all subtests.
+
 2020-06-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Change FileReader.error to DOMException from obsoleted FileError

@@ -1,3 +1,18 @@
+2020-06-13  Sam Weinig  <weinig@apple.com>
+
+        [WPT] dom/nodes/Document-createCDATASection-xhtml.xhtml fails due to missing exception in Document.createCDATASection()
+        https://bugs.webkit.org/show_bug.cgi?id=213167
+
+        Reviewed by Yusuke Suzuki.
+
+        Tested by existing (formerly failing) test: imported/w3c/web-platform-tests/dom/nodes/Document-createCDATASection-xhtml.xhtml
+
+        Throw an "InvalidCharacterError" DOMException if the data passed to createCDATASection
+        contains the string "]]>" as specified by https://dom.spec.whatwg.org/#dom-document-createcdatasection
+
+        * dom/Document.cpp:
+        (WebCore::Document::createCDATASection):
+
 2020-06-13  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Obsolete comment in FontCustomPlatformDataFreeType.cpp

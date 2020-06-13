@@ -5,5 +5,5 @@ PASS createCDATASection("a-")
 PASS createCDATASection("-b") 
 PASS createCDATASection(null) 
 PASS createCDATASection(undefined) 
-FAIL Creating a CDATA section containing the string "]]>" must throw assert_throws_dom: function "() => document.createCDATASection(" ]" + "]>  ")" did not throw
+PASS Creating a CDATA section containing the string "]]>" must throw 
 

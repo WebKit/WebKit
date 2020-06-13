@@ -1027,6 +1027,10 @@ ExceptionOr<Ref<CDATASection>> Document::createCDATASection(const String& data)
 {
     if (isHTMLDocument())
         return Exception { NotSupportedError };
+
+    if (data.contains("]]>"))
+        return Exception { InvalidCharacterError };
+
     return CDATASection::create(*this, data);
 }
 

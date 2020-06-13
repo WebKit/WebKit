@@ -1,3 +1,16 @@
+2020-06-13  Sam Weinig  <weinig@apple.com>
+
+        [WPT] dom/nodes/Document-createCDATASection-xhtml.xhtml fails due to missing exception in Document.createCDATASection()
+        https://bugs.webkit.org/show_bug.cgi?id=213167
+
+        Reviewed by Yusuke Suzuki.
+
+        * dom/xhtml/level3/core/documentnormalizedocument07-expected.txt:
+        * dom/xhtml/level3/core/documentnormalizedocument08-expected.txt:
+        * dom/xhtml/level3/core/handleerror01-expected.txt:
+        * dom/xhtml/level3/core/splitcdatasections01-expected.txt:
+        Update expected results with new error now being thrown.
+
 2020-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r261985): Unable to respond to large comments on Bugzilla with always-on scrollbars
