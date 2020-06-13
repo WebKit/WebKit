@@ -1709,7 +1709,7 @@ static WebCore::TextManipulationController::TokenIdentifier coreTextManipulation
 
 static RetainPtr<NSMutableArray> makeFailureSetForAllTextManipulationItems(NSArray<_WKTextManipulationItem *> *items)
 {
-    RetainPtr<NSMutableArray> wkFailures = adoptNS([[[NSMutableArray alloc] initWithCapacity:items.count] autorelease]);
+    RetainPtr<NSMutableArray> wkFailures = adoptNS([[NSMutableArray alloc] initWithCapacity:items.count]);
     for (_WKTextManipulationItem *item in items)
         [wkFailures addObject:[NSError errorWithDomain:_WKTextManipulationItemErrorDomain code:_WKTextManipulationItemErrorNotAvailable userInfo:@{_WKTextManipulationItemErrorItemKey: item}]];
     return wkFailures;
