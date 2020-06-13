@@ -413,7 +413,7 @@
                     },
                     {
                       "name": "WPE Linux 64-bit Debug (Tests JS)", "type": "TestJS", "builddir": "wpe-linux-64-debug-tests-js",
-                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-6"]
                     }
                   ],

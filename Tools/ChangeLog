@@ -1,3 +1,12 @@
+2020-06-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix configuration setting of WPE Debug (Tests JS) bot
+        https://bugs.webkit.org/show_bug.cgi?id=213164
+
+        The bot was meant to run as Debug.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2020-06-12  Keith Miller  <keith_miller@apple.com>
 
         Tests expecting a crash should use a signal handler in the JSC CLI process
