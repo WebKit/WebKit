@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
 #include "SocketStreamHandleClient.h"
 #include "ThreadableWebSocketChannel.h"
@@ -113,7 +114,7 @@ public:
     void didStartLoading() override;
     void didReceiveData() override;
     void didFinishLoading() override;
-    void didFail(int errorCode) override;
+    void didFail(ExceptionCode errorCode) override;
 
     unsigned identifier() const { return m_identifier; }
     bool hasCreatedHandshake() { return !!m_handshake; }

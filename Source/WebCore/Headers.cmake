@@ -534,7 +534,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     fileapi/BlobPropertyBag.h
     fileapi/EndingType.h
     fileapi/File.h
-    fileapi/FileError.h
     fileapi/FileList.h
     fileapi/FileReaderLoader.h
     fileapi/FileReaderLoaderClient.h

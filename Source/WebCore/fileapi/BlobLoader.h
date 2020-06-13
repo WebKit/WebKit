@@ -27,11 +27,13 @@
 
 #include "Blob.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -43,19 +45,19 @@ public:
 
     bool isLoading() const { return !!m_loader; }
     const RefPtr<JSC::ArrayBuffer>& result() const { return m_buffer; }
-    int errorCode() const { return m_errorCode; }
+    Optional<ExceptionCode> errorCode() const { return m_errorCode; }
 
 private:
     void didStartLoading() final { }
     void didReceiveData() final { }
 
     void didFinishLoading() final;
-    void didFail(int errorCode) final;
+    void didFail(ExceptionCode errorCode) final;
     void complete();
 
     std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<JSC::ArrayBuffer> m_buffer;
-    int m_errorCode { 0 };
+    Optional<ExceptionCode> m_errorCode;
     CompletionHandler<void()> m_completionHandler;
 };
 
@@ -78,7 +80,7 @@ inline void BlobLoader::didFinishLoading()
     complete();
 }
 
-inline void BlobLoader::didFail(int errorCode)
+inline void BlobLoader::didFail(ExceptionCode errorCode)
 {
     m_errorCode = errorCode;
     complete();

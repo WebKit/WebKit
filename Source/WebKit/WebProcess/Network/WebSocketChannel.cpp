@@ -34,6 +34,7 @@
 #include "WebProcess.h"
 #include <WebCore/Blob.h>
 #include <WebCore/Document.h>
+#include <WebCore/ExceptionCode.h>
 #include <WebCore/Page.h>
 #include <WebCore/WebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
@@ -62,8 +63,9 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
     }, [&channel](const char* data, size_t byteLength) {
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, data, byteLength);
         channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { reinterpret_cast<const uint8_t*>(data), byteLength } }, byteLength);
-    }, [&channel](auto errorCode) {
-        channel.fail(makeString("Failed to load Blob: error code = ", errorCode));
+    }, [&channel](ExceptionCode exceptionCode) {
+        auto code = static_cast<int>(exceptionCode);
+        channel.fail(makeString("Failed to load Blob: exception code = ", code));
         return NetworkSendQueue::Continue::No;
     } };
 }

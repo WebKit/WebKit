@@ -31,7 +31,6 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "FileError.h"
 
 namespace JSC {
 class ArrayBuffer;
@@ -54,8 +53,6 @@ public:
     ExceptionOr<String> readAsBinaryString(ScriptExecutionContext&, Blob&);
     ExceptionOr<String> readAsText(ScriptExecutionContext&, Blob&, const String& encoding);
     ExceptionOr<String> readAsDataURL(ScriptExecutionContext&, Blob&);
-
-    static ExceptionOr<void> errorCodeToException(FileError::ErrorCode);
 
 private:
     FileReaderSync();

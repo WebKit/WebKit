@@ -29,6 +29,7 @@
 #include "BitmapImage.h"
 #include "Blob.h"
 #include "CachedImage.h"
+#include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
@@ -597,7 +598,7 @@ private:
         createImageBitmapAndResolvePromiseSoon(m_blobLoader.arrayBufferResult());
     }
 
-    void didFail(int) override
+    void didFail(ExceptionCode) override
     {
         createImageBitmapAndResolvePromiseSoon(nullptr);
     }

@@ -36,7 +36,7 @@
 #include "ContentRuleListResults.h"
 #include "CookieJar.h"
 #include "Document.h"
-#include "FileError.h"
+#include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -395,14 +395,15 @@ void WebSocketChannel::didFinishLoading()
     deref();
 }
 
-void WebSocketChannel::didFail(int errorCode)
+void WebSocketChannel::didFail(ExceptionCode errorCode)
 {
-    LOG(Network, "WebSocketChannel %p didFail() errorCode=%d", this, errorCode);
+    auto code = static_cast<int>(errorCode);
+    LOG(Network, "WebSocketChannel %p didFail() errorCode=%d", this, code);
     ASSERT(m_blobLoader);
     ASSERT(m_blobLoaderStatus == BlobLoaderStarted);
     m_blobLoader = nullptr;
     m_blobLoaderStatus = BlobLoaderFailed;
-    fail(makeString("Failed to load Blob: error code = ", errorCode)); // FIXME: Generate human-friendly reason message.
+    fail(makeString("Failed to load Blob: error code = ", code)); // FIXME: Generate human-friendly reason message.
     deref();
 }
 
@@ -809,7 +810,7 @@ void WebSocketChannel::abortOutgoingFrameQueue()
     m_outgoingFrameQueueStatus = OutgoingFrameQueueClosed;
     if (m_blobLoaderStatus == BlobLoaderStarted) {
         m_blobLoader->cancel();
-        didFail(FileError::ABORT_ERR);
+        didFail(AbortError);
     }
 }
 

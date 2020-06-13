@@ -1,3 +1,50 @@
+2020-06-13  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Remove FileError.h
+        https://bugs.webkit.org/show_bug.cgi?id=213119
+
+        Reviewed by Chris Dumez.
+
+        * Headers.cmake:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFail):
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::createMessageQueue):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::abortOutgoingFrameQueue):
+        * Modules/websockets/WebSocketChannel.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/BlobLoader.h:
+        (WebCore::BlobLoader::didFail):
+        * fileapi/FileError.h: Removed.
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::didFail):
+        * fileapi/FileReader.h:
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        (WebCore::FileReaderLoader::cancel):
+        (WebCore::FileReaderLoader::cleanup):
+        (WebCore::FileReaderLoader::didReceiveResponse):
+        (WebCore::FileReaderLoader::didReceiveData):
+        (WebCore::FileReaderLoader::didFail):
+        (WebCore::FileReaderLoader::failed):
+        (WebCore::FileReaderLoader::toErrorCode):
+        (WebCore::FileReaderLoader::httpStatusCodeToErrorCode):
+        (WebCore::FileReaderLoader::arrayBufferResult const):
+        (WebCore::FileReaderLoader::stringResult):
+        * fileapi/FileReaderLoader.h:
+        (WebCore::FileReaderLoader::errorCode const):
+        * fileapi/FileReaderLoaderClient.h:
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::FileReaderSync::startLoading):
+        * fileapi/FileReaderSync.h:
+        * fileapi/NetworkSendQueue.cpp:
+        (WebCore::NetworkSendQueue::processMessages):
+        * fileapi/NetworkSendQueue.h:
+        * html/ImageBitmap.cpp:
+
 2020-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r261985): Unable to respond to large comments on Bugzilla with always-on scrollbars

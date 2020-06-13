@@ -30,6 +30,8 @@
 
 #pragma once
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
 
 class FileReaderLoaderClient {
@@ -39,7 +41,7 @@ public:
     virtual void didStartLoading() = 0;
     virtual void didReceiveData() = 0;
     virtual void didFinishLoading() = 0;
-    virtual void didFail(int errorCode) = 0;
+    virtual void didFail(ExceptionCode errorCode) = 0;
 };
 
 } // namespace WebCore

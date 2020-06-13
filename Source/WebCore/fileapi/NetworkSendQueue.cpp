@@ -85,7 +85,8 @@ void NetworkSendQueue::processMessages()
         }, [this](Ref<SharedBuffer>& data) {
             m_writeRawData(data->data(), data->size());
         }, [this, &shouldStopProcessing](UniqueRef<BlobLoader>& loader) {
-            if (loader->isLoading() || loader->errorCode() == FileError::ABORT_ERR) {
+            auto errorCode = loader->errorCode();
+            if (loader->isLoading() || (errorCode && errorCode.value() == AbortError)) {
                 shouldStopProcessing = true;
                 return;
             }
@@ -94,8 +95,8 @@ void NetworkSendQueue::processMessages()
                 m_writeRawData(static_cast<const char*>(result->data()), result->byteLength());
                 return;
             }
-            ASSERT(loader->errorCode());
-            shouldStopProcessing = m_processError(loader->errorCode()) == Continue::No;
+            ASSERT(errorCode);
+            shouldStopProcessing = m_processError(errorCode.value()) == Continue::No;
         });
         if (shouldStopProcessing)
             return;

@@ -30,6 +30,7 @@
 
 #include "Blob.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
@@ -71,9 +72,11 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(Document& document, RTCDataC
     }, [&channel](auto* data, size_t length) {
         if (!channel.m_handler->sendRawData(data, length))
             channel.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending binary data through RTCDataChannel."_s);
-    }, [&channel](int errorCode) {
-        if (auto* context = channel.scriptExecutionContext())
-            context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Error ", errorCode, " in retrieving a blob data to be sent through RTCDataChannel."));
+    }, [&channel](ExceptionCode errorCode) {
+        if (auto* context = channel.scriptExecutionContext()) {
+            auto code = static_cast<int>(errorCode);
+            context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Error ", code, " in retrieving a blob data to be sent through RTCDataChannel."));
+        }
         return NetworkSendQueue::Continue::Yes;
     } };
 }

@@ -1,3 +1,13 @@
+2020-06-13  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Remove FileError.h
+        https://bugs.webkit.org/show_bug.cgi?id=213119
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::createMessageQueue):
+
 2020-06-12  Brian Burg  <bburg@apple.com>
 
         Automation.computeElementLayout should return iframe-relative element rects (when coordinate system is 'Page')

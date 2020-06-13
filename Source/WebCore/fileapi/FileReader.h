@@ -33,6 +33,7 @@
 #include "ActiveDOMObject.h"
 #include "DOMException.h"
 #include "EventTarget.h"
+#include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
@@ -95,7 +96,7 @@ private:
     void didStartLoading() final;
     void didReceiveData() final;
     void didFinishLoading() final;
-    void didFail(int errorCode) final;
+    void didFail(ExceptionCode errorCode) final;
 
     ExceptionOr<void> readInternal(Blob&, FileReaderLoader::ReadType);
     void fireErrorEvent(int httpStatusCode);

@@ -37,7 +37,6 @@
 #include "Exception.h"
 #include "ExceptionCode.h"
 #include "File.h"
-#include "FileError.h"
 #include "Logging.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
@@ -211,7 +210,7 @@ void FileReader::didFinishLoading()
     });
 }
 
-void FileReader::didFail(int errorCode)
+void FileReader::didFail(ExceptionCode errorCode)
 {
     // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
     if (m_aborting)
@@ -221,9 +220,7 @@ void FileReader::didFail(int errorCode)
         ASSERT(m_state != DONE);
         m_state = DONE;
 
-        auto e = FileReaderSync::errorCodeToException(static_cast<FileError::ErrorCode>(errorCode));
-        ASSERT(e.hasException());
-        m_error = DOMException::create(e.exception());
+        m_error = DOMException::create(Exception { errorCode });
 
         fireEvent(eventNames().errorEvent);
         fireEvent(eventNames().loadendEvent);

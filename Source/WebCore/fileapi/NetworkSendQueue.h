@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionCode.h"
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/UniqueRef.h>
@@ -47,7 +48,7 @@ public:
     using WriteString = Function<void(const String&)>;
     using WriteRawData = Function<void(const char*, size_t)>;
     enum class Continue { No, Yes };
-    using ProcessError = Function<Continue(int)>;
+    using ProcessError = Function<Continue(ExceptionCode)>;
     NetworkSendQueue(Document&, WriteString&&, WriteRawData&&, ProcessError&&);
     ~NetworkSendQueue();
 
