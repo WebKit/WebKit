@@ -1,3 +1,156 @@
+2020-06-13  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Experiment with strongly typed ColorComponents
+        https://bugs.webkit.org/show_bug.cgi?id=212396
+
+        Reviewed by Darin Adler.
+
+        Adds simple explicit types for sRGBA, LinearSRGBA, DisplayP3, 
+        LinearDisplayP3, XYZA and HSLA colors. Conversion to/from
+        ColorComponents<float> is easy but explicit to make conversions
+        easier to spot.
+
+        The goal is to add type clarity (you know when you are dealing
+        with an sRGB color vs. a DisplayP3 color) and make dealing with
+        the colors nicer (color.red rather than color[0]). It also allows
+        us to simplify the naming of functions that convert between color 
+        types as now only the output type needs to be in the function name.
+ 
+        * Headers.cmake:
+        Add new header, ColorTypes.h
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new header, ColorTypes.h
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        Switch from hslToSRGB({ ... }) to toSRGBA(HSLAColor { ... })
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        Update to use toHSLA() and HSLA<float> making the code a bit more readable.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightened const):
+        (WebCore::Color::darkened const):
+        (WebCore::Color::isDark const):
+        (WebCore::Color::lightness const):
+        (WebCore::Color::luminance const):
+        (WebCore::Color::colorSpaceAndComponents const):
+        (WebCore::Color::toSRGBASimpleColorLossy const):
+        (WebCore::Color::toSRGBALossy const):
+        (WebCore::Color::toSRGBAComponentsLossy const): Deleted.
+        * platform/graphics/Color.h:
+        Renames toSRGBAComponentsLossy() to toSRGBALossy() which now returns
+        a SRGBA<float>.
+        
+        * platform/graphics/ColorMatrix.h:
+        (WebCore::ColorMatrix::transformColorComponents const): Deleted.
+        Remove transformColorComponents, keeping just transformedColorComponents
+        to simplify the interface. With late conversion to ColorComponents, the
+        latter is more straightforward to use in most cases anyway.
+        
+        * platform/graphics/ColorUtilities.cpp:
+        (WebCore::linearToRGBColorComponent):
+        (WebCore::rgbToLinearColorComponent):
+        (WebCore::toLinearSRGBA):
+        (WebCore::toSRGBA):
+        (WebCore::toLinearDisplayP3):
+        (WebCore::toDisplayP3):
+        (WebCore::toXYZ):
+        (WebCore::lightness):
+        (WebCore::luminance):
+        (WebCore::contrastRatio):
+        (WebCore::toHSLA):
+        (WebCore::premultiplied):
+        (WebCore::rgbToLinearComponents): Deleted.
+        (WebCore::linearToRGBComponents): Deleted.
+        (WebCore::xyzToLinearSRGB): Deleted.
+        (WebCore::linearSRGBToXYZ): Deleted.
+        (WebCore::XYZToLinearP3): Deleted.
+        (WebCore::linearP3ToXYZ): Deleted.
+        (WebCore::p3ToSRGB): Deleted.
+        (WebCore::sRGBToP3): Deleted.
+        (WebCore::sRGBToHSL): Deleted.
+        (WebCore::hslToSRGB): Deleted.
+        * platform/graphics/ColorUtilities.h:
+        Rename / rework conversion and utility functions to operate on explicit Color 
+        types. In doing so, simplify the names of the conversion functions so only name
+        the output type. For instance:
+
+            ColorComponents<float> p3ToSRGB(const ColorComponents<float>&);
+            
+        is now 
+        
+            SRGBA<float> toSRGBA(const DisplayP3<float>&);
+        
+        as the input type is implicit in the call. A little duplication was needed 
+        for linearToRGBColorComponent/rgbToLinearColorComponent (as it was used for
+        both sRGB and DisplayP3 linearization), but mostly things stay the same.
+        
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::toSRGBALossy const):
+        (WebCore::ExtendedColor::toSRGBAComponentsLossy const): Deleted.
+        * platform/graphics/ExtendedColor.h:
+        Renamed toSRGBAComponentsLossy() to toSRGBALossy() and have it
+        return a SRGBA<float>.
+
+        * platform/graphics/SimpleColor.h:
+        (WebCore::SimpleColor::asSRGBA const):
+        (WebCore::makeSimpleColor):
+        (WebCore::SimpleColor::asSRGBFloatComponents const): Deleted.
+        Rename asSRGBFloatComponents() to asSRGBA<T>() and have it 
+        return a SRGBA<float>. Replace makeSimpleColor taking FloatComponents
+        with one taking a SRGBA<float>, making it much clearer that this
+        is only valid for sRGB.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        Rework to support seperate types for SRGB<float> and LinearSRGBA<float>.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicColorMatrixFilterOperation::transformColor const):
+        (WebCore::BasicComponentTransferFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::transformColor const):
+        (WebCore::InvertLightnessFilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::transformColor const):
+        (WebCore::FilterOperation::inverseTransformColor const):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::transformColor const):
+        (WebCore::FilterOperations::inverseTransformColor const):
+        Use SRGBA<float> rather than ColorComponents<float> to make it clear
+        that the filters only work on sRGB colors right now.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::disabledTextColor const):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::textColorIsLegibleAgainstBackgroundColor):
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::setSourceRGBAFromColor):
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::addColorStopRGBA):
+        (WebCore::setCornerColorRGBA):
+        (WebCore::interpolateColorStop):
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::operator GdkRGBA const):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawBorder):
+        (WebCore::TextureMapperGL::drawNumber):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore::TextureMapperGL::clearColor):
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::operator D2D1_COLOR_F const):
+        (WebCore::Color::operator D2D1_VECTOR_4F const):
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::colorWithGlobalAlpha const):
+        Update to call toSRGBALossy() rather than toSRGBAComponentsLossy().
+
 2020-06-13  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Remove FileError.h

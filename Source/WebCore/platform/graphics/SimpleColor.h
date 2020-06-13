@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ColorComponents.h"
+#include "ColorTypes.h"
 #include "ColorUtilities.h"
 #include <wtf/text/WTFString.h>
 
@@ -65,10 +66,7 @@ public:
         return { static_cast<uint8_t>(0xFF - redComponent()), static_cast<uint8_t>(0xFF - greenComponent()), static_cast<uint8_t>(0xFF - blueComponent()), alpha };
     }
 
-    constexpr ColorComponents<float> asSRGBFloatComponents() const
-    {
-        return { convertToComponentFloat(redComponent()), convertToComponentFloat(greenComponent()), convertToComponentFloat(blueComponent()),  convertToComponentFloat(alphaComponent()) };
-    }
+    template<typename T> constexpr SRGBA<T> asSRGBA() const;
 
     template<std::size_t N>
     constexpr uint8_t get() const
@@ -122,9 +120,9 @@ constexpr SimpleColor makeSimpleColor(int r, int g, int b, int a)
     return { static_cast<uint8_t>(std::clamp(r, 0, 0xFF)), static_cast<uint8_t>(std::clamp(g, 0, 0xFF)), static_cast<uint8_t>(std::clamp(b, 0, 0xFF)), static_cast<uint8_t>(std::clamp(a, 0, 0xFF)) };
 }
 
-inline SimpleColor makeSimpleColor(const ColorComponents<float>& sRGBComponents)
+inline SimpleColor makeSimpleColor(const SRGBA<float>& sRGBA)
 {
-    auto [r, g, b, a] = sRGBComponents;
+    auto [r, g, b, a] = sRGBA;
     return makeSimpleColorFromFloats(r, g, b, a);
 }
 
@@ -132,6 +130,15 @@ inline SimpleColor makeSimpleColorFromFloats(float r, float g, float b, float a)
 {
     return { convertToComponentByte(r), convertToComponentByte(g), convertToComponentByte(b), convertToComponentByte(a) };
 }
+
+template<typename T> constexpr SRGBA<T> SimpleColor::asSRGBA() const
+{
+    if constexpr (std::is_floating_point_v<T>)
+        return { convertToComponentFloat(redComponent()), convertToComponentFloat(greenComponent()), convertToComponentFloat(blueComponent()),  convertToComponentFloat(alphaComponent()) };
+    else
+        return { redComponent(), greenComponent(), blueComponent(), alphaComponent() };
+}
+
 
 } // namespace WebCore
 

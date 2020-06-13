@@ -237,27 +237,25 @@ TEST(ExtendedColor, ReturnValues)
 
 TEST(ExtendedColor, P3ConversionToSRGB)
 {
-    {
-        Color p3Color { makeExtendedColor(1.0, 0.5, 0.25, 0.75, ColorSpace::DisplayP3) };
-        EXPECT_TRUE(p3Color.isExtended());
+    Color p3Color { makeExtendedColor(1.0, 0.5, 0.25, 0.75, ColorSpace::DisplayP3) };
+    EXPECT_TRUE(p3Color.isExtended());
 
-        auto sRGBComponents = p3Color.toSRGBAComponentsLossy();
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[0], 1.0f));
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[1], 0.462537885f));
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[2], 0.149147838f));
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[3], 0.75f));
-    }
-
-    {
-        Color linearColor { makeExtendedColor(1.0, 0.5, 0.25, 0.75, ColorSpace::LinearRGB) };
-        EXPECT_TRUE(linearColor.isExtended());
-        auto sRGBComponents = linearColor.toSRGBAComponentsLossy();
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[0], 1.0f));
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[1], 0.735356927f));
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[2], 0.537098706f));
-        EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBComponents.components[3], 0.75f));
-    }
+    auto sRGBAColor = p3Color.toSRGBALossy();
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.red, 1.0f));
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.green, 0.462537885f));
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.blue, 0.149147838f));
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.alpha, 0.75f));
 }
 
+TEST(ExtendedColor, LinearSRGBConversionToSRGB)
+{
+    Color linearColor { makeExtendedColor(1.0, 0.5, 0.25, 0.75, ColorSpace::LinearRGB) };
+    EXPECT_TRUE(linearColor.isExtended());
+    auto sRGBAColor = linearColor.toSRGBALossy();
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.red, 1.0f));
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.green, 0.735356927f));
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.blue, 0.537098706f));
+    EXPECT_TRUE(WTF::areEssentiallyEqual(sRGBAColor.alpha, 0.75f));
+}
 
 } // namespace TestWebKitAPI

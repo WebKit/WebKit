@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Color;
+template<typename> struct SRGBA;
 
 class ExtendedColor : public RefCounted<ExtendedColor> {
 public:
@@ -51,7 +52,7 @@ public:
     Ref<ExtendedColor> colorWithAlpha(float) const;
     Ref<ExtendedColor> invertedColorWithAlpha(float) const;
 
-    ColorComponents<float> toSRGBAComponentsLossy() const;
+    SRGBA<float> toSRGBALossy() const;
 
     bool isWhite() const;
     bool isBlack() const;

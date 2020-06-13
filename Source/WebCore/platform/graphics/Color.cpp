@@ -106,7 +106,7 @@ Color Color::lightened() const
     if (isSimple() && asSimple() == black)
         return lightenedBlack;
 
-    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    auto [r, g, b, a] = toSRGBALossy();
     float v = std::max({ r, g, b });
 
     if (v == 0.0f)
@@ -123,7 +123,7 @@ Color Color::darkened() const
     if (isSimple() && asSimple() == white)
         return darkenedWhite;
     
-    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    auto [r, g, b, a] = toSRGBALossy();
 
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
@@ -134,7 +134,7 @@ Color Color::darkened() const
 bool Color::isDark() const
 {
     // FIXME: This should probably be using luminance.
-    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    auto [r, g, b, a] = toSRGBALossy();
     float largestNonAlphaChannel = std::max({ r, g, b });
     return a > 0.5 && largestNonAlphaChannel < 0.5;
 }
@@ -142,13 +142,13 @@ bool Color::isDark() const
 float Color::lightness() const
 {
     // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for HSL.
-    return WebCore::lightness(toSRGBAComponentsLossy());
+    return WebCore::lightness(toSRGBALossy());
 }
 
 float Color::luminance() const
 {
     // FIXME: This can probably avoid conversion to sRGB by having per-colorspace algorithms for luminance (e.g. convertToXYZ(c).yComponent()).
-    return WebCore::luminance(toSRGBAComponentsLossy());
+    return WebCore::luminance(toSRGBALossy());
 }
 
 Color Color::blend(const Color& source) const
@@ -242,21 +242,21 @@ std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() c
 {
     if (isExtended())
         return { asExtended().colorSpace(), asExtended().components() };
-    return { ColorSpace::SRGB, asSimple().asSRGBFloatComponents() };
+    return { ColorSpace::SRGB, asColorComponents(asSimple().asSRGBA<float>()) };
 }
 
 SimpleColor Color::toSRGBASimpleColorLossy() const
 {
     if (isExtended())
-        return makeSimpleColor(asExtended().toSRGBAComponentsLossy());
+        return makeSimpleColor(asExtended().toSRGBALossy());
     return asSimple();
 }
 
-ColorComponents<float> Color::toSRGBAComponentsLossy() const
+SRGBA<float> Color::toSRGBALossy() const
 {
     if (isExtended())
-        return asExtended().toSRGBAComponentsLossy();
-    return asSimple().asSRGBFloatComponents();
+        return asExtended().toSRGBALossy();
+    return asSimple().asSRGBA<float>();
 }
 
 Color blend(const Color& from, const Color& to, double progress)

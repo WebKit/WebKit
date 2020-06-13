@@ -1,3 +1,18 @@
+2020-06-13  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Experiment with strongly typed ColorComponents
+        https://bugs.webkit.org/show_bug.cgi?id=212396
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkitColorFillFromWebCoreColor):
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::getDocumentBackgroundColor):
+        Update to call toSRGBALossy() rather than toSRGBAComponentsLossy().
+
 2020-06-13  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Remove FileError.h

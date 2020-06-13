@@ -38,7 +38,7 @@ Color::Color(const GdkRGBA& c)
 
 Color::operator GdkRGBA() const
 {
-    auto [r, g, b, a] = toSRGBAComponentsLossy();
+    auto [r, g, b, a] = toSRGBALossy();
     return { r, g, b, a };
 }
 

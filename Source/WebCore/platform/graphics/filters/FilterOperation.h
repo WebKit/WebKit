@@ -46,7 +46,7 @@ class CachedResourceLoader;
 class CachedSVGDocumentReference;
 class FilterEffect;
 struct ResourceLoaderOptions;
-template<typename> struct ColorComponents;
+template<typename> struct SRGBA;
 
 class FilterOperation : public ThreadSafeRefCounted<FilterOperation> {
 public:
@@ -80,8 +80,8 @@ public:
         return nullptr;
     }
     
-    virtual bool transformColor(ColorComponents<float>&) const { return false; }
-    virtual bool inverseTransformColor(ColorComponents<float>&) const { return false; }
+    virtual bool transformColor(SRGBA<float>&) const { return false; }
+    virtual bool inverseTransformColor(SRGBA<float>&) const { return false; }
 
     OperationType type() const { return m_type; }
 
@@ -229,7 +229,7 @@ private:
     {
     }
 
-    bool transformColor(ColorComponents<float>&) const override;
+    bool transformColor(SRGBA<float>&) const override;
 
     double m_amount;
 };
@@ -264,7 +264,7 @@ private:
     {
     }
 
-    bool transformColor(ColorComponents<float>&) const override;
+    bool transformColor(SRGBA<float>&) const override;
 
     double m_amount;
 };
@@ -291,8 +291,8 @@ private:
     {
     }
 
-    bool transformColor(ColorComponents<float>&) const final;
-    bool inverseTransformColor(ColorComponents<float>&) const final;
+    bool transformColor(SRGBA<float>&) const final;
+    bool inverseTransformColor(SRGBA<float>&) const final;
 };
 
 class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {

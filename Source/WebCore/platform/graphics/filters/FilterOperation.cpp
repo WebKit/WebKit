@@ -85,27 +85,23 @@ RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOpera
     return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
 }
 
-bool BasicColorMatrixFilterOperation::transformColor(ColorComponents<float>& colorComponents) const
+bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
 {
     switch (m_type) {
     case GRAYSCALE: {
-        auto matrix = grayscaleColorMatrix(m_amount);
-        matrix.transformColorComponents(colorComponents);
+        color = asSRGBA(grayscaleColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     case SEPIA: {
-        auto matrix = sepiaColorMatrix(m_amount);
-        matrix.transformColorComponents(colorComponents);
+        color = asSRGBA(sepiaColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     case HUE_ROTATE: {
-        auto matrix = hueRotateColorMatrix(m_amount);
-        matrix.transformColorComponents(colorComponents);
+        color = asSRGBA(hueRotateColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     case SATURATE: {
-        auto matrix = saturationColorMatrix(m_amount);
-        matrix.transformColorComponents(colorComponents);
+        color = asSRGBA(saturationColorMatrix(m_amount).transformedColorComponents(asColorComponents(color)));
         return true;
     }
     default:
@@ -152,30 +148,30 @@ RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const Filte
     return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
 }
 
-bool BasicComponentTransferFilterOperation::transformColor(ColorComponents<float>& colorComponents) const
+bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) const
 {
     switch (m_type) {
     case OPACITY:
-        colorComponents[3] *= m_amount;
+        color.alpha *= m_amount;
         return true;
     case INVERT: {
-        float oneMinusAmount = 1.f - m_amount;
-        colorComponents[0] = 1 - (oneMinusAmount + colorComponents[0] * (m_amount - oneMinusAmount));
-        colorComponents[1] = 1 - (oneMinusAmount + colorComponents[1] * (m_amount - oneMinusAmount));
-        colorComponents[2] = 1 - (oneMinusAmount + colorComponents[2] * (m_amount - oneMinusAmount));
+        float oneMinusAmount = 1.0f - m_amount;
+        forEachNonAlphaComponent(color, [&](float component) {
+            return 1.0f - (oneMinusAmount + component * (m_amount - oneMinusAmount));
+        });
         return true;
     }
     case CONTRAST: {
         float intercept = -(0.5f * m_amount) + 0.5f;
-        colorComponents[0] = clampTo<float>(intercept + m_amount * colorComponents[0], 0, 1);
-        colorComponents[1] = clampTo<float>(intercept + m_amount * colorComponents[1], 0, 1);
-        colorComponents[2] = clampTo<float>(intercept + m_amount * colorComponents[2], 0, 1);
+        forEachNonAlphaComponent(color, [&](float component) {
+            return std::clamp<float>(intercept + m_amount * component, 0.0f, 1.0f);
+        });
         return true;
     }
     case BRIGHTNESS:
-        colorComponents[0] = std::max<float>(m_amount * colorComponents[0], 0);
-        colorComponents[1] = std::max<float>(m_amount * colorComponents[1], 0);
-        colorComponents[2] = std::max<float>(m_amount * colorComponents[2], 0);
+        forEachNonAlphaComponent(color, [&](float component) {
+            return std::max<float>(m_amount * component, 0.0f);
+        });
         return true;
     default:
         ASSERT_NOT_REACHED();
@@ -226,15 +222,15 @@ RefPtr<FilterOperation> InvertLightnessFilterOperation::blend(const FilterOperat
     return InvertLightnessFilterOperation::create();
 }
 
-bool InvertLightnessFilterOperation::transformColor(ColorComponents<float>& sRGBColorComponents) const
+bool InvertLightnessFilterOperation::transformColor(SRGBA<float>& color) const
 {
-    auto hslComponents = sRGBToHSL(sRGBColorComponents);
+    auto hsla = toHSLA(color);
     
     // Rotate the hue 180deg.
-    hslComponents[0] = fmod(hslComponents[0] + 0.5f, 1.0f);
+    hsla.hue = std::fmod(hsla.hue + 0.5f, 1.0f);
     
     // Convert back to RGB.
-    sRGBColorComponents = hslToSRGB(hslComponents);
+    auto hueRotatedSRGBA = toSRGBA(hsla);
     
     // Apply the matrix. See rdar://problem/41146650 for how this matrix was derived.
     constexpr ColorMatrix<5, 3> toDarkModeMatrix {
@@ -242,28 +238,28 @@ bool InvertLightnessFilterOperation::transformColor(ColorComponents<float>& sRGB
         0.030f, -0.741f, -0.089f, 0.0f, 1.0f,
         0.030f,  0.059f, -0.890f, 0.0f, 1.0f
     };
-    toDarkModeMatrix.transformColorComponents(sRGBColorComponents);
+    color = asSRGBA(toDarkModeMatrix.transformedColorComponents(asColorComponents(hueRotatedSRGBA)));
     return true;
 }
 
-bool InvertLightnessFilterOperation::inverseTransformColor(ColorComponents<float>& sRGBColorComponents) const
+bool InvertLightnessFilterOperation::inverseTransformColor(SRGBA<float>& color) const
 {
-    auto rgbComponents = sRGBColorComponents;
-
     // Apply the matrix.
     constexpr ColorMatrix<5, 3> toLightModeMatrix {
         -1.300f, -0.097f,  0.147f, 0.0f, 1.25f,
         -0.049f, -1.347f,  0.146f, 0.0f, 1.25f,
         -0.049f, -0.097f, -1.104f, 0.0f, 1.25f
     };
-    toLightModeMatrix.transformColorComponents(rgbComponents);
+    auto convertedToLightMode = asSRGBA(toLightModeMatrix.transformedColorComponents(asColorComponents(color)));
 
     // Convert to HSL.
-    auto hslComponents = sRGBToHSL(rgbComponents);
+    auto hsla = toHSLA(convertedToLightMode);
+
     // Hue rotate by 180deg.
-    hslComponents[0] = fmod(hslComponents[0] + 0.5f, 1.0f);
+    hsla.hue = std::fmod(hsla.hue + 0.5f, 1.0f);
+
     // And return RGB.
-    sRGBColorComponents = hslToSRGB(hslComponents);
+    color = toSRGBA(hsla);
     return true;
 }
 

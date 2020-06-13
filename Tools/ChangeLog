@@ -1,3 +1,17 @@
+2020-06-13  Sam Weinig  <weinig@apple.com>
+
+        Extended Color: Experiment with strongly typed ColorComponents
+        https://bugs.webkit.org/show_bug.cgi?id=212396
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ExtendedColorTests.cpp:
+        (TestWebKitAPI::TEST):
+        Update for changed names (e.g. toSRGBAComponentsLossy() -> toSRGBALossy())
+        and use of explicit types.
+
 2020-06-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix configuration setting of WPE Debug (Tests JS) bot

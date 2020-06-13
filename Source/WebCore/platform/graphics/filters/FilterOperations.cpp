@@ -111,14 +111,14 @@ bool FilterOperations::transformColor(Color& color) const
     if (color.isSemantic())
         return false;
 
-    auto sRGBAComponents = color.toSRGBAComponentsLossy();
+    auto sRGBAColor = color.toSRGBALossy();
 
     for (auto& operation : m_operations) {
-        if (!operation->transformColor(sRGBAComponents))
+        if (!operation->transformColor(sRGBAColor))
             return false;
     }
 
-    color = makeSimpleColor(sRGBAComponents);
+    color = makeSimpleColor(sRGBAColor);
     return true;
 }
 
@@ -130,14 +130,14 @@ bool FilterOperations::inverseTransformColor(Color& color) const
     if (color.isSemantic())
         return false;
 
-    auto sRGBAComponents = color.toSRGBAComponentsLossy();
+    auto sRGBAColor = color.toSRGBALossy();
 
     for (auto& operation : m_operations) {
-        if (!operation->inverseTransformColor(sRGBAComponents))
+        if (!operation->inverseTransformColor(sRGBAColor))
             return false;
     }
 
-    color = makeSimpleColor(sRGBAComponents);
+    color = makeSimpleColor(sRGBAColor);
     return true;
 }
 

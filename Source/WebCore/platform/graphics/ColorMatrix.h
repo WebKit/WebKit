@@ -41,7 +41,6 @@ public:
         static_assert(sizeof...(Ts) == Rows * Columns);
     }
 
-    constexpr void transformColorComponents(ColorComponents<float>&) const;
     constexpr ColorComponents<float> transformedColorComponents(const ColorComponents<float>&) const;
 
     constexpr float at(size_t row, size_t column) const
@@ -98,12 +97,6 @@ inline ColorMatrix<3, 3> hueRotateColorMatrix(float angleInDegrees)
         0.213f - cosHue * 0.213f + sinHue * 0.143f, 0.715f + cosHue * 0.285f + sinHue * 0.140f, 0.072f - cosHue * 0.072f - sinHue * 0.283f,
         0.213f - cosHue * 0.213f - sinHue * 0.787f, 0.715f - cosHue * 0.715f + sinHue * 0.715f, 0.072f + cosHue * 0.928f + sinHue * 0.072f
     };
-}
-
-template<size_t Columns, size_t Rows>
-constexpr void ColorMatrix<Columns, Rows>::transformColorComponents(ColorComponents<float>& inputVector) const
-{
-    inputVector = transformedColorComponents(inputVector);
 }
 
 template<size_t Columns, size_t Rows>

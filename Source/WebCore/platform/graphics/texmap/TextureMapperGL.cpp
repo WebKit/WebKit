@@ -253,7 +253,7 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
     glUseProgram(program->programID());
 
-    auto [r, g, b, a] = premultiplied(color.toSRGBAComponentsLossy());
+    auto [r, g, b, a] = premultiplied(color.toSRGBALossy());
     glUniform4f(program->colorLocation(), r, g, b, a);
     glLineWidth(width);
 
@@ -275,7 +275,7 @@ void TextureMapperGL::drawNumber(int number, const Color& color, const FloatPoin
     cairo_t* cr = cairo_create(surface);
 
     // Since we won't swap R+B when uploading a texture, paint with the swapped R+B color.
-    auto [r, g, b, a] = color.toSRGBAComponentsLossy();
+    auto [r, g, b, a] = color.toSRGBALossy();
     cairo_set_source_rgba(cr, b, g, r, a);
 
     cairo_rectangle(cr, 0, 0, width, height);
@@ -414,7 +414,7 @@ static void prepareFilterProgram(TextureMapperShaderProgram& program, const Filt
             break;
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
-            auto [r, g, b, a] = premultiplied(shadow.color().toSRGBAComponentsLossy());
+            auto [r, g, b, a] = premultiplied(shadow.color().toSRGBALossy());
             glUniform4f(program.colorLocation(), r, g, b, a);
             glUniform2f(program.blurRadiusLocation(), 0, shadow.stdDeviation() / float(size.height()));
             glUniform2f(program.shadowOffsetLocation(), 0, 0);
@@ -676,7 +676,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
     glUseProgram(program->programID());
 
-    auto [r, g, b, a] = premultiplied(color.toSRGBAComponentsLossy());
+    auto [r, g, b, a] = premultiplied(color.toSRGBALossy());
     glUniform4f(program->colorLocation(), r, g, b, a);
     if (a < 1 && isBlendingAllowed)
         flags |= ShouldBlend;
@@ -686,7 +686,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
 
 void TextureMapperGL::clearColor(const Color& color)
 {
-    auto [r, g, b, a] = color.toSRGBAComponentsLossy();
+    auto [r, g, b, a] = color.toSRGBALossy();
     glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT);
 }

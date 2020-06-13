@@ -28,10 +28,11 @@
 
 #include "ColorComponents.h"
 #include "ColorMatrix.h"
+#include "ColorTypes.h"
 
 namespace WebCore {
 
-// These are the standard sRGB <-> linearRGB conversion functions (https://en.wikipedia.org/wiki/SRGB).
+// These are the standard sRGB <-> linearRGB / standard DisplayP3 <-> LinearDisplayP3 conversion functions (https://en.wikipedia.org/wiki/SRGB).
 float linearToRGBColorComponent(float c)
 {
     if (c < 0.0031308f)
@@ -48,27 +49,47 @@ float rgbToLinearColorComponent(float c)
     return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
 }
 
-ColorComponents<float> rgbToLinearComponents(const ColorComponents<float>& RGBColor)
+LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
 {
     return {
-        rgbToLinearColorComponent(RGBColor[0]),
-        rgbToLinearColorComponent(RGBColor[1]),
-        rgbToLinearColorComponent(RGBColor[2]),
-        RGBColor[3]
+        rgbToLinearColorComponent(color.red),
+        rgbToLinearColorComponent(color.green),
+        rgbToLinearColorComponent(color.blue),
+        color.alpha
     };
 }
 
-ColorComponents<float> linearToRGBComponents(const ColorComponents<float>& linearRGB)
+SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 {
     return {
-        linearToRGBColorComponent(linearRGB[0]),
-        linearToRGBColorComponent(linearRGB[1]),
-        linearToRGBColorComponent(linearRGB[2]),
-        linearRGB[3]
+        linearToRGBColorComponent(color.red),
+        linearToRGBColorComponent(color.green),
+        linearToRGBColorComponent(color.blue),
+        color.alpha
     };
 }
 
-static ColorComponents<float> xyzToLinearSRGB(const ColorComponents<float>& XYZComponents)
+LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
+{
+    return {
+        rgbToLinearColorComponent(color.red),
+        rgbToLinearColorComponent(color.green),
+        rgbToLinearColorComponent(color.blue),
+        color.alpha
+    };
+}
+
+DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
+{
+    return {
+        linearToRGBColorComponent(color.red),
+        linearToRGBColorComponent(color.green),
+        linearToRGBColorComponent(color.blue),
+        color.alpha
+    };
+}
+
+static LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
 {
     // https://en.wikipedia.org/wiki/SRGB
     // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
@@ -77,10 +98,10 @@ static ColorComponents<float> xyzToLinearSRGB(const ColorComponents<float>& XYZC
         -0.9692660f,  1.8760108f,  0.0415560f,
          0.0556434f, -0.2040259f,  1.0572252f
     };
-    return xyzToLinearSRGBMatrix.transformedColorComponents(XYZComponents);
+    return asLinearSRGBA(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static ColorComponents<float> linearSRGBToXYZ(const ColorComponents<float>& XYZComponents)
+static XYZA<float> toXYZ(const LinearSRGBA<float>& color)
 {
     // https://en.wikipedia.org/wiki/SRGB
     // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
@@ -89,72 +110,63 @@ static ColorComponents<float> linearSRGBToXYZ(const ColorComponents<float>& XYZC
         0.2126729f,  0.7151522f,  0.0721750f,
         0.0193339f,  0.1191920f,  0.9503041f
     };
-    return linearSRGBToXYZMatrix.transformedColorComponents(XYZComponents);
+    return asXYZA(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static ColorComponents<float> XYZToLinearP3(const ColorComponents<float>& XYZComponents)
+static LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>& color)
 {
     // https://drafts.csswg.org/css-color/#color-conversion-code
-    constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
+    constexpr ColorMatrix<3, 3> xyzToLinearDisplayP3Matrix {
          2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
         -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
          0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
     };
-    return xyzToLinearSRGBMatrix.transformedColorComponents(XYZComponents);
+    return asLinearDisplayP3(xyzToLinearDisplayP3Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static ColorComponents<float> linearP3ToXYZ(const ColorComponents<float>& XYZComponents)
+static XYZA<float> toXYZ(const LinearDisplayP3<float>& color)
 {
     // https://drafts.csswg.org/css-color/#color-conversion-code
-    constexpr ColorMatrix<3, 3> linearP3ToXYZMatrix {
+    constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
         0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
         0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
         0.0f,                0.0451133818589026f, 1.043944368900976f
     };
-    return linearP3ToXYZMatrix.transformedColorComponents(XYZComponents);
+    return asXYZA(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-ColorComponents<float> p3ToSRGB(const ColorComponents<float>& p3)
+SRGBA<float> toSRGBA(const DisplayP3<float>& color)
 {
-    auto linearP3 = rgbToLinearComponents(p3);
-    auto xyz = linearP3ToXYZ(linearP3);
-    auto linearSRGB = xyzToLinearSRGB(xyz);
-    return linearToRGBComponents(linearSRGB);
+    return toSRGBA(toLinearSRGBA(toXYZ(toLinearDisplayP3(color))));
 }
 
-ColorComponents<float> sRGBToP3(const ColorComponents<float>& sRGB)
+DisplayP3<float> toDisplayP3(const SRGBA<float>& color)
 {
-    auto linearSRGB = rgbToLinearComponents(sRGB);
-    auto xyz = linearSRGBToXYZ(linearSRGB);
-    auto linearP3 = XYZToLinearP3(xyz);
-    return linearToRGBComponents(linearP3);
+    return toDisplayP3(toLinearDisplayP3(toXYZ(toLinearSRGBA(color))));
 }
 
-float lightness(const ColorComponents<float>& sRGBCompontents)
+float lightness(const SRGBA<float>& color)
 {
-    auto [r, g, b, a] = sRGBCompontents;
-
+    auto [r, g, b, a] = color;
     auto [min, max] = std::minmax({ r, g, b });
-
     return 0.5f * (max + min);
 }
 
-float luminance(const ColorComponents<float>& sRGBComponents)
+float luminance(const SRGBA<float>& color)
 {
-    // NOTE: This is the equivilent of `linearSRGBToXYZ(rgbToLinearComponents(sRGBComponents))[1]`
+    // NOTE: This is the equivalent of toXYZA(toLinearSRGBA(color)).y
     // FIMXE: If we can generalize ColorMatrix a bit more, it might be nice to write this as:
-    //      auto linearSRGBComponents = rgbToLinearComponents(sRGBComponents);
-    //      return linearSRGBComponents * linearSRGBToXYZMatrix.row(1);
-    auto [r, g, b, a] = rgbToLinearComponents(sRGBComponents);
+    //      return toLinearSRGBA(color) * linearSRGBToXYZMatrix.row(1);
+    auto [r, g, b, a] = toLinearSRGBA(color);
     return 0.2126f * r + 0.7152f * g + 0.0722f * b;
 }
 
-float contrastRatio(const ColorComponents<float>& componentsA, const ColorComponents<float>& componentsB)
+float contrastRatio(const SRGBA<float>& colorA, const SRGBA<float>& colorB)
 {
     // Uses the WCAG 2.0 definition of contrast ratio.
     // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
-    float lighterLuminance = luminance(componentsA);
-    float darkerLuminance = luminance(componentsB);
+    float lighterLuminance = luminance(colorA);
+    float darkerLuminance = luminance(colorB);
 
     if (lighterLuminance < darkerLuminance)
         std::swap(lighterLuminance, darkerLuminance);
@@ -162,10 +174,10 @@ float contrastRatio(const ColorComponents<float>& componentsA, const ColorCompon
     return (lighterLuminance + 0.05) / (darkerLuminance + 0.05);
 }
 
-ColorComponents<float> sRGBToHSL(const ColorComponents<float>& sRGBCompontents)
+HSLA<float> toHSLA(const SRGBA<float>& color)
 {
     // http://en.wikipedia.org/wiki/HSL_color_space.
-    auto [r, g, b, alpha] = sRGBCompontents;
+    auto [r, g, b, alpha] = color;
 
     auto [min, max] = std::minmax({ r, g, b });
     float chroma = max - min;
@@ -221,9 +233,9 @@ static float calcHue(float temp1, float temp2, float hueVal)
 // Explanation of this algorithm can be found in the CSS Color 4 Module
 // specification at https://drafts.csswg.org/css-color-4/#hsl-to-rgb with
 // further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
-ColorComponents<float> hslToSRGB(const ColorComponents<float>& hslColor)
+SRGBA<float> toSRGBA(const HSLA<float>& color)
 {
-    auto [hue, saturation, lightness, alpha] = hslColor;
+    auto [hue, saturation, lightness, alpha] = color;
 
     // Convert back to RGB.
     if (!saturation) {
@@ -247,9 +259,9 @@ ColorComponents<float> hslToSRGB(const ColorComponents<float>& hslColor)
     };
 }
 
-ColorComponents<float> premultiplied(const ColorComponents<float>& sRGBComponents)
+SRGBA<float> premultiplied(const SRGBA<float>& color)
 {
-    auto [r, g, b, a] = sRGBComponents;
+    auto [r, g, b, a] = color;
     return {
         r * a,
         g * a,

@@ -27,6 +27,7 @@
 #include "ExtendedColor.h"
 
 #include "Color.h"
+#include "ColorTypes.h"
 #include "ColorUtilities.h"
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
@@ -80,18 +81,18 @@ Ref<ExtendedColor> ExtendedColor::invertedColorWithAlpha(float overrideAlpha) co
     return ExtendedColor::create(1.0f - c1, 1.0f - c2, 1.0f - c3, overrideAlpha, colorSpace());
 }
 
-ColorComponents<float> ExtendedColor::toSRGBAComponentsLossy() const
+SRGBA<float> ExtendedColor::toSRGBALossy() const
 {
     switch (m_colorSpace) {
     case ColorSpace::SRGB:
-        return m_components;
+        return asSRGBA(m_components);
     case ColorSpace::LinearRGB:
-        return linearToRGBComponents(m_components);
+        return toSRGBA(asLinearSRGBA(m_components));
     case ColorSpace::DisplayP3:
-        return p3ToSRGB(m_components);
+        return toSRGBA(asDisplayP3(m_components));
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return { 0, 0, 0, 0 };
 }
 
 bool ExtendedColor::isWhite() const
