@@ -29,6 +29,7 @@
 import sys
 import argparse
 import json
+from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 
 try:
     from scipy import stats
@@ -44,13 +45,173 @@ except:
 
 def readJSONFile(path):
     with open(path, 'r') as contents:
-        return json.loads(contents.read())
+        result = json.loads(contents.read())
+        if 'debugOutput' in result:
+            del result['debugOutput']
+        return result
 
 Speedometer2 = "Speedometer2"
 JetStream2 = "JetStream2"
 PLT5 = "PLT5"
 MotionMark = "MotionMark"
 MotionMark1_1 = "MotionMark-1.1"
+MotionMark1_1_1 = "MotionMark-1.1.1"
+
+unitMarker = "__unit__"
+
+def speedometer2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-2"]["tests"].keys():
+        result[test] = breakdown._results["Speedometer-2"]["tests"][test]["metrics"]["Time"]["Total"]["current"]
+    return result
+
+def jetStream2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "pts"
+    for test in breakdown._results["JetStream2.0"]["tests"].keys():
+        result[test] = breakdown._results["JetStream2.0"]["tests"][test]["metrics"]["Score"][None]["current"]
+    return result
+
+def motionMarkBreakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+
+    result = {}
+    result[unitMarker] = "pts"
+
+    if detectMotionMark(jsonObject):
+        name = "MotionMark"
+    elif detectMotionMark1_1(jsonObject):
+        name = "MotionMark-1.1"
+    else:
+        name = "MotionMark-1.1.1"
+
+    for test in breakdown._results[name]["tests"].keys():
+        result[test] = breakdown._results[name]["tests"][test]["metrics"]["Score"][None]["current"]
+
+    return result
+
+def plt5Breakdown(jsonObject):
+    nameMapping = {}
+
+    for mappings in  jsonObject["urls"]:
+        for key in mappings.keys():
+            nameMapping[key] = mappings[key]
+
+    result = {}
+    result[unitMarker] = "ms"
+    for test in jsonObject["iterations"][0]["warm"].keys():
+        if test == "Geometric":
+            continue
+        result["warm--" + nameMapping[test]] = []
+        result["cold--" + nameMapping[test]] = []
+
+    for payload in jsonObject["iterations"]:
+        warmTests = payload["warm"]
+        coldTests = payload["cold"]
+        for test in warmTests.keys():
+            if test == "Geometric":
+                continue
+            result["warm--" + nameMapping[test]].append(warmTests[test]["Geometric"])
+            result["cold--" + nameMapping[test]].append(coldTests[test]["Geometric"])
+
+    return result
+
+def displayStr(value):
+    return "{:.6f}".format(float(value))
+
+def dumpBreakdowns(a, b):
+    nameLength = len("subtest")
+    aLength = len(a[unitMarker])
+    bLength = len(a[unitMarker])
+    ratioLength = len("b / a")
+
+    # See Bonferroni correction:
+    # https://en.m.wikipedia.org/wiki/Bonferroni_correction
+    # If we're testing N hypothesis, we make our threshold, alpha, .05/N instead of .05.
+    testCount = float(len(a.keys()) - 1)
+    alpha = .05 / testCount
+    pValueHeader = "pValue, alpha = {}".format(displayStr(alpha))
+    pLength = len(pValueHeader)
+
+    for key in a.keys():
+        if key == unitMarker:
+            continue
+        nameLength = max(nameLength, len(key))
+        aLength = max(aLength, len(displayStr(numpy.mean(a[key]))))
+        bLength = max(bLength, len(displayStr(numpy.mean(b[key]))))
+        ratioLength = max(ratioLength, len(displayStr(numpy.mean(b[key]) / numpy.mean(a[key]))))
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+        significantStr = ""
+        if pValue <= alpha:
+            significantStr = " (significant)"
+        pLength = max(pLength, len(displayStr(pValue)) + len(significantStr))
+
+    aLength += 2
+    bLength += 2
+    nameLength += 2
+    ratioLength += 2
+    pLength += 2
+
+    strings = []
+    strings.append("|{key:^{nameLength}}|{aScore:^{aLength}} |{bScore:^{bLength}} |{compare:^{ratioLength}}|{pMarker:^{pLength}}|".format(key="subtest", aScore=a[unitMarker], bScore=b[unitMarker], nameLength=nameLength, aLength=aLength, bLength=bLength , compare="b / a", ratioLength=ratioLength, pMarker=pValueHeader, pLength=pLength))
+    for key in a.keys():
+        if key == unitMarker:
+            continue
+
+        aScore = numpy.mean(a[key])
+        bScore = numpy.mean(b[key])
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+
+        significantStr = ""
+        if pValue <= alpha:
+            significantStr = " (significant)"
+
+        strings.append("| {key:{nameLength}}|{aScore:{aLength}} |{bScore:{bLength}} |{compare:{ratioLength}}| {pValue:<{pLength}}|".format(key=key, aScore=displayStr(aScore), bScore=displayStr(bScore), nameLength=nameLength - 1, aLength=aLength, bLength=bLength, ratioLength=ratioLength, compare=displayStr(bScore / aScore), pValue = displayStr(pValue) + significantStr, pLength=pLength - 1))
+
+    maxLen = 0
+    for s in strings:
+        maxLen = max(maxLen, len(s))
+
+    verticalSeparator = "-" * maxLen
+    strings.insert(0, verticalSeparator)
+    strings.insert(2, verticalSeparator)
+    strings.append(verticalSeparator)
+
+    print "\n"
+    for s in strings:
+        print(s)
+    print "\n"
+
+def writeCSV(a, b, fileName):
+    strings = []
+    result = ""
+    testCount = float(len(a.keys()) - 1)
+    alpha = .05 / testCount
+    pValueHeader = "pValue_with_alpha_{}".format(displayStr(alpha))
+    result += "test_name, {}, {}, b_divided_by_a, {}, is_significant\n".format("a_in_" + a[unitMarker], "b_in_" + b[unitMarker], pValueHeader)
+
+
+    for key in a.keys():
+        if key == unitMarker:
+            continue
+
+        aScore = numpy.mean(a[key])
+        bScore = numpy.mean(b[key])
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+        # See above comment about Bonferroni correction
+        significantStr = "No"
+        result += "{},{},{},{},{},{}\n".format(key, displayStr(aScore), displayStr(bScore), displayStr(bScore / aScore), displayStr(pValue), significantStr)
+
+    f = open(fileName, "w")
+    f.write(result)
+    f.close()
+
 
 def detectJetStream2(payload):
     return "JetStream2.0" in payload
@@ -110,12 +271,17 @@ def detectMotionMark(payload):
 def detectMotionMark1_1(payload):
     return "MotionMark-1.1" in payload
 
+def detectMotionMark1_1_1(payload):
+    return "MotionMark-1.1.1" in payload
+
 def motionMarkResults(payload):
-    assert detectMotionMark(payload) or detectMotionMark1_1(payload)
+    assert detectMotionMark(payload) or detectMotionMark1_1(payload) or detectMotionMark1_1_1(payload)
     if detectMotionMark(payload):
         payload = payload["MotionMark"]
-    else:
+    elif detectMotionMark1_1(payload):
         payload = payload["MotionMark-1.1"]
+    else:
+        payload = payload["MotionMark-1.1.1"]
     testNames = payload["tests"].keys()
     numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
     results = []
@@ -127,9 +293,6 @@ def motionMarkResults(payload):
 
     return results
 
-def motionMark1_1Results(payload):
-    return motionMarkResults(payload)
-
 def detectBenchmark(payload):
     if detectJetStream2(payload):
         return JetStream2
@@ -140,6 +303,8 @@ def detectBenchmark(payload):
     if detectMotionMark(payload):
         return MotionMark
     if detectMotionMark1_1(payload):
+        return MotionMark1_1
+    if detectMotionMark1_1_1(payload):
         return MotionMark1_1
     return None
 
@@ -199,6 +364,14 @@ def getOptions():
         required=True,
         help="b of a/b. Path to JSON results file.")
 
+    parser.add_argument("--csv",
+        type=str,
+        required=False,
+        help="Path to write a csv file containing subtest breakdown.")
+
+    parser.add_argument("--breakdown", action="store_true",
+        default=False, help="Print a per subtest breakdown.")
+
     return parser.parse_known_args()[0]
 
 
@@ -220,15 +393,38 @@ def main():
         sys.exit(1)
     
     if typeA == JetStream2:
+        if args.breakdown:
+            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
+
         ttest(typeA, JetStream2Results(a), JetStream2Results(b))
+
+        if args.csv:
+            writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
     elif typeA == Speedometer2:
+        if args.breakdown:
+            dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
+
         ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
-    elif typeA == MotionMark:
+
+        if args.csv:
+            writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv)
+
+    elif typeA == MotionMark or typeA == MotionMark1_1 or typeA == MotionMark1_1_1:
+        if args.breakdown:
+            dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b))
+
         ttest(typeA, motionMarkResults(a), motionMarkResults(b))
-    elif typeA == MotionMark1_1:
-        ttest(typeA, motionMark1_1Results(a), motionMark1_1Results(b))
+
+        if args.csv:
+            writeCSV(motionMarkBreakdown(a), motionMarkBreakdown(b), args.csv)
     elif typeA == PLT5:
+        if args.breakdown:
+            dumpBreakdowns(plt5Breakdown(a), plt5Breakdown(b))
+
         ttest(typeA, PLT5Results(a), PLT5Results(b))
+
+        if args.csv:
+            writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
     else:
         print "Unknown benchmark type"
         sys.exit(1)

@@ -1,3 +1,59 @@
+2020-06-13  Saam Barati  <sbarati@apple.com>
+
+        compare-results should have an option to print a breakdown and to save the breakdown as csv file
+        https://bugs.webkit.org/show_bug.cgi?id=213140
+
+        Reviewed by Filip Pizlo.
+
+        In this patch, compare-results has a new --breakdown feature which will
+        break down the results for -a and -b per subtest. It will also show you
+        p values with a significance threshold determined using the Bonferroni
+        correction for testing multiple hypotheses:
+        https://en.wikipedia.org/wiki/Bonferroni_correction
+        
+        And there is also now a --csv option to generate a csv file containing
+        the same per subtest breakdown.
+        
+        --breakdown will print out results like:
+        
+        ------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms       |     ms       |  b / a   | pValue, alpha = 0.003125 |
+        ------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |616.625000    |583.625000    |0.946483  | 0.065002                 |
+        | VueJS-TodoMVC                        |89.425000     |83.225000     |0.930668  | 0.039102                 |
+        | EmberJS-TodoMVC                      |695.875000    |664.000000    |0.954194  | 0.088901                 |
+        | Flight-TodoMVC                       |263.600000    |257.600000    |0.977238  | 0.249259                 |
+        | BackboneJS-TodoMVC                   |213.025000    |201.550000    |0.946133  | 0.000636 (significant)   |
+        | Preact-TodoMVC                       |48.800000     |47.550000     |0.974385  | 0.502768                 |
+        | AngularJS-TodoMVC                    |745.300000    |704.275000    |0.944955  | 0.011779                 |
+        | Inferno-TodoMVC                      |607.900000    |354.800000    |0.583649  | 0.000000 (significant)   |
+        | Vanilla-ES2015-TodoMVC               |214.950000    |200.575000    |0.933124  | 0.005018                 |
+        | Angular2-TypeScript-TodoMVC          |191.575000    |187.025000    |0.976250  | 0.542229                 |
+        | VanillaJS-TodoMVC                    |162.075000    |160.375000    |0.989511  | 0.747186                 |
+        | jQuery-TodoMVC                       |855.275000    |833.825000    |0.974920  | 0.103439                 |
+        | EmberJS-Debug-TodoMVC                |2056.250000   |1952.050000   |0.949325  | 0.000003 (significant)   |
+        | React-TodoMVC                        |475.225000    |428.950000    |0.902625  | 0.007566                 |
+        | React-Redux-TodoMVC                  |791.100000    |736.675000    |0.931203  | 0.066091                 |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |208.050000    |202.000000    |0.970920  | 0.152470                 |
+        ------------------------------------------------------------------------------------------------------------
+
+        * Scripts/compare-results:
+        (readJSONFile):
+        (speedometer2Breakdown):
+        (jetStream2Breakdown):
+        (motionMarkBreakdown):
+        (plt5Breakdown):
+        (displayStr):
+        (dumpBreakdowns):
+        (writeCSV):
+        (detectMotionMark1_1):
+        (detectMotionMark1_1_1):
+        (motionMarkResults):
+        (detectBenchmark):
+        (getOptions):
+        (main):
+        (motionMark1_1Results): Deleted.
+
 2020-06-13  Sam Weinig  <weinig@apple.com>
 
         Extended Color: Experiment with strongly typed ColorComponents
