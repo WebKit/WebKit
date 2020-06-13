@@ -1849,6 +1849,51 @@ ExceptionOr<void> Internals::unconstrainedScrollTo(Element& element, double x, d
     return { };
 }
 
+ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, double deltaX, double deltaY)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { InvalidAccessError };
+
+    if (!element.renderBox())
+        return Exception { InvalidAccessError };
+
+    RenderBox& box = *element.renderBox();
+    ScrollableArea* scrollableArea;
+
+    if (&element == document->scrollingElementForAPI()) {
+        FrameView* frameView = box.frame().mainFrame().view();
+        if (!frameView || !frameView->isScrollable())
+            return Exception { InvalidAccessError };
+
+        scrollableArea = frameView;
+    } else {
+        if (!box.canBeScrolledAndHasScrollableArea())
+            return Exception { InvalidAccessError };
+
+        scrollableArea = box.layer();
+    }
+    
+    if (!scrollableArea)
+        return Exception { InvalidAccessError };
+
+    auto scrollingNodeID = scrollableArea->scrollingNodeID();
+    if (!scrollingNodeID)
+        return Exception { InvalidAccessError };
+
+    auto page = document->page();
+    if (!page)
+        return Exception { InvalidAccessError };
+
+    auto scrollingCoordinator = page->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return Exception { InvalidAccessError };
+
+    scrollingCoordinator->scrollBySimulatingWheelEventForTesting(scrollingNodeID, FloatSize(deltaX, deltaY));
+
+    return { };
+}
+
 ExceptionOr<Ref<DOMRect>> Internals::layoutViewportRect()
 {
     Document* document = contextDocument();

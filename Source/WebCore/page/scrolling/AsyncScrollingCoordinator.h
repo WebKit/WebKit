@@ -126,6 +126,8 @@ private:
     WEBCORE_EXPORT void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) override;
     void reconcileScrollPosition(FrameView&, ScrollingLayerPositionAction);
 
+    WEBCORE_EXPORT void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) final;
+
     bool isRubberBandInProgress() const override;
     void setScrollPinningBehavior(ScrollPinningBehavior) override;
 

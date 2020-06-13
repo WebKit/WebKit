@@ -284,6 +284,7 @@ public:
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);
     ExceptionOr<void> unconstrainedScrollTo(Element&, double x, double y);
+    ExceptionOr<void> scrollBySimulatingWheelEvent(Element&, double deltaX, double deltaY);
 
     ExceptionOr<Ref<DOMRect>> layoutViewportRect();
     ExceptionOr<Ref<DOMRect>> visualViewportRect();

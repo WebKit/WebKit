@@ -114,6 +114,7 @@ void ScrollingCoordinatorMac::willStartRenderingUpdate()
 {
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     threadedScrollingTree->willStartRenderingUpdate();
+    commitTreeStateIfNeeded();
     synchronizeStateFromScrollingTree();
 }
 

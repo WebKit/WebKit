@@ -328,6 +328,9 @@ enum CompositingPolicy {
     // Like Element.scrollTo(), but without constaints, for testing rubber-banding.
     [MayThrowException] void unconstrainedScrollTo(Element element, unrestricted double x, unrestricted double y);
 
+    // Scrolls the element by the given delta, approximating the async wheel event handling code path where available.
+    [MayThrowException] void scrollBySimulatingWheelEvent(Element element, unrestricted double deltaX, unrestricted double deltaY);
+
     [MayThrowException] DOMRect layoutViewportRect();
     [MayThrowException] DOMRect visualViewportRect();
 

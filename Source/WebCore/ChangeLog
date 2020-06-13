@@ -1,3 +1,45 @@
+2020-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r261985): Unable to respond to large comments on Bugzilla with always-on scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=213135
+        <rdar://problem/64302086>
+
+        Reviewed by Tim Horton.
+        
+        The combination of programmatic scrolls (e.g. anchor click, reveal selection) and user scrolling
+        could result in a mismatch between the main thread and scrolling thread scroll positions, resulting
+        in missing tiles and offset cursor handling.
+        
+        This happened if a programmatic scroll occurred and 'scrolledSinceLastCommit' was true for
+        the equivalent scrolling node at the start of a rendering update. synchronizeStateFromScrollingTree()
+        would take the scrolling thread's notion of the scroll position, clobbering the position resulting
+        from the programmatic scroll.
+
+        To fix this, call commitTreeStateIfNeeded() before synchronizeStateFromScrollingTree() to ensure that
+        any programmatic scrolls have been pushed to the scrolling tree before we fetch its state.
+        
+        Some infrastructure is needed for testing; getting into the state where a programmatic
+        scroll and 'scrolledSinceLastCommit' happened in the same event loop cycle required adding
+        internals.scrollBySimulatingWheelEvent(), which just pokes the scrolling tree directly
+        without the complexities of wheel events dispatched via the UI process.
+
+        Test: scrollingcoordinator/mac/reveal-selection-tile-coverage.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollBySimulatingWheelEventForTesting):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::scrollBySimulatingWheelEventForTesting):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::scrollBySimulatingWheelEventForTesting):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::willStartRenderingUpdate):
+        * testing/Internals.cpp:
+        (WebCore::Internals::scrollBySimulatingWheelEvent):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-06-12  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Check enum values in IPC::Decoder::decodeEnum() an IPC::Encoder::encodeEnum()

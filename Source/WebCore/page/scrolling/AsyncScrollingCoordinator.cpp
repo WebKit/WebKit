@@ -531,6 +531,12 @@ void AsyncScrollingCoordinator::reconcileScrollPosition(FrameView& frameView, Sc
 #endif
 }
 
+void AsyncScrollingCoordinator::scrollBySimulatingWheelEventForTesting(ScrollingNodeID nodeID, FloatSize delta)
+{
+    if (m_scrollingTree)
+        m_scrollingTree->scrollBySimulatingWheelEventForTesting(nodeID, delta);
+}
+
 void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(ScrollableArea& scrollableArea, ScrollbarOrientation orientation)
 {
     ASSERT(isMainThread());

@@ -193,6 +193,8 @@ public:
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
     bool inCommitTreeState() const { return m_inCommitTreeState; }
 
+    void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize);
+
     virtual void lockLayersForHitTesting() { }
     virtual void unlockLayersForHitTesting() { }
 

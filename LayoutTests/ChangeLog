@@ -1,3 +1,18 @@
+2020-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r261985): Unable to respond to large comments on Bugzilla with always-on scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=213135
+        <rdar://problem/64302086>
+
+        Reviewed by Tim Horton.
+
+        Test that does a fake user scroll then a programmatic scroll from a timer (i.e. outside
+        the rendering update), then dumps tile caches to check that coverage rects match the
+        right scroll position.
+
+        * scrollingcoordinator/mac/reveal-selection-tile-coverage-expected.txt: Added.
+        * scrollingcoordinator/mac/reveal-selection-tile-coverage.html: Added.
+
 2020-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Focusing selects and color inputs should not bring up the software keyboard

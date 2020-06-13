@@ -541,6 +541,17 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
     return false;
 }
 
+void ScrollingTree::scrollBySimulatingWheelEventForTesting(ScrollingNodeID nodeID, FloatSize delta)
+{
+    LockHolder locker(m_treeMutex);
+
+    auto* node = nodeForID(nodeID);
+    if (!is<ScrollingTreeScrollingNode>(node))
+        return;
+
+    downcast<ScrollingTreeScrollingNode>(*node).scrollBy(delta);
+}
+
 void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
     LockHolder locker(m_treeStateMutex);

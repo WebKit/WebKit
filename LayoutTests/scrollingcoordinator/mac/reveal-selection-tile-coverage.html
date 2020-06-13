@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .filler {
+            height: 1000px;
+            width: 100px;
+            margin: 10px;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        async function scrollTest()
+        {
+            shouldBe('window.pageYOffset', '0');
+
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            await UIHelper.animationFrame(); // Wait for scrolling tree commit
+
+            setTimeout(async () => {
+                internals.scrollBySimulatingWheelEvent(document.scrollingElement, 0, 100);
+                window.location.href = '#anchor';
+
+                shouldBe('window.pageYOffset', '1026');
+
+                await UIHelper.animationFrame();
+
+                if (window.internals)
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+                finishJSTest();
+            }, 0);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+
+    </script>
+</head>
+<body>
+    <div class="filler"></div>
+    <p id="anchor">Scroll to here</p>
+    <div class="filler"></div>
+    <div class="filler"></div>
+<pre id="layers"></pre>
+<div id="console"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

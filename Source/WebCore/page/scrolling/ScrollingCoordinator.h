@@ -145,6 +145,8 @@ public:
     virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return 0; }
     virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
 
+    virtual void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) { }
+
     struct NodeLayers {
         GraphicsLayer* layer { nullptr };
         GraphicsLayer* scrollContainerLayer { nullptr };
