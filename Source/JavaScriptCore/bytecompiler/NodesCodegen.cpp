@@ -55,21 +55,22 @@ namespace JSC {
 
     Return value: The register holding the production's value.
              dst: An optional parameter specifying the most efficient destination at
-                  which to store the production's value. The callee must honor dst.
+                  which to store the production's value.
+                  If dst is null, you may return whatever VirtualRegister you want. Otherwise you have to return dst.
 
     The dst argument provides for a crude form of copy propagation. For example,
 
         x = 1
 
     becomes
-    
+
         load r[x], 1
-    
+
     instead of 
 
         load r0, 1
         mov r[x], r0
-    
+
     because the assignment node, "x =", passes r[x] as dst to the number node, "1".
 */
 
@@ -84,10 +85,12 @@ void ExpressionNode::emitBytecodeInConditionContext(BytecodeGenerator& generator
 
 // ------------------------------ ThrowableExpressionData --------------------------------
 
-RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, const String& message)
+RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, const String& message, RegisterID* dst)
 {
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitThrowReferenceError(message);
+    if (dst)
+        return dst;
     return generator.newTemporary();
 }
 
@@ -2247,7 +2250,8 @@ RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     ASSERT(m_expr->isFunctionCall());
     return emitThrowReferenceError(generator, m_operator == Operator::PlusPlus
         ? "Postfix ++ operator applied to value that is not a reference."_s
-        : "Postfix -- operator applied to value that is not a reference."_s);
+        : "Postfix -- operator applied to value that is not a reference."_s,
+        dst);
 }
 
 // ------------------------------ DeleteResolveNode -----------------------------------
@@ -2279,7 +2283,7 @@ RegisterID* DeleteBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     RefPtr<RegisterID> r1 = generator.emitNode(m_subscript);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
-        return emitThrowReferenceError(generator, "Cannot delete a super property");
+        return emitThrowReferenceError(generator, "Cannot delete a super property", dst);
     return generator.emitDeleteByVal(finalDest.get(), r0.get(), r1.get());
 }
 
@@ -2295,7 +2299,7 @@ RegisterID* DeleteDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
-        return emitThrowReferenceError(generator, "Cannot delete a super property");
+        return emitThrowReferenceError(generator, "Cannot delete a super property", dst);
     return generator.emitDeleteById(finalDest.get(), r0.get(), m_ident);
 }
 
@@ -2484,7 +2488,8 @@ RegisterID* PrefixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
     ASSERT(m_expr->isFunctionCall());
     return emitThrowReferenceError(generator, m_operator == Operator::PlusPlus
         ? "Prefix ++ operator applied to value that is not a reference."_s
-        : "Prefix -- operator applied to value that is not a reference."_s);
+        : "Prefix -- operator applied to value that is not a reference."_s,
+        dst);
 }
 
 // ------------------------------ Unary Operation Nodes -----------------------------------
@@ -3199,7 +3204,7 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
     Ref<Label> afterAssignment = generator.newLabel();
     emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
 
-    result = generator.emitNode(result.get(), m_right); // Execute side effects first.
+    generator.emitNode(result.get(), m_right); // Execute side effects first.
 
     bool threwException = isReadOnly ? generator.emitReadOnlyExceptionIfNeeded(var) : false;
 
@@ -3352,9 +3357,9 @@ RegisterID* ShortCircuitReadModifyDotNode::emitBytecode(BytecodeGenerator& gener
 
 // ------------------------------ AssignErrorNode -----------------------------------
 
-RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
+RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    return emitThrowReferenceError(generator, "Left side of assignment is not a reference."_s);
+    return emitThrowReferenceError(generator, "Left side of assignment is not a reference."_s, dst);
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------

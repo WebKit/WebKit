@@ -1,3 +1,34 @@
+2020-06-12  Robin Morisset  <rmorisset@apple.com>
+
+        The ||= operator (and similar ones) should produce valid bytecode even if the right side is a static error
+        https://bugs.webkit.org/show_bug.cgi?id=213154
+
+        Reviewed by Devin Rousso.
+
+        There were two minor issues here that interacted:
+        - emitThrowReferenceError did not take an optional `dst` argument like everything else, and instead always returned a new temporary.
+          As a result, the various functions that sometimes did "return emitThrowReferenceError(..);" could return a different RegisterID than the one
+          provided to them through `dst`, breaking the invariant stated at the top of the file.
+        - ShortCircuitReadModifyResolveNode::emitBytecode used the result of such a function, unnecessarily, and (correctly) relied on the invariant being upheld.
+        The combination of these led to the bytecode trying to do a move of a temporary that was only defined in one of the predecessors of the basic block it was on,
+        which was caught by validateBytecode.
+
+        I fixed both issues, and verified that either fix is enough to stop the bug.
+        I fixed the first because other code may depend on that invariant in more subtle ways.
+        I fixed the second because it was just unnecessary complexity and made the code misleading.
+
+        I also reworded the comment at the top of NodesCodegen.cpp based on Keith's explanation and Mark's advice to make it less cryptic.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThrowableExpressionData::emitThrowReferenceError):
+        (JSC::PostfixNode::emitBytecode):
+        (JSC::DeleteBracketNode::emitBytecode):
+        (JSC::DeleteDotNode::emitBytecode):
+        (JSC::PrefixNode::emitBytecode):
+        (JSC::ShortCircuitReadModifyResolveNode::emitBytecode):
+        (JSC::AssignErrorNode::emitBytecode):
+        * parser/Nodes.h:
+
 2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] el(Greek) characters' upper-case conversion is locale-sensitive

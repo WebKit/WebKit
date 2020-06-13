@@ -1,3 +1,13 @@
+2020-06-12  Robin Morisset  <rmorisset@apple.com>
+
+        The ||= operator (and similar ones) should produce valid bytecode even if the right side is a static error
+        https://bugs.webkit.org/show_bug.cgi?id=213154
+
+        Reviewed by Devin Rousso.
+
+        * stress/bytecode-for-rmw-with-invalid-right-side.js: Added.
+        (catch):
+
 2020-06-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] el(Greek) characters' upper-case conversion is locale-sensitive
