@@ -1,3 +1,22 @@
+2020-06-12  Keith Miller  <keith_miller@apple.com>
+
+        Tests expecting a crash should use a signal handler in the JSC CLI process
+        https://bugs.webkit.org/show_bug.cgi?id=212479
+
+        Reviewed by Yusuke Suzuki.
+
+        Add signals for floating point exceptions and breakpoints. There's a
+        note for breakpoints that explains how using them in the same process
+        as lldb will cause badness. Fortunately, the only place I plan on using
+        the breakpoint handler is to check for tests where crashing is expected.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::fromMachException):
+        (WTF::toMachMask):
+        * wtf/threads/Signals.h:
+        (WTF::toSystemSignal):
+        (WTF::fromSystemSignal):
+
 2020-06-12  Jason Lawrence  <lawrence.j@apple.com>
 
         Unreviewed, reverting r262904.

@@ -226,8 +226,8 @@ class Plan
         @outputHandler = outputHandler
         @errorHandler = errorHandler
         @isSlow = !!$runCommandOptions[:isSlow]
-        @shouldCrash = !!$runCommandOptions[:shouldCrash]
-        if @shouldCrash
+        @crashOK = !!$runCommandOptions[:crashOK]
+        if @crashOK
             @outputHandler = noisyOutputHandler
         end
         @additionalEnv = []
@@ -237,7 +237,7 @@ class Plan
         # It's important to remember that the test is actually run in a subshell, so if we change directory
         # in the subshell when we return we will be in our original directory. This is nice because we don't
         # have to bend over backwards to do things relative to the root.
-        script = "(cd ../#{Shellwords.shellescape(@directory.to_s)} && #{@shouldCrash ? "!" : ""}("
+        script = "(cd ../#{Shellwords.shellescape(@directory.to_s)} && ("
         ($envVars + additionalEnv).each { |var| script += "export " << var << "; " }
         script += "\"$@\" " + escapeAll(@arguments) + "))"
         return script

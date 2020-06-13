@@ -633,8 +633,9 @@ def slow!
     skip() if ($mode == "quick")
 end
 
-def crash!
-    $runCommandOptions[:shouldCrash] = true
+def crashOK!
+    $testSpecificRequiredOptions += ["-s"]
+    $runCommandOptions[:crashOK] = true
 end
 
 def requireOptions(*options)

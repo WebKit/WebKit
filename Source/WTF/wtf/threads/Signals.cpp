@@ -126,7 +126,9 @@ static Signal fromMachException(exception_type_t type)
 {
     switch (type) {
     case EXC_BAD_ACCESS: return Signal::AccessFault;
-    case EXC_BAD_INSTRUCTION: return Signal::Ill;
+    case EXC_BAD_INSTRUCTION: return Signal::IllegalInstruction;
+    case EXC_ARITHMETIC: return Signal::FloatingPoint;
+    case EXC_BREAKPOINT: return Signal::Breakpoint;
     default: break;
     }
     return Signal::Unknown;
@@ -136,7 +138,9 @@ static exception_mask_t toMachMask(Signal signal)
 {
     switch (signal) {
     case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
-    case Signal::Ill: return EXC_MASK_BAD_INSTRUCTION;
+    case Signal::IllegalInstruction: return EXC_MASK_BAD_INSTRUCTION;
+    case Signal::FloatingPoint: return EXC_MASK_ARITHMETIC;
+    case Signal::Breakpoint: return EXC_MASK_BREAKPOINT;
     default: break;
     }
     RELEASE_ASSERT_NOT_REACHED();

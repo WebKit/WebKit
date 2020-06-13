@@ -1,3 +1,17 @@
+2020-06-12  Keith Miller  <keith_miller@apple.com>
+
+        Tests expecting a crash should use a signal handler in the JSC CLI process
+        https://bugs.webkit.org/show_bug.cgi?id=212479
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/ensure-crash.js:
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-bad-transition-debug.js:
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-bad-transition.js:
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior-debug.js: Removed.
+        * stress/incorrect-put-could-generate-invalid-ic-but-still-not-causing-bad-behavior.js:
+        * stress/incorrect-put-could-generate-invalid-ic-involving-dictionary-flatten-debug.js:
+
 2020-06-12  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         AsyncGenerator should await "return" completions

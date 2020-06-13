@@ -1,7 +1,5 @@
-//@ skip if $buildType == "debug"
-
-if ($vm.assertEnabled())
-    quit();
+//@ crashOK!
+//@ runDefault("--useLLInt=1")
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
@@ -27,3 +25,6 @@ for (var i = 0; i < 1000; ++i) {
     putter(object);
 }
 shouldBe(counter, 1000);
+
+if ($vm.assertEnabled())
+    throw new Error();

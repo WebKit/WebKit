@@ -83,6 +83,7 @@
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/threads/Signals.h>
 
 #if OS(WINDOWS)
 #include <direct.h>
@@ -103,10 +104,6 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #undef Function
-#endif
-
-#if HAVE(SIGNAL_H)
-#include <signal.h>
 #endif
 
 #if COMPILER(MSVC)
@@ -2890,8 +2887,8 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -m         Execute as a module\n");
-#if HAVE(SIGNAL_H)
-    fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
+#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+    fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only, lldb will not work with this option) \n");
 #endif
     fprintf(stderr, "  -p <file>  Outputs profiling data to a file\n");
     fprintf(stderr, "  -x         Output exit code before terminating\n");
@@ -2982,11 +2979,18 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
         if (!strcmp(arg, "-s")) {
-#if HAVE(SIGNAL_H)
-            signal(SIGILL, _exit);
-            signal(SIGFPE, _exit);
-            signal(SIGBUS, _exit);
-            signal(SIGSEGV, _exit);
+#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
+            SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
+                dataLogLn("Signal handler hit. Exiting with status 0");
+                _exit(0);
+                return SignalAction::ForceDefault;
+            };
+
+            installSignalHandler(Signal::IllegalInstruction, SignalHandler(exit));
+            installSignalHandler(Signal::AccessFault, SignalHandler(exit));
+            installSignalHandler(Signal::FloatingPoint, SignalHandler(exit));
+            // once we do this lldb won't work anymore because we will exit on any breakpoints it sets.
+            installSignalHandler(Signal::Breakpoint, SignalHandler(exit));
 #endif
             continue;
         }

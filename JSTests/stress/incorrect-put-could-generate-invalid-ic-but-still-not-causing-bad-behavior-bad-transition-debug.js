@@ -1,5 +1,4 @@
-//@ skip if $buildType != "debug"
-//@ crash!
+//@ crashOK!
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
@@ -28,3 +27,6 @@ for (var i = 0; i < 1000; ++i) {
     shouldBe(object._unsupported, "Hey");
 }
 shouldBe(counter, 1000);
+
+if ($vm.assertEnabled())
+    throw new Error();

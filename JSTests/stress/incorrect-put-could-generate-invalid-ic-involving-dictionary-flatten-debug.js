@@ -1,5 +1,4 @@
-//@ skip if $buildType != "debug"
-//@ crash!
+//@ crashOK!
 //@ runDefault("--useLLInt=true")
 
 function shouldBe(actual, expected) {
@@ -33,3 +32,6 @@ for (var i = 0; i < 100; ++i) {
     putter(d);
     shouldBe('p3' in d, false);
 }
+
+if ($vm.assertEnabled())
+    throw new Error();

@@ -272,8 +272,8 @@ class Plan
         @outputHandler = outputHandler
         @errorHandler = errorHandler
         @isSlow = !!$runCommandOptions[:isSlow]
-        @shouldCrash = !!$runCommandOptions[:shouldCrash]
-        if @shouldCrash
+        @crashOK = !!$runCommandOptions[:crashOK]
+        if @crashOK
             @outputHandler = noisyOutputHandler
         end
         @additionalEnv = []
@@ -290,9 +290,6 @@ class Plan
         script += "end\n"
         script += "if (status == 0)\n"
         script += "  success = true\n"
-        script += "end\n"
-        script += "if (#{@shouldCrash})\n"
-        script += "  success = !success\n"
         script += "end\n"
 
         script += "out = File.open(\"#{n}-stdout\", \"r\").read\n"

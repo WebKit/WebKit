@@ -1,3 +1,17 @@
+2020-06-12  Keith Miller  <keith_miller@apple.com>
+
+        Tests expecting a crash should use a signal handler in the JSC CLI process
+        https://bugs.webkit.org/show_bug.cgi?id=212479
+
+        Reviewed by Yusuke Suzuki.
+
+        Crashing tests should now exit with status zero.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-playstation.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+
 2020-06-12  Alex Christensen  <achristensen@webkit.org>
 
         Make API tests tolerant of our relatively new use of WebPageProxy::preconnectTo
