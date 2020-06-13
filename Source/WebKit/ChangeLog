@@ -1,3 +1,27 @@
+2020-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Focusing selects and color inputs should not bring up the software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=213149
+        <rdar://problem/64312450>
+
+        Reviewed by Darin Adler.
+
+        After <trac.webkit.org/r261658>, we now opt into bringing up the software keyboard when focusing color inputs
+        and select elements. This is due to the changes in `-_shouldShowAutomaticKeyboardUIIgnoringInputMode`, which
+        were intended to make us return `NO` for date and time inputs, but also unintentionally makes us return `YES`
+        on iPadOS.
+
+        This patch fixes the bug by returning `!WebKit::currentUserInterfaceIdiomIsPad()` instead, and additionally
+        preserves the existing behavior of now showing a color picker for `<input type="color" readonly>` on iPhone.
+
+        Test: fast/forms/ios/ipad/select-should-not-bring-up-software-keyboard.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
 2020-06-12  Alex Christensen  <achristensen@webkit.org>
 
         Make API tests tolerant of our relatively new use of WebPageProxy::preconnectTo

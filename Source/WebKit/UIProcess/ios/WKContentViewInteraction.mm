@@ -1916,6 +1916,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)_shouldShowAutomaticKeyboardUIIgnoringInputMode
 {
+    if (_focusedElementInformation.isReadOnly)
+        return NO;
+
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
@@ -1928,8 +1931,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
+        return !WebKit::currentUserInterfaceIdiomIsPad();
     default:
-        return !_focusedElementInformation.isReadOnly;
+        return YES;
     }
     return NO;
 }

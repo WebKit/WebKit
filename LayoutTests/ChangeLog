@@ -1,3 +1,16 @@
+2020-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Focusing selects and color inputs should not bring up the software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=213149
+        <rdar://problem/64312450>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test.
+
+        * fast/forms/ios/ipad/select-should-not-bring-up-software-keyboard-expected.txt: Added.
+        * fast/forms/ios/ipad/select-should-not-bring-up-software-keyboard.html: Added.
+
 2020-06-12  Andres Gonzalez  <andresg_22@apple.com>
 
         Re-write accessibility/form-control-value-settable.html so that it can pass in both isolated tree mode on and off.
