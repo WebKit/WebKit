@@ -1,3 +1,46 @@
+2020-06-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r262978. rdar://problem/64315997
+
+    Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache
+    https://bugs.webkit.org/show_bug.cgi?id=213147
+    <rdar://problem/64249683>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache.
+    This is a revert of r250437 due to push back from Web developers.
+    
+    No new tests, updated existing tests.
+    
+    * history/BackForwardCache.cpp:
+    (WebCore::canCacheFrame):
+    
+    LayoutTests:
+    
+    Update layout test coverage.
+    
+    * http/tests/navigation/https-in-page-cache-expected.txt:
+    * http/tests/navigation/resources/https-in-page-cache-1.php:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@262978 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-06-12  Chris Dumez  <cdumez@apple.com>
+
+            Stop allowing pages served over HTTPS with "Cache-Control: no-store" into the back/forward cache
+            https://bugs.webkit.org/show_bug.cgi?id=213147
+            <rdar://problem/64249683>
+
+            Reviewed by Geoffrey Garen.
+
+            Update layout test coverage.
+
+            * http/tests/navigation/https-in-page-cache-expected.txt:
+            * http/tests/navigation/resources/https-in-page-cache-1.php:
+
 2020-06-10  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r262870. rdar://problem/64232759
