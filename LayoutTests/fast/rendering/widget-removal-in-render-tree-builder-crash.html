@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+var runcount = {'runTest':0}
+
+function runTest() {
+    if (window.testRunner)
+    {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    runcount["runTest"]++; if(runcount["runTest"] > 2) { return; }
+    element = document.createElement("command"); //HTMLUnknownElement
+    x.addEventListener("DOMSubtreeModified", runTest);
+    z.childNodes;
+    x.before(progress);
+    progress.appendChild(element)
+    window.requestAnimationFrame(runTest1);
+    iframe = document.createElement("iframe");
+    y.appendChild(iframe);
+}
+
+function runTest1() {
+    win = window; 
+    win0 = win[0];
+    win0.focus();
+    y.slot = "y";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+
+<body>
+<p>The test passes if there is no crash.</p>
+<details id="x" open="true">
+<summary id="y"></summary>
+<details id="z" open="true" ontoggle="runTest()">a</details>
+</details>
+<audio cite="">
+<source slot="slot2">
+<progress id="progress" ></progress>
+
+</body>
+</html>
