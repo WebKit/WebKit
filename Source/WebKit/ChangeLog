@@ -1,3 +1,13 @@
+2020-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Disable HSTS for requests when cookies will be blocked by ITP
+        https://bugs.webkit.org/show_bug.cgi?id=210739
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade const):
+
 2020-06-13  Richard Houle  <rhoule@apple.com>
 
         Fix Overrelease in makeFailureSetForAllTextManipulationItems

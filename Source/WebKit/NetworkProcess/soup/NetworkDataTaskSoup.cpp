@@ -1133,7 +1133,7 @@ bool NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade() const
     // Follow Apple's HSTS abuse mitigation 2:
     // "Ignore HSTS State for Subresource Requests to Blocked Domains"
     return isTopLevelNavigation()
-        || m_currentRequest.allowCookies();
+        && !m_isBlockingCookies;
 }
 
 void NetworkDataTaskSoup::protocolUpgradedViaHSTS(SoupMessage* soupMessage)
