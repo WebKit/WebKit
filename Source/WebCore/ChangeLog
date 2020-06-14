@@ -1,3 +1,15 @@
+2020-06-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Floating positioned box is always a float avoider.
+        https://bugs.webkit.org/show_bug.cgi?id=213162
+
+        Reviewed by Darin Adler.
+
+        Test: fast/layoutformattingcontext/inline-float-simple.html
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isFloatAvoider const): also fix the independent formatting context case.
+
 2020-06-13  Sam Weinig  <weinig@apple.com>
 
         [WPT] dom/nodes/Document-createCDATASection-xhtml.xhtml fails due to missing exception in Document.createCDATASection()
