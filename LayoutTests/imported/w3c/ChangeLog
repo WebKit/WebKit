@@ -1,3 +1,16 @@
+2020-06-14  Sam Weinig  <weinig@apple.com>
+
+        [WPT] websockets/Close-reason-unpaired-surrogates.any.html fails due to failure to convert unpaired surrogates to replacement character for close reason
+        https://bugs.webkit.org/show_bug.cgi?id=213182
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/websockets/Close-reason-unpaired-surrogates.any-expected.txt:
+        * web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.worker-expected.txt:
+        * web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any-expected.txt: Added.
+        * web-platform-tests/websockets/Secure-Close-Reason-Unpaired-surrogates.any.worker-expected.txt: Added.
+        Update/add results now that these tests pass. 
+
 2020-06-14  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Withdraw FileReaderSync from ServiceWorker

@@ -64,5 +64,5 @@
     [MayThrowException] void send(Blob data);
     [MayThrowException] void send(USVString data);
 
-    [MayThrowException] void close(optional [Clamp] unsigned short code, optional DOMString reason);
+    [MayThrowException] void close(optional [Clamp] unsigned short code, optional USVString reason);
 };

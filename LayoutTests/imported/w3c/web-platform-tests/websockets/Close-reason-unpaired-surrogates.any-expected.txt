@@ -1,4 +1,4 @@
 
 PASS Create WebSocket - Close the Connection - close(reason with unpaired surrogates) - connection should get opened 
-FAIL Create WebSocket - Close the Connection - close(reason with unpaired surrogates) - connection should get closed assert_equals: reason replaced with replacement character expected "\ufffd" but got ""
+PASS Create WebSocket - Close the Connection - close(reason with unpaired surrogates) - connection should get closed 
 
