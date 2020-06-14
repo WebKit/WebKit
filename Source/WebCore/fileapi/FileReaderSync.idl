@@ -30,7 +30,7 @@
 
 [
     Constructor,
-    Exposed=Worker,
+    Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface FileReaderSync {
     [CallWith=ScriptExecutionContext, MayThrowException] ArrayBuffer readAsArrayBuffer(Blob blob);

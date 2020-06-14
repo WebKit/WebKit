@@ -1,3 +1,20 @@
+2020-06-14  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Withdraw FileReaderSync from ServiceWorker
+        https://bugs.webkit.org/show_bug.cgi?id=213136
+
+        Reviewed by Darin Adler.
+
+        `FileReaderSync` is not exposed for ServiceWorker.
+
+            - https://w3c.github.io/FileAPI/#FileReaderSync
+            - https://github.com/w3c/FileAPI/issues/16
+
+        We does not support SharedWorker. We don't have to care about it.
+
+
+        * fileapi/FileReaderSync.idl:
+
 2020-06-13  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=213166

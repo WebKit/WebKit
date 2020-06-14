@@ -11,5 +11,5 @@ PASS createFor method should not be supported
 PASS Blob.close() should not be supported 
 PASS File's lastModifiedDate should not be supported 
 PASS Service worker test setup 
-FAIL "FileReaderSync" should not be supported in service workers assert_false: expected false got true
+PASS "FileReaderSync" should not be supported in service workers 
 

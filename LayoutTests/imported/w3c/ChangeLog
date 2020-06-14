@@ -1,3 +1,12 @@
+2020-06-14  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Withdraw FileReaderSync from ServiceWorker
+        https://bugs.webkit.org/show_bug.cgi?id=213136
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/FileAPI/historical.https-expected.txt:
+
 2020-06-13  Sam Weinig  <weinig@apple.com>
 
         [WPT] dom/nodes/Document-createCDATASection-xhtml.xhtml fails due to missing exception in Document.createCDATASection()
