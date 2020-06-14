@@ -1,3 +1,9 @@
+2020-06-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [AppleWin] Unreviewed test gardening
+
+        * platform/win/TestExpectations: Marked fast/text/combining-character-sequence-vertical.html with ImageOnlyFailure.
+
 2020-06-14  Sam Weinig  <weinig@apple.com>
 
         [WPT] websockets/Close-reason-unpaired-surrogates.any.html fails due to failure to convert unpaired surrogates to replacement character for close reason
