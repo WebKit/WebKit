@@ -436,7 +436,8 @@ void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* trigger
 
     Ref<Frame> protect(m_frame);
 
-    if (m_frame.script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), &frameRequest.requester().securityOrigin(), frameRequest.shouldReplaceDocumentIfJavaScriptURL())) {
+    if (frameRequest.resourceRequest().url().protocolIsJavaScript()) {
+        m_frame.script().executeJavaScriptURL(frameRequest.resourceRequest().url(), &frameRequest.requester().securityOrigin(), frameRequest.shouldReplaceDocumentIfJavaScriptURL());
         m_quickRedirectComing = false;
         return;
     }
@@ -475,7 +476,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     if (formAction.protocolIsJavaScript()) {
         m_isExecutingJavaScriptFormAction = true;
         Ref<Frame> protect(m_frame);
-        m_frame.script().executeIfJavaScriptURL(submission->action(), nullptr, DoNotReplaceDocumentIfJavaScriptURL);
+        m_frame.script().executeJavaScriptURL(submission->action(), nullptr, DoNotReplaceDocumentIfJavaScriptURL);
         m_isExecutingJavaScriptFormAction = false;
         return;
     }

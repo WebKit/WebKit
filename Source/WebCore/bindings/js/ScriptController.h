@@ -109,8 +109,8 @@ public:
 
     Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
 
-    // Returns true if argument is a JavaScript URL.
-    bool executeIfJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
+    // This asserts that URL argument is a JavaScript URL.
+    void executeJavaScriptURL(const URL&, RefPtr<SecurityOrigin> = nullptr, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
 
     // This function must be called from the main thread. It is safe to call it repeatedly.
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.

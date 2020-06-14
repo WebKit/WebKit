@@ -103,7 +103,7 @@ bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerEleme
         // FIXME: Some sites rely on the javascript:'' loading synchronously, which is why we have this special case.
         // Blink has the same workaround (https://bugs.chromium.org/p/chromium/issues/detail?id=923585).
         if (urlString == "javascript:''" || urlString == "javascript:\"\"")
-            frame->script().executeIfJavaScriptURL(scriptURL);
+            frame->script().executeJavaScriptURL(scriptURL);
         else
             frame->navigationScheduler().scheduleLocationChange(ownerElement.document(), ownerElement.document().securityOrigin(), scriptURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, stopDelayingLoadEvent.release());
     }

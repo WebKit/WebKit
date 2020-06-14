@@ -1,3 +1,25 @@
+2020-06-13  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=213166
+        Rename executeIfJavaScriptURL to executeJavaScriptURL
+
+        Reviewed by Darin Adler.
+
+        Rename executeIfJavaScriptURL to executeJavaScriptURL in order to make the function
+        unconditional, i.e.  the passed url is expected to have the javascript protocol, this
+        is asserted first thing in the method.  This allows us to remove the return parameter
+        since the remaining return statements all return true.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeJavaScriptURL):
+        (WebCore::ScriptController::executeIfJavaScriptURL): Deleted.
+        * bindings/js/ScriptController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::submitForm):
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::SubframeLoader::requestFrame):
+
 2020-06-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Floating positioned box is always a float avoider.
