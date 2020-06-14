@@ -1,3 +1,45 @@
+2020-06-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Two KeyboardInputTests are failing on recent iOS SDK versions
+        https://bugs.webkit.org/show_bug.cgi?id=213183
+        <rdar://problem/64273483>
+
+        Reviewed by Tim Horton.
+
+        On recent versions of the iOS SDK, iOS simulators that are not shown on-screen are treated as if the hardware
+        keyboard is not available (that is, `+[UIIKeyboard isInHardwareKeyboardMode]` returns `NO`). When running API
+        tests while `Simulator.app` is already launched, an iOS simulator is presented on-screen, whereas the simulator
+        is not visible when running API tests without launching `Simulator.app` beforehand.
+
+        This discrepancy causes two iOS API tests to fail (i.e. `CaretSelectionRectAfterRestoringFirstResponder` and
+        `RangedSelectionRectAfterRestoringFirstResponder`), due to the fact that `-[WKWebView becomeFirstResponder]` no
+        longer causes an input session to begin.
+
+        Interestingly, these tests already attempt to circumvent this by using `webViewWithAutofocusedInput()`, which
+        creates and loads a `WKWebView` with a single autofocusing input element, with a `_WKInputDelegate` that
+        unconditionally allows input sessions to begin. However, this doesn't work as intended in these tests, because
+        nothing keeps the delegate (a `TestInputDelegate`) alive past the scope of the call to
+        `webViewWithAutofocusedInput()`. Since `[WKWebView _inputDelegate]` is a weak property, the input delegate
+        simply disappears after we finish waiting for the load to finish (and the autofocused input element begins its
+        input session). This causes us to erroneously fall back to default behavior (i.e.
+        `_WKFocusStartsInputSessionPolicyAuto`) for subsequent calls to show the keyboard for the focused element, as is
+        the case when these two API tests call `-becomeFirstResponder`. The end result is that the keyboard doesn't
+        appear and text selection views are not created and laid out, but only when API tests are run without having
+        launched the Simulator app beforehand.
+
+        To fix this, refactor `webViewWithAutofocusedInput()` into `webViewAndInputDelegateWithAutofocusedInput()`,
+        which returns both the new `WKWebView` as well as the `TestInputDelegate` of the web view. The call site is then
+        responsible for keeping the input delegate around for as long as it needs.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (webViewWithAutofocusedInput):
+
+        Drive-by fix: fix a potential stack smasher by using an Objective-C block when setting the input delegate's
+        policy handler, and by using `__block` for the `doneWaiting` boolean flag. This is now a problem becuase this
+        block may be invoked multiple times.
+
+        (webViewAndInputDelegateWithAutofocusedInput):
+
 2020-06-13  Saam Barati  <sbarati@apple.com>
 
         compare-results should have an option to print a breakdown and to save the breakdown as csv file

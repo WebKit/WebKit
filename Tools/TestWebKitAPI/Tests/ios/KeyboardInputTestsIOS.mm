@@ -187,9 +187,9 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<Test
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
 
-    bool doneWaiting = false;
-    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
-        doneWaiting = true;
+    __block BOOL doneWaiting = NO;
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:^_WKFocusStartsInputSessionPolicy(WKWebView *, id <_WKFocusedElementInfo>) {
+        doneWaiting = YES;
         return _WKFocusStartsInputSessionPolicyAllow;
     }];
     [webView _setInputDelegate:inputDelegate.get()];
@@ -200,10 +200,10 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<Test
     return webView;
 }
 
-static RetainPtr<TestWKWebView> webViewWithAutofocusedInput()
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestInputDelegate>> webViewAndInputDelegateWithAutofocusedInput()
 {
     auto inputDelegate = adoptNS([TestInputDelegate new]);
-    return webViewWithAutofocusedInput(inputDelegate);
+    return { webViewWithAutofocusedInput(inputDelegate), inputDelegate };
 }
 
 namespace TestWebKitAPI {
@@ -309,7 +309,7 @@ TEST(KeyboardInputTests, CustomInputViewAndInputAccessoryView)
 
 TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 {
-    auto webView = webViewWithAutofocusedInput();
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     bool doneWaiting = false;
 
     id <UITextInputPrivate> contentView = (id <UITextInputPrivate>)[webView firstResponder];
@@ -330,7 +330,7 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 
 TEST(KeyboardInputTests, ResigningFirstResponderCancelsKeyEvents)
 {
-    auto webView = webViewWithAutofocusedInput();
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     auto contentView = [webView textInputContentView];
     auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
 
@@ -372,7 +372,7 @@ TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetai
 {
     // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
     auto expectedCaretRect = CGRectMake(16, 13, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
-    auto webView = webViewWithAutofocusedInput();
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];
 
@@ -389,7 +389,7 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponderWithReta
 {
     NSArray *expectedSelectionRects = @[ [NSValue valueWithCGRect:CGRectMake(16, 13, 24, 15)] ];
 
-    auto webView = webViewWithAutofocusedInput();
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     [[webView textInputContentView] insertText:@"hello"];
     [webView selectAll:nil];
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
@@ -408,7 +408,7 @@ TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
 {
     // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
     auto expectedCaretRect = CGRectMake(16, 13, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
-    auto webView = webViewWithAutofocusedInput();
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForCaretViewFrameToBecome:expectedCaretRect];
 
@@ -423,7 +423,7 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponder)
 {
     NSArray *expectedSelectionRects = @[ [NSValue valueWithCGRect:CGRectMake(16, 13, 24, 15)] ];
 
-    auto webView = webViewWithAutofocusedInput();
+    auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     [[webView textInputContentView] insertText:@"hello"];
     [webView selectAll:nil];
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
