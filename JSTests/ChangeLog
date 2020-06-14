@@ -1,3 +1,14 @@
+2020-06-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add wasm regresion test for loop
+        https://bugs.webkit.org/show_bug.cgi?id=213176
+
+        Reviewed by Darin Adler.
+
+        This patch adds one more regression test for r246134.
+
+        * wasm/regress/regression-with-loop.js: Added.
+
 2020-06-13  Devin Rousso  <drousso@apple.com>
 
         Make `errors` an own property of `AggregateError` instead of a prototype accessor
