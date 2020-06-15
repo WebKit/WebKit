@@ -1,3 +1,19 @@
+2020-06-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] ImageDecoder hits Debug ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=213178
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Pass a reference of the decoder to its inner implementation instead of a WeakPtr, which
+        can't be used across multiple threads.
+
+        Covered by fast/images/animated-image-mp4{,-crash}.html tests.
+
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::connectDecoderPad):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h:
+
 2020-06-15  Youenn Fablet  <youenn@apple.com>
 
         Simplify MediaRecorderPrivateWriterCocoa threading logic

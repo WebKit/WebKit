@@ -35,7 +35,7 @@ namespace WebCore {
 class ContentType;
 class ImageDecoderGStreamerSample;
 
-class ImageDecoderGStreamer final : public ImageDecoder, public CanMakeWeakPtr<ImageDecoderGStreamer> {
+class ImageDecoderGStreamer final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:
@@ -85,7 +85,7 @@ private:
         }
 
         InnerDecoder(ImageDecoderGStreamer& decoder, const char* data, gssize size)
-            : m_decoder(makeWeakPtr(decoder))
+            : m_decoder(decoder)
             , m_runLoop(RunLoop::current())
         {
             m_memoryStream = adoptGRef(g_memory_input_stream_new_from_data(data, size, nullptr));
@@ -100,7 +100,7 @@ private:
         void preparePipeline();
         void connectDecoderPad(GstPad*);
 
-        WeakPtr<ImageDecoderGStreamer> m_decoder;
+        ImageDecoderGStreamer& m_decoder;
         GRefPtr<GstElement> m_pipeline;
         GRefPtr<GInputStream> m_memoryStream;
         RunLoop& m_runLoop;
