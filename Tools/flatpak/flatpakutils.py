@@ -34,8 +34,6 @@ import sys
 import tempfile
 import re
 
-from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.port.factory import PortFactory
 from webkitpy.common.system.logutils import configure_logging
 import webkitpy.thirdparty.autoinstalled.toml
 import toml
@@ -395,10 +393,12 @@ class WebkitFlatpak:
         general = parser.add_argument_group("General")
         general.add_argument('--verbose', action='store_true',
                              help='Show debug message')
-        general.add_argument("--debug",
-                             help="Compile with Debug configuration, also installs Sdk debug symbols.",
-                             action="store_true")
-        general.add_argument("--release", help="Compile with Release configuration.", action="store_true")
+        type_group = parser.add_mutually_exclusive_group()
+        type_group.add_argument("--debug",
+                                help="Compile with Debug configuration, also installs Sdk debug symbols.",
+                                dest='build_type', action="store_const", const="Debug")
+        type_group.add_argument("--release", help="Compile with Release configuration.",
+                                dest='build_type', action="store_const", const="Release")
         general.add_argument('--gtk', action='store_const', dest='platform', const='gtk',
                              help='Setup build directory for the GTK port')
         general.add_argument('--wpe', action='store_const', dest='platform', const='wpe',
@@ -440,6 +440,9 @@ class WebkitFlatpak:
 
         _, self.args = parser.parse_known_args(args=args, namespace=self)
 
+        if not self.build_type:
+            self.build_type = "Release"
+
         if os.environ.get('CCACHE_PREFIX') == 'icecc':
             self.use_icecream = True
 
@@ -467,7 +470,6 @@ class WebkitFlatpak:
 
         self.sdk_branch = "0.2"
         self.platform = "gtk"
-        self.build_type = "Release"
         self.check_available = False
         self.user_command = []
 
@@ -514,12 +516,6 @@ class WebkitFlatpak:
         configure_logging(logging.DEBUG if self.verbose else logging.INFO)
         _log.debug("Using flatpak user dir: %s" % self.flatpak_build_path)
 
-        if not self.debug and not self.release:
-            factory = PortFactory(SystemHost())
-            port = factory.get(self.platform)
-            self.debug = port.default_configuration() == "Debug"
-
-        self.build_type = "Debug" if self.debug else "Release"
         self.platform = self.platform.upper()
 
         if self.gdb is None and '--gdb' in sys.argv:

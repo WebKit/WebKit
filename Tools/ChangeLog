@@ -1,3 +1,18 @@
+2020-06-15  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Remove webkit-build-directory dependency from flatpakutils
+        https://bugs.webkit.org/show_bug.cgi?id=213179
+
+        Reviewed by Žan Doberšek.
+
+        This makes webkit-flatpak usable without installing additional perl modules (version) on the host OS.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args): Make --release and --debug mutually exclusive, and default to Release builds.
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args): No need to pull in webkitpy which pulls webkitdirs.pm only to
+        determine the default configuration. Assume we use Release by default.
+
 2020-06-15  Paulo Matos  <pmatos@igalia.com>
 
         Properly propagate TZ to the remote test devices
