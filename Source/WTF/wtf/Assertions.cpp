@@ -174,6 +174,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
 
+WTF_ATTRIBUTE_PRINTF(2, 0)
 static void vprintf_stderr_with_prefix(const char* prefix, const char* format, va_list args)
 {
     size_t prefixLength = strlen(prefix);
@@ -186,6 +187,7 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
     vprintf_stderr_common(formatWithPrefix.data(), args);
 }
 
+WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_with_trailing_newline(const char* format, va_list args)
 {
     size_t formatLength = strlen(format);
@@ -419,6 +421,7 @@ void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* form
     va_end(args);
 }
 
+WTF_ATTRIBUTE_PRINTF(2, 0)
 static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list args)
 {
     if (channel->state == WTFLogChannelState::Off)
