@@ -1,5 +1,12 @@
 2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Remove stale flaky text and image failures from test expectations.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https-expected.txt: Added.
+
+2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Remove stale flaky timeout failures from test expectations.
 
         * platform/wpe/TestExpectations:
