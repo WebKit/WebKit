@@ -1,3 +1,19 @@
+2020-06-14  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] Return type of -[NSCoder validateClassSupportsSecureCoding:] is incorrect
+        <https://webkit.org/b/213161>
+        <rdar://problem/64050085>
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (validateClass):
+        - Fix return type of
+          -[NSCoder validateClassSupportsSecureCoding:].  Throw an
+          NSException in case the method ever returns NO without
+          throwing its own NSException.  (Currently this method does
+          throw an NSException instead of returning NO.)
+
 2020-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Disable HSTS for requests when cookies will be blocked by ITP

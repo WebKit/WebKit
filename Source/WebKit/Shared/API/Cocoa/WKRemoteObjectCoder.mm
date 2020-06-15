@@ -53,7 +53,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 @end
 
 @interface NSCoder ()
-- (void)validateClassSupportsSecureCoding:(Class)objectClass;
+- (BOOL)validateClassSupportsSecureCoding:(Class)objectClass;
 @end
 
 @implementation WKRemoteObjectEncoder {
@@ -638,7 +638,8 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
     if (objectClass == [NSInvocation class] || objectClass == [NSBlockInvocation class])
         return;
 
-    [decoder validateClassSupportsSecureCoding:objectClass];
+    if (![decoder validateClassSupportsSecureCoding:objectClass])
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" does not support NSSecureCoding.", objectClass];
 }
 
 static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<CFTypeRef>>& allowedArgumentClasses, NSUInteger firstArgument)
