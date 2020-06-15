@@ -39,6 +39,7 @@
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessCreationParameters.h"
+#include "WebSQLiteDatabaseTracker.h"
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/FrameIdentifier.h>
@@ -577,6 +578,10 @@ private:
     WebCore::Timer m_nonVisibleProcessCleanupTimer;
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
+
+#if PLATFORM(IOS_FAMILY)
+    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
+#endif
 
     bool m_suppressMemoryPressureHandler { false };
 #if PLATFORM(MAC)

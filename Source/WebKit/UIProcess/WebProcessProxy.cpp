@@ -418,6 +418,7 @@ void WebProcessProxy::shutDown()
 
     m_responsivenessTimer.invalidate();
     m_backgroundResponsivenessTimer.invalidate();
+    m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = WTF::nullopt;
 
     for (auto& frame : copyToVector(m_frameMap.values()))
@@ -1399,6 +1400,19 @@ void WebProcessProxy::updateAudibleMediaAssertions()
     } else {
         RELEASE_LOG(ProcessSuspension, "%p - Releasing MediaPlayback assertion for WebProcess with PID %d", this, processIdentifier());
         m_audibleMediaActivity = WTF::nullopt;
+    }
+}
+
+void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
+{
+    if (!isHoldingLockedFiles) {
+        RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the WebContent process is no longer holding locked files");
+        m_activityForHoldingLockedFiles = nullptr;
+        return;
+    }
+    if (!m_activityForHoldingLockedFiles) {
+        RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the WebContent process is holding locked files");
+        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s).moveToUniquePtr();
     }
 }
 

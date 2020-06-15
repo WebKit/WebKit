@@ -135,6 +135,7 @@ Shared/APIWebArchiveResource.mm
 Shared/DocumentEditingContext.mm
 Shared/FocusedElementInformation.cpp
 Shared/VisibleContentRectUpdateInfo.cpp
+Shared/WebSQLiteDatabaseTracker.cpp
 
 Shared/cf/ArgumentCodersCF.cpp @no-unify
 Shared/cf/CookieStorageUtilsCF.mm

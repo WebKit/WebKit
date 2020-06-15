@@ -188,6 +188,8 @@ public:
     
     void synthesizeAppIsBackground(bool background);
 
+    void setIsHoldingLockedFiles(bool);
+
     void syncAllCookies();
     void didSyncAllCookies();
 
@@ -308,6 +310,7 @@ private:
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
     ProcessThrottler m_throttler;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_syncAllCookiesActivity;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
     
