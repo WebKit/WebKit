@@ -955,5 +955,3 @@ media/presentationmodechanged-fired-once.html [ Skip ]
 media/video-presentation-mode.html [ Skip ]
 
 webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
-
-webkit.org/b/213146 [ Debug ] media/remoteplayback-target-availability.html [ Pass Failure ]

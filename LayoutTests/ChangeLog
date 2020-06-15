@@ -1,5 +1,14 @@
 2020-06-15  Jason Lawrence  <lawrence.j@apple.com>
 
+        REGRESSION: (r262904): [ Mac wk1 Debug ] media/remoteplayback-target-availability.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=213146
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2020-06-15  Jason Lawrence  <lawrence.j@apple.com>
+
         [ iOS wk2 and Mac wk2 ] imported/w3c/web-platform-tests/fetch/stale-while-revalidate/frame-removal.html is flaky failing. 
         https://bugs.webkit.org/show_bug.cgi?id=209281
 
