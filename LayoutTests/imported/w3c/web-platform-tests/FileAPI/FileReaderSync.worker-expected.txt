@@ -1,6 +1,11 @@
 
 PASS Interface 
 PASS readAsText 
+PASS readAsText with empty blob 
 PASS readAsDataURL 
+PASS readAsDataURL with empty blob 
+PASS readAsBinaryString 
+PASS readAsBinaryString with empty blob 
 PASS readAsArrayBuffer 
+PASS readAsArrayBuffer with empty blob 
 

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_error.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_events.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsArrayBuffer.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsBinaryString.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL.html

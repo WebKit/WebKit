@@ -1,3 +1,0 @@
-
-PASS FileAPI Test: Creating Blob URL via XMLHttpRequest 
-

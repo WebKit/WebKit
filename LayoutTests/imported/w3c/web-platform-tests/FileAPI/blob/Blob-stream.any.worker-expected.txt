@@ -1,0 +1,6 @@
+
+FAIL Blob.stream() promise_test: Unhandled rejection with value: object "TypeError: blob.stream is not a function. (In 'blob.stream()', 'blob.stream' is undefined)"
+FAIL Blob.stream() empty Blob promise_test: Unhandled rejection with value: object "TypeError: blob.stream is not a function. (In 'blob.stream()', 'blob.stream' is undefined)"
+FAIL Blob.stream() non-unicode input promise_test: Unhandled rejection with value: object "TypeError: blob.stream is not a function. (In 'blob.stream()', 'blob.stream' is undefined)"
+FAIL Blob.stream() garbage collection of blob shouldn't break streamconsumption promise_test: Unhandled rejection with value: object "TypeError: blob.stream is not a function. (In 'blob.stream()', 'blob.stream' is undefined)"
+

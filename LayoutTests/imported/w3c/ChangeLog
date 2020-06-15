@@ -1,3 +1,91 @@
+2020-06-15  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Update WPT tests for FileAPI
+        https://bugs.webkit.org/show_bug.cgi?id=213198
+
+        Reviewed by Alex Christensen.
+
+        Import from 90446389b82ae924cdef637bca2dd99ece41160c
+
+        * web-platform-tests/FileAPI/BlobURL/support/w3c-import.log:
+        * web-platform-tests/FileAPI/FileReader/support/w3c-import.log:
+        * web-platform-tests/FileAPI/FileReader/w3c-import.log:
+        * web-platform-tests/FileAPI/FileReaderSync.worker-expected.txt:
+        * web-platform-tests/FileAPI/FileReaderSync.worker.js:
+        (setup):
+        (test):
+        * web-platform-tests/FileAPI/META.yml: Added.
+        * web-platform-tests/FileAPI/OWNERS: Removed.
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any.js: Added.
+        (string_appeared_here.promise_test.async const):
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any.worker.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-constructor-endings.html:
+        * web-platform-tests/FileAPI/blob/Blob-constructor.html:
+        * web-platform-tests/FileAPI/blob/Blob-stream.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-stream.any.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-stream.any.js: Added.
+        (async read_all_chunks):
+        (promise_test.async const):
+        (promise_test):
+        * web-platform-tests/FileAPI/blob/Blob-stream.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-stream.any.worker.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-text.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-text.any.html: Added.
+        * web-platform-tests/FileAPI/blob/Blob-text.any.js: Added.
+        (string_appeared_here.promise_test.async const):
+        * web-platform-tests/FileAPI/blob/Blob-text.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/blob/Blob-text.any.worker.html: Added.
+        * web-platform-tests/FileAPI/blob/w3c-import.log:
+        * web-platform-tests/FileAPI/file/File-constructor-endings.html:
+        * web-platform-tests/FileAPI/file/File-constructor.html:
+        * web-platform-tests/FileAPI/file/w3c-import.log:
+        * web-platform-tests/FileAPI/filelist-section/support/w3c-import.log:
+        * web-platform-tests/FileAPI/filelist-section/w3c-import.log:
+        * web-platform-tests/FileAPI/idlharness.html:
+        * web-platform-tests/FileAPI/idlharness.worker.js:
+        * web-platform-tests/FileAPI/reading-data-section/FileReader-multiple-reads.html:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_abort-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_events.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_events.any.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_events.any.js: Added.
+        (promise_test.async t):
+        * web-platform-tests/FileAPI/reading-data-section/filereader_events.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_events.any.worker.html: Added.
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_readAsDataURL.html:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_result-expected.txt:
+        * web-platform-tests/FileAPI/reading-data-section/filereader_result.html:
+        * web-platform-tests/FileAPI/reading-data-section/support/w3c-import.log:
+        * web-platform-tests/FileAPI/reading-data-section/w3c-import.log:
+        * web-platform-tests/FileAPI/support/Blob.js:
+        (self.assert_equals_typed_array):
+        (test_blob): Deleted.
+        * web-platform-tests/FileAPI/support/w3c-import.log:
+        * web-platform-tests/FileAPI/url/cross-global-revoke.sub.html:
+        * web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub-expected.txt:
+        * web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub.html:
+        * web-platform-tests/FileAPI/url/resources/revoke-helper.js:
+        * web-platform-tests/FileAPI/url/resources/w3c-import.log:
+        * web-platform-tests/FileAPI/url/sandboxed-iframe-expected.txt:
+        * web-platform-tests/FileAPI/url/sandboxed-iframe.html:
+        * web-platform-tests/FileAPI/url/url-format.any.js:
+        * web-platform-tests/FileAPI/url/url-in-tags-revoke.window-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-in-tags-revoke.window.html: Added.
+        * web-platform-tests/FileAPI/url/url-in-tags-revoke.window.js:
+        (async_test.t.const.blob.new.Blob.window_contents_for_channel):
+        * web-platform-tests/FileAPI/url/url-in-tags.window-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-in-tags.window.html: Added.
+        * web-platform-tests/FileAPI/url/url-lifetime.html:
+        * web-platform-tests/FileAPI/url/url-reload.window-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-reload.window.html: Added.
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.js:
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest-expected.txt: Removed.
+        * web-platform-tests/FileAPI/url/w3c-import.log:
+        * web-platform-tests/FileAPI/w3c-import.log:
+
 2020-06-14  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, reverting r262124.

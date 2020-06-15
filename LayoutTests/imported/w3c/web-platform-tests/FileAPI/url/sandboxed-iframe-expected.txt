@@ -1,23 +1,24 @@
+CONSOLE MESSAGE: Not allowed to load local resource: blob:null/ed58c75f-a210-4d63-a072-71a5f08c71ff#block2
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/d1801cd6-cf38-4d13-a661-fbd8810e7007 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/5223372d-9f9d-4b09-9e55-10a2c173d76c due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/0d6efa45-4589-4ae0-b3fb-5f51b004946e#fragment due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/205bb96f-a7cb-4ebd-a48a-24895169605e#fragment due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/c4553d08-4b95-4306-b37b-360bfe282412 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/e7e2723e-0ecd-42d0-b2f8-3a49e34fcefb due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/8f66f90e-8ca2-4a13-bb25-c3f8a2443688?querystring due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/e9403383-2a1f-4928-91b2-9f24dfb203a1?querystring due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/81f47b74-8c88-4abb-a2fa-68e0469512ed/path due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load blob:null/53d30f55-04a7-40c1-a84a-31da7fb8eb48/path due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load blob:null/23463417-46d8-432d-9e4a-decaa7db24a0#fragment due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load blob:null/d4e47cf5-1859-4d6d-8690-e9366cc0ef38#fragment due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load blob:null/4750b3fc-6988-4dc1-a5b7-6e9fec56083d due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load blob:null/75663ec2-d863-4fa9-b96b-888576b81404 due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load blob:null/97c5ff0a-bce2-4055-b299-72fa555e417c?querystring due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load blob:null/40f1d6f1-36cc-47a8-a03c-ec03f1f3c9cb?querystring due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load blob:null/79df7f44-df14-49b2-9211-63492d09951c/path due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load blob:null/a2a9a99e-380f-47fa-907f-132e4a9f2116/path due to access control checks.
 CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load blob:null/e65cf001-c90c-48b1-b0a3-1c0f211e6d37 due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load blob:null/ebacc727-d8f7-44d9-b7ca-850ec3cf3c18 due to access control checks.
 
 PASS Generated Blob URLs are unique 
 PASS Blob URL starts with "blob:" 
@@ -25,6 +26,11 @@ PASS Blob URL starts with "blob:" for Files
 PASS Origin of Blob URL matches our origin 
 PASS Blob URL parses correctly 
 PASS Origin of Blob URL matches our origin for Files 
+PASS Blob URLs can be used in <script> tags 
+FAIL Blob URLs can be used in iframes, and are treated same origin Sandbox access violation: Blocked a frame at "null" from accessing a cross-origin frame.  Both frames are sandboxed and lack the "allow-same-origin" flag.
+FAIL Blob URL fragment is implemented. null is not an object (evaluating 'frame.contentWindow.onscroll = t.step_func_done(() => {
+    assert_equals(frame.contentWindow.scrollY, 5000);
+  })')
 PASS Blob URLs can be used in XHR 
 FAIL XHR with a fragment should succeed promise_test: Unhandled rejection with value: "Got unexpected error event"
 PASS XHR of a revoked URL should fail 

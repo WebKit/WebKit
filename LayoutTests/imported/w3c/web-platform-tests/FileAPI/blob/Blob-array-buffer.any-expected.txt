@@ -1,0 +1,7 @@
+
+FAIL Blob.arrayBuffer() promise_test: Unhandled rejection with value: object "TypeError: blob.arrayBuffer is not a function. (In 'blob.arrayBuffer()', 'blob.arrayBuffer' is undefined)"
+FAIL Blob.arrayBuffer() empty Blob data promise_test: Unhandled rejection with value: object "TypeError: blob.arrayBuffer is not a function. (In 'blob.arrayBuffer()', 'blob.arrayBuffer' is undefined)"
+FAIL Blob.arrayBuffer() non-ascii input promise_test: Unhandled rejection with value: object "TypeError: blob.arrayBuffer is not a function. (In 'blob.arrayBuffer()', 'blob.arrayBuffer' is undefined)"
+FAIL Blob.arrayBuffer() non-unicode input promise_test: Unhandled rejection with value: object "TypeError: blob.arrayBuffer is not a function. (In 'blob.arrayBuffer()', 'blob.arrayBuffer' is undefined)"
+FAIL Blob.arrayBuffer() concurrent reads promise_test: Unhandled rejection with value: object "TypeError: blob.arrayBuffer is not a function. (In 'blob.arrayBuffer()', 'blob.arrayBuffer' is undefined)"
+

@@ -1,3 +1,5 @@
 
-FAIL FileAPI Test: filereader_readAsDataURL assert_equals: expected 1 but got 2
+FAIL FileReader readyState during readAsDataURL assert_equals: expected 1 but got 2
+PASS readAsDataURL result for Blob with specified MIME type 
+FAIL readAsDataURL result for Blob with unspecified MIME type assert_equals: expected "data:application/octet-stream;base64,VEVTVA==" but got "data:;base64,VEVTVA=="
 

@@ -1,7 +1,9 @@
-Blocked access to external URL http://www.localhost:8800/FileAPI/support/incumbent.sub.html
-CONSOLE MESSAGE: TypeError: frames[0].createBlobURL is not a function. (In 'frames[0].createBlobURL()', 'frames[0].createBlobURL' is undefined)
+CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
+Blocked access to external URL http://www1.localhost:8800/FileAPI/support/document-domain-setter.sub.html
+Blocked access to external URL http://www2.localhost:8800/FileAPI/support/document-domain-setter.sub.html
+Blocked access to external URL http://xn--lve-6lad.localhost:8800/FileAPI/support/document-domain-setter.sub.html
+CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 
 
-Harness Error (FAIL), message = TypeError: frames[0].createBlobURL is not a function. (In 'frames[0].createBlobURL()', 'frames[0].createBlobURL' is undefined)
-
+FAIL Blob URL serialization (specifically the origin) in multi-global situations SecurityError: Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 

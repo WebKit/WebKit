@@ -9,10 +9,11 @@
 
 <!-- this page is the entry global -->
 
-<iframe src="//{{domains[www]}}:{{location[port]}}/FileAPI/support/incumbent.sub.html"></iframe>
+<iframe src="//{{hosts[alt][]}}:{{location[port]}}/FileAPI/support/incumbent.sub.html"></iframe>
 
 <script>
 "use strict";
+setup({ single_test: true });
 document.domain = "{{host}}";
 
 window.onload = () => {
