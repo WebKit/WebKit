@@ -9663,17 +9663,17 @@ void SpeculativeJIT::compileCheckIsConstant(Node* node)
 {
     if (node->child1().useKind() == CellUse) {
         SpeculateCellOperand cell(this, node->child1());
-        speculationCheck(BadCell, JSValueSource::unboxedCell(cell.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, cell.gpr(), node->cellOperand()->cell()));
+        speculationCheck(BadConstantValue, JSValueSource::unboxedCell(cell.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, cell.gpr(), node->cellOperand()->cell()));
     } else {
         ASSERT(!node->constant()->value().isCell() || !node->constant()->value());
         JSValueOperand operand(this, node->child1());
         JSValueRegs regs = operand.jsValueRegs();
 
 #if USE(JSVALUE64)
-        speculationCheck(BadCache, regs, node->child1(), m_jit.branch64(JITCompiler::NotEqual, regs.gpr(), TrustedImm64(JSValue::encode(node->constant()->value()))));
+        speculationCheck(BadConstantValue, regs, node->child1(), m_jit.branch64(JITCompiler::NotEqual, regs.gpr(), TrustedImm64(JSValue::encode(node->constant()->value()))));
 #else
-        speculationCheck(BadCache, regs, node->child1(), m_jit.branch32(JITCompiler::NotEqual, regs.tagGPR(), TrustedImm32(node->constant()->value().tag())));
-        speculationCheck(BadCache, regs, node->child1(), m_jit.branch32(JITCompiler::NotEqual, regs.payloadGPR(), TrustedImm32(node->constant()->value().payload())));
+        speculationCheck(BadConstantValue, regs, node->child1(), m_jit.branch32(JITCompiler::NotEqual, regs.tagGPR(), TrustedImm32(node->constant()->value().tag())));
+        speculationCheck(BadConstantValue, regs, node->child1(), m_jit.branch32(JITCompiler::NotEqual, regs.payloadGPR(), TrustedImm32(node->constant()->value().payload())));
 #endif
     }
 

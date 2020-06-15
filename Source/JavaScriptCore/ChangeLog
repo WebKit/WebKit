@@ -1,3 +1,63 @@
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
+        CheckIsConstant should not use BadCache exit kind
+        https://bugs.webkit.org/show_bug.cgi?id=213141
+
+        Reviewed by Yusuke Suzuki.
+
+        The BadCache exit kind causes the OSR exit compilers to try to
+        update ArrayProfiles.  This is just incorrect for CheckIsConstant
+        since the node's origin may not even have an
+        ArrayProfile... BadCache also strongly assumes the value it's
+        profiling is a cell, which is clearly not always the case for
+        CheckIsConstant.
+
+        CheckIsConstant now uses the BadConstantValue (BadValue conflicts
+        with macros exported by X11 on GTK) exit kind for all use kinds,
+        which is just a rename of BadCell.  All existing places where we
+        can emit a CheckIsConstant already have a story for BadConstantValue.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleModuleNamespaceLoad):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        (JSC::DFG::ByteCodeParser::handleCreateInternalFieldObject):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isPseudoTerminal):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckIsConstant):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckIsConstant):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckBadValue):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckBadCell): Deleted.
+
 2020-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Webkit Feature BigInt on webkit.org

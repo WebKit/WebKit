@@ -205,7 +205,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetEnumerableLength:
     case FiatInt52:
     case BooleanToNumber:
-    case CheckBadCell:
+    case CheckBadValue:
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:

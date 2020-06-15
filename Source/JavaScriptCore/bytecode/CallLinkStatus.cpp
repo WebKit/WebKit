@@ -57,7 +57,7 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeB
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(DFG_JIT)
-    if (profiledBlock->unlinkedCodeBlock()->hasExitSite(DFG::FrequentExitSite(bytecodeIndex, BadCell))) {
+    if (profiledBlock->unlinkedCodeBlock()->hasExitSite(DFG::FrequentExitSite(bytecodeIndex, BadConstantValue))) {
         // We could force this to be a closure call, but instead we'll just assume that it
         // takes slow path.
         return takesSlowPath();
@@ -138,7 +138,7 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(CodeBlock* prof
     };
     
     auto badFunction = [&] (ExitingInlineKind inlineKind) -> ExitFlag {
-        return ExitFlag(codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell, ExitFromAnything, inlineKind)), inlineKind);
+        return ExitFlag(codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantValue, ExitFromAnything, inlineKind)), inlineKind);
     };
     
     exitSiteData.takesSlowPath |= takesSlowPath(ExitFromNotInlined);

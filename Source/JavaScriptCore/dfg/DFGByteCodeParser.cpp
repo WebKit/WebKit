@@ -2231,7 +2231,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
             registerOffset, prediction);
         VERBOSE_LOG("We added a call in the slow path\n");
     } else {
-        addToGraph(CheckBadCell);
+        addToGraph(CheckBadValue);
         addToGraph(Phantom, myCallTargetNode);
         emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
         
@@ -2742,7 +2742,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             if (argumentCountIncludingThis < 2)
                 return false;
 
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
             insertChecks();
@@ -2854,7 +2854,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
 
             if (intrinsic == RegExpTestIntrinsic) {
                 // Don't inline intrinsic if we exited due to one of the primordial RegExp checks failing.
-                if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
+                if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue))
                     return false;
 
                 JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
@@ -2976,7 +2976,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 return false;
 
             // Don't inline intrinsic if we exited due to one of the primordial RegExp checks failing.
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue))
                 return false;
 
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
@@ -3211,7 +3211,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
         case JSMapValuesIntrinsic:
         case JSSetEntriesIntrinsic:
         case JSSetValuesIntrinsic: {
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return false;
 
             insertChecks();
@@ -3919,7 +3919,7 @@ bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByIdVariant& va
 
 bool ByteCodeParser::handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType prediction, Node* base, GetByStatus getById)
 {
-    if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell))
+    if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue))
         return false;
     addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(getById.moduleNamespaceObject())), Edge(base, CellUse));
 
@@ -5195,7 +5195,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                 if (cachedFunction
                     && cachedFunction != JSCell::seenMultipleCalleeObjects()
-                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
                     ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
 
                     FrozenValue* frozen = m_graph.freeze(cachedFunction);
@@ -5255,7 +5255,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                     if (cachedFunction
                         && cachedFunction != JSCell::seenMultipleCalleeObjects()
-                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)
                         && cachedFunction == (bytecode.m_isInternalPromise ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())) {
                         FrozenValue* frozen = m_graph.freeze(cachedFunction);
                         addToGraph(CheckIsConstant, OpInfo(frozen), callee);
@@ -5278,7 +5278,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                     if (cachedFunction
                         && cachedFunction != JSCell::seenMultipleCalleeObjects()
-                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
                         ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
 
                         FrozenValue* frozen = m_graph.freeze(cachedFunction);
@@ -5963,7 +5963,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             CacheableIdentifier identifier;
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
-                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
 
                 // FIXME: In the future, we should be able to do something like MultiGetByOffset in a multi identifier mode.
                 // That way, we could both switch on multiple structures and multiple identifiers (or int 32 properties).
@@ -6188,7 +6188,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
-                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
 
                 if (CacheableIdentifier identifier = deleteByStatus.singleIdentifier()) {
                     UniquedStringImpl* uid = identifier.uid();
@@ -8231,7 +8231,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
                 && !byValInfo->tookSlowPath
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
-                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
                 compiledAsPutById = true;
                 identifier = byValInfo->cachedId;
                 identifierNumber = m_graph.identifiers().ensure(identifier.uid());
@@ -8335,7 +8335,7 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
         JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
         if (cachedFunction
             && cachedFunction != JSCell::seenMultipleCalleeObjects()
-            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
             ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
 
             FrozenValue* frozen = m_graph.freeze(cachedFunction);

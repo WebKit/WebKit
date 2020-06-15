@@ -2731,7 +2731,7 @@ private:
         case SuperSamplerBegin:
         case SuperSamplerEnd:
         case ForceOSRExit:
-        case CheckBadCell:
+        case CheckBadValue:
         case CheckNotEmpty:
         case AssertNotEmpty:
         case CheckTraps:

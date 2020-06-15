@@ -1408,7 +1408,7 @@ private:
         case CheckNotEmpty:
         case AssertNotEmpty:
         case CheckIdent:
-        case CheckBadCell:
+        case CheckBadValue:
         case PutStructure:
         case Phantom:
         case Check:

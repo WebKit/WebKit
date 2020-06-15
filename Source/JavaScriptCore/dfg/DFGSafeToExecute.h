@@ -530,7 +530,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ArrayifyToStructure:
     case PutClosureVar:
     case PutGlobalVariable:
-    case CheckBadCell:
+    case CheckBadValue:
     case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
     case RegExpTest:

@@ -909,8 +909,8 @@ private:
         case AssertNotEmpty:
             compileAssertNotEmpty();
             break;
-        case CheckBadCell:
-            compileCheckBadCell();
+        case CheckBadValue:
+            compileCheckBadValue();
             break;
         case CheckIdent:
             compileCheckIdent();
@@ -3650,21 +3650,21 @@ private:
             LValue cell = lowCell(m_node->child1());
         
             speculate(
-                BadCell, jsValueValue(cell), m_node->child1().node(),
+                BadConstantValue, jsValueValue(cell), m_node->child1().node(),
                 m_out.notEqual(cell, weakPointer(m_node->cellOperand()->cell())));
         } else {
             LValue value = lowJSValue(m_node->child1());
 
             ASSERT(!m_node->constant()->value().isCell() || !m_node->constant()->value());
             speculate(
-                BadType, jsValueValue(value), m_node->child1().node(),
+                BadConstantValue, jsValueValue(value), m_node->child1().node(),
                 m_out.notEqual(value, m_out.constInt64(JSValue::encode(m_node->constant()->value()))));
         }
     }
     
-    void compileCheckBadCell()
+    void compileCheckBadValue()
     {
-        terminate(BadCell);
+        terminate(BadConstantValue);
     }
 
     void compileCheckNotEmpty()

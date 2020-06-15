@@ -5544,7 +5544,7 @@ void SpeculativeJIT::compile(Node* node)
     case MultiPutByOffset:
     case MultiDeleteByOffset:
     case FiatInt52:
-    case CheckBadCell:
+    case CheckBadValue:
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:

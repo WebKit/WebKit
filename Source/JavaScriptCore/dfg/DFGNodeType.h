@@ -276,7 +276,7 @@ namespace JSC { namespace DFG {
     macro(CheckIsConstant, NodeMustGenerate) \
     macro(CheckNotEmpty, NodeMustGenerate) \
     macro(AssertNotEmpty, NodeMustGenerate) \
-    macro(CheckBadCell, NodeMustGenerate) \
+    macro(CheckBadValue, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate | NodeResultJS) \
     macro(CheckIdent, NodeMustGenerate) \
     macro(CheckTypeInfoFlags, NodeMustGenerate) /* Takes an OpInfo with the flags you want to test are set */\

@@ -4239,7 +4239,7 @@ void SpeculativeJIT::compile(Node* node)
     case MultiGetByOffset:
     case MultiPutByOffset:
     case MultiDeleteByOffset:
-    case CheckBadCell:
+    case CheckBadValue:
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:

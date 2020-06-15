@@ -4278,7 +4278,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case ForceOSRExit:
-    case CheckBadCell:
+    case CheckBadValue:
         m_state.setIsValid(false);
         break;
         

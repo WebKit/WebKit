@@ -159,7 +159,7 @@ inline CapabilityLevel canCompile(Node* node)
     case InvalidationPoint:
     case StringCharAt:
     case CheckIsConstant:
-    case CheckBadCell:
+    case CheckBadValue:
     case CheckNotEmpty:
     case AssertNotEmpty:
     case CheckIdent:

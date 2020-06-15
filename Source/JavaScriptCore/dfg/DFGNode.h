@@ -1575,7 +1575,7 @@ public:
     {
         switch (op()) {
         case ForceOSRExit:
-        case CheckBadCell:
+        case CheckBadValue:
             return true;
         default:
             return false;
