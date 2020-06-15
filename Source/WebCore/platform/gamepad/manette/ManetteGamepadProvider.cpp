@@ -57,7 +57,7 @@ static void onDeviceDisconnected(ManetteMonitor*, ManetteDevice* device, Manette
 }
 
 ManetteGamepadProvider::ManetteGamepadProvider()
-    : m_monitor(manette_monitor_new())
+    : m_monitor(adoptGRef(manette_monitor_new()))
     , m_connectionDelayTimer(RunLoop::current(), this, &ManetteGamepadProvider::connectionDelayTimerFired)
     , m_inputNotificationTimer(RunLoop::current(), this, &ManetteGamepadProvider::inputNotificationTimerFired)
 {

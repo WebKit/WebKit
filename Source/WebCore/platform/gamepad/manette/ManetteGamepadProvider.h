@@ -69,7 +69,7 @@ private:
     HashMap<ManetteDevice*, std::unique_ptr<ManetteGamepad>> m_gamepadMap;
     bool m_shouldDispatchCallbacks { false };
 
-    GUniquePtr<ManetteMonitor> m_monitor;
+    GRefPtr<ManetteMonitor> m_monitor;
     RunLoop::Timer<ManetteGamepadProvider> m_connectionDelayTimer;
     RunLoop::Timer<ManetteGamepadProvider> m_inputNotificationTimer;
 };
