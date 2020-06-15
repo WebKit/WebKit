@@ -51,7 +51,10 @@
 #import <wtf/text/WTFString.h>
 
 static bool done;
+
+#if HAVE(NETWORK_FRAMEWORK)
 static bool didFinishNavigation;
+#endif
 
 static String expectedMessage;
 static String retrievedString;

@@ -1,3 +1,13 @@
+2020-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Follow-up fix: Make API tests tolerant of our relatively new use of WebPageProxy::preconnectTo
+        https://bugs.webkit.org/show_bug.cgi?id=213144
+        <rdar://problem/64316743>
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm: Guard didFinishNavigation declaration with HAVE(NETWORK_FRAMEWORK).
+
 2020-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Provide alternatively-named SPI for user style sheets and scripts
