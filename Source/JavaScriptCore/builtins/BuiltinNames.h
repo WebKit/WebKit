@@ -65,7 +65,6 @@ namespace JSC {
     macro(create) \
     macro(defineProperty) \
     macro(defaultPromiseThen) \
-    macro(getPrototypeOf) \
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
     macro(Set) \

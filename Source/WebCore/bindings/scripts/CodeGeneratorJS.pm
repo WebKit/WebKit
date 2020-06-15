@@ -2710,6 +2710,7 @@ sub GenerateHeader
     
     if ($interface->extendedAttributes->{CustomGetPrototype}) {
         push(@headerContent, "    static JSC::JSValue getPrototype(JSC::JSObject*, JSC::JSGlobalObject*);\n");
+        $structureFlags{"JSC::OverridesGetPrototype"} = 1;
     }
     
     if ($interface->extendedAttributes->{CustomToStringName}) {

@@ -3268,22 +3268,8 @@ EncodedJSValue JIT_OPERATION operationGetPrototypeOf(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = JSValue::decode(encodedValue).toThis(globalObject, ECMAMode::strict());
-    if (thisValue.isUndefinedOrNull())
-        return throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
-
-    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
-    if (!thisObject) {
-        JSObject* prototype = thisValue.synthesizePrototype(globalObject);
-        EXCEPTION_ASSERT(!!scope.exception() == !prototype);
-        if (UNLIKELY(!prototype))
-            return JSValue::encode(JSValue());
-        return JSValue::encode(prototype);
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPrototype(vm, globalObject)));
+    JSValue value = JSValue::decode(encodedValue);
+    return JSValue::encode(value.getPrototype(globalObject));
 }
 
 EncodedJSValue JIT_OPERATION operationDateGetFullYear(VM* vmPointer, DateInstance* date)

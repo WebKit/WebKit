@@ -3830,9 +3830,7 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         bool canFold = !variant.structureSet().isEmpty();
         JSValue prototype;
         variant.structureSet().forEach([&] (Structure* structure) {
-            auto getPrototypeMethod = structure->classInfo()->methodTable.getPrototype;
-            MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-            if (getPrototypeMethod != defaultGetPrototype) {
+            if (structure->typeInfo().overridesGetPrototype()) {
                 canFold = false;
                 return;
             }
@@ -6103,6 +6101,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }
+
+        case op_get_prototype_of: {
+            auto bytecode = currentInstruction->as<OpGetPrototypeOf>();
+            set(bytecode.m_dst, addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(getPrediction()), get(bytecode.m_value)));
+            NEXT_OPCODE(op_get_prototype_of);
+        }
+
         case op_put_by_id: {
             auto bytecode = currentInstruction->as<OpPutById>();
             Node* value = get(bytecode.m_value);

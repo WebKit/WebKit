@@ -32,7 +32,7 @@ namespace JSC {
 class JSProxy : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesAnyFormOfGetPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesAnyFormOfGetPropertyNames | OverridesGetPrototype | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)

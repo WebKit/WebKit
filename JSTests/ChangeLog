@@ -1,3 +1,16 @@
+2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        super should not depend on __proto__
+        https://bugs.webkit.org/show_bug.cgi?id=157972
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/object-get-prototype-of-primitive.js: Added.
+        * stress/class-syntax-derived-default-constructor.js:
+        * stress/get-prototype-of.js: Added.
+        * stress/super-property-access.js:
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-06-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add wasm regresion test for loop

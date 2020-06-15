@@ -811,6 +811,7 @@ namespace JSC {
         RegisterID* emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier&);
         RegisterID* emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* thisValue, RegisterID* property);
+        RegisterID* emitGetPrototypeOf(RegisterID* dst, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value);
         RegisterID* emitDirectGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property);

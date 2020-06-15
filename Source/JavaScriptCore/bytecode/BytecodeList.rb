@@ -498,6 +498,15 @@ op :get_by_id_direct,
         offset: unsigned,
     }
 
+op :get_prototype_of,
+    args: {
+        dst: VirtualRegister,
+        value: VirtualRegister,
+    },
+    metadata: {
+        profile: ValueProfile,
+    }
+
 op :try_get_by_id,
     args: {
         dst: VirtualRegister,

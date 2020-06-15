@@ -321,6 +321,7 @@ public:
     JS_EXPORT_PRIVATE bool putToPrimitiveByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
     bool putByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
 
+    JSValue getPrototype(JSGlobalObject*) const;
     JSValue toThis(JSGlobalObject*, ECMAMode) const;
 
     static bool equal(JSGlobalObject*, JSValue v1, JSValue v2);

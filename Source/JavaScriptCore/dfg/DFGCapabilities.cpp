@@ -174,6 +174,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_get_by_id_with_this:
     case op_get_by_id_direct:
     case op_get_by_val_with_this:
+    case op_get_prototype_of:
     case op_put_by_id:
     case op_put_by_id_with_this:
     case op_put_by_val_with_this:

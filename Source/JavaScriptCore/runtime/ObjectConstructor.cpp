@@ -144,11 +144,7 @@ static EncodedJSValue JSC_HOST_CALL callObjectConstructor(JSGlobalObject* global
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(object->getPrototype(vm, globalObject)));
+    return JSValue::encode(callFrame->argument(0).getPrototype(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(JSGlobalObject* globalObject, CallFrame* callFrame)

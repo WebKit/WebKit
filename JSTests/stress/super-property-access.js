@@ -1,3 +1,5 @@
+Object.defineProperty(Object.prototype, "__proto__", {get: undefined});
+
 function assert(b, m = "Bad!") {
     if (!b) {
         throw new Error(m);

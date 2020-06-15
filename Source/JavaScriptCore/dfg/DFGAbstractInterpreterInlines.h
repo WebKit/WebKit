@@ -3698,9 +3698,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             bool canFold = !value.m_structure.isClear();
             JSValue prototype;
             value.m_structure.forEach([&] (RegisteredStructure structure) {
-                auto getPrototypeMethod = structure->classInfo()->methodTable.getPrototype;
-                MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-                if (getPrototypeMethod != defaultGetPrototype) {
+                if (structure->typeInfo().overridesGetPrototype()) {
                     canFold = false;
                     return;
                 }

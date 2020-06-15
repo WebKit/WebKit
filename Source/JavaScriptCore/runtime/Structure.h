@@ -559,7 +559,12 @@ public:
     {
         return OBJECT_OFFSETOF(Structure, m_classInfo);
     }
-        
+
+    static ptrdiff_t outOfLineTypeFlagsOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_outOfLineTypeFlags);
+    }
+
     static ptrdiff_t indexingModeIncludingHistoryOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_blob) + StructureIDBlob::indexingModeIncludingHistoryOffset();

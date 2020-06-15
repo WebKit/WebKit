@@ -212,6 +212,13 @@ void Structure::validateFlags()
         || overridesGetOwnPropertyNames
         || overridesGetOwnNonIndexPropertyNames)
         RELEASE_ASSERT(typeInfo().overridesAnyFormOfGetPropertyNames());
+
+    bool overridesGetPrototype =
+        methodTable.getPrototype != static_cast<MethodTable::GetPrototypeFunctionPtr>(JSObject::getPrototype)
+        && methodTable.getPrototype != JSCell::getPrototype;
+
+    if (overridesGetPrototype)
+        RELEASE_ASSERT(typeInfo().overridesGetPrototype());
 }
 #else
 inline void Structure::validateFlags() { }

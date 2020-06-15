@@ -2975,12 +2975,6 @@ test/language/expressions/prefix-increment/S11.4.4_A5_T5.js:
 test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/super/call-poisoned-underscore-proto.js:
-  default: 'Test262Error: should not be called'
-  strict mode: 'Test262Error: should not be called'
-test/language/expressions/super/prop-poisoned-underscore-proto.js:
-  default: 'Test262Error: should not be called'
-  strict mode: 'Test262Error: should not be called'
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(«false», «undefined») to be true'

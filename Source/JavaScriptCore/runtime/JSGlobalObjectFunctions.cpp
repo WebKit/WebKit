@@ -693,23 +693,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncMakeTypeError(JSGlobalObject* globalObjec
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
-    if (thisValue.isUndefinedOrNull())
-        return throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
-
-    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
-    if (!thisObject) {
-        JSObject* prototype = thisValue.synthesizePrototype(globalObject);
-        EXCEPTION_ASSERT(!!scope.exception() == !prototype);
-        if (UNLIKELY(!prototype))
-            return JSValue::encode(JSValue());
-        return JSValue::encode(prototype);
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPrototype(vm, globalObject)));
+    return JSValue::encode(thisValue.getPrototype(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(JSGlobalObject* globalObject, CallFrame* callFrame)

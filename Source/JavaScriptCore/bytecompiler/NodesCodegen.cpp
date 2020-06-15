@@ -196,17 +196,17 @@ static RegisterID* emitHomeObjectForCallee(BytecodeGenerator& generator)
 static RegisterID* emitSuperBaseForCallee(BytecodeGenerator& generator)
 {
     RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
-    return generator.emitGetById(generator.newTemporary(), homeObject.get(), generator.propertyNames().underscoreProto);
+    return generator.emitGetPrototypeOf(generator.newTemporary(), homeObject.get());
 }
 
 static RegisterID* emitGetSuperFunctionForConstruct(BytecodeGenerator& generator)
 {
     if (generator.isDerivedConstructorContext())
-        return generator.emitGetById(generator.newTemporary(), generator.emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment(), generator.propertyNames().underscoreProto);
+        return generator.emitGetPrototypeOf(generator.newTemporary(), generator.emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment());
 
     RegisterID callee;
     callee.setIndex(CallFrameSlot::callee);
-    return generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().underscoreProto);
+    return generator.emitGetPrototypeOf(generator.newTemporary(), &callee);
 }
 
 RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -1154,6 +1154,14 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate(BytecodeG
     ASSERT(symbol);
     ASSERT(!node->m_next);
     return generator.emitDirectGetById(generator.finalDestination(dst), base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol));
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPrototypeOf(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> value = generator.emitNode(node);
+    ASSERT(!node->m_next);
+    return generator.emitGetPrototypeOf(generator.finalDestination(dst), value.get());
 }
 
 static JSPromise::Field promiseInternalFieldIndex(BytecodeIntrinsicNode* node)

@@ -1495,6 +1495,31 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
 end)
 
 
+llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, dispatch, return)
+    get(m_value, t1)
+    loadConstantOrVariable(size, t1, t0)
+
+    btqnz t0, notCellMask, .opGetPrototypeOfSlow
+    bbb JSCell::m_type[t0], ObjectType, .opGetPrototypeOfSlow
+
+    loadStructureWithScratch(t0, t2, t1, t3)
+    btinz Structure::m_outOfLineTypeFlags[t2], OverridesGetPrototypeOutOfLine, .opGetPrototypeOfSlow
+
+    loadq Structure::m_prototype[t2], t2
+    btqz t2, .opGetPrototypeOfPolyProto
+    return(t2)
+
+.opGetPrototypeOfSlow:
+    callSlowPath(_slow_path_get_prototype_of)
+    dispatch()
+
+.opGetPrototypeOfPolyProto:
+    loadi knownPolyProtoOffset, t1
+    loadPropertyAtVariableOffset(t1, t0, t3)
+    return(t3)
+end)
+
+
 llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadata, return)
     get(m_base, t3)
     loadConstantOrVariableCell(size, t3, t0, .opPutByIdSlow)

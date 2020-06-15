@@ -1,3 +1,4 @@
+Object.defineProperty(Object.prototype, "__proto__", {get: undefined});
 
 var A = class A { };
 var B = class B extends A { };

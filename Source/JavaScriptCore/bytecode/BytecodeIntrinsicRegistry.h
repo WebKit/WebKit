@@ -42,6 +42,7 @@ enum class LinkTimeConstant : int32_t;
     macro(argumentCount) \
     macro(getByIdDirect) \
     macro(getByIdDirectPrivate) \
+    macro(getPrototypeOf) \
     macro(getPromiseInternalField) \
     macro(getGeneratorInternalField) \
     macro(getAsyncGeneratorInternalField) \

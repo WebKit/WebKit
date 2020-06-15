@@ -4439,6 +4439,8 @@ private:
             return;
         }
         case ObjectUse: {
+            // FIXME: Add fast path based on OverridesGetPrototype type info flag
+            // https://bugs.webkit.org/show_bug.cgi?id=213191
             setJSValue(vmCall(Int64, operationGetPrototypeOfObject, weakPointer(globalObject), lowObject(m_node->child1())));
             return;
         }

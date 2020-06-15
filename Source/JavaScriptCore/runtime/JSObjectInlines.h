@@ -83,8 +83,8 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInlineExcludingProto(VM& vm)
     JSValue prototype;
     JSObject* obj = this;
     while (true) {
-        MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-        if (obj->structure(vm)->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || obj->methodTable(vm)->getPrototype != defaultGetPrototype)
+        Structure* structure = obj->structure(vm);
+        if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype())
             return false;
 
         prototype = obj->getPrototypeDirect(vm);
@@ -127,7 +127,6 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, unsig
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (true) {
         Structure* structure = structureIDTable.get(object->structureID());
         bool hasSlot = structure->classInfo()->methodTable.getOwnPropertySlotByIndex(object, globalObject, propertyName, slot);
@@ -137,7 +136,7 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, unsig
         if (object->type() == ProxyObjectType && slot.internalMethodType() == PropertySlot::InternalMethodType::HasProperty)
             return false;
         JSValue prototype;
-        if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
+        if (LIKELY(!structure->typeInfo().overridesGetPrototype() || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
             prototype = object->getPrototypeDirect(vm);
         else {
             prototype = object->getPrototype(vm, globalObject);
@@ -165,7 +164,6 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (true) {
         Structure* structure = structureIDTable.get(object->structureID());
         if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
@@ -180,7 +178,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(JSGlobalObject* globalObjec
                 return false;
         }
         JSValue prototype;
-        if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
+        if (LIKELY(!structure->typeInfo().overridesGetPrototype() || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
             prototype = object->getPrototypeDirect(vm);
         else {
             prototype = object->getPrototype(vm, globalObject);

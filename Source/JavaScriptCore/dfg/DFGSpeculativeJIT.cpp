@@ -13943,6 +13943,8 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
         return;
     }
     case ObjectUse: {
+        // FIXME: Add fast path based on OverridesGetPrototype type info flag
+        // https://bugs.webkit.org/show_bug.cgi?id=213191
         SpeculateCellOperand value(this, node->child1());
         JSValueRegsTemporary result(this);
 

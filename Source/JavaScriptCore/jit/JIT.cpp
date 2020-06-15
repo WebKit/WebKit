@@ -318,6 +318,9 @@ void JIT::privateCompileMainPass()
         DEFINE_SLOW_OP(create_async_generator)
         DEFINE_SLOW_OP(new_generator)
         DEFINE_SLOW_OP(pow)
+#if !USE(JSVALUE64)
+        DEFINE_SLOW_OP(get_prototype_of)
+#endif
 
         DEFINE_OP(op_add)
         DEFINE_OP(op_bitnot)
@@ -470,6 +473,10 @@ void JIT::privateCompileMainPass()
             
         DEFINE_OP(op_log_shadow_chicken_prologue)
         DEFINE_OP(op_log_shadow_chicken_tail)
+
+#if USE(JSVALUE64)
+        DEFINE_OP(op_get_prototype_of)
+#endif
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -624,7 +631,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(resolve_scope)
         DEFINE_SLOWCASE_SLOW_OP(check_tdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key)
-
+#if USE(JSVALUE64)
+        DEFINE_SLOWCASE_SLOW_OP(get_prototype_of)
+#endif
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }

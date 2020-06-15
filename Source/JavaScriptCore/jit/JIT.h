@@ -528,6 +528,7 @@ namespace JSC {
         void emit_op_get_by_id_direct(const Instruction*);
         void emit_op_get_by_val(const Instruction*);
         void emit_op_get_argument_by_val(const Instruction*);
+        void emit_op_get_prototype_of(const Instruction*);
         void emit_op_in_by_id(const Instruction*);
         void emit_op_init_lazy_reg(const Instruction*);
         void emit_op_overrides_has_instance(const Instruction*);

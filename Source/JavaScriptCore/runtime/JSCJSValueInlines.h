@@ -1081,6 +1081,14 @@ inline bool JSValue::putByIndex(JSGlobalObject* globalObject, unsigned propertyN
     return asCell()->methodTable(getVM(globalObject))->putByIndex(asCell(), globalObject, propertyName, value, shouldThrow);
 }
 
+ALWAYS_INLINE JSValue JSValue::getPrototype(JSGlobalObject* globalObject) const
+{
+    VM& vm = getVM(globalObject);
+    if (isObject())
+        return asObject(asCell())->getPrototype(vm, globalObject);
+    return synthesizePrototype(globalObject);
+}
+
 inline Structure* JSValue::structureOrNull() const
 {
     if (isCell())

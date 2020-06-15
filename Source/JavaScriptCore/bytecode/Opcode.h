@@ -105,6 +105,7 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpTryGetById) \
     macro(OpGetByIdDirect) \
     macro(OpGetByValWithThis) \
+    macro(OpGetPrototypeOf) \
     macro(OpGetFromArguments) \
     macro(OpToNumber) \
     macro(OpToNumeric) \

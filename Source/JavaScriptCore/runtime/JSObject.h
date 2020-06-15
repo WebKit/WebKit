@@ -1369,11 +1369,9 @@ inline JSValue JSObject::getPrototypeDirect(VM& vm) const
 
 inline JSValue JSObject::getPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    auto getPrototypeMethod = methodTable(vm)->getPrototype;
-    MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-    if (LIKELY(getPrototypeMethod == defaultGetPrototype))
+    if (LIKELY(!structure(vm)->typeInfo().overridesGetPrototype()))
         return getPrototypeDirect(vm);
-    return getPrototypeMethod(this, globalObject);
+    return methodTable(vm)->getPrototype(this, globalObject);
 }
 
 // Normally, we never shrink the butterfly so if we know an offset is valid for some

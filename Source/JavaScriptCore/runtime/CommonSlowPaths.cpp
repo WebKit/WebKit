@@ -1355,6 +1355,14 @@ SLOW_PATH_DECL(slow_path_get_private_name)
     RETURN_PROFILED(slot.getValue(globalObject, property));
 }
 
+SLOW_PATH_DECL(slow_path_get_prototype_of)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpGetPrototypeOf>();
+    JSValue value = GET_C(bytecode.m_value).jsValue();
+    RETURN_PROFILED(value.getPrototype(globalObject));
+}
+
 SLOW_PATH_DECL(slow_path_put_by_id_with_this)
 {
     BEGIN();

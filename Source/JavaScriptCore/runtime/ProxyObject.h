@@ -34,7 +34,7 @@ class ProxyObject final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | OverridesAnyFormOfGetPropertyNames | ProhibitsPropertyCaching;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | OverridesAnyFormOfGetPropertyNames | OverridesGetPrototype | ProhibitsPropertyCaching;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)

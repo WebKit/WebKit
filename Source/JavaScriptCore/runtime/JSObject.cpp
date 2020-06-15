@@ -554,8 +554,7 @@ String JSObject::calculatedClassName(JSObject* object)
     // Get the display name of obj.__proto__.constructor.
     // This is useful to get `Foo` for a `new Foo` object.
     if (constructorFunctionName.isNull()) {
-        MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-        if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype)) {
+        if (LIKELY(!structure->typeInfo().overridesGetPrototype())) {
             JSValue protoValue = object->getPrototypeDirect(vm);
             if (protoValue.isObject()) {
                 JSObject* protoObject = asObject(protoValue);

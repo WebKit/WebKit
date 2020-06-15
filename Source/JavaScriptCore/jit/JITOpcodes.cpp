@@ -1525,6 +1525,26 @@ void JIT::emit_op_get_direct_pname(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, regT0);
 }
 
+void JIT::emit_op_get_prototype_of(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetPrototypeOf>();
+    emitGetVirtualRegister(bytecode.m_value, regT0);
+
+    addSlowCase(branchIfNotCell(regT0));
+    addSlowCase(branchIfNotObject(regT0));
+
+    emitLoadStructure(vm(), regT0, regT2, regT1);
+    addSlowCase(branchTest32(NonZero, Address(regT2, Structure::outOfLineTypeFlagsOffset()), TrustedImm32(OverridesGetPrototypeOutOfLine)));
+
+    load64(Address(regT2, Structure::prototypeOffset()), regT2);
+    Jump hasMonoProto = branchTest64(NonZero, regT2);
+    load64(Address(regT0, offsetRelativeToBase(knownPolyProtoOffset)), regT2);
+    hasMonoProto.link(this);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitStoreCell(bytecode.m_dst, regT2);
+}
+
 void JIT::emit_op_enumerator_structure_pname(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnumeratorStructurePname>();

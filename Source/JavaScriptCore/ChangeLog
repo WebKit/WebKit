@@ -1,3 +1,90 @@
+2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        super should not depend on __proto__
+        https://bugs.webkit.org/show_bug.cgi?id=157972
+
+        Reviewed by Saam Barati.
+
+        Before this change, both super() call [1] and super.property [2] relied on
+        Object.prototype.__proto__ to acquire super base, which was observable and
+        incorrect if __proto__ gets removed.
+
+        This patch introduces get_prototype_of bytecode, ensuring returned values
+        are profiled so the op can be wired to existing DFG and FTL implementations.
+        In order to avoid performance regression w/o DFG (__proto__ is optimized via
+        IntrinsicGetterAccessCase), fast paths for LLInt and baseline JIT are added
+        (64-bit only), utilizing OverridesGetPrototypeOutOfLine type info flag.
+
+        This change aligns JSC with V8 and SpiderMonkey, progressing microbenchmarks/
+        super-get-by-{id,val}-with-this-monomorphic.js by 7-10%. SixSpeed is neutral.
+
+        Also, extracts JSValue::getPrototype() method to avoid code duplication and
+        utilizes it in objectConstructorGetPrototypeOf(), advancing provided
+        microbenchmark by 40%.
+
+        [1]: https://tc39.es/ecma262/#sec-getsuperconstructor (step 5)
+        [2]: https://tc39.es/ecma262/#sec-getsuperbase (step 5)
+
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetPrototypeOf):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitSuperBaseForCallee):
+        (JSC::emitGetSuperFunctionForConstruct):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getPrototypeOf):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOperations.cpp:
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::canEmitIntrinsicGetter):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_prototype_of):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getPrototype const):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getPrototype):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        * runtime/JSProxy.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetPrototype const):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+        * runtime/ProxyObject.h:
+        * runtime/Structure.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+
 2020-06-13  Devin Rousso  <drousso@apple.com>
 
         Make `errors` an own property of `AggregateError` instead of a prototype accessor

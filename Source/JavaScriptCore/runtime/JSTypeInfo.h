@@ -63,6 +63,10 @@ static constexpr unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 15
 static constexpr unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 16;
 static constexpr unsigned StructureIsImmortal = 1 << 17;
 static constexpr unsigned HasPutPropertySecurityCheck = 1 << 18;
+static constexpr unsigned OverridesGetPrototype = 1 << 19;
+
+static constexpr unsigned numberOfInlineBits = 8;
+static constexpr unsigned OverridesGetPrototypeOutOfLine = OverridesGetPrototype >> numberOfInlineBits;
 
 class TypeInfo {
 public:
@@ -70,7 +74,7 @@ public:
     typedef uint16_t OutOfLineTypeFlags;
 
     TypeInfo(JSType type, unsigned flags)
-        : TypeInfo(type, flags & 0xff, flags >> 8)
+        : TypeInfo(type, flags & 0xff, flags >> numberOfInlineBits)
     {
         ASSERT(!(flags >> 24));
     }
@@ -88,7 +92,7 @@ public:
     bool isFinalObject() const { return type() == FinalObjectType; }
     bool isNumberObject() const { return type() == NumberObjectType; }
 
-    unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
+    unsigned flags() const { return (static_cast<unsigned>(m_flags2) << numberOfInlineBits) | static_cast<unsigned>(m_flags); }
     bool masqueradesAsUndefined() const { return isSetOnFlags1<MasqueradesAsUndefined>(); }
     bool implementsHasInstance() const { return isSetOnFlags2<ImplementsHasInstance>(); }
     bool implementsDefaultHasInstance() const { return isSetOnFlags1<ImplementsDefaultHasInstance>(); }
@@ -101,6 +105,7 @@ public:
     bool structureIsImmortal() const { return isSetOnFlags2<StructureIsImmortal>(); }
     bool overridesGetPropertyNames() const { return isSetOnFlags2<OverridesGetPropertyNames>(); }
     bool overridesAnyFormOfGetPropertyNames() const { return isSetOnFlags2<OverridesAnyFormOfGetPropertyNames>(); }
+    bool overridesGetPrototype() const { return isSetOnFlags2<OverridesGetPrototype>(); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2<ProhibitsPropertyCaching>(); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2<GetOwnPropertySlotIsImpureForPropertyAbsence>(); }
@@ -148,8 +153,8 @@ private:
     template<unsigned flag>
     bool isSetOnFlags2() const
     {
-        static_assert(flag >= (1 << 8) && flag <= (1 << 24));
-        return m_flags2 & (flag >> 8);
+        static_assert(flag >= (1 << numberOfInlineBits) && flag <= (1 << 24));
+        return m_flags2 & (flag >> numberOfInlineBits);
     }
 
     JSType m_type;

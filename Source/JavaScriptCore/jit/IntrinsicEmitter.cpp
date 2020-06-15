@@ -61,9 +61,8 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(JSFunction* getter, Struc
         return true;
     }
     case UnderscoreProtoIntrinsic: {
-        auto getPrototypeMethod = structure->classInfo()->methodTable.getPrototype;
-        MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-        return getPrototypeMethod == defaultGetPrototype;
+        TypeInfo info = structure->typeInfo();
+        return info.isObject() && !info.overridesGetPrototype();
     }
     default:
         return false;
