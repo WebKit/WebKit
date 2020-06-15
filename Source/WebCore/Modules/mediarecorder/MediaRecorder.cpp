@@ -153,7 +153,7 @@ ExceptionOr<void> MediaRecorder::stopRecording()
 
         stopRecordingInternal();
         ASSERT(m_state == RecordingState::Inactive);
-        m_private->fetchData([this, protectedThis = makeRef(*this)](auto&& buffer, auto& mimeType) {
+        m_private->fetchData([this, pendingActivity = makePendingActivity(*this)](auto&& buffer, auto& mimeType) {
             if (!m_isActive)
                 return;
     
@@ -173,7 +173,7 @@ ExceptionOr<void> MediaRecorder::requestData()
     if (state() == RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
-    m_private->fetchData([this, protectedThis = makeRef(*this)](auto&& buffer, auto& mimeType) {
+    m_private->fetchData([this, pendingActivity = makePendingActivity(*this)](auto&& buffer, auto& mimeType) {
         if (!m_isActive)
             return;
 

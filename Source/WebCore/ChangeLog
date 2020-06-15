@@ -1,3 +1,17 @@
+2020-06-15  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorder should not be collectable when fetching data from its backend
+        https://bugs.webkit.org/show_bug.cgi?id=213121
+
+        Reviewed by Eric Carlson.
+
+        Take a pending activity when fetching data since we might want dispatch an event when receiving the fetch data.
+        Covered by existing tests no longer crashing in debug.
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::requestData):
+
 2020-06-14  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, reverting r262124.
