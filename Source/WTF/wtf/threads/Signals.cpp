@@ -66,7 +66,8 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
     size_t signalIndex = static_cast<size_t>(signal);
     size_t nextFree = numberOfHandlers[signalIndex];
 #if HAVE(MACH_EXCEPTIONS)
-    addedExceptions |= toMachMask(signal);
+    if (signal != Signal::Usr)
+        addedExceptions |= toMachMask(signal);
 #endif
     RELEASE_ASSERT(nextFree < maxNumberOfHandlers);
     SignalHandlerMemory* memory = &handlers[signalIndex][nextFree];

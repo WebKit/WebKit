@@ -1,3 +1,15 @@
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
+        REGRESSION (r263045): TestWTF.Signals.SignalsWorkOnExit crashing
+        https://bugs.webkit.org/show_bug.cgi?id=213211
+
+        Reviewed by Mark Lam.
+
+        Don't call toMachMask on Signal::Usr as mach doesn't support user exceptions.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::SignalHandlers::add):
+
 2020-06-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Consistently use WTF_ATTRIBUTE_PRINTF in Assertions.[cpp,h]
