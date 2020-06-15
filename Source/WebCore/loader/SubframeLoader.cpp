@@ -163,30 +163,25 @@ bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerEle
     return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);
 }
 
-static String findPluginMIMETypeFromURL(Page* page, const String& url)
+static String findPluginMIMETypeFromURL(Page& page, const StringView& url)
 {
     if (!url)
-        return String();
+        return { };
 
     size_t dotIndex = url.reverseFind('.');
     if (dotIndex == notFound)
-        return String();
+        return { };
 
-    String extension = url.substring(dotIndex + 1);
+    auto extensionFromURL = url.substring(dotIndex + 1);
 
-    const PluginData& pluginData = page->pluginData();
-
-    Vector<MimeClassInfo> mimes;
-    Vector<size_t> mimePluginIndices;
-    pluginData.getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    for (auto& mime : mimes) {
-        for (auto& mimeExtension : mime.extensions) {
-            if (equalIgnoringASCIICase(extension, mimeExtension))
-                return mime.type;
+    for (auto& type : page.pluginData().webVisibleMimeTypes()) {
+        for (auto& extension : type.extensions) {
+            if (equalIgnoringASCIICase(extensionFromURL, extension))
+                return type.type;
         }
     }
 
-    return String();
+    return { };
 }
 
 static void logPluginRequest(Page* page, const String& mimeType, const String& url, bool success)
@@ -197,7 +192,7 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
     String newMIMEType = mimeType;
     if (!newMIMEType) {
         // Try to figure out the MIME type from the URL extension.
-        newMIMEType = findPluginMIMETypeFromURL(page, url);
+        newMIMEType = findPluginMIMETypeFromURL(*page, url);
         if (!newMIMEType)
             return;
     }

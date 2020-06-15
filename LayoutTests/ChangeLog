@@ -1,3 +1,23 @@
+2020-06-14  Sam Weinig  <weinig@apple.com>
+
+        [WPT] html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html fails due to lack of caching of Plugin objects
+        https://bugs.webkit.org/show_bug.cgi?id=213185
+
+        Reviewed by Darin Adler.
+
+        * http/tests/plugins/plugin-javascript-access-allow-all-plugins-expected.txt: Added.
+        * http/tests/plugins/plugin-javascript-access-allow-all-plugins.html: Added.
+        * http/tests/plugins/plugin-javascript-access-expected.txt:
+        * http/tests/plugins/plugin-javascript-access.html:
+        Split out internals.setShowAllPlugins(true) part of plugin-javascript-access.html to
+        allow the test to continue working now that navigator.plugins is immutable after 
+        accessing it.
+        
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray-expected.txt: Removed.
+        Remove imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html
+        from TestExpectations now that it passes all the time.
+
 2020-06-14  Pinki Gyanchandani  <pgyanchandani@apple.com>
 
         Release Assert @ WebCore::RenderTreeBuilder::RenderTreeBuilder

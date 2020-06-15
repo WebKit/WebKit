@@ -952,6 +952,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/NavigatorIsLoggedIn.idl \
     $(WebCore)/page/NavigatorLanguage.idl \
     $(WebCore)/page/NavigatorOnLine.idl \
+    $(WebCore)/page/NavigatorPlugins.idl \
     $(WebCore)/page/NavigatorServiceWorker.idl \
     $(WebCore)/page/NavigatorShare.idl \
     $(WebCore)/page/Performance.idl \

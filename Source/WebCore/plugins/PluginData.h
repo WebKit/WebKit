@@ -21,8 +21,6 @@
 #pragma once
 
 #include <wtf/EnumTraits.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -32,7 +30,6 @@
 namespace WebCore {
 
 class Page;
-struct PluginInfo;
 
 enum class PluginLoadClientPolicy : uint8_t {
     // No client-specific plug-in load policy has been defined. The plug-in should be visible in navigator.plugins and WebKit should synchronously
@@ -102,27 +99,23 @@ public:
 
     const Vector<PluginInfo>& plugins() const { return m_plugins; }
     WEBCORE_EXPORT const Vector<PluginInfo>& webVisiblePlugins() const;
-    Vector<PluginInfo> publiclyVisiblePlugins() const;
-    WEBCORE_EXPORT void getWebVisibleMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
+    std::pair<Vector<PluginInfo>, Vector<PluginInfo>> publiclyVisiblePluginsAndAdditionalWebVisiblePlugins() const;
+
+    WEBCORE_EXPORT Vector<MimeClassInfo> webVisibleMimeTypes() const;
 
     enum AllowedPluginTypes {
         AllPlugins,
         OnlyApplicationPlugins
     };
-
-    WEBCORE_EXPORT bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes) const;
-    String pluginFileForWebVisibleMimeType(const String& mimeType) const;
-
     WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
+    WEBCORE_EXPORT bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes, const URL&) const;
+
+    String pluginFileForWebVisibleMimeType(const String& mimeType) const;
 
 private:
     explicit PluginData(Page&);
     void initPlugins();
-    bool getPluginInfoForWebVisibleMimeType(const String& mimeType, PluginInfo&) const;
-    void getMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
-    void getMimesAndPluginIndiciesForPlugins(const Vector<PluginInfo>&, Vector<MimeClassInfo>&, Vector<size_t>&) const;
-    bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes, const Vector<PluginInfo>&) const;
 
 protected:
     Page& m_page;

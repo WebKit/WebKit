@@ -21,10 +21,7 @@
     GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
 ] interface Navigator {
-    readonly attribute DOMPluginArray plugins;
-    readonly attribute DOMMimeTypeArray mimeTypes;
     readonly attribute boolean cookieEnabled;
-    boolean javaEnabled();
 
     [Conditional=NAVIGATOR_STANDALONE] readonly attribute boolean standalone;
 
@@ -35,5 +32,6 @@ Navigator implements NavigatorID;
 Navigator implements NavigatorLanguage;
 Navigator implements NavigatorMaxTouchPoints;
 Navigator implements NavigatorOnLine;
+Navigator implements NavigatorPlugins;
 Navigator implements NavigatorServiceWorker;
 Navigator implements NavigatorShare;

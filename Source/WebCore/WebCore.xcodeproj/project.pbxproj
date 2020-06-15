@@ -9887,6 +9887,7 @@
 		7AF9B20918CFB5F200C64BEF /* JSVTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegion.h; sourceTree = "<group>"; };
 		7AF9B20A18CFB5F300C64BEF /* JSVTTRegionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVTTRegionList.cpp; sourceTree = "<group>"; };
 		7AF9B20B18CFB5F300C64BEF /* JSVTTRegionList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVTTRegionList.h; sourceTree = "<group>"; };
+		7C017C3D24969F1300DC0C02 /* NavigatorPlugins.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorPlugins.idl; sourceTree = "<group>"; };
 		7C029C6D2493C8F800268204 /* ColorTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorTypes.h; sourceTree = "<group>"; };
 		7C0CEF281E4A542C008DEB80 /* JSDOMConstructorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorBase.h; sourceTree = "<group>"; };
 		7C0CEF291E4A54D3008DEB80 /* JSDOMConstructorWithDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConstructorWithDocument.h; sourceTree = "<group>"; };
@@ -21112,6 +21113,7 @@
 				6B507A23234BF34100BE7C62 /* NavigatorIsLoggedIn.idl */,
 				7C5BEA3B1E9EE77100CC517B /* NavigatorLanguage.idl */,
 				7C5BEA3C1E9EE77100CC517B /* NavigatorOnLine.idl */,
+				7C017C3D24969F1300DC0C02 /* NavigatorPlugins.idl */,
 				5182C24B1F313AE00059BA7C /* NavigatorServiceWorker.idl */,
 				1DC553FD211BA12A004B780E /* NavigatorShare.idl */,
 				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,

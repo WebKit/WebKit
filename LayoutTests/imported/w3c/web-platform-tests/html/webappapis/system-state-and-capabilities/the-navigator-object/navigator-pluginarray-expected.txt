@@ -1,6 +1,6 @@
 
 PASS Tests that named properties are not enumerable in navigator.plugins and navigator.mimeTypes 
-FAIL Tests that navigator.plugins and navigator.mimeTypes returns the same object when queried multiple times. assert_equals: expected object "[object Plugin]" but got object "[object Plugin]"
+PASS Tests that navigator.plugins and navigator.mimeTypes returns the same object when queried multiple times. 
 PASS Tests that navigator.plugins and navigator.mimeTypes does not return the same object on different frames. 
-FAIL Tests that navigator.plugins and navigator.mimeTypes returns plugins sorted in alphabetical order by plugin name. assert_less_than_equal: expected a number less than or equal to 0 but got 1
+PASS Tests that navigator.plugins and navigator.mimeTypes returns plugins sorted in alphabetical order by plugin name. 
 

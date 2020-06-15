@@ -933,6 +933,7 @@ $(PROJECT_DIR)/page/NavigatorID.idl
 $(PROJECT_DIR)/page/NavigatorIsLoggedIn.idl
 $(PROJECT_DIR)/page/NavigatorLanguage.idl
 $(PROJECT_DIR)/page/NavigatorOnLine.idl
+$(PROJECT_DIR)/page/NavigatorPlugins.idl
 $(PROJECT_DIR)/page/NavigatorServiceWorker.idl
 $(PROJECT_DIR)/page/NavigatorShare.idl
 $(PROJECT_DIR)/page/Performance.idl

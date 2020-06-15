@@ -1,6 +1,0 @@
-
-FAIL Tests that named properties are not enumerable in navigator.plugins and navigator.mimeTypes assert_in_array: value "application/x-webkit-test-netscape" not in array ["0", "1", "2", "3"]
-FAIL Tests that navigator.plugins and navigator.mimeTypes returns the same object when queried multiple times. assert_equals: expected object "[object MimeType]" but got object "[object MimeType]"
-PASS Tests that navigator.plugins and navigator.mimeTypes does not return the same object on different frames. 
-FAIL Tests that navigator.plugins and navigator.mimeTypes returns plugins sorted in alphabetical order by plugin name. assert_less_than_equal: expected a number less than or equal to 0 but got 1
-

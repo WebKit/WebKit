@@ -1,3 +1,18 @@
+2020-06-14  Sam Weinig  <weinig@apple.com>
+
+        [WPT] html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html fails due to lack of caching of Plugin objects
+        https://bugs.webkit.org/show_bug.cgi?id=213185
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        Add missing #include that is now needed due to pruning of unnecessary #includes
+        in WebCore.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::pluginSupportsExtension):
+        Update to use new webVisibleMimeTypes() rather than the clunky getWebVisibleMimesAndPluginIndices().
+
 2020-06-14  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Return type of -[NSCoder validateClassSupportsSecureCoding:] is incorrect

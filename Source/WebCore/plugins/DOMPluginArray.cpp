@@ -23,7 +23,6 @@
 #include "DOMPlugin.h"
 #include "Frame.h"
 #include "Page.h"
-#include "PluginData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
@@ -31,8 +30,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMPluginArray);
 
-DOMPluginArray::DOMPluginArray(Navigator& navigator)
+Ref<DOMPluginArray> DOMPluginArray::create(Navigator& navigator, Vector<Ref<DOMPlugin>>&& publiclyVisiblePlugins, Vector<Ref<DOMPlugin>>&& additionalWebVisibilePlugins)
+{
+    return adoptRef(*new DOMPluginArray(navigator, WTFMove(publiclyVisiblePlugins), WTFMove(additionalWebVisibilePlugins)));
+}
+
+DOMPluginArray::DOMPluginArray(Navigator& navigator, Vector<Ref<DOMPlugin>>&& publiclyVisiblePlugins, Vector<Ref<DOMPlugin>>&& additionalWebVisibilePlugins)
     : m_navigator(makeWeakPtr(navigator))
+    , m_publiclyVisiblePlugins(WTFMove(publiclyVisiblePlugins))
+    , m_additionalWebVisibilePlugins(WTFMove(additionalWebVisibilePlugins))
 {
 }
 
@@ -40,57 +46,46 @@ DOMPluginArray::~DOMPluginArray() = default;
 
 unsigned DOMPluginArray::length() const
 {
-    PluginData* data = pluginData();
-    if (!data)
-        return 0;
-
-    return data->publiclyVisiblePlugins().size();
+    return m_publiclyVisiblePlugins.size();
 }
 
 RefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
 {
-    PluginData* data = pluginData();
-    if (!data)
+    if (index >= m_publiclyVisiblePlugins.size())
         return nullptr;
-
-    const Vector<PluginInfo>& plugins = data->publiclyVisiblePlugins();
-    if (index >= plugins.size())
-        return nullptr;
-    return DOMPlugin::create(data, frame(), plugins[index]);
+    return m_publiclyVisiblePlugins[index].ptr();
 }
 
 RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomString& propertyName)
 {
-    PluginData* data = pluginData();
-    if (!data)
-        return nullptr;
-
-    for (auto& plugin : data->webVisiblePlugins()) {
-        if (plugin.name == propertyName)
-            return DOMPlugin::create(data, frame(), plugin);
+    for (auto& plugin : m_publiclyVisiblePlugins) {
+        if (plugin->name() == propertyName)
+            return plugin.ptr();
     }
+
+    for (auto& plugin : m_additionalWebVisibilePlugins) {
+        if (plugin->name() == propertyName)
+            return plugin.ptr();
+    }
+
     return nullptr;
 }
 
 Vector<AtomString> DOMPluginArray::supportedPropertyNames()
 {
-    PluginData* data = pluginData();
-    if (!data)
-        return { };
-
-    const auto& plugins = data->publiclyVisiblePlugins();
-
     Vector<AtomString> result;
-    result.reserveInitialCapacity(plugins.size());
-    for (auto& plugin : plugins)
-        result.uncheckedAppend(plugin.name);
-
+    result.reserveInitialCapacity(m_publiclyVisiblePlugins.size());
+    for (auto& plugin : m_publiclyVisiblePlugins)
+        result.uncheckedAppend(plugin->name());
     return result;
 }
 
 void DOMPluginArray::refresh(bool reloadPages)
 {
-    auto* frame = this->frame();
+    if (!m_navigator)
+        return;
+
+    auto* frame = m_navigator->frame();
     if (!frame)
         return;
 
@@ -98,19 +93,6 @@ void DOMPluginArray::refresh(bool reloadPages)
         return;
 
     Page::refreshPlugins(reloadPages);
-}
-
-PluginData* DOMPluginArray::pluginData() const
-{
-    auto* frame = this->frame();
-    if (!frame)
-        return nullptr;
-
-    Page* page = frame->page();
-    if (!page)
-        return nullptr;
-
-    return &page->pluginData();
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "PluginModuleInfo.h"
 
 #include <WebCore/PluginData.h>
+#include <wtf/HashSet.h>
 
 namespace WebKit {
 

@@ -54,14 +54,15 @@ function checkForTestPlugin() {
 if (window.testRunner)
     testRunner.dumpAsText()
 
-navigator.plugins.refresh(false); // Supposedly helps if new plug-ins were added.
+// Activate our debugging code to show all plugins to confirm we do have the test plugin.
+  document.writeln("<p>Test: Confirm the plugin is present.<\/p>");
+if (window.internals)
+    internals.setShowAllPlugins(true);
 
-// A non-local file should not be allowed to iterate over the installed plugins.
-document.writeln("<p>Test: A non-local file should not be able to iterate over the plugins.<\/p>");
 if (checkForTestPlugin())
-    document.writeln("<p>FAILURE!  (Found the netscape test plugin on a non-local file!)<\/p>");
+    document.writeln("<p>PASS!  (Found the netscape test plugin on a non-local file!)<\/p>");
 else
-    document.writeln("<p>PASS!  (Could not find the netscape test plugin on a non-local file!)<\/p>");
+    document.writeln("<p>FAILURE!  (Could not find netscape test plugin on a non-local file!)<\/p>");
 
 </script>
 </body>

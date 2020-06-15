@@ -68,6 +68,8 @@ private:
     void showShareData(ExceptionOr<ShareDataWithParsedURL&>, Ref<DeferredPromise>&&);
     explicit Navigator(ScriptExecutionContext*, DOMWindow&);
 
+    void initializePluginAndMimeTypeArrays();
+
     mutable RefPtr<ShareDataReader> m_loader;
     mutable bool m_hasPendingShare { false };
     mutable RefPtr<DOMPluginArray> m_plugins;

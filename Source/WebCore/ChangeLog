@@ -1,5 +1,123 @@
 2020-06-14  Sam Weinig  <weinig@apple.com>
 
+        [WPT] html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html fails due to lack of caching of Plugin objects
+        https://bugs.webkit.org/show_bug.cgi?id=213185
+
+        Reviewed by Darin Adler.
+
+        Tests:
+        - Updates results for web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html
+          which now passes.
+        - Splits up http/tests/plugins/plugin-javascript-access.html, adding 
+          http/tests/plugins/plugin-javascript-access-allow-all-plugins.html
+          which tests the internals.setShowAllPlugins(true) case. This was
+          required now that the plugin and mimetype arrays are immutable after
+          creation.
+
+        Overhaul web exposed plugin APIs:
+        - All DOMPlugin and DOMMimeTypes are now created together (along with the DOMPluginArray and 
+          DOMMimeTypeArray) on first access of either navigator.plugins or navigator.mimeTypes.
+        - DOMPlugins are created and stored in the DOMPluginArray (fixing the initial lack of caching issue)
+        - DOMMimeTypes are created and stored in the DOMMimeTypeArray.
+        - DOMPlugins hold a strong reference to their associated DOMMimeType. The DOMMimeType has
+          a weak reference back to the DOMPlugin. This means for a single executation context, we only
+          ever create one DOMPlugin / DOMMimeType for each underlying plugin / mimetype.
+        - Update GC so that DOMPlugin and DOMMimeType (in addition to DOMPluginArray and DOMMimeTypeArray
+          which were already doing this) use navigator reachability for their lifetime. This is almost
+          correct, except if we ever implement DOMPluginArray.refresh(false) to match the spec, in which
+          case you could end up with some DOMPlugins and DOMMimeTypes that are marked as reachable when
+          they really are not, but only plugins that were removed. This seems so unlikely to matter that
+          implementing a more strict reachability function seems like the wrong way to go.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add NavigatorPlugins.idl
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::findPluginMIMETypeFromURL):
+        (WebCore::logPluginRequest):
+        Simplify and cleanup code making use of the new webVisibleMimeTypes() rather than the
+        clunky getWebVisibleMimesAndPluginIndices().
+
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        (WebCore::Navigator::initializePluginAndMIMETypeArrays):
+        (WebCore::Navigator::plugins):
+        (WebCore::Navigator::mimeTypes):
+        Fully initialize Navigator.plugins/mimeTypes on first access of either, following
+        the specified behavior that they should not change after initial access for a script
+        execution context. This also ensures we always return the same wrappers for these
+        objects on multiple accesses, something the spec mandates but we failed to do prior.
+        In addition, we now correctly sort the plugins by name and mimeTypes by type, also as
+        specified.
+
+        * page/Navigator.idl:
+        * page/NavigatorPlugins.idl: Added.
+        Split NavigatorPlugins out of Navigator.idl as specified. No functional change but
+        makes things nicer when we match the spec closer.
+
+        * plugins/DOMMimeType.cpp:
+        (WebCore::DOMMimeType::DOMMimeType):
+        (WebCore::DOMMimeType::suffixes const):
+        (WebCore::DOMMimeType::enabledPlugin const):
+        * plugins/DOMMimeType.h:
+        (WebCore::DOMMimeType::create):
+        (WebCore::DOMMimeType::navigator):
+        * plugins/DOMMimeType.idl:
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::DOMMimeTypeArray):
+        (WebCore::DOMMimeTypeArray::length const):
+        (WebCore::DOMMimeTypeArray::item):
+        (WebCore::DOMMimeTypeArray::namedItem):
+        (WebCore::DOMMimeTypeArray::supportedPropertyNames):
+        (WebCore::DOMMimeTypeArray::getPluginData const): Deleted.
+        * plugins/DOMMimeTypeArray.h:
+        * plugins/DOMPlugin.cpp:
+        (WebCore::DOMPlugin::DOMPlugin):
+        (WebCore::DOMPlugin::item):
+        (WebCore::DOMPlugin::namedItem):
+        (WebCore::DOMPlugin::supportedPropertyNames):
+        * plugins/DOMPlugin.h:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::DOMPluginArray):
+        (WebCore::DOMPluginArray::length const):
+        (WebCore::DOMPluginArray::item):
+        (WebCore::DOMPluginArray::namedItem):
+        (WebCore::DOMPluginArray::supportedPropertyNames):
+        (WebCore::DOMPluginArray::pluginData const): Deleted.
+        * plugins/DOMPluginArray.h:
+        Rather than dynamically accessing plugin information through Page
+        on each interaction with the DOM plugin objects, we now fully initialize
+        them on creation, allowing for correct wrapper caching and behavior if
+        plugins are added / removed (e.g. the arrays should not change).
+        
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::initPlugins):
+        (WebCore::PluginData::publiclyVisiblePluginsAndAdditionalWebVisiblePlugins const):
+        (WebCore::PluginData::webVisibleMimeTypes const):
+        (WebCore::supportsMimeTypeForPlugins):
+        (WebCore::PluginData::supportsMimeType const):
+        (WebCore::PluginData::supportsWebVisibleMimeType const):
+        (WebCore::PluginData::supportsWebVisibleMimeTypeForURL const):
+        (WebCore::PluginData::pluginFileForWebVisibleMimeType const):
+        (WebCore::PluginData::publiclyVisiblePlugins const): Deleted.
+        (WebCore::PluginData::getWebVisibleMimesAndPluginIndices const): Deleted.
+        (WebCore::PluginData::getMimesAndPluginIndices const): Deleted.
+        (WebCore::PluginData::getMimesAndPluginIndiciesForPlugins const): Deleted.
+        (WebCore::PluginData::getPluginInfoForWebVisibleMimeType const): Deleted.
+        * plugins/PluginData.h:
+        Simplify interface by removing out parameter based getWebVisibleMimesAndPluginIndices
+        (and helpers) and adding more straigtword alternatives. getWebVisibleMimesAndPluginIndices
+        was useful for the old DOM plugin model, but now that the arrays are initialized all 
+        together, it no longer provides an optimization. Instead, all callers really just want
+        a either a list of MimeClassInfos or to know if one is supported under a specific scenario,
+        so we now just expose that.
+
+2020-06-14  Sam Weinig  <weinig@apple.com>
+
         [WPT] websockets/Close-reason-unpaired-surrogates.any.html fails due to failure to convert unpaired surrogates to replacement character for close reason
         https://bugs.webkit.org/show_bug.cgi?id=213182
 

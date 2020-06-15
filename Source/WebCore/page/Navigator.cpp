@@ -25,7 +25,9 @@
 
 #include "Chrome.h"
 #include "CookieJar.h"
+#include "DOMMimeType.h"
 #include "DOMMimeTypeArray.h"
+#include "DOMPlugin.h"
 #include "DOMPluginArray.h"
 #include "Document.h"
 #include "Frame.h"
@@ -195,14 +197,64 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
     });
 }
 
+void Navigator::initializePluginAndMimeTypeArrays()
+{
+    if (m_plugins)
+        return;
+
+    auto* frame = this->frame();
+    if (!frame || !frame->page()) {
+        m_plugins = DOMPluginArray::create(*this);
+        m_mimeTypes = DOMMimeTypeArray::create(*this);
+        return;
+    }
+
+    auto [publiclyVisiblePlugins, additionalWebVisiblePlugins] = frame->page()->pluginData().publiclyVisiblePluginsAndAdditionalWebVisiblePlugins();
+
+    Vector<Ref<DOMPlugin>> publiclyVisibleDOMPlugins;
+    Vector<Ref<DOMPlugin>> additionalWebVisibleDOMPlugins;
+    Vector<Ref<DOMMimeType>> webVisibleDOMMimeTypes;
+
+    publiclyVisibleDOMPlugins.reserveInitialCapacity(publiclyVisiblePlugins.size());
+    for (auto& plugin : publiclyVisiblePlugins) {
+        auto wrapper = DOMPlugin::create(*this, plugin);
+        webVisibleDOMMimeTypes.appendVector(wrapper->mimeTypes());
+        publiclyVisibleDOMPlugins.uncheckedAppend(WTFMove(wrapper));
+    }
+
+    additionalWebVisibleDOMPlugins.reserveInitialCapacity(additionalWebVisiblePlugins.size());
+    for (auto& plugin : additionalWebVisiblePlugins) {
+        auto wrapper = DOMPlugin::create(*this, plugin);
+        webVisibleDOMMimeTypes.appendVector(wrapper->mimeTypes());
+        additionalWebVisibleDOMPlugins.uncheckedAppend(WTFMove(wrapper));
+    }
+
+    std::sort(publiclyVisibleDOMPlugins.begin(), publiclyVisibleDOMPlugins.end(), [](const Ref<DOMPlugin>& a, const Ref<DOMPlugin>& b) {
+        if (auto nameComparison = codePointCompare(a->info().name, b->info().name))
+            return nameComparison < 0;
+        return codePointCompareLessThan(a->info().bundleIdentifier, b->info().bundleIdentifier);
+    });
+
+    std::sort(webVisibleDOMMimeTypes.begin(), webVisibleDOMMimeTypes.end(), [](const Ref<DOMMimeType>& a, const Ref<DOMMimeType>& b) {
+        if (auto typeComparison = codePointCompare(a->type(), b->type()))
+            return typeComparison < 0;
+        return codePointCompareLessThan(a->enabledPlugin()->info().bundleIdentifier, b->enabledPlugin()->info().bundleIdentifier);
+    });
+
+    // NOTE: It is not necessary to sort additionalWebVisibleDOMPlugins, as they are only accessible via
+    // named property look up, so their order is not exposed.
+
+    m_plugins = DOMPluginArray::create(*this, WTFMove(publiclyVisibleDOMPlugins), WTFMove(additionalWebVisibleDOMPlugins));
+    m_mimeTypes = DOMMimeTypeArray::create(*this, WTFMove(webVisibleDOMMimeTypes));
+}
+
 DOMPluginArray& Navigator::plugins()
 {
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
         if (auto* frame = this->frame())
             ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::Plugins);
     }
-    if (!m_plugins)
-        m_plugins = DOMPluginArray::create(*this);
+    initializePluginAndMimeTypeArrays();
     return *m_plugins;
 }
 
@@ -212,8 +264,7 @@ DOMMimeTypeArray& Navigator::mimeTypes()
         if (auto* frame = this->frame())
             ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::MimeTypes);
     }
-    if (!m_mimeTypes)
-        m_mimeTypes = DOMMimeTypeArray::create(*this);
+    initializePluginAndMimeTypeArrays();
     return *m_mimeTypes;
 }
 
