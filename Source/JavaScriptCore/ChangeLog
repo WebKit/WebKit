@@ -1,3 +1,12 @@
+2020-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=157972
+
+        loadi only takes address.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         super should not depend on __proto__

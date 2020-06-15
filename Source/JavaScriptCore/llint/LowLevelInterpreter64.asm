@@ -1514,7 +1514,7 @@ llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, disp
     dispatch()
 
 .opGetPrototypeOfPolyProto:
-    loadi knownPolyProtoOffset, t1
+    move knownPolyProtoOffset, t1
     loadPropertyAtVariableOffset(t1, t0, t3)
     return(t3)
 end)
