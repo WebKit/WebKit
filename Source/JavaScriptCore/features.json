@@ -113,6 +113,16 @@
         }
     },
     {
+        "name": "BigInt",
+        "status": {
+            "status": "Supported",
+            "enabled-by-default": true
+        },
+        "url": "https://tc39.es/proposal-bigint/",
+        "description": "BigInt is a new primitive that offers arbitrary-precision integers.",
+        "specification": "ESNext"
+    },
+    {
         "name": "Block Scoping",
         "status": {
             "status": "Supported",

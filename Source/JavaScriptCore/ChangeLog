@@ -1,3 +1,14 @@
+2020-06-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Webkit Feature BigInt on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=197546
+
+        Reviewed by Sam Weinig.
+
+        Add BigInt entry to JSC features.json.
+
+        * features.json:
+
 2020-06-15  Keith Miller  <keith_miller@apple.com>
 
         JIT thunks should work on arm64_32
