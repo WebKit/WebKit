@@ -2095,6 +2095,7 @@ def runTestRunner(remoteIndex=0)
         remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
         remoteScript += "export LD_LIBRARY_PATH=#{remoteHost.remoteDirectory}/#{$outputDir.basename}/#{$jscPath.dirname} && "
         remoteScript += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && "
+        remoteScript += "export TZ=#{Shellwords.shellescape(ENV['TZ'])} && "
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunnerCommand(remoteIndex)}\""
         runAndMonitorTestRunnerCommand("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript)
@@ -2225,6 +2226,11 @@ if ENV["JSCTEST_timeout"]
     # Increase the timeout proportionally to the number of processors.
     ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i.to_f * Math.sqrt($numChildProcesses)).to_i.to_s
 end
+
+# Some tests fail if the time zone is not set to US/Pacific
+# https://webkit.org/b/136363
+# Set as done in run-javascript-tests
+ENV["TZ"] = "US/Pacific"; 
 
 def runBundle
     raise unless $bundle
