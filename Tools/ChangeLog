@@ -1,5 +1,15 @@
 2020-06-15  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Bump Subversion and enable Perl bindings
+        https://bugs.webkit.org/show_bug.cgi?id=213189
+
+        Reviewed by Žan Doberšek.
+
+        * buildstream/elements/sdk-build-depends/swig.bst: Added.
+        * buildstream/elements/sdk/subversion.bst: Enable Perl bindings so that git svn can be used within the sandbox.
+
+2020-06-15  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] flatpak update still not displayed
         https://bugs.webkit.org/show_bug.cgi?id=213180
 
