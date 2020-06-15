@@ -1,3 +1,15 @@
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
+        JIT thunks should work on arm64_32
+        https://bugs.webkit.org/show_bug.cgi?id=213103
+
+        Reviewed by Saam Barati.
+
+        Refactor timesPtr() to ScalePtr.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasClasses):
+
 2020-06-15  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation does not observe newly displayed element inside previously observed content

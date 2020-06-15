@@ -3501,7 +3501,7 @@ void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failu
         Assembler::Label loopStart(m_assembler.label());
 
         // If the pointers match, proceed to the next matcher.
-        Assembler::Jump classFound = m_assembler.branchPtr(Assembler::Equal, Assembler::BaseIndex(spaceSplitStringData, indexRegister, Assembler::timesPtr(), SpaceSplitStringData::tokensMemoryOffset()), classNameToMatch);
+        Assembler::Jump classFound = m_assembler.branchPtr(Assembler::Equal, Assembler::BaseIndex(spaceSplitStringData, indexRegister, Assembler::ScalePtr, SpaceSplitStringData::tokensMemoryOffset()), classNameToMatch);
 
         // Increment the index.
         m_assembler.add32(Assembler::TrustedImm32(1), indexRegister);

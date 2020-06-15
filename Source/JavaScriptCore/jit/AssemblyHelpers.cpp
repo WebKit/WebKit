@@ -382,7 +382,7 @@ void AssemblyHelpers::emitLoadStructure(VM& vm, RegisterID source, RegisterID de
     load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), scratch2);
     loadPtr(vm.heap.structureIDTable().base(), scratch);
     rshift32(scratch2, TrustedImm32(StructureIDTable::s_numberOfEntropyBits), dest);
-    loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);
+    loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::ScalePtr), dest);
     lshiftPtr(TrustedImm32(StructureIDTable::s_entropyBitsShiftForStructurePointer), scratch2);
     xorPtr(scratch2, dest);
 #else // not USE(JSVALUE64)
@@ -572,7 +572,7 @@ void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspa
     urshift32(TrustedImm32(stepShift), scratchGPR1);
     slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
     move(TrustedImmPtr(subspace.allocatorForSizeStep()), scratchGPR2);
-    loadPtr(BaseIndex(scratchGPR2, scratchGPR1, timesPtr()), scratchGPR1);
+    loadPtr(BaseIndex(scratchGPR2, scratchGPR1, ScalePtr), scratchGPR1);
     
     emitAllocate(resultGPR, JITAllocator::variable(), scratchGPR1, scratchGPR2, slowPath);
 }
@@ -608,11 +608,9 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
         RegisterAtOffset entry = allCalleeSaves->at(i);
         if (dontRestoreRegisters.get(entry.reg()))
             continue;
-        if (entry.reg().isGPR()) {
-            if (i != scratchGPREntryIndex)
-                loadPtr(Address(scratch, entry.offset()), entry.reg().gpr());
-        } else
-            loadDouble(Address(scratch, entry.offset()), entry.reg().fpr());
+        if (i == scratchGPREntryIndex)
+            continue;
+        loadReg(Address(scratch, entry.offset()), entry.reg());
     }
 
     // Restore the callee save value of the scratch.
@@ -620,7 +618,7 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
     ASSERT(!dontRestoreRegisters.get(entry.reg()));
     ASSERT(entry.reg().isGPR());
     ASSERT(scratch == entry.reg().gpr());
-    loadPtr(Address(scratch, entry.offset()), scratch);
+    loadReg(Address(scratch, entry.offset()), scratch);
 #else
     UNUSED_PARAM(topEntryFrame);
 #endif
@@ -988,10 +986,7 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
         RegisterAtOffset entry = allCalleeSaves->at(i);
         if (dontCopyRegisters.get(entry.reg()))
             continue;
-        if (entry.reg().isGPR())
-            storePtr(entry.reg().gpr(), Address(calleeSavesBuffer, entry.offset()));
-        else
-            storeDouble(entry.reg().fpr(), Address(calleeSavesBuffer, entry.offset()));
+        storeReg(entry.reg(), Address(calleeSavesBuffer, entry.offset()));
     }
 #else
     UNUSED_PARAM(calleeSavesBuffer);

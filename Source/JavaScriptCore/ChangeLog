@@ -1,3 +1,83 @@
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
+        JIT thunks should work on arm64_32
+        https://bugs.webkit.org/show_bug.cgi?id=213103
+
+        Reviewed by Saam Barati.
+
+        This patch fixes various issues when running JSC on arm64_32 with
+        useJIT=1 and useBaselineJIT=0. In particular this patch makes the
+        following changes:
+
+        1) ScalePtr is now just part of the Scale enum and is set based on
+        the size of the address space.
+
+        2) MacroAssembler::*Ptr functions call 32/64 bit variants based on
+        Address space size rather than cpu architecture. Vetting of callsites
+        using Ptr as 64 will happen in future patches since it's hard to
+        comprehensively vet.
+
+        3) Add some missing variants of functions for when pointers are 32-bit.
+
+        4) Add a load/storeReg function that stores a full register regardless
+        of pointer size for storing/loading callee saves.
+
+        5) numberOfDFGCompiles should report a big number for
+        useBaselineJIT=0 as some tests fail by default if useBaselineJIT=0
+        but useJIT=1.
+
+        6) Assert BaseIndex has a scale of PtrSize or TimesOne (for pre-scaled
+        values) when passed to a load/storePtr function.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::timesPtr): Deleted.
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::rotateRightPtr):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::loadPtrWithCompactAddressOffsetPatch):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::shouldBlindDouble):
+        (JSC::MacroAssembler::moveDouble):
+        (JSC::MacroAssembler::store64):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::add32):
+        (JSC::MacroAssemblerARM64::signExtend32ToPtr):
+        (JSC::MacroAssemblerARM64::loadPtr):
+        (JSC::MacroAssemblerARM64::call):
+        (JSC::MacroAssemblerARM64::farJump):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::rotateRight32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::rotateRight32):
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * b3/B3LowerMacros.cpp:
+        * b3/testb3_6.cpp:
+        (testInterpreter):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeReg):
+        (JSC::AssemblyHelpers::loadReg):
+        (JSC::AssemblyHelpers::emitMaterializeTagCheckRegisters):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeaderPtr):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeader32):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeader64):
+        (JSC::AssemblyHelpers::emitPutToCallFrameHeader):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enumerator_structure_pname):
+        (JSC::JIT::emit_op_enumerator_generic_pname):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::numberOfDFGCompiles):
+
 2020-06-15  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] add machinery to disable JIT tiers when experimental features are enabled

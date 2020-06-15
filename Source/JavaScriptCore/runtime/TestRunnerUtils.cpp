@@ -65,7 +65,7 @@ JSValue numberOfDFGCompiles(JSValue theFunctionValue)
 {
     bool pretendToHaveManyCompiles = false;
 #if ENABLE(DFG_JIT)
-    if (!Options::useJIT() || !Options::useDFGJIT())
+    if (!Options::useJIT() || !Options::useBaselineJIT() || !Options::useDFGJIT())
         pretendToHaveManyCompiles = true;
 #else
     pretendToHaveManyCompiles = true;

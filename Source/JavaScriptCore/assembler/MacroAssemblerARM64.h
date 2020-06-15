@@ -89,8 +89,6 @@ public:
     template <Assembler::CopyFunction copy>
     static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<copy>(record, from, fromInstruction, to); }
 
-    static constexpr Scale ScalePtr = TimesEight;
-
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
         // This is the largest 32-bit access allowed, aligned to 64-bit boundary.
@@ -152,13 +150,18 @@ public:
 
     void add32(RegisterID a, RegisterID b, RegisterID dest)
     {
-        ASSERT(a != ARM64Registers::sp && b != ARM64Registers::sp);
+        ASSERT(a != ARM64Registers::sp || b != ARM64Registers::sp);
+        if (b == ARM64Registers::sp)
+            std::swap(a, b);
         m_assembler.add<32>(dest, a, b);
     }
 
     void add32(RegisterID src, RegisterID dest)
     {
-        m_assembler.add<32>(dest, dest, src);
+        if (src == ARM64Registers::sp)
+            m_assembler.add<32>(dest, src, dest);
+        else
+            m_assembler.add<32>(dest, dest, src);
     }
 
     void add32(TrustedImm32 imm, RegisterID dest)
@@ -221,6 +224,12 @@ public:
     void add32(Address src, RegisterID dest)
     {
         load32(src, getCachedDataTempRegisterIDAndInvalidate());
+        add32(dataTempRegister, dest);
+    }
+
+    void add32(AbsoluteAddress src, RegisterID dest)
+    {
+        load32(src.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
         add32(dataTempRegister, dest);
     }
 
@@ -2497,9 +2506,9 @@ public:
 
     void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
     {
-        move(TrustedImmPtr(reinterpret_cast<void*>(static_cast<intptr_t>(imm.m_value))), dest);
+        move(TrustedImm64(imm.m_value), dest);
     }
-    
+
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtw(dest, src);
@@ -3324,6 +3333,17 @@ public:
 
     // Jumps, calls, returns
 
+    // duplicate MacroAssembler's loadPtr for loading call targets.
+    template<typename... Args>
+    ALWAYS_INLINE void loadPtr(Args... args)
+    {
+#if CPU(ADDRESS64)
+        load64(args...);
+#else
+        load32(args...);
+#endif
+    }
+
     ALWAYS_INLINE Call call(PtrTag)
     {
         AssemblerLabel pointerLabel = m_assembler.label();
@@ -3344,7 +3364,7 @@ public:
 
     ALWAYS_INLINE Call call(Address address, PtrTag tag)
     {
-        load64(address, getCachedDataTempRegisterIDAndInvalidate());
+        loadPtr(address, getCachedDataTempRegisterIDAndInvalidate());
         return call(dataTempRegister, tag);
     }
 
@@ -3373,20 +3393,20 @@ public:
 
     void farJump(Address address, PtrTag)
     {
-        load64(address, getCachedDataTempRegisterIDAndInvalidate());
+        loadPtr(address, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.br(dataTempRegister);
     }
     
     void farJump(BaseIndex address, PtrTag)
     {
-        load64(address, getCachedDataTempRegisterIDAndInvalidate());
+        loadPtr(address, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.br(dataTempRegister);
     }
 
     void farJump(AbsoluteAddress address, PtrTag)
     {
         move(TrustedImmPtr(address.m_ptr), getCachedDataTempRegisterIDAndInvalidate());
-        load64(Address(dataTempRegister), dataTempRegister);
+        loadPtr(Address(dataTempRegister), dataTempRegister);
         m_assembler.br(dataTempRegister);
     }
 

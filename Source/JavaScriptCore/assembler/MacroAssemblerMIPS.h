@@ -61,8 +61,6 @@ public:
         return getLSBSet(v);
     }
 
-    static constexpr Scale ScalePtr = TimesFour;
-
     // For storing immediate number
     static constexpr RegisterID immTempRegister = MIPSRegisters::t0;
     // For storing data loaded from the memory
@@ -618,6 +616,12 @@ public:
             }
             m_assembler.sw(dataTempRegister, addrTempRegister, address.offset);
         }
+    }
+
+    // This is only referenced by code intented for ARM64_32.
+    void rotateRight32(TrustedImm32, RegisterID)
+    {
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void rshift32(RegisterID shiftAmount, RegisterID dest)

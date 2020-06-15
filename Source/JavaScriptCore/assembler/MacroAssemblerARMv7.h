@@ -105,8 +105,6 @@ public:
     };
     
 public:
-    static constexpr Scale ScalePtr = TimesFour;
-
     enum RelationalCondition {
         Equal = ARMv7Assembler::ConditionEQ,
         NotEqual = ARMv7Assembler::ConditionNE,
@@ -439,6 +437,19 @@ public:
             move(imm, dataTempRegister);
             m_assembler.orr(dest, src, dataTempRegister);
         }
+    }
+
+    void rotateRight32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        if (!imm.m_value)
+            move(src, dest);
+        else
+            m_assembler.ror(dest, src, imm.m_value & 0x1f);
+    }
+
+    void rotateRight32(TrustedImm32 imm, RegisterID srcDst)
+    {
+        rotateRight32(srcDst, imm, srcDst);
     }
 
     void rshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)

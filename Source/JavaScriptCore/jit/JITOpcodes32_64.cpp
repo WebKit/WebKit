@@ -1320,7 +1320,7 @@ void JIT::emit_op_enumerator_structure_pname(const Instruction* currentInstructi
     inBounds.link(this);
 
     loadPtr(Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), regT1);
-    loadPtr(BaseIndex(regT1, regT0, timesPtr()), regT0);
+    loadPtr(BaseIndex(regT1, regT0, ScalePtr), regT0);
     move(TrustedImm32(JSValue::CellTag), regT2);
 
     done.link(this);
@@ -1345,7 +1345,7 @@ void JIT::emit_op_enumerator_generic_pname(const Instruction* currentInstruction
     inBounds.link(this);
 
     loadPtr(Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), regT1);
-    loadPtr(BaseIndex(regT1, regT0, timesPtr()), regT0);
+    loadPtr(BaseIndex(regT1, regT0, ScalePtr), regT0);
     move(TrustedImm32(JSValue::CellTag), regT2);
     
     done.link(this);

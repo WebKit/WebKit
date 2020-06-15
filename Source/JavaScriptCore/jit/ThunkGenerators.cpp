@@ -302,8 +302,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 
     // Check for an exception
 #if USE(JSVALUE64)
-    jit.load64(vm.addressOfException(), JSInterfaceJIT::regT2);
-    JSInterfaceJIT::Jump exceptionHandler = jit.branchTest64(JSInterfaceJIT::NonZero, JSInterfaceJIT::regT2);
+    jit.loadPtr(vm.addressOfException(), JSInterfaceJIT::regT2);
+    JSInterfaceJIT::Jump exceptionHandler = jit.branchTestPtr(JSInterfaceJIT::NonZero, JSInterfaceJIT::regT2);
 #else
     JSInterfaceJIT::Jump exceptionHandler = jit.branch32(
         JSInterfaceJIT::NotEqual,

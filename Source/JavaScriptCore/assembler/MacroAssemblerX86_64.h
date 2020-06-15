@@ -40,8 +40,6 @@ public:
     static constexpr unsigned numGPRs = 16;
     static constexpr unsigned numFPRs = 16;
     
-    static constexpr Scale ScalePtr = TimesEight;
-
     static constexpr RegisterID InvalidGPRReg = X86Registers::InvalidGPRReg;
 
     using MacroAssemblerX86Common::add32;

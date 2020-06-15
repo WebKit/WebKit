@@ -36,8 +36,6 @@ public:
     static constexpr unsigned numGPRs = 8;
     static constexpr unsigned numFPRs = 8;
     
-    static constexpr Scale ScalePtr = TimesFour;
-
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
     using MacroAssemblerX86Common::branchAdd32;

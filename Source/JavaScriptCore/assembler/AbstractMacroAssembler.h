@@ -120,14 +120,8 @@ public:
         TimesTwo,
         TimesFour,
         TimesEight,
+        ScalePtr = isAddress64Bit() ? TimesEight : TimesFour,
     };
-    
-    static Scale timesPtr()
-    {
-        if (sizeof(void*) == 4)
-            return TimesFour;
-        return TimesEight;
-    }
     
     struct BaseIndex;
     
