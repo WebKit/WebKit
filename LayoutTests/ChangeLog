@@ -1,5 +1,11 @@
 2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Remove stale flaky timeout failures from test expectations.
+
+        * platform/wpe/TestExpectations:
+
+2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Update test expectations after 263019.
 
         * platform/wpe/TestExpectations:

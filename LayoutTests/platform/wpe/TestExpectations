@@ -60,7 +60,6 @@ scrollingcoordinator/ios/ [ Skip ]
 # 1. TESTS THAT REQUIRE NEW RESULTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 2. EXPECTED FAILURES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +441,7 @@ webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
 
 webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
-                    fast/text/variations/optical-sizing-trak-2.html [ Skip ]
+fast/text/variations/optical-sizing-trak-2.html [ Skip ]
 
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 
@@ -1021,10 +1020,6 @@ webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure
 
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
-webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
-
-Bug(WPE) js/dom/create-lots-of-workers.html [ Pass Timeout ]
-
 webkit.org/b/187323 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Pass Failure ]
 
 webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure Pass ]
@@ -1036,8 +1031,6 @@ webkit.org/b/187595 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid
 webkit.org/b/187595 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-002.html [ Failure Pass ]
 
 webkit.org/b/187596 fast/events/autoscroll-with-non-scrollable-parent.html [ Timeout Pass ]
-
-webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
 
 webkit.org/b/187599 svg/hittest/svg-visual-overflow-rect.html [ Timeout Pass ]
 
@@ -1070,7 +1063,7 @@ webkit.org/b/192893 http/tests/workers/service/postmessage-after-sw-process-cras
 
 webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 
-webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
+webkit.org/b/178705 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
@@ -1245,8 +1238,6 @@ webkit.org/b/208327 http/wpt/service-workers/postMessage-fetch-order.https.html 
 webkit.org/b/208327 http/wpt/service-workers/ready.https.window.html [ Failure Pass ]
 
 webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Failure Pass ]
-
-webkit.org/b/205856 storage/indexeddb/IDBTransaction-page-cache.html [ Pass Timeout ]
 
 webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
 
@@ -1581,7 +1572,6 @@ webkit.org/b/201983 accessibility/w3c-svg-roles.html [ Missing ]
 # =========
 webkit.org/b/180693 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Skip ]
 
-
 # WPT: css
 # ========
 
@@ -1686,7 +1676,6 @@ webkit.org/b/174674 fast/events/selectstart-by-double-triple-clicks.html [ Failu
 webkit.org/b/174674 fast/events/zoom-dblclick.html [ Failure ]
 
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
-
 
 # The tests below need gardening after the EventSenderWPE has been added.
 # Most of them are probably failing because of missing support of event related
@@ -1880,7 +1869,6 @@ webkit.org/b/185676 fullscreen/requestFullscreen-escape-key.html [ Failure ]
 webkit.org/b/185676 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/185676 fullscreen/full-screen-plugin.html [ Timeout ]
 
-
 webkit.org/b/186141 svg/dom/SVGGeometry-isPointInStroke.xhtml [ Failure ]
 
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
@@ -1888,13 +1876,11 @@ webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Fai
 webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
-
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
 webkit.org/b/187601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
-
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
 
@@ -2068,20 +2054,10 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-006.html [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-007.html [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-008.html [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-009.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-010.html [ Timeout ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-002.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001.xht [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-004.html [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-allow-end-001.xht [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-001.html [ Timeout Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-007.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ Timeout ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ Timeout ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-scrollable-001.html [ Timeout Pass ]
 
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
 
