@@ -11,14 +11,11 @@ sources:
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 - freedesktop-sdk.bst:components/nasm.bst
-- freedesktop-sdk.bst:extensions/ffmpeg-full/ffmpeg.bst
 depends:
+- sdk/ffmpeg.bst
 - sdk/gst-plugins-base.bst
 - freedesktop-sdk.bst:components/orc.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
-
-environment:
-  PKG_CONFIG_PATH: /usr/lib/%{gcc_triplet}/ffmpeg/lib/pkgconfig/:/usr/lib/%{gcc_triplet}/pkgconfig
 
 variables:
   meson-local: |
@@ -28,3 +25,7 @@ public:
   bst:
     overlap-whitelist:
     - '**'
+
+    integration-commands:
+    - |
+      gst-inspect-1.0 libav

@@ -97,12 +97,6 @@ config:
       download-if: have-intel-gpu
       version: '%{freedesktop-sdk-flatpak-branch}'
 
-    Extension org.freedesktop.Platform.ffmpeg-full:
-      directory: '%{lib}/ffmpeg'
-      add-ld-path: '.'
-      autodelete: 'false'
-      version: '%{freedesktop-sdk-flatpak-branch}'
-
     (?):
     - arch in ["x86_64", "aarch64"]:
         Extension org.webkit.Sdk.Compat.arm:

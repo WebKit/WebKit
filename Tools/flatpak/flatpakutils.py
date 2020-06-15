@@ -936,8 +936,6 @@ class WebkitFlatpak:
 
         packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", "19.08",
                                        self.flathub_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Platform.ffmpeg-full", "19.08",
-                                       self.flathub_repo, arch))
         return packages
 
     def install_all(self):

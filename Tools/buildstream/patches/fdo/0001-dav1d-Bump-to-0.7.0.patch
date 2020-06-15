@@ -1,0 +1,22 @@
+From a4dc4cae545532cfbd98724573488036a0842324 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 6 Jun 2020 13:00:47 +0100
+Subject: [PATCH] dav1d: Bump to 0.7.0
+
+---
+ elements/components/dav1d.bst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/elements/components/dav1d.bst b/elements/components/dav1d.bst
+index e1ea10fdd..d0150deec 100644
+--- a/elements/components/dav1d.bst
++++ b/elements/components/dav1d.bst
+@@ -22,4 +22,4 @@ sources:
+ - kind: git_tag
+   url: videolan:dav1d.git
+   track: master
+-  ref: 0.4.0-0-g5f63e531b9d10a09afe0a6b4875ca4852a7e58c1
++  ref: 0.7.0-0-gdf40d36d84fbdd3aae827b36d1a15739efb9225b
+-- 
+2.26.2
+

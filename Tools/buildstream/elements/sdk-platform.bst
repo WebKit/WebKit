@@ -16,6 +16,7 @@ depends:
 - sdk/capnp.bst
 - sdk/ccls.bst
 - sdk/enchant-2.bst
+- sdk/ffmpeg.bst
 - sdk/glib-networking.bst
 - sdk/glib.bst
 - sdk/graphviz.bst
@@ -30,6 +31,7 @@ depends:
 - sdk/icecc.bst
 - sdk/intltool.bst
 - sdk/krb5.bst
+- sdk/libavif.bst
 - sdk/libcap-ng.bst
 - sdk/libevent.bst
 - sdk/libgcrypt.bst
@@ -76,6 +78,7 @@ depends:
 - freedesktop-sdk.bst:components/cups.bst
 - freedesktop-sdk.bst:components/curl.bst
 - freedesktop-sdk.bst:components/cyrus-sasl.bst
+- freedesktop-sdk.bst:components/dav1d.bst
 - freedesktop-sdk.bst:components/dbus.bst
 - freedesktop-sdk.bst:components/dejavu-fonts.bst
 - freedesktop-sdk.bst:components/dictionaries.bst
@@ -83,7 +86,6 @@ depends:
 - freedesktop-sdk.bst:components/e2fsprogs.bst
 - freedesktop-sdk.bst:components/emoji-one-font.bst
 - freedesktop-sdk.bst:components/expat.bst
-- freedesktop-sdk.bst:components/ffmpeg.bst
 - freedesktop-sdk.bst:components/fftw.bst
 - freedesktop-sdk.bst:components/flatpak-xdg-utils.bst
 - freedesktop-sdk.bst:components/flex.bst

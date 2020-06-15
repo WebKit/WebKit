@@ -82,9 +82,3 @@ config:
       add-ld-path: extra
       autodelete: 'false'
       version: '%{freedesktop-sdk-flatpak-branch}'
-
-    Extension org.freedesktop.Platform.ffmpeg-full:
-      directory: '%{lib}/ffmpeg'
-      add-ld-path: '.'
-      autodelete: 'false'
-      version: '%{freedesktop-sdk-flatpak-branch}'
