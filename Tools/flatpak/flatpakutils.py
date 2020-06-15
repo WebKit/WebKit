@@ -196,6 +196,16 @@ class FlatpakObject:
         _log.debug("Executing %s" % ' '.join(command))
         return run_sanitized(command, gather_output=gather_output)
 
+    def version(self, ref_id):
+        output = self.flatpak("info", ref_id, gather_output=True)
+        for line in output.splitlines():
+            tokens = line.split(":")
+            if len(tokens) != 2:
+                continue
+            if tokens[0].strip().lower() == "version":
+                return tokens[1].strip()
+        return ""
+
 class FlatpakPackages(FlatpakObject):
 
     def __init__(self, repos, user=True):
@@ -391,8 +401,8 @@ class WebkitFlatpak:
 
         parser = argparse.ArgumentParser(prog="webkit-flatpak", add_help=add_help)
         general = parser.add_argument_group("General")
-        general.add_argument('--verbose', action='store_true',
-                             help='Show debug message')
+        general.add_argument('--verbose', action='store_true', help='Show debug messages')
+        general.add_argument('--version', action='store_true', help='Show SDK version', dest="show_version")
         type_group = parser.add_mutually_exclusive_group()
         type_group.add_argument("--debug",
                                 help="Compile with Debug configuration, also installs Sdk debug symbols.",
@@ -454,6 +464,7 @@ class WebkitFlatpak:
         self.sdk = None
         self.user_repo = None
 
+        self.show_version = False
         self.verbose = False
         self.quiet = False
         self.update = False
@@ -812,10 +823,15 @@ class WebkitFlatpak:
         if not self.clean_args():
             return 1
 
+        if self.show_version:
+            print(self.sdk_repo.version("org.webkit.Sdk"))
+            return 0
+
         if self.update:
             repo = self.sdk_repo
-            update_output = repo.flatpak("update", gather_output=True, comment="Updating Flatpak %s environment" % self.build_type)
-            regenerate_toolchains = update_output.find("Nothing to do") == -1
+            version_before_update = repo.version("org.webkit.Sdk")
+            repo.flatpak("update", comment="Updating Flatpak %s environment" % self.build_type)
+            regenerate_toolchains = repo.version("org.webkit.Sdk") != version_before_update
 
             for package in self._get_packages():
                 if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
