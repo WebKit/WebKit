@@ -671,6 +671,8 @@ webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 
+webkit.org/b/213188 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -953,8 +955,6 @@ fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/199440 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Timeout Crash ]
-
 webkit.org/b/177633 editing/async-clipboard/clipboard-change-data-while-writing.html [ Failure ]
 webkit.org/b/177633 editing/async-clipboard/clipboard-read-text-from-platform.html [ Failure ]
 
@@ -977,6 +977,8 @@ webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_req
 webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Crash ]
 webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Crash ]
 webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Crash ]
+
+webkit.org/b/newbug imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS
