@@ -1,3 +1,12 @@
+2020-06-15  Jason Lawrence  <lawrence.j@apple.com>
+
+        REGRESSION: [ Mac wk2 ] inspector/canvas/create-context-webgpu.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=213123
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Remove stale flaky text and image failures from test expectations.
