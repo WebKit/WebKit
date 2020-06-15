@@ -1156,12 +1156,21 @@ Optional<LayoutUnit> RenderFlexibleBox::crossSizeForPercentageResolution(const R
 
 Optional<LayoutUnit> RenderFlexibleBox::mainSizeForPercentageResolution(const RenderBox& child)
 {
-    // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
-    // If the flex container has a definite main size the flex item post-flexing main size is also treated
-    // as definite. We make up a percentage to check whether we have a definite size.
-    if (!mainAxisLengthIsDefinite(child, Length(0, Percent)))
+    // This function implements section 9.8. Definite and Indefinite Sizes, case
+    // 2) of the flexbox spec.
+    // We need to check for the flexbox to have a definite main size, and for the
+    // flex item to have a definite flex basis.
+    const Length& flexBasis = flexBasisForChild(child);
+    if (!mainAxisLengthIsDefinite(child, flexBasis))
         return WTF::nullopt;
-
+    if (!flexBasis.isPercentOrCalculated()) {
+        // If flex basis had a percentage, our size is guaranteed to be definite or
+        // the flex item's size could not be definite. Otherwise, we make up a
+        // percentage to check whether we have a definite size.
+        if (!mainAxisLengthIsDefinite(child, Length(0, Percent)))
+            return WTF::nullopt;
+    }
+    
     if (hasOrthogonalFlow(child))
         return child.hasOverrideContentLogicalHeight() ? Optional<LayoutUnit>(child.overrideContentLogicalHeight()) : WTF::nullopt;
     return child.hasOverrideContentLogicalWidth() ? Optional<LayoutUnit>(child.overrideContentLogicalWidth()) : WTF::nullopt;

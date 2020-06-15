@@ -1,3 +1,16 @@
+2020-06-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, reverting r262124.
+
+        Twitter videos go blank after exiting fullscreen
+
+        Reverted changeset:
+
+        "[css-flex] Allow indefinite size flex items to be definite
+        wrt resolving percentages inside them"
+        https://bugs.webkit.org/show_bug.cgi?id=212264
+        https://trac.webkit.org/changeset/262124
+
 2020-06-14  Sam Weinig  <weinig@apple.com>
 
         [WPT] html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html fails due to lack of caching of Plugin objects
