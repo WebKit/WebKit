@@ -150,6 +150,7 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebViewBackend.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebViewSessionState.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebsiteData.h
+    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebsiteDataAccessPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebsiteDataManager.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWindowProperties.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/webkit.h

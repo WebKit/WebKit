@@ -1,3 +1,37 @@
+2020-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to expose UIClient::requestStorageAccessConfirm
+        https://bugs.webkit.org/show_bug.cgi?id=210422
+
+        Reviewed by Michael Catanzaro.
+
+        Add WebKitWebsiteDataAccessPermissionRequest to ask for permission to the user using the existing permission
+        request API.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequest.cpp: Added.
+        (webkitWebsiteDataAccessPermissionRequestAllow):
+        (webkitWebsiteDataAccessPermissionRequestDeny):
+        (webkit_permission_request_interface_init):
+        (webkitWebsiteDataAccessPermissionRequestDispose):
+        (webkit_website_data_access_permission_request_class_init):
+        (webkitWebsiteDataAccessPermissionRequestCreate):
+        (webkit_website_data_access_permission_request_get_requesting_domain):
+        (webkit_website_data_access_permission_request_get_current_domain):
+        * UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebsiteDataAccessPermissionRequest.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/WebKitWebsiteDataAccessPermissionRequest.h: Added.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/API/wpe/docs/wpe-docs.sgml:
+        * UIProcess/API/wpe/webkit.h:
+
 2020-06-14  Sam Weinig  <weinig@apple.com>
 
         [WPT] html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html fails due to lack of caching of Plugin objects

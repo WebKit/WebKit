@@ -84,6 +84,7 @@
 #include <wpe/WebKitWebViewBackend.h>
 #include <wpe/WebKitWebViewSessionState.h>
 #include <wpe/WebKitWebsiteData.h>
+#include <wpe/WebKitWebsiteDataAccessPermissionRequest.h>
 #include <wpe/WebKitWebsiteDataManager.h>
 #include <wpe/WebKitWindowProperties.h>
 

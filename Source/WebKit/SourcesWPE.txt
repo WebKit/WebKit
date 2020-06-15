@@ -178,6 +178,7 @@ UIProcess/API/glib/WebKitWebView.cpp @no-unify
 UIProcess/API/glib/WebKitWebViewAccessible.cpp @no-unify
 UIProcess/API/glib/WebKitWebViewSessionState.cpp @no-unify
 UIProcess/API/glib/WebKitWebsiteData.cpp @no-unify
+UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitWebsiteDataManager.cpp @no-unify
 UIProcess/API/glib/WebKitWindowProperties.cpp @no-unify
 

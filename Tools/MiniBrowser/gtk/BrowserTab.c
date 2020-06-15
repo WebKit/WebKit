@@ -333,6 +333,13 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
         tab->pointerLockMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)pointerLockMessageTimeoutCallback, tab);
         g_source_set_name_by_id(tab->pointerLockMessageLabelId, "[WebKit]pointerLockMessageTimeoutCallback");
         return TRUE;
+    } else if (WEBKIT_IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST(request)) {
+        title = "WebsiteData access request";
+        WebKitWebsiteDataAccessPermissionRequest *websiteDataAccessRequest = WEBKIT_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST(request);
+        const gchar *requestingDomain = webkit_website_data_access_permission_request_get_requesting_domain(websiteDataAccessRequest);
+        const gchar *currentDomain = webkit_website_data_access_permission_request_get_current_domain(websiteDataAccessRequest);
+        text = g_strdup_printf("Do you want to allow \"%s\" to use cookies while browsing \"%s\"? This will allow \"%s\" to track your activity",
+            requestingDomain, currentDomain, requestingDomain);
     } else {
         g_print("%s request not handled\n", G_OBJECT_TYPE_NAME(request));
         return FALSE;

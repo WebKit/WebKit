@@ -1,3 +1,15 @@
+2020-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to expose UIClient::requestStorageAccessConfirm
+        https://bugs.webkit.org/show_bug.cgi?id=210422
+
+        Reviewed by Michael Catanzaro.
+
+        Handle WebKitWebsiteDataAccessPermissionRequest in MiniBrowser.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (decidePermissionRequest):
+
 2020-06-15  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add libavif

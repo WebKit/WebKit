@@ -90,6 +90,7 @@
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWebViewSessionState.h>
 #include <webkit2/WebKitWebsiteData.h>
+#include <webkit2/WebKitWebsiteDataAccessPermissionRequest.h>
 #include <webkit2/WebKitWebsiteDataManager.h>
 #include <webkit2/WebKitWindowProperties.h>
 

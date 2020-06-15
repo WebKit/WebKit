@@ -66,6 +66,7 @@
     <xi:include href="xml/WebKitUserMessage.xml"/>
     <xi:include href="xml/WebKitPointerLockPermissionRequest.xml"/>
     <xi:include href="xml/WebKitInputMethodContext.xml"/>
+    <xi:include href="xml/WebKitWebsiteDataAccessPermissionRequest.xml"/>
   </chapter>
 
   <chapter>
