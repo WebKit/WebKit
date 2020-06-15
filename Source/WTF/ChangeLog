@@ -1,3 +1,14 @@
+2020-06-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Pack bytes a little tighter in MemoryPressureHandler
+        https://bugs.webkit.org/show_bug.cgi?id=200392
+
+        Reviewed by Yusuke Suzuki.
+
+        Save a tiny bit of memory by packing member variables tighter in MemoryPressureHandler.
+
+        * wtf/MemoryPressureHandler.h:
+
 2020-06-12  Keith Miller  <keith_miller@apple.com>
 
         Tests expecting a crash should use a signal handler in the JSC CLI process
