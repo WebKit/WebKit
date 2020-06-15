@@ -1086,6 +1086,13 @@ void AudioContext::nodeWillBeginPlayback()
         startRendering();
 }
 
+static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
+{
+    if (document.processingUserGestureForMedia() || document.isCapturing())
+        return true;
+    return document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction();
+}
+
 bool AudioContext::willBeginPlayback()
 {
     auto* document = this->document();
@@ -1093,7 +1100,7 @@ bool AudioContext::willBeginPlayback()
         return false;
 
     if (userGestureRequiredForAudioStart()) {
-        if (!document->processingUserGestureForMedia() && !document->isCapturing()) {
+        if (!shouldDocumentAllowWebAudioToAutoPlay(*document)) {
             ALWAYS_LOG(LOGIDENTIFIER, "returning false, not processing user gesture or capturing");
             return false;
         }

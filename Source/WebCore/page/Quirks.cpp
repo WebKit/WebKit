@@ -130,6 +130,15 @@ bool Quirks::shouldAutoplayForArbitraryUserGesture() const
 #endif
 }
 
+bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "www.bing.com");
+}
+
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
     if (!needsQuirks())

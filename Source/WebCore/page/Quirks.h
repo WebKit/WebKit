@@ -49,6 +49,7 @@ public:
     bool needsSeekingSupportDisabled() const;
     bool needsPerDocumentAutoplayBehavior() const;
     bool shouldAutoplayForArbitraryUserGesture() const;
+    bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
     bool shouldStripQuotationMarkInFontFaceSetFamily() const;
 #if ENABLE(TOUCH_EVENTS)
