@@ -119,17 +119,6 @@ TextManipulationController::TextManipulationController(Document& document)
 {
 }
 
-bool TextManipulationController::isInManipulatedElement(Element& element)
-{
-    if (!m_manipulatedElements.capacity())
-        return false; // Fast path for startObservingParagraphs.
-    for (auto& ancestorOrSelf : lineageOfType<Element>(element)) {
-        if (m_manipulatedElements.contains(ancestorOrSelf))
-            return true;
-    }
-    return false;
-}
-
 void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback, Vector<ExclusionRule>&& exclusionRules)
 {
     auto document = makeRefPtr(m_document.get());
@@ -433,8 +422,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         }
 
         if (RefPtr<Element> currentElementAncestor = is<Element>(*contentNode) ? downcast<Element>(contentNode) : contentNode->parentOrShadowHostElement()) {
-            // We can exit early here because scheduleObservationUpdate calls this function on each paragraph separately.
-            if (isInManipulatedElement(*currentElementAncestor))
+            if (m_manipulatedElements.contains(*currentElementAncestor))
                 return;
         }
 
@@ -488,7 +476,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
 void TextManipulationController::didCreateRendererForElement(Element& element)
 {
-    if (isInManipulatedElement(element))
+    if (m_manipulatedElements.contains(element))
         return;
 
     if (m_elementsWithNewRenderer.computesEmpty())
@@ -630,7 +618,7 @@ Vector<Ref<Node>> TextManipulationController::getPath(Node* ancestor, Node* node
     return path;
 }
 
-void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDownPath, const Vector<Ref<Node>>& currentTopDownPath, Node* currentNode, HashSet<Ref<Node>>& insertedNodes, Vector<NodeInsertion>& insertions)
+void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDownPath, const Vector<Ref<Node>>& currentTopDownPath, Node* currentNode, HashSet<Ref<Node>>& insertedNodes, Vector<NodeInsertion>& insertions, IsNodeManipulated isNodeManipulated)
 {
     size_t i =0;
     while (i < lastTopDownPath.size() && i < currentTopDownPath.size() && lastTopDownPath[i].first.ptr() == currentTopDownPath[i].ptr())
@@ -654,7 +642,7 @@ void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDown
     }
 
     if (currentNode)
-        insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *currentNode });
+        insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *currentNode, isNodeManipulated });
 }
 
 auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens) -> Optional<ManipulationFailureType>
@@ -783,14 +771,14 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     RefPtr<Node> endNode = end.firstNode();
     if (node && node != endNode) {
         auto topDownPath = getPath(commonAncestor.get(), node->parentNode());
-        updateInsertions(lastTopDownPath, topDownPath, nullptr, reusedOriginalNodes, insertions);
+        updateInsertions(lastTopDownPath, topDownPath, nullptr, reusedOriginalNodes, insertions, IsNodeManipulated::No);
     }
     while (node != endNode) {
         Ref<Node> parentNode = *node->parentNode();
         while (!lastTopDownPath.isEmpty() && lastTopDownPath.last().first.ptr() != parentNode.ptr())
             lastTopDownPath.removeLast();
 
-        insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *node });
+        insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *node, IsNodeManipulated::No });
         lastTopDownPath.append({ *node, *node });
         node = NodeTraversal::next(*node);
     }
@@ -808,7 +796,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             insertionPoint = positionInParentAfterNode(insertion.child.ptr());
         } else
             insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
-        if (is<Element>(insertion.child.get()))
+        if (is<Element>(insertion.child.get()) && insertion.isChildManipulated == IsNodeManipulated::Yes)
             m_manipulatedElements.add(downcast<Element>(insertion.child.get()));
     }
 

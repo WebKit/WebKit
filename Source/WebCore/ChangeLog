@@ -1,3 +1,26 @@
+2020-06-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation does not observe newly displayed element inside previously observed content
+        https://bugs.webkit.org/show_bug.cgi?id=213156
+
+        Reviewed by Darin Adler.
+
+        Fix two issues:
+        1. Some inserted nodes are marked as manipulated, but they are inserted because they get removed in the
+        replacement process, not because they are manipulated or in the range of item.
+        2. TextManipulationController does not perform manipulation on an element if its ancestor is manipulated. This
+        means the newly inserted/displayed children of a manipulated element are ruled out for manipulation.
+
+        Test: TextManipulation.CompleteTextManipulationForNewlyDisplayedParagraph
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::TextManipulationController::didCreateRendererForElement):
+        (WebCore::TextManipulationController::updateInsertions):
+        (WebCore::TextManipulationController::replace):
+        (WebCore::TextManipulationController::isInManipulatedElement): Deleted.
+        * editing/TextManipulationController.h:
+
 2020-06-15  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Suppress compiler warnings

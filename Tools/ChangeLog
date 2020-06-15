@@ -1,3 +1,13 @@
+2020-06-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation does not observe newly displayed element inside previously observed content
+        https://bugs.webkit.org/show_bug.cgi?id=213156
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-06-15  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Bump Subversion and enable Perl bindings
