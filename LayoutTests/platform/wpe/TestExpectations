@@ -1007,22 +1007,13 @@ webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure
 
 webkit.org/b/187594 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Failure Pass ]
 
-webkit.org/b/187596 fast/events/autoscroll-with-non-scrollable-parent.html [ Timeout Pass ]
-
-webkit.org/b/187599 svg/hittest/svg-visual-overflow-rect.html [ Timeout Pass ]
-
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
 
 webkit.org/b/188047 crypto/workers/subtle/hrsa-postMessage-worker.html [ Failure Pass ]
 
-webkit.org/b/188048 fast/canvas/webgl/worker-data-view-test.html [ Timeout Pass ]
 webkit.org/b/188048 fast/workers/empty-worker-nocrash.html [ Timeout Pass ]
 
 webkit.org/b/188049 fetch/fetch-worker-crash.html [ Timeout Pass ]
-
-webkit.org/b/188051 http/tests/cache/redirect-referer.html [ Timeout Pass ]
-
-webkit.org/b/188052 http/tests/images/draw-pattern-slow-load-large-image.html [ Timeout Pass ]
 
 webkit.org/b/188053 http/wpt/service-workers/update-service-worker.https.html [ Failure Timeout Pass ]
 

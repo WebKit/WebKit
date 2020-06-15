@@ -1,5 +1,11 @@
 2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Remove more stale flaky failures from test expectations.
+
+        * platform/wpe/TestExpectations:
+
+2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Update baselines of flaky tests which were consistently failing for the last 4000 revisions.
 
         * platform/wpe/TestExpectations:
