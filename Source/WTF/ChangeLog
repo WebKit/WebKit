@@ -1,5 +1,13 @@
 2020-06-15  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, build fix for build without mach exceptions.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::SignalHandlers::add):
+        (WTF::addSignalHandler):
+
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
         Signal handlers should have a two phase installation.
         https://bugs.webkit.org/show_bug.cgi?id=213160
 

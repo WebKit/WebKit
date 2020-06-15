@@ -53,6 +53,10 @@ extern "C" {
 
 namespace WTF {
 
+#if HAVE(MACH_EXCEPTIONS)
+static exception_mask_t toMachMask(Signal);
+#endif
+
 void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
@@ -61,6 +65,9 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 
     size_t signalIndex = static_cast<size_t>(signal);
     size_t nextFree = numberOfHandlers[signalIndex];
+#if HAVE(MACH_EXCEPTIONS)
+    addedExceptions |= toMachMask(signal);
+#endif
     RELEASE_ASSERT(nextFree < maxNumberOfHandlers);
     SignalHandlerMemory* memory = &handlers[signalIndex][nextFree];
     new (memory) SignalHandler(WTFMove(handler));
@@ -291,8 +298,6 @@ void addSignalHandler(Signal signal, SignalHandler&& handler)
     static std::once_flag initializeOnceFlags[static_cast<size_t>(Signal::NumberOfSignals)];
     std::call_once(initializeOnceFlags[static_cast<size_t>(signal)], [&] {
         Config::AssertNotFrozenScope assertScope;
-
-        handlers.addedExceptions |= toMachMask(signal);
         if (!handlers.useMach) {
             struct sigaction action;
             action.sa_sigaction = jscSignalHandler;
