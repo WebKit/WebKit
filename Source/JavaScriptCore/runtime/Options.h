@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,7 @@ public:
     JS_EXPORT_PRIVATE static void dumpAllOptionsInALine(StringBuilder&);
 
     JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
+    static void recomputeDependentOptions();
 
 #define DECLARE_OPTION_ACCESSORS(type_, name_, defaultValue_, availability_, description_) \
     ALWAYS_INLINE static OptionsStorage::type_& name_() { return g_jscConfig.options.name_; }  \

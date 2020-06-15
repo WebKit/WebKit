@@ -297,8 +297,10 @@ private:
 void VMTraps::initializeSignals()
 {
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
-    if (!Options::usePollingTraps())
+    if (!Options::usePollingTraps()) {
+        ASSERT(Options::useJIT());
         SignalSender::initializeSignals();
+    }
 #endif
 }
 

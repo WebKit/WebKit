@@ -66,8 +66,12 @@ void initializeThreading()
 
         ExecutableAllocator::initialize();
         VM::computeCanUseJIT();
+        if (!VM::canUseJIT()) {
+            Options::useJIT() = false;
+            Options::recomputeDependentOptions();
+        }
 
-        if (VM::canUseJIT() && Options::useSigillCrashAnalyzer())
+        if (Options::useSigillCrashAnalyzer())
             enableSigillCrashAnalyzer();
 
         LLInt::initialize();

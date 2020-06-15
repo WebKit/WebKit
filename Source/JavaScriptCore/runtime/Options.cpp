@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -375,12 +375,8 @@ static void correctOptions()
         Options::thresholdForGlobalLexicalBindingEpoch() = UINT_MAX;
 }
 
-static void recomputeDependentOptions()
+static void disableAllJITOptions()
 {
-#if !defined(NDEBUG)
-    Options::validateDFGExceptionHandling() = true;
-#endif
-#if !ENABLE(JIT)
     Options::useLLInt() = true;
     Options::useJIT() = false;
     Options::useBaselineJIT() = false;
@@ -388,6 +384,15 @@ static void recomputeDependentOptions()
     Options::useFTLJIT() = false;
     Options::useDOMJIT() = false;
     Options::useRegExpJIT() = false;
+}
+
+void Options::recomputeDependentOptions()
+{
+#if !defined(NDEBUG)
+    Options::validateDFGExceptionHandling() = true;
+#endif
+#if !ENABLE(JIT)
+    disableAllJITOptions();
 #endif
 #if !ENABLE(CONCURRENT_JS)
     Options::useConcurrentJIT() = false;
@@ -407,9 +412,15 @@ static void recomputeDependentOptions()
     Options::useConcurrentGC() = false;
 #endif
 
+    // At initialization time, we may decide that useJIT should be false for any
+    // number of reasons (including failing to allocate JIT memory), and therefore,
+    // will / should not be able to enable any JIT related services.
     if (!Options::useJIT()) {
+        disableAllJITOptions();
+        Options::useConcurrentJIT() = false;
         Options::useSigillCrashAnalyzer() = false;
         Options::useWebAssembly() = false;
+        Options::usePollingTraps() = true;
     }
 
     if (!jitEnabledByDefault() && !Options::useJIT())

@@ -1,3 +1,35 @@
+2020-06-15  Mark Lam  <mark.lam@apple.com>
+
+        Do not install the VMTraps signal handler if Options::useJIT=false.
+        https://bugs.webkit.org/show_bug.cgi?id=212543
+        <rdar://problem/63772519>
+
+        Reviewed by Keith Miller.
+
+        VMTraps is only needed for JITted code.  Hence, if the JIT is disabled, we should
+        set Options::usePollingTraps() to true to indicate that we won't be using VMTraps.
+
+        With this change, we no longer install any signal handling machinery if
+        Options::useJIT() is false.
+
+        Because we may still disable the JIT even if useJIT() is true (due to failure to
+        allocate JIT memory or a number of other factors), we will also add a check of
+        VM::canUseJIT() in initializeThreading(), and disable useJIT() if needed.  Of
+        course, this also means we need to call Options::recomputeDependentOptions() to
+        make other options consistent with useJIT() being false.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/Options.cpp:
+        (JSC::disableAllJITOptions):
+        (JSC::Options::recomputeDependentOptions):
+        (JSC::recomputeDependentOptions): Deleted.
+        * runtime/Options.h:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::initializeSignals):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SigillCrashAnalyzer::instance):
+
 2020-06-15  Keith Miller  <keith_miller@apple.com>
 
         CheckIsConstant should not use BadCache exit kind
