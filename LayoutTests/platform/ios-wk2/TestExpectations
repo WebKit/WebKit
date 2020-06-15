@@ -1715,8 +1715,6 @@ imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_trans
 imported/w3c/web-platform-tests/html/canvas/element/transformations/canvas_transformations_scale_001.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/transformations/transform_a.html [ ImageOnlyFailure ]
 
-webkit.org/b/209281 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/frame-removal.html [ Pass Failure ]
-
 webkit.org/b/209352 http/tests/security/stylesheet-href-redirect.html [ Pass Timeout ]
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
