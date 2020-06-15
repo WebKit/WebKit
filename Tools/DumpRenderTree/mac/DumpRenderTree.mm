@@ -446,7 +446,7 @@ static NSSet *allowedFontFamilySet()
     return fontFamilySet;
 }
 
-static NSArray *fontWhitelist()
+static NSArray *fontAllowList()
 {
     static NSArray *availableFonts;
     if (availableFonts)
@@ -735,7 +735,7 @@ WebView *createWebViewAndOffscreenWindow()
 
 #if PLATFORM(MAC)
     [webView setWindowOcclusionDetectionEnabled:NO];
-    [WebView _setFontWhitelist:fontWhitelist()];
+    [WebView _setFontAllowList:fontAllowList()];
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1943,7 +1943,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
     [WebView _setUsesTestModeFocusRingColor:YES];
 #endif
-    [WebView _resetOriginAccessWhitelists];
+    [WebView _resetOriginAccessAllowLists];
 
     [[MockGeolocationProvider shared] stopTimer];
     [[MockWebNotificationProvider shared] reset];

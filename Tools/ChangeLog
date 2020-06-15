@@ -1,5 +1,31 @@
 2020-06-15  Alex Christensen  <achristensen@webkit.org>
 
+        Provide alternatively-named SPI for user style sheets and scripts
+        https://bugs.webkit.org/show_bug.cgi?id=213206
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (fontAllowList):
+        (createWebViewAndOffscreenWindow):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (fontWhitelist): Deleted.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::addOriginAccessWhitelistEntry):
+        (TestRunner::removeOriginAccessWhitelistEntry):
+        (TestRunner::addUserScript):
+        (TestRunner::addUserStyleSheet):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentWorld.mm:
+        (TEST):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::generateFontAllowList):
+        (WTR::TestController::platformInitializeContext):
+        (WTR::generateWhitelist): Deleted.
+
+2020-06-15  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI to preconnect to a server
         https://bugs.webkit.org/show_bug.cgi?id=213109
         <rdar://problem/64184412>

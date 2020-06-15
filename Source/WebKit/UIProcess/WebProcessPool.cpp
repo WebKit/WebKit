@@ -2074,7 +2074,7 @@ void WebProcessPool::setMemoryCacheDisabled(bool disabled)
     sendToAllProcesses(Messages::WebProcess::SetMemoryCacheDisabled(disabled));
 }
 
-void WebProcessPool::setFontWhitelist(API::Array* array)
+void WebProcessPool::setFontAllowList(API::Array* array)
 {
     m_fontWhitelist.clear();
     if (array) {

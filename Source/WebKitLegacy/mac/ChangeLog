@@ -1,3 +1,25 @@
+2020-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        Provide alternatively-named SPI for user style sheets and scripts
+        https://bugs.webkit.org/show_bug.cgi?id=213206
+
+        Reviewed by Brady Eidson.
+
+        * WebView/WebView.mm:
+        (+[WebView _addOriginAccessAllowListEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]):
+        (+[WebView _removeOriginAccessAllowListEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]):
+        (+[WebView _resetOriginAccessAllowLists]):
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        (+[WebView _addUserScriptToGroup:world:source:url:includeMatchPatternStrings:excludeMatchPatternStrings:injectionTime:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:includeMatchPatternStrings:excludeMatchPatternStrings:injectedFrames:]):
+        (+[WebView _setFontAllowList:]):
+        (+[WebView _addOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]): Deleted.
+        (+[WebView _removeOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]): Deleted.
+        (+[WebView _resetOriginAccessWhitelists]): Deleted.
+        (+[WebView _setFontWhitelist:]): Deleted.
+        * WebView/WebViewPrivate.h:
+
 2020-06-11  Sam Weinig  <weinig@apple.com>
 
         Document.currentScript does not work for SVGScriptElements

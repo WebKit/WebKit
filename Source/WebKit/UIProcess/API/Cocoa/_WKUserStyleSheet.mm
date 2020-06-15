@@ -117,6 +117,17 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
+- (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly includeMatchPatternStrings:(NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray<NSString *> *)excludeMatchPatternStrings baseURL:(NSURL *)baseURL level:(_WKUserStyleLevel)level contentWorld:(WKContentWorld *)contentWorld
+{
+
+    WebKit::InitializeWebKit2();
+
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, API::toWebCoreUserStyleLevel(level), webView ? Optional<WebCore::PageIdentifier>([webView _page]->webPageID()) : WTF::nullopt }, contentWorld ? *contentWorld->_contentWorld : API::ContentWorld::pageContentWorld());
+
+    return self;
+}
+
+
 - (void)dealloc
 {
     _userStyleSheet->~UserStyleSheet();

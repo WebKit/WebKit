@@ -440,7 +440,7 @@ public:
     void updateHiddenPageThrottlingAutoIncreaseLimit();
 
     void setMemoryCacheDisabled(bool);
-    void setFontWhitelist(API::Array*);
+    void setFontAllowList(API::Array*);
 
     UserObservablePageCounter::Token userObservablePageCount()
     {

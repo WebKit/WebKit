@@ -104,13 +104,13 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPostIsolatedWorld)
     scriptMessages.clear();
     receivedScriptMessage = false;
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
-    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage('Hello')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage('Hello')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" userContentWorld:world.get()];
+    [[configuration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" contentWorld:world.get()];
     [[configuration userContentController] addUserScript:userScript.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -376,7 +376,7 @@ TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:YES]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleUserLevel contentWorld:nil]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -389,8 +389,8 @@ TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
 
 TEST(WKUserContentController, NonCanonicalizedURL)
 {
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://CamelCase/"] userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:[[[NSURL alloc] initWithString:@"http://CamelCase/"] autorelease] level:_WKUserStyleUserLevel contentWorld:world.get()]);
 }
 
 TEST(WKUserContentController, AddUserStyleSheetAfterCreatingView)
@@ -464,10 +464,10 @@ TEST(WKUserContentController, UserStyleSheetRemoveAll)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
-    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:nil level:_WKUserStyleUserLevel contentWorld:world.get()]);
     
     [userContentController _addUserStyleSheet:styleSheet.get()];
     [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld.get()];
@@ -485,11 +485,11 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
-    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
-    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld2 = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:nil level:_WKUserStyleUserLevel contentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld2 = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:nil level:_WKUserStyleUserLevel contentWorld:world.get()]);
     
     [userContentController _addUserStyleSheet:styleSheet.get()];
     [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld.get()];
@@ -500,7 +500,7 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByWorld)
     EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][1]);
     EXPECT_EQ(styleSheetAssociatedWithWorld2.get(), [userContentController _userStyleSheets][2]);
 
-    [userContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:world.get()];
+    [userContentController _removeAllUserStyleSheetsAssociatedWithContentWorld:world.get()];
 
     EXPECT_EQ(1u, [userContentController _userStyleSheets].count);
     EXPECT_EQ(styleSheet.get(), [userContentController _userStyleSheets][0]);
@@ -510,11 +510,11 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByNormalWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
-    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
-    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld2 = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:nil level:_WKUserStyleUserLevel contentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheetAssociatedWithWorld2 = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:nil forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:nil level:_WKUserStyleUserLevel contentWorld:world.get()]);
     
     [userContentController _addUserStyleSheet:styleSheet.get()];
     [userContentController _addUserStyleSheet:styleSheetAssociatedWithWorld.get()];
@@ -525,7 +525,7 @@ TEST(WKUserContentController, UserStyleSheetRemoveAllByNormalWorld)
     EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][1]);
     EXPECT_EQ(styleSheetAssociatedWithWorld2.get(), [userContentController _userStyleSheets][2]);
 
-    [userContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:[_WKUserContentWorld normalWorld]];
+    [userContentController _removeAllUserStyleSheetsAssociatedWithContentWorld:[WKContentWorld pageWorld]];
 
     EXPECT_EQ(2u, [userContentController _userStyleSheets].count);
     EXPECT_EQ(styleSheetAssociatedWithWorld.get(), [userContentController _userStyleSheets][0]);
@@ -546,8 +546,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebView)
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);
     expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    auto styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
@@ -559,8 +559,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingSpecificWebViewInjectionImm
     RetainPtr<WKWebView> targetWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     [targetWebView _test_waitForDidFinishNavigation];
@@ -573,8 +573,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingSpecificWebViewInjectionAnd
     RetainPtr<WKWebView> targetWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [targetWebView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
     [[targetWebView configuration].userContentController _removeUserStyleSheet:styleSheet.get()];
 
@@ -599,8 +599,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewSharedCo
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, redInRGB);
     expectScriptEvaluatesToColor(otherWebView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:targetWebView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[targetWebView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(targetWebView.get(), backgroundColorScript, greenInRGB);
@@ -616,8 +616,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemoval)
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -636,8 +636,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -660,8 +660,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -696,8 +696,8 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlySpecificWebViewRemovalA
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forWKWebView:webView.get() forMainFrameOnly:YES includeMatchPatternStrings:nil excludeMatchPatternStrings:nil baseURL:nil level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
@@ -724,10 +724,11 @@ TEST(WKUserContentController, UserStyleSheetSpecificityLevelNotSpecified)
 
 TEST(WKUserContentController, UserStyleSheetSpecificityLevelUser)
 {
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://example.com/"] level:_WKUserStyleUserLevel userContentWorld:world.get()]);
+    
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forWKWebView:nil forMainFrameOnly:YES includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:[[NSURL alloc] initWithString:@"http://example.com/"] level:_WKUserStyleUserLevel contentWorld:world.get()]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -740,10 +741,10 @@ TEST(WKUserContentController, UserStyleSheetSpecificityLevelUser)
 
 TEST(WKUserContentController, UserStyleSheetSpecificityLevelAuthor)
 {
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://example.com/"] level:_WKUserStyleAuthorLevel userContentWorld:world.get()]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSourceForSpecificityLevelTests forWKWebView:nil forMainFrameOnly:YES includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] baseURL:[[NSURL alloc] initWithString:@"http://example.com/"] level:_WKUserStyleAuthorLevel contentWorld:world.get()]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -772,11 +773,11 @@ TEST(WKUserContentController, UserScriptRemoveAll)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
-    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
-    
+    auto userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+
     [userContentController addUserScript:userScript.get()];
     [userContentController addUserScript:userScriptAssociatedWithWorld.get()];
     
@@ -793,11 +794,11 @@ TEST(WKUserContentController, UserScriptRemoveAllByWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
-    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
-    RetainPtr<WKUserScript> userScriptAssociatedWithWorld2 = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld2 = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
     
     [userContentController addUserScript:userScript.get()];
     [userContentController addUserScript:userScriptAssociatedWithWorld.get()];
@@ -808,7 +809,7 @@ TEST(WKUserContentController, UserScriptRemoveAllByWorld)
     EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][1]);
     EXPECT_EQ(userScriptAssociatedWithWorld2.get(), [userContentController userScripts][2]);
 
-    [userContentController _removeAllUserScriptsAssociatedWithUserContentWorld:world.get()];
+    [userContentController _removeAllUserScriptsAssociatedWithContentWorld:world.get()];
 
     EXPECT_EQ(1u, [userContentController userScripts].count);
     EXPECT_EQ(userScript.get(), [userContentController userScripts][0]);
@@ -818,11 +819,11 @@ TEST(WKUserContentController, UserScriptRemoveAllByNormalWorld)
 {
     RetainPtr<WKUserContentController> userContentController = adoptNS([[WKUserContentController alloc] init]);
 
-    RetainPtr<_WKUserContentWorld> world = [_WKUserContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
 
     RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);
-    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
-    RetainPtr<WKUserScript> userScriptAssociatedWithWorld2 = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] userContentWorld:world.get()]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+    RetainPtr<WKUserScript> userScriptAssociatedWithWorld2 = adoptNS([[WKUserScript alloc] _initWithSource:@"" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
     
     [userContentController addUserScript:userScript.get()];
     [userContentController addUserScript:userScriptAssociatedWithWorld.get()];
@@ -833,7 +834,7 @@ TEST(WKUserContentController, UserScriptRemoveAllByNormalWorld)
     EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][1]);
     EXPECT_EQ(userScriptAssociatedWithWorld2.get(), [userContentController userScripts][2]);
 
-    [userContentController _removeAllUserScriptsAssociatedWithUserContentWorld:[_WKUserContentWorld normalWorld]];
+    [userContentController _removeAllUserScriptsAssociatedWithContentWorld:[WKContentWorld pageWorld]];
 
     EXPECT_EQ(2u, [userContentController userScripts].count);
     EXPECT_EQ(userScriptAssociatedWithWorld.get(), [userContentController userScripts][0]);
@@ -891,7 +892,7 @@ TEST(WKUserContentController, InjectUserScriptImmediately)
 
 TEST(WKUserContentController, UserScriptNotification)
 {
-    WKUserScript *waitsForNotification = [[[WKUserScript alloc] _initWithSource:@"alert('waited for notification')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES legacyWhitelist:@[] legacyBlacklist:@[] associatedURL:[NSURL URLWithString:@"test:///script"] contentWorld:[WKContentWorld defaultClientWorld] deferRunningUntilNotification:YES] autorelease];
+    WKUserScript *waitsForNotification = [[[WKUserScript alloc] _initWithSource:@"alert('waited for notification')" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:[NSURL URLWithString:@"test:///script"] contentWorld:[WKContentWorld defaultClientWorld] deferRunningUntilNotification:YES] autorelease];
     WKUserScript *documentEnd = [[[WKUserScript alloc] initWithSource:@"alert('document parsing ended')" injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES] autorelease];
 
     TestWKWebView *webView1 = [[TestWKWebView new] autorelease];

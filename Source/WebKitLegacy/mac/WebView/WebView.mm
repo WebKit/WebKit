@@ -4723,17 +4723,17 @@ IGNORE_WARNINGS_END
 }
 #endif
 
-+ (void)_addOriginAccessWhitelistEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
++ (void)_addOriginAccessAllowListEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
 {
     WebCore::SecurityPolicy::addOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
-+ (void)_removeOriginAccessWhitelistEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
++ (void)_removeOriginAccessAllowListEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains
 {
     WebCore::SecurityPolicy::removeOriginAccessAllowlistEntry(WebCore::SecurityOrigin::createFromString(sourceOrigin).get(), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
-+ (void)_resetOriginAccessWhitelists
++ (void)_resetOriginAccessAllowLists
 {
     WebCore::SecurityPolicy::resetOriginAccessAllowlists();
 }
@@ -4786,6 +4786,11 @@ IGNORE_WARNINGS_END
                 injectionTime:(WebUserScriptInjectionTime)injectionTime
                injectedFrames:(WebUserContentInjectedFrames)injectedFrames
 {
+    [WebView _addUserScriptToGroup:groupName world:world source:source url:url includeMatchPatternStrings:whitelist excludeMatchPatternStrings:blacklist injectionTime:injectionTime injectedFrames:injectedFrames];
+}
+
++ (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url includeMatchPatternStrings:(NSArray *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray *)excludeMatchPatternStrings injectionTime:(WebUserScriptInjectionTime)injectionTime injectedFrames:(WebUserContentInjectedFrames)injectedFrames
+{
     String group(groupName);
     if (group.isEmpty())
         return;
@@ -4795,7 +4800,7 @@ IGNORE_WARNINGS_END
     if (!world)
         return;
 
-    auto userScript = makeUnique<WebCore::UserScript>(source, url, makeVector<String>(whitelist), makeVector<String>(blacklist), injectionTime == WebInjectAtDocumentStart ? WebCore::UserScriptInjectionTime::DocumentStart : WebCore::UserScriptInjectionTime::DocumentEnd, injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::WaitForNotificationBeforeInjecting::No);
+    auto userScript = makeUnique<WebCore::UserScript>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectionTime == WebInjectAtDocumentStart ? WebCore::UserScriptInjectionTime::DocumentStart : WebCore::UserScriptInjectionTime::DocumentEnd, injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::WaitForNotificationBeforeInjecting::No);
     viewGroup->userContentController().addUserScript(*core(world), WTFMove(userScript));
 }
 
@@ -4809,6 +4814,11 @@ IGNORE_WARNINGS_END
                         whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist
                    injectedFrames:(WebUserContentInjectedFrames)injectedFrames
 {
+    [WebView _addUserStyleSheetToGroup:groupName world:world source:source url:url includeMatchPatternStrings:whitelist excludeMatchPatternStrings:blacklist injectedFrames:injectedFrames];
+}
+
++ (void)_addUserStyleSheetToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url includeMatchPatternStrings:(NSArray *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray *)excludeMatchPatternStrings injectedFrames:(WebUserContentInjectedFrames)injectedFrames
+{
     String group(groupName);
     if (group.isEmpty())
         return;
@@ -4818,7 +4828,7 @@ IGNORE_WARNINGS_END
     if (!world)
         return;
 
-    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(whitelist), makeVector<String>(blacklist), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleUserLevel);
+    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleUserLevel);
     viewGroup->userContentController().addUserStyleSheet(*core(world), WTFMove(styleSheet), WebCore::InjectInExistingDocuments);
 }
 
@@ -10247,12 +10257,12 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
 @implementation WebView (WebViewFontSelection)
 
-+ (void)_setFontWhitelist:(NSArray *)whitelist
++ (void)_setFontAllowList:(NSArray *)allowList
 {
 #if !PLATFORM(MAC)
-    UNUSED_PARAM(whitelist);
+    UNUSED_PARAM(allowList);
 #else
-    WebCore::FontCache::setFontAllowlist(makeVector<String>(whitelist));
+    WebCore::FontCache::setFontAllowlist(makeVector<String>(allowList));
 #endif
 }
 

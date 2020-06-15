@@ -252,12 +252,10 @@ private:
     _userContentControllerProxy->removeUserScript(*userScript->_userScript);
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (void)_removeAllUserScriptsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
+- (void)_removeAllUserScriptsAssociatedWithContentWorld:(WKContentWorld *)contentWorld
 {
-    _userContentControllerProxy->removeAllUserScripts(*userContentWorld->_contentWorld->_contentWorld);
+    _userContentControllerProxy->removeAllUserScripts(*contentWorld->_contentWorld);
 }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_addUserScriptImmediately:(WKUserScript *)userScript
 {
@@ -305,17 +303,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _userContentControllerProxy->removeAllUserStyleSheets();
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (void)_removeAllUserStyleSheetsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
+- (void)_removeAllUserStyleSheetsAssociatedWithContentWorld:(WKContentWorld *)contentWorld
 {
-    _userContentControllerProxy->removeAllUserStyleSheets(*userContentWorld->_contentWorld->_contentWorld);
+    _userContentControllerProxy->removeAllUserStyleSheets(*contentWorld->_contentWorld);
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     auto handler = WebKit::WebScriptMessageHandler::create(makeUnique<ScriptMessageHandlerDelegate>(self, scriptMessageHandler, name), name, *userContentWorld->_contentWorld->_contentWorld);
     if (!_userContentControllerProxy->addUserScriptMessageHandler(handler.get()))
         [NSException raise:NSInvalidArgumentException format:@"Attempt to add script message handler with name '%@' when one already exists.", name];
+}
+
+- (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name contentWorld:(WKContentWorld *)contentWorld
+{
+    [self _addScriptMessageHandler:scriptMessageHandler name:name userContentWorld:contentWorld._userContentWorld];
 }
 
 - (void)_removeScriptMessageHandlerForName:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld

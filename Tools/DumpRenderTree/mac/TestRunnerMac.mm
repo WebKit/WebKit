@@ -760,7 +760,7 @@ void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStrin
     NSString *destinationProtocolNS = (__bridge NSString *)protocolCF.get();
     RetainPtr<CFStringRef> hostCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, destinationHost));
     NSString *destinationHostNS = (__bridge NSString *)hostCF.get();
-    [WebView _addOriginAccessWhitelistEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
+    [WebView _addOriginAccessAllowListEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
 }
 
 void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
@@ -771,7 +771,7 @@ void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSSt
     NSString *destinationProtocolNS = (__bridge NSString *)protocolCF.get();
     RetainPtr<CFStringRef> hostCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, destinationHost));
     NSString *destinationHostNS = (__bridge NSString *)hostCF.get();
-    [WebView _removeOriginAccessWhitelistEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
+    [WebView _removeOriginAccessAllowListEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
 }
 
 void TestRunner::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
@@ -783,14 +783,14 @@ void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFram
 {
     RetainPtr<CFStringRef> sourceCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (__bridge NSString *)sourceCF.get();
-    [WebView _addUserScriptToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil whitelist:nil blacklist:nil injectionTime:(runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd) injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
+    [WebView _addUserScriptToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil injectionTime:(runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd) injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
 }
 
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
     RetainPtr<CFStringRef> sourceCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (__bridge NSString *)sourceCF.get();
-    [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil whitelist:nil blacklist:nil injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
+    [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
 }
 
 void TestRunner::setDeveloperExtrasEnabled(bool enabled)

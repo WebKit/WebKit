@@ -1,5 +1,40 @@
 2020-06-15  Alex Christensen  <achristensen@webkit.org>
 
+        Provide alternatively-named SPI for user style sheets and scripts
+        https://bugs.webkit.org/show_bug.cgi?id=213206
+
+        Reviewed by Brady Eidson.
+
+        Test-only SPI was just renamed.
+        SPI used by other projects was deprecated with a replacement so we can remove the old names soon.
+
+        _WKUserContentWorld/WKContentWorld was tied up in this, and rather than provide replacement SPI with deprecated _WKUserContentWorld,
+        this will move some SPI from _WKUserContentWorld to WKContentWorld too.  The most heavy user of _WKUserContentWorld is TestWebKitAPI and we'll remove it soon.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetFontAllowList):
+        (WKContextSetFontWhitelist): Deleted.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _removeAllUserScriptsAssociatedWithContentWorld:]):
+        (-[WKUserContentController _removeAllUserStyleSheetsAssociatedWithContentWorld:]):
+        (-[WKUserContentController _addScriptMessageHandler:name:contentWorld:]):
+        (-[WKUserContentController _removeAllUserScriptsAssociatedWithUserContentWorld:]): Deleted.
+        (-[WKUserContentController _removeAllUserStyleSheetsAssociatedWithUserContentWorld:]): Deleted.
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:includeMatchPatternStrings:excludeMatchPatternStrings:associatedURL:contentWorld:deferRunningUntilNotification:]):
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:includeMatchPatternStrings:excludeMatchPatternStrings:baseURL:level:contentWorld:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setFontAllowList):
+        (WebKit::WebProcessPool::setFontWhitelist): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+2020-06-15  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI to preconnect to a server
         https://bugs.webkit.org/show_bug.cgi?id=213109
         <rdar://problem/64184412>

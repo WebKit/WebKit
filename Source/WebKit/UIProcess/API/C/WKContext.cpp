@@ -601,9 +601,9 @@ void WKContextSetMemoryCacheDisabled(WKContextRef contextRef, bool disabled)
     WebKit::toImpl(contextRef)->setMemoryCacheDisabled(disabled);
 }
 
-void WKContextSetFontWhitelist(WKContextRef contextRef, WKArrayRef arrayRef)
+void WKContextSetFontAllowList(WKContextRef contextRef, WKArrayRef arrayRef)
 {
-    WebKit::toImpl(contextRef)->setFontWhitelist(WebKit::toImpl(arrayRef));
+    WebKit::toImpl(contextRef)->setFontAllowList(WebKit::toImpl(arrayRef));
 }
 
 void WKContextTerminateNetworkProcess(WKContextRef context)

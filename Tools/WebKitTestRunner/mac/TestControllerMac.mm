@@ -317,7 +317,7 @@ static NSSet *systemHiddenFontFamilySet()
     return fontFamilySet;
 }
 
-static WKRetainPtr<WKArrayRef> generateWhitelist()
+static WKRetainPtr<WKArrayRef> generateFontAllowList()
 {
     WKRetainPtr<WKMutableArrayRef> result = adoptWK(WKMutableArrayCreate());
     for (NSString *fontFamily in allowedFontFamilySet()) {
@@ -348,7 +348,7 @@ void TestController::platformInitializeContext()
                                           diskPath:nil]);
     [NSURLCache setSharedURLCache:sharedCache.get()];
 
-    WKContextSetFontWhitelist(m_context.get(), generateWhitelist().get());
+    WKContextSetFontAllowList(m_context.get(), generateFontAllowList().get());
 }
 
 void TestController::setHidden(bool hidden)
