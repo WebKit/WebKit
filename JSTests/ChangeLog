@@ -1,3 +1,12 @@
+2020-06-15  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv7][MIPS][JSC] Skip check-is-constant-non-cell-should-not-array-profile-during-osr-exit.js
+        https://bugs.webkit.org/show_bug.cgi?id=213208
+
+        Unreviewed Gardening.
+
+        * stress/check-is-constant-non-cell-should-not-array-profile-during-osr-exit.js:
+
 2020-06-15  Keith Miller  <keith_miller@apple.com>
 
         CheckIsConstant should not use BadCache exit kind

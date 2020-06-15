@@ -1,3 +1,5 @@
+//@ skip if ["arm", "mips"].include?($architecture)
+
 function foo() {
   function bar(a0) {
     try {
