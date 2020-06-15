@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,23 +41,17 @@ public:
     using CompletionHandler = Function<void(Ref<FileList>&&)>;
 
     enum class ShouldResolveDirectories { No, Yes };
-    static Ref<FileListCreator> create(const Vector<FileChooserFileInfo>& paths, ShouldResolveDirectories shouldResolveDirectories, CompletionHandler&& completionHandler)
-    {
-        return adoptRef(*new FileListCreator(paths, shouldResolveDirectories, WTFMove(completionHandler)));
-    }
+    static RefPtr<FileListCreator> create(const Vector<FileChooserFileInfo>&, ShouldResolveDirectories, CompletionHandler&&);
 
     ~FileListCreator();
 
     void cancel();
 
 private:
-    FileListCreator(const Vector<FileChooserFileInfo>& paths, ShouldResolveDirectories, CompletionHandler&&);
-
-    template<ShouldResolveDirectories shouldResolveDirectories>
-    static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>&);
+    FileListCreator(const Vector<FileChooserFileInfo>&, CompletionHandler&&);
 
     RefPtr<WorkQueue> m_workQueue;
-    CompletionHandler m_completionHander;
+    CompletionHandler m_completionHandler;
 };
 
 }
