@@ -136,13 +136,13 @@ http://255.255.255.255:6679/test.jpg - didFailLoadingWithError: <NSError domain 
 http://255.255.255.255:6697/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:6697/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255:6697/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:6697/test.jpg">
 http://255.255.255.255:65535/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:65535/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255:65535/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:65535/test.jpg">
+http://255.255.255.255:65535/test.jpg - didFailLoadingWithError: <NSError domain soup-http-error-quark, code 4, failing URL "http://255.255.255.255:65535/test.jpg">
 http://255.255.255.255:0/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:0/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255:0/test.jpg - didFailLoadingWithError: <NSError domain soup_http_error_quark, code 4, failing URL "http://255.255.255.255/test.jpg">
+http://255.255.255.255:0/test.jpg - didFailLoadingWithError: <NSError domain soup-http-error-quark, code 4, failing URL "http://255.255.255.255/test.jpg">
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain soup_http_error_quark, code 4, failing URL "http://255.255.255.255/test.jpg">
+http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain soup-http-error-quark, code 4, failing URL "http://255.255.255.255/test.jpg">
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain soup_http_error_quark, code 4, failing URL "http://255.255.255.255/test.jpg">
+http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain soup-http-error-quark, code 4, failing URL "http://255.255.255.255/test.jpg">
 ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 101, failing URL "ftp://255.255.255.255/test.jpg">
 ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)

@@ -1,3 +1,19 @@
+2020-06-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update baselines of flaky tests which were consistently failing for the last 4000 revisions.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/css/resize-corner-tracking-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-10-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-33-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-34-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt:
+        * platform/wpe/security/block-test-expected.txt:
+        * platform/wpe/svg/custom/non-scaling-stroke-expected.txt: Removed.
+
 2020-06-15  Jason Lawrence  <lawrence.j@apple.com>
 
         REGRESSION: (r262904): [ Mac wk1 Debug ] media/remoteplayback-target-availability.html is flaky failing.

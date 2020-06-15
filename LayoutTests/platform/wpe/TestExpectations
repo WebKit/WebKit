@@ -117,7 +117,6 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pass Timeout ]
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Timeout ImageOnlyFailure ]
-webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
 
 # Canvas captureStream support is not implemented
 webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]
@@ -505,8 +504,6 @@ webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-write-t
 webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Failure ]
 webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.html [ Failure ]
 
-webkit.org/b/198823 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Failure Pass ]
-
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
 
 webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
@@ -649,7 +646,6 @@ webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigati
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php [ Failure ]
 
 # Failing in test bots. Started failing since r260615.
-webkit.org/b/210968 fast/css/resize-corner-tracking.html [ Failure ImageOnlyFailure Pass ]
 
 webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
 
@@ -671,6 +667,10 @@ webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 
 webkit.org/b/213188 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html [ Failure ]
+
+webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
+
+webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -977,13 +977,9 @@ webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_ca
 webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Crash ]
 webkit.org/b/212513 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Crash ]
 
-webkit.org/b/newbug imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/80210 security/block-test.html [ Failure Pass ]
 
 webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
 
@@ -1037,8 +1033,6 @@ webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-documen
 webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ Pass Failure ]
 
 webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
-
-webkit.org/b/178705 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
@@ -1098,10 +1092,6 @@ webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-add.https.html [ Failure Pass ]
 webkit.org/b/201981 http/tests/workers/service/basic-fetch.https.html [ Failure Pass ]
 
-webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-10-t-manual.svg [ Failure Pass ]
-webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-33-t-manual.svg [ Failure Pass ]
-webkit.org/b/202514 imported/w3c/web-platform-tests/svg/import/animate-elem-34-t-manual.svg [ Failure Pass ]
-
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
 webkit.org/b/202736 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
 
@@ -1135,8 +1125,6 @@ webkit.org/b/208327 http/wpt/service-workers/postMessage-fetch-order.https.html 
 webkit.org/b/208327 http/wpt/service-workers/ready.https.window.html [ Failure Pass ]
 
 webkit.org/b/208368 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Failure Pass ]
-
-webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure Pass ]
 
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
@@ -1224,6 +1212,8 @@ webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
 webkit.org/b/212960 jquery/manipulation.html [ Slow ]
 
 imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
+
+imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 8. TESTS TIMING OUT
@@ -1488,7 +1478,6 @@ webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html 
 
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 
-webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html [ Failure ]

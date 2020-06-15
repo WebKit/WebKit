@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (8,26) size 780x423
-      RenderSVGContainer {g} at (12,26) size 342x79 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,50.00)}]
+      RenderSVGContainer {g} at (11,26) size 343x79 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,50.00)}]
         RenderSVGText {text} at (-160,-58) size 17x35 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 17x34
             chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 17.00: "0"
@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
           RenderSVGEllipse {circle} at (12,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-150.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (162,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (312,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
-        RenderSVGEllipse {circle} at (161,61) size 44x44 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-      RenderSVGContainer {g} at (446,26) size 342x79 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,50.00)}]
+        RenderSVGEllipse {circle} at (11,61) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGContainer {g} at (445,26) size 343x79 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,50.00)}]
         RenderSVGText {text} at (-160,-58) size 17x35 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 17x34
             chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 17.00: "0"
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
           RenderSVGEllipse {circle} at (506,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-90.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (686,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=90.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (746,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
-        RenderSVGEllipse {circle} at (595,61) size 44x44 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (445,61) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
       RenderSVGContainer {g} at (57,212) size 252x115 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,180.00)}]
         RenderSVGText {text} at (-115,-58) size 17x35 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 17x34
@@ -69,7 +69,7 @@ layer at (0,0) size 800x600
           RenderSVGEllipse {circle} at (97,249) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-65.00] [cy=-30.00] [r=20.00]
           RenderSVGEllipse {circle} at (227,249) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=65.00] [cy=-30.00] [r=20.00]
           RenderSVGEllipse {circle} at (267,279) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=105.00] [cy=0.00] [r=20.00]
-        RenderSVGEllipse {circle} at (161,278) size 44x44 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (226,248) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,-30.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
       RenderSVGContainer {g} at (471,209) size 292x115 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,160.00)}]
         RenderSVGText {text} at (-135,-58) size 17x35 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 17x34
@@ -96,7 +96,7 @@ layer at (0,0) size 800x600
           RenderSVGEllipse {circle} at (521,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-75.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (671,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=75.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (721,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=125.00] [cy=0.00] [r=20.00]
-        RenderSVGEllipse {circle} at (595,245) size 44x44 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (670,245) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
       RenderSVGText {text} at (5,209) size 408x32 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 408x32
           chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 408.00: "Test of keyPoints and keyTimes."
