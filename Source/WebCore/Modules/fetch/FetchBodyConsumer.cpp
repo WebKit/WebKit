@@ -42,21 +42,6 @@ static inline Ref<Blob> blobFromData(const unsigned char* data, unsigned length,
     return Blob::create(WTFMove(value), contentType);
 }
 
-static inline bool shouldPrependBOM(const unsigned char* data, unsigned length)
-{
-    if (length < 3)
-        return true;
-    return data[0] != 0xef || data[1] != 0xbb || data[2] != 0xbf;
-}
-
-static String textFromUTF8(const unsigned char* data, unsigned length)
-{
-    auto decoder = TextResourceDecoder::create("text/plain", "UTF-8");
-    if (shouldPrependBOM(data, length))
-        decoder->decode("\xef\xbb\xbf", 3);
-    return decoder->decodeAndFlush(reinterpret_cast<const char*>(data), length);
-}
-
 static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyConsumer::Type type, const String& contentType, const unsigned char* data, unsigned length)
 {
     switch (type) {
@@ -69,10 +54,10 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         });
         return;
     case FetchBodyConsumer::Type::JSON:
-        fulfillPromiseWithJSON(WTFMove(promise), textFromUTF8(data, length));
+        fulfillPromiseWithJSON(WTFMove(promise), TextResourceDecoder::textFromUTF8(data, length));
         return;
     case FetchBodyConsumer::Type::Text:
-        promise->resolve<IDLDOMString>(textFromUTF8(data, length));
+        promise->resolve<IDLDOMString>(TextResourceDecoder::textFromUTF8(data, length));
         return;
     case FetchBodyConsumer::Type::None:
         ASSERT_NOT_REACHED();
@@ -196,7 +181,7 @@ String FetchBodyConsumer::takeAsText()
     if (!m_buffer)
         return String();
 
-    auto text = textFromUTF8(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size());
+    auto text = TextResourceDecoder::textFromUTF8(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size());
     m_buffer = nullptr;
     return text;
 }

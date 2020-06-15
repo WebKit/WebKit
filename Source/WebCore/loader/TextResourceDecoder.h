@@ -46,6 +46,8 @@ public:
     WEBCORE_EXPORT static Ref<TextResourceDecoder> create(const String& mimeType, const TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
     WEBCORE_EXPORT ~TextResourceDecoder();
 
+    static String textFromUTF8(const unsigned char* data, unsigned length);
+
     void setEncoding(const TextEncoding&, EncodingSource);
     const TextEncoding& encoding() const { return m_encoding; }
     const TextEncoding* encodingForURLParsing();

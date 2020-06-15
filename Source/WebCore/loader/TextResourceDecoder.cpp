@@ -320,6 +320,22 @@ Ref<TextResourceDecoder> TextResourceDecoder::create(const String& mimeType, con
 
 TextResourceDecoder::~TextResourceDecoder() = default;
 
+static inline bool shouldPrependBOM(const unsigned char* data, unsigned length)
+{
+    if (length < 3)
+        return true;
+    return data[0] != 0xef || data[1] != 0xbb || data[2] != 0xbf;
+}
+
+// https://encoding.spec.whatwg.org/#utf-8-decode
+String TextResourceDecoder::textFromUTF8(const unsigned char* data, unsigned length)
+{
+    auto decoder = TextResourceDecoder::create("text/plain", "UTF-8");
+    if (shouldPrependBOM(data, length))
+        decoder->decode("\xef\xbb\xbf", 3);
+    return decoder->decodeAndFlush(reinterpret_cast<const char*>(data), length);
+}
+
 void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSource source)
 {
     // In case the encoding didn't exist, we keep the old one (helps some sites specifying invalid encodings).
