@@ -1,3 +1,27 @@
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
+        Signal handlers should have a two phase installation.
+        https://bugs.webkit.org/show_bug.cgi?id=213160
+
+        Reviewed by Mark Lam.
+
+        LLDB does not like it when we single step while there are mach exception
+        handlers installed because LLDB suspends all the non-active threads.
+        With Mach exception handlers installed, the OS will send a mach message
+        to our exception handler port, which is different than the active thread.
+        When this happens, the combination of LLDB and the process JSC is in effectively
+        deadlock.
+
+        Under our new approach, we go back to only telling the OS we care about
+        these exceptions late but lock down the function pointers early. This way
+        processes that benefit from our exception handler code are easier to debug.
+
+        * wtf/threads/Signals.cpp:
+        (WTF::addSignalHandler):
+        (WTF::activateSignalHandlersFor):
+        (WTF::installSignalHandler): Deleted.
+        * wtf/threads/Signals.h:
+
 2020-06-15  Per Arne Vollan  <pvollan@apple.com>
 
         Pack bytes a little tighter in MemoryPressureHandler

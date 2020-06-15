@@ -113,11 +113,27 @@ void enableFastMemory()
         if (!Options::useWebAssemblyFastMemory())
             return;
 
-        installSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
-            return trapHandler(signal, sigInfo, ucontext);
-        });
+        activateSignalHandlersFor(Signal::AccessFault);
 
         fastHandlerInstalled = true;
+    });
+#endif
+}
+
+void prepareFastMemory()
+{
+#if ENABLE(WEBASSEMBLY_FAST_MEMORY)
+    static std::once_flag once;
+    std::call_once(once, [] {
+        if (!Wasm::isSupported())
+            return;
+
+        if (!Options::useWebAssemblyFastMemory())
+            return;
+
+        addSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
+            return trapHandler(signal, sigInfo, ucontext);
+        });
     });
 #endif // ENABLE(WEBASSEMBLY_FAST_MEMORY)
 }

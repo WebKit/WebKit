@@ -32,6 +32,7 @@ namespace JSC {
 namespace Wasm {
 
 bool fastMemoryEnabled();
+JS_EXPORT_PRIVATE void prepareFastMemory();
 JS_EXPORT_PRIVATE void enableFastMemory();
 
 } } // namespace JSC::Wasm

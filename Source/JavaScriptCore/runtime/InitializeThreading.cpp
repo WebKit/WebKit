@@ -95,7 +95,7 @@ void initializeThreading()
 #endif
         VMTraps::initializeSignals();
 #if ENABLE(WEBASSEMBLY)
-        Wasm::enableFastMemory();
+        Wasm::prepareFastMemory();
 #endif
 
         WTF::compilerFence();

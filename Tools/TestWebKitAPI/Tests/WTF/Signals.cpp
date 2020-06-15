@@ -40,11 +40,12 @@ public:
 TEST(Signals, SignalsWorkOnExit)
 {
     static bool handlerRan = false;
-    installSignalHandler(Signal::Usr, [] (Signal, SigInfo&, PlatformRegisters&) -> SignalAction {
+    addSignalHandler(Signal::Usr, [] (Signal, SigInfo&, PlatformRegisters&) -> SignalAction {
         dataLogLn("here");
         handlerRan = true;
         return SignalAction::Handled;
     });
+    activateSignalHandlersFor(Signal::Usr);
 
     Atomic<bool> receiverShouldKeepRunning(true);
     Ref<Thread> receiverThread = (Thread::create("ThreadMessage receiver",

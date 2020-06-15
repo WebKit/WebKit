@@ -109,21 +109,25 @@ struct SignalHandlers {
 
 #if HAVE(MACH_EXCEPTIONS)
     mach_port_t exceptionPort;
-    exception_mask_t activeExceptions;
+    exception_mask_t addedExceptions;
     bool useMach;
+#else
+    static constexpr bool useMach = false;
 #endif
     uint8_t numberOfHandlers[numberOfSignals];
     SignalHandlerMemory handlers[numberOfSignals][maxNumberOfHandlers];
     struct sigaction oldActions[numberOfSignals];
 };
 
-// Call this method whenever you want to install a signal handler. This function needs to be called
+// Call this method whenever you want to add a signal handler. This function needs to be called
 // before g_wtfConfig is frozen. After the g_wtfConfig is frozen, no additional signal handlers may
 // be installed. Any attempt to do so will trigger a crash.
 // Note: Your signal handler will be called every time the handler for the desired signal is called.
 // Thus it is your responsibility to discern if the signal fired was yours.
-// This function is a one way street i.e. once installed, a signal handler cannot be uninstalled.
-WTF_EXPORT_PRIVATE void installSignalHandler(Signal, SignalHandler&&);
+// These functions are a one way street i.e. once installed, a signal handler cannot be uninstalled
+// and once commited they can't be turned off.
+WTF_EXPORT_PRIVATE void addSignalHandler(Signal, SignalHandler&&);
+WTF_EXPORT_PRIVATE void activateSignalHandlersFor(Signal);
 
 
 #if HAVE(MACH_EXCEPTIONS)
@@ -147,6 +151,7 @@ using WTF::toSystemSignal;
 using WTF::fromSystemSignal;
 using WTF::SignalAction;
 using WTF::SignalHandler;
-using WTF::installSignalHandler;
+using WTF::addSignalHandler;
+using WTF::activateSignalHandlersFor;
 
 #endif // USE(PTHREADS) && HAVE(MACHINE_CONTEXT)

@@ -83,6 +83,7 @@
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
+#include <JavaScriptCore/WasmFaultSignalHandler.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AuthenticationChallenge.h>
@@ -471,6 +472,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
 #if ENABLE(SERVICE_WORKER)
     ServiceWorkerProvider::setSharedProvider(WebServiceWorkerProvider::singleton());
+#endif
+
+#if ENABLE(WEBASSEMBLY)
+    JSC::Wasm::enableFastMemory();
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED

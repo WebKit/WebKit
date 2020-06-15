@@ -1,3 +1,13 @@
+2020-06-15  Keith Miller  <keith_miller@apple.com>
+
+        Signal handlers should have a two phase installation.
+        https://bugs.webkit.org/show_bug.cgi?id=213160
+
+        Reviewed by Mark Lam.
+
+        * TestWebKitAPI/Tests/WTF/Signals.cpp:
+        (TEST):
+
 2020-06-15  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation does not observe newly displayed element inside previously observed content

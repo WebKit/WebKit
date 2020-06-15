@@ -66,6 +66,7 @@
 #include "TypedArrayInlines.h"
 #include "VMInspector.h"
 #include "WasmCapabilities.h"
+#include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -2986,11 +2987,16 @@ void CommandLine::parseArguments(int argc, char** argv)
                 return SignalAction::ForceDefault;
             };
 
-            installSignalHandler(Signal::IllegalInstruction, SignalHandler(exit));
-            installSignalHandler(Signal::AccessFault, SignalHandler(exit));
-            installSignalHandler(Signal::FloatingPoint, SignalHandler(exit));
+            addSignalHandler(Signal::IllegalInstruction, SignalHandler(exit));
+            addSignalHandler(Signal::AccessFault, SignalHandler(exit));
+            addSignalHandler(Signal::FloatingPoint, SignalHandler(exit));
             // once we do this lldb won't work anymore because we will exit on any breakpoints it sets.
-            installSignalHandler(Signal::Breakpoint, SignalHandler(exit));
+            addSignalHandler(Signal::Breakpoint, SignalHandler(exit));
+
+            activateSignalHandlersFor(Signal::IllegalInstruction);
+            activateSignalHandlersFor(Signal::AccessFault);
+            activateSignalHandlersFor(Signal::FloatingPoint);
+            activateSignalHandlersFor(Signal::Breakpoint);
 #endif
             continue;
         }
@@ -3122,6 +3128,10 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
     Worker worker(Workers::singleton());
     
     VM& vm = VM::create(LargeHeap).leakRef();
+#if ENABLE(WEBASSEMBLY)
+    Wasm::enableFastMemory();
+#endif
+
     int result;
     bool success = true;
     GlobalObject* globalObject = nullptr;

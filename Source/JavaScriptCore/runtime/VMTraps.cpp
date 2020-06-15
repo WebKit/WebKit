@@ -193,13 +193,15 @@ public:
     SignalSender(const AbstractLocker& locker, VM& vm)
         : Base(locker, vm.traps().m_lock, vm.traps().m_condition.copyRef())
         , m_vm(vm)
-    { }
+    {
+        activateSignalHandlersFor(Signal::AccessFault);
+    }
 
     static void initializeSignals()
     {
         static std::once_flag once;
         std::call_once(once, [] {
-            installSignalHandler(Signal::AccessFault, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
+            addSignalHandler(Signal::AccessFault, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
                 auto signalContext = SignalContext::tryCreate(registers);
                 if (!signalContext)
                     return SignalAction::NotHandled;

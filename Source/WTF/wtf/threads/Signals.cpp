@@ -235,11 +235,12 @@ void handleSignalsWithMach()
     g_wtfConfig.signalHandlers.useMach = true;
 }
 
+static exception_mask_t activeExceptions;
 inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& thread)
 {
     UNUSED_PARAM(threadGroupLocker);
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
-    kern_return_t result = thread_set_exception_ports(thread.machThread(), handlers.activeExceptions, handlers.exceptionPort, EXCEPTION_STATE | MACH_EXCEPTION_CODES, MACHINE_THREAD_STATE);
+    kern_return_t result = thread_set_exception_ports(thread.machThread(), handlers.addedExceptions &activeExceptions, handlers.exceptionPort, EXCEPTION_STATE | MACH_EXCEPTION_CODES, MACHINE_THREAD_STATE);
     if (result != KERN_SUCCESS) {
         dataLogLn("thread set port failed due to ", mach_error_string(result));
         CRASH();
@@ -265,10 +266,7 @@ void registerThreadForMachExceptionHandling(Thread& thread)
         setExceptionPorts(locker, thread);
 }
 
-#else
-static constexpr bool useMach = false;
 #endif // HAVE(MACH_EXCEPTIONS)
-
 
 inline size_t offsetForSystemSignal(int sig)
 {
@@ -278,14 +276,14 @@ inline size_t offsetForSystemSignal(int sig)
 
 static void jscSignalHandler(int, siginfo_t*, void*);
 
-void installSignalHandler(Signal signal, SignalHandler&& handler)
+void addSignalHandler(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
     ASSERT(signal < Signal::Unknown);
-#if HAVE(MACH_EXCEPTIONS)
     ASSERT(!handlers.useMach || signal != Signal::Usr);
 
+#if HAVE(MACH_EXCEPTIONS)
     if (handlers.useMach)
         startMachExceptionHandlerThread();
 #endif
@@ -293,10 +291,9 @@ void installSignalHandler(Signal signal, SignalHandler&& handler)
     static std::once_flag initializeOnceFlags[static_cast<size_t>(Signal::NumberOfSignals)];
     std::call_once(initializeOnceFlags[static_cast<size_t>(signal)], [&] {
         Config::AssertNotFrozenScope assertScope;
-#if HAVE(MACH_EXCEPTIONS)
-        bool useMach = handlers.useMach;
-#endif
-        if (!useMach) {
+
+        handlers.addedExceptions |= toMachMask(signal);
+        if (!handlers.useMach) {
             struct sigaction action;
             action.sa_sigaction = jscSignalHandler;
             auto result = sigfillset(&action.sa_mask);
@@ -314,11 +311,19 @@ void installSignalHandler(Signal signal, SignalHandler&& handler)
     });
 
     handlers.add(signal, WTFMove(handler));
+}
 
+void activateSignalHandlersFor(Signal signal)
+{
+    UNUSED_PARAM(signal);
 #if HAVE(MACH_EXCEPTIONS)
+    const SignalHandlers& handlers = g_wtfConfig.signalHandlers;
+    ASSERT(signal < Signal::Unknown);
+    ASSERT(!handlers.useMach || signal != Signal::Usr);
+
     auto locker = holdLock(activeThreads().getLock());
     if (handlers.useMach) {
-        handlers.activeExceptions |= toMachMask(signal);
+        activeExceptions |= toMachMask(signal);
 
         for (auto& thread : activeThreads().threads(locker))
             setExceptionPorts(locker, thread.get());
