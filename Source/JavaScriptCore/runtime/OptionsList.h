@@ -511,6 +511,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, usePublicClassFields, true, Normal, "If true, the parser will understand public data fields inside classes.") \
     v(Bool, useRandomizingExecutableIslandAllocation, false, Normal, "For the arm64 ExecutableAllocator, if true, select which region to use randomly. This is useful for testing that jump islands work.") \
     v(Bool, exposeProfilersOnGlobalObject, false, Normal, "If true, we will expose functions to enable/disable both the sampling profiler and the super sampler") \
+    v(Bool, allowUnsupportedTiers, false, Normal, "If true, we will not disable DFG or FTL when an experimental feature is enabled.") \
     v(Bool, usePrivateClassFields, false, Normal, "If true, the parser will understand private data fields inside classes.") \
 
 enum OptionEquivalence {
@@ -553,8 +554,16 @@ enum OptionEquivalence {
     v(maximumFunctionForClosureCallInlineCandidateInstructionCount, maximumFunctionForClosureCallInlineCandidateBytecodeCost, SameOption) \
     v(maximumFunctionForConstructInlineCandidateInstructionCount, maximumFunctionForConstructInlineCandidateBytecoodeCost, SameOption) \
     v(maximumFTLCandidateInstructionCount, maximumFTLCandidateBytecodeCost, SameOption) \
-    v(maximumInliningCallerSize, maximumInliningCallerBytecodeCost, SameOption) \
+    v(maximumInliningCallerSize, maximumInliningCallerBytecodeCost, SameOption)
 
+enum ExperimentalOptionFlags {
+    LLIntAndBaselineOnly = 0,
+    SupportsDFG = 1 << 0,
+    SupportsFTL = 1 << 1,
+};
+
+#define FOR_EACH_JSC_EXPERIMENTAL_OPTION(v) \
+    v(usePrivateClassFields, LLIntAndBaselineOnly, "https://bugs.webkit.org/show_bug.cgi?id=212781", "https://bugs.webkit.org/show_bug.cgi?id=212784")
 
 constexpr size_t countNumberOfJSCOptions()
 {

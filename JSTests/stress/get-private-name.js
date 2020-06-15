@@ -1,6 +1,4 @@
-// FIXME: //@ requireOptions("--usePrivateClassFields=1") --- Run this in all variants once https://bugs.webkit.org/show_bug.cgi?id=212781 is fixed
-//@ runNoJIT("--usePrivateClassFields=1")
-//@ runNoLLInt("--usePrivateClassFields=1")
+//@ requireOptions("--usePrivateClassFields=1")
 
 // GetPrivateName should throw when the receiver does not have the requested private property
 let i, threw = false;

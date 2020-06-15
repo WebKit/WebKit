@@ -514,6 +514,19 @@ static void recomputeDependentOptions()
         Options::randomIntegrityAuditRate() = 0;
     else if (Options::randomIntegrityAuditRate() > 1.0)
         Options::randomIntegrityAuditRate() = 1.0;
+
+    if (!Options::allowUnsupportedTiers()) {
+#define DISABLE_TIERS(option, flags, ...) do { \
+            if (!Options::option())            \
+                break;                         \
+            if (!(flags & SupportsDFG))        \
+                Options::useDFGJIT() = false;  \
+            if (!(flags & SupportsFTL))        \
+                Options::useFTLJIT() = false;  \
+        } while (false);
+
+        FOR_EACH_JSC_EXPERIMENTAL_OPTION(DISABLE_TIERS);
+    }
 }
 
 inline void* Options::addressOfOption(Options::ID id)

@@ -291,6 +291,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_unreachable:
     case op_super_sampler_begin:
     case op_super_sampler_end:
+    case op_get_private_name:
         return CanCompileAndInline;
 
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.
@@ -299,7 +300,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
 
     case op_yield:
     case op_create_generator_frame_environment:
-    case op_get_private_name: // FIXME: op_get_private_name will need DFG/FTL support to ship class fields. (https://bugs.webkit.org/show_bug.cgi?id=212781)
     case llint_program_prologue:
     case llint_eval_prologue:
     case llint_module_program_prologue:

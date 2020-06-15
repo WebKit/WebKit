@@ -1,3 +1,14 @@
+2020-06-15  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] add machinery to disable JIT tiers when experimental features are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=213193
+
+        Reviewed by Mark Lam.
+
+        * stress/get-private-name.js:
+        * stress/put-by-val-direct-addprivate.js:
+        * stress/put-by-val-direct-putprivate.js:
+
 2020-06-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         super should not depend on __proto__
