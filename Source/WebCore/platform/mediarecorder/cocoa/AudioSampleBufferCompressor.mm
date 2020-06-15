@@ -52,14 +52,12 @@ std::unique_ptr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create
 AudioSampleBufferCompressor::AudioSampleBufferCompressor()
     : m_serialDispatchQueue { dispatch_queue_create("com.apple.AudioSampleBufferCompressor", DISPATCH_QUEUE_SERIAL) }
     , m_lowWaterTime { CMTimeMakeWithSeconds(LOW_WATER_TIME_IN_SECONDS, 1000) }
-    , m_outputCodecType { kAudioFormatMPEG4AAC }
 {
 }
 
 AudioSampleBufferCompressor::~AudioSampleBufferCompressor()
 {
-    if (m_serialDispatchQueue)
-        dispatch_release(m_serialDispatchQueue);
+    dispatch_release(m_serialDispatchQueue);
 }
 
 bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callback, void* callbackObject)

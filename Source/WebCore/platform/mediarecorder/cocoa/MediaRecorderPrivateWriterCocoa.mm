@@ -135,14 +135,18 @@ RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(const Medi
 
 void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    auto *writer = static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter);
-    writer->processNewCompressedVideoSampleBuffers();
+    callOnMainThread([weakWriter = makeWeakPtr(static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter))] {
+        if (weakWriter)
+            weakWriter->processNewCompressedVideoSampleBuffers();
+    });
 }
 
 void MediaRecorderPrivateWriter::compressedAudioOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    auto *writer = static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter);
-    writer->processNewCompressedAudioSampleBuffers();
+    callOnMainThread([weakWriter = makeWeakPtr(static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter))] {
+        if (weakWriter)
+            weakWriter->processNewCompressedAudioSampleBuffers();
+    });
 }
 
 MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo)
@@ -188,16 +192,13 @@ void MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers()
     ASSERT(m_hasVideo);
     if (!m_videoFormatDescription) {
         m_videoFormatDescription = CMSampleBufferGetFormatDescription(m_videoCompressor->getOutputSampleBuffer());
-        callOnMainThread([weakThis = makeWeakPtr(this), this] {
-            if (!weakThis)
-                return;
 
-            if (m_hasAudio && !m_audioFormatDescription)
-                return;
+        if (m_hasAudio && !m_audioFormatDescription)
+            return;
 
-            startAssetWriter();
-        });
+        startAssetWriter();
     }
+
     if (!m_hasStartedWriting)
         return;
     appendCompressedSampleBuffers();
@@ -208,16 +209,12 @@ void MediaRecorderPrivateWriter::processNewCompressedAudioSampleBuffers()
     ASSERT(m_hasAudio);
     if (!m_audioFormatDescription) {
         m_audioFormatDescription = CMSampleBufferGetFormatDescription(m_audioCompressor->getOutputSampleBuffer());
-        callOnMainThread([weakThis = makeWeakPtr(this), this] {
-            if (!weakThis)
-                return;
+        if (m_hasVideo && !m_videoFormatDescription)
+            return;
 
-            if (m_hasVideo && !m_videoFormatDescription)
-                return;
-
-            startAssetWriter();
-        });
+        startAssetWriter();
     }
+
     if (!m_hasStartedWriting)
         return;
     appendCompressedSampleBuffers();
@@ -435,35 +432,43 @@ void MediaRecorderPrivateWriter::stopRecording()
     if (m_audioCompressor)
         m_audioCompressor->finish();
 
-    if (!m_hasStartedWriting)
-        return;
-    ASSERT([m_writer status] == AVAssetWriterStatusWriting);
-
     m_isStopping = true;
+    // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
+    callOnMainThread([this, weakThis = makeWeakPtr(this)]() mutable {
+        auto whenFinished = [this] {
+            m_isStopping = false;
+            if (m_fetchDataCompletionHandler) {
+                auto buffer = WTFMove(m_data);
+                m_fetchDataCompletionHandler(WTFMove(buffer));
+            }
 
-    flushCompressedSampleBuffers([this, weakThis = makeWeakPtr(this)]() mutable {
-        if (!weakThis)
+            m_isStopped = false;
+            m_hasStartedWriting = false;
+            clear();
+        };
+
+        if (!m_hasStartedWriting) {
+            whenFinished();
             return;
+        }
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [m_writer flush];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        [m_writer finishWritingWithCompletionHandler:[this, weakThis = WTFMove(weakThis)]() mutable {
-            callOnMainThread([this, weakThis = WTFMove(weakThis)]() mutable {
-                if (!weakThis)
-                    return;
+        ASSERT([m_writer status] == AVAssetWriterStatusWriting);
+        flushCompressedSampleBuffers([this, weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
+            if (!weakThis)
+                return;
 
-                m_isStopping = false;
-                if (m_fetchDataCompletionHandler) {
-                    auto buffer = WTFMove(m_data);
-                    m_fetchDataCompletionHandler(WTFMove(buffer));
-                }
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            [m_writer flush];
+            ALLOW_DEPRECATED_DECLARATIONS_END
 
-                m_isStopped = false;
-                m_hasStartedWriting = false;
-                clear();
-            });
-        }];
+            [m_writer finishWritingWithCompletionHandler:[weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
+                callOnMainThread([weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
+                    if (!weakThis)
+                        return;
+                    whenFinished();
+                });
+            }];
+        });
     });
 }
 

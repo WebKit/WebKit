@@ -1,5 +1,35 @@
 2020-06-15  Youenn Fablet  <youenn@apple.com>
 
+        Simplify MediaRecorderPrivateWriterCocoa threading logic
+        https://bugs.webkit.org/show_bug.cgi?id=213126
+
+        Reviewed by Eric Carlson.
+
+        Always hop to the main thread when receiving compressed samples.
+        This makes the threading model simpler and pushing enqueued samples in the writer is not very performance sensitive.
+
+        Add handling of the special case of video samples being pushed but no compressed sample is yet produced.
+        In that case, when stopping recording, the samples will be pushed and we will start the writer.
+
+        Minor refactoring to remove some unnecessary checks and make sure some of the member fields gets initialized in their declaration.
+        Covered by existing tests.
+
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.h:
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm:
+        (WebCore::AudioSampleBufferCompressor::~AudioSampleBufferCompressor):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback):
+        (WebCore::MediaRecorderPrivateWriter::compressedAudioOutputBufferCallback):
+        (WebCore::MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::processNewCompressedAudioSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.h:
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm:
+        (WebCore::VideoSampleBufferCompressor::~VideoSampleBufferCompressor):
+
+2020-06-15  Youenn Fablet  <youenn@apple.com>
+
         Add a quirk to allow starting AudioContext if document was interacted
         https://bugs.webkit.org/show_bug.cgi?id=213118
 

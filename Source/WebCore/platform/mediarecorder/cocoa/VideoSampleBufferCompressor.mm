@@ -55,8 +55,7 @@ VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType output
 
 VideoSampleBufferCompressor::~VideoSampleBufferCompressor()
 {
-    if (m_serialDispatchQueue)
-        dispatch_release(m_serialDispatchQueue);
+    dispatch_release(m_serialDispatchQueue);
 }
 
 bool VideoSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callback, void* callbackObject)

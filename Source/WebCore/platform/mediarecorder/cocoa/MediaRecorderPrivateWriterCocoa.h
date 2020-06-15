@@ -95,17 +95,17 @@ private:
     void flushCompressedSampleBuffers(CompletionHandler<void()>&&);
     void appendEndOfVideoSampleDurationIfNeeded(CompletionHandler<void()>&&);
 
+    bool m_hasAudio { false };
+    bool m_hasVideo { false };
+
     bool m_hasStartedWriting { false };
     bool m_isStopped { false };
+    bool m_isStopping { false };
 
     RetainPtr<AVAssetWriter> m_writer;
 
-    bool m_isStopping { false };
     RefPtr<SharedBuffer> m_data;
     CompletionHandler<void(RefPtr<SharedBuffer>&&)> m_fetchDataCompletionHandler;
-
-    bool m_hasAudio;
-    bool m_hasVideo;
 
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
     std::unique_ptr<AudioSampleBufferCompressor> m_audioCompressor;

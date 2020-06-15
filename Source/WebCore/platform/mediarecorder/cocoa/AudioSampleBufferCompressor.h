@@ -59,10 +59,11 @@ private:
     void processSampleBuffersUntilLowWaterTime(CMTime);
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
 
-    RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
-    RetainPtr<CMBufferQueueRef> m_inputBufferQueue;
     dispatch_queue_t m_serialDispatchQueue;
     CMTime m_lowWaterTime;
+
+    RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
+    RetainPtr<CMBufferQueueRef> m_inputBufferQueue;
     bool m_isEncoding { false };
 
     RetainPtr<AudioConverterRef> m_converter;
@@ -70,7 +71,7 @@ private:
     AudioStreamBasicDescription m_destinationFormat;
     RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription;
     RetainPtr<NSNumber> m_gdrCountNum;
-    UInt32 m_maxOutputPacketSize;
+    UInt32 m_maxOutputPacketSize { 0 };
     Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions;
 
     CMTime m_currentNativePresentationTimeStamp;
@@ -81,9 +82,9 @@ private:
     Vector<char> m_destinationBuffer;
 
     RetainPtr<CMBlockBufferRef> m_sampleBlockBuffer;
-    size_t m_sampleBlockBufferSize;
-    size_t m_currentOffsetInSampleBlockBuffer;
-    AudioFormatID m_outputCodecType;
+    size_t m_sampleBlockBufferSize { 0 };
+    size_t m_currentOffsetInSampleBlockBuffer { 0 };
+    AudioFormatID m_outputCodecType { kAudioFormatMPEG4AAC };
 };
 
 }

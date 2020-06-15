@@ -56,12 +56,12 @@ private:
     static void videoCompressionCallback(void *refCon, void*, OSStatus, VTEncodeInfoFlags, CMSampleBufferRef);
 
     dispatch_queue_t m_serialDispatchQueue;
+    CMVideoCodecType m_outputCodecType { kCMVideoCodecType_H264 };
+
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
     RetainPtr<VTCompressionSessionRef> m_vtSession;
 
     bool m_isEncoding { false };
-
-    CMVideoCodecType m_outputCodecType;
     float m_maxKeyFrameIntervalDuration { 2.0 };
     unsigned m_expectedFrameRate { 30 };
 };
