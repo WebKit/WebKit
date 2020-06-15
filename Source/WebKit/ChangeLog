@@ -1,3 +1,15 @@
+2020-06-15  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Suppress compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=213034
+
+        Reviewed by Darin Adler.
+
+        Convert to std:size_t to compare equal data types.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::readOrMakeSalt):
+
 2020-06-15  Chris Dumez  <cdumez@apple.com>
 
         Revert r260856 as it seems to have regressed PLT on iOS

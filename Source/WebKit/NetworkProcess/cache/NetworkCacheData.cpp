@@ -149,7 +149,7 @@ Optional<Salt> readOrMakeSalt(const String& path)
     if (FileSystem::fileExists(path)) {
         auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
         Salt salt;
-        auto bytesRead = FileSystem::readFromFile(file, reinterpret_cast<char*>(salt.data()), salt.size());
+        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, reinterpret_cast<char*>(salt.data()), salt.size()));
         FileSystem::closeFile(file);
         if (bytesRead == salt.size())
             return salt;
@@ -159,7 +159,7 @@ Optional<Salt> readOrMakeSalt(const String& path)
 
     Salt salt = makeSalt();
     auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Write, FileSystem::FileAccessPermission::User);
-    bool success = FileSystem::writeToFile(file, reinterpret_cast<char*>(salt.data()), salt.size()) == salt.size();
+    bool success = static_cast<std::size_t>(FileSystem::writeToFile(file, reinterpret_cast<char*>(salt.data()), salt.size())) == salt.size();
     FileSystem::closeFile(file);
     if (!success)
         return { };

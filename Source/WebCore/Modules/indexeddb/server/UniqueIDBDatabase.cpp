@@ -778,7 +778,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     auto indexSize = estimateSize(*objectStoreInfo, indexKeys, keySize);
     auto taskSize = defaultWriteOperationCost + keySize + valueSize + indexSize;
 
-    LOG(IndexedDB, "UniqueIDBDatabase::putOrAdd quota check with task size: %llu key size: %llu value size: %llu index size: %llu", taskSize, keySize, valueSize, indexSize);
+    LOG(IndexedDB, "UniqueIDBDatabase::putOrAdd quota check with task size: %" PRIu64 " key size: %" PRIu64 " value size: %" PRIu64 " index size: %" PRIu64, taskSize, keySize, valueSize, indexSize);
 
     if (m_server.requestSpace(m_identifier.origin(), taskSize) == StorageQuotaManager::Decision::Deny) {
         callback(IDBError { QuotaExceededError, quotaErrorMessageName("PutOrAdd") }, usedKey);

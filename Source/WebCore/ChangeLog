@@ -1,3 +1,17 @@
+2020-06-15  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Suppress compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=213034
+
+        Reviewed by Darin Adler.
+
+        Use PRIu64 formatter for uint64_t instead of %llu.
+
+        No functional changes.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+
 2020-06-15  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Use GRefPtr for ManetteMonitor
