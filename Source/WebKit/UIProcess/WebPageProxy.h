@@ -1782,6 +1782,8 @@ public:
 
     WebPopupMenuProxy* activePopupMenu() const { return m_activePopupMenu.get(); }
 
+    void preconnectTo(const URL&);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1855,8 +1857,6 @@ private:
     void didChangeProgress(double);
     void didFinishProgress();
     void setNetworkRequestsInProgress(bool);
-
-    void preconnectTo(const URL&);
 
     void didDestroyNavigation(uint64_t navigationID);
 

@@ -2650,6 +2650,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     });
 }
 
+- (void)_preconnectToServer:(NSURL *)url
+{
+    _page->preconnectTo(url);
+}
+
 - (id <_WKInputDelegate>)_inputDelegate
 {
     return _inputDelegate.getAutoreleased();
