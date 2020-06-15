@@ -180,6 +180,7 @@
         "kern.version"
         "machdep.cpu.brand_string"
         "security.mac.sandbox.sentinel"
+        "sysctl.name2oid"
         "kern.tcsm_enable"
         "kern.tcsm_available"
         "vm.footprint_suspend")
@@ -234,6 +235,8 @@
     (iokit-property "Formats")
     (iokit-property "GPUConfigurationVariable")
     (iokit-property "GpuDebugPolicy")
+    (iokit-property "GPURawCounterBundleName")
+    (iokit-property "GPURawCounterPluginClassName")
     (iokit-property "HEVCSupported")
     (iokit-property "HIDPointerAccelerationType")
     (iokit-property-regex #"^IOAccel(DisplayPipeCapabilities|Index|Types|Revision)")
@@ -285,6 +288,7 @@
     (iokit-property "IOParentMatch")
     (iokit-property-regex #"^IOPCI((Class|Primary|Property|)Match|Express(Capabilities|Link(Status|Capabilities))|MSIMode|Resourced|Tunnelled)")
     (iokit-property "IOPMIsPowerManaged")
+    (iokit-property "IOPersonalityPublisher")
     (iokit-property-regex #"^IOPlatform(SerialNumber|UUID)")
     (iokit-property "IOPowerManagement")
     (iokit-property "IOProbeScore")
@@ -925,7 +929,7 @@
         (extension "com.apple.webkit.extension.mach")
         (xpc-service-name
             ;;; FIXME(207716): The following should be removed when the GPU process is complete
-            "com.apple.accessibility.mediaaccessibilityd" "com.apple.coremedia.videodecoder" "com.apple.coremedia.videoencoder"
+            "com.apple.accessibility.mediaaccessibilityd" "com.apple.audio.toolbox.reporting.service" "com.apple.coremedia.videodecoder" "com.apple.coremedia.videoencoder"
             ;;; FIXME(207716): End services to remove.
         )
     )

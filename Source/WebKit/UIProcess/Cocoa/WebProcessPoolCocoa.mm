@@ -217,13 +217,13 @@ static const Vector<String>& mediaRelatedMachServices()
     ASSERT(isMainThread());
     static const auto services = makeNeverDestroyed(Vector<String> {
         "com.apple.audio.AudioComponentPrefs", "com.apple.audio.AudioComponentRegistrar",
-        "com.apple.audio.AudioQueueServer", "com.apple.coremedia.endpoint.xpc",
+        "com.apple.audio.AudioQueueServer", "com.apple.audio.toolbox.reporting.service", "com.apple.coremedia.endpoint.xpc",
         "com.apple.coremedia.routediscoverer.xpc", "com.apple.coremedia.routingcontext.xpc",
         "com.apple.coremedia.volumecontroller.xpc", "com.apple.accessibility.mediaaccessibilityd",
         "com.apple.mediaremoted.xpc",
 #if PLATFORM(IOS_FAMILY)
         "com.apple.audio.AudioSession", "com.apple.MediaPlayer.RemotePlayerService",
-        "com.apple.audio.toolbox.reporting.service", "com.apple.coremedia.admin",
+        "com.apple.coremedia.admin",
         "com.apple.coremedia.asset.xpc", "com.apple.coremedia.assetimagegenerator.xpc",
         "com.apple.coremedia.audiodeviceclock.xpc", "com.apple.coremedia.audioprocessingtap.xpc",
         "com.apple.coremedia.capturesession", "com.apple.coremedia.capturesource",

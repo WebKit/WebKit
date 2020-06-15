@@ -1,3 +1,19 @@
+2020-06-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Update sandboxes to reduce logging for media-related operations
+        https://bugs.webkit.org/show_bug.cgi?id=213210
+        <rdar://problem/64376237>
+
+        Reviewed by Per Arne Vollan.
+
+        Ongoing testing has uncovered a set of additional services and IOKit
+        properties that we should allow without logging.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::mediaRelatedMachServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-06-15  Alex Christensen  <achristensen@webkit.org>
 
         Provide alternatively-named SPI for user style sheets and scripts

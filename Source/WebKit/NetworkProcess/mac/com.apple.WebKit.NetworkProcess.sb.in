@@ -181,6 +181,7 @@
         "kern.tcsm_available" ;; Needed for IndexedDB support.
         "kern.ostype"
         "kern.version"
+        "sysctl.name2oid"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^net.routetable")
 )
