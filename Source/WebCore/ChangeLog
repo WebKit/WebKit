@@ -1,3 +1,16 @@
+2020-06-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Don't claim to support fullscreen mode unless fullScreenEnabled setting is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=213142
+        <rdar://63753327>
+
+        Reviewed by Jer Noble.
+
+        Test: media/video-supports-fullscreen.html
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen const): Check settings.fullScreenEnabled.
+
 2020-06-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/textarea-selected-text-range.html in isolated tree mode.
