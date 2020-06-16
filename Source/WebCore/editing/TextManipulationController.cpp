@@ -409,16 +409,16 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         return;
 
     Vector<ManipulationUnit> unitsInCurrentParagraph;
-    RefPtr<Element> enclosingItemBoundaryElement;
+    Vector<Ref<Element>> enclosingItemBoundaryElements;
     ParagraphContentIterator iterator { start, end };
     for (; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         auto* contentNode = content.node.get();
         ASSERT(contentNode);
 
-        if (enclosingItemBoundaryElement && !enclosingItemBoundaryElement->contains(contentNode)) {
+        while (!enclosingItemBoundaryElements.isEmpty() && !enclosingItemBoundaryElements.last()->contains(contentNode)) {
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
-            enclosingItemBoundaryElement = nullptr;
+            enclosingItemBoundaryElements.removeLast();
         }
 
         if (RefPtr<Element> currentElementAncestor = is<Element>(*contentNode) ? downcast<Element>(contentNode) : contentNode->parentOrShadowHostElement()) {
@@ -444,8 +444,10 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
                     addItem(ManipulationItemData { { }, { }, makeWeakPtr(currentElement), HTMLNames::valueAttr, { ManipulationToken { m_tokenIdentifier.generate(), input.value(), tokenInfo(&currentElement) } } });
             }
 
-            if (!enclosingItemBoundaryElement && isEnclosingItemBoundaryElement(currentElement))
-                enclosingItemBoundaryElement = &currentElement;
+            if (isEnclosingItemBoundaryElement(currentElement)) {
+                addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
+                enclosingItemBoundaryElements.append(currentElement);
+            }
         }
 
         if (content.isReplacedContent) {

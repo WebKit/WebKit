@@ -1,3 +1,24 @@
+2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should handle nested item boundary elements
+        https://bugs.webkit.org/show_bug.cgi?id=213251
+        <rdar://problem/63371514>
+
+        Reviewed by Sihui Liu.
+
+        In the case where there are nested item boundary elements (e.g. block-level list items or links), text
+        manipulation will currently only observe that we've crossed the top-level item boundary, and proceed to extract
+        text from the nested boundary elements as tokens in the same item.
+
+        Address this by maintaining a stack of boundary elements rather than just a single item. Additionally, create
+        and add an item when crossing into a new item boundary, rather than only when we exit a boundary; this handles
+        the case where we descend from one boundary element into another boundary element that is a child.
+
+        Test: TextManipulation.StartTextManipulationTreatsNestedInlineBlockListItemsAndLinksAsParagraphs
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::observeParagraphs):
+
 2020-06-16  Youenn Fablet  <youenn@apple.com>
 
         Loads triggered by an opaque stylesheet should not be visible to service workers

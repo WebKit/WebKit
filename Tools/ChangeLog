@@ -1,3 +1,15 @@
+2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text manipulation should handle nested item boundary elements
+        https://bugs.webkit.org/show_bug.cgi?id=213251
+        <rdar://problem/63371514>
+
+        Reviewed by Sihui Liu.
+
+        Add a new API test to exercise this scenario.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+
 2020-06-16  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Disable video autoplay
