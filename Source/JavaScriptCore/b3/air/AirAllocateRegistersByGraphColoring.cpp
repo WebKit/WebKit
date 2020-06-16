@@ -1839,7 +1839,7 @@ private:
             // possible that most of the TmpWidth overhead is from queries of TmpWidth rather than the
             // recomputation, in which case speeding up the lookup would be a bigger win.
             // https://bugs.webkit.org/show_bug.cgi?id=152478
-            m_tmpWidth.recompute(m_code);
+            m_tmpWidth.recompute<bank>(m_code);
 
             auto doAllocation = [&] (auto& allocator) -> bool {
                 allocator.allocate();
@@ -2204,7 +2204,7 @@ void allocateRegistersByGraphColoring(Code& code)
 {
     PhaseScope phaseScope(code, "allocateRegistersByGraphColoring");
     
-    if (false)
+    if (traceDebug)
         dataLog("Code before graph coloring:\n", code);
 
     UseCounts<Tmp> useCounts(code);

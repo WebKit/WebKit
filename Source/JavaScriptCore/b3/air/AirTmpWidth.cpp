@@ -40,32 +40,36 @@ TmpWidth::TmpWidth()
 
 TmpWidth::TmpWidth(Code& code)
 {
-    recompute(code);
+    recompute<GP>(code);
+    recompute<FP>(code);
 }
 
 TmpWidth::~TmpWidth()
 {
 }
 
+template <Bank bank>
 void TmpWidth::recompute(Code& code)
 {
     // Set this to true to cause this analysis to always return pessimistic results.
-    const bool beCareful = false;
-
+    constexpr bool beCareful = false;
     constexpr bool verbose = false;
 
     if (verbose) {
-        dataLog("Code before TmpWidth:\n");
+        dataLogLn("Code before TmpWidth:");
         dataLog(code);
     }
-    
-    m_width.clear();
+
+    auto& bankWidthsVector = widthsVector(bank);
+    bankWidthsVector.resize(AbsoluteTmpMapper<bank>::absoluteIndex(code.numTmps(bank)));
+    for (unsigned i = 0; i < bankWidthsVector.size(); ++i)
+        bankWidthsVector[i] = Widths(bank);
     
     auto assumeTheWorst = [&] (Tmp tmp) {
-        Widths& widths = m_width.add(tmp, Widths()).iterator->value;
-        Bank bank = Arg(tmp).bank();
-        widths.use = conservativeWidth(bank);
-        widths.def = conservativeWidth(bank);
+        if (bank == Arg(tmp).bank()) {
+            Width conservative = conservativeWidth(bank);
+            addWidths(tmp, { conservative, conservative });
+        }
     };
     
     // Assume the worst for registers.
@@ -89,43 +93,42 @@ void TmpWidth::recompute(Code& code)
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
             if (inst.kind.opcode == Move && inst.args[1].isTmp()) {
+                if (Arg(inst.args[1]).bank() != bank)
+                    continue;
+
                 if (inst.args[0].isTmp()) {
-                    // Make sure that both sides of the Move have a width already initialized. The
-                    // fixpoint below assumes that it never has to add things to the HashMap.
-                    m_width.add(inst.args[0].tmp(), Widths(GP));
-                    m_width.add(inst.args[1].tmp(), Widths(GP));
-                    
                     moves.append(&inst);
                     continue;
                 }
-                if (inst.args[0].isImm()
-                    && inst.args[0].value() >= 0) {
+                if (inst.args[0].isImm() && inst.args[0].value() >= 0) {
                     Tmp tmp = inst.args[1].tmp();
-                    Widths& widths = m_width.add(tmp, Widths(GP)).iterator->value;
-                    
+                    Widths& tmpWidths = widths(tmp);
+                    Width maxWidth = Width64;
                     if (inst.args[0].value() <= std::numeric_limits<int8_t>::max())
-                        widths.def = std::max(widths.def, Width8);
+                        maxWidth = Width8;
                     else if (inst.args[0].value() <= std::numeric_limits<int16_t>::max())
-                        widths.def = std::max(widths.def, Width16);
+                        maxWidth = Width16;
                     else if (inst.args[0].value() <= std::numeric_limits<int32_t>::max())
-                        widths.def = std::max(widths.def, Width32);
-                    else
-                        widths.def = std::max(widths.def, Width64);
+                        maxWidth = Width32;
+
+                    tmpWidths.def = std::max(tmpWidths.def, maxWidth);
 
                     continue;
                 }
             }
             inst.forEachTmp(
-                [&] (Tmp& tmp, Arg::Role role, Bank bank, Width width) {
-                    Widths& widths = m_width.add(tmp, Widths(bank)).iterator->value;
-                    
+                [&] (Tmp& tmp, Arg::Role role, Bank tmpBank, Width width) {
+                    if (Arg(tmp).bank() != bank)
+                        return;
+
+                    Widths& tmpWidths = widths(tmp);
                     if (Arg::isAnyUse(role))
-                        widths.use = std::max(widths.use, width);
+                        tmpWidths.use = std::max(tmpWidths.use, width);
 
                     if (Arg::isZDef(role))
-                        widths.def = std::max(widths.def, width);
+                        tmpWidths.def = std::max(tmpWidths.def, width);
                     else if (Arg::isAnyDef(role))
-                        widths.def = conservativeWidth(bank);
+                        tmpWidths.def = conservativeWidth(tmpBank);
                 });
         }
     }
@@ -139,12 +142,8 @@ void TmpWidth::recompute(Code& code)
             ASSERT(move->args[0].isTmp());
             ASSERT(move->args[1].isTmp());
 
-            // We already ensure that both tmps are added to the width map. That's important
-            // because you cannot add both tmps here while simultaneously getting a reference to
-            // their values, since the second add would invalidate the reference returned by the
-            // first one.
-            Widths& srcWidths = m_width.find(move->args[0].tmp())->value;
-            Widths& dstWidths = m_width.find(move->args[1].tmp())->value;
+            Widths& srcWidths = widths(move->args[0].tmp());
+            Widths& dstWidths = widths(move->args[1].tmp());
 
             // Legend:
             //
@@ -168,8 +167,11 @@ void TmpWidth::recompute(Code& code)
         }
     }
 
-    if (verbose)
-        dataLog("width: ", mapDump(m_width), "\n");
+    if (verbose) {
+        dataLogLn("bank: ", bank, ", widthsVector: ");
+        for (unsigned i = 0; i < bankWidthsVector.size(); ++i)
+            dataLogLn("\t", i, " : ", bankWidthsVector[i]);
+    }
 }
 
 void TmpWidth::Widths::dump(PrintStream& out) const

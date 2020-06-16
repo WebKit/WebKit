@@ -1,3 +1,32 @@
+2020-06-16  Robin Morisset  <rmorisset@apple.com>
+
+        Optimize Air::TmpWidth analysis in IRC
+        https://bugs.webkit.org/show_bug.cgi?id=152478
+
+        Reviewed by Filip Pizlo.
+
+        AirTmpWidth currently uses a HashMap to map tmps to their width.
+        Since tmps have consecutive indices, we can instead use vectors (one for GP and one for FP tmps).
+        As a bonus, we can just compute the width of the tmps of the bank the register allocator is currently looking at.
+        This cuts the time spent in the register allocator in JetStream2 by about 100ms out of 3.4s
+        (or sometimes 80ms out of 2.4, the bimodality of the time spent is due to a huge function in tagcloud-SP which usually but not always reach the FTL, I'll check later if it can be fixed by tweaking the inliner).
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        (JSC::B3::Air::allocateRegistersByGraphColoring):
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::TmpWidth):
+        (JSC::B3::Air::TmpWidth::recompute):
+        * b3/air/AirTmpWidth.h:
+        (JSC::B3::Air::TmpWidth::width const):
+        (JSC::B3::Air::TmpWidth::requiredWidth):
+        (JSC::B3::Air::TmpWidth::defWidth const):
+        (JSC::B3::Air::TmpWidth::useWidth const):
+        (JSC::B3::Air::TmpWidth::Widths::Widths):
+        (JSC::B3::Air::TmpWidth::widths):
+        (JSC::B3::Air::TmpWidth::widths const):
+        (JSC::B3::Air::TmpWidth::addWidths):
+        (JSC::B3::Air::TmpWidth::widthsVector):
+
 2020-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Visual Studio] CombinedDomains.json is generated twice in JavaScriptCore.vcxproj and InspectorBackendCommands.vcxproj

@@ -39,6 +39,7 @@ public:
     TmpWidth(Code&);
     ~TmpWidth();
 
+    template <Bank bank>
     void recompute(Code&);
 
     // The width of a Tmp is the number of bits that you need to be able to track without some trivial
@@ -52,19 +53,15 @@ public:
     // methods.
     Width width(Tmp tmp) const
     {
-        auto iter = m_width.find(tmp);
-        if (iter == m_width.end())
-            return minimumWidth(Arg(tmp).bank());
-        return std::min(iter->value.use, iter->value.def);
+        Widths tmpWidths = widths(tmp);
+        return std::min(tmpWidths.use, tmpWidths.def);
     }
 
     // Return the minimum required width for all defs/uses of this Tmp.
     Width requiredWidth(Tmp tmp)
     {
-        auto iter = m_width.find(tmp);
-        if (iter == m_width.end())
-            return minimumWidth(Arg(tmp).bank());
-        return std::max(iter->value.use, iter->value.def);
+        Widths tmpWidths = widths(tmp);
+        return std::max(tmpWidths.use, tmpWidths.def);
     }
 
     // This indirectly tells you how much of the tmp's high bits are guaranteed to be zero. The number of
@@ -75,19 +72,13 @@ public:
     // Where TotalBits are the total number of bits in the register, so 64 on a 64-bit system.
     Width defWidth(Tmp tmp) const
     {
-        auto iter = m_width.find(tmp);
-        if (iter == m_width.end())
-            return minimumWidth(Arg(tmp).bank());
-        return iter->value.def;
+        return widths(tmp).def;
     }
 
     // This tells you how much of Tmp is going to be read.
     Width useWidth(Tmp tmp) const
     {
-        auto iter = m_width.find(tmp);
-        if (iter == m_width.end())
-            return minimumWidth(Arg(tmp).bank());
-        return iter->value.use;
+        return widths(tmp).use;
     }
     
 private:
@@ -95,9 +86,15 @@ private:
         Widths() { }
 
         Widths(Bank bank)
+            : use(minimumWidth(bank))
+            , def(minimumWidth(bank))
         {
-            use = minimumWidth(bank);
-            def = minimumWidth(bank);
+        }
+
+        Widths(Width useArg, Width defArg)
+            : use(useArg)
+            , def(defArg)
+        {
         }
 
         void dump(PrintStream& out) const;
@@ -105,8 +102,36 @@ private:
         Width use;
         Width def;
     };
-    
-    HashMap<Tmp, Widths> m_width;
+
+    Widths& widths(Tmp tmp)
+    {
+        if (tmp.isGP()) {
+            unsigned index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
+            ASSERT(index < m_widthGP.size());
+            return m_widthGP[index];
+        }
+        unsigned index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
+        ASSERT(index < m_widthFP.size());
+        return m_widthFP[index];
+    }
+    const Widths& widths(Tmp tmp) const
+    {
+        return const_cast<TmpWidth*>(this)->widths(tmp);
+    }
+
+    void addWidths(Tmp tmp, Widths tmpWidths)
+    {
+        widths(tmp) = tmpWidths;
+    }
+
+    Vector<Widths>& widthsVector(Bank bank)
+    {
+        return bank == GP ? m_widthGP : m_widthFP;
+    }
+
+    // These are initialized at the beginning of recompute<bank>, which is called in the constructor for both values of bank.
+    Vector<Widths> m_widthGP;
+    Vector<Widths> m_widthFP;
 };
 
 } } } // namespace JSC::B3::Air
