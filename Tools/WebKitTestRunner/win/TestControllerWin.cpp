@@ -84,6 +84,10 @@ static RunLoopResult runRunLoopUntil(bool& condition, HANDLE object, double time
         // There are messages in the queue. Process them.
         MSG msg;
         while (::PeekMessageW(&msg, 0, 0, 0, PM_REMOVE)) {
+            // WM_MOUSELEAVE is dispatched because the mouse cursor is not on the WebKitTestRunner's window.
+            // Ignore WM_MOUSELEAVE because it discontinues mouse dragging events.
+            if (msg.message == WM_MOUSELEAVE)
+                continue;
             ::TranslateMessage(&msg);
             ::DispatchMessageW(&msg);
         }

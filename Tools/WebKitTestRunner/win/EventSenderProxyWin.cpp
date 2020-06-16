@@ -67,6 +67,7 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     switch (button) {
     case 0:
         messageType = WM_LBUTTONDOWN;
+        m_leftMouseButtonDown = true;
         break;
     case 1:
         messageType = WM_MBUTTONDOWN;
@@ -92,6 +93,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
     switch (button) {
     case 0:
         messageType = WM_LBUTTONUP;
+        m_leftMouseButtonDown = false;
         break;
     case 1:
         messageType = WM_MBUTTONUP;
@@ -115,7 +117,8 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
 {
     m_position.x = x;
     m_position.y = y;
-    dispatchMessage(WM_MOUSEMOVE, 0, MAKELPARAM(positionInPoint().x, positionInPoint().y));
+    WPARAM wParam = m_leftMouseButtonDown ? MK_LBUTTON : 0;
+    dispatchMessage(WM_MOUSEMOVE, wParam, MAKELPARAM(positionInPoint().x, positionInPoint().y));
 }
 
 void EventSenderProxy::mouseScrollBy(int x, int y)

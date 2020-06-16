@@ -1,3 +1,29 @@
+2020-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Mouse dragging tests are failing because WebKitTestRunner dispatches WM_MOUSELEAVE to the hidden WebView
+        https://bugs.webkit.org/show_bug.cgi?id=213239
+
+        Reviewed by Don Olmstead.
+
+        There are two problems:
+        1. Windows EventSenderProxy::mouseMoveTo doesn't set WPARAM of WM_MOUSEMOVE
+        2. Unexpected WM_MOUSELEAVE discontinues the mouse dragging events
+
+        WPARAM of WM_MOUSEMOVE should represent pressed mouse buttons while dragging.
+
+        WM_MOUSELEAVE is unexpectedly dispatched because the mouse cursor
+        is always out of the hidden WebView. The unexpected WM_MOUSELEAVE
+        discontinues dragging events. WM_MOUSELEAVE shouldn't be
+        dispatched in WebKitTestRunner. Ignore it.
+
+        * WebKitTestRunner/win/EventSenderProxyWin.cpp:
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo): Set MK_LBUTTON to WPARAM of
+        WM_MOUSEMOVE while dragging.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::runRunLoopUntil): Ignore WM_MOUSELEAVE.
+
 2020-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text manipulation should handle nested item boundary elements
