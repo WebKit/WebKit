@@ -1,3 +1,26 @@
+2020-06-16  Sam Weinig  <weinig@apple.com>
+
+        [WPT] form.action does not return document.url when unset (part of https://wpt.live/html/dom/reflection-forms.html)
+        https://bugs.webkit.org/show_bug.cgi?id=213205
+
+        Reviewed by David Kilzer.
+
+        Update existing test results that now pass.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::formAction const):
+        Call document.completeURL() directly rather than getURLAttribute() as that 
+        will cause the attribute to have to be looked up again.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::action const):
+        Match HTMLFormControlElement::formAction (and the spec) and return the document's
+        url if the attribute value is missing.
+
+        * html/HTMLFormElement.idl:
+        Remove Reflect/URL extended attributes, as we need custom handling for the empty
+        case.
+
 2020-06-16  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r262994): Web Inspector is killed when context-clicking anywhere

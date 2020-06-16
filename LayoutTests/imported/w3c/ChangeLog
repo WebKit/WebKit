@@ -1,3 +1,15 @@
+2020-06-16  Sam Weinig  <weinig@apple.com>
+
+        [WPT] form.action does not return document.url when unset (part of https://wpt.live/html/dom/reflection-forms.html)
+        https://bugs.webkit.org/show_bug.cgi?id=213205
+
+        Reviewed by David Kilzer.
+
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-action-reflection-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-action-reflection-with-base-url-expected.txt:
+        Update test results.
+
 2020-06-16  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r263079.

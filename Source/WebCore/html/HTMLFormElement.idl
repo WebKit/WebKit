@@ -24,7 +24,7 @@
     JSGenerateToNativeObject,
 ] interface HTMLFormElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect=accept_charset] attribute DOMString acceptCharset;
-    [CEReactions=NotNeeded, Reflect, URL] attribute USVString action;
+    [CEReactions=NotNeeded] attribute USVString action;
     [CEReactions=NotNeeded] attribute DOMString autocomplete;
     [CEReactions=NotNeeded] attribute DOMString enctype;
     [CEReactions=NotNeeded, ImplementedAs=enctype] attribute DOMString encoding;

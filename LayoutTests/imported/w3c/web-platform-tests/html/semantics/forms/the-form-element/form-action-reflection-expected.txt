@@ -1,5 +1,5 @@
 
 PASS An action URL should be resolved relative to the document's base URL (= the document's URL in this case) 
 PASS An empty-string action content attribute should cause the IDL attribute to return the document's URL (= the document's base URL in this case) 
-FAIL A missing action content attribute should cause the IDL attribute to return the document's URL (= the document's base URL in this case) assert_equals: expected "http://localhost:8800/html/semantics/forms/the-form-element/form-action-reflection.html" but got ""
+PASS A missing action content attribute should cause the IDL attribute to return the document's URL (= the document's base URL in this case) 
 

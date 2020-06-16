@@ -281,7 +281,7 @@ PASS form.acceptCharset (<form accept-charset>): IDL set to null
 PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-toString" 
 PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-valueOf" 
 PASS form.action: typeof IDL attribute 
-FAIL form.action: IDL get with DOM attribute unset assert_equals: expected "http://localhost:8800/html/dom/reflection-forms.html" but got ""
+PASS form.action: IDL get with DOM attribute unset 
 PASS form.action: setAttribute() to "" 
 PASS form.action: setAttribute() to " foo " 
 PASS form.action: setAttribute() to "http://site.example/" 

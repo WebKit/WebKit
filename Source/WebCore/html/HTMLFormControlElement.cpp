@@ -115,7 +115,7 @@ String HTMLFormControlElement::formAction() const
     const AtomString& value = attributeWithoutSynchronization(formactionAttr);
     if (value.isEmpty())
         return document().url().string();
-    return getURLAttribute(formactionAttr).string();
+    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(value)).string();
 }
 
 void HTMLFormControlElement::setFormAction(const AtomString& value)
