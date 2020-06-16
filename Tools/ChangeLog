@@ -1,3 +1,13 @@
+2020-06-16  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r263029): [Flatpak SDK] Broke initial SDK installation
+
+        Rubber-stamped by Žan Doberšek.
+
+        * flatpak/flatpakutils.py:
+        (FlatpakObject.version): Gracefully return an empty version when the flatpak info command
+        fails. This usually means the app has not been installed yet.
+
 2020-06-15  Megan Gardner  <megan_gardner@apple.com>
 
         Text form controls can scroll by 1px when value is the same length as size. No scrolling should happen.

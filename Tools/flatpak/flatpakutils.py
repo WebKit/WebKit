@@ -197,7 +197,11 @@ class FlatpakObject:
         return run_sanitized(command, gather_output=gather_output)
 
     def version(self, ref_id):
-        output = self.flatpak("info", ref_id, gather_output=True)
+        try:
+            output = self.flatpak("info", ref_id, gather_output=True)
+        except subprocess.CalledProcessError:
+            # ref is likely not installed
+            return ""
         for line in output.splitlines():
             tokens = line.split(":")
             if len(tokens) != 2:
