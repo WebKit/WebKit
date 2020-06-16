@@ -72,7 +72,7 @@ public:
 
     struct DynamicMediaQueryRules {
         Vector<Ref<const MediaQuerySet>> mediaQuerySets;
-        HashSet<size_t, DefaultHash<size_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<size_t>> affectedRulePositions;
+        Vector<size_t> affectedRulePositions;
         Vector<RuleFeature> ruleFeatures;
         bool requiresFullReset { false };
         bool result { true };
