@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
     CodeSpecializationKind kind = codeBlock->specializationKind();
     
 #if ENABLE(JIT)
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         if (kind == CodeForCall) {
             static DirectJITCode* jitCode;
             static std::once_flag onceKey;
@@ -88,7 +88,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
 static void setEvalEntrypoint(CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         static NativeJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
@@ -111,7 +111,7 @@ static void setEvalEntrypoint(CodeBlock* codeBlock)
 static void setProgramEntrypoint(CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         static NativeJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
@@ -134,7 +134,7 @@ static void setProgramEntrypoint(CodeBlock* codeBlock)
 static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         static NativeJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {

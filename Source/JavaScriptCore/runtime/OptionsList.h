@@ -618,6 +618,9 @@ struct OptionsStorage {
     using OptionString = const char*;
     using GCLogLevel = GCLogging::Level;
 
+    bool allowUnfinalizedAccess;
+    bool isFinalized;
+
 #define DECLARE_OPTION(type_, name_, defaultValue_, availability_, description_) \
     type_ name_; \
     type_ name_##Default;

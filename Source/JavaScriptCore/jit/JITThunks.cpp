@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,37 +92,37 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutab
 
 MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
 {
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     return ctiStub(vm, nativeCallGenerator).code();
 }
 
 MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm)
 {
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     return ctiStub(vm, nativeConstructGenerator).code();
 }
 
 MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm)
 {
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     return ctiStub(vm, nativeTailCallGenerator).code();
 }
 
 MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM& vm)
 {
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator).code();
 }
 
 MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm)
 {
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     return ctiStub(vm, internalFunctionCallGenerator).code();
 }
 
 MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm)
 {
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     return ctiStub(vm, internalFunctionConstructGenerator).code();
 }
 
@@ -183,7 +183,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction funct
 NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, ThunkGenerator generator, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {
     ASSERT(!isCompilationThread());    
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
 
     auto hostFunctionKey = std::make_tuple(function, constructor, name);
     {

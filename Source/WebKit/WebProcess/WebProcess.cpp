@@ -1001,7 +1001,7 @@ void WebProcess::resetPluginLoadClientPolicies(const HashMap<WTF::String, HashMa
 
 void WebProcess::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(JSC::VM::canUseJIT());
+    completionHandler(JSC::Options::useJIT());
 }
 
 void WebProcess::clearPluginClientPolicies()

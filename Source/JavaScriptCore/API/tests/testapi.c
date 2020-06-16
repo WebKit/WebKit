@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2101,7 +2101,6 @@ int main(int argc, char* argv[])
         JSGlobalContextRelease(context);
     }
     failed |= testTypedArrayCAPI();
-    failed |= testExecutionTimeLimit();
     failed |= testFunctionOverrides();
     failed |= testGlobalContextWithFinalizer();
     failed |= testPingPongStackOverflow();
@@ -2156,6 +2155,14 @@ int main(int argc, char* argv[])
     globalObjectPrivatePropertyTest();
 
     failed = finalizeMultithreadedMultiVMExecutionTest() || failed;
+
+    // Don't run this till after the MultithreadedMultiVMExecutionTest has finished.
+    // This is because testExecutionTimeLimit() modifies JIT options at runtime
+    // as part of its testing. This can wreak havoc on the rest of the system that
+    // expects the options to be frozen. Ideally, we'll find a way for testExecutionTimeLimit()
+    // to do its work without changing JIT options, but that is not easy to do.
+    // For now, we'll just run it here at the end as a workaround.
+    failed |= testExecutionTimeLimit();
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");

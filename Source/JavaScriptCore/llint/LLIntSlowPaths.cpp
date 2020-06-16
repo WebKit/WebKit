@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -357,14 +357,14 @@ inline bool shouldJIT(CodeBlock* codeBlock)
         || !ensureGlobalJITAllowlist().contains(codeBlock))
         return false;
 
-    return VM::canUseJIT() && Options::useBaselineJIT();
+    return Options::useBaselineJIT();
 }
 
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0))
 {
     DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
-    ASSERT(VM::canUseJIT());
+    ASSERT(Options::useJIT());
     
     codeBlock->updateAllValueProfilePredictions();
 

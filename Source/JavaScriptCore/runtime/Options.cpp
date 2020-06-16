@@ -219,7 +219,7 @@ static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta,
     return multiCorePriorityDelta;
 }
 
-static bool jitEnabledByDefault()
+static constexpr bool jitEnabledByDefault()
 {
     return is32Bit() || isAddress64Bit();
 }
@@ -382,6 +382,8 @@ static void disableAllJITOptions()
     Options::useBaselineJIT() = false;
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
+    Options::useBBQJIT() = false;
+    Options::useOMGJIT() = false;
     Options::useDOMJIT() = false;
     Options::useRegExpJIT() = false;
 }
@@ -567,6 +569,8 @@ void Options::initialize()
     std::call_once(
         initializeOptionsOnceFlag,
         [] {
+            AllowUnfinalizedAccessScope scope;
+
             // Sanity check that options address computation is working.
             RELEASE_ASSERT(Options::addressOfOption(useKernTCSMID) ==  &Options::useKernTCSM());
             RELEASE_ASSERT(Options::addressOfOptionDefault(useKernTCSMID) ==  &Options::useKernTCSMDefault());
@@ -631,9 +635,6 @@ void Options::initialize()
             ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= 0);
             ASSERT(Options::criticalGCMemoryThreshold() > 0.0 && Options::criticalGCMemoryThreshold() < 1.0);
 
-            dumpOptionsIfNeeded();
-            ensureOptionsAreCoherent();
-
 #if HAVE(MACH_EXCEPTIONS)
             if (Options::useMachForExceptions())
                 handleSignalsWithMach();
@@ -663,7 +664,12 @@ void Options::initialize()
             Options::dumpZappedCellCrashData() =
                 (hwPhysicalCPUMax() >= 4) && (hwL3CacheSize() >= static_cast<int64_t>(6 * MB));
 #endif
-        });
+
+            // The following should only be done at the end after all options
+            // have been initialized.
+            dumpOptionsIfNeeded();
+            ensureOptionsAreCoherent();
+    });
 }
 
 void Options::dumpOptionsIfNeeded()
@@ -694,6 +700,12 @@ void Options::dumpOptionsIfNeeded()
     }
 }
 
+void Options::finalize()
+{
+    ASSERT(!g_jscConfig.options.allowUnfinalizedAccess);
+    g_jscConfig.options.isFinalized = true;
+}
+
 static bool isSeparator(char c)
 {
     return isASCIISpace(c) || (c == ',');
@@ -701,6 +713,7 @@ static bool isSeparator(char c)
 
 bool Options::setOptions(const char* optionsStr)
 {
+    AllowUnfinalizedAccessScope scope;
     RELEASE_ASSERT(!g_jscConfig.isPermanentlyFrozen());
     Vector<char*> options;
 
@@ -866,6 +879,7 @@ bool Options::setAliasedOption(const char* arg)
 
 bool Options::setOption(const char* arg)
 {
+    AllowUnfinalizedAccessScope scope;
     bool success = setOptionWithoutAlias(arg);
     if (success)
         return true;
@@ -876,6 +890,7 @@ bool Options::setOption(const char* arg)
 void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char* title,
     const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption dumpDefaultsOption)
 {
+    AllowUnfinalizedAccessScope scope;
     if (title) {
         builder.append(title);
         builder.append('\n');
@@ -978,6 +993,7 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
 
 void Options::ensureOptionsAreCoherent()
 {
+    AllowUnfinalizedAccessScope scope;
     bool coherent = true;
     if (!(useLLInt() || useJIT())) {
         coherent = false;

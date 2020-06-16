@@ -1,3 +1,152 @@
+2020-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Make Options::useJIT() be the canonical source of truth on whether we should use the JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=212556
+        <rdar://problem/63780436>
+
+        Reviewed by Saam Barati.
+
+        After r263055, Options::useJIT() always equals VM::canUseJIT() after canUseJIT()
+        has been computed.  This patch removes VM::canUseJIT(), and replaces all calls to
+        it with calls to Options::useJIT().
+
+        In the old code, VM::canUseJIT() would assert s_canUseJITIsSet to ensure that
+        its clients will not access s_canUseJIT before it is initialized.  We not have an
+        equivalent mechanism with Options.  This is how it works:
+
+        1. There are 2 new Options flags in the g_jscConfig:
+                g_jscConfig.options.isFinalized
+                g_jscConfig.options.allowUnfinalizedAccess
+
+           g_jscConfig.options.isFinalized means that all Options values are finalized
+           i.e. initialization is complete and ready to be frozen in the Config.
+
+           g_jscConfig.options.isFinalized is set by initializeThreading() by calling
+           Options::finalize() once options initialization is complete.
+
+           g_jscConfig.options.allowUnfinalizedAccess is an allowance for clients to
+           access Options values before they are finalized.  This is only needed in
+           options initialization code where Options values are read and written to.
+
+           g_jscConfig.options.allowUnfinalizedAccess is set and cleared using the
+           Options::AllowUnfinalizedAccessScope RAII object.  The few pieces of code that
+           do options initialization will instantiate this scope object.
+
+        2. All Options accessors (e.g. Option::useJIT()) will now assert that either
+           g_jscConfig.options.allowUnfinalizedAccess or g_jscConfig.options.isFinalized
+           is set.
+
+        3. Since r263055, Options::recomputeDependentOptions() ensures that if useJIT() is
+           false, all other JIT options (e.g. useBaselineJIT(), useDFTJIT(), useFTLJIT(),
+           etc.) are also false.  This patch also adds useBBQJIT() and useOMGJIT() to that
+           list.
+
+           With this, checks for useJIT() are now redundant if there's also another JIT
+           option check, e.g. useRegExpJIT() or useDFGJIT().  When redundant, this patch
+           elides the useJIT() check (which used to be a VM::canUseJIT() check).
+
+        Ideally, we should also introduce a separate abstraction for requested option
+        values before finalization than the finalized option values that will be adopted
+        by the system.  We'll do this as a separate exercise in a later patch.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * API/tests/FunctionOverridesTest.cpp:
+        (testFunctionOverrides):
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow):
+        - Removed redundant calls to Options::initialize().
+
+        * API/tests/testapi.c:
+        (main):
+        - move the call to testExecutionTimeLimit() to after finalizeMultithreadedMultiVMExecutionTest()
+          returns.  This is because testExecutionTimeLimit() modifies JIT options at runtime
+          as part of its testing.  This can wreak havoc on the rest of the system that expects
+          the options to be frozen.  Ideally, we'll find a way for testExecutionTimeLimit() to
+          do its work without changing JIT options, but that is not easy to do.  For now,
+          we'll just run it at the end as a workaround.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setNumParameters):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+        (JSC::CodeBlock::valueProfileForArgument):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupported):
+        * heap/Heap.cpp:
+        (JSC::Heap::completeAllJITPlans):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+        (JSC::Heap::gatherScratchBufferRoots):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::resumeCompilerThreads):
+        (JSC::Heap::addCoreConstraints):
+        * interpreter/AbstractPC.cpp:
+        (JSC::AbstractPC::AbstractPC):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        (JSC::JITThunks::ctiNativeTailCall):
+        (JSC::JITThunks::ctiNativeTailCallWithoutSavedTags):
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        (JSC::JITThunks::hostFunctionStub):
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        (jscmain):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSCConfig.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::numberToStringWatchpointSet):
+        * runtime/Options.cpp:
+        (JSC::jitEnabledByDefault):
+        (JSC::disableAllJITOptions):
+
+        (JSC::Options::initialize):
+        - Move the calls to dumpOptionsIfNeeded() and ensureOptionsAreCoherent() to the
+          end after all the options have been initialized because this where they belong.
+
+        (JSC::Options::finalize):
+        (JSC::Options::setOptions):
+        (JSC::Options::setOption):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::ensureOptionsAreCoherent):
+        * runtime/Options.h:
+        (JSC::Options::AllowUnfinalizedAccessScope::AllowUnfinalizedAccessScope):
+        (JSC::Options::AllowUnfinalizedAccessScope::~AllowUnfinalizedAccessScope):
+        * runtime/OptionsList.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::isWatchable const):
+        * runtime/VM.cpp:
+        (JSC::VM::computeCanUseJIT):
+        (JSC::VM::VM):
+        (JSC::VM::getHostFunction):
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+        * runtime/VM.h:
+        (JSC::VM::isInMiniMode):
+        (JSC::VM::canUseJIT): Deleted.
+        * wasm/WasmCapabilities.h:
+        (JSC::Wasm::isSupported):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::shouldJIT):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+
 2020-06-16  Robin Morisset  <rmorisset@apple.com>
 
         Optimize Air::TmpWidth analysis in IRC

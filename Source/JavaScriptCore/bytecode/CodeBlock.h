@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -496,13 +496,13 @@ public:
     unsigned numberOfArgumentValueProfiles()
     {
         ASSERT(m_numParameters >= 0);
-        ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !vm().canUseJIT());
+        ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !Options::useJIT());
         return m_argumentValueProfiles.size();
     }
 
     ValueProfile& valueProfileForArgument(unsigned argumentIndex)
     {
-        ASSERT(vm().canUseJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
+        ASSERT(Options::useJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
         ValueProfile& result = m_argumentValueProfiles[argumentIndex];
         return result;
     }

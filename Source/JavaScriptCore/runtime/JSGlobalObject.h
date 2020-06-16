@@ -464,7 +464,7 @@ public:
     InlineWatchpointSet& arrayJoinWatchpointSet() { return m_arrayJoinWatchpointSet; }
     InlineWatchpointSet& numberToStringWatchpointSet()
     {
-        RELEASE_ASSERT(VM::canUseJIT());
+        RELEASE_ASSERT(Options::useJIT());
         return m_numberToStringWatchpointSet;
     }
     // If this hasn't been invalidated, it means the array iterator protocol

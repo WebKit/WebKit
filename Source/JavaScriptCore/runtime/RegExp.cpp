@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001, 2004 Harri Porten (porten@kde.org)
- *  Copyright (c) 2007, 2008, 2016-2017 Apple Inc. All rights reserved.
+ *  Copyright (c) 2007-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
@@ -256,7 +256,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.containsUnsignedLengthPattern() && VM::canUseJIT() && Options::useRegExpJIT()
+    if (!pattern.containsUnsignedLengthPattern() && Options::useRegExpJIT()
 #if !ENABLE(YARR_JIT_BACKREFERENCES)
         && !pattern.m_containsBackreferences
 #endif
@@ -320,7 +320,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.containsUnsignedLengthPattern() && VM::canUseJIT() && Options::useRegExpJIT()
+    if (!pattern.containsUnsignedLengthPattern() && Options::useRegExpJIT()
 #if !ENABLE(YARR_JIT_BACKREFERENCES)
         && !pattern.m_containsBackreferences
 #endif

@@ -948,7 +948,7 @@ void CodeBlock::setNumParameters(int newValue)
 {
     m_numParameters = newValue;
 
-    m_argumentValueProfiles = RefCountedArray<ValueProfile>(vm().canUseJIT() ? newValue : 0);
+    m_argumentValueProfiles = RefCountedArray<ValueProfile>(Options::useJIT() ? newValue : 0);
 }
 
 CodeBlock* CodeBlock::specialOSREntryBlockOrNull()

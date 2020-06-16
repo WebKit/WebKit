@@ -63,13 +63,16 @@ void initializeThreading()
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif
-
-        ExecutableAllocator::initialize();
-        VM::computeCanUseJIT();
-        if (!VM::canUseJIT()) {
-            Options::useJIT() = false;
-            Options::recomputeDependentOptions();
+        {
+            Options::AllowUnfinalizedAccessScope scope;
+            ExecutableAllocator::initialize();
+            VM::computeCanUseJIT();
+            if (!g_jscConfig.vm.canUseJIT) {
+                Options::useJIT() = false;
+                Options::recomputeDependentOptions();
+            }
         }
+        Options::finalize();
 
         if (Options::useSigillCrashAnalyzer())
             enableSigillCrashAnalyzer();

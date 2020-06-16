@@ -2925,6 +2925,7 @@ static bool isMJSFile(char *filename)
 
 void CommandLine::parseArguments(int argc, char** argv)
 {
+    Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
     
     if (Options::dumpOptions()) {
@@ -3241,9 +3242,12 @@ int jscmain(int argc, char** argv)
     // comes first.
     CommandLine options(argc, argv);
 
-    processConfigFile(Options::configFile(), "jsc");
-    if (options.m_dump)
-        JSC::Options::dumpGeneratedBytecodes() = true;
+    {
+        Options::AllowUnfinalizedAccessScope scope;
+        processConfigFile(Options::configFile(), "jsc");
+        if (options.m_dump)
+            Options::dumpGeneratedBytecodes() = true;
+    }
 
     // Initialize JSC before getting VM.
     JSC::initializeThreading();

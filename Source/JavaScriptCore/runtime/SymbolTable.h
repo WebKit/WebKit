@@ -231,7 +231,7 @@ public:
     
     bool isWatchable() const
     {
-        return (m_bits & KindBitsMask) == ScopeKindBits && VM::canUseJIT();
+        return (m_bits & KindBitsMask) == ScopeKindBits && Options::useJIT();
     }
     
     // Asserts if the offset is anything but a scope offset. This structures the assertions

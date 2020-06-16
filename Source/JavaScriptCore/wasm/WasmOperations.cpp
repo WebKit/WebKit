@@ -232,8 +232,6 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
 
 inline bool shouldJIT(unsigned functionIndex)
 {
-    if (!VM::canUseJIT())
-        return false;
     if (!Options::useOMGJIT())
         return false;
     if (!Options::wasmFunctionIndexRangeToCompile().isInRange(functionIndex))

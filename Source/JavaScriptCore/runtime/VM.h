@@ -789,7 +789,7 @@ public:
     static JS_EXPORT_PRIVATE bool canUseAssembler();
     static bool isInMiniMode()
     {
-        return !canUseJIT() || Options::forceMiniVMMode();
+        return !Options::useJIT() || Options::forceMiniVMMode();
     }
 
     static bool useUnlinkedCodeBlockJettisoning()
@@ -798,15 +798,6 @@ public:
     }
 
     static void computeCanUseJIT();
-    ALWAYS_INLINE static bool canUseJIT()
-    {
-#if ENABLE(JIT)
-        ASSERT(s_canUseJITIsSet);
-        return s_canUseJIT;
-#else
-        return false;
-#endif
-    }
 
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
@@ -1232,13 +1223,6 @@ private:
 
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
     uintptr_t m_currentWeakRefVersion { 0 };
-
-#if ENABLE(JIT)
-#if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE static bool s_canUseJITIsSet;
-#endif
-    JS_EXPORT_PRIVATE static bool s_canUseJIT;
-#endif
 
     VM* m_prev; // Required by DoublyLinkedListNode.
     VM* m_next; // Required by DoublyLinkedListNode.

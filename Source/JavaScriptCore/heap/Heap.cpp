@@ -630,7 +630,7 @@ void Heap::didFinishIterating()
 
 void Heap::completeAllJITPlans()
 {
-    if (!VM::canUseJIT())
+    if (!Options::useJIT())
         return;
 #if ENABLE(JIT)
     JITWorklist::ensureGlobalWorklist().completeAllForVM(m_vm);
@@ -642,7 +642,7 @@ template<typename Func>
 void Heap::iterateExecutingAndCompilingCodeBlocks(const Func& func)
 {
     m_codeBlocks->iterateCurrentlyExecuting(func);
-    if (VM::canUseJIT())
+    if (Options::useJIT())
         DFG::iterateCodeBlocksForGC(m_vm, func);
 }
 
@@ -701,7 +701,7 @@ void Heap::gatherJSStackRoots(ConservativeRoots& roots)
 void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 {
 #if ENABLE(DFG_JIT)
-    if (!VM::canUseJIT())
+    if (!Options::useJIT())
         return;
     m_vm.gatherScratchBufferRoots(roots);
     m_vm.scanSideState(roots);
@@ -721,7 +721,7 @@ void Heap::beginMarking()
 void Heap::removeDeadCompilerWorklistEntries()
 {
 #if ENABLE(DFG_JIT)
-    if (!VM::canUseJIT())
+    if (!Options::useJIT())
         return;
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::existingWorklistForIndex(i).removeDeadPlans(m_vm);
@@ -1638,7 +1638,7 @@ void Heap::stopThePeriphery(GCConductor conn)
         });
 
 #if ENABLE(JIT)
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         DeferGCForAWhile awhile(*this);
         if (JITWorklist::ensureGlobalWorklist().completeAllForVM(m_vm)
             && conn == GCConductor::Collector)
@@ -2154,7 +2154,7 @@ void Heap::suspendCompilerThreads()
     // We ensure the worklists so that it's not possible for the mutator to start a new worklist
     // after we have suspended the ones that he had started before. That's not very expensive since
     // the worklists use AutomaticThreads anyway.
-    if (!VM::canUseJIT())
+    if (!Options::useJIT())
         return;
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::ensureWorklistForIndex(i).suspendAllThreads();
@@ -2365,7 +2365,7 @@ void Heap::didFinishCollection()
 void Heap::resumeCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
-    if (!VM::canUseJIT())
+    if (!Options::useJIT())
         return;
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::existingWorklistForIndex(i).resumeAllThreads();
@@ -2715,7 +2715,7 @@ void Heap::addCoreConstraints()
                 SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
                 slotVisitor.append(conservativeRoots);
             }
-            if (VM::canUseJIT()) {
+            if (Options::useJIT()) {
                 // JITStubRoutines must be visited after scanning ConservativeRoots since JITStubRoutines depend on the hook executed during gathering ConservativeRoots.
                 SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::JITStubRoutines);
                 m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
@@ -2823,7 +2823,7 @@ void Heap::addCoreConstraints()
         ConstraintParallelism::Parallel);
     
 #if ENABLE(DFG_JIT)
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         m_constraintSet->add(
             "Dw", "DFG Worklists",
             [this] (SlotVisitor& slotVisitor) {

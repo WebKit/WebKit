@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -400,7 +400,7 @@ void compileSelector(CompiledSelector& compiledSelector, const CSSSelector* sele
 {
     ASSERT(compiledSelector.status == SelectorCompilationStatus::NotCompiled);
 
-    if (!JSC::VM::canUseJIT()) {
+    if (!JSC::Options::useJIT()) {
         compiledSelector.status = SelectorCompilationStatus::CannotCompile;
         return;
     }

@@ -196,13 +196,6 @@
 
 namespace JSC {
 
-#if ENABLE(JIT)
-#if ASSERT_ENABLED
-bool VM::s_canUseJITIsSet = false;
-#endif
-bool VM::s_canUseJIT = false;
-#endif
-
 Atomic<unsigned> VM::s_numberOfIDs;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
@@ -250,10 +243,10 @@ void VM::computeCanUseJIT()
 {
 #if ENABLE(JIT)
 #if ASSERT_ENABLED
-    RELEASE_ASSERT(!s_canUseJITIsSet);
-    s_canUseJITIsSet = true;
+    RELEASE_ASSERT(!g_jscConfig.vm.canUseJITIsSet);
+    g_jscConfig.vm.canUseJITIsSet = true;
 #endif
-    s_canUseJIT = VM::canUseAssembler() && Options::useJIT();
+    g_jscConfig.vm.canUseJIT = VM::canUseAssembler() && Options::useJIT();
 #endif
 }
 
@@ -467,7 +460,7 @@ VM::VM(VMType vmType, HeapType heapType)
     executableToCodeBlockEdgeStructure.set(*this, ExecutableToCodeBlockEdge::createStructure(*this, nullptr, jsNull()));
 
     // Eagerly initialize constant cells since the concurrent compiler can access them.
-    if (canUseJIT()) {
+    if (Options::useJIT()) {
         sentinelMapBucket();
         sentinelSetBucket();
     }
@@ -547,7 +540,7 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(JIT)
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
-    if (canUseJIT()) {
+    if (Options::useJIT()) {
         jitStubs = makeUnique<JITThunks>();
 #if ENABLE(FTL_JIT)
         ftlThunks = makeUnique<FTL::Thunks>();
@@ -797,7 +790,7 @@ static Ref<NativeJITCode> jitCodeForConstructTrampoline()
 NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, const String& name)
 {
 #if ENABLE(JIT)
-    if (canUseJIT()) {
+    if (Options::useJIT()) {
         return jitStubs->hostFunctionStub(
             *this, function, constructor,
             intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : nullptr,
@@ -837,7 +830,7 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
 MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
 {
 #if ENABLE(JIT)
-    if (canUseJIT()) {
+    if (Options::useJIT()) {
         if (kind == CodeForCall)
             return jitStubs->ctiInternalFunctionCall(*this).retagged<JSEntryPtrTag>();
         return jitStubs->ctiInternalFunctionConstruct(*this).retagged<JSEntryPtrTag>();

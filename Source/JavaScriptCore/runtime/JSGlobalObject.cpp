@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1349,7 +1349,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     }
 
     // Unfortunately, the prototype objects of the builtin objects can be touched from concurrent compilers. So eagerly initialize them only if we use JIT.
-    if (VM::canUseJIT()) {
+    if (Options::useJIT()) {
         this->booleanPrototype();
         this->numberPrototype();
         this->symbolPrototype();

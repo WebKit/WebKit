@@ -64,6 +64,13 @@ struct Config {
     // The following HasBeenCalled flags are for auditing call_once initialization functions.
     bool initializeThreadingHasBeenCalled;
 
+    struct {
+#if ASSERT_ENABLED
+        bool canUseJITIsSet;
+#endif
+        bool canUseJIT;
+    } vm;
+
     ExecutableAllocator* executableAllocator;
     FixedVMPoolExecutableAllocator* fixedVMPoolExecutableAllocator;
     void* startExecutableMemory;

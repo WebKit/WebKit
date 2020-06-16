@@ -79,8 +79,6 @@ enum class RequiredWasmJIT { Any, OMG };
 
 inline bool shouldJIT(Wasm::FunctionCodeBlock* codeBlock, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
 {
-    if (!VM::canUseJIT())
-        return false;
     if (requiredJIT == RequiredWasmJIT::OMG) {
         if (!Options::useOMGJIT())
             return false;
