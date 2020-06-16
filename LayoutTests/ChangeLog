@@ -1,3 +1,12 @@
+2020-06-16  Jason Lawrence  <lawrence.j@apple.com>
+
+        [iOS wk2] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=206946
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-06-16  Truitt Savell  <tsavell@apple.com>
 
         Rebase tables/mozilla_expected_failures/bugs/bug2479-5.html after the changes in https://trac.webkit.org/changeset/263073/webkit
