@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "NicosiaGC3DLayer.h"
+#include "NicosiaGCGLLayer.h"
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
@@ -47,13 +47,13 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GC3DLayer::GC3DLayer(GraphicsContextGLOpenGL& context)
+GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
 }
 
-GC3DLayer::GC3DLayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
+GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
@@ -67,24 +67,24 @@ GC3DLayer::GC3DLayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::
     }
 }
 
-GC3DLayer::~GC3DLayer()
+GCGLLayer::~GCGLLayer()
 {
     downcast<ContentLayerTextureMapperImpl>(m_contentLayer->impl()).invalidateClient();
 }
 
-bool GC3DLayer::makeContextCurrent()
+bool GCGLLayer::makeContextCurrent()
 {
     ASSERT(m_glContext);
     return m_glContext->makeContextCurrent();
 }
 
-PlatformGraphicsContextGL GC3DLayer::platformContext() const
+PlatformGraphicsContextGL GCGLLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();
 }
 
-void GC3DLayer::swapBuffersIfNeeded()
+void GCGLLayer::swapBuffersIfNeeded()
 {
 #if USE(COORDINATED_GRAPHICS)
     if (m_context.layerComposited())

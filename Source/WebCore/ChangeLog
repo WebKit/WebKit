@@ -1,3 +1,50 @@
+2020-06-15  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Rename GC3D to GCGL.
+        https://bugs.webkit.org/show_bug.cgi?id=211117
+
+        Reviewed by Fujii Hironori.
+
+        GraphicsContext3D has been renamed to GraphicsContextGL after r254103 but some files
+        still follow the old name. This change reflects the new name to them for consistency.
+
+        No new tests because of no new functionalities.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp: Renamed from Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.cpp.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::errorString):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::lastErrorString):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::createContext):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::ANGLEContext):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::~ANGLEContext):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::makeContextCurrent):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::platformContext const):
+        (Nicosia::GCGLANGLELayer::GCGLANGLELayer):
+        (Nicosia::GCGLANGLELayer::~GCGLANGLELayer):
+        (Nicosia::GCGLANGLELayer::makeContextCurrent):
+        (Nicosia::GCGLANGLELayer::platformContext const):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.h: Renamed from Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGC3DANGLELayer.h.
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp: Renamed from Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp.
+        (Nicosia::GCGLLayer::GCGLLayer):
+        (Nicosia::GCGLLayer::~GCGLLayer):
+        (Nicosia::GCGLLayer::makeContextCurrent):
+        (Nicosia::GCGLLayer::platformContext const):
+        (Nicosia::GCGLLayer::swapBuffersIfNeeded):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.h: Renamed from Source/WebCore/platform/graphics/nicosia/texmap/NicosiaGC3DLayer.h.
+        (Nicosia::GCGLLayer::contentLayer const):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp: Renamed from Source/WebCore/platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp.
+        (WebCore::TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer):
+        (WebCore::TextureMapperGCGLPlatformLayer::~TextureMapperGCGLPlatformLayer):
+        (WebCore::TextureMapperGCGLPlatformLayer::makeContextCurrent):
+        (WebCore::TextureMapperGCGLPlatformLayer::platformContext const):
+        (WebCore::TextureMapperGCGLPlatformLayer::proxy const):
+        (WebCore::TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded):
+        (WebCore::TextureMapperGCGLPlatformLayer::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.h: Renamed from Source/WebCore/platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h.
+
 2020-06-15  Megan Gardner  <megan_gardner@apple.com>
 
         Text form controls can scroll by 1px when value is the same length as size. No scrolling should happen.
