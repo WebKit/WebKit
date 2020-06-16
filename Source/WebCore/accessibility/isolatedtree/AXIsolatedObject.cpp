@@ -1058,6 +1058,15 @@ bool AXIsolatedObject::isNativeTextControl() const
     return false;
 }
 
+PlainTextRange AXIsolatedObject::selectedTextRange() const
+{
+    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([this] () -> PlainTextRange {
+        if (auto* object = associatedAXObject())
+            return object->selectedTextRange();
+        return PlainTextRange();
+    });
+}
+
 bool AXIsolatedObject::isListBoxOption() const
 {
     ASSERT_NOT_REACHED();

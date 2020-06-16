@@ -646,8 +646,8 @@ private:
     String documentEncoding() const override;
     bool preventKeyboardDOMEventDispatch() const override;
 
+    PlainTextRange selectedTextRange() const override;
     // TODO: Text ranges and selection.
-    PlainTextRange selectedTextRange() const override { return PlainTextRange(); }
     unsigned selectionStart() const override { return 0; }
     unsigned selectionEnd() const override { return 0; }
     VisibleSelection selection() const override { return VisibleSelection(); }

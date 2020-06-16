@@ -149,7 +149,7 @@ void setAttributeValue(id element, NSString* attribute, id value, bool synchrono
     AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([&element, &attribute, &value, &synchronous] {
         // FIXME: should always be asynchronous, fix tests.
         synchronous ? [element _accessibilitySetValue:value forAttribute:attribute] :
-            [element accessibilitySetValue:value forAttribute:attribute];;;
+            [element accessibilitySetValue:value forAttribute:attribute];
     });
     END_AX_OBJC_EXCEPTIONS
 }
@@ -1413,13 +1413,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
 {
     NSRange range = NSMakeRange(NSNotFound, 0);
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSValue *indexRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextRangeAttribute];
+    NSValue *indexRange = attributeValue(m_element.get(), NSAccessibilitySelectedTextRangeAttribute);
     if (indexRange)
         range = [indexRange rangeValue];
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
     return [rangeDescription createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 

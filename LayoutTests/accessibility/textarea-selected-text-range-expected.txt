@@ -1,6 +1,6 @@
-PASS textArea.selectedTextRange became '{4, 0}'
-PASS textArea.selectedTextRange became '{8, 2}'
-PASS textArea.selectedTextRange became '{25, 0}'
+{4, 0}
+{8, 2}
+{25, 0}
 PASS successfullyParsed is true
 
 TEST COMPLETE

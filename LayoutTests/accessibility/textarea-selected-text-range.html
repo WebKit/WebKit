@@ -10,27 +10,34 @@ line 2
 line 3
     </textarea>
 
-    <script>
-        if (window.accessibilityController) {
-            window.jsTestIsAsync = true;
-            var area1 = document.getElementById("area1");
-            area1.focus();
-
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var area1 = document.getElementById("area1");
+        area1.focus();
+        setTimeout(function() {
             var textArea = accessibilityController.focusedElement;
-
-            textArea.setSelectedTextRange(4,0);
+            textArea.setSelectedTextRange(4, 0);
 
             // After setting a property through accessibility, the value won't be updated immediately, so we
             // must check after a timeout to re-verify the value.
-            shouldBecomeEqual("textArea.selectedTextRange", "'{4, 0}'", function() {
+            setTimeout(function() {
+                debug(textArea.selectedTextRange);
+
                 textArea.setSelectedTextRange(8,2);
-                shouldBecomeEqual("textArea.selectedTextRange", "'{8, 2}'", function() {
+                setTimeout(function() {
+                    debug(textArea.selectedTextRange);
+
                     textArea.setSelectedTextRange(100,0);
-                    shouldBecomeEqual("textArea.selectedTextRange", "'{25, 0}'", finishJSTest);
-                });
-            });
-        }
-    </script>
+                    setTimeout(function() {
+                        debug(textArea.selectedTextRange);
+                        finishJSTest();
+                    }, 0);
+                }, 0);
+            }, 0);
+        }, 0);
+    }
+</script>
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

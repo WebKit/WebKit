@@ -1,3 +1,18 @@
+2020-06-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/textarea-selected-text-range.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=213257
+
+        Reviewed by Chris Fleizach.
+
+        - Re-write this test so that it can pass in both isolated tree mode on
+        and off.
+        - Replaced shouldBecomeEqual with setTimeout follow by debug because
+        shouldBecomeEqual causes a thread lock on isolated tree mode.
+
+        * accessibility/textarea-selected-text-range-expected.txt:
+        * accessibility/textarea-selected-text-range.html:
+
 2020-06-16  Clark Wang  <clark_wang@apple.com>
 
         Added missing position attributes to PannerNode
