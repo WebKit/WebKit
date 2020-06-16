@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 207x17
                   text run at (1,1) width 207: "text with value property changed"
               RenderTableCell {TD} at (343,0) size 313x30 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (3,3) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderTableCell {TD} at (657,5) size 62x20 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -45,9 +45,9 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 244x17
                   text run at (1,1) width 244: "password with value property changed"
               RenderTableCell {TD} at (343,32) size 313x30 [r=1 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderFlexibleBox {DIV} at (3,3) size 185x18
-                    RenderBlock {DIV} at (0,0) size 185x18
+                RenderTextControl {INPUT} at (3,3) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderFlexibleBox {DIV} at (3,3) size 186x18
+                    RenderBlock {DIV} at (0,0) size 186x18
               RenderTableCell {TD} at (657,37) size 62x20 [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -121,7 +121,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 205x17
                   text run at (1,1) width 205: "text with value attribute changed"
               RenderTableCell {TD} at (343,190) size 313x30 [r=7 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (3,3) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderTableCell {TD} at (657,195) size 62x20 [r=7 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -159,7 +159,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 328: "check box with value property changed, then turned"
                   text run at (1,19) width 51: "into text"
               RenderTableCell {TD} at (343,288) size 313x30 [r=10 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (3,3) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderTableCell {TD} at (657,293) size 62x20 [r=10 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -185,7 +185,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 326: "check box with value attribute changed, then turned"
                   text run at (1,19) width 51: "into text"
               RenderTableCell {TD} at (343,368) size 313x30 [r=12 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (3,3) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderTableCell {TD} at (657,373) size 62x20 [r=12 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
@@ -206,23 +206,23 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (721,410) size 61x21 [r=13 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 40x18
                   text run at (1,2) width 40: "before"
-layer at (357,134) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18
+layer at (357,134) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 45x17
       text run at (0,0) width 45: "before"
-layer at (357,166) size 185x18
-  RenderBlock {DIV} at (0,0) size 185x18
+layer at (357,166) size 186x18
+  RenderBlock {DIV} at (0,0) size 186x18
     RenderText {#text} at (0,0) size 36x17
       text run at (0,0) width 36: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
-layer at (357,324) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18
+layer at (357,324) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 31x17
       text run at (0,0) width 31: "after"
-layer at (357,422) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18
+layer at (357,422) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 31x17
       text run at (0,0) width 31: "after"
-layer at (357,502) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18
+layer at (357,502) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 31x17
       text run at (0,0) width 31: "after"

@@ -10,22 +10,22 @@ layer at (0,0) size 800x600
               text run at (5,5) width 83: "append cell"
         RenderText {#text} at (116,8) size 52x17
           text run at (116,8) width 52: "   tbody "
-        RenderTextControl {INPUT} at (170,5) size 56x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (228,8) size 41x17
-          text run at (228,8) width 41: "   row "
-        RenderTextControl {INPUT} at (271,5) size 56x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (329,8) size 35x17
-          text run at (329,8) width 35: "   col "
-        RenderTextControl {INPUT} at (366,5) size 56x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (424,8) size 74x17
-          text run at (424,8) width 74: "   row span "
-        RenderTextControl {INPUT} at (500,5) size 56x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (558,8) size 68x17
-          text run at (558,8) width 68: "   col span "
-        RenderTextControl {INPUT} at (628,5) size 56x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (686,8) size 20x17
-          text run at (686,8) width 20: "     "
-        RenderButton {INPUT} at (708,4) size 49x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderTextControl {INPUT} at (170,5) size 57x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (229,8) size 41x17
+          text run at (229,8) width 41: "   row "
+        RenderTextControl {INPUT} at (272,5) size 57x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (331,8) size 35x17
+          text run at (331,8) width 35: "   col "
+        RenderTextControl {INPUT} at (368,5) size 57x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (427,8) size 74x17
+          text run at (427,8) width 74: "   row span "
+        RenderTextControl {INPUT} at (503,5) size 57x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (562,8) size 68x17
+          text run at (562,8) width 68: "   col span "
+        RenderTextControl {INPUT} at (632,5) size 57x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (691,8) size 20x17
+          text run at (691,8) width 20: "     "
+        RenderButton {INPUT} at (713,4) size 49x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 33x18
             RenderText at (0,0) size 33x17
               text run at (0,0) width 33: "Do It"
@@ -47,23 +47,23 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 23: "c22"
       RenderBlock (anonymous) at (0,120) size 784x18
         RenderBR {BR} at (0,0) size 0x17
-layer at (181,16) size 50x18
-  RenderBlock {DIV} at (3,3) size 50x18
+layer at (181,16) size 51x18
+  RenderBlock {DIV} at (3,3) size 51x18
     RenderText {#text} at (0,0) size 9x17
       text run at (0,0) width 9: "0"
-layer at (282,16) size 50x18
-  RenderBlock {DIV} at (3,3) size 50x18
+layer at (283,16) size 51x18
+  RenderBlock {DIV} at (3,3) size 51x18
     RenderText {#text} at (0,0) size 9x17
       text run at (0,0) width 9: "0"
-layer at (377,16) size 50x18
-  RenderBlock {DIV} at (3,3) size 50x18
+layer at (379,16) size 51x18
+  RenderBlock {DIV} at (3,3) size 51x18
     RenderText {#text} at (0,0) size 9x17
       text run at (0,0) width 9: "0"
-layer at (511,16) size 50x18
-  RenderBlock {DIV} at (3,3) size 50x18
+layer at (514,16) size 51x18
+  RenderBlock {DIV} at (3,3) size 51x18
     RenderText {#text} at (0,0) size 9x17
       text run at (0,0) width 9: "1"
-layer at (639,16) size 50x18
-  RenderBlock {DIV} at (3,3) size 50x18
+layer at (643,16) size 51x18
+  RenderBlock {DIV} at (3,3) size 51x18
     RenderText {#text} at (0,0) size 9x17
       text run at (0,0) width 9: "1"

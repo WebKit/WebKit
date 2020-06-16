@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
         text run at (0,0) width 293: "This tests that text fields get the right baseline. "
       RenderBR {BR} at (293,14) size 0x0
       RenderBR {BR} at (0,18) size 0x17
-      RenderTextControl {INPUT} at (2,38) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (195,41) size 424x17
-        text run at (195,41) width 424: "This text should line up with the bottom of the text in the text field. "
-      RenderBR {BR} at (619,55) size 0x0
+      RenderTextControl {INPUT} at (2,38) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (196,41) size 424x17
+        text run at (196,41) width 424: "This text should line up with the bottom of the text in the text field. "
+      RenderBR {BR} at (620,55) size 0x0
       RenderBR {BR} at (0,64) size 0x17
-      RenderTextControl {INPUT} at (2,84) size 191x130 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (195,172) size 420x17
-        text run at (195,172) width 420: "This text should line up with the bottom of the text in the text field."
-layer at (13,49) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18
-layer at (13,95) size 185x124
-  RenderBlock {DIV} at (3,3) size 185x124
+      RenderTextControl {INPUT} at (2,84) size 192x130 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (196,172) size 420x17
+        text run at (196,172) width 420: "This text should line up with the bottom of the text in the text field."
+layer at (13,49) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
+layer at (13,95) size 186x124
+  RenderBlock {DIV} at (3,3) size 186x124

@@ -79,17 +79,17 @@ layer at (0,0) size 800x600
           RenderTable {TABLE} at (2,26) size 780x59
             RenderTableSection {TBODY} at (0,0) size 780x59
               RenderTableRow {TR} at (0,0) size 780x59
-                RenderTableCell {TD} at (0,20) size 122x19 [r=0 c=0 rs=1 cs=1]
+                RenderTableCell {TD} at (0,20) size 121x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,1) width 4: " "
-                RenderTableCell {TD} at (121,0) size 511x59 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (2,2) size 506x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderBR {BR} at (510,19) size 0x0
-                  RenderButton {INPUT} at (121,30) size 124x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderTableCell {TD} at (120,0) size 512x59 [r=0 c=1 rs=1 cs=1]
+                  RenderTextControl {INPUT} at (2,2) size 507x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBR {BR} at (511,19) size 0x0
+                  RenderButton {INPUT} at (122,30) size 123x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 107x18
                       RenderText at (0,0) size 107x17
                         text run at (0,0) width 107: "Google Search"
-                  RenderButton {INPUT} at (248,30) size 141x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                  RenderButton {INPUT} at (249,30) size 140x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 124x18
                       RenderText at (0,0) size 124x17
                         text run at (0,0) width 124: "I'm Feeling Lucky"
@@ -148,7 +148,7 @@ layer at (0,0) size 800x600
           RenderInline {FONT} at (0,0) size 60x11
             RenderText {#text} at (362,0) size 60x11
               text run at (362,0) width 60: "\x{A9}2005 Google"
-layer at (136,90) size 500x18
-  RenderBlock {DIV} at (3,3) size 500x18
+layer at (135,90) size 501x18
+  RenderBlock {DIV} at (3,3) size 501x18
 selection start: position 0 of child 1 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body
 selection end:   position 1 of child 3 {#text} of child 4 {FONT} of child 4 {DIV} of child 0 {CENTER} of body

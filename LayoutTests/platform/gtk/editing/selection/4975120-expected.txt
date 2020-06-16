@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 783: "This tests for a bug that caused the parent of an active frame to paint as though it were active when its window becomes key."
           text run at (0,18) width 774: "To run manually, make another window active and then make this window active. Only the subframe should appear active."
       RenderBlock (anonymous) at (0,52) size 784x182
-        RenderTextControl {INPUT} at (2,2) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderBR {BR} at (195,19) size 0x0
+        RenderTextControl {INPUT} at (2,2) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderBR {BR} at (196,19) size 0x0
         RenderIFrame {IFRAME} at (0,28) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (13,65) size 185x18
-  RenderBlock {DIV} at (3,3) size 185x18
+layer at (13,65) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 22x17
       text run at (0,0) width 22: "foo"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body
