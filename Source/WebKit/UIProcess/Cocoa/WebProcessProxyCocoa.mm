@@ -38,6 +38,7 @@
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -249,18 +250,8 @@ void WebProcessProxy::unblockPreferenceServiceIfNeeded()
 
 Vector<String> WebProcessProxy::platformOverrideLanguages() const
 {
-    NeverDestroyed<Vector<String>> overrideLanguages = []() {
-        NSArray *languages = [[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"];
-        if (!languages)
-            return Vector<WTF::String> { };
-
-        Vector<String> overrideLanguages;
-        overrideLanguages.reserveInitialCapacity([languages count]);
-        for (NSString *language in languages)
-            overrideLanguages.uncheckedAppend(language);
-        return overrideLanguages;
-    }();
-    return overrideLanguages.get();
+    static const NeverDestroyed<Vector<String>> overrideLanguages = makeVector<String>([[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"]);
+    return overrideLanguages;
 }
 
 }

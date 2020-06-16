@@ -1,3 +1,19 @@
+2020-06-16  Chris Dumez  <cdumez@apple.com>
+
+        Stop calling userPreferredLanguages() in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=213214
+        <rdar://problem/64317593>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r263094 to address post-landing feedback from Darin.
+        Use makeVector() functionality in WTF to convert the NSArray into a Vector instead
+        of doing it by hand. Also mark the NeverDestroyed variable as static const to
+        avoid leaking.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformOverrideLanguages const):
+
 2020-06-16  Alex Christensen  <achristensen@webkit.org>
 
         Provide alternatively-named WKBrowsingContextGroup SPI
